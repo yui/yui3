@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Uploader Build File -->
+<project name="Uploader" default="local">
+    <description>Uploader Build File</description>
+    <property file="build.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+</project>

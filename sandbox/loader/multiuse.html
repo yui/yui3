@@ -27,11 +27,10 @@ YUI({
 
     }, errorFn: function(msg, e, data) {
         alert('error: ' + msg + ', ' + data);
-    },
-
-    throwFail: false
+        return true;
+    } 
+    // , throwFail: false
 }).use('lib1', function (Y) {
-
 
     Y.replace('boo', 'boo');
 
@@ -42,6 +41,10 @@ YUI({
     Y.use('lib3', function (Y) {
         Y.log("lib3: " + Y.lib3);
     });
+});
+
+YUI().use(function(Y) {
+    Y.log('successful continue');
 });
 
 </script>

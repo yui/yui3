@@ -1,7 +1,13 @@
-// TODO: Better way to sniff 'n' switch touch support?
-var TOUCH = "ontouchstart" in Y.config.win,
+/**
+ * Adds support for a "flick" event, which is fired at the end of a touch or mouse based flick gesture, and provides 
+ * velocity of the flick, along with distance and time information.
+ *
+ * @module event-gestures
+ * @submodule event-flick
+ */
 
-    EVENT = (TOUCH) ? {
+// TODO: Better way to sniff 'n' switch touch support?
+var EVENT = ("ontouchstart" in Y.config.win) ? {
         start: "touchstart",
         end: "touchend"
     } : {
@@ -16,44 +22,58 @@ var TOUCH = "ontouchstart" in Y.config.win,
     MIN_VELOCITY = "minVelocity",
     MIN_DISTANCE = "minDistance",
 
-    FLICK_START = "_fs",
-    FLICK_START_HANDLE = "_fsh",
-    FLICK_END_HANDLE = "_feh",
+    _FLICK_START = "_fs",
+    _FLICK_START_HANDLE = "_fsh",
+    _FLICK_END_HANDLE = "_feh",
 
     NODE_TYPE = "nodeType";
+
+/**
+ * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
+ * where the listener is attached. The subscriber can specify a minimum distance or velocity for
+ * which the event is to be fired.  
+ * 
+ * @event flick
+ * @param type {string} "flick"
+ * @param fn {function} The method the event invokes.
+ * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity
+ * of the flick gesture for which the event is to be fired.
+ *  
+ * @return {EventHandle} the detach handle
+ */
 
 Y.Event.define('flick', {
 
     init: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
-            Y.bind(this._onStart, this),
-            null, // Don't want stuff mixed into the facade
+            this._onStart,
+            this,
             node,
             subscriber, 
             ce);
  
-        node.setData(FLICK_START_HANDLE, startHandle);
+        node.setData(_FLICK_START_HANDLE, startHandle);
     },
 
     destroy: function (node, subscriber, ce) {
 
-        var startHandle = node.getData(FLICK_START_HANDLE),
-            endHandle = node.getData(FLICK_END_HANDLE);
+        var startHandle = node.getData(_FLICK_START_HANDLE),
+            endHandle = node.getData(_FLICK_END_HANDLE);
 
         if (startHandle) {
             startHandle.detach();
-            node.setData(FLICK_START_HANDLE, null);
+            node.clearData(_FLICK_START_HANDLE);
         }
 
         if (endHandle) {
             endHandle.detach();
-            node.setData(FLICK_END_HANDLE, null);
+            node.clearData(_FLICK_END_HANDLE);
         }
     },
 
     processArgs: function(args) {
-        var params = (args[3]) ? args.splice(3, 1) : {};
+        var params = (args[3]) ? args.splice(3, 1)[0] : {};
 
         if (!(MIN_VELOCITY in params)) {
             params.minVelocity = this.MIN_VELOCITY;
@@ -62,6 +82,8 @@ Y.Event.define('flick', {
         if (!(MIN_DISTANCE in params)) {
             params.minDistance = this.MIN_DISTANCE;
         }
+
+        Y.log("flick, processArgs : minDistance =" + params.minDistance + ", minVelocity =" + params.minVelocity);
 
         return params;
     },
@@ -81,7 +103,7 @@ Y.Event.define('flick', {
 
             e.preventDefault();
 
-            node.setData(FLICK_START, {
+            node.setData(_FLICK_START, {
                 time : new Date().getTime(),
                 pageX: e.pageX, 
                 pageY: e.pageY,
@@ -90,13 +112,13 @@ Y.Event.define('flick', {
                 _e : e
             });
 
-            endHandle = node.getData(FLICK_END_HANDLE);
+            endHandle = node.getData(_FLICK_END_HANDLE);
 
             if (!endHandle) {
-                doc = node.get(NODE_TYPE) === 9 ? node : node.get(OWNER_DOCUMENT);
+                doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
-                node.setData(FLICK_END_HANDLE,endHandle);
+                node.setData(_FLICK_END_HANDLE,endHandle);
             }
         }
     },
@@ -104,7 +126,7 @@ Y.Event.define('flick', {
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
-            valid = node.getData(FLICK_START),
+            valid = node.getData(_FLICK_START),
             start = valid,
             endEvent = e,
 
@@ -148,12 +170,13 @@ Y.Event.define('flick', {
 
                 if (isFinite(velocity) && velocity >= params.minVelocity && absDistance >= params.minDistance) {
                     ce.fire({
-                        distance:distance,
-                        time:time,
-                        velocity:velocity,
-                        axis:axis,
+                        distance: distance,
+                        time: time,
+                        velocity: velocity,
+                        axis: axis,
+                        button: e.button,
                         start: start,
-                        end : {
+                        end: {
                             time: endTime,
                             clientX: endEvent.clientX, 
                             clientY: endEvent.clientY,
@@ -164,7 +187,7 @@ Y.Event.define('flick', {
                     });
                 }
 
-                node.setData(FLICK_START, null);
+                node.clearData(_FLICK_START);
             }
         }
     },

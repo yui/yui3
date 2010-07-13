@@ -48,7 +48,8 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="kd">var</span> <span class="nx">SCALE</span> <span class="o">=</span> <span class="s2">&quot;scale&quot;</span><span class="p">,</span>
-    <span class="nx">ROTATION</span> <span class="o">=</span> <span class="s2">&quot;rotation&quot;</span><span class="p">;</span>
+    <span class="nx">ROTATION</span> <span class="o">=</span> <span class="s2">&quot;rotation&quot;</span><span class="p">,</span>
+    <span class="nx">IDENTIFIER</span> <span class="o">=</span> <span class="s2">&quot;identifier&quot;</span><span class="p">;</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_touch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">)</span> <span class="p">{</span>
 
@@ -99,11 +100,15 @@
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">SCALE</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">scale</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">scale</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">SCALE</span><span class="p">]</span> <span class="o">=</span> <span class="nx">e</span><span class="p">[</span><span class="nx">SCALE</span><span class="p">];</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">ROTATION</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rotation</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">rotation</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">ROTATION</span><span class="p">]</span> <span class="o">=</span> <span class="nx">e</span><span class="p">[</span><span class="nx">ROTATION</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">IDENTIFIER</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">IDENTIFIER</span><span class="p">]</span> <span class="o">=</span> <span class="nx">e</span><span class="p">[</span><span class="nx">IDENTIFIER</span><span class="p">];</span>
     <span class="p">}</span>
 <span class="p">};</span>
 

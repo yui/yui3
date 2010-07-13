@@ -81,9 +81,19 @@
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base", 
+                    "json"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -242,8 +252,7 @@
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -470,7 +479,9 @@
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base"
+                    "dd-ddm-base", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-drop": {
@@ -693,11 +704,17 @@
     "history": {
         "submodules": {
             "history-base": {
+                "after": [
+                    "history-deprecated"
+                ], 
                 "requires": [
                     "event-custom-complex"
                 ]
             }, 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ], 
                 "requires": [
                     "event-synthetic", 
                     "history-base", 
@@ -708,6 +725,13 @@
                 "requires": [
                     "history-base", 
                     "history-hash", 
+                    "node-base"
+                ]
+            }, 
+            "history-html5": {
+                "requires": [
+                    "event-base", 
+                    "history-base", 
                     "node-base"
                 ]
             }

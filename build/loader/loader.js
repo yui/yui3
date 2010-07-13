@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.06.23-18-37',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.07-19-52',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '3',
@@ -160,6 +160,9 @@ YUI.Env[VERSION] = META;
  *  callback executed each time a script or css file is loaded</li>
  *  <li>modules:
  *  A list of module definitions.  See Loader.addModule for the supported module metadata</li>
+ *  <li>groups:
+ *  A list of group definitions.  Each group can contain specific definitions for base, comboBase,
+ *  combine, and accepts a list of modules.  See above for the description of these properties.</li>
  * </ul>
  */
 
@@ -747,6 +750,8 @@ Y.Loader.prototype = {
      *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
      *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
      *     <dt>submodules:</dt> <dd>a hash of submodules</dd>
+     *     <dt>group:</dt>      <dd>The group the module belongs to -- this is set automatically when
+     *                          it is added as part of a group configuration.</dd>
      *     <dt>lang:</dt>       <dd>array of BCP 47 language tags of
      *                              languages for which this module has localized resource bundles,
      *                              e.g., ["en-GB","zh-Hans-CN"]</dd>
@@ -1222,7 +1227,7 @@ Y.Loader.prototype = {
             return null;
         }
 
-        var p, type, found, pname, 
+        var p, found, pname, 
             m = this.moduleInfo[mname], 
             patterns = this.patterns;
 
@@ -1232,7 +1237,6 @@ Y.Loader.prototype = {
             for (pname in patterns) {
                 if (patterns.hasOwnProperty(pname)) {
                     p = patterns[pname];
-                    type = p.type;
 
                     // use the metadata supplied for the pattern
                     // as the module definition.
@@ -2028,9 +2032,19 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base", 
+                    "json"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -2189,8 +2203,7 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -2417,7 +2430,9 @@ YUI.Env[Y.version].modules = {
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base"
+                    "dd-ddm-base", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-drop": {
@@ -2640,11 +2655,17 @@ YUI.Env[Y.version].modules = {
     "history": {
         "submodules": {
             "history-base": {
+                "after": [
+                    "history-deprecated"
+                ], 
                 "requires": [
                     "event-custom-complex"
                 ]
             }, 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ], 
                 "requires": [
                     "event-synthetic", 
                     "history-base", 
@@ -2655,6 +2676,13 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "history-base", 
                     "history-hash", 
+                    "node-base"
+                ]
+            }, 
+            "history-html5": {
+                "requires": [
+                    "event-base", 
+                    "history-base", 
                     "node-base"
                 ]
             }

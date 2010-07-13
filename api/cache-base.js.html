@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: cache   cache.js  (YUI Library)</title>
+	<title>API: cache   cache-base.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_cache.html" title="cache">cache</a>
                 
-                 &gt; cache.js (source view) 
+                 &gt; cache-base.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -58,13 +58,13 @@
 <span class="cm">/**</span>
 <span class="cm"> * Base class for the YUI Cache utility.</span>
 <span class="cm"> * @class Cache</span>
-<span class="cm"> * @extends Plugin.Base</span>
+<span class="cm"> * @extends Base</span>
 <span class="cm"> * @constructor</span>
-<span class="cm"> */</span>    
+<span class="cm"> */</span>
 <span class="nx">Cache</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">Cache</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
-    
+
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
     <span class="c1">//</span>
     <span class="c1">// Cache static properties</span>
@@ -72,24 +72,11 @@
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Cache</span><span class="p">,</span> <span class="p">{</span>
     <span class="cm">/**</span>
-<span class="cm">     * The namespace for the plugin. This will be the property on the host which</span>
-<span class="cm">     * references the plugin instance.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property NS</span>
-<span class="cm">     * @type String</span>
-<span class="cm">     * @static</span>
-<span class="cm">     * @final</span>
-<span class="cm">     * @value &quot;cache&quot;</span>
-<span class="cm">     */</span>
-    <span class="nx">NS</span><span class="o">:</span> <span class="s2">&quot;cache&quot;</span><span class="p">,</span>
-
-    
-    <span class="cm">/**</span>
 <span class="cm">     * Class name.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @property NAME</span>
 <span class="cm">     * @type String</span>
-<span class="cm">     * @static     </span>
+<span class="cm">     * @static</span>
 <span class="cm">     * @final</span>
 <span class="cm">     * @value &quot;cache&quot;</span>
 <span class="cm">     */</span>
@@ -102,7 +89,7 @@
         <span class="c1">// Cache Attributes</span>
         <span class="c1">//</span>
         <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
-        
+
         <span class="cm">/**</span>
 <span class="cm">        * @attribute max</span>
 <span class="cm">        * @description Maximum number of entries the Cache can hold.</span>
@@ -112,26 +99,9 @@
 <span class="cm">        */</span>
         <span class="nx">max</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">validator</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">value</span><span class="p">));</span>
-            <span class="p">},</span>
-            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">// If the cache is full, make room by removing stalest element (index=0)</span>
-                <span class="kd">var</span> <span class="nx">entries</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">;</span>
-                <span class="k">if</span><span class="p">(</span><span class="nx">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span><span class="p">(</span><span class="nx">entries</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">while</span><span class="p">(</span><span class="nx">entries</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">entries</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span> <span class="o">=</span> <span class="p">[];</span>
-                <span class="p">}</span>
-                <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
-            <span class="p">}</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_setMax&quot;</span>
         <span class="p">},</span>
-        
+
         <span class="cm">/**</span>
 <span class="cm">        * @attribute size</span>
 <span class="cm">        * @description Number of entries currently cached.</span>
@@ -139,16 +109,14 @@
 <span class="cm">        */</span>
         <span class="nx">size</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="p">}</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="s2">&quot;_getSize&quot;</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
 <span class="cm">        * @attribute uniqueKeys</span>
 <span class="cm">        * @description Validate uniqueness of stored keys. Default is false and</span>
 <span class="cm">        * is more performant.</span>
-<span class="cm">        * @type Number</span>
+<span class="cm">        * @type Boolean</span>
 <span class="cm">        */</span>
         <span class="nx">uniqueKeys</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
@@ -164,20 +132,18 @@
 <span class="cm">         */</span>
         <span class="nx">entries</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">;</span>
-            <span class="p">}</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="s2">&quot;_getEntries&quot;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">});</span>
-    
-<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Cache</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Cache</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
     <span class="c1">//</span>
     <span class="c1">// Cache private properties</span>
     <span class="c1">//</span>
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * Array of request/response objects indexed chronologically.</span>
 <span class="cm">     *</span>
@@ -197,7 +163,7 @@
 <span class="cm">    * @method initializer</span>
 <span class="cm">    * @description Internal init() handler.</span>
 <span class="cm">    * @param config {Object} Config object.</span>
-<span class="cm">    * @private        </span>
+<span class="cm">    * @private</span>
 <span class="cm">    */</span>
     <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
@@ -246,7 +212,7 @@
     <span class="cm">/**</span>
 <span class="cm">    * @method destructor</span>
 <span class="cm">    * @description Internal destroy() handler.</span>
-<span class="cm">    * @private        </span>
+<span class="cm">    * @private</span>
 <span class="cm">    */</span>
     <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -258,6 +224,50 @@
     <span class="c1">// Cache protected methods</span>
     <span class="c1">//</span>
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sets max.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setMax</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setMax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// If the cache is full, make room by removing stalest element (index=0)</span>
+        <span class="kd">var</span> <span class="nx">entries</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">entries</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">while</span><span class="p">(</span><span class="nx">entries</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">entries</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Gets size.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _getSize</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_getSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Gets all entries.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _getEntries</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_getEntries</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">;</span>
+    <span class="p">},</span>
+
 
     <span class="cm">/**</span>
 <span class="cm">     * Adds entry to cache.</span>
@@ -278,12 +288,12 @@
             <span class="nx">entries</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
         <span class="p">}</span>
 
-            
+
         <span class="c1">// If the cache at or over capacity, make room by removing stalest element (index=0)</span>
-        <span class="k">while</span><span class="p">(</span><span class="nx">entries</span><span class="p">.</span><span class="nx">length</span><span class="o">&gt;=</span><span class="nx">max</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="nx">max</span> <span class="o">&amp;&amp;</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">length</span><span class="o">&gt;=</span><span class="nx">max</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">entries</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
         <span class="p">}</span>
-    
+
         <span class="c1">// Add entry to cache in the newest position, at the end of the array</span>
         <span class="nx">entries</span><span class="p">[</span><span class="nx">entries</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">;</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Cached entry: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">entry</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
@@ -294,7 +304,7 @@
 <span class="cm">     *</span>
 <span class="cm">     * @method _defFlushFn</span>
 <span class="cm">     * @param e {Event.Facade} Event Facade object.</span>
-<span class="cm">     * @protected     </span>
+<span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_defFlushFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span> <span class="o">=</span> <span class="p">[];</span>
@@ -325,18 +335,17 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Adds a new entry to the cache of the format</span>
-<span class="cm">     * {request:request, response:response, payload:payload}.</span>
+<span class="cm">     * {request:request, response:response}.</span>
 <span class="cm">     * If cache is full, evicts the stalest entry before adding the new one.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method add</span>
 <span class="cm">     * @param request {Object} Request value.</span>
 <span class="cm">     * @param response {Object} Response value.</span>
-<span class="cm">     * @param payload {Object} (optional) Arbitrary data payload.</span>
 <span class="cm">     */</span>
-    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;entries&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;entries&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
                 <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="o">||</span> <span class="nx">LANG</span><span class="p">.</span><span class="nx">isNull</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="o">||</span> <span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">request</span><span class="p">)))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">entry</span><span class="o">:</span> <span class="p">{</span><span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="o">:</span><span class="nx">response</span><span class="p">,</span> <span class="nx">payload</span><span class="o">:</span><span class="nx">payload</span><span class="p">}});</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">entry</span><span class="o">:</span> <span class="p">{</span><span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="o">:</span><span class="nx">response</span><span class="p">,</span> <span class="nx">cached</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()}});</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Could not add &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; to cache for &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">request</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
@@ -353,41 +362,41 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Retrieves cached entry for given request, if available, and refreshes</span>
+<span class="cm">     * Retrieves cached object for given request, if available, and refreshes</span>
 <span class="cm">     * entry in the cache. Returns null if there is no cache match.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method retrieve</span>
 <span class="cm">     * @param request {Object} Request object.</span>
-<span class="cm">     * @return {Object} Cached entry object with the properties request, response, and payload, or null.</span>
+<span class="cm">     * @return {Object} Cached object with the properties request and response, or null.</span>
 <span class="cm">     */</span>
     <span class="nx">retrieve</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// If cache is enabled...</span>
-        <span class="kd">var</span> <span class="nx">entries</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">,</span>     
+        <span class="kd">var</span> <span class="nx">entries</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">,</span>
             <span class="nx">length</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
             <span class="nx">entry</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
             <span class="nx">i</span> <span class="o">=</span> <span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-            
-        <span class="k">if</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+
+        <span class="k">if</span><span class="p">((</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">request</span><span class="o">:</span> <span class="nx">request</span><span class="p">});</span>
-    
+
             <span class="c1">// Loop through each cached entry starting from the newest</span>
             <span class="k">for</span><span class="p">(;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">entry</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-    
+
                 <span class="c1">// Execute matching function</span>
                 <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_isMatch</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">entry</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;retrieve&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">entry</span><span class="o">:</span> <span class="nx">entry</span><span class="p">});</span>
-                    
+
                     <span class="c1">// Refresh the position of the cache hit</span>
                     <span class="k">if</span><span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                         <span class="c1">// Remove element from its original location</span>
                         <span class="nx">entries</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
                         <span class="c1">// Add as newest</span>
                         <span class="nx">entries</span><span class="p">[</span><span class="nx">entries</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">;</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Refreshed cache entry: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">entry</span><span class="p">)</span> <span class="o">+</span> 
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Refreshed cache entry: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">entry</span><span class="p">)</span> <span class="o">+</span>
                                 <span class="s2">&quot; for request: &quot;</span> <span class="o">+</span>  <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">request</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
-                    <span class="p">}</span> 
-                    
+                    <span class="p">}</span>
+
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Retrieved cached response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">entry</span><span class="p">)</span> <span class="o">+</span>
                             <span class="s2">&quot; for request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">request</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
                     <span class="k">return</span> <span class="nx">entry</span><span class="p">;</span>
@@ -397,9 +406,8 @@
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">});</span>
-    
+
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Cache</span> <span class="o">=</span> <span class="nx">Cache</span><span class="p">;</span>
-    
 </pre></div>
 
                     </div>
@@ -477,13 +485,15 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Cache.html" title="Cache">Cache</a></li>
+                                <li class=""><a href="CacheOffline.html" title="CacheOffline">CacheOffline</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="cache.js.html" title="cache.js">cache.js</a></li>
+                                <li class="selected"><a href="cache-base.js.html" title="cache-base.js">cache-base.js</a></li>
+                                <li class=""><a href="cache-offline.js.html" title="cache-offline.js">cache-offline.js</a></li>
                         </ul>
                     </div>
 
@@ -501,7 +511,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Cache", "name": "add", "url": "Cache.html#method_add", "type": "method"}, {"access": "", "host": "Cache", "name": "add", "url": "Cache.html#event_add", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_defAddFn", "url": "Cache.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defFlushFn", "url": "Cache.html#method__defFlushFn", "type": "method"}, {"access": "private", "host": "Cache", "name": "destructor", "url": "Cache.html#method_destructor", "type": "method"}, {"access": "private", "host": "Cache", "name": "_entries", "url": "Cache.html#property__entries", "type": "property"}, {"access": "", "host": "Cache", "name": "entries", "url": "Cache.html#config_entries", "type": "config"}, {"access": "", "host": "Cache", "name": "entriesChange", "url": "Cache.html#event_entriesChange", "type": "event"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#method_flush", "type": "method"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#event_flush", "type": "event"}, {"access": "private", "host": "Cache", "name": "initializer", "url": "Cache.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_isMatch", "url": "Cache.html#method__isMatch", "type": "method"}, {"access": "", "host": "Cache", "name": "max", "url": "Cache.html#config_max", "type": "config"}, {"access": "", "host": "Cache", "name": "maxChange", "url": "Cache.html#event_maxChange", "type": "event"}, {"access": "", "host": "Cache", "name": "NAME", "url": "Cache.html#property_NAME", "type": "property"}, {"access": "", "host": "Cache", "name": "NS", "url": "Cache.html#property_NS", "type": "property"}, {"access": "", "host": "Cache", "name": "request", "url": "Cache.html#event_request", "type": "event"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#method_retrieve", "type": "method"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#event_retrieve", "type": "event"}, {"access": "", "host": "Cache", "name": "size", "url": "Cache.html#config_size", "type": "config"}, {"access": "", "host": "Cache", "name": "sizeChange", "url": "Cache.html#event_sizeChange", "type": "event"}, {"access": "", "host": "Cache", "name": "uniqueKeys", "url": "Cache.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "Cache", "name": "uniqueKeysChange", "url": "Cache.html#event_uniqueKeysChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Cache", "name": "add", "url": "Cache.html#method_add", "type": "method"}, {"access": "", "host": "Cache", "name": "add", "url": "Cache.html#event_add", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "add", "url": "CacheOffline.html#method_add", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defAddFn", "url": "Cache.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_defAddFn", "url": "CacheOffline.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defFlushFn", "url": "Cache.html#method__defFlushFn", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_defFlushFn", "url": "CacheOffline.html#method__defFlushFn", "type": "method"}, {"access": "private", "host": "Cache", "name": "destructor", "url": "Cache.html#method_destructor", "type": "method"}, {"access": "private", "host": "Cache", "name": "_entries", "url": "Cache.html#property__entries", "type": "property"}, {"access": "", "host": "Cache", "name": "entries", "url": "Cache.html#config_entries", "type": "config"}, {"access": "", "host": "Cache", "name": "entriesChange", "url": "Cache.html#event_entriesChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "expires", "url": "CacheOffline.html#config_expires", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "expiresChange", "url": "CacheOffline.html#event_expiresChange", "type": "event"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#method_flush", "type": "method"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#event_flush", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_getEntries", "url": "Cache.html#method__getEntries", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_getEntries", "url": "CacheOffline.html#method__getEntries", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_getSize", "url": "Cache.html#method__getSize", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_getSize", "url": "CacheOffline.html#method__getSize", "type": "method"}, {"access": "private", "host": "Cache", "name": "initializer", "url": "Cache.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_isMatch", "url": "Cache.html#method__isMatch", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_isMatch", "url": "CacheOffline.html#method__isMatch", "type": "method"}, {"access": "", "host": "Cache", "name": "max", "url": "Cache.html#config_max", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "max", "url": "CacheOffline.html#config_max", "type": "config"}, {"access": "", "host": "Cache", "name": "maxChange", "url": "Cache.html#event_maxChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "maxChange", "url": "CacheOffline.html#event_maxChange", "type": "event"}, {"access": "", "host": "Cache", "name": "NAME", "url": "Cache.html#property_NAME", "type": "property"}, {"access": "", "host": "CacheOffline", "name": "NAME", "url": "CacheOffline.html#property_NAME", "type": "property"}, {"access": "", "host": "Cache", "name": "request", "url": "Cache.html#event_request", "type": "event"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#method_retrieve", "type": "method"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#event_retrieve", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "retrieve", "url": "CacheOffline.html#method_retrieve", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_setMax", "url": "Cache.html#method__setMax", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_setMax", "url": "CacheOffline.html#method__setMax", "type": "method"}, {"access": "", "host": "Cache", "name": "size", "url": "Cache.html#config_size", "type": "config"}, {"access": "", "host": "Cache", "name": "sizeChange", "url": "Cache.html#event_sizeChange", "type": "event"}, {"access": "", "host": "Cache", "name": "uniqueKeys", "url": "Cache.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "uniqueKeys", "url": "CacheOffline.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "Cache", "name": "uniqueKeysChange", "url": "Cache.html#event_uniqueKeysChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "uniqueKeysChange", "url": "CacheOffline.html#event_uniqueKeysChange", "type": "event"}];
 </script>
 </body>
 </html>

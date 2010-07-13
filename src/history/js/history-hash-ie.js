@@ -1,10 +1,11 @@
 /**
- * The history-hash-ie module improves IE6/7 support in history-hash by using a
- * hidden iframe to create entries in IE's browser history. This module is only
- * needed if IE6/7 support is necessary; it's not needed for any other browser.
+ * Improves IE6/7 support in history-hash by using a hidden iframe to create
+ * entries in IE's browser history. This module is only needed if IE6/7 support
+ * is necessary; it's not needed for any other browser.
  *
  * @module history
  * @submodule history-hash-ie
+ * @since 3.2.0
  */
 
 // Combination of a UA sniff to ensure this is IE (or a browser that wants us to

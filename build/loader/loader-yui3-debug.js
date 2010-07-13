@@ -88,9 +88,19 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base", 
+                    "json"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -249,8 +259,7 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -477,7 +486,9 @@ YUI.Env[Y.version].modules = {
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base"
+                    "dd-ddm-base", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-drop": {
@@ -700,11 +711,17 @@ YUI.Env[Y.version].modules = {
     "history": {
         "submodules": {
             "history-base": {
+                "after": [
+                    "history-deprecated"
+                ], 
                 "requires": [
                     "event-custom-complex"
                 ]
             }, 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ], 
                 "requires": [
                     "event-synthetic", 
                     "history-base", 
@@ -715,6 +732,13 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "history-base", 
                     "history-hash", 
+                    "node-base"
+                ]
+            }, 
+            "history-html5": {
+                "requires": [
+                    "event-base", 
+                    "history-base", 
                     "node-base"
                 ]
             }

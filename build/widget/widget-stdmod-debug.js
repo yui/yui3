@@ -460,8 +460,10 @@ YUI.add('widget-stdmod', function(Y) {
                     this._addNodeHTML(node, content, where);
                 }
                 this.set(section + CONTENT_SUFFIX, this._getStdModContent(section), {src:UI});
-                this.fire(ContentUpdate);
+            } else {
+                this._eraseStdMod(section);
             }
+            this.fire(ContentUpdate);
         },
 
         /**
@@ -485,6 +487,21 @@ YUI.add('widget-stdmod', function(Y) {
 
             this[section + NODE_SUFFIX] = sectionNode;
             return this[section + NODE_SUFFIX];
+        },
+
+        /**
+         * Removes the DOM node for the given section.
+         *
+         * @method _eraseStdMod
+         * @protected
+         * @param {String} section The section to remove. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
+         */
+        _eraseStdMod : function(section) {
+            var sectionNode = this.getStdModNode(section);
+            if (sectionNode) {
+                sectionNode.remove(true);
+                delete this[section + NODE_SUFFIX];
+            }
         },
 
         /**

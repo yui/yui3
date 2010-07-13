@@ -587,11 +587,15 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
             }
         });
 
-        Y.Test.Runner.add(testJSON);
-        Y.Test.Runner.add(testXML);
-        Y.Test.Runner.add(testHTML);
-        Y.Test.Runner.add(testArray);
-        Y.Test.Runner.add(testText);
+        var suite = new Y.Test.Suite({name:"DataSchema Test Suite"});
+        suite.add(testJSON);
+        suite.add(testXML);
+        suite.add(testHTML);
+        suite.add(testArray);
+        suite.add(testText);
+
+        Y.Test.Runner.setName("DataSchema Test Runner");
+        Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
 })();

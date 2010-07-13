@@ -2,7 +2,11 @@
     "history": {
         "submodules": {
             "history-base": {
-                "requires"  : [
+                "after": [
+                    "history-deprecated"
+                ],
+
+                "requires": [
                     "event-custom-complex"
                 ]
             },
@@ -29,7 +33,9 @@
 
             "history-html5": {
                 "requires": [
-                    "history-base"
+                    "event-base",
+                    "history-base",
+                    "node-base"
                 ]
             }
         }

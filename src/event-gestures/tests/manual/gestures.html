@@ -49,11 +49,11 @@
                 };
 
                 var moveHandler = function(e) {
-                    div.append("<div>move, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    e.target.append("<div>move, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveEndHandler = function(e) {
-                    div.append("<div>moveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    e.target.append("<div>moveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 /* Waiting on synth event infrastructure to support this properly */
@@ -65,8 +65,14 @@
                 /* Waiting on synth event infrastructure to support this properly */
                 var moveStartCfg = {
                     minDistance: 10,
-                    minTime: 500,
-                    button:1
+                    minTime: 5000,
+                    button:0
+                };
+
+                var moveStartCfg2 = {
+                    minDistance: 10,
+                    minTime: -1, // must move at least 10 pixels
+                    button:0
                 };
 
                 div.on("flick", flickHandler, flickCfg);
@@ -75,8 +81,9 @@
                 div.on("move", moveHandler);
                 div.on("moveend", moveEndHandler);
 
-                div2.on("movestart", moveStartHandler, moveStartCfg);
-
+                div2.on("movestart", moveStartHandler, moveStartCfg2);
+                div2.on("move", moveHandler);
+                div2.on("moveend", moveEndHandler);
 
                 div.addClass("active");
             });

@@ -13,6 +13,8 @@ body {
 #doc {
     min-height:200px;
     width:1000px;
+    border:10px solid red;
+    padding:1em;
 }
 
 #get-style {
@@ -167,7 +169,7 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', 'node-event-simulate', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
@@ -1215,6 +1217,104 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node = Y.Node.create('<div><div><table><tbody><tr></tr><tr></tr><tr><td><div><div class="inner"></div></div></td></tr></tbody></table></div></div>');
             var inner = node.one('.inner');
             inner.ancestor('td');
+        },
+
+        test_nodelistEvent: function() {
+            var nodelist = Y.all('div'),
+                item = nodelist.item(0),
+                evtObj = {
+                mousedown: function(e, foo, bar) {
+                    Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+                    Assert.areEqual('foo', foo, "foo === 'foo'");
+                    Assert.areEqual('bar', bar, "bar === 'bar'");
+                }
+            };
+
+            nodelist.on('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.on(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.on(evtObj, null, null, 'foo', 'bar');
+
+            nodelist.on({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.on({mouseup: function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }});
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+
+            nodelist.after('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.after(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.after(evtObj, null, null, 'foo', 'bar');
+
+            nodelist.after({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.after({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            item.simulate('mousedown');
+            item.simulate('click');
+            item.simulate('mouseup');
+            item.simulate('keydown');
+        },
+
+        test_size: function() {
+            var node = Y.one('#doc'),
+                height = node._node.offsetHeight,
+                width = node._node.offsetWidth;
+
+            node.set('offsetHeight', 1000);
+            node.set('offsetWidth', 800);
+
+            Assert.areEqual(1000, node.get('offsetHeight'),
+                "node.set('offsetHeight')");
+
+            Assert.areEqual(800, node.get('offsetWidth'),
+                "node.set('offsetWidth')");
+
+            node.set('offsetWidth', -100);
+            node.set('offsetHeight', -100);
+
+            Assert.areEqual('0px', node.getStyle('height'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual('0px', node.getStyle('width'),
+                "node.get('offsetWidth')");
+
+            node.setStyle('height', '');
+            node.setStyle('width', '');
+
+            Assert.areEqual(height, node.get('offsetHeight'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual(width, node.get('offsetWidth'),
+                "node.get('offsetWidth')");
+
         }
 
     })); 
