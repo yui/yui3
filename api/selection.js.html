@@ -192,9 +192,6 @@
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">childs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">wrapped</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">doit</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">sel</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">childs</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
-            <span class="nx">sel</span><span class="p">.</span><span class="nx">setCursor</span><span class="p">();</span>
-
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">childs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">childs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">BLOCKS</span><span class="p">))</span> <span class="p">{</span>
@@ -215,8 +212,6 @@
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="nx">wrapped</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">_wrapBlock</span><span class="p">(</span><span class="nx">wrapped</span><span class="p">);</span>
-
-            <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">();</span>
         <span class="p">}</span>
     <span class="p">};</span>
 
@@ -479,7 +474,7 @@
             <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">DEFAULT_TAG</span> <span class="o">+</span> <span class="s1">&#39; class=&quot;yui-non&quot;&gt;&lt;/&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">DEFAULT_TAG</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">),</span>
                 <span class="nx">inHTML</span><span class="p">,</span> <span class="nx">txt</span><span class="p">,</span> <span class="nx">txt2</span><span class="p">,</span> <span class="nx">newNode</span><span class="p">,</span> <span class="nx">range</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createRange</span><span class="p">(),</span> <span class="nx">b</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">b</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;span&gt;&lt;/span&gt;&#39;</span><span class="p">);</span>
                     <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>
                     <span class="nx">node</span> <span class="o">=</span> <span class="nx">b</span><span class="p">;</span>
@@ -490,9 +485,16 @@
                 <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
                 <span class="nx">range</span><span class="p">.</span><span class="nx">pasteHTML</span><span class="p">(</span><span class="s1">&#39;&lt;span id=&quot;rte-insert&quot;&gt;&lt;/span&gt;&#39;</span><span class="p">);</span>
                 <span class="nx">inHTML</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#rte-insert&#39;</span><span class="p">);</span>
-                <span class="nx">inHTML</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-                <span class="nx">inHTML</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
-                <span class="k">return</span> <span class="nx">newNode</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">inHTML</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">inHTML</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                    <span class="nx">inHTML</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                    <span class="k">return</span> <span class="nx">newNode</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="nx">inHTML</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                        <span class="nx">inHTML</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                    <span class="p">},</span> <span class="s1">&#39;#rte-insert&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="c1">//TODO using Y.Node.create here throws warnings &amp; strips first white space character</span>
                 <span class="c1">//txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));</span>
@@ -671,9 +673,9 @@
         <span class="nx">focusCursor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCursor</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">cur</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-                <span class="nx">cur</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">selectNode</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
+                <span class="nx">cur</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
+                <span class="nx">cur</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;nbsp;&amp;nbsp;&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">selectNode</span><span class="p">(</span><span class="nx">cur</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
