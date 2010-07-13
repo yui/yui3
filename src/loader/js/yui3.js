@@ -257,7 +257,8 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local"
+                    "datasource-local", 
+                    "cache-base"
                 ]
             }, 
             "datasource-function": {
