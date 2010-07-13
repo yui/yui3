@@ -803,9 +803,6 @@ YUI.add('datasource-cache', function(Y) {
  * @class DataSourceCacheExtension
  */
 var DataSourceCacheExtension = function() {
-    this.after("initializedChange", function() {
-        DataSourceCacheExtension.prototype.initializer.apply(this, arguments);
-    });
 };
 
 Y.mix(DataSourceCacheExtension, {
@@ -863,7 +860,7 @@ DataSourceCacheExtension.prototype = {
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
-            this.get("host").fire("response", Y.mix({response: entry.response}, e));
+            this.get("host").fire("response", Y.mix(entry, e));
             return new Y.Do.Halt("DataSourceCache extension halted _defRequestFn");
         }
     },
@@ -897,8 +894,7 @@ DataSourceCacheExtension.prototype = {
      */
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
-        if(e.response && !e.response.cached) {
-            e.response.cached = true;
+        if(e.response && !e.cached) {
             this.add(e.request, e.response, (e.callback && e.callback.argument));
         }
      }

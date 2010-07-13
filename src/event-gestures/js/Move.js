@@ -48,7 +48,7 @@ define('movestart', {
 
         node.setData(_MOVE_START_HANDLE, node.on(EVENT[START], 
             this._onStart, 
-            null,
+            this,
             node,
             subscriber, 
             ce));
@@ -113,8 +113,8 @@ define('move', {
         var root = _getRoot(node, subscriber),
 
             moveHandle = root.on(EVENT[MOVE], 
-                Y.bind(this._onMove, this),
-                null,
+                this._onMove,
+                this,
                 node,
                 subscriber,
                 ce);
@@ -168,8 +168,8 @@ define('moveend', {
         var root = _getRoot(node, subscriber),
 
             endHandle = root.on(EVENT[END], 
-                Y.bind(this._onEnd, this), 
-                null,
+                this._onEnd, 
+                this,
                 node,
                 subscriber, 
                 ce);

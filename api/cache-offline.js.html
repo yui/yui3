@@ -244,7 +244,7 @@
     <span class="nx">retrieve</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">request</span><span class="o">:</span> <span class="nx">request</span><span class="p">});</span>
 
-        <span class="kd">var</span> <span class="nx">entry</span><span class="p">,</span> <span class="nx">expires</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">entry</span><span class="p">,</span> <span class="nx">expires</span><span class="p">,</span> <span class="nx">cached</span><span class="p">;</span>
 
         <span class="k">try</span> <span class="p">{</span>
             <span class="nx">request</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="s2">&quot;request&quot;</span><span class="o">:</span><span class="nx">request</span><span class="p">});</span>
@@ -258,6 +258,8 @@
         <span class="p">}</span>
         
         <span class="k">if</span><span class="p">(</span><span class="nx">entry</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cached</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">cached</span><span class="p">;</span>
+            <span class="nx">entry</span><span class="p">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="nx">cached</span> <span class="o">?</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">cached</span><span class="p">)</span> <span class="o">:</span> <span class="nx">cached</span><span class="p">;</span>
             <span class="nx">expires</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">expires</span><span class="p">;</span>
             <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">expires</span> <span class="o">||</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nx">expires</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;retrieve&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">entry</span><span class="o">:</span> <span class="nx">entry</span><span class="p">});</span>

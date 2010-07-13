@@ -298,7 +298,7 @@ Y.extend(Cache, Y.Base, {
     add: function(request, response) {
         if(this.get("entries") && ((this.get("max") === null) || this.get("max") > 0) &&
                 (LANG.isValue(request) || LANG.isNull(request) || LANG.isUndefined(request))) {
-            this.fire("add", {entry: {request:request, response:response}});
+            this.fire("add", {entry: {request:request, response:response, cached: new Date()}});
         }
         else {
             Y.log("Could not add " + Y.dump(response) + " to cache for " + Y.dump(request), "info", "cache");
