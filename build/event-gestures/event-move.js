@@ -86,8 +86,14 @@ define('movestart', {
 
         e.preventDefault();
 
-        var start = true,
-            origE = e; // always true for mouse
+        var origE = e,
+            params = subscriber._extra,
+            start = true,  
+            minTime = params.minTime,
+            minDistance = params.minDistance,
+            button = params.button,
+            root = _getRoot(node, subscriber),
+            startXY;
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -95,17 +101,71 @@ define('movestart', {
 
             e.target = e.target || origE.target;
             e.currentTarget = e.currentTarget || origE.currentTarget;
+        } else {
+            start = (button === undefined) || (button = e.button);
         }
 
+
         if (start) {
-            e.type = "movestart";
-            node.setData(_MOVE_START, e);
-            ce.fire(e);
+
+            if (minTime === 0 || minDistance === 0) {
+                this._start(e, node, ce, params);
+            } else {
+
+                startXY = [e.pageX, e.pageY];
+
+                if (minTime > 0) {
+
+                    
+                    params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
+
+                    params._hme = root.on(EVENT[END], Y.bind(function() {
+                        this._cancel(params);
+                    }, this));
+                }
+
+                if (minDistance > 0) {
+
+
+                    params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                        if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
+                            this._start(e, node, ce, params);
+                        }
+                    }, this));
+                }                        
+            }
+        }
+    },
+    
+    _cancel : function(params) {
+        if (params._ht) {
+            params._ht.cancel();
+            params._ht = null;
+        }
+        if (params._hme) {
+            params._hme.detach();
+            params._hme = null;
+        }
+        if (params._hm) {
+            params._hm.detach();
+            params._hm = null;
         }
     },
 
+    _start : function(e, node, ce, params) {
+        if (params) {
+            this._cancel(params);
+        }
+
+        e.type = "movestart";
+
+
+        node.setData(_MOVE_START, e);
+        ce.fire(e);
+    },
+
     MIN_TIME : 0,
-    MIN_DISTANCE : 3
+    MIN_DISTANCE : 0
 });
 
 define('move', {

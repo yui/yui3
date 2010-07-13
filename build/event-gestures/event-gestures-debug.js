@@ -46,7 +46,6 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
 Y.Event.define('flick', {
 
-    // The initialization implementation. Called for the first subscription per node.
     init: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
@@ -59,7 +58,6 @@ Y.Event.define('flick', {
         node.setData(_FLICK_START_HANDLE, startHandle);
     },
 
-    // The destroy implementation. Called for the last detach per node.
     destroy: function (node, subscriber, ce) {
 
         var startHandle = node.getData(_FLICK_START_HANDLE),
@@ -76,7 +74,6 @@ Y.Event.define('flick', {
         }
     },
 
-    // How to process the additional spec args
     processArgs: function(args) {
         var params = (args[3]) ? args.splice(3, 1)[0] : {};
 
@@ -93,7 +90,6 @@ Y.Event.define('flick', {
         return params;
     },
 
-    // Internal DOM listener to identify the start of the gesture 
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
@@ -129,8 +125,6 @@ Y.Event.define('flick', {
         }
     },
 
-    // Internal DOM listener to identify the end of the gesture. Fires the 
-    // synthetic flick event. 
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
@@ -294,8 +288,14 @@ define('movestart', {
 
         e.preventDefault();
 
-        var start = true,
-            origE = e; // always true for mouse
+        var origE = e,
+            params = subscriber._extra,
+            start = true,  
+            minTime = params.minTime,
+            minDistance = params.minDistance,
+            button = params.button,
+            root = _getRoot(node, subscriber),
+            startXY;
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -303,17 +303,79 @@ define('movestart', {
 
             e.target = e.target || origE.target;
             e.currentTarget = e.currentTarget || origE.currentTarget;
+        } else {
+            start = (button === undefined) || (button = e.button);
         }
 
+        Y.log("movestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance);
+
         if (start) {
-            e.type = "movestart";
-            node.setData(_MOVE_START, e);
-            ce.fire(e);
+
+            if (minTime === 0 || minDistance === 0) {
+                Y.log("movestart: No minTime or minDistance.");
+                this._start(e, node, ce, params);
+            } else {
+
+                startXY = [e.pageX, e.pageY];
+
+                if (minTime > 0) {
+
+                    Y.log("movestart: minTime specified. Setup timer.");
+                    Y.log("movestart: initialTime for minTime = " + new Date().getTime());
+                    
+                    params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
+
+                    params._hme = root.on(EVENT[END], Y.bind(function() {
+                        this._cancel(params);
+                    }, this));
+                }
+
+                if (minDistance > 0) {
+
+                    Y.log("movestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.");
+                    Y.log("movestart: initialXY for minDistance = " + startXY);
+
+                    params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                        if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
+                            Y.log("movestart: minDistance hit.");
+                            this._start(e, node, ce, params);
+                        }
+                    }, this));
+                }                        
+            }
+        }
+    },
+    
+    _cancel : function(params) {
+        if (params._ht) {
+            params._ht.cancel();
+            params._ht = null;
+        }
+        if (params._hme) {
+            params._hme.detach();
+            params._hme = null;
+        }
+        if (params._hm) {
+            params._hm.detach();
+            params._hm = null;
         }
     },
 
+    _start : function(e, node, ce, params) {
+        if (params) {
+            this._cancel(params);
+        }
+
+        e.type = "movestart";
+
+        Y.log("movestart: Firing start: " + new Date().getTime());
+
+        node.setData(_MOVE_START, e);
+        ce.fire(e);
+    },
+
     MIN_TIME : 0,
-    MIN_DISTANCE : 3
+    MIN_DISTANCE : 0
 });
 
 define('move', {

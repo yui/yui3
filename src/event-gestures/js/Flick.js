@@ -44,7 +44,6 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
 Y.Event.define('flick', {
 
-    // The initialization implementation. Called for the first subscription per node.
     init: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
@@ -57,7 +56,6 @@ Y.Event.define('flick', {
         node.setData(_FLICK_START_HANDLE, startHandle);
     },
 
-    // The destroy implementation. Called for the last detach per node.
     destroy: function (node, subscriber, ce) {
 
         var startHandle = node.getData(_FLICK_START_HANDLE),
@@ -74,7 +72,6 @@ Y.Event.define('flick', {
         }
     },
 
-    // How to process the additional spec args
     processArgs: function(args) {
         var params = (args[3]) ? args.splice(3, 1)[0] : {};
 
@@ -91,7 +88,6 @@ Y.Event.define('flick', {
         return params;
     },
 
-    // Internal DOM listener to identify the start of the gesture 
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
@@ -127,8 +123,6 @@ Y.Event.define('flick', {
         }
     },
 
-    // Internal DOM listener to identify the end of the gesture. Fires the 
-    // synthetic flick event. 
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
