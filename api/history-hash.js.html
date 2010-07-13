@@ -247,9 +247,9 @@
             <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">;</span>
 
         <span class="c1">// Slight code duplication here, but execution speed is of the essence</span>
-        <span class="c1">// since getHash() is called every 20ms or so to poll for changes in</span>
-        <span class="c1">// browsers that don&#39;t support native onhashchange. An additional</span>
-        <span class="c1">// function call would add unnecessary overhead.</span>
+        <span class="c1">// since getHash() is called every 50ms to poll for changes in browsers</span>
+        <span class="c1">// that don&#39;t support native onhashchange. An additional function call</span>
+        <span class="c1">// would add unnecessary overhead.</span>
         <span class="k">return</span> <span class="nx">prefix</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span>
                     <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">}),</span>
