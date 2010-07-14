@@ -616,7 +616,8 @@
         "plugins": {
             "event-synthetic": {
                 "requires": [
-                    "node-base"
+                    "node-base", 
+                    "event-custom"
                 ]
             }, 
             "event-touch": {
@@ -898,6 +899,12 @@
                 ]
             }
         }
+    }, 
+    "node-flick": {
+        "requires": [
+            "event-flick", 
+            "plugin"
+        ]
     }, 
     "node-focusmanager": {
         "requires": [
