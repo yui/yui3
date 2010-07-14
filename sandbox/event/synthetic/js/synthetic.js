@@ -1,8 +1,6 @@
-YUI.add('xevent-synthetic', function (Y) {
-
 var DOMMap  = Y.Env.evt.dom_map,
     toArray = Y.Array,
-    noop   = function () {};
+    noop    = function () {};
 
 function SyntheticEvent() {
     this._init.apply(this, arguments);
@@ -12,7 +10,9 @@ SyntheticEvent.prototype = {
     constructor: SyntheticEvent,
 
     _init: function () {
-        this.publishConfig || (this.publishConfig = { emitFacade: true });
+        if (!this.publishConfig) {
+            this.publishConfig = {};
+        }
 
         if (!('emitFacade' in this.publishConfig)) {
             this.publishConfig.emitFacade = true;
@@ -24,7 +24,8 @@ SyntheticEvent.prototype = {
     detach     : noop,
     destroy    : noop,
     processArgs: noop,
-    //allowDups: false,
+    filterSubs : noop,
+    //allowDups  : false,
 
     _getEvent: function (node) {
         var ce = node.getEvent(this.type),
@@ -35,9 +36,12 @@ SyntheticEvent.prototype = {
             key  = 'event:' + yuid + this.type;
 
             ce        = node.publish(this.type, this.publishConfig);
-            ce.el     = node._node,
-            ce.key    = key,
-            ce.domkey = yuid,
+            ce.el     = node._node;
+            ce.key    = key;
+            ce.domkey = yuid;
+
+            // Add support for notifying only a subset of subscribers
+            Y.Do.before(this.filterSubs, ce, '_procSubs', this);
 
             ce.monitor('detach', this._unsubscribe, this);
 
@@ -49,10 +53,8 @@ SyntheticEvent.prototype = {
 
     subscribe: function (args) {
         var handles = [],
-            type    = args[0],
-            fn      = args[1],
             query   = (typeof args[2] === 'string') ? args[2] : null,
-            els     = (query) ? Y.Selector.query(query) : Y.Array(args[2]),
+            els     = (query) ? Y.Selector.query(query) : toArray(args[2]),
             handle;
 
         if (!els.length && query) {
@@ -74,20 +76,24 @@ SyntheticEvent.prototype = {
             }
         }, this);
 
-        return (!handles.length === 1) ?
+        return (handles.length === 1) ?
             handles[0] :
             new Y.EventHandle(handles);
     },
 
     _subscribe: function (ce, args, node) {
         var extra = this.processArgs(args),
+            abort,
             handle;
 
         args[2] = node;
         args.shift();
 
-        // TODO: is getSubs good/flexible enough?
-        if (this.allowDups || !this.getSubs(ce, args)[0]) {
+        if (!this.allowDups) {
+            abort = this.findDup.apply(this, [ce.subscribers].concat(args));
+        }
+
+        if (!abort) {
             handle = ce.on.apply(ce, args);
             handle.sub._extra = extra;
 
@@ -102,41 +108,31 @@ SyntheticEvent.prototype = {
         return handle;
     },
 
-    //allowDups: false,
+    findDup: function (subs, fn, context) {
+        var id, sub;
 
-    getSubs: function (ce, args) {
-        args = args.slice();
-        args.unshift(Y.Object.values(ce.getSubs()[0]));
-
-        return this.filterSubs.apply(this, args) || [];
-    },
-
-    filterSubs: function (subs, fn, context) {
-        var matches = [], i, len, sub;
-
-        for (i = 0, len = subs.length; i < len; ++i) {
-            sub = subs[i];
-            if ((!fn      || sub.fn === fn) &&
-                (!context || sub.context === context)) {
-                matches.push(sub);
+        for (id in subs) {
+            if (subs.hasOwnProperty(id)) {
+                sub = subs[id];
+                if ((!fn      || sub.fn === fn) &&
+                    (!context || sub.context === context)) {
+                    return true;
+                }
             }
         }
 
-        return matches;
+        return false;
     },
 
     unsubscribe: function (args) {
-        var type = args[0],
-            fn   = args[1],
+        var fn  = args[1],
             els = (typeof args[2] === 'string') ?
                     Y.Selector.query(args[2]) :
-                    Y.Array(args[2]);
+                    toArray(args[2]);
         
         if (els.length) {
             Y.each(els, function (el) {
-                var yuid = Y.stamp(el),
-                    key  = 'event:' + yuid + type,
-                    node = Y.one(el),
+                var node = Y.one(el),
                     ce   = node.getEvent(this.type);
 
                 if (ce) {
@@ -148,7 +144,6 @@ SyntheticEvent.prototype = {
 
     _unsubscribe: function (e) {
         var ce   = e.ce,
-            fn   = e.sub.fn,
             node = e.sub.context;
 
         this.detach(node, e.sub, ce);
@@ -163,7 +158,9 @@ SyntheticEvent.prototype = {
 };
 
 Y.Node.publish = Y.Event.define = function (type, config) {
-    config || (config = {});
+    if (!config) {
+        config = {};
+    }
 
     var eventDef = (Y.Lang.isObject(type)) ?
                         type :
@@ -191,5 +188,3 @@ Y.Node.publish = Y.Event.define = function (type, config) {
 
     }
 };
-
-}, '0.0.1', { requires: ['node', 'event-custom'] });

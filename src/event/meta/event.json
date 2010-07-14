@@ -42,7 +42,8 @@
         "plugins": {
             "event-synthetic": {
                 "requires": [
-                    "node-base"
+                    "node-base",
+                    "event-custom"
                 ]
             },
             "event-touch": {

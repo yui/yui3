@@ -29,13 +29,13 @@
 <ul id="output"></ul>
 
 <script src="../../../build/yui/yui.js"></script>
-<script src="js/synthetic.js"></script>
+<!--script src="js/synthetic.js"></script-->
 <!--script src="../../../build/event/event-synthetic.js"></script-->
 <script>
 YUI({
     useBrowserConsole: false,
     filter: 'raw'
-}).use('xevent-synthetic', function (Y) {
+}).use('event-synthetic', 'event-custom', function (Y) {
 
 Y.on('yui:log', function (e) {
     Y.one("#output").append("<li>" + e.msg + "</li>");
@@ -49,6 +49,13 @@ Y.Event.define('test', {
         }));
     },
 
+    processArgs: function (args) {
+        var extra = args[4];
+        args.splice(4,1);
+
+        return extra;
+    },
+
     on: function (node, sub, notifier) {
         Y.log("on " + this.type + ": " + node.get('text'));
     },
@@ -60,6 +67,19 @@ Y.Event.define('test', {
 
     destroy: function (node, sub, notifier) {
         Y.log("destroy " + this.type + ": " + node.get('text'));
+    },
+
+    filterSubs: function (subs, args) {
+        var skip = [], i;
+        for (i in subs) {
+            if (subs.hasOwnProperty(i) && subs[i]._extra === args[1]) {
+                skip.push(i);
+            }
+        }
+
+        for (i = skip.length - 1; i >= 0; --i) {
+            delete subs[skip[i]];
+        }
     }
 });
 
