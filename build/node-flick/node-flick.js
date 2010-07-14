@@ -1,13 +1,27 @@
 YUI.add('node-flick', function(Y) {
 
-//TODO
-//    Is offsetLeft, offsetTop accurate with translate
+
+    var HOST = "host",
+        PARENT_NODE = "parentNode",
+        BOUNDING_BOX = "boundingBox",
+        OFFSET_HEIGHT = "offsetHeight",
+        OFFSET_WIDTH = "offsetWidth",
+        BOUNCE = "bounce",
+        MIN_DISTANCE = "minDistance",
+        MIN_VELOCITY = "minVelocity",
+        BOUNCE_DISTANCE = "bounceDistance",
+        DECELERATION = "deceleration",
+        STEP = "step",
+        DURATION = "duration",
+        EASING = "easing",
+        FLICK = "flick";
 
     function Flick(config) {
         Flick.superclass.constructor.apply(this, arguments);
     }
     
     Flick.ATTRS = {
+
         deceleration : {
             value: 0.98
         },
@@ -30,16 +44,16 @@ YUI.add('node-flick', function(Y) {
 
         boundingBox : {
             valueFn : function() {
-                return this.get("host").get("parentNode");
+                return this.get(HOST).get(PARENT_NODE);
             }
         },
 
         step : {
             value:10
         },
-        
+
         duration : {},
-        
+
         easing : {}
     };
 
@@ -47,47 +61,54 @@ YUI.add('node-flick', function(Y) {
     Flick.NS = "flick";
 
     Y.extend(Flick, Y.Plugin.Base, {
-        
-        initializer : function() {
-            this.setBounds();
-            this._uiSetStyle();
 
-            this.get("host").on("flick", Y.bind(this._onFlick, this));
+        initializer : function() {
+            this._node = this.get(HOST);
+
+            this.setBounds();
+            this._setStyles();
+
+            this._node.on(FLICK, Y.bind(this._onFlick, this), {
+                minDistance : this.get(MIN_DISTANCE),
+                minVelocity : this.get(MIN_VELOCITY)
+            });
         },
 
         setBounds : function () {
-            var boundingHeight = this.get("boundingBox").get("offsetHeight"),
-                boundingWidth = this.get("boundingBox").get("offsetWidth"),
-                contentHeight = this.get("host").get("offsetHeight"),
-                contentWidth = this.get("host").get("offsetWidth");
+            var box = this.get(BOUNDING_BOX),
 
-            if(contentHeight > boundingHeight) {
-                this._maxY = contentHeight - boundingHeight;
+                boxHeight = box.get(OFFSET_HEIGHT),
+                boxWidth = box.get(OFFSET_WIDTH),
+
+                contentHeight = this._node.get(OFFSET_HEIGHT),
+                contentWidth = this._node.get(OFFSET_WIDTH);
+
+            if (contentHeight > boxHeight) {
+                this._maxY = contentHeight - boxHeight;
                 this._minY = 0;
                 this._scrollY = true;
             }
 
-            if (contentWidth > boundingWidth) {
-                this._maxX = contentWidth - boundingWidth;
+            if (contentWidth > boxWidth) {
+                this._maxX = contentWidth - boxWidth;
                 this._minX = 0;
                 this._scrollX = true;
             }
-            
+
             this._x = this._y = 0;
         },
 
-        _uiSetStyle : function() {
-            var bb = this.get("boundingBox"),
-                node = this.get("host");
+        _setStyles : function() {
+            var box = this.get(BOUNDING_BOX);
 
             // TODO: Cross-browser and class based
-            bb.setStyle("overflow", "hidden");
+            box.setStyle("overflow", "hidden");
 
-            if (bb.getStyle("position") !== "absolute") {
-                bb.setStyle("position", "relative");
+            if (box.getStyle("position") !== "absolute") {
+                box.setStyle("position", "relative");
             }
 
-            node.setStyle("position", "absolute");
+            this._node.setStyle("position", "absolute");
         },
 
         /**
@@ -99,9 +120,10 @@ YUI.add('node-flick', function(Y) {
          * @protected
          */
         _onFlick: function(e) {
-            this._vel = e.velocity * e.direction;
-            this._flicking = true;
-            this._move();
+            this._v = e.velocity * e.direction;
+            this._flick = true;
+
+            this._flickAnim();
         },
 
         /**
@@ -110,86 +132,90 @@ YUI.add('node-flick', function(Y) {
          * @method _flickFrame
          * @protected
          */
-        _move: function() {
-            var // content = this.get("host"),
-                y = this._y, //content.get("offsetTop"),
-                x = this._x, //content.get("offsetLeft"),
-                step = this.get("step"),
+        _flickAnim: function() {
+
+            var y = this._y,
+                x = this._x,
                 maxY = this._maxY,
                 minY = this._minY,
                 maxX = this._maxX,
-                minX = this._minX;
+                minX = this._minX,
+                velocity = this._v,
 
-            this._vel = (this._vel*this.get("deceleration"));
+                step = this.get(STEP),
+                deceleration = this.get(DECELERATION),
+                bounce = this.get(BOUNCE);
 
-            if(this._scrollX) {
-                x = x - (this._vel * step);
+            this._v = (velocity * deceleration);
+
+            if (this._scrollX) {
+                x = x - (velocity * step);
             }
     
-            if(this._scrollY) {
-                y = y - (this._vel * step);
+            if (this._scrollY) {
+                y = y - (velocity * step);
             }
 
-            if(Math.abs(this._vel).toFixed(4) <= 0.015) {
-                this._flicking = false;
+            if (Math.abs(velocity).toFixed(4) <= 0.015) {
 
-                // TODO
+                this._flick = false;
+
                 this._killTimer(!(this._exceededYBoundary || this._exceededXBoundary));
 
-                if(this._scrollX) {
-                    if(x < minX) {
+                if (this._scrollX) {
+                    if (x < minX) {
                         this._snapToEdge = true;
-                        this._setOffsetX(minX);
-                    } else if(x > maxX) {
+                        this._setX(minX);
+                    } else if (x > maxX) {
                         this._snapToEdge = true;
-                        this._setOffsetX(maxX);
+                        this._setX(maxX);
                     }
                 }
 
-                if(this._scrollY) {
-                    if(y < minY) {
+                if (this._scrollY) {
+                    if (y < minY) {
                         this._snapToEdge = true;
-                        this._setOffsetY(minY);
-                    } else if(y > maxY) {
+                        this._setY(minY);
+                    } else if (y > maxY) {
                         this._snapToEdge = true;
-                        this._setOffsetY(maxY);
+                        this._setY(maxY);
                     }
                 }
 
             } else {
 
-                if(this._scrollX && (x < minX || x > maxX)) {
+                if (this._scrollX && (x < minX || x > maxX)) {
                     this._exceededXBoundary = true;
-                    this._vel *= this.get('bounce');
+                    this._v *= bounce;
                 }
 
-                if(this._scrollY && (y < minY || y > maxY)) {
+                if (this._scrollY && (y < minY || y > maxY)) {
                     this._exceededYBoundary = true;
-                    this._vel *= this.get('bounce');
+                    this._v *= bounce;
                 }
 
 
-                if(this._scrollX) {
-                    this._setOffsetX(x);
+                if (this._scrollX) {
+                    this._setX(x);
                 }
 
-                if(this._scrollY) {
-                    this._setOffsetY(y);
+                if (this._scrollY) {
+                    this._setY(y);
                 }
 
-                this._flickTimer = Y.later(this.get("step"), this, this._move);
+                this._flickTimer = Y.later(step, this, this._flickAnim);
             }
         },
 
-        _setOffsetX : function(val) {
-            this._setOffset(val, null, this.get("duration"), this.get("easing"));
+        _setX : function(val) {
+            this._move(val, null, this.get(DURATION), this.get(EASING));
         },
 
-        _setOffsetY : function(val) {
-            this._setOffset(null, val, this.get("duration"), this.get("easing"));
+        _setY : function(val) {
+            this._move(null, val, this.get(DURATION), this.get(EASING));
         },
 
-        _setOffset: function(x, y, duration, easing) {
+        _move: function(x, y, duration, easing) {
 
             if (x !== null) {
                 x = this._bounce(x);
@@ -208,14 +234,14 @@ YUI.add('node-flick', function(Y) {
 
             this._x = x;
             this._y = y;
-           
+
             this._anim(x, y, duration, easing);
         },
 
         _anim : function(x, y, duration, easing) {
-            var node = this.get("host");
+            var node = this._node;
 
-            // TODO: Anim, once done
+            // TODO: Integrate Anim, once done
 
             if(duration) {
                 easing = easing || 'cubic-bezier(0, 0.1, 0, 1.0)';
@@ -229,10 +255,10 @@ YUI.add('node-flick', function(Y) {
         },
 
         _bounce : function(val, max) {
-            var bounce = this.get("bounce"),
-                dist = this.get("bounceDistance"),
+            var bounce = this.get(BOUNCE),
+                dist = this.get(BOUNCE_DISTANCE),
                 min = bounce ? -dist : 0;
-            
+
             max = bounce ? max + dist : max;
     
             if(!bounce) {
