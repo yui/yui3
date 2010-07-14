@@ -122,6 +122,7 @@ YUI.add('anim-base', function(Y) {
             val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
 
         if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
+            unit = unit || '';
             node.setStyle(att, val + unit);
         } else if (node._node.attributes[att]) {
             node.setAttribute(att, val);
