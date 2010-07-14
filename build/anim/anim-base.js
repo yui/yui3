@@ -118,8 +118,16 @@ YUI.add('anim-base', function(Y) {
      * @static
      */
     Y.Anim.DEFAULT_SETTER = function(anim, att, from, to, elapsed, duration, fn, unit) {
-        unit = unit || '';
-        anim._node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
+        var node = anim._node,
+            val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
+
+        if (att in node._node.style) {
+            node.setStyle(att, val + unit);
+        } else if (att in node._node) {
+            node._node[att] = val;
+        } else {
+            node.setAttribute(att, val);
+        }
     };
 
     /**
