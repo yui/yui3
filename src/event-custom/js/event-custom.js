@@ -655,10 +655,14 @@ Y.CustomEvent.prototype = {
      */
     _delete: function(s) {
         if (s) {
-            delete s.fn;
-            delete s.context;
-            delete this.subscribers[s.id];
-            delete this.afters[s.id];
+            if (this.subscribers[s.id]) {
+                delete this.subscribers[s.id];
+                this.subCount--;
+            }
+            if (this.afters[s.id]) {
+                delete this.afters[s.id];
+                this.afterCount--;
+            }
         }
 
         if (this.host) {
@@ -666,6 +670,11 @@ Y.CustomEvent.prototype = {
                 ce: this, 
                 sub: s
             });
+        }
+
+        if (s) {
+            delete s.fn;
+            delete s.context;
         }
     }
 };
