@@ -88,6 +88,27 @@ Y.Event.define('flick', {
         return params;
     },
 
+    filterSubs: function (subs, args) {
+        var i,
+            sub,
+            params, 
+            absDistance,
+            e = args[0];
+
+        for (i in subs) {
+            if (subs.hasOwnProperty(i)) {
+
+                sub = subs[i];
+                params = sub._extra;
+                absDistance = Math.abs(e.distance);
+
+                if (e.velocity < params.minVelocity || absDistance < params.minDistance) {   
+                    subs[i] = null;
+                }
+            }
+        }
+    },
+
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
@@ -171,7 +192,7 @@ Y.Event.define('flick', {
                 absDistance = Math.abs(distance); 
                 velocity = absDistance/time;
 
-                if (isFinite(velocity) && velocity >= params.minVelocity && absDistance >= params.minDistance) {
+                if (isFinite(velocity)) {
                     ce.fire({
                         distance: distance,
                         time: time,

@@ -450,7 +450,10 @@
 <span class="cm">        * @return {String} The filtered content of the Editor</span>
 <span class="cm">        */</span>
         <span class="nx">getContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">unfilter</span><span class="p">();</span>
+            <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">inst</span> <span class="o">&amp;&amp;</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">html</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">unfilter</span><span class="p">();</span>
+            <span class="p">}</span>
             <span class="c1">//Removing the _yuid from the objects in IE</span>
             <span class="nx">html</span> <span class="o">=</span> <span class="nx">html</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/ _yuid=&quot;([^&gt;]*)&quot;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">html</span><span class="p">;</span>

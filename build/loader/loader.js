@@ -2203,7 +2203,8 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local"
+                    "datasource-local", 
+                    "cache-base"
                 ]
             }, 
             "datasource-function": {
@@ -2566,7 +2567,8 @@ YUI.Env[Y.version].modules = {
         "plugins": {
             "event-synthetic": {
                 "requires": [
-                    "node-base"
+                    "node-base", 
+                    "event-custom"
                 ]
             }, 
             "event-touch": {
@@ -2848,6 +2850,12 @@ YUI.Env[Y.version].modules = {
                 ]
             }
         }
+    }, 
+    "node-flick": {
+        "requires": [
+            "event-flick", 
+            "plugin"
+        ]
     }, 
     "node-focusmanager": {
         "requires": [

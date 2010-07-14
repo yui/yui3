@@ -17,7 +17,7 @@
     function Flick(config) {
         Flick.superclass.constructor.apply(this, arguments);
     }
-    
+
     Flick.ATTRS = {
 
         deceleration : {
@@ -27,7 +27,7 @@
         bounce : {
             value: 0.7
         },
-        
+
         bounceDistance : {
             value: 150
         },

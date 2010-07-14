@@ -1,0 +1,8 @@
+{
+    "node-flick": {
+        "requires": [
+            "event-flick",
+            "plugin"
+        ]   
+    }
+}

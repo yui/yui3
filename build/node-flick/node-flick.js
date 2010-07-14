@@ -19,7 +19,7 @@ YUI.add('node-flick', function(Y) {
     function Flick(config) {
         Flick.superclass.constructor.apply(this, arguments);
     }
-    
+
     Flick.ATTRS = {
 
         deceleration : {
@@ -29,7 +29,7 @@ YUI.add('node-flick', function(Y) {
         bounce : {
             value: 0.7
         },
-        
+
         bounceDistance : {
             value: 150
         },
@@ -292,4 +292,4 @@ YUI.add('node-flick', function(Y) {
     Y.Plugin.Flick = Flick;
 
 
-}, '@VERSION@' ,{requires:['node-base', 'plugin']});
+}, '@VERSION@' ,{requires:['event-flick', 'plugin']});
