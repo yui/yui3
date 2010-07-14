@@ -45,6 +45,7 @@ Y.Event.define('test', {
     init: function (node, sub, notifier) {
         Y.log("init " + this.type + ": " + node.get('text'));
         node.setData('testHandle', node.on('click', function (e) {
+            //notifier.fire("alpha");
             notifier.fire();
         }));
     },
@@ -70,6 +71,7 @@ Y.Event.define('test', {
     },
 
     filterSubs: function (subs, args) {
+    /*
         var skip = [], i;
         for (i in subs) {
             if (subs.hasOwnProperty(i) && subs[i]._extra === args[1]) {
@@ -80,12 +82,13 @@ Y.Event.define('test', {
         for (i = skip.length - 1; i >= 0; --i) {
             delete subs[skip[i]];
         }
+    */
     }
 });
 
 var outer = Y.one('#outer'),
     inner = Y.one('#inner'),
-    mode  = 2,
+    mode  = 1,
     handle;
 
 function notify(e) {
@@ -96,6 +99,7 @@ function notify(e) {
 Y.one('#attach').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').on('test', notify); break;
+        //case 2: Y.all('.go').on('test', notify, null, "alpha"); break;
         case 2: Y.all('.go').on('test', notify); break;
         case 3: Y.on('test', notify, '.go');
     }
