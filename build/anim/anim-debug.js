@@ -121,12 +121,12 @@ YUI.add('anim-base', function(Y) {
         var node = anim._node,
             val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
 
-        if (att in node._node.style) {
+        if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
             node.setStyle(att, val + unit);
-        } else if (att in node._node) {
-            node._node[att] = val;
-        } else {
+        } else if (node._node.attributes[att]) {
             node.setAttribute(att, val);
+        } else {
+            node.set(att, val);
         }
     };
 
@@ -136,8 +136,19 @@ YUI.add('anim-base', function(Y) {
      * @property DEFAULT_GETTER
      * @static
      */
-    Y.Anim.DEFAULT_GETTER = function(anim, prop) {
-        return anim._node.getComputedStyle(prop);
+    Y.Anim.DEFAULT_GETTER = function(anim, att) {
+        var node = anim._node,
+            val = '';
+
+        if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
+            val = node.getComputedStyle(att);
+        } else if (node._node.attributes[att]) {
+            val = node.getAttribute(att);
+        } else {
+            val = node.get(att);
+        }
+
+        return val;
     };
 
     Y.Anim.ATTRS = {
