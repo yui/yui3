@@ -72,12 +72,6 @@ YUI.add('node-flick', function(Y) {
                 this._minX = 0;
                 this._scrollX = true;
             }
-
-            console.log("boundingHeight = " + boundingHeight);
-            console.log("contentHeight = " + contentHeight);
-
-            console.log("MaxY = " + this._maxY);
-            console.log("scrollY = " + this._scrollY);
             
             this._x = this._y = 0;
         },
@@ -87,7 +81,7 @@ YUI.add('node-flick', function(Y) {
                 node = this.get("host");
 
             // TODO: Cross-browser and class based
-            bb.setStyle("overflow", "auto");
+            bb.setStyle("overflow", "hidden");
 
             if (bb.getStyle("position") !== "absolute") {
                 bb.setStyle("position", "relative");
@@ -105,7 +99,7 @@ YUI.add('node-flick', function(Y) {
          * @protected
          */
         _onFlick: function(e) {
-            this._vel = e.velocity;
+            this._vel = e.velocity * e.direction;
             this._flicking = true;
             this._move();
         },
@@ -118,8 +112,8 @@ YUI.add('node-flick', function(Y) {
          */
         _move: function() {
             var // content = this.get("host"),
-                y = this._y || 0, //content.get("offsetTop"),
-                x = this._x || 0, //content.get("offsetLeft"),
+                y = this._y, //content.get("offsetTop"),
+                x = this._x, //content.get("offsetLeft"),
                 step = this.get("step"),
                 maxY = this._maxY,
                 minY = this._minY,
@@ -129,11 +123,11 @@ YUI.add('node-flick', function(Y) {
             this._vel = (this._vel*this.get("deceleration"));
 
             if(this._scrollX) {
-                x = x + (this._vel * step);
+                x = x - (this._vel * step);
             }
     
             if(this._scrollY) {
-                y = y + (this._vel * step);
+                y = y - (this._vel * step);
             }
 
             if(Math.abs(this._vel).toFixed(4) <= 0.015) {
@@ -151,7 +145,7 @@ YUI.add('node-flick', function(Y) {
                         this._setOffsetX(maxX);
                     }
                 }
-    
+
                 if(this._scrollY) {
                     if(y < minY) {
                         this._snapToEdge = true;
@@ -212,16 +206,6 @@ YUI.add('node-flick', function(Y) {
             duration = duration || this._snapToEdge ? 400 : 0;
             easing = easing || this._snapToEdge ? 'ease-out' : null;
 
-            /*
-            if(x !== null) {
-                cb.set('offsetLeft', x);
-            }
-
-            if(y !== null) {
-                cb.set('offsetTop', y);
-            }
-            */
-
             this._x = x;
             this._y = y;
            
@@ -230,6 +214,8 @@ YUI.add('node-flick', function(Y) {
 
         _anim : function(x, y, duration, easing) {
             var node = this.get("host");
+
+            // TODO: Anim, once done
 
             if(duration) {
                 easing = easing || 'cubic-bezier(0, 0.1, 0, 1.0)';

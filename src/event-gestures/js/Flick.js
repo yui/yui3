@@ -137,7 +137,7 @@ Y.Event.define('flick', {
             xyDistance, 
             distance,
             absDistance,
-            velocity, 
+            velocity,
             axis;
             
         if (valid) {
@@ -175,6 +175,7 @@ Y.Event.define('flick', {
                     ce.fire({
                         distance: distance,
                         time: time,
+                        direction: distance/absDistance,
                         velocity: velocity,
                         axis: axis,
                         button: e.button,

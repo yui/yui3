@@ -79,7 +79,7 @@
                 node = this.get("host");
 
             // TODO: Cross-browser and class based
-            bb.setStyle("overflow", "auto");
+            bb.setStyle("overflow", "hidden");
 
             if (bb.getStyle("position") !== "absolute") {
                 bb.setStyle("position", "relative");
@@ -97,7 +97,7 @@
          * @protected
          */
         _onFlick: function(e) {
-            this._vel = e.velocity;
+            this._vel = e.velocity * e.direction;
             this._flicking = true;
             this._move();
         },
@@ -110,8 +110,8 @@
          */
         _move: function() {
             var // content = this.get("host"),
-                y = this._y || 0, //content.get("offsetTop"),
-                x = this._x || 0, //content.get("offsetLeft"),
+                y = this._y, //content.get("offsetTop"),
+                x = this._x, //content.get("offsetLeft"),
                 step = this.get("step"),
                 maxY = this._maxY,
                 minY = this._minY,
@@ -121,11 +121,11 @@
             this._vel = (this._vel*this.get("deceleration"));
 
             if(this._scrollX) {
-                x = x + (this._vel * step);
+                x = x - (this._vel * step);
             }
     
             if(this._scrollY) {
-                y = y + (this._vel * step);
+                y = y - (this._vel * step);
             }
 
             if(Math.abs(this._vel).toFixed(4) <= 0.015) {
@@ -143,7 +143,7 @@
                         this._setOffsetX(maxX);
                     }
                 }
-    
+
                 if(this._scrollY) {
                     if(y < minY) {
                         this._snapToEdge = true;
@@ -212,6 +212,8 @@
 
         _anim : function(x, y, duration, easing) {
             var node = this.get("host");
+
+            // TODO: Anim, once done
 
             if(duration) {
                 easing = easing || 'cubic-bezier(0, 0.1, 0, 1.0)';
