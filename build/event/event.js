@@ -61,7 +61,6 @@ if (!GLOBAL_ENV._ready) {
 }
 
 })();
-
 YUI.add('event-base', function(Y) {
 
 (function() {
@@ -113,7 +112,6 @@ if (GLOBAL_ENV.DOMReady) {
 }
 
 })();
-
 (function() {
 
 /**
@@ -441,7 +439,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 };
 
 })();
-
 (function() {
 /**
  * DOM event listener abstraction layer
@@ -1339,7 +1336,6 @@ Event._poll();
 
 })();
 
-
 /**
  * DOM event listener abstraction layer
  * @module event
@@ -1388,10 +1384,7 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['event-custom-base']});
-
-
 YUI.add('event-delegate', function(Y) {
 
 /**
@@ -1703,9 +1696,7 @@ Event.delegate = function (type, fn, el, spec) {
 Y.delegate = Event.delegate;
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 YUI.add('event-mousewheel', function(Y) {
 
 /**
@@ -1755,9 +1746,7 @@ Y.Env.evt.plugins.mousewheel = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 YUI.add('event-mouseenter', function(Y) {
 
 /**
@@ -1941,9 +1930,7 @@ plugins.mouseenter = eventConfig;
 plugins.mouseleave = eventConfig;
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 YUI.add('event-key', function(Y) {
 
 /**
@@ -2042,9 +2029,7 @@ Y.Env.evt.plugins.key = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 YUI.add('event-focus', function(Y) {
 
 /**
@@ -2140,9 +2125,7 @@ plugins.blur = eventAdapter;
 })();
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 YUI.add('event-resize', function(Y) {
 
 /**
@@ -2206,9 +2189,7 @@ Y.Env.evt.plugins.windowresize = {
 })();
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 
 
 YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});

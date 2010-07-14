@@ -309,5 +309,4 @@ Event.delegate = function (type, fn, el, spec) {
 Y.delegate = Event.delegate;
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
