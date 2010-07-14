@@ -105,14 +105,6 @@
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
-<script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/lists.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(mktime()); ?>"></script>
-
 <script type="text/javascript">
 var yConfig = {
     debug: true,
@@ -145,7 +137,7 @@ var yConfig = {
     }
 };
 
-YUI(yConfig).use('gallery-aui-toolbar', 'node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-tab', function(Y) {
+YUI(yConfig).use('gallery-aui-toolbar', 'node', 'editor', 'editor-lists', 'createlink-base', 'editor-tab', function(Y) {
     //console.log(Y, Y.id);
 
 
@@ -171,11 +163,8 @@ YUI(yConfig).use('gallery-aui-toolbar', 'node', 'selector-css3', 'base', 'editor
 			]
 		}
 	).render('#toolbar');
-    
-    console.log(toolbar);
 
     toolbar.on('buttonitem:click', function(e) {
-        console.log(e);
         var cmd = e.target.get('icon'), val = '';
         switch (cmd) {
             case 'bold':
@@ -203,24 +192,13 @@ YUI(yConfig).use('gallery-aui-toolbar', 'node', 'selector-css3', 'base', 'editor
         if (tar) {
             var cmds = e.commands;
 
-            console.log(toolbar);
             toolbar.each(function(b) {
                 var st = false;
                 if (cmds[b.get('icon')]) {
                     st = true;
                 }
-                console.log(b, b.get('icon'), st);
                 b.StateInteraction.set('active', st);
-                //b.set('selected', st);
             });
-            /*
-            buttons.removeClass('selected');
-            buttons.each(function(v) {
-                if (cmds[v.get('value')]) {
-                    v.addClass('selected');
-                }
-            });
-            */
 
             var fname = e.fontFamily,
             size = e.fontSize;
