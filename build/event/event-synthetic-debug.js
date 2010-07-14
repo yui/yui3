@@ -37,10 +37,12 @@ SyntheticEvent.prototype = {
             yuid = Y.stamp(node._node);
             key  = 'event:' + yuid + this.type;
 
-            ce        = node.publish(this.type, this.publishConfig);
-            ce.el     = node._node;
-            ce.key    = key;
-            ce.domkey = yuid;
+            ce         = node.publish(this.type, this.publishConfig);
+            ce.el      = node._node;
+            ce.key     = key;
+            ce.domkey  = yuid;
+            ce.fn      = noop;
+            ce.capture = false;
 
             // Add support for notifying only a subset of subscribers
             Y.Do.before(this.filterSubs, ce, '_procSubs', this);
