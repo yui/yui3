@@ -94,7 +94,8 @@ Y.Event.define('flick', {
 
         var start = true, // always true for mouse
             endHandle,
-            doc; 
+            doc,
+            origE = e; 
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -103,7 +104,7 @@ Y.Event.define('flick', {
 
         if (start) {
 
-            e.preventDefault();
+            origE.preventDefault();
 
             node.setData(_FLICK_START, {
                 time : new Date().getTime(),
@@ -152,6 +153,8 @@ Y.Event.define('flick', {
             }
 
             if (valid) {
+
+                endEvent.preventDefault();
 
                 startTime = start.time;
                 endTime = new Date().getTime();
