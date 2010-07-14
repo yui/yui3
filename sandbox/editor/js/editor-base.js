@@ -403,7 +403,10 @@ YUI.add('editor-base', function(Y) {
         * @return {String} The filtered content of the Editor
         */
         getContent: function() {
-            var html = this.getInstance().Selection.unfilter();
+            var html = '', inst = this.getInstance();
+            if (inst && inst.Selection) {
+                html = inst.Selection.unfilter();
+            }
             //Removing the _yuid from the objects in IE
             html = html.replace(/ _yuid="([^>]*)"/g, '');
             return html;
