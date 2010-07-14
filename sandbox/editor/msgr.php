@@ -126,7 +126,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         content: ''
     });
     editor.on('nodeChange', function(e) {
-        updateButtons(e.node);
+        updateButtons(e.changedNode);
     });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
@@ -140,6 +140,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             var html = editor.getContent();
             editor.set('content', '');
             alert('Send: ' + html);
+            editor.focus();
         }
     });
     editor.on('frame:keyup', function(e) {
