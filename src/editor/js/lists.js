@@ -5,10 +5,9 @@
      */     
     /**
      * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
-     * @class EditorLists
+     * @class Plugin.EditorLists
      * @constructor
      * @extends Base
-     * @namespace Plugin
      */
     
     var EditorLists = function() {
@@ -27,18 +26,20 @@
             newLi, newList, sTab, par, moved = false, tag;
 
             if (Y.UA.ie && e.changedType === 'enter') {
-                e.changedEvent.halt();
-                e.preventDefault();
-                li = e.changedNode;
-                newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
+                if (e.changedNode.test(LI + ', ' + LI + ' *')) {
+                    e.changedEvent.halt();
+                    e.preventDefault();
+                    li = e.changedNode;
+                    newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
+                        
+                    if (!li.test(LI)) {
+                        li = li.ancestor(LI);
+                    }
+                    li.insert(newLi, 'after');
                     
-                if (!li.test(LI)) {
-                    li = li.ancestor(LI);
+                    sel = new inst.Selection();
+                    sel.selectNode(newLi.get('firstChild'));
                 }
-                li.insert(newLi, 'after');
-                
-                sel = new inst.Selection();
-                sel.selectNode(newLi.get('firstChild'));
             }
             if (e.changedType === 'tab') {
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {

@@ -7,10 +7,9 @@ YUI.add('exec-command', function(Y) {
      */     
     /**
      * Plugin for the frame module to handle execCommands for Editor
-     * @class ExecCommand
+     * @class Plugin.ExecCommand
      * @extends Base
      * @constructor
-     * @namespace Plugin
      */
         var ExecCommand = function() {
             ExecCommand.superclass.constructor.apply(this, arguments);
@@ -32,7 +31,6 @@ YUI.add('exec-command', function(Y) {
             */
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
-
 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
@@ -186,19 +184,53 @@ YUI.add('exec-command', function(Y) {
                     return blockItem;
                 },
                 backcolor: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
                     if (Y.UA.gecko || Y.UA.opera) {
                         cmd = 'hilitecolor';
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    this._command(cmd, val);
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<span style="background-color: ' + val + '"><span>&nbsp;</span>&nbsp;</span>');
+                        inst.Selection.filterBlocks();
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command(cmd, val);
+                    }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
                     }
                 },
                 hilitecolor: function() {
                     ExecCommand.COMMANDS.backcolor.apply(this, arguments);
+                },
+                fontname: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<span style="font-family: ' + val + '">&nbsp;</span>');
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command('fontname', val);
+                    }
+                },
+                fontsize: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command('fontsize', val);
+                    }
                 }
             }
         });

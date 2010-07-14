@@ -1000,6 +1000,40 @@
             Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
 
             return val;
+        },
+
+        /**
+         * Returns an object with the configuration properties (and value)
+         * for the given attrubute. If attrName is not provided, returns the
+         * configuration properties for all attributes.
+         *
+         * @method _getAttrCfg
+         * @protected
+         * @param {String} name Optional. The attribute name. If not provided, the method will return the configuration for all attributes.
+         * @return {Object} The configuration properties for the given attribute, or all attributes.
+         */
+        _getAttrCfg : function(name) {
+            var o,
+                data = this._state.data;
+
+            if (data) {
+                o = {};
+
+                Y.each(data, function(cfg, cfgProp) {
+                    if (attrName) {
+                        if(attrName in cfg) {
+                            o[cfgProp] = cfg[attrName];
+                        }
+                    } else {
+                        Y.each(cfg, function(attrCfg, attr) {
+                           o[attr] = o[attr] || {};
+                           o[attr][cfgProp] = attrCfg;
+                        });
+                    }
+                });
+            }
+
+            return o;
         }
     };
 

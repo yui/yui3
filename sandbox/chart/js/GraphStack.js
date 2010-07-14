@@ -22,31 +22,27 @@ GraphStack.ATTRS = {
     },
 
     parent: {
-        getter: function()
-        {
-            return this._parent;
-        },
-
-        setter: function(val)
-        {
-            this._parent = val;
-            return val;
-        }
+        value: null
     }
 };
 
 Y.extend(GraphStack, Y.Base, {
-	/**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuigraphstack",
-    
-    _parent: null,
-
+    /**
+     * @private 
+     * @description Collection of series to be displayed in the graph.
+     */
     _seriesCollection: null,
 
+    /**
+     * Hash of arrays containing series mapped to a series type.
+     */
     seriesTypes: null,
 
+    /**
+     * @private
+     * @description Parses series instances to be displayed in the graph.
+     * @param {Array} Collection of series instances or object literals containing necessary properties for creating a series instance.
+     */
     _parseSeriesCollection: function(val)
     {
         var len = val.length,
@@ -67,20 +63,25 @@ Y.extend(GraphStack, Y.Base, {
         for(; i < len; ++i)
         {	
             series = val[i];
-            if(Y.Lang.isObject(series))
+            if(!(series instanceof Y.CartesianSeries))
             {
                 this._createSeries(series);
                 continue;
             }
-            this.addSeries(series);
+            this._addSeries(series);
         }
         len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
         {
-            this._seriesCollection[i].initialize();
+            this._seriesCollection[i].render(this.get("parent"));
         }
     },
 
+    /**
+     * @private
+     * @description Adds a series to the graph.
+     * @param {CartesianSeries}
+     */
     _addSeries: function(series)
     {
         var type = series.get("type"),
@@ -113,7 +114,6 @@ Y.extend(GraphStack, Y.Base, {
             seriesType,
             series;
             seriesData.graph = this;
-            seriesData.parent = this.get("parent");
         if(!seriesTypes.hasOwnProperty(type))
         {
             seriesTypes[type] = [];
@@ -127,6 +127,12 @@ Y.extend(GraphStack, Y.Base, {
         seriesCollection.push(series);
     },
 
+    /**
+     * @private
+     * @description Creates a series instance based on a specified type.
+     * @param {String} Indicates type of series instance to be created.
+     * @return {CartesianSeries} Series instance created.
+     */
     _getSeries: function(type)
     {
         var seriesClass;
@@ -137,6 +143,33 @@ Y.extend(GraphStack, Y.Base, {
             break;
             case "column" :
                 seriesClass = Y.ColumnSeries;
+            break;
+            case "bar" :
+                seriesClass = Y.BarSeries;
+            break;
+            case "area" : 
+                seriesClass = Y.AreaSeries;
+            break;
+            case "candlestick" :
+                seriesClass = Y.CandlestickSeries;
+            break;
+            case "ohlc" :
+                seriesClass = Y.OHLCSeries;
+            break;
+            case "stackedarea" :
+                seriesClass = Y.StackedAreaSeries;
+            break;
+            case "stackedline" :
+                seriesClass = Y.StackedLineSeries;
+            break;
+            case "stackedcolumn" :
+                seriesClass = Y.StackedColumnSeries;
+            break;
+            case "stackedbar" :
+                seriesClass = Y.StackedBarSeries;
+            break;
+            case "markerseries" :
+                seriesClass = Y.MarkerSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;

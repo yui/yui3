@@ -764,12 +764,14 @@
                 ds.sendRequest({request:"c"});
 
                 ds.on("data", function(e) {
-                    ASSERT.fail("Entry should be cached -- 'data' event is unexpected");
+                    
                 });
 
                 ds.sendRequest({request:"a"});
                 ds.sendRequest({request:"b"});
-                ds.sendRequest({request:"c"});
+                ds.sendRequest({request:"c", callback:{success:function(e){
+                    ASSERT.isInstanceOf(Date, e.cached);
+                }}});
             },
 
             testLocalCacheUnplug: function() {
@@ -875,14 +877,18 @@
             }
         });
 
-        Y.Test.Runner.add(testClass);
-        Y.Test.Runner.add(testLocal);
-        Y.Test.Runner.add(testIO);
-        Y.Test.Runner.add(testGet);
-        Y.Test.Runner.add(testFunction);
-        Y.Test.Runner.add(testDataSchemaPlugin);
-        Y.Test.Runner.add(testCaching);
-        Y.Test.Runner.add(testPolling);
+        var suite = new Y.Test.Suite({name:"DataSource Test Suite"});
+        suite.add(testClass);
+        suite.add(testLocal);
+        suite.add(testIO);
+        suite.add(testGet);
+        suite.add(testFunction);
+        suite.add(testDataSchemaPlugin);
+        suite.add(testCaching);
+        suite.add(testPolling);
+
+        Y.Test.Runner.setName("DataSource Test Runner");
+        Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
 })();

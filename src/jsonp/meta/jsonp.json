@@ -1,0 +1,17 @@
+{
+    "jsonp": {
+        "submodules": {
+            "jsonp-base": {
+                "requires": [
+                    "get",
+                    "oop"
+                ]
+            },
+            "jsonp-url": {
+                "requires": [
+                    "jsonp-base"
+                ]
+            }
+        }
+    }
+}

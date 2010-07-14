@@ -2,10 +2,20 @@
     "history": {
         "submodules": {
             "history-base": {
-                "requires"  : ["event-custom-complex"]
+                "after": [
+                    "history-deprecated"
+                ],
+
+                "requires": [
+                    "event-custom-complex"
+                ]
             },
 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ],
+
                 "requires": [
                     "event-synthetic",
                     "history-base",
@@ -17,6 +27,14 @@
                 "requires": [
                     "history-base",
                     "history-hash",
+                    "node-base"
+                ]
+            },
+
+            "history-html5": {
+                "requires": [
+                    "event-base",
+                    "history-base",
                     "node-base"
                 ]
             }

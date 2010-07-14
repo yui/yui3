@@ -55,11 +55,11 @@ YUI({
     }
 }).use( 'test', 'console', 'querystring', function (Y) {
     var J = Y.JSON.stringify;
-    
+
     if (!Array.prototype.forEach) Array.prototype.forEach = function (fn) {
         for (var i = 0, l = this.length; i < l; i ++) fn(this[i]);
     };
-    
+
     // [ wonkyQS, canonicalQS, obj ]
     var qsTestCases = [ //{
         ["foo=bar",  "foo=bar", {"foo" : "bar"}],
@@ -93,7 +93,7 @@ YUI({
         ["foo%3Abaz:bar", "foo%3Abaz:bar", {"foo:baz":"bar"}],
         ["foo:baz:bar", "foo:baz%3Abar", {"foo":"baz:bar"}]
     ]; //}
-    
+
     // [ wonkyObj, qs, canonicalObj ]
     var extendedFunction = function () {};
     extendedFunction.prototype = {a:"b"};
@@ -109,7 +109,7 @@ YUI({
         [ {f:new Boolean(false), t:new Boolean(true)}, "f=0&t=1", {"f":0, "t":1} ],
         [ {f:false, t:true}, "f=0&t=1", {"f":0, "t":1} ],
     ]; //}
-    
+
     // Tests Below...
     var suite = new Y.Test.Suite("Query String Tests");
     suite.add(new Y.Test.Case({
@@ -139,28 +139,28 @@ YUI({
             var f = Y.QueryString.parse("a:b;q:x%3Ay%3By%3Az", ";", ":");
             f.q = Y.QueryString.parse(f.q, ";", ":");
             Y.Assert.areSame(J(f), J({ a : "b", q : { x : "y", y : "z" } }));
-        }   
+        }
     }));
     suite.add(new Y.Test.Case({
         name : "Query Stringify Objects",
-        
+
         _should:{error:{
             testStringifyCyclical : "QueryString.stringify. Cyclical reference"
         }},
-        
+
         testStringifyBasic : function () {
             qsTestCases.forEach(function (testCase) {
-                Y.Assert.areSame(testCase[1], Y.QueryString.stringify(testCase[2]));
+                Y.Assert.areSame(testCase[1], Y.QueryString.stringify(testCase[2], { arrayKey: true }));
             });
         },
         testStringifyColon : function () {
             qsColonTestCases.forEach(function (testCase) {
-                Y.Assert.areSame(testCase[1], Y.QueryString.stringify(testCase[2], ";", ":"));
+                Y.Assert.areSame(testCase[1], Y.QueryString.stringify(testCase[2], { arrayKey: true, sep: ";", eq: ":" }));
             });
         },
         testStringifyWeird : function () {
             qsWeirdObjects.forEach(function (testCase) {
-                Y.Assert.areSame(testCase[1], Y.QueryString.stringify(testCase[0]));
+                Y.Assert.areSame(testCase[1], Y.QueryString.stringify(testCase[0]), { arrayKey: true });
             });
         },
         testStringifyCyclical : function () {
@@ -174,7 +174,7 @@ YUI({
                 q : Y.QueryString.stringify({
                     x : "y",
                     y : "z"
-                })
+                }, { arrayKey: true })
             });
             Y.Assert.areSame(f, "a=b&q=x%3Dy%26y%3Dz");
         },
@@ -184,13 +184,17 @@ YUI({
                 q : Y.QueryString.stringify({
                     x : "y",
                     y : "z"
-                }, ";", ":")
-            }, ";", ":");
+                }, { arrayKey: true, sep: ";", eq: ":" })
+            }, { arrayKey: true, sep: ";", eq: ":" });
             Y.Assert.areSame(f, "a:b;q:x%3Ay%3By%3Az");
-        }   
+        },
+        testArrayKey : function () {
+            var f = Y.QueryString.stringify({ foo: ["bar","baz"] });
+            Y.Assert.areSame(f, "foo=bar&foo=baz");
+        }
     }));
 
-    
+
     var yconsole = new Y.Console({
         contentBox : "#testbed",
         newestOnTop : false,

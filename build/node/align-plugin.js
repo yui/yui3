@@ -18,19 +18,9 @@ YUI.add('align-plugin', function(Y) {
      * @param {Object} User configuration object
      */
     function Align(config) {
-        var self = this;
-
-        function fn() {
-            if (config.length) {
-                self.to.apply(this, arguments);
-            }
-        }
-
         if (config.host) {
             this._host = config.host;
         }
-
-        return Y.mix(fn, this);
     }
         
     Align.prototype = {

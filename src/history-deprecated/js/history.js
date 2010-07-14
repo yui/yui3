@@ -1,9 +1,10 @@
 /*global YUI */
 
 /**
- * The Browser History Utility provides the ability to use the back/forward
- * navigation buttons in a DHTML application. It also allows a DHTML
- * application to be bookmarked in a specific state.
+ * <strong>Deprecated since 3.2.0.</strong> The Browser History Utility provides
+ * the ability to use the back/forward navigation buttons in a DHTML
+ * application. It also allows a DHTML application to be bookmarked in a
+ * specific state.
  *
  * This utility requires the following static markup:
  *
@@ -18,6 +19,7 @@
  * This class represents an instance of the browser history utility.
  * @class History
  * @constructor
+ * @deprecated Please use the new "history" module instead.
  */
 
         // Shortcuts, etc.
@@ -626,6 +628,7 @@
      * @constructor
      * @param id {String} the module identifier
      * @param initialState {String} the module's initial state
+     * @deprecated Please use the new "history" module instead.
      */
     H.Module = function (id, initialState) {
 

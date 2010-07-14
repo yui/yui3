@@ -9,7 +9,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.05.12-19-08',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.07-19-52',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '3',
@@ -40,7 +40,8 @@ groups.gallery = {
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
-    patterns:  { 'gallery-': {} }
+    patterns:  { 'gallery-': {},
+                 'gallerycss-': { type: 'css' } }
 };
 
 groups.yui2 = {

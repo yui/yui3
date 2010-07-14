@@ -1,0 +1,22 @@
+{
+    "event-gestures": {
+
+        "submodules": {
+            "event-flick": {
+                "requires": [
+                    "node-base",
+                    "event-touch",
+                    "event-synthetic"
+                ]   
+            },
+
+            "event-move": {
+                "requires": [
+                    "node-base",
+                    "event-touch",
+                    "event-synthetic"
+                ]   
+            }
+        }
+    }
+}

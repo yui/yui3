@@ -27,7 +27,7 @@ YUI.add('dd-ddm', function(Y) {
         _activateTargets: function() { },
         _deactivateTargets: function() {},
         _startDrag: function() {
-            if (this.activeDrag.get('useShim')) {
+            if (this.activeDrag && this.activeDrag.get('useShim')) {
                 this._pg_activate();
                 this._activateTargets();
             }
@@ -110,8 +110,10 @@ YUI.add('dd-ddm', function(Y) {
                 bd.appendChild(pg);
             }
             this._pg = pg;
-            this._pg.on('mouseup', Y.bind(this._end, this));
-            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            //this._pg.on('mouseup', Y.bind(this._end, this));
+            //this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on('move', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on('moveend', Y.bind(this._end, this));
             
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));

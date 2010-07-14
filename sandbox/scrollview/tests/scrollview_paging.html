@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Y.ScrollView (x-paging)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+        <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+		<link rel="stylesheet" href="../build/scrollview/assets/scrollview-scrollbars.css" type="text/css" media="screen" title="no title" charset="utf-8">
+		<link rel="stylesheet" href="assets/tests.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+		<style type="text/css" media="screen">
+			#scrollable {
+				white-space: nowrap;
+				text-align: center;
+			}
+			#scrollable li {
+				border-bottom: 0;
+			}
+		</style>
+
+		<script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../build/scrollview/scrollview-debug.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../build/scrollview/paginator-plugin-debug.js" type="text/javascript" charset="utf-8"></script>
+		
+    </head>
+    
+    <body>
+        <header>
+        	<h1>Y.ScrollView: Paging</h1>
+        </header>
+        <div id="scrollable" class="yui3-scrollview-loading">
+			<ul>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" /></li>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" /></li>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" /></li>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" /></li>
+			</ul>
+        </div>
+		<div id="pager">
+			<button id="prev-page">Prev</button>
+			<button id="next-page">Next</button>
+		</div>
+
+        <script type="text/javascript" charset="utf-8">
+			YUI().use('scrollview', 'paginator-plugin', function(Y) {
+
+                var scrollView = new Y.ScrollView({
+                    contentBox: '#scrollable',
+                    width: 320
+                });
+			
+				scrollView.plug(Y.Plugin.PaginatorPlugin, {
+					selector: 'li'
+				});
+                
+				scrollView.render();
+
+				Y.one('#next-page').on('click', Y.bind(scrollView.pages.next, scrollView.pages));
+				Y.one('#prev-page').on('click', Y.bind(scrollView.pages.prev, scrollView.pages));
+				
+				Y.later(200, window, scrollTo, [0, 0]);
+            });
+        </script>
+    </body>
+</html>

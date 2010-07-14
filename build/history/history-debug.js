@@ -12,19 +12,12 @@ YUI.add('history-base', function(Y) {
  */
 
 /**
- * The history-base module uses a simple object to store state. To integrate
- * state management with browser history and allow the back/forward buttons to
- * navigate between states, use history-hash.
+ * Provides global state management backed by an object, but with no browser
+ * history integration. For actual browser history integration and back/forward
+ * support, use the history-html5 or history-hash modules.
  *
  * @module history
  * @submodule history-base
- */
-
-/**
- * The HistoryBase class provides basic state management functionality backed by
- * an object. History state is shared globally among all instances and
- * subclass instances of HistoryBase.
- *
  * @class HistoryBase
  * @uses EventTarget
  * @constructor
@@ -40,18 +33,21 @@ YUI.add('history-base', function(Y) {
  * </dl>
  */
 
-var Lang        = Y.Lang,
-    Obj         = Y.Object,
-    GlobalEnv   = YUI.namespace('Env.History'),
+var Lang      = Y.Lang,
+    Obj       = Y.Object,
+    GlobalEnv = YUI.namespace('Env.History'),
 
-    EVT_CHANGE  = 'change',
-    NAME        = 'historyBase',
-    SRC_ADD     = 'add',
-    SRC_REPLACE = 'replace',
+    docMode   = Y.config.doc.documentMode,
+    win       = Y.config.win,
 
-HistoryBase = function () {
+    DEFAULT_OPTIONS = {merge: true},
+    EVT_CHANGE      = 'change',
+    SRC_ADD         = 'add',
+    SRC_REPLACE     = 'replace';
+
+function HistoryBase() {
     this._init.apply(this, arguments);
-};
+}
 
 Y.augment(HistoryBase, Y.EventTarget, null, null, {
     emitFacade : true,
@@ -64,6 +60,21 @@ if (!GlobalEnv._state) {
     GlobalEnv._state = {};
 }
 
+// -- Private Methods ----------------------------------------------------------
+
+/**
+ * Returns <code>true</code> if <i>value</i> is a simple object and not a
+ * function or an array.
+ *
+ * @method _isSimpleObject
+ * @param {mixed} value
+ * @return {Boolean}
+ * @private
+ */
+function _isSimpleObject(value) {
+    return Lang.type(value) === 'object';
+}
+
 // -- Public Static Properties -------------------------------------------------
 
 /**
@@ -73,7 +84,7 @@ if (!GlobalEnv._state) {
  * @type String
  * @static
  */
-HistoryBase.NAME = NAME;
+HistoryBase.NAME = 'historyBase';
 
 /**
  * Constant used to identify state changes originating from the
@@ -96,6 +107,39 @@ HistoryBase.SRC_ADD = SRC_ADD;
  * @final
  */
 HistoryBase.SRC_REPLACE = SRC_REPLACE;
+
+/**
+ * Whether or not this browser supports the HTML5 History API.
+ *
+ * @property html5
+ * @type Boolean
+ * @static
+ */
+
+// All HTML5-capable browsers except Gecko 2+ (Firefox 4+) correctly return
+// true for 'onpopstate' in win. In order to support Gecko 2, we fall back to a
+// UA sniff for now. (current as of Firefox 4.0b1)
+HistoryBase.html5 = !!(win.history && win.history.pushState &&
+        win.history.replaceState && ('onpopstate' in win || Y.UA.gecko >= 2));
+
+/**
+ * Whether or not this browser supports the <code>window.onhashchange</code>
+ * event natively. Note that even if this is <code>true</code>, you may
+ * still want to use HistoryHash's synthetic <code>hashchange</code> event
+ * since it normalizes implementation differences and fixes spec violations
+ * across various browsers.
+ *
+ * @property nativeHashChange
+ * @type Boolean
+ * @static
+ */
+
+// IE8 supports the hashchange event, but only in IE8 Standards
+// Mode. However, IE8 in IE7 compatibility mode still defines the
+// event but never fires it, so we can't just detect the event. We also can't
+// just UA sniff for IE8, since other browsers support this event as well.
+HistoryBase.nativeHashChange = 'onhashchange' in win &&
+        (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {
     // -- Initialization -------------------------------------------------------
@@ -123,7 +167,7 @@ Y.mix(HistoryBase.prototype, {
          *   properties:
          *
          * <dl>
-         *   <dt>changed</dt>
+         *   <dt>changed (Object)</dt>
          *   <dd>
          *     Object hash of state items that have been added or changed. The
          *     key is the item key, and the value is an object containing
@@ -133,25 +177,25 @@ Y.mix(HistoryBase.prototype, {
          *     <code>undefined</code>.
          *   </dd>
          *
-         *   <dt>newVal</dt>
+         *   <dt>newVal (Object)</dt>
          *   <dd>
          *     Object hash of key/value pairs of all state items after the
          *     change.
          *   </dd>
          *
-         *   <dt>prevVal</dt>
+         *   <dt>prevVal (Object)</dt>
          *   <dd>
          *     Object hash of key/value pairs of all state items before the
          *     change.
          *   </dd>
          *
-         *   <dt>removed</dt>
+         *   <dt>removed (Object)</dt>
          *   <dd>
          *     Object hash of key/value pairs of state items that have been
          *     removed. Values are the old values prior to removal.
          *   </dd>
          *
-         *   <dt>src</dt>
+         *   <dt>src (String)</dt>
          *   <dd>
          *     The source of the event. This can be used to selectively ignore
          *     events generated by certain sources.
@@ -163,30 +207,66 @@ Y.mix(HistoryBase.prototype, {
             defaultFn: this._defChangeFn
         });
 
-        // If initialState was provided and is a simple object, merge it into
-        // the current state.
-        if (Lang.isObject(initialState) && !Lang.isFunction(initialState) &&
-                !Lang.isArray(initialState)) {
-            this.add(Y.merge(GlobalEnv._state, initialState));
+        // If initialState was provided, merge it into the current state.
+        if (initialState) {
+            this.add(initialState);
         }
     },
 
     // -- Public Methods -------------------------------------------------------
 
     /**
-     * Adds a state entry with new values for the specified key or keys. Any key
-     * with a <code>null</code> or <code>undefined</code> value will be removed
-     * from the current state; all others will be merged into it.
+     * Adds a state entry with new values for the specified keys. By default,
+     * the new state will be merged into the existing state, and new values will
+     * override existing values. Specifying a <code>null</code> or
+     * <code>undefined</code> value will cause that key to be removed from the
+     * new state entry.
      *
      * @method add
-     * @param {Object|String} state|key object hash of key/value string pairs,
-     *   or the name of a single key
-     * @param {String|null} value (optional) if <i>state</i> is the name of a
-     *   single key, <i>value</i> will become its new value
+     * @param {Object} state Object hash of key/value pairs.
+     * @param {Object} options (optional) Zero or more of the following options:
+     *   <dl>
+     *     <dt>merge (Boolean)</dt>
+     *     <dd>
+     *       <p>
+     *       If <code>true</code> (the default), the new state will be merged
+     *       into the existing state. New values will override existing values,
+     *       and <code>null</code> or <code>undefined</code> values will be
+     *       removed from the state.
+     *       </p>
+     *
+     *       <p>
+     *       If <code>false</code>, the existing state will be discarded as a
+     *       whole and the new state will take its place.
+     *       </p>
+     *     </dd>
+     *   </dl>
      * @chainable
      */
-    add: function (state, value) {
-        return this._change(SRC_ADD, state, value);
+    add: function () {
+        var args = Y.Array(arguments, 0, true);
+        args.unshift(SRC_ADD);
+        return this._change.apply(this, args);
+    },
+
+    /**
+     * Adds a state entry with a new value for a single key. By default, the new
+     * value will be merged into the existing state values, and will override an
+     * existing value with the same key if there is one. Specifying a
+     * <code>null</code> or <code>undefined</code> value will cause the key to
+     * be removed from the new state entry.
+     *
+     * @method addValue
+     * @param {String} key State parameter key.
+     * @param {String} value New value.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
+     * @chainable
+     */
+    addValue: function (key, value, options) {
+        var state = {};
+        state[key] = value;
+        return this._change(SRC_ADD, state, options);
     },
 
     /**
@@ -195,62 +275,80 @@ Y.mix(HistoryBase.prototype, {
      * no key is specified.
      *
      * @method get
-     * @param {String} key (optional) state parameter key
-     * @return {Object|mixed} value of the specified state parameter, or an
-     *   object hash of key/value pairs for all current state parameters
+     * @param {String} key (optional) State parameter key.
+     * @return {Object|String} Value of the specified state parameter, or an
+     *   object hash of key/value pairs for all current state parameters.
      */
     get: function (key) {
-        var state = GlobalEnv._state;
+        var state    = GlobalEnv._state,
+            isObject = _isSimpleObject(state);
 
         if (key) {
-            return Obj.owns(state, key) ? state[key] : undefined;
+            return isObject && Obj.owns(state, key) ? state[key] : undefined;
         } else {
-            return Y.mix({}, state, true); // Fast shallow clone.
+            return isObject ? Y.mix({}, state, true) : state; // mix provides a fast shallow clone.
         }
     },
 
     /**
-     * Replaces the current state entry with new values for the specified
-     * parameters, just as with <code>add()</code>, except that no change events
-     * are generated.
+     * Same as <code>add()</code> except that a new browser history entry will
+     * not be created. Instead, the current history entry will be replaced with
+     * the new state.
      *
      * @method replace
-     * @param {Object|String} state|key object hash of key/value string pairs,
-     *   or the name of a single key
-     * @param {String|null} value (optional) if <i>state</i> is the name of a
-     *   single key, <i>value</i> will become its new value
+     * @param {Object} state Object hash of key/value pairs.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
      * @chainable
      */
-    replace: function (state, value) {
-        return this._change(SRC_REPLACE, state, value);
+    replace: function () {
+        var args = Y.Array(arguments, 0, true);
+        args.unshift(SRC_REPLACE);
+        return this._change.apply(this, args);
+    },
+
+    /**
+     * Same as <code>addValue()</code> except that a new browser history entry
+     * will not be created. Instead, the current history entry will be replaced
+     * with the new state.
+     *
+     * @method replaceValue
+     * @param {String} key State parameter key.
+     * @param {String} value New value.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
+     * @chainable
+     */
+    replaceValue: function (key, value, options) {
+        var state = {};
+        state[key] = value;
+        return this._change(SRC_REPLACE, state, options);
     },
 
     // -- Protected Methods ----------------------------------------------------
 
     /**
      * Changes the state. This method provides a common implementation shared by
-     * add() and replace().
+     * the public methods for changing state.
      *
      * @method _change
-     * @param {String} src source of the change, for inclusion in event facades
-     *   to facilitate filtering
-     * @param {Object|String} state|key object hash of key/value string pairs,
-     *   or the name of a single key
-     * @param {String|null} value (optional) if <i>state</i> is the name of a
-     *   single key, <i>value</i> will become its new value
+     * @param {String} src Source of the change, for inclusion in event facades
+     *   to facilitate filtering.
+     * @param {Object} state Object hash of key/value pairs.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
      * @protected
      * @chainable
      */
-    _change: function (src, state, value) {
-        var key;
+    _change: function (src, state, options) {
+        options = options ? Y.merge(DEFAULT_OPTIONS, options) : DEFAULT_OPTIONS;
 
-        if (Lang.isString(state)) {
-            key        = state;
-            state      = {};
-            state[key] = value;
+        if (options.merge && _isSimpleObject(state) &&
+                _isSimpleObject(GlobalEnv._state)) {
+            state = Y.merge(GlobalEnv._state, state);
         }
 
-        this._resolveChanges(src, Y.merge(GlobalEnv._state, state));
+        this._resolveChanges(src, state, options);
         return this;
     },
 
@@ -259,19 +357,22 @@ Y.mix(HistoryBase.prototype, {
      * care of actually firing the necessary events.
      *
      * @method _fireEvents
-     * @param {String} src source of the changes, for inclusion in event facades
-     *   to facilitate filtering
-     * @param {Object} changes resolved changes
+     * @param {String} src Source of the changes, for inclusion in event facades
+     *   to facilitate filtering.
+     * @param {Object} changes Resolved changes.
+     * @param {Object} options Zero or more options. See <code>add()</code> for
+     *   a list of supported options.
      * @protected
      */
-    _fireEvents: function (src, changes) {
+    _fireEvents: function (src, changes, options) {
         // Fire the global change event.
         this.fire(EVT_CHANGE, {
-            changed: changes.changed,
-            newVal : changes.newState,
-            prevVal: changes.prevState,
-            removed: changes.removed,
-            src    : src
+            _options: options,
+            changed : changes.changed,
+            newVal  : changes.newState,
+            prevVal : changes.prevState,
+            removed : changes.removed,
+            src     : src
         });
 
         // Fire change/remove events for individual items.
@@ -317,19 +418,19 @@ Y.mix(HistoryBase.prototype, {
          *   properties:
          *
          * <dl>
-         *   <dt>newVal</dt>
+         *   <dt>newVal (mixed)</dt>
          *   <dd>
          *     The new value of the item after the change.
          *   </dd>
          *
-         *   <dt>prevVal</dt>
+         *   <dt>prevVal (mixed)</dt>
          *   <dd>
          *     The previous value of the item before the change, or
          *     <code>undefined</code> if the item was just added and has no
          *     previous value.
          *   </dd>
          *
-         *   <dt>src</dt>
+         *   <dt>src (String)</dt>
          *   <dd>
          *     The source of the event. This can be used to selectively ignore
          *     events generated by certain sources.
@@ -375,12 +476,12 @@ Y.mix(HistoryBase.prototype, {
          *   properties:
          *
          * <dl>
-         *   <dt>prevVal</dt>
+         *   <dt>prevVal (mixed)</dt>
          *   <dd>
          *     The value of the item before it was removed.
          *   </dd>
          *
-         *   <dt>src</dt>
+         *   <dt>src (String)</dt>
          *   <dd>
          *     The source of the event. This can be used to selectively ignore
          *     events generated by certain sources.
@@ -402,41 +503,50 @@ Y.mix(HistoryBase.prototype, {
      *   to facilitate filtering
      * @param {Object} newState object hash of key/value pairs representing the
      *   new state
+     * @param {Object} options Zero or more options. See <code>add()</code> for
+     *   a list of supported options.
      * @protected
      */
-    _resolveChanges: function (src, newState) {
+    _resolveChanges: function (src, newState, options) {
         var changed   = {},
             isChanged,
             prevState = GlobalEnv._state,
             removed   = {};
 
-        newState = newState || {};
+        if (!newState) {
+            newState = {};
+        }
 
-        // Figure out what was added or changed.
-        Obj.each(newState, function (newVal, key) {
-            var prevVal = prevState[key];
+        if (!options) {
+            options = {};
+        }
 
-            if (newVal !== prevVal) {
-                changed[key] = {
-                    newVal : newVal,
-                    prevVal: prevVal
-                };
+        if (_isSimpleObject(newState) && _isSimpleObject(prevState)) {
+            // Figure out what was added or changed.
+            Obj.each(newState, function (newVal, key) {
+                var prevVal = prevState[key];
 
-                isChanged = true;
-            }
-        }, this);
+                if (newVal !== prevVal) {
+                    changed[key] = {
+                        newVal : newVal,
+                        prevVal: prevVal
+                    };
 
-        // Figure out what was removed.
-        // TODO: Could possibly improve performance slightly by not checking
-        // keys that have been added/changed, since they obviously haven't been
-        // removed. Need to profile to see if it's actually worth it.
-        Obj.each(prevState, function (prevVal, key) {
-            if (!Obj.owns(newState, key) || newState[key] === null) {
-                delete newState[key];
-                removed[key] = prevVal;
-                isChanged = true;
-            }
-        }, this);
+                    isChanged = true;
+                }
+            }, this);
+
+            // Figure out what was removed.
+            Obj.each(prevState, function (prevVal, key) {
+                if (!Obj.owns(newState, key) || newState[key] === null) {
+                    delete newState[key];
+                    removed[key] = prevVal;
+                    isChanged = true;
+                }
+            }, this);
+        } else {
+            isChanged = newState !== prevState;
+        }
 
         if (isChanged) {
             this._fireEvents(src, {
@@ -444,7 +554,7 @@ Y.mix(HistoryBase.prototype, {
                 newState : newState,
                 prevState: prevState,
                 removed  : removed
-            });
+            }, options);
         }
     },
 
@@ -454,13 +564,15 @@ Y.mix(HistoryBase.prototype, {
      * fired properly.
      *
      * @method _storeState
-     * @param {String} src source of the changes, for inclusion in event facades
-     *   to facilitate filtering
+     * @param {String} src source of the changes
      * @param {Object} newState new state to store
+     * @param {Object} options Zero or more options. See <code>add()</code> for
+     *   a list of supported options.
      * @protected
      */
     _storeState: function (src, newState) {
-        // Note: the src param isn't used here, but it is used by subclasses.
+        // Note: the src and options params aren't used here, but they are used
+        // by subclasses.
         GlobalEnv._state = newState || {};
     },
 
@@ -474,7 +586,7 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _defChangeFn: function (e) {
-        this._storeState(e.src, e.newVal);
+        this._storeState(e.src, e.newVal, e._options);
     }
 }, true);
 
@@ -485,22 +597,15 @@ Y.HistoryBase = HistoryBase;
 YUI.add('history-hash', function(Y) {
 
 /**
- * The history-hash module adds the History class, which provides browser
- * history management functionality backed by <code>window.location.hash</code>.
- * This allows the browser's back and forward buttons to be used to navigate
- * between states.
- *
- * @module history
- * @submodule history-hash
- */
-
-/**
- * The History class provides browser history management backed by
+ * Provides browser history management backed by
  * <code>window.location.hash</code>, as well as convenience methods for working
  * with the location hash and a synthetic <code>hashchange</code> event that
  * normalizes differences across browsers.
  *
- * @class History
+ * @module history
+ * @submodule history-hash
+ * @since 3.2.0
+ * @class HistoryHash
  * @extends HistoryBase
  * @constructor
  * @param {Object} config (optional) Configuration object. See the HistoryBase
@@ -510,57 +615,46 @@ YUI.add('history-hash', function(Y) {
 var HistoryBase    = Y.HistoryBase,
     Lang           = Y.Lang,
     Obj            = Y.Object,
-    GlobalEnv      = YUI.namespace('Env.History'),
+    GlobalEnv      = YUI.namespace('Env.HistoryHash'),
 
     SRC_HASH       = 'hash',
 
-    config         = Y.config,
-    doc            = config.doc,
-    docMode        = doc.documentMode,
     hashNotifiers,
     oldHash,
     oldUrl,
-    win            = config.win,
-    location       = win.location,
+    win            = Y.config.win,
+    location       = win.location;
 
-    // IE8 supports the hashchange event, but only in IE8 Standards
-    // Mode. However, IE8 in IE7 compatibility mode still defines the
-    // event but never fires it, so we can't just sniff for the event. We also
-    // can't just sniff for IE8, since other browsers have begun to support this
-    // event as well.
-    nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
-            (Lang.isUndefined(docMode) || docMode > 7),
+function HistoryHash() {
+    HistoryHash.superclass.constructor.apply(this, arguments);
+}
 
-History = function () {
-    History.superclass.constructor.apply(this, arguments);
-};
-
-Y.extend(History, HistoryBase, {
+Y.extend(HistoryHash, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
         // Use the bookmarked state as the initialState if no initialState was
         // specified.
         config = config || {};
-        config.initialState = config.initialState || History.parseHash();
+        config.initialState = config.initialState || HistoryHash.parseHash();
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
 
-        History.superclass._init.call(this, config);
+        HistoryHash.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------
     _storeState: function (src, newState) {
-        var newHash = History.createHash(newState);
+        var newHash = HistoryHash.createHash(newState);
 
-        History.superclass._storeState.apply(this, arguments);
+        HistoryHash.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes, but only if the new hash
         // actually differs from the current hash (this avoids creating multiple
         // history entries for a single state).
-        if (History.getHash() !== newHash) {
-            History[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
+        if (HistoryHash.getHash() !== newHash) {
+            HistoryHash[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
         }
     },
 
@@ -570,14 +664,15 @@ Y.extend(History, HistoryBase, {
      * Handler for hashchange events.
      *
      * @method _afterHashChange
+     * @param {Event} e
      * @protected
      */
     _afterHashChange: function (e) {
-        this._resolveChanges(SRC_HASH, History.parseHash(e.newHash));
+        this._resolveChanges(SRC_HASH, HistoryHash.parseHash(e.newHash), {});
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
-    NAME: 'history',
+    NAME: 'historyHash',
 
     /**
      * Constant used to identify state changes originating from
@@ -601,9 +696,9 @@ Y.extend(History, HistoryBase, {
      * </p>
      *
      * <p>
-     * Note that this prefix applies to all History instances. It's not possible
-     * for individual instances to use their own prefixes since they all operate
-     * on the same URL.
+     * Note that this prefix applies to all HistoryHash instances. It's not
+     * possible for individual instances to use their own prefixes since they
+     * all operate on the same URL.
      * </p>
      *
      * @property hashPrefix
@@ -612,19 +707,6 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     hashPrefix: '',
-
-    /**
-     * Whether or not this browser supports the <code>window.onhashchange</code>
-     * event natively. Note that even if this is <code>true</code>, you may
-     * still want to use History's synthetic <code>hashchange</code> event since
-     * it normalizes implementation differences and fixes spec violations across
-     * various browsers.
-     *
-     * @property nativeHashChange
-     * @type Boolean
-     * @static
-     */
-    nativeHashChange: nativeHashChange,
 
     // -- Protected Static Properties ------------------------------------------
 
@@ -651,7 +733,7 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     createHash: function (params) {
-        var encode = History.encode,
+        var encode = HistoryHash.encode,
             hash   = [];
 
         Obj.each(params, function (value, key) {
@@ -705,18 +787,18 @@ Y.extend(History, HistoryBase, {
         // actually change the hash.
         var matches = /#(.*)$/.exec(location.href),
             hash    = matches && matches[1] || '',
-            prefix  = History.hashPrefix;
+            prefix  = HistoryHash.hashPrefix;
 
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     } : function () {
         var hash   = location.hash.substr(1),
-            prefix = History.hashPrefix;
+            prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
-        // since getHash() is called every 20ms or so to poll for changes in
-        // browsers that don't support native onhashchange. An additional
-        // function call would add unnecessary overhead.
+        // since getHash() is called every 50ms to poll for changes in browsers
+        // that don't support native onhashchange. An additional function call
+        // would add unnecessary overhead.
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     }),
@@ -743,16 +825,16 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     parseHash: function (hash) {
-        var decode = History.decode,
+        var decode = HistoryHash.decode,
             i,
             len,
             matches,
             param,
             params = {},
-            prefix = History.hashPrefix,
+            prefix = HistoryHash.hashPrefix,
             prefixIndex;
 
-        hash = Lang.isValue(hash) ? hash : History.getHash();
+        hash = Lang.isValue(hash) ? hash : HistoryHash.getHash();
 
         if (prefix) {
             prefixIndex = hash.indexOf(prefix);
@@ -762,7 +844,7 @@ Y.extend(History, HistoryBase, {
             }
         }
 
-        matches = hash.match(History._REGEX_HASH) || [];
+        matches = hash.match(HistoryHash._REGEX_HASH) || [];
 
         for (i = 0, len = matches.length; i < len; ++i) {
             param = matches[i].split('=');
@@ -787,7 +869,7 @@ Y.extend(History, HistoryBase, {
             hash = hash.substr(1);
         }
 
-        location.replace('#' + (History.hashPrefix || '') + hash);
+        location.replace('#' + (HistoryHash.hashPrefix || '') + hash);
     },
 
     /**
@@ -803,12 +885,12 @@ Y.extend(History, HistoryBase, {
             hash = hash.substr(1);
         }
 
-        location.hash = (History.hashPrefix || '') + hash;
+        location.hash = (HistoryHash.hashPrefix || '') + hash;
     }
 });
 
 // -- Synthetic hashchange Event -----------------------------------------------
-hashNotifiers = YUI.namespace('Env.History._hashNotifiers');
+hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
 
 // TODO: YUIDoc currently doesn't provide a good way to document synthetic DOM
 // events. For now, we're just documenting the hashchange event on the YUI
@@ -871,7 +953,7 @@ Y.Event.define('hashchange', {
         // window or document body, since those are the only elements that
         // should support the hashchange event. Note that the body could also be
         // a frameset, but that's okay since framesets support hashchange too.
-        if ((node.compareTo(win) || node.compareTo(doc.body)) &&
+        if ((node.compareTo(win) || node.compareTo(Y.config.doc.body)) &&
                 !Obj.owns(hashNotifiers, notifier.key)) {
 
             hashNotifiers[notifier.key] = notifier;
@@ -888,18 +970,16 @@ Y.Event.define('hashchange', {
     }
 });
 
-oldHash = History.getHash();
-oldUrl  = History.getUrl();
+oldHash = HistoryHash.getHash();
+oldUrl  = HistoryHash.getUrl();
 
-if (nativeHashChange) {
+if (HistoryBase.nativeHashChange) {
     // Wrap the browser's native hashchange event.
     Y.Event.attach('hashchange', function (e) {
-        var newHash = History.getHash(),
-            newUrl  = History.getUrl();
+        var newHash = HistoryHash.getHash(),
+            newUrl  = HistoryHash.getUrl();
 
         Obj.each(hashNotifiers, function (notifier) {
-            // TODO: would there be any benefit to making this an overridable
-            // protected method?
             notifier.fire({
                 oldHash: oldHash,
                 oldUrl : oldUrl,
@@ -915,23 +995,27 @@ if (nativeHashChange) {
     // Begin polling for location hash changes if there's not already a global
     // poll running.
     if (!GlobalEnv._hashPoll) {
-        if (Y.UA.webkit && !Y.UA.chrome) {
+        if (Y.UA.webkit && !Y.UA.chrome &&
+                navigator.vendor.indexOf('Apple') !== -1) {
             // Attach a noop unload handler to disable Safari's back/forward
             // cache. This works around a nasty Safari bug when the back button
             // is used to return from a page on another domain, but results in
             // slightly worse performance. This bug is not present in Chrome.
             //
-            // Current as of Safari 4.0.5 (6531.22.7).
+            // Unfortunately a UA sniff is unavoidable here, but the
+            // consequences of a false positive are minor.
+            //
+            // Current as of Safari 5.0 (6533.16).
             // See: https://bugs.webkit.org/show_bug.cgi?id=34679
             Y.on('unload', function () {}, win);
         }
 
-        GlobalEnv._hashPoll = Y.later(config.pollInterval || 50, null, function () {
-            var newHash = History.getHash(),
+        GlobalEnv._hashPoll = Y.later(50, null, function () {
+            var newHash = HistoryHash.getHash(),
                 newUrl;
 
             if (oldHash !== newHash) {
-                newUrl = History.getUrl();
+                newUrl = HistoryHash.getUrl();
 
                 Obj.each(hashNotifiers, function (notifier) {
                     notifier.fire({
@@ -949,35 +1033,58 @@ if (nativeHashChange) {
     }
 }
 
-Y.History = History;
+Y.HistoryHash = HistoryHash;
+
+// Only point Y.History at HistoryHash if it doesn't already exist and if the
+// current browser doesn't support HTML5 history, or if the HistoryHTML5 class
+// is not present. The history-hash module is always loaded after history-html5
+// if history-html5 is loaded, so this check doesn't introduce a race condition.
+if (!Y.History && (!HistoryBase.html5 || !Y.HistoryHTML5)) {
+    Y.History = HistoryHash;
+}
 
 
 }, '@VERSION@' ,{requires:['event-synthetic', 'history-base', 'yui-later']});
 YUI.add('history-hash-ie', function(Y) {
 
 /**
- * The history-hash-ie module improves IE6/7 support in history-hash by using a
- * hidden iframe to create entries in IE's browser history. This module is only
- * needed if IE6/7 support is necessary; it's not needed for any other browser.
+ * Improves IE6/7 support in history-hash by using a hidden iframe to create
+ * entries in IE's browser history. This module is only needed if IE6/7 support
+ * is necessary; it's not needed for any other browser.
  *
  * @module history
  * @submodule history-hash-ie
+ * @since 3.2.0
  */
 
-var Do        = Y.Do,
-    GlobalEnv = YUI.namespace('Env.History'),
-    History   = Y.History,
-    iframe    = GlobalEnv._iframe,
-    win       = Y.config.win,
-    location  = win.location;
+// Combination of a UA sniff to ensure this is IE (or a browser that wants us to
+// treat it like IE) and feature detection for native hashchange support (false
+// for IE < 8 or IE8/9 in IE7 mode).
+if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
+    var Do          = Y.Do,
+        GlobalEnv   = YUI.namespace('Env.HistoryHash'),
+        HistoryHash = Y.HistoryHash,
+        iframe      = GlobalEnv._iframe,
+        win         = Y.config.win,
+        location    = win.location;
 
-if (Y.UA.ie && Y.UA.ie < 8) {
-    History.getHash = function () {
-        return iframe ? iframe.contentWindow.location.hash.substr(1) : '';
+    HistoryHash.getHash = function () {
+        // The iframe's hash always wins over the parent frame's. This results
+        // in the unfortunate edge case that changing the parent's hash without
+        // using the YUI History API will not result in a hashchange event, but
+        // this is a reasonable tradeoff. The only time the parent frame's hash
+        // will be returned is if the iframe hasn't been created yet (i.e.,
+        // before domready).
+        var prefix = HistoryHash.hashPrefix,
+            hash   = iframe ? iframe.contentWindow.location.hash.substr(1) :
+                        location.hash.substr(1);
+
+        return prefix && hash.indexOf(prefix) === 0 ?
+                    hash.replace(prefix, '') : hash;
     };
 
-    History.getUrl = function () {
-        var hash = History.getHash();
+    HistoryHash.getUrl = function () {
+        var hash = HistoryHash.getHash();
 
         if (hash && hash !== location.hash.substr(1)) {
             return location.href.replace(/#.*$/, '') + '#' + hash;
@@ -995,9 +1102,9 @@ if (Y.UA.ie && Y.UA.ie < 8) {
      *   history state will be replaced without adding a new history entry
      * @protected
      * @static
-     * @for History
+     * @for HistoryHash
      */
-    History._updateIframe = function (hash, replace) {
+    HistoryHash._updateIframe = function (hash, replace) {
         var iframeDoc      = iframe.contentWindow.document,
             iframeLocation = iframeDoc.location;
 
@@ -1012,30 +1119,44 @@ if (Y.UA.ie && Y.UA.ie < 8) {
         }
     };
 
-    Do.after(History._updateIframe, History, 'replaceHash', History, true);
-    Do.after(History._updateIframe, History, 'setHash');
+    Do.after(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
+    Do.after(HistoryHash._updateIframe, HistoryHash, 'setHash');
 
     if (!iframe) {
-        // Create an iframe to store history state.
-        Y.log('creating dynamic history iframe', 'info', 'history');
-
-        iframe = GlobalEnv._iframe = Y.Node.getDOMNode(Y.Node.create(
-            '<iframe src="javascript:0" style="display:none"/>'
-        ));
-
-        // Don't add the iframe to the DOM until the DOM is ready, lest we
-        // frighten IE.
         Y.on('domready', function () {
-            // The iframe is appended to the documentElement rather than the
-            // body. Keeping it outside the body prevents scrolling on the
-            // initial page load (hat tip to Ben Alman and jQuery BBQ for this
+            // Create a hidden iframe to store history state, following the
+            // iframe-hiding recommendations from
+            // http://www.paciellogroup.com/blog/?p=604.
+            //
+            // This iframe will allow history navigation within the current page
+            // context. After navigating to another page, all but the most
+            // recent history state will be lost.
+            //
+            // Earlier versions of the YUI History Utility attempted to work
+            // around this limitation by having the iframe load a static
+            // resource. This workaround was extremely fragile and tended to
+            // break frequently (and silently) since it was entirely dependent
+            // on IE's inconsistent handling of iframe history.
+            //
+            // Since this workaround didn't work much of the time anyway and
+            // added significant complexity, it has been removed, and IE6 and 7
+            // now get slightly degraded history support.
+            Y.log('creating dynamic history iframe', 'info', 'history');
+
+            iframe = GlobalEnv._iframe = Y.Node.getDOMNode(Y.Node.create(
+                '<iframe src="javascript:0" style="display:none" height="0" width="0" tabindex="-1" title="empty"/>'
+            ));
+
+            // Append the iframe to the documentElement rather than the body.
+            // Keeping it outside the body prevents scrolling on the initial
+            // page load (hat tip to Ben Alman and jQuery BBQ for this
             // technique).
             Y.config.doc.documentElement.appendChild(iframe);
 
             // Update the iframe with the initial location hash, if any. This
             // will create an initial history entry that the user can return to
             // after the state has changed.
-            History._updateIframe(location.hash.substr(1));
+            HistoryHash._updateIframe(location.hash.substr(1));
         });
 
         // Listen for hashchange events and keep the parent window's location
@@ -1051,7 +1172,138 @@ if (Y.UA.ie && Y.UA.ie < 8) {
 
 
 }, '@VERSION@' ,{requires:['history-base', 'history-hash', 'node-base']});
+YUI.add('history-html5', function(Y) {
+
+/**
+ * Provides browser history management using the HTML5 history API.
+ *
+ * @module history
+ * @submodule history-html5
+ * @since 3.2.0
+ */
+
+/**
+ * <p>
+ * Provides browser history management using the HTML5 history API.
+ * </p>
+ *
+ * <p>
+ * When calling the <code>add()</code>, <code>addValue()</code>,
+ * <code>replace()</code>, or <code>replaceValue()</code> methods on
+ * <code>HistoryHTML5</code>, the following additional options are supported:
+ * </p>
+ *
+ * <dl>
+ *   <dt><strong>title (String)</strong></dt>
+ *   <dd>
+ *     Title to use for the new history entry. Browsers will typically display
+ *     this title to the user in the detailed history window or in a dropdown
+ *     menu attached to the back/forward buttons. If not specified, the title
+ *     of the current document will be used.
+ *   </dd>
+ *
+ *   <dt><strong>url (String)</strong></dt>
+ *   <dd>
+ *     URL to display to the user for the new history entry. This URL will be
+ *     visible in the browser's address bar and will be the bookmarked URL if
+ *     the user bookmarks the page. It may be a relative path ("foo/bar"), an
+ *     absolute path ("/foo/bar"), or a full URL ("http://example.com/foo/bar").
+ *     If you specify a full URL, the origin <i>must</i> be the same as the 
+ *     origin of the current page, or an error will occur. If no URL is
+ *     specified, the current URL will not be changed.
+ *   </dd>
+ * </dl>
+ *
+ * @class HistoryHTML5
+ * @extends HistoryBase
+ * @constructor
+ * @param {Object} config (optional) Configuration object. See the HistoryBase
+ *   documentation for details.
+ */
+
+var HistoryBase = Y.HistoryBase,
+    doc         = Y.config.doc,
+    win         = Y.config.win,
+
+    SRC_POPSTATE = 'popstate',
+    SRC_REPLACE  = HistoryBase.SRC_REPLACE;
+
+function HistoryHTML5() {
+    HistoryHTML5.superclass.constructor.apply(this, arguments);
+}
+
+Y.extend(HistoryHTML5, HistoryBase, {
+    // -- Initialization -------------------------------------------------------
+    _init: function () {
+        Y.on('popstate', this._onPopState, win, this);
+        HistoryHTML5.superclass._init.apply(this, arguments);
+    },
+
+    // -- Protected Methods ----------------------------------------------------
+
+    /**
+     * Overrides HistoryBase's <code>_storeState()</code> and pushes or replaces
+     * a history entry using the HTML5 history API when necessary.
+     *
+     * @method _storeState
+     * @param {String} src Source of the changes.
+     * @param {Object} newState New state to store.
+     * @param {Object} options Zero or more options.
+     * @protected
+     */
+    _storeState: function (src, newState, options) {
+        if (src !== SRC_POPSTATE) {
+            win.history[src === SRC_REPLACE ? 'replaceState' : 'pushState'](
+                newState, options.title || doc.title || '', options.url || null
+            );
+        }
+
+        HistoryHTML5.superclass._storeState.apply(this, arguments);
+    },
+
+    // -- Protected Event Handlers ---------------------------------------------
+
+    /**
+     * Handler for popstate events.
+     *
+     * @method _onPopState
+     * @param {Event} e
+     * @protected
+     */
+    _onPopState: function (e) {
+        this._resolveChanges(SRC_POPSTATE, e._event.state || {});
+    }
+}, {
+    // -- Public Static Properties ---------------------------------------------
+    NAME: 'historyhtml5',
+
+    /**
+     * Constant used to identify state changes originating from
+     * <code>popstate</code> events.
+     *
+     * @property SRC_POPSTATE
+     * @type String
+     * @static
+     * @final
+     */
+    SRC_POPSTATE: SRC_POPSTATE
+});
+
+if (!Y.Node.DOM_EVENTS.popstate) {
+    Y.Node.DOM_EVENTS.popstate = 1;
+}
+
+Y.HistoryHTML5 = HistoryHTML5;
+
+// Only point Y.History at HistoryHTML5 if it doesn't already exist and if the
+// current browser supports HTML5 history.
+if (!Y.History && HistoryBase.html5) {
+    Y.History = HistoryHTML5;
+}
 
 
-YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie']});
+}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base']});
+
+
+YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie', 'history-html5']});
 

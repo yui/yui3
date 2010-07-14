@@ -734,9 +734,11 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
-        this.host._monitor('attach', this.type, {
-            args: arguments
-        });
+        if (this.host) {
+            this.host._monitor('attach', this.type, {
+                args: arguments
+            });
+        }
         return this._on(fn, context, a, true);
     },
 
@@ -951,16 +953,27 @@ Y.CustomEvent.prototype = {
      */
     _delete: function(s) {
         if (s) {
-            delete s.fn;
-            delete s.context;
-            delete this.subscribers[s.id];
-            delete this.afters[s.id];
+            if (this.subscribers[s.id]) {
+                delete this.subscribers[s.id];
+                this.subCount--;
+            }
+            if (this.afters[s.id]) {
+                delete this.afters[s.id];
+                this.afterCount--;
+            }
         }
 
-        this.host._monitor('detach', this.type, {
-            ce: this, 
-            sub: s
-        });
+        if (this.host) {
+            this.host._monitor('detach', this.type, {
+                ce: this, 
+                sub: s
+            });
+        }
+
+        if (s) {
+            delete s.fn;
+            delete s.context;
+        }
     }
 };
 
@@ -1404,15 +1417,17 @@ ET.prototype = {
         var parts = _parseType(type, this._yuievt.config.prefix), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
-        handle, adapt, store = Y.Env.evt.handles, cat, args,
+        adapt, store = Y.Env.evt.handles, detachhost, cat, args,
         ce,
 
-        keyDetacher = function(lcat, ltype) {
-            var handles = lcat[ltype];
+        keyDetacher = function(lcat, ltype, host) {
+            var handles = lcat[ltype], ce, i;
             if (handles) {
-                while (handles.length) {
-                    handle = handles.pop();
-                    handle.detach();
+                for (i = handles.length - 1; i >= 0; --i) {
+                    ce = handles[i].evt;
+                    if (ce.host === host || ce.el === host) {
+                        handles[i].detach();
+                    }
                 }
             }
         };
@@ -1421,14 +1436,15 @@ ET.prototype = {
 
             cat = store[detachcategory];
             type = parts[1];
+            detachhost = (isNode) ? Y.Node.getDOMNode(this) : this;
 
             if (cat) {
                 if (type) {
-                    keyDetacher(cat, type);
+                    keyDetacher(cat, type, detachhost);
                 } else {
                     for (i in cat) {
                         if (cat.hasOwnProperty(i)) {
-                            keyDetacher(cat, i);
+                            keyDetacher(cat, i, detachhost);
                         }
                     }
                 }
@@ -1573,7 +1589,9 @@ ET.prototype = {
      *
      */
     publish: function(type, opts) {
-        var events, ce, ret, pre = this._yuievt.config.prefix;
+        var events, ce, ret, defaults,
+            edata    = this._yuievt,
+            pre      = edata.config.prefix;
 
         type = (pre) ? _getType(type, pre) : type;
 
@@ -1590,7 +1608,7 @@ ET.prototype = {
             return ret;
         }
 
-        events = this._yuievt.events; 
+        events = edata.events; 
         ce = events[type];
 
         if (ce) {
@@ -1599,8 +1617,12 @@ ET.prototype = {
                 ce.applyConfig(opts, true);
             }
         } else {
+
+            defaults = edata.defaults;
+
             // apply defaults
-            ce = new Y.CustomEvent(type, (opts) ? Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults);
+            ce = new Y.CustomEvent(type,
+                                  (opts) ? Y.merge(defaults, opts) : defaults);
             events[type] = ce;
         }
 

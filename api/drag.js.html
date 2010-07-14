@@ -66,8 +66,10 @@
         <span class="nx">DRAG_NODE</span> <span class="o">=</span> <span class="s1">&#39;dragNode&#39;</span><span class="p">,</span>
         <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="p">,</span>
         <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="p">,</span>        
-        <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="s1">&#39;mouseup&#39;</span><span class="p">,</span>
-        <span class="nx">MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;mousedown&#39;</span><span class="p">,</span>
+        <span class="c1">//MOUSE_UP = &#39;mouseup&#39;,</span>
+        <span class="c1">//MOUSE_DOWN = &#39;mousedown&#39;,</span>
+        <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="s1">&#39;moveend&#39;</span><span class="p">,</span>
+        <span class="nx">MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;movestart&#39;</span><span class="p">,</span>
         <span class="nx">DRAG_START</span> <span class="o">=</span> <span class="s1">&#39;dragstart&#39;</span><span class="p">,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @event drag:mouseDown</span>
@@ -785,7 +787,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_ev_md</span> <span class="o">=</span> <span class="nx">ev</span><span class="p">;</span>
             
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;primaryButtonOnly&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">button</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="c1">//return false;</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">validClick</span><span class="p">(</span><span class="nx">ev</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_fixIEMouseDown</span><span class="p">();</span>
@@ -1001,9 +1003,16 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_dragThreshMet</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-draggable&#39;</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">MOUSE_DOWN</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_handleMouseDownEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">MOUSE_DOWN</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_handleMouseDownEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="p">{</span>
+                <span class="nx">minDistance</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;clickPixelThresh&#39;</span><span class="p">),</span>
+                <span class="nx">minTime</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;clickTimeThresh&#39;</span><span class="p">)</span>
+            <span class="p">});</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">MOUSE_UP</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_handleMouseUp</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">DRAG_START</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_fixDragStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;move&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_move</span><span class="p">,</span> <span class="nx">DDM</span><span class="p">),</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;throttleTime&#39;</span><span class="p">)));</span>
+            <span class="c1">//Should not need this, _handleMouseUp calls this..</span>
+            <span class="c1">//node.on(&#39;moveend&#39;, Y.bind(DDM._end, DDM));</span>
+            
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
@@ -1262,6 +1271,7 @@
                                 <li class="selected"><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
@@ -1290,6 +1300,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -1300,6 +1311,7 @@
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>

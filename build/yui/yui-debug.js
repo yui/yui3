@@ -336,6 +336,7 @@ proto = {
      *
      */
     add: function(name, fn, version, details) {
+
         details = details || {};
         var env = YUI.Env,
             mod  = {
@@ -359,9 +360,10 @@ proto = {
      * @private
      */
     _attach: function(r, fromLoader) {
-        var i, name, mod, details, req, use,
+        var i, name, mod, details, req, use, 
             mods = YUI.Env.mods,
-            done = this.Env._attached,
+            Y    = this,
+            done = Y.Env._attached,
             len  = r.length;
 
         for (i=0; i<len; i++) {
@@ -375,20 +377,31 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    this._attach(this.Array(req));
+                    if (!Y._attach(Y.Array(req))) {
+                        return false;
+                    }
                 }
 
-                // this.log('attaching ' + name, 'info', 'yui');
+                // Y.log('attaching ' + name, 'info', 'yui');
 
                 if (mod.fn) {
-                    mod.fn(this, name);
+                    try {
+                        mod.fn(Y, name);
+                    } catch (e) {
+                        Y.error('Attach error: ' + name, e, name);
+                        return false;
+                    }
                 }
 
                 if (use && use.length) {
-                    this._attach(this.Array(use));
+                    if (!Y._attach(Y.Array(use))) {
+                        return false;
+                    }
                 }
             }
         }
+
+        return true;
     },
 
     /**
@@ -451,6 +464,7 @@ proto = {
             boot     = config.bootstrap,
             missing  = [], 
             r        = [], 
+            ret      = true,
             fetchCSS = config.fetchCSS,
             process  = function(name) {
 
@@ -484,8 +498,16 @@ proto = {
                 if (use) { // make sure we grab the submodule dependencies too
                     YArray.each(YArray(use), process);
                 }
+            },
 
-
+            notify = function(response) {
+                if (callback) {
+                    try {
+                        callback(Y, response);
+                    } catch (e) {
+                        Y.error('use callback error', e, args);
+                    }
+                }
             },
 
             handleLoader = function(fromLoader) {
@@ -493,7 +515,8 @@ proto = {
                         success: true,
                         msg: 'not dynamic'
                     }, 
-                    newData, redo, origMissing,
+                    newData, redo, origMissing, 
+                    ret = true,
                     data = response.data;
 
                 Y._loading = false;
@@ -519,19 +542,18 @@ proto = {
                     newData = data.concat();
                     newData.push(function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
-                        Y._attach(data);
-                        if (callback) {
-                            callback(Y, response);
+                        if (Y._attach(data)) {
+                            notify(response);
                         }
                     });
                     Y._loading  = false;
                     Y.use.apply(Y, newData);
                 } else {
                     if (data) {
-                        Y._attach(data);
+                        ret = Y._attach(data);
                     }
-                    if (callback) {
-                        callback(Y, response);
+                    if (ret) {
+                        notify(response);
                     }
                 }
 
@@ -606,8 +628,9 @@ proto = {
                 Y._loading = false;
                 queue.running = false;
                 Env.bootstrapped = true;
-                Y._attach(['loader']);
-                Y.use.apply(Y, args);
+                if (Y._attach(['loader'])) {
+                    Y.use.apply(Y, args);
+                }
             };
 
             if (G_ENV._bootstrapping) {
@@ -627,8 +650,10 @@ Y.log('Fetching loader: ' + Y.id + ", " + config.base + config.loaderPath, 'info
 Y.log('This instance is not provisioned to fetch missing modules: ' + missing, 'log', 'yui');
             }
             Y.log('Attaching available dependencies.', 'info', 'yui');
-            Y._attach(r);
-            handleLoader();
+            ret = Y._attach(r);
+            if (ret) {
+                handleLoader();
+            }
         }
 
         return Y;
@@ -685,13 +710,20 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
      * @return {YUI} this YUI instance
      */
     error: function(msg, e) {
-        if (this.config.throwFail) {
-            throw (e || new Error(msg)); 
-        } else {
-            this.message(msg, "error"); // don't scrub this one
+
+        var Y = this, ret;
+        
+        if (Y.config.errorFn) {
+            ret = Y.config.errorFn.apply(Y, arguments);
         }
 
-        return this;
+        if (Y.config.throwFail && !ret) {
+            throw (e || new Error(msg)); 
+        } else {
+            Y.message(msg, "error"); // don't scrub this one
+        }
+
+        return Y;
     },
 
     /**
@@ -1198,6 +1230,16 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * a supported native console.
  * @since 3.1.0
  * @property logFn
+ * @type Function
+ */
+
+/**
+ * A callback to execute when Y.error is called.  It receives the
+ * error message and an javascript error object if Y.error was
+ * executed because a javascript error was caught.
+ *
+ * @since 3.2.0
+ * @property errorFn
  * @type Function
  */
 YUI.add('yui-base', function(Y) {
@@ -1921,7 +1963,7 @@ owns = function(o, k) {
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED = undefined,
+UNDEFINED,
 
 /**
  * Extracts the keys, values, or size from an object
@@ -2271,6 +2313,41 @@ Y.UA = function() {
          * @type float
          */
         air: 0,
+        /**
+         * Detects Apple iPad's OS version
+         * @property ipad
+         * @type float
+         * @static
+         */
+        ipad: 0,
+        /**
+         * Detects Apple iPhone's OS version
+         * @property iphone
+         * @type float
+         * @static
+         */
+        iphone: 0,
+        /**
+         * Detects Apples iPod's OS version
+         * @property ipod
+         * @type float
+         * @static
+         */
+        ipod: 0,
+        /**
+         * General truthy check for iPad, iPhone or iPod
+         * @property itouch
+         * @type float
+         * @static
+         */
+        itouch: null,
+        /**
+         * Detects Googles Android OS version
+         * @property android 
+         * @type float
+         * @static
+         */
+        android: 0,
 
         /**
          * Google Caja version number or 0.
@@ -2329,10 +2406,27 @@ Y.UA = function() {
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
                 o.mobile = "Apple"; // iPhone or iPod Touch
+
+                m = ua.match(/OS ([^\s]*)/);
+                if (m && m[1]) {
+                    m = numberify(m[1].replace('_', '.'));
+                }
+                o.ipad = (navigator.platform == 'iPad') ? m : 0;
+                o.ipod = (navigator.platform == 'iPod') ? m : 0;
+                o.iphone = (navigator.platform == 'iPhone') ? m : 0;
+                o.itouch = o.ipad || o.iphone || o.ipod;
             } else {
                 m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
                     o.mobile = m[0]; // Nokia N-series, Android, webOS, ex: NokiaN95
+                }
+                if (/ Android/.test(ua)) {
+                    o.mobile = 'Android';
+                    m = ua.match(/Android ([^\s]*);/);
+                    if (m && m[1]) {
+                        o.android = numberify(m[1]);
+                    }
+
                 }
             }
 

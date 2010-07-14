@@ -264,7 +264,7 @@
 	</div>
 		<script>
 
-			YUI({}).use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphics', 'infographics', function (Y)
+			YUI().use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphics', 'infographics', function (Y)
             {
                 var TOUCH = Y.UA.webkit && Y.UA.mobile, 
                     EVT_MAP;
@@ -399,16 +399,18 @@
                     {
                         var target = e.currentTarget,
                             val = target.get("value"),
-                            len = parseInt(target.get("length"), 10);
-                        timeaxis.updateMinByPosition(val, len);
+                            len = parseInt(target.get("length"), 10),
+                            pos = val/len;
+                        timeaxis.updateMinByPosition(pos);
                     }
 
                     function calculateAndUpdateMax(e)
                     {
                         var target = e.currentTarget,
                             val = target.get("value"),
-                            len = parseInt(target.get("length"), 10);
-                        timeaxis.updateMaxByPosition(val, len);
+                            len = parseInt(target.get("length"), 10),
+                            pos = val/len;
+                        timeaxis.updateMaxByPosition(pos);
                     }
                    
                     function calculateAndUpdateMinAndMax(e)
@@ -416,9 +418,18 @@
                         var target = e.currentTarget,
                             minVal = target.get("node").get("region").left,
                             maxVal = minVal + sliderWidth, 
-                            len = document.getElementById("small-chart").offsetWidth;
-                        timeaxis.updateMinByPosition(minVal, len);
-                        timeaxis.updateMaxByPosition(maxVal, len);
+                            len = document.getElementById("small-chart").offsetWidth,
+                            minPos = minVal/len,
+                            maxPos = maxVal/len;
+                        try
+                        {
+                        timeaxis.updateMinByPosition(minPos);
+                        timeaxis.updateMaxByPosition(maxPos);
+                        }
+                        catch(e)
+                        {
+                        //    alert(len + ", " + (Math.round(minPos*100)/100) + ", " + (Math.round(maxPos*100)/100));
+                        }
                     }
                    
                     dd.on("drag", Y.bind(calculateAndUpdateMinAndMax, this)); 

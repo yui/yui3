@@ -1,19 +1,17 @@
-var YLang      = Y.Lang,
-    isObject   = YLang.isObject,
-    isFunction = YLang.isFunction;
+var isFunction = Y.Lang.isFunction;
 
 /**
  * <p>Provides a JSONPRequest class for repeated JSONP calls, and a convenience
  * method Y.jsonp(url, callback) to instantiate and send a JSONP request.</p>
  *
- * <p>The callback for the response can be named in the url explicitly or
- * provided in the configuration (second parameter to the constructor).
+ * <p>Both the constructor as well as the convenience function take two
+ * parameters: a url string and a callback.</p>
  *
- * <p>By default, the query parameter string &quot;callback=???&quot; will be
- * searched for in the url (??? can be anything).  If it's not found, it will
- * be added on.  If the JSONP service uses a different parameter name or url
- * format, you can override this behavior with the <code>format</code> property
- * in the callback config.</p>
+ * <p>The url provided must include the placeholder string
+ * &quot;{callback}&quot; which will be replaced by a dynamically
+ * generated routing function to pass the data to your callback function.
+ * An example url might look like
+ * &quot;http://example.com/service?callback={callback}&quot;.</p>
  *
  * <p>The second parameter can be a callback function that accepts the JSON
  * payload as its argument, or a configuration object supporting the keys:</p>
@@ -31,7 +29,8 @@ var YLang      = Y.Lang,
  *  <li>args    - array of subsequent parameters to pass to the callbacks</li>
  * </ul>
  *
- * @module gallery-jsonp
+ * @module jsonp
+ * @submodule jsonp-base
  * @class JSONPRequest
  * @constructor
  * @param url {String} the url of the JSONP service
@@ -41,31 +40,6 @@ var YLang      = Y.Lang,
 function JSONPRequest() {
     this._init.apply(this, arguments);
 }
-
-/**
- * RegExp used by the default URL formatter to insert the generated callback
- * name into the JSONP url.  Looks for a query param callback=.  If a value is
- * assigned, it will be clobbered.
- *
- * @member JSONPRequest._pattern
- * @type RegExp
- * @default /\bcallback=.*?(?=&|$)/i
- * @protected
- * @static
- */
-JSONPRequest._pattern = /\bcallback=(.*?)(?=&|$)/i;
-
-/**
- * Template used by the default URL formatter to add the callback function name
- * to the url.
- *
- * @member JSONPRequest._template
- * @type String
- * @default "callback={callback}"
- * @protected
- * @static
- */
-JSONPRequest._template = "callback={callback}";
 
 JSONPRequest.prototype = {
     /**
@@ -90,7 +64,7 @@ JSONPRequest.prototype = {
         var subs = callback.on || {};
 
         if (!subs.success) {
-            subs = Y.mix({ success: this._getCallbackFromUrl(url) }, callback);
+            subs.success = this._defaultCallback(url, callback);
         }
 
         // Apply defaults and store
@@ -101,49 +75,18 @@ JSONPRequest.prototype = {
             }, callback, { on: subs });
     },
 
-    /**
-     * <p>Parses the url for a callback named explicitly in the string.
-     * Override this if the target JSONP service uses a different query
-     * parameter or url format.</p>
-     *
-     * <p>If the callback is declared inline, the corresponding function will
-     * be returned.  Otherwise null.</p>
-     *
-     * @method _getCallbackFromUrl
-     * @param url {String} the url to search in
-     * @return {Function} the callback function if found, or null
-     * @protected
+    /** 
+     * Override this method to provide logic to default the success callback if
+     * it is not provided at construction.  This is overridden by jsonp-url to
+     * parse the callback from the url string.
+     * 
+     * @method _defaultCallback
+     * @param url {String} the url passed at construction
+     * @param config {Object} (optional) the config object passed at
+     *                        construction
+     * @return {Function}
      */
-    _getCallbackFromUrl: function (url) {
-        var match = url.match(JSONPRequest._pattern),
-            callback, context, bits, i;
-
-        if (match) {
-            // resolve from the global
-            context = Y.config.win;
-
-            // callback=foo.bar.func => [ 'func', 'bar', 'foo' ]
-            // @TODO doesn't support bracket notation (callback=foo["bar"].func)
-            bits = match[1].split( /\./ ).reverse();
-
-            callback = bits.shift();
-
-            for ( i = bits.length - 1; i >= 0; --i ) {
-                context = context[ bits[ i ] ];
-                if ( !isObject( context ) ) {
-                    return null;
-                }
-            }
-
-            if ( isObject( context ) && isFunction( context[ callback ] ) ) {
-                // bind to preserve context declared inline, so
-                // callback=foo.bar.func => 'this' is foo.bar in func
-                return Y.bind( context[ callback ], context );
-            }
-        }
-
-        return null;
-    },
+    _defaultCallback: function () {},
 
     /** 
      * Issues the JSONP request.
@@ -151,36 +94,48 @@ JSONPRequest.prototype = {
      * @method send
      * @chainable
      */
-    send : function (callback) {
-        if (!this._config.on.success) {
-            Y.log("No success handler defined.  Aborting JSONP request.", "warn", "jsonp");
-            return this;
-        }
-
-        var proxy  = Y.guid().replace(/-/g, '_'),
+    send : function () {
+        var proxy  = Y.guid(),
             config = this._config,
             url    = config.format.call(this,
                         this.url, 'YUI.Env.JSONP.' + proxy);
+
+        if (!config.on.success) {
+            Y.log("No success handler defined.  Aborting JSONP request.", "warn", "jsonp");
+            return this;
+        }
 
         function wrap(fn) {
             return (isFunction(fn)) ?
                 function (data) {
                     delete YUI.Env.JSONP[proxy];
-                    fn.apply( config.context, [data].concat(config.args));
+                    fn.apply(config.context, [data].concat(config.args));
                 } :
                 null;
         }
 
         // Temporary un-sandboxed function alias
+        // TODO: queuing
         YUI.Env.JSONP[proxy] = wrap(config.on.success);
 
         Y.Get.script(url, {
             onFailure: wrap(config.on.failure),
-            onTimeout: wrap(config.on.timeout || config.on.failure),
+            onTimeout: wrap(config.on.timeout),
             timeout  : config.timeout
         });
 
         return this;
+    },
+
+    /** 
+     * Initiates the JSONP transaction.
+     *
+     * @method _dispatch
+     * @param url {String} fully formed url with callback 
+     * @param config {Object} configuration object
+     * @protected
+     */
+    _dispatch: function (url, config) {
     },
 
     /**
@@ -197,20 +152,8 @@ JSONPRequest.prototype = {
      * @protected
      */
     _format: function (url, proxy) {
-        var callback = JSONPRequest._template.replace(/\{callback\}/, proxy),
-            lastChar;
-
-        if (JSONPRequest._pattern.test(url)) {
-            return url.replace(JSONPRequest._pattern, callback);
-        } else {
-            lastChar = url.slice(-1);
-            if (lastChar !== '&' && lastChar !== '?') {
-                url += (url.indexOf('?') > -1) ? '&' : '?';
-            }
-            return url + callback;
-        }
+        return url.replace(/\{callback\}/, proxy);
     }
-
 };
 
 Y.JSONPRequest = JSONPRequest;

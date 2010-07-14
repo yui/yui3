@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Yui3Build" default="local">
+    <description>YUI3 Build File</description>
+    <property file="build.scrollview-base.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" />
+</project>

@@ -23,7 +23,7 @@ YUI({
         augment: true,
         useConsole: true
     }
-}).use('dd', 'console', 'test', 'substitute', 'selector-css3', function(Y) {
+}).use('event-synthetic', 'event-gestures', 'dd', 'console', 'test', 'substitute', 'selector-css3', function(Y) {
         var myConsole = new Y.Console({
             height: Y.one(window).get('winHeight') + 'px',
             width: '375px'
@@ -82,6 +82,7 @@ YUI({
         dd, drop, proxy, del,
 
     template = {
+        name: 'DD Test',
         setUp : function() {
         },
         
@@ -165,9 +166,9 @@ YUI({
                 Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
                 Y.Assert.areSame(1, _count['drag:start'], 'drag:start should fire 1 time');
                 Y.Assert.areSame(1, _count['drag:enter'], 'drag:enter should fire 1 time');
-                Y.Assert.areSame(30, _count['drag:over'], 'drag:over should fire 30 times');
+                Y.Assert.areSame(((Y.UA.ie) ? 32 : 30), _count['drag:over'], 'drag:over should fire 30 times');
 
-                Y.Assert.areSame(30, _count['drop:over'], 'drop:over should fire 30 times');
+                Y.Assert.areSame(((Y.UA.ie) ? 32 : 30), _count['drop:over'], 'drop:over should fire 30 times');
                 Y.Assert.areSame(1, _count['drop:enter'], 'drop:enter should fire 1 time');
                 Y.Assert.areSame(1, _count['drop:hit'], 'drop:hit should fire 1 time');
             });
@@ -205,9 +206,9 @@ YUI({
             Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
             Y.Assert.areSame(1, _count['drag:start'], 'drag:start should fire 1 time');
             Y.Assert.areSame(1, _count['drag:enter'], 'drag:enter should fire 1 time');
-            Y.Assert.areSame(30, _count['drag:over'], 'drag:over should fire 30 times');
+            Y.Assert.areSame(((Y.UA.ie) ? 32 : 30), _count['drag:over'], 'drag:over should fire 30 times');
 
-            Y.Assert.areSame(30, _count['drop:over'], 'drop:over should fire 30 times');
+            Y.Assert.areSame(((Y.UA.ie) ? 32 : 30), _count['drop:over'], 'drop:over should fire 30 times');
             Y.Assert.areSame(1, _count['drop:enter'], 'drop:enter should fire 1 time');
             Y.Assert.areSame(1, _count['drop:hit'], 'drop:hit should fire 1 time');
         },
@@ -353,8 +354,10 @@ YUI({
         }
     };
     
-    Y.Test.Runner.clear();
-    Y.Test.Runner.add(new Y.Test.Case(template));
+    var suite = new Y.Test.Suite("DD");
+    
+    suite.add(new Y.Test.Case(template));
+    Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
 

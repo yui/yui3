@@ -9,7 +9,9 @@ YUI.add('querystring-stringify', function(Y) {
  * @static
  */
 
-var QueryString = Y.namespace("QueryString");
+var QueryString = Y.namespace("QueryString"),
+    stack = [],
+    L = Y.Lang;
 
 /**
  * Provides Y.QueryString.escape method to be able to override default encoding
@@ -24,8 +26,6 @@ var QueryString = Y.namespace("QueryString");
  **/
 QueryString.escape = encodeURIComponent;
 
-
-var stack = [];
 /**
  * <p>Converts an arbitrary value to a Query String representation.</p>
  *
@@ -38,26 +38,33 @@ var stack = [];
  * @param name {String} (optional) Name of the current key, for handling children recursively.
  * @static
  */
-QueryString.stringify = function (obj, sep, eq, name) {
-    sep = sep || "&";
-    eq = eq || "=";
-    
-    if (Y.Lang.isNull(obj) || Y.Lang.isUndefined(obj) || typeof(obj) === 'function') {
+QueryString.stringify = function (obj, c, name) {
+    var begin, end, i, l, n, s,
+        sep = c && c.sep ? c.sep : "&",
+        eq = c && c.eq ? c.eq : "=",
+        aK = c && c.arrayKey ? c.arrayKey : false;
+
+    if (L.isNull(obj) || L.isUndefined(obj) || L.isFunction(obj)) {
         return name ? QueryString.escape(name) + eq : '';
     }
-    
-    if (is('Boolean',obj)) obj = +obj;
-    if (is('Number',obj) || is("String",obj)) {
+
+    if (L.isBoolean(obj) || Object.prototype.toString.call(obj) === '[object Boolean]') {
+        obj =+ obj;
+    }
+
+    if (L.isNumber(obj) || L.isString(obj)) {
         // Y.log("Number or string: "+obj);
         return QueryString.escape(name) + eq + QueryString.escape(obj);
-    }    
-    
-    if (Y.Lang.isArray(obj)) {
-        var s = [];
-        name = name+'[]';
-        for (var i = 0, l = obj.length; i < l; i ++) {
-            s.push( QueryString.stringify(obj[i], sep, eq, name) );
+    }
+
+    if (L.isArray(obj)) {
+        s = [];
+        name = aK ? name + '[]' : name;
+        l = obj.length;
+        for (i = 0; i < l; i++) {
+            s.push( QueryString.stringify(obj[i], c, name) );
         }
+
         return s.join(sep);
     }
     // now we know it's an object.
@@ -65,36 +72,34 @@ QueryString.stringify = function (obj, sep, eq, name) {
     //     typeof obj + (typeof obj === 'object' ? " ok" : "ONOES!")+
     //     Object.prototype.toString.call(obj)
     // );
-    
+
     // Check for cyclical references in nested objects
-    for (var i = stack.length - 1; i >= 0; --i) if (stack[i] === obj) {
-        throw new Error("QueryString.stringify. Cyclical reference");
+    for (i = stack.length - 1; i >= 0; --i) {
+        if (stack[i] === obj) {
+            throw new Error("QueryString.stringify. Cyclical reference");
+        }
     }
-    
+
     stack.push(obj);
-    
-    var s = [];
-    var begin = name ? name + '[' : '';
-    var end = name ? ']' : '';
-    for (var i in obj) if (obj.hasOwnProperty(i)) {
-        var n = begin + i + end;
-        s.push(QueryString.stringify(obj[i], sep, eq, n));
+    s = [];
+    begin = name ? name + '[' : '';
+    end = name ? ']' : '';
+    for (i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            n = begin + i + end;
+            s.push(QueryString.stringify(obj[i], c, n));
+        }
     }
-    
+
     stack.pop();
-    
     s = s.join(sep);
-    if (!s && name) return name + "=";
+    if (!s && name) {
+        return name + "=";
+    }
+
     return s;
 };
-function is (type, obj) {
-    // Y.log(type === 'String' ? 'test a string: "'+ obj+'" ' +
-    //     Object.prototype.toString.call(obj) + " " + Y.Lang["is"+"String"](obj) : '');
-    return (
-        Y.Lang["is"+type](obj)
-        || Object.prototype.toString.call(obj) === '[object '+type+']'
-    );
-}
+
 
 
 }, '@VERSION@' );

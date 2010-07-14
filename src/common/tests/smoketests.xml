@@ -9,15 +9,17 @@
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
+        <url>dd/tests/dd.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
-    	<url>event-custom/tests/customevent.html</url>
+        <url>event-custom/tests/customevent.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>history/tests/functional/history-base.html</url>
         <url>history/tests/functional/history-hash.html</url>
+        <url>history/tests/functional/history-html5.html</url>
         <url>intl/tests/intl.html</url>
         <url>node/tests/node.html</url>
         <url>pluginhost/tests/plugins.html</url>
@@ -27,6 +29,7 @@
         <url>yui/tests/lang.html</url>
         <url>yui/tests/namespace.html</url>
         <url>yui/tests/object.html</url>
+        <url>yql/tests/yql.html</url>
         <!--
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>

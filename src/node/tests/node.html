@@ -13,6 +13,8 @@ body {
 #doc {
     min-height:200px;
     width:1000px;
+    border:10px solid red;
+    padding:1em;
 }
 
 #get-style {
@@ -92,7 +94,7 @@ button {
         <a href="foo.html" id="link-2" tabIndex="-1">foo</a>
         <form id="test-form" class="test-class" action="#">
             <label for="test-text-value"><em>label</em></label>
-            <input name="test-text-value" value="text value">
+            <input name="test-text-value" id="test-text-value" value="text value">
             <input name="test-text-novalue">
     
             <textarea name="test-textarea-value" value="textarea value"></textarea>
@@ -138,6 +140,10 @@ button {
         </ol>
     </div>
 
+    <table id="test-table">
+        <tr><td id="test-td"><div><div>grandchild of td</div></div></td></tr>
+    </table>
+
     <ol>
         <li>item 1</li>
         <li>item 2</li>
@@ -163,7 +169,7 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', 'node-event-simulate', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
@@ -211,7 +217,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
             Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
                     Y.Node.getDOMNode(Y.one('#test-nodes li:nth-child(2)')), 'Y.one("#test-nodes:nth-child(2)")');
-            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.one('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
+            Assert.areEqual(byId('form.foo@bar:baz'), Y.Node.getDOMNode(Y.one('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
 
             var firstChild = Y.one('body :first-child');
             Y.one('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
@@ -245,6 +251,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
             ArrayAssert.itemsAreEqual([document.body], Y.all(document.body)._nodes, "Y.all(document.body)");
             Assert.areSame(Y.one('doc'), Y.one('doc'), "Y.one('doc') === Y.one('doc')");
+
+            Assert.areEqual(byId('test-text-value'),
+                    Y.one('doc').one('.test-class #test-text-value')._node,
+                    "Y.one('doc').one('.test-class #test-text-value')");
         },
 
         test_each: function() {
@@ -483,6 +493,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             clone = Y.one('.bar').cloneNode(true);
             Assert.isTrue(clone.hasClass('bar'), "clone.hasClass('bar') (before appending)");
             Y.one('body').appendChild(clone);
+            clone.set('id', 'new-bar');
             Assert.isTrue(clone.test('.bar'), "clone.test('.bar') (after appending)");
 
             Assert.isTrue(
@@ -1188,7 +1199,124 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.clearData();
             Assert.areEqual(undefined, node.getData('baz'),
                 "node.clearData()");
+        },
+
+        test_appendStyle: function() {
+            var html = '<style>body {height:100px}</style>';
+            Y.one('head').append(html);
+            Assert.areEqual('100px', Y.one('body').getStyle('height'),
+                "Y.one('head').append(" + html + ")");
+        },
+
+        test_ancestor: function() {
+            var node = Y.one('#test-table div div').ancestor('td');
+
+            Y.Assert.areEqual(byId('test-td'), node._node,
+               "Y.one('#test-table div').ancestor('td'))"); 
+
+            node = Y.Node.create('<div><div><table><tbody><tr></tr><tr></tr><tr><td><div><div class="inner"></div></div></td></tr></tbody></table></div></div>');
+            var inner = node.one('.inner');
+            inner.ancestor('td');
+        },
+
+        test_nodelistEvent: function() {
+            var nodelist = Y.all('div'),
+                item = nodelist.item(0),
+                evtObj = {
+                mousedown: function(e, foo, bar) {
+                    Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+                    Assert.areEqual('foo', foo, "foo === 'foo'");
+                    Assert.areEqual('bar', bar, "bar === 'bar'");
+                }
+            };
+
+            nodelist.on('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.on(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.on(evtObj, null, null, 'foo', 'bar');
+
+            nodelist.on({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.on({mouseup: function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }});
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+
+            nodelist.after('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.after(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.after(evtObj, null, null, 'foo', 'bar');
+
+            nodelist.after({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.after({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            item.simulate('mousedown');
+            item.simulate('click');
+            item.simulate('mouseup');
+            item.simulate('keydown');
+        },
+
+        test_size: function() {
+            var node = Y.one('#doc'),
+                height = node._node.offsetHeight,
+                width = node._node.offsetWidth;
+
+            node.set('offsetHeight', 1000);
+            node.set('offsetWidth', 800);
+
+            Assert.areEqual(1000, node.get('offsetHeight'),
+                "node.set('offsetHeight')");
+
+            Assert.areEqual(800, node.get('offsetWidth'),
+                "node.set('offsetWidth')");
+
+            node.set('offsetWidth', -100);
+            node.set('offsetHeight', -100);
+
+            Assert.areEqual('0px', node.getStyle('height'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual('0px', node.getStyle('width'),
+                "node.get('offsetWidth')");
+
+            node.setStyle('height', '');
+            node.setStyle('width', '');
+
+            Assert.areEqual(height, node.get('offsetHeight'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual(width, node.get('offsetWidth'),
+                "node.get('offsetWidth')");
+
         }
+
     })); 
 
     Y.Test.Runner.add(suite);

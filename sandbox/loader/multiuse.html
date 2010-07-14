@@ -9,6 +9,7 @@
 
 YUI.add('lib1', function (Y) {
     Y.lib1 = true;
+    Y.replace('blah', 'blah');
 }, '@VERSION@');
 
 YUI({
@@ -24,8 +25,14 @@ YUI({
             fullpath: 'js/lib3.js'
         }
 
-    }
+    }, errorFn: function(msg, e, data) {
+        alert('error: ' + msg + ', ' + data);
+        return true;
+    } 
+    // , throwFail: false
 }).use('lib1', function (Y) {
+
+    Y.replace('boo', 'boo');
 
     Y.use('lib2', function (Y) {
         Y.log("lib2: " + Y.lib2);
@@ -34,6 +41,10 @@ YUI({
     Y.use('lib3', function (Y) {
         Y.log("lib3: " + Y.lib3);
     });
+});
+
+YUI().use(function(Y) {
+    Y.log('successful continue');
 });
 
 </script>

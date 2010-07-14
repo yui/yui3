@@ -3,34 +3,21 @@ function ColumnSeries(config)
 	ColumnSeries.superclass.constructor.apply(this, arguments);
 }
 
-ColumnSeries.name = "columnSeries";
+ColumnSeries.NAME = "columnSeries";
 
 ColumnSeries.ATTRS = {
 	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-		getter: function()
-		{
-			return this._type;
-		}
-	}
+        value: "column"
+    }
 };
 
 Y.extend(ColumnSeries, Y.CartesianSeries, {
 	/**
-	 * Constant used to generate unique id.
+	 * @private
 	 */
-	GUID: "yuicolumnseries",
-	
-    /**
-	 * @private (protected)
-	 */
-	_type: "column",
-
-	drawMarkers: function()
+	drawSeries: function()
 	{
-	    if(this._xcoords.length < 1) 
+	    if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
@@ -48,9 +35,9 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             alphas = style.alpha || [],
             ratios = style.ratios || [],
             rotation = style.rotation || 0,
-            xcoords = this._xcoords,
-            ycoords = this._ycoords,
-            shapeMethod = style.func || "drawCircle",
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -64,6 +51,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             ratio,
             renderer,
             order = this.get("order"),
+            node = Y.Node.one(this._parentNode).get("parentNode"),
             left;
         for(; i < seriesLen; ++i)
         {
@@ -75,7 +63,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             }
         }
         totalWidth = len * seriesWidth;
-        if(totalWidth > this.get("parent").offsetWidth)
+        if(totalWidth > node.offsetWidth)
         {
             ratio = this.width/totalWidth;
             seriesWidth *= ratio;
@@ -87,6 +75,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
         for(i = 0; i < len; ++i)
         {
             top = ycoords[i];
+            h = this._bottomOrigin - top;
             left = xcoords[i] + offset;
             if(borderWidth > 0)
             {
@@ -101,13 +90,12 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
                 graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
             }
             this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.endFill();
+            graphic.end();
         }
  	},
 
     drawMarker: function(graphic, func, left, top, w, h)
     {
-        h = this._bottomOrigin - top;
         graphic.drawRect(left, top, w, h);
     },
 	

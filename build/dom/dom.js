@@ -684,6 +684,8 @@ Y.DOM = {
                 }
             }
         });
+
+        Y.DOM.creators.style = Y.DOM.creators.script;
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -827,6 +829,49 @@ hasClass = Y.DOM.hasClass;
 removeClass = Y.DOM.removeClass;
 addClass = Y.DOM.addClass;
 
+Y.mix(Y.DOM, {
+    /**
+     * Sets the width of the element to the given size, regardless
+     * of box model, border, padding, etc.
+     * @method setWidth
+     * @param {HTMLElement} element The DOM element. 
+     * @param {String|Int} size The pixel height to size to
+     */
+
+    setWidth: function(node, size) {
+        Y.DOM._setSize(node, 'width', size);
+    },
+
+    /**
+     * Sets the height of the element to the given size, regardless
+     * of box model, border, padding, etc.
+     * @method setHeight
+     * @param {HTMLElement} element The DOM element. 
+     * @param {String|Int} size The pixel height to size to
+     */
+
+    setHeight: function(node, size) {
+        Y.DOM._setSize(node, 'height', size);
+    },
+
+    _setSize: function(node, prop, val) {
+        val = (val > 0) ? val : 0;
+        var size = 0;
+
+        node.style[prop] = val + 'px';
+        size = (prop === 'height') ? node.offsetHeight : node.offsetWidth;
+
+        if (size > val) {
+            val = val - (size - val);
+
+            if (val < 0) {
+                val = 0;
+            }
+
+            node.style[prop] = val + 'px';
+        }
+    }
+});
 
 
 }, '@VERSION@' ,{requires:['oop']});
@@ -1338,49 +1383,6 @@ Y.DOM.IE.COMPUTED = IEComputed;
 Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 })(Y);
-Y.mix(Y.DOM, {
-    /**
-     * Sets the width of the element to the given size, regardless
-     * of box model, border, padding, etc.
-     * @method setWidth
-     * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
-     */
-
-    setWidth: function(node, size) {
-        Y.DOM._setSize(node, 'width', size);
-    },
-
-    /**
-     * Sets the height of the element to the given size, regardless
-     * of box model, border, padding, etc.
-     * @method setHeight
-     * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
-     */
-
-    setHeight: function(node, size) {
-        Y.DOM._setSize(node, 'height', size);
-    },
-
-    _getOffsetProp: function(node, prop) {
-        return 'offset' + prop.charAt(0).toUpperCase() + prop.substr(1);
-    },
-
-    _setSize: function(node, prop, val) {
-        var offset;
-
-        Y.DOM.setStyle(node, prop, val + 'px');
-        offset = node[Y.DOM._getOffsetProp(node, prop)];
-        val = val - (offset - val);
-
-        // TODO: handle size less than border/padding (add class?)
-        if (val < 0) {
-            val = 0; // no negative sizes
-        }
-        Y.DOM.setStyle(node, prop, val + 'px');
-    }
-});
 
 
 }, '@VERSION@' ,{requires:['dom-base']});
@@ -1539,8 +1541,11 @@ Y.mix(Y_DOM, {
                             }
 
                         if ((scrollTop || scrollLeft)) {
-                            xy[0] += scrollLeft;
-                            xy[1] += scrollTop;
+                            if (!Y.UA.itouch) {
+                                xy[0] += scrollLeft;
+                                xy[1] += scrollTop;
+                            }
+                            
                         }
                     } else { // default to current offsets
                         xy = Y_DOM._getOffset(node);
@@ -2324,6 +2329,7 @@ var PARENT_NODE = 'parentNode',
                 tokens = Selector._tokenize(selector),
                 token = tokens[tokens.length - 1],
                 rootDoc = Y.DOM._getDoc(root),
+                child,
                 id,
                 className,
                 tagName;
@@ -2344,16 +2350,28 @@ var PARENT_NODE = 'parentNode',
                 className = token.className;
                 tagName = token.tagName || '*';
 
-                // try ID first
-                if (id) {
-                    nodes = Y.DOM.allById(id, root);
-                // try className
-                } else if (className) {
-                    nodes = root.getElementsByClassName(className);
-                } else { // default to tagName
-                    nodes = root.getElementsByTagName(tagName);
-                }
+                if (root.getElementsByTagName) { // non-IE lacks DOM api on doc frags
+                    // try ID first, unless no root.all && root not in document
+                    // (root.all works off document, but not getElementById)
+                    // TODO: move to allById?
+                    if (id && (root.all || (root.nodeType === 9 || Y.DOM.inDoc(root)))) {
+                        nodes = Y.DOM.allById(id, root);
+                    // try className
+                    } else if (className) {
+                        nodes = root.getElementsByClassName(className);
+                    } else { // default to tagName
+                        nodes = root.getElementsByTagName(tagName);
+                    }
 
+                } else { // brute getElementsByTagName('*')
+                    child = root.firstChild;
+                    while (child) {
+                        if (child.tagName) { // only collect HTMLElements
+                            nodes.push(child);
+                        }
+                        child = child.nextSilbing || child.firstChild;
+                    }
+                }
                 if (nodes.length) {
                     ret = Selector._filterNodes(nodes, tokens, firstOnly);
                 }

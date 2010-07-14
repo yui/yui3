@@ -47,414 +47,196 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Define new DOM events that can be subscribed from any Node.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @module event</span>
-<span class="cm"> * @submodule event-synthetic</span>
-<span class="cm"> */</span>
-<span class="kd">var</span> <span class="nx">Evt</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
-    <span class="nx">DOMWrappers</span> <span class="o">=</span> <span class="nx">Evt</span><span class="p">.</span><span class="nx">dom_wrappers</span><span class="p">,</span>
-    <span class="nx">DOMMap</span>      <span class="o">=</span> <span class="nx">Evt</span><span class="p">.</span><span class="nx">dom_map</span><span class="p">,</span>
-    <span class="nx">EvtPlugins</span>  <span class="o">=</span> <span class="nx">Evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">,</span>
-    <span class="nx">DOMEvents</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">,</span>
-    <span class="nx">isFunction</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">;</span>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">DOMMap</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">dom_map</span><span class="p">,</span>
+    <span class="nx">toArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+    <span class="nx">noop</span>    <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
 
-<span class="cm">/*</span>
-<span class="cm"> * Adds the following method to CustomEvent&#39;s prototype.</span>
-<span class="cm"> */</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * Returns the first subscriber that matches the provided function and/or</span>
-<span class="cm"> * context.  Both function and context parameters are optional.  Omitting</span>
-<span class="cm"> * either will return the first match on the other parameter, and omitting both</span>
-<span class="cm"> * will return the first subscriber.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @method getSubscriber</span>
-<span class="cm"> * @param fn {Function} Optional. The subscribed callback function</span>
-<span class="cm"> * @param ctx {Object} Optional.  The context override for the callback</span>
-<span class="cm"> * @return {Subscriber} or null</span>
-<span class="cm"> * @for CustomEvent</span>
-<span class="cm"> * @since 3.1.0</span>
-<span class="cm"> * @in event-synthetic</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getSubscriber</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSubs</span><span class="p">(),</span> <span class="c1">// on, after subs and their *:type siblings</span>
-        <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
-
-    <span class="k">for</span> <span class="p">(</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">sub</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">id</span><span class="p">];</span>
-                <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">ctx</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">===</span> <span class="nx">ctx</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">sub</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * &lt;p&gt;Wrapper class for the integration of new events into the YUI event</span>
-<span class="cm"> * infrastructure.  Don&#39;t instantiate this object directly, use</span>
-<span class="cm"> * &lt;code&gt;Y.Event.define( type, config )&lt;/code&gt;.&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;The configuration object must include the event &lt;code&gt;type&lt;/code&gt;, and should include implementation methods for &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt;.  This is the full list of configuration properties:&lt;/p&gt;</span>
-<span class="cm"> * &lt;dl&gt;</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;type&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;REQUIRED.  The name of the synthetic event.  What goes</span>
-<span class="cm"> *       &lt;code&gt;node.on(&lt;strong&gt;HERE&lt;/strong&gt;, callback )&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;on&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
-<span class="cm"> *       implementation logic for subscription.  Any special setup you need to</span>
-<span class="cm"> *       do to create the environment for the event being fired.  E.g. native</span>
-<span class="cm"> *       DOM event subscriptions.  Store subscription related objects and</span>
-<span class="cm"> *       information on the &lt;code&gt;subscription&lt;/code&gt; object.  When the</span>
-<span class="cm"> *       criteria have been met to fire the synthetic event, call</span>
-<span class="cm"> *       &lt;code&gt;fireEvent.fire()&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;detach&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
-<span class="cm"> *       implementation logic for cleaning up a detached subscription. E.g.</span>
-<span class="cm"> *       detach any DOM subscriptions done in &lt;code&gt;on&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;publishConfig&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;(Object) The configuration object that will be used to instantiate</span>
-<span class="cm"> *       the underlying CustomEvent.  By default, the event is defined with</span>
-<span class="cm"> *       &lt;code&gt;emitFacade: true&lt;/code&gt; so subscribers will receive a DOM-like</span>
-<span class="cm"> *       event object.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;processArgs&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( argArray )&lt;/code&gt;  Optional method to extract any</span>
-<span class="cm"> *       additional arguments from the subscription signature.  Using this</span>
-<span class="cm"> *       allows &lt;code&gt;on&lt;/code&gt; signatures like &lt;code&gt;node.on(</span>
-<span class="cm"> *       &amp;quot;hover&amp;quot;, overCallback, outCallback )&lt;/code&gt;.  Be sure that</span>
-<span class="cm"> *       the args passed in is pruned of any additional arguments using, for</span>
-<span class="cm"> *       example, &lt;code&gt;argArray.splice(2,1);&lt;/code&gt;.  Data returned from the</span>
-<span class="cm"> *       function will be stored on the &lt;code&gt;subscription&lt;/code&gt; object passed</span>
-<span class="cm"> *       to &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt; under</span>
-<span class="cm"> *       &lt;code&gt;subscription._extra&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *   &lt;dt&gt;</span>
-<span class="cm"> * &lt;/dl&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * @class SyntheticEvent</span>
-<span class="cm"> * @constructor</span>
-<span class="cm"> * @param cfg {Object} Implementation pieces and configuration</span>
-<span class="cm"> * @since 3.1.0</span>
-<span class="cm"> * @in event-synthetic</span>
-<span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">SyntheticEvent</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">(</span><span class="nx">cfg</span><span class="p">);</span>
+<span class="kd">function</span> <span class="nx">SyntheticEvent</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="cm">/**</span>
-<span class="cm">     * Initializes the synthetic event.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _init</span>
-<span class="cm">     * @param cfg {Object} The configuration object passed to the constructor</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">impl</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_publishConfig</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">publishConfig</span> <span class="o">||</span> <span class="p">{</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
+    <span class="nx">constructor</span><span class="o">:</span> <span class="nx">SyntheticEvent</span><span class="p">,</span>
+
+    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;emitFacade&#39;</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Initial receiver of the event subscription.  Passes off control to the</span>
-<span class="cm">     * implementation &lt;code&gt;on&lt;/code&gt; specified in the constructor</span>
-<span class="cm">     * configuration after setting up the boiler plate code necessary for clean</span>
-<span class="cm">     * detaching and destruction in the Event infrastructure.  Note that the</span>
-<span class="cm">     * implementation function specified in the configuration will be called</span>
-<span class="cm">     * once for each node passed in &lt;code&gt;el&lt;/code&gt;, and each will be a Node</span>
-<span class="cm">     * instance.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method on</span>
-<span class="cm">     * @param type {String} the synthetic event name</span>
-<span class="cm">     * @param fn {Function} the callback function</span>
-<span class="cm">     * @param el {HTMLElement | Node | HTMLElement[] | NodeList} </span>
-<span class="cm">     *                          subscription target(s)</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">true</span><span class="p">),</span>
-            <span class="nx">self</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span> <span class="c1">// event system calls on.apply(Y, ...)</span>
-            <span class="nx">ce</span><span class="p">,</span>       <span class="c1">// Custom event published on node</span>
-            <span class="nx">node</span><span class="p">,</span>     <span class="c1">// Node wrapper for el</span>
-            <span class="nx">payload</span><span class="p">,</span>  <span class="c1">// extra info extracted from the args by implementation</span>
-            <span class="nx">key</span><span class="p">,</span> <span class="nx">domGuid</span><span class="p">,</span> <span class="c1">// Ids for registering as a DOM event</span>
-            <span class="nx">_handles</span><span class="p">,</span> <span class="c1">// Collection of detach handles for array subs</span>
-            <span class="nx">handle</span><span class="p">;</span>   <span class="c1">// The detach handle for this subscription</span>
+    <span class="nx">init</span>       <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">on</span>         <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">detach</span>     <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">destroy</span>    <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">processArgs</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">filterSubs</span> <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="c1">//allowDups  : false,</span>
 
-        <span class="c1">// Y.on normalizes Nodes to DOM nodes and NodeLists to an array of DOM</span>
-        <span class="c1">// nodes.  Other possible value is a selector string.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+    <span class="nx">_getEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
+            <span class="nx">yuid</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
 
-            <span class="c1">// If not found by query, trigger deferral.</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">el</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
-                <span class="p">});</span>
-            <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">yuid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">);</span>
+            <span class="nx">key</span>  <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">yuid</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+
+            <span class="nx">ce</span>         <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">);</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">el</span>      <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">key</span>     <span class="o">=</span> <span class="nx">key</span><span class="p">;</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">domkey</span>  <span class="o">=</span> <span class="nx">yuid</span><span class="p">;</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">fn</span>      <span class="o">=</span> <span class="nx">noop</span><span class="p">;</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+            <span class="c1">// Add support for notifying only a subset of subscribers</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterSubs</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="s1">&#39;_procSubs&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span><span class="s1">&#39;detach&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+
+            <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}))[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="nx">ce</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">handles</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">query</span>   <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">els</span>     <span class="o">=</span> <span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">:</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+            <span class="nx">handle</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">els</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">query</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="c1">// Array of elements get collection handle</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">_handles</span> <span class="o">=</span> <span class="p">[];</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span><span class="p">;</span>
-                <span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">));</span>
-            <span class="p">});</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">els</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
+                <span class="nx">ce</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getEvent</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
 
-            <span class="c1">// EventHandle can be constructed with an array of other handles</span>
-            <span class="nx">handle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">_handles</span><span class="p">);</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_subscribe</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">(),</span> <span class="nx">node</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="nx">handles</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span>
+            <span class="nx">handles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span>
+            <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">handles</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_subscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">extra</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">),</span>
+            <span class="nx">abort</span><span class="p">,</span>
+            <span class="nx">handle</span><span class="p">;</span>
+
+        <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">allowDups</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">abort</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">findDup</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="nx">ce</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">args</span><span class="p">));</span>
         <span class="p">}</span>
 
-        <span class="c1">// Single element subscription</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// Allow the implementation to modify and/or extract extra data</span>
-            <span class="c1">// from the subscription args</span>
-            <span class="nx">payload</span> <span class="o">=</span> <span class="nx">isFunction</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">)</span> <span class="o">?</span>
-                <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_processArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">abort</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span> <span class="o">=</span> <span class="nx">extra</span><span class="p">;</span>
 
-            <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span> <span class="c1">// don&#39;t need type from here on out</span>
-            <span class="nx">node</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
-
-            <span class="c1">// Get or publish a custom event on the Node with the synthetic</span>
-            <span class="c1">// event&#39;s name.</span>
-            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_yuievt</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">ce</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_publishConfig</span><span class="p">);</span>
-
-                <span class="c1">// node.detach() with type missing doesn&#39;t reach adapter fork</span>
-                <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">self</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
-                <span class="p">};</span>
-
-                <span class="c1">// Decorate and register like a DOM ce to support purgeElement</span>
-                <span class="nx">domGuid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
-                <span class="nx">key</span> <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-
-                <span class="c1">// This will route through Y.Env.remove - the wrapper for</span>
-                <span class="c1">// removeEventListener/detachEvent.  To avoid cross browser</span>
-                <span class="c1">// issues, a real event name and dummy function are used to</span>
-                <span class="c1">// make the DOM detach a noop</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="p">{</span>
-                    <span class="nx">el</span>     <span class="o">:</span> <span class="nx">el</span><span class="p">,</span>
-                    <span class="nx">key</span>    <span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
-                    <span class="nx">domkey</span> <span class="o">:</span> <span class="nx">domGuid</span><span class="p">,</span>
-                    <span class="nx">fn</span>     <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
-                    <span class="nx">capture</span><span class="o">:</span> <span class="kc">false</span>
-                <span class="p">});</span>
-
-                <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">domGuid</span><span class="p">]</span>  <span class="o">=</span> <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">domGuid</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
-                <span class="nx">DOMWrappers</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">domGuid</span><span class="p">][</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+                <span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="c1">// Disallow duplicates.  </span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">.</span><span class="nx">getSubscriber</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
-                <span class="c1">// Subscribe to the hosted custom event</span>
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-
-                <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span> <span class="o">=</span> <span class="nx">payload</span><span class="p">;</span>
-
-                <span class="c1">// Override the handle&#39;s detach method to pass through to the</span>
-                <span class="c1">// the this instance&#39;s detach method</span>
-                <span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                    <span class="nx">self</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">);</span>
-                <span class="p">};</span>
-
-                <span class="c1">// Pass control to the implementation code</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">on</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
         <span class="p">}</span>
-
+        
         <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Initial receiver of the event detach.  Passes off control to the</span>
-<span class="cm">     * implementation &lt;code&gt;detach&lt;/code&gt; specified in the constructor</span>
-<span class="cm">     * configuration after doing the necessary infrastructure cleanup.</span>
-<span class="cm">     * Note that the implementation function specified in the configuration</span>
-<span class="cm">     * will be called once for each node passed in &lt;code&gt;el&lt;/code&gt;, and each</span>
-<span class="cm">     * will be a Node instance.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method detach</span>
-<span class="cm">     * @param type { String } the synthetic event name</span>
-<span class="cm">     * @param fn {Function} the callback function</span>
-<span class="cm">     * @param el {HTMLElement | Node | HTMLElement[] | NodeList}</span>
-<span class="cm">     *                      subscription target(s)</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
-            <span class="nx">self</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span>
-            <span class="nx">ret</span>  <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="c1">// To aggregate return values from detach multiple</span>
-            <span class="nx">ce</span><span class="p">,</span>       <span class="c1">// The custom event published on the Node</span>
-            <span class="nx">sub</span><span class="p">;</span>      <span class="c1">// The subscription tied to this fn and el</span>
+    <span class="nx">findDup</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">subs</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
 
-        <span class="c1">// Detach doesn&#39;t normalize Node or NodeList</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">el</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">sub</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">fn</span>      <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                    <span class="p">(</span><span class="o">!</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">===</span> <span class="nx">context</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// Iterate detach by looping back for each item</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span><span class="p">;</span>
-                    <span class="nx">ret</span> <span class="o">+=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-                <span class="p">});</span>
-
-                <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="c1">// Single element subscription detach.  Wrap in a Node because</span>
-            <span class="c1">// that&#39;s how the subscription/context is enabled</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
-
-            <span class="c1">// Get the custom event named for the synthetic event from the Node.</span>
-            <span class="c1">// Node uses Y.augment(Node, EventTarget), so _yuievt won&#39;t be</span>
-            <span class="c1">// present until an API method is called.</span>
-            <span class="c1">// @TODO: do I need to do the object default?</span>
-            <span class="nx">ce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">_yuievt</span> <span class="o">||</span> <span class="p">{</span><span class="nx">events</span><span class="o">:</span><span class="p">{}}).</span><span class="nx">events</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
-
-            <span class="c1">// Get the Subscriber object for this fn and context</span>
-            <span class="nx">sub</span> <span class="o">=</span> <span class="nx">ce</span> <span class="o">?</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">getSubscriber</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">// detach called without a fn = detach all subs</span>
-                <span class="c1">// @TODO: this and the generic return should return an int</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">while</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
-                        <span class="nx">ret</span> <span class="o">+=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-                        <span class="nx">sub</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">getSubscriber</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">);</span>
-                    <span class="p">}</span>
-
-                    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
-                <span class="p">}</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">detach</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="c1">// Standard detach cleanup</span>
-                <span class="nx">ce</span><span class="p">.</span><span class="nx">_delete</span><span class="p">(</span><span class="nx">sub</span><span class="p">);</span>
-
-                <span class="nx">ret</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="p">}</span>
-
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Stub implementation.  Specify this in the configuration object passed to </span>
-<span class="cm">     * the constructor (rather, passed to &lt;code&gt;Y.Event.define&lt;/code&gt;).</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _processArgs</span>
-<span class="cm">     * @param args {Array} Array of arguments passed to &lt;code&gt;on&lt;/code&gt;</span>
-<span class="cm">     * @return {MIXED} null by default, but override to return useful data</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_processArgs</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="nx">unsubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">fn</span>  <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="nx">els</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">:</span>
+                    <span class="nx">toArray</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nx">els</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">els</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
+                    <span class="nx">ce</span>   <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_unsubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ce</span>   <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ce</span><span class="p">,</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">.</span><span class="nx">hasSubs</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span> <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">publish</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">}</span>
 
-<span class="cm">/*</span>
-<span class="cm"> * Static method added to &lt;code&gt;Y.Event&lt;/code&gt;</span>
-<span class="cm"> */</span>
+    <span class="kd">var</span> <span class="nx">eventDef</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="o">?</span>
+                        <span class="nx">type</span> <span class="o">:</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span> <span class="p">},</span> <span class="nx">config</span><span class="p">),</span>
+        <span class="nx">Impl</span><span class="p">,</span> <span class="nx">synth</span><span class="p">;</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * &lt;p&gt;Static method to register a synthetic event definition and implementation</span>
-<span class="cm"> * in the DOM Event subsystem.&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;Pass either a string &lt;code&gt;type&lt;/code&gt; and configuration object as</span>
-<span class="cm"> * separate parameters or a configuration object that includes a</span>
-<span class="cm"> * &lt;code&gt;type&lt;/code&gt; property as a single parameter.&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;The configuration object should include implementation methods for</span>
-<span class="cm"> * &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt;.  This is the full list of</span>
-<span class="cm"> * configuration properties:&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * &lt;dl&gt;</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;type&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;Required if using the &lt;code&gt;Y.Event.define( config )&lt;/code&gt;</span>
-<span class="cm"> *       signature.  The name of the synthetic event.  What goes</span>
-<span class="cm"> *       &lt;code&gt;node.on(&lt;strong&gt;HERE&lt;/strong&gt;, callback )&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;on&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
-<span class="cm"> *       implementation logic for subscription.  Any special setup you need to</span>
-<span class="cm"> *       do to create the environment for the event being fired.  E.g. native</span>
-<span class="cm"> *       DOM event subscriptions.  Store subscription related objects and</span>
-<span class="cm"> *       information on the &lt;code&gt;subscription&lt;/code&gt; object.  When the</span>
-<span class="cm"> *       criteria have been met to fire the synthetic event, call</span>
-<span class="cm"> *       &lt;code&gt;fireEvent.fire()&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;detach&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
-<span class="cm"> *       implementation logic for cleaning up a detached subscription. E.g.</span>
-<span class="cm"> *       detach any DOM subscriptions done in &lt;code&gt;on&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;publishConfig&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;(Object) The configuration object that will be used to instantiate</span>
-<span class="cm"> *       the underlying CustomEvent.  By default, the event is defined with</span>
-<span class="cm"> *       &lt;code&gt;emitFacade: true&lt;/code&gt; so subscribers will receive a DOM-like</span>
-<span class="cm"> *       event object.&lt;/dd&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> *   &lt;dt&gt;&lt;code&gt;processArgs&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( argArray )&lt;/code&gt;  Optional method to extract any</span>
-<span class="cm"> *       additional arguments from the subscription signature.  Using this</span>
-<span class="cm"> *       allows &lt;code&gt;on&lt;/code&gt; signatures like &lt;code&gt;node.on(</span>
-<span class="cm"> *       &amp;quot;hover&amp;quot;, overCallback, outCallback )&lt;/code&gt;.  Be sure that</span>
-<span class="cm"> *       the args passed in is pruned of any additional arguments using, for</span>
-<span class="cm"> *       example, &lt;code&gt;argArray.splice(2,1);&lt;/code&gt;.  Data returned from the</span>
-<span class="cm"> *       function will be stored on the &lt;code&gt;subscription&lt;/code&gt; object passed</span>
-<span class="cm"> *       to &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt; under</span>
-<span class="cm"> *       &lt;code&gt;subscription._extra&lt;/code&gt;.&lt;/dd&gt;</span>
-<span class="cm"> *   &lt;dt&gt;</span>
-<span class="cm"> * &lt;/dl&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * @method Event.define</span>
-<span class="cm"> * @param type {String} Name given to the synthetic event</span>
-<span class="cm"> * @param cfg {Object} configuration object.  Pass this as the first</span>
-<span class="cm"> *                  parameter if it includes the &lt;code&gt;type&lt;/code&gt; property.</span>
-<span class="cm"> * @static</span>
-<span class="cm"> * @for Event</span>
-<span class="cm"> * @since 3.1.0</span>
-<span class="cm"> * @in event-synthetic</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">?</span>
-                <span class="nx">type</span> <span class="o">:</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">||</span> <span class="p">{}),</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span> <span class="p">});</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">[</span><span class="nx">eventDef</span><span class="p">.</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">Impl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Impl</span><span class="p">,</span> <span class="nx">SyntheticEvent</span><span class="p">,</span> <span class="nx">eventDef</span><span class="p">);</span>
+        <span class="nx">synth</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Impl</span><span class="p">();</span>
 
-    <span class="c1">// no redefinition allowed</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
-        <span class="nx">EvtPlugins</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+            <span class="p">},</span>
+
+            <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
     <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
@@ -485,6 +267,7 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class="selected"><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
@@ -513,6 +296,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -523,6 +307,7 @@
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>
@@ -532,7 +317,6 @@
                         <ul class="content">
                                 <li class=""><a href="DOMEventFacade.html" title="DOMEventFacade">DOMEventFacade</a></li>
                                 <li class=""><a href="Event.html" title="Event">Event</a></li>
-                                <li class=""><a href="SyntheticEvent.html" title="SyntheticEvent">SyntheticEvent</a></li>
                         </ul>
                     </div>
 
@@ -542,6 +326,7 @@
                                 <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
                                 <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
+                                <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
                                 <li class=""><a href="event-facade-dom.js.html" title="event-facade-dom.js">event-facade-dom.js</a></li>
                                 <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
                                 <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
@@ -568,7 +353,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "detach", "url": "SyntheticEvent.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "Event.define", "url": "Event.html#method_Event.define", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_init", "url": "SyntheticEvent.html#method__init", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "on", "url": "SyntheticEvent.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_processArgs", "url": "SyntheticEvent.html#method__processArgs", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
 </script>
 </body>
 </html>

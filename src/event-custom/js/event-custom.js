@@ -434,9 +434,11 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
-        this.host._monitor('attach', this.type, {
-            args: arguments
-        });
+        if (this.host) {
+            this.host._monitor('attach', this.type, {
+                args: arguments
+            });
+        }
         return this._on(fn, context, a, true);
     },
 
@@ -653,16 +655,27 @@ Y.CustomEvent.prototype = {
      */
     _delete: function(s) {
         if (s) {
-            delete s.fn;
-            delete s.context;
-            delete this.subscribers[s.id];
-            delete this.afters[s.id];
+            if (this.subscribers[s.id]) {
+                delete this.subscribers[s.id];
+                this.subCount--;
+            }
+            if (this.afters[s.id]) {
+                delete this.afters[s.id];
+                this.afterCount--;
+            }
         }
 
-        this.host._monitor('detach', this.type, {
-            ce: this, 
-            sub: s
-        });
+        if (this.host) {
+            this.host._monitor('detach', this.type, {
+                ce: this, 
+                sub: s
+            });
+        }
+
+        if (s) {
+            delete s.fn;
+            delete s.context;
+        }
     }
 };
 

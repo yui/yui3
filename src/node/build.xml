@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>DOM - Build All Modules</description>
+    <description>Node - Build All Modules</description>
+
+    <macrodef name="build-node">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
 
     <target name="local">
-	<ant antfile="build.node.xml" target="local" />
-	<ant antfile="build.shim.xml" target="local" />
-	<ant antfile="build.align.xml" target="local" />
-	<ant antfile="build.event-html5.xml" target="local" />
+        <build-node target="local"/>
     </target>
-
     <target name="deploy">
-	<ant antfile="build.node.xml" target="deploy" />
-	<ant antfile="build.shim.xml" target="deploy" />
-	<ant antfile="build.align.xml" target="deploy" />
-	<ant antfile="build.event-html5.xml" target="deploy" />
+        <build-node target="deploy"/>
     </target>
-
     <target name="all">
-	<ant antfile="build.node.xml" target="all" />
-	<ant antfile="build.shim.xml" target="all" />
-	<ant antfile="build.align.xml" target="all" />
-	<ant antfile="build.event-html5.xml" target="all" />
+        <build-node target="all"/>
+    </target>
+    <target name="clean">
+        <build-node target="clean"/>
     </target>
 
 </project>

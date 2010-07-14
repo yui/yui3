@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.05.12-19-08',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.07-19-52',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '3',
@@ -42,7 +42,8 @@ groups.gallery = {
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
-    patterns:  { 'gallery-': {} }
+    patterns:  { 'gallery-': {},
+                 'gallerycss-': { type: 'css' } }
 };
 
 groups.yui2 = {
@@ -159,6 +160,9 @@ YUI.Env[VERSION] = META;
  *  callback executed each time a script or css file is loaded</li>
  *  <li>modules:
  *  A list of module definitions.  See Loader.addModule for the supported module metadata</li>
+ *  <li>groups:
+ *  A list of group definitions.  Each group can contain specific definitions for base, comboBase,
+ *  combine, and accepts a list of modules.  See above for the description of these properties.</li>
  * </ul>
  */
 
@@ -485,21 +489,28 @@ Y.Loader = function(o) {
     
     self._internal = true;
 
-    // YObject.each(defaults, function(k, v) {
-    //     self.addModule(v, k);
-    // });
+    // for (i in defaults) {
+    //     if (defaults.hasOwnProperty(i)) {
+    //         self.addModule(defaults[i], i);
+    //     }
+    // }
+    //
+    //
+    // for (i in onPage) {
+    //     if ((!(i in self.moduleInfo)) && onPage[i].details) {
+    //         self.addModule(onPage[i].details, i);
+    //     }
+    // }
 
-    for (i in defaults) {
-        if (defaults.hasOwnProperty(i)) {
-            self.addModule(defaults[i], i);
-        }
-    }
+    YObject.each(defaults, function(v, k) {
+        self.addModule(v, k);
+    });
 
-    for (i in onPage) {
-        if ((!(i in self.moduleInfo)) && onPage[i].details) {
-            self.addModule(onPage[i].details, i);
+    YObject.each(onPage, function(v, k) {
+        if ((!(k in self.moduleInfo)) && ('details' in v)) {
+            self.addModule(v.details, k);
         }
-    }
+    });
 
     self._internal = false;
 
@@ -681,6 +692,8 @@ Y.Loader.prototype = {
                     path:  (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
                     ext:   ext
                 });
+
+                // console.log(info[name]);
             }
         }
 
@@ -737,6 +750,8 @@ Y.Loader.prototype = {
      *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
      *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
      *     <dt>submodules:</dt> <dd>a hash of submodules</dd>
+     *     <dt>group:</dt>      <dd>The group the module belongs to -- this is set automatically when
+     *                          it is added as part of a group configuration.</dd>
      *     <dt>lang:</dt>       <dd>array of BCP 47 language tags of
      *                              languages for which this module has localized resource bundles,
      *                              e.g., ["en-GB","zh-Hans-CN"]</dd>
@@ -748,7 +763,6 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes
      */
     addModule: function(o, name) {
-
 
         name = name || o.name;
         o.name = name;
@@ -897,7 +911,7 @@ Y.Loader.prototype = {
             }
         }
 
-        this.dirty = true;
+        // this.dirty = true;
 
         if (o.configFn) {
             ret = o.configFn(o);
@@ -1127,13 +1141,6 @@ Y.Loader.prototype = {
 
                 // Create lang pack modules
                 if (m && m.lang && m.lang.length) {
-                    // langs = YArray(m.lang);
-                    // for (i=0; i<langs.length; i=i+1) {
-                    //     lang = langs[i];
-                    //     packName = this.getLangPackName(lang, name);
-                    //     this._addLangPack(lang, m, packName);
-                    // }
-
                     // Setup root package if the module has lang defined, 
                     // it needs to provide a root language pack
                     packName = this.getLangPackName(ROOT_LANG, name);
@@ -1220,7 +1227,7 @@ Y.Loader.prototype = {
             return null;
         }
 
-        var p, type, found, pname, 
+        var p, found, pname, 
             m = this.moduleInfo[mname], 
             patterns = this.patterns;
 
@@ -1230,7 +1237,6 @@ Y.Loader.prototype = {
             for (pname in patterns) {
                 if (patterns.hasOwnProperty(pname)) {
                     p = patterns[pname];
-                    type = p.type;
 
                     // use the metadata supplied for the pattern
                     // as the module definition.
@@ -1269,7 +1275,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // remove if already loaded
-                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m && m.type != type)) { 
+                if ((this.loaded[i] && !this.forceMap[i] && !this.ignoreRegistered) || (type && m && m.type != type)) { 
                     delete r[i];
                 // remove anything this module supersedes
                 } else {
@@ -1295,7 +1301,6 @@ Y.Loader.prototype = {
             onEnd.call(this.context, {
                 msg: msg,
                 data: this.data,
-                // data: this.sorted,
                 success: success
             });
         }
@@ -1308,7 +1313,6 @@ Y.Loader.prototype = {
             delete this.inserted[k];
         }, this);
         this.skipped = {};
-        // Y.mix(this.loaded, this.inserted);
         fn = this.onSuccess;
         if (fn) {
             fn.call(this.context, {
@@ -1501,7 +1505,6 @@ Y.Loader.prototype = {
                 self._insert(null, null, JS);
             };
 
-            // _queue.running = false;
             this._insert(null, null, CSS);
 
             return;
@@ -2029,9 +2032,19 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base", 
+                    "json"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -2190,8 +2203,7 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -2418,7 +2430,9 @@ YUI.Env[Y.version].modules = {
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base"
+                    "dd-ddm-base", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-drop": {
@@ -2554,6 +2568,11 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "node-base"
                 ]
+            }, 
+            "event-touch": {
+                "requires": [
+                    "node-base"
+                ]
             }
         }, 
         "submodules": {
@@ -2610,6 +2629,24 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
+    "event-gestures": {
+        "submodules": {
+            "event-flick": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }, 
+            "event-move": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }
+        }
+    }, 
     "event-simulate": {
         "requires": [
             "event-base"
@@ -2618,11 +2655,17 @@ YUI.Env[Y.version].modules = {
     "history": {
         "submodules": {
             "history-base": {
+                "after": [
+                    "history-deprecated"
+                ], 
                 "requires": [
                     "event-custom-complex"
                 ]
             }, 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ], 
                 "requires": [
                     "event-synthetic", 
                     "history-base", 
@@ -2633,6 +2676,13 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "history-base", 
                     "history-hash", 
+                    "node-base"
+                ]
+            }, 
+            "history-html5": {
+                "requires": [
+                    "event-base", 
+                    "history-base", 
                     "node-base"
                 ]
             }
@@ -2703,6 +2753,21 @@ YUI.Env[Y.version].modules = {
             "json-stringify": {
                 "requires": [
                     "yui-base"
+                ]
+            }
+        }
+    }, 
+    "jsonp": {
+        "submodules": {
+            "jsonp-base": {
+                "requires": [
+                    "get", 
+                    "oop"
+                ]
+            }, 
+            "jsonp-url": {
+                "requires": [
+                    "jsonp-base"
                 ]
             }
         }
@@ -2969,12 +3034,9 @@ YUI.Env[Y.version].modules = {
         "skinnable": true
     }, 
     "value-change": {
-        "optional": [
-            "event-custom-complex"
-        ], 
         "requires": [
-            "node-base", 
-            "event-focus"
+            "event-focus", 
+            "event-synthetic"
         ]
     }, 
     "widget": {
@@ -3029,6 +3091,11 @@ YUI.Env[Y.version].modules = {
         "path": "widget/widget-locale-min.js", 
         "requires": [
             "widget-base"
+        ]
+    }, 
+    "yql": {
+        "requires": [
+            "jsonp"
         ]
     }, 
     "yui": {

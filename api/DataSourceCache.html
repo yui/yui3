@@ -53,6 +53,15 @@
                            - extends <a href="Cache.html" title="Cache">Cache</a>
                         </span>
 
+                            <span class="extends" rel="yui:extends">
+                          - uses 
+                            
+                                <span rel="extend" resource="Plugin.Base, DataSourceCachePlugin.html">
+                                <a href="Plugin.Base, DataSourceCachePlugin.html" property="yui:name" title="Plugin.Base, DataSourceCachePlugin">Plugin.Base, DataSourceCachePlugin</a>
+                                </span>
+                            
+                            
+                        </span>
                     </h2>
                     <!-- class tree goes here -->
                     
@@ -60,7 +69,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Adds cacheability to the DataSource Utility.
+                        DataSource plugin adds cache functionality.
                     </div>
 
                     
@@ -127,18 +136,6 @@ references the plugin instance.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                            <h4>Properties inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                            <div class="content" rel="yui:properties">
-                                <code>
-                                    
-                                        <span rel="yui:property" resource="Plugin.Base.html#property__handles">
-                                        <a class="private" href="Plugin.Base.html#property__handles" property="yui:name" title="_handles">_handles</a>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
                         <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
                             <h4>Properties inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
                             <div class="content" rel="yui:properties">
@@ -151,346 +148,8 @@ references the plugin instance.
                     </div>
 
                     <div rel="yui:methods" resource="#methods">
-                        <div class="section method details">
-                            <h3 id="methods">Methods</h3>
-                            <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__beforeDefRequestFn">
-                                    <h4>
-                                        <a name="method__beforeDefRequestFn">_beforeDefRequestFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_beforeDefRequestFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            First look for cached response, then send request to live data.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object.</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-</dl></span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__beforeDefResponseFn">
-                                    <h4>
-                                        <a name="method__beforeDefResponseFn">_beforeDefResponseFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_beforeDefResponseFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Adds data to cache before returning data.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-<dt>response (Object)</dt> <dd>Normalized response object with the following properties:
-<dl>
-<dt>cached (Object)</dt> <dd>True when response is cached.</dd>
-<dt>results (Object)</dt> <dd>Parsed results.</dd>
-<dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-<dt>error (Object)</dt> <dd>Error object.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-</dl></span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method_initializer">
-                                    <h4>
-                                        <a name="method_initializer">initializer</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">initializer</strong>
-                                           (
-                                                
-                                                        
-                                                         config
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Internal init() handler.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">config</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Config object.</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
                         <div rel="yui:inheritance">                    
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
-                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
-                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
-                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
-                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                                <h4>Methods inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostEvent">                                        
-                                            <a class="" href="Plugin.Base.html#method_afterHostEvent" property="yui:name" title="afterHostEvent">afterHostEvent</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostMethod">                                        
-                                            <a class="" href="Plugin.Base.html#method_afterHostMethod" property="yui:name" title="afterHostMethod">afterHostMethod</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_beforeHostMethod">                                        
-                                            <a class="" href="Plugin.Base.html#method_beforeHostMethod" property="yui:name" title="beforeHostMethod">beforeHostMethod</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_destructor">                                        
-                                            <a class="" href="Plugin.Base.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_doAfter">                                        
-                                            <a class="" href="Plugin.Base.html#method_doAfter" property="yui:name" title="doAfter">doAfter</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_doBefore">                                        
-                                            <a class="" href="Plugin.Base.html#method_doBefore" property="yui:name" title="doBefore">doBefore</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_initializer">                                        
-                                            <a class="" href="Plugin.Base.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_onHostEvent">                                        
-                                            <a class="" href="Plugin.Base.html#method_onHostEvent" property="yui:name" title="onHostEvent">onHostEvent</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
-                                <h4>Methods inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="Attribute.html#method__addAttrs">                                        
-                                            <a class="private" href="Attribute.html#method__addAttrs" property="yui:name" title="_addAttrs">_addAttrs</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__addLazyAttr">                                        
-                                            <a class="private" href="Attribute.html#method__addLazyAttr" property="yui:name" title="_addLazyAttr">_addLazyAttr</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__defAttrChangeFn">                                        
-                                            <a class="private" href="Attribute.html#method__defAttrChangeFn" property="yui:name" title="_defAttrChangeFn">_defAttrChangeFn</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__fireAttrChange">                                        
-                                            <a class="private" href="Attribute.html#method__fireAttrChange" property="yui:name" title="_fireAttrChange">_fireAttrChange</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__getAttr">                                        
-                                            <a class="protected" href="Attribute.html#method__getAttr" property="yui:name" title="_getAttr">_getAttr</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__getAttrInitVal">                                        
-                                            <a class="private" href="Attribute.html#method__getAttrInitVal" property="yui:name" title="_getAttrInitVal">_getAttrInitVal</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__getAttrs">                                        
-                                            <a class="protected" href="Attribute.html#method__getAttrs" property="yui:name" title="_getAttrs">_getAttrs</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__getStateVal">                                        
-                                            <a class="private" href="Attribute.html#method__getStateVal" property="yui:name" title="_getStateVal">_getStateVal</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__isLazyAttr">                                        
-                                            <a class="private" href="Attribute.html#method__isLazyAttr" property="yui:name" title="_isLazyAttr">_isLazyAttr</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__normAttrVals">                                        
-                                            <a class="private" href="Attribute.html#method__normAttrVals" property="yui:name" title="_normAttrVals">_normAttrVals</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__protectAttrs">                                        
-                                            <a class="protected" href="Attribute.html#method__protectAttrs" property="yui:name" title="_protectAttrs">_protectAttrs</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__set">                                        
-                                            <a class="protected" href="Attribute.html#method__set" property="yui:name" title="_set">_set</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__setAttr">                                        
-                                            <a class="protected" href="Attribute.html#method__setAttr" property="yui:name" title="_setAttr">_setAttr</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__setAttrs">                                        
-                                            <a class="protected" href="Attribute.html#method__setAttrs" property="yui:name" title="_setAttrs">_setAttrs</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__setAttrVal">                                        
-                                            <a class="private" href="Attribute.html#method__setAttrVal" property="yui:name" title="_setAttrVal">_setAttrVal</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method__setStateVal">                                        
-                                            <a class="private" href="Attribute.html#method__setStateVal" property="yui:name" title="_setStateVal">_setStateVal</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_addAttr">                                        
-                                            <a class="" href="Attribute.html#method_addAttr" property="yui:name" title="addAttr">addAttr</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_addAttrs">                                        
-                                            <a class="" href="Attribute.html#method_addAttrs" property="yui:name" title="addAttrs">addAttrs</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_attrAdded">                                        
-                                            <a class="" href="Attribute.html#method_attrAdded" property="yui:name" title="attrAdded">attrAdded</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_get">                                        
-                                            <a class="" href="Attribute.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_getAttrs">                                        
-                                            <a class="" href="Attribute.html#method_getAttrs" property="yui:name" title="getAttrs">getAttrs</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_modifyAttr">                                        
-                                            <a class="" href="Attribute.html#method_modifyAttr" property="yui:name" title="modifyAttr">modifyAttr</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_removeAttr">                                        
-                                            <a class="" href="Attribute.html#method_removeAttr" property="yui:name" title="removeAttr">removeAttr</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_reset">                                        
-                                            <a class="" href="Attribute.html#method_reset" property="yui:name" title="reset">reset</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_set">                                        
-                                            <a class="" href="Attribute.html#method_set" property="yui:name" title="set">set</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_setAttrs">                                        
-                                            <a class="" href="Attribute.html#method_setAttrs" property="yui:name" title="setAttrs">setAttrs</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Cache.html">
-                                <h4>Methods inherited from <a href="Cache.html" property="yui:name" title="Cache">Cache</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="Cache.html#method__defAddFn">                                        
-                                            <a class="protected" href="Cache.html#method__defAddFn" property="yui:name" title="_defAddFn">_defAddFn</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Cache.html#method__defFlushFn">                                        
-                                            <a class="protected" href="Cache.html#method__defFlushFn" property="yui:name" title="_defFlushFn">_defFlushFn</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Cache.html#method__isMatch">                                        
-                                            <a class="protected" href="Cache.html#method__isMatch" property="yui:name" title="_isMatch">_isMatch</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Cache.html#method_add">                                        
-                                            <a class="" href="Cache.html#method_add" property="yui:name" title="add">add</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Cache.html#method_destructor">                                        
-                                            <a class="private" href="Cache.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Cache.html#method_flush">                                        
-                                            <a class="" href="Cache.html#method_flush" property="yui:name" title="flush">flush</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Cache.html#method_initializer">                                        
-                                            <a class="private" href="Cache.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Cache.html#method_retrieve">                                        
-                                            <a class="" href="Cache.html#method_retrieve" property="yui:name" title="retrieve">retrieve</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
                             <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
                                 <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
                                 <div class="content" rel="yui:methods">
@@ -601,6 +260,162 @@ references the plugin instance.
                                     </code>
                                 </div>
                             </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
+                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
+                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
+                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Cache.html">
+                                <h4>Methods inherited from <a href="Cache.html" property="yui:name" title="Cache">Cache</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Cache.html#method__defAddFn">                                        
+                                            <a class="protected" href="Cache.html#method__defAddFn" property="yui:name" title="_defAddFn">_defAddFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method__defFlushFn">                                        
+                                            <a class="protected" href="Cache.html#method__defFlushFn" property="yui:name" title="_defFlushFn">_defFlushFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method__getEntries">                                        
+                                            <a class="protected" href="Cache.html#method__getEntries" property="yui:name" title="_getEntries">_getEntries</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method__getSize">                                        
+                                            <a class="protected" href="Cache.html#method__getSize" property="yui:name" title="_getSize">_getSize</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method__isMatch">                                        
+                                            <a class="protected" href="Cache.html#method__isMatch" property="yui:name" title="_isMatch">_isMatch</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method__setMax">                                        
+                                            <a class="protected" href="Cache.html#method__setMax" property="yui:name" title="_setMax">_setMax</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method_add">                                        
+                                            <a class="" href="Cache.html#method_add" property="yui:name" title="add">add</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method_destructor">                                        
+                                            <a class="private" href="Cache.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method_flush">                                        
+                                            <a class="" href="Cache.html#method_flush" property="yui:name" title="flush">flush</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method_initializer">                                        
+                                            <a class="private" href="Cache.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Cache.html#method_retrieve">                                        
+                                            <a class="" href="Cache.html#method_retrieve" property="yui:name" title="retrieve">retrieve</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                                <h4>Methods inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Attribute.html#method__addAttrs">                                        
+                                            <a class="private" href="Attribute.html#method__addAttrs" property="yui:name" title="_addAttrs">_addAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__addLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__addLazyAttr" property="yui:name" title="_addLazyAttr">_addLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__defAttrChangeFn">                                        
+                                            <a class="private" href="Attribute.html#method__defAttrChangeFn" property="yui:name" title="_defAttrChangeFn">_defAttrChangeFn</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__fireAttrChange">                                        
+                                            <a class="private" href="Attribute.html#method__fireAttrChange" property="yui:name" title="_fireAttrChange">_fireAttrChange</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttr" property="yui:name" title="_getAttr">_getAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrCfg">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrCfg" property="yui:name" title="_getAttrCfg">_getAttrCfg</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrInitVal">                                        
+                                            <a class="private" href="Attribute.html#method__getAttrInitVal" property="yui:name" title="_getAttrInitVal">_getAttrInitVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrs" property="yui:name" title="_getAttrs">_getAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__getStateVal" property="yui:name" title="_getStateVal">_getStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__isLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__isLazyAttr" property="yui:name" title="_isLazyAttr">_isLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__normAttrVals">                                        
+                                            <a class="private" href="Attribute.html#method__normAttrVals" property="yui:name" title="_normAttrVals">_normAttrVals</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__protectAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__protectAttrs" property="yui:name" title="_protectAttrs">_protectAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__set">                                        
+                                            <a class="protected" href="Attribute.html#method__set" property="yui:name" title="_set">_set</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttr" property="yui:name" title="_setAttr">_setAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttrs" property="yui:name" title="_setAttrs">_setAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrVal">                                        
+                                            <a class="private" href="Attribute.html#method__setAttrVal" property="yui:name" title="_setAttrVal">_setAttrVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__setStateVal" property="yui:name" title="_setStateVal">_setStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttr">                                        
+                                            <a class="" href="Attribute.html#method_addAttr" property="yui:name" title="addAttr">addAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttrs">                                        
+                                            <a class="" href="Attribute.html#method_addAttrs" property="yui:name" title="addAttrs">addAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_attrAdded">                                        
+                                            <a class="" href="Attribute.html#method_attrAdded" property="yui:name" title="attrAdded">attrAdded</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_get">                                        
+                                            <a class="" href="Attribute.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_getAttrs">                                        
+                                            <a class="" href="Attribute.html#method_getAttrs" property="yui:name" title="getAttrs">getAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_modifyAttr">                                        
+                                            <a class="" href="Attribute.html#method_modifyAttr" property="yui:name" title="modifyAttr">modifyAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_removeAttr">                                        
+                                            <a class="" href="Attribute.html#method_removeAttr" property="yui:name" title="removeAttr">removeAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_reset">                                        
+                                            <a class="" href="Attribute.html#method_reset" property="yui:name" title="reset">reset</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_set">                                        
+                                            <a class="" href="Attribute.html#method_set" property="yui:name" title="set">set</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_setAttrs">                                        
+                                            <a class="" href="Attribute.html#method_setAttrs" property="yui:name" title="setAttrs">setAttrs</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -642,10 +457,10 @@ references the plugin instance.
                                         <a class="" href="Cache.html#event_flush" property="yui:name" title="flush">flush</a><span class="">,</span>
                                         </span>
                                                                             <span rel="yui:event" resource="Cache.html#event_maxChange">
-                                        <a class="" href="Cache.html#event_maxChange" property="yui:name" title="maxChange">maxChange</a>
+                                        <a class="" href="Cache.html#event_maxChange" property="yui:name" title="maxChange">maxChange</a><span class="">,</span>
                                         </span>
                                                                             <span rel="yui:event" resource="Cache.html#event_request">
-                                        <a class="" href="Cache.html#event_request" property="yui:name" title="request">request</a>
+                                        <a class="" href="Cache.html#event_request" property="yui:name" title="request">request</a><span class="">,</span>
                                         </span>
                                                                             <span rel="yui:event" resource="Cache.html#event_retrieve">
                                         <a class="" href="Cache.html#event_retrieve" property="yui:name" title="retrieve">retrieve</a>
@@ -655,17 +470,6 @@ references the plugin instance.
                                         </span>
                                                                             <span rel="yui:event" resource="Cache.html#event_uniqueKeysChange">
                                         <a class="" href="Cache.html#event_uniqueKeysChange" property="yui:name" title="uniqueKeysChange">uniqueKeysChange</a>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                            <h4>Events inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                            <div class="content" rel="yui:events">
-                                <code>
-                                        <span rel="yui:event" resource="Plugin.Base.html#event_hostChange">
-                                        <a class="" href="Plugin.Base.html#event_hostChange" property="yui:name" title="hostChange">hostChange</a><span class="">,</span>
                                         </span>
                                     
                                 </code>
@@ -711,17 +515,6 @@ references the plugin instance.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                            <h4>Configuration attributes inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                            <div class="content" rel="yui:attributes">
-                                <code>
-                                        <span rel="yui:attribute" resource="Plugin.Base.html#config_host">                                        
-                                        <a class="" href="Plugin.Base.html#config_host" property="yui:name" title="host">host</a>
-                                        </span>
-                                        
-                                </code>
-                            </div>
-                        </div>
                         </div>
                     </div>
 
@@ -750,6 +543,7 @@ references the plugin instance.
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
@@ -778,6 +572,7 @@ references the plugin instance.
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -788,6 +583,7 @@ references the plugin instance.
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>
@@ -801,6 +597,7 @@ references the plugin instance.
                                 <li class=""><a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a></li>
                                 <li class=""><a href="DataSourceArraySchema.html" title="DataSourceArraySchema">DataSourceArraySchema</a></li>
                                 <li class="selected"><a href="DataSourceCache.html" title="DataSourceCache">DataSourceCache</a></li>
+                                <li class=""><a href="DataSourceCacheExtension.html" title="DataSourceCacheExtension">DataSourceCacheExtension</a></li>
                                 <li class=""><a href="DataSourceJSONSchema.html" title="DataSourceJSONSchema">DataSourceJSONSchema</a></li>
                                 <li class=""><a href="DataSourceTextSchema.html" title="DataSourceTextSchema">DataSourceTextSchema</a></li>
                                 <li class=""><a href="DataSourceXMLSchema.html" title="DataSourceXMLSchema">DataSourceXMLSchema</a></li>
@@ -832,14 +629,6 @@ references the plugin instance.
                         </ul>
                     </div>
 
-                    <div id="methodsList" class="module">
-                        <h4>Methods</h4>
-                        <ul class="content">        
-                                <li class="protected"><a href="#method__beforeDefRequestFn" title="_beforeDefRequestFn">_beforeDefRequestFn</a></li>
-                                <li class="protected"><a href="#method__beforeDefResponseFn" title="_beforeDefResponseFn">_beforeDefResponseFn</a></li>
-                                <li class="private"><a href="#method_initializer" title="initializer">initializer</a></li>
-                        </ul>
-                    </div>
 
 
 
@@ -853,7 +642,7 @@ references the plugin instance.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefRequestFn", "url": "DataSourceCache.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefResponseFn", "url": "DataSourceCache.html#method__beforeDefResponseFn", "type": "method"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCache", "name": "initializer", "url": "DataSourceCache.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCacheExtension", "name": "_beforeDefRequestFn", "url": "DataSourceCacheExtension.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCacheExtension", "name": "_beforeDefResponseFn", "url": "DataSourceCacheExtension.html#method__beforeDefResponseFn", "type": "method"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCacheExtension", "name": "initializer", "url": "DataSourceCacheExtension.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCacheExtension", "name": "NAME", "url": "DataSourceCacheExtension.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCacheExtension", "name": "NS", "url": "DataSourceCacheExtension.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}];
 </script>
 </body>
 </html>

@@ -14,7 +14,11 @@ YUI.add('plugin', function(Y) {
      * @param {Object} config Configuration object with property name/value pairs.
      */
     function Plugin(config) {
-        Plugin.superclass.constructor.apply(this, arguments);
+        if (! (this.hasImpl && this.hasImpl(Y.Plugin.Base)) ) {
+            Plugin.superclass.constructor.apply(this, arguments);
+        } else {
+            Plugin.prototype.initializer.apply(this, arguments);
+        }
     }
 
     /**
@@ -156,7 +160,7 @@ YUI.add('plugin', function(Y) {
          * @return handle {EventHandle} The detach handle for the listener. 
          */
         onHostEvent : function(type, fn, context) {
-            var handle = this.get("host").after(type, fn, context || this);
+            var handle = this.get("host").on(type, fn, context || this);
             this._handles.push(handle);
             return handle;
         },

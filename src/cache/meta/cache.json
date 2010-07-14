@@ -1,7 +1,18 @@
 {
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            },
+
+            "cache-offline": {
+                "requires": [
+                    "cache-base",
+                    "json"
+                ]
+            }
+        }
     }
 }

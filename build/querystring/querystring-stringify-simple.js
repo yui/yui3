@@ -57,5 +57,4 @@ QueryString.stringify = function (obj, c) {
 };
 
 
-
 }, '@VERSION@' );

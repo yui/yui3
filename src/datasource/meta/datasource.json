@@ -10,8 +10,8 @@
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local",
+                    "cache-base"
                 ]
             }, 
             "datasource-function": {

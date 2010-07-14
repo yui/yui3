@@ -7,6 +7,8 @@ YUI.add('io-form', function(Y) {
     * @submodule io-form
     */
 
+    var eUC = encodeURIComponent;
+
     Y.mix(Y.io, {
        /**
         * @description Method to enumerate through an HTML form's elements collection
@@ -20,19 +22,18 @@ YUI.add('io-form', function(Y) {
         * @return string
         */
         _serialize: function(c, s) {
-			var eUC = encodeURIComponent,
-            	data = [],
-            	useDf = c.useDisabled || false,
-            	item = 0,
-            	id = (typeof c.id === 'string') ? c.id : c.id.getAttribute('id'),
-            	e, f, n, v, d, i, il, j, jl, o;
+            var data = [],
+                useDf = c.useDisabled || false,
+                item = 0,
+                id = (typeof c.id === 'string') ? c.id : c.id.getAttribute('id'),
+                e, f, n, v, d, i, il, j, jl, o;
 
-            	if (!id) {
-					id = Y.guid('io:');
-					c.id.setAttribute('id', id);
-				}
+                if (!id) {
+                    id = Y.guid('io:');
+                    c.id.setAttribute('id', id);
+                }
 
-            	f = Y.config.doc.getElementById(id);
+                f = Y.config.doc.getElementById(id);
 
             // Iterate over the form elements collection to construct the
             // label-value pairs.
@@ -41,9 +42,9 @@ YUI.add('io-form', function(Y) {
                 d = e.disabled;
                 n = e.name;
 
-                if ((useDf) ? n : (n && !d)) {
-                    n = encodeURIComponent(n) + '=';
-                    v = encodeURIComponent(e.value);
+                if (useDf ? n : n && !d) {
+                    n = eUC(n) + '=';
+                    v = eUC(e.value);
 
                     switch (e.type) {
                         // Safari, Opera, FF all default options.value from .text if
@@ -51,7 +52,7 @@ YUI.add('io-form', function(Y) {
                         case 'select-one':
                             if (e.selectedIndex > -1) {
                                 o = e.options[e.selectedIndex];
-                                data[item++] = n + eUC((o.attributes.value && o.attributes.value.specified) ? o.value : o.text);
+                                data[item++] = n + eUC(o.attributes.value && o.attributes.value.specified ? o.value : o.text);
                             }
                             break;
                         case 'select-multiple':
@@ -59,14 +60,14 @@ YUI.add('io-form', function(Y) {
                                 for (j = e.selectedIndex, jl = e.options.length; j < jl; ++j) {
                                     o = e.options[j];
                                     if (o.selected) {
-                                      data[item++] = n + eUC((o.attributes.value && o.attributes.value.specified) ? o.value : o.text);
+                                      data[item++] = n + eUC(o.attributes.value && o.attributes.value.specified ? o.value : o.text);
                                     }
                                 }
                             }
                             break;
                         case 'radio':
                         case 'checkbox':
-                            if(e.checked){
+                            if (e.checked) {
                                 data[item++] = n + v;
                             }
                             break;
