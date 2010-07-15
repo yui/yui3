@@ -345,6 +345,7 @@
                 _running[i].pause();
             }
         }
+
         Y.Anim._stopTimer();
     };
 
@@ -467,6 +468,8 @@
         _resume: function() {
             this._set(PAUSED, false);
             _running[Y.stamp(this)] = this;
+            this._set(START_TIME, new Date() - this.get(ELAPSED_TIME));
+            Y.Anim._startTimer();
 
             /**
             * @event resume

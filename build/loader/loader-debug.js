@@ -2839,6 +2839,17 @@ YUI.Env[Y.version].modules = {
                     "node-style", 
                     "node-pluginhost"
                 ]
+            }, 
+            "transition": {
+                "requires": [
+                    "transition-native", 
+                    "node-style"
+                ]
+            }, 
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
             }
         }, 
         "requires": [
