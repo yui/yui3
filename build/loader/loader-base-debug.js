@@ -588,6 +588,54 @@ Y.Loader = function(o) {
      */
     self.results = {};
 
+        // returns true if b is not loaded, and is required
+        // directly or by means of modules it supersedes.
+           self._requires = Y.cached(function(mod1, mod2) {
+
+                var i, rm, after, after_map, s,
+                    info  = self.moduleInfo, 
+                    m     = info[mod1], 
+                    other = info[mod2]; 
+
+                // if (loaded[mod2] || !m || !other) {
+                if (!m || !other) {
+                    return false;
+                }
+
+                rm    = m.expanded_map;
+                after = m.after; 
+                after_map = m.after_map; 
+
+                // check if this module requires the other directly
+                // if (r && YArray.indexOf(r, mod2) > -1) {
+                if (rm && (mod2 in rm)) {
+                    return true;
+                }
+
+                // check if this module should be sorted after the other
+                if (after_map && (mod2 in after_map)) {
+                    return true;
+                } else if (after && YArray.indexOf(after, mod2) > -1) {
+                    return true;
+                }
+
+                // check if this module requires one the other supersedes
+                s = info[mod2] && info[mod2].supersedes;
+                if (s) {
+                    for (i=0; i<s.length; i++) {
+                        if (self._requires(mod1, s[i])) {
+                            return true;
+                        }
+                    }
+                }
+
+                // external css files should be sorted below yui css
+                if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
+                    return true;
+                }
+
+                return false;
+            });
 };
 
 Y.Loader.prototype = {
@@ -968,7 +1016,6 @@ Y.Loader.prototype = {
             info   = this.moduleInfo,
             hash   = {},
             INTL   = 'intl';
-
 
         if (mod.temp && adddef) {
             delete mod.expanded;
@@ -1421,6 +1468,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
         }
         this._finish('timeout', false);
     },
+
     
     /**
      * Sorts the dependency tree.  The last step of calculate()
@@ -1431,58 +1479,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
         // create an indexed list
         var s = YObject.keys(this.required), 
-            info = this.moduleInfo, 
             // loaded = this.loaded,
             done = {},
-            p=0, l, a, b, j, k, moved, doneKey,
+            p=0, l, a, b, j, k, moved, doneKey;
 
-        // returns true if b is not loaded, and is required
-        // directly or by means of modules it supersedes.
-            requires = Y.cached(function(mod1, mod2) {
-
-                var i, rm, after, after_map, s,
-                    m     = info[mod1], 
-                    other = info[mod2]; 
-
-                // if (loaded[mod2] || !m || !other) {
-                if (!m || !other) {
-                    return false;
-                }
-
-                rm    = m.expanded_map;
-                after = m.after; 
-                after_map = m.after_map; 
-
-                // check if this module requires the other directly
-                // if (r && YArray.indexOf(r, mod2) > -1) {
-                if (rm && (mod2 in rm)) {
-                    return true;
-                }
-
-                // check if this module should be sorted after the other
-                if (after_map && (mod2 in after_map)) {
-                    return true;
-                } else if (after && YArray.indexOf(after, mod2) > -1) {
-                    return true;
-                }
-
-                // check if this module requires one the other supersedes
-                s = info[mod2] && info[mod2].supersedes;
-                if (s) {
-                    for (i=0; i<s.length; i++) {
-                        if (requires(mod1, s[i])) {
-                            return true;
-                        }
-                    }
-                }
-
-                // external css files should be sorted below yui css
-                if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
-                    return true;
-                }
-
-                return false;
-            });
 
         // keep going until we make a pass without moving anything
         for (;;) {
@@ -1502,7 +1502,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
                 for (k=j+1; k<l; k++) {
                     doneKey = a + s[k];
 
-                    if (!done[doneKey] && requires(a, s[k])) {
+                    if (!done[doneKey] && this._requires(a, s[k])) {
 
                         // extract the dependency so we can move it up
                         b = s.splice(k, 1);
