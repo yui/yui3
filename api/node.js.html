@@ -509,25 +509,28 @@
 <span class="cm"> * @return {String} A string representation of the Node instance </span>
 <span class="cm"> */</span>
     <span class="nx">toString</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-            <span class="nx">errorMsg</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">UID</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;: not bound to a node&#39;</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">UID</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;: not bound to a node&#39;</span><span class="p">,</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="nx">id</span> <span class="o">=</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span> <span class="c1">// form.id may be a field name</span>
+            <span class="nx">attrs</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">className</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">str</span> <span class="o">+=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">NODE_NAME</span><span class="p">];</span>
+            <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">;</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="p">(</span><span class="nx">attrs</span> <span class="o">&amp;&amp;</span> <span class="nx">attrs</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">className</span> <span class="o">=</span> <span class="p">(</span><span class="nx">attrs</span> <span class="o">&amp;&amp;</span> <span class="nx">attrs</span><span class="p">.</span><span class="nx">className</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;className&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">str</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">NODE_NAME</span><span class="p">];</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">str</span> <span class="o">+=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">;</span> 
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">str</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">className</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span> 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">str</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">className</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span> 
             <span class="p">}</span>
 
             <span class="c1">// TODO: add yuid?</span>
             <span class="nx">str</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">[</span><span class="nx">UID</span><span class="p">];</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">str</span> <span class="o">||</span> <span class="nx">errorMsg</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">str</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
