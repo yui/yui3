@@ -962,7 +962,8 @@
             <span class="c1">// console.log(adddef);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">&amp;&amp;</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// if (!this.dirty &amp;&amp; mod.expanded &amp;&amp; (!mod.langCache || mod.langCache == this.lang)) {</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;already expanded &#39; + mod.name);</span>
             <span class="k">return</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
         <span class="p">}</span>
