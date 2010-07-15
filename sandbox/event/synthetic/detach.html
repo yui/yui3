@@ -45,7 +45,8 @@ Y.Event.define('test', {
     init: function (node, sub, notifier) {
         Y.log("init " + this.type + ": " + node.get('text'));
         node.setData('testHandle', node.on('click', function (e) {
-            notifier.fire();
+            notifier.fire("alpha");
+            //notifier.fire();
         }));
     },
 
@@ -69,17 +70,8 @@ Y.Event.define('test', {
         Y.log("destroy " + this.type + ": " + node.get('text'));
     },
 
-    filterSubs: function (subs, args) {
-        var skip = [], i;
-        for (i in subs) {
-            if (subs.hasOwnProperty(i) && subs[i]._extra === args[1]) {
-                skip.push(i);
-            }
-        }
-
-        for (i = skip.length - 1; i >= 0; --i) {
-            delete subs[skip[i]];
-        }
+    fireFilter: function (sub, fireArgs, thisObj, ce) {
+        return fireArgs[1] && sub._extra !== fireArgs[1];
     }
 });
 
@@ -90,12 +82,13 @@ var outer = Y.one('#outer'),
 
 function notify(e) {
     //console.log('Fired', this, arguments);
-    Y.log('Fired ' + e.type + ' from ' + this.get('text'));
+    Y.log('fired ' + e.type + ' from ' + this.get('text'));
 }
 
 Y.one('#attach').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').on('test', notify); break;
+        //case 2: Y.all('.go').on('test', notify, null, "alpha"); break;
         case 2: Y.all('.go').on('test', notify); break;
         case 3: Y.on('test', notify, '.go');
     }

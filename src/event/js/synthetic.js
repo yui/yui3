@@ -19,13 +19,19 @@ SyntheticEvent.prototype = {
         }
     },
 
+    processArgs: noop,
+    //fireFilter : null,
+    //allowDups  : false,
+
     init       : noop,
     on         : noop,
     detach     : noop,
     destroy    : noop,
-    processArgs: noop,
-    filterSubs : noop,
-    //allowDups  : false,
+
+    initDelegate   : noop,
+    onDelegate     : noop,
+    detachDelegate : noop,
+    destroyDelegate: noop,
 
     _getEvent: function (node) {
         var ce = node.getEvent(this.type),
@@ -42,9 +48,6 @@ SyntheticEvent.prototype = {
             ce.fn      = noop;
             ce.capture = false;
 
-            // Add support for notifying only a subset of subscribers
-            Y.Do.before(this.filterSubs, ce, '_procSubs', this);
-
             ce.monitor('detach', this._unsubscribe, this);
 
             (DOMMap[yuid] || (DOMMap[yuid] = {}))[key] = ce;
@@ -53,7 +56,7 @@ SyntheticEvent.prototype = {
         return ce;
     },
 
-    subscribe: function (args) {
+    _on: function (args) {
         var handles = [],
             query   = (typeof args[2] === 'string') ? args[2] : null,
             els     = (query) ? Y.Selector.query(query) : toArray(args[2]),
@@ -85,8 +88,7 @@ SyntheticEvent.prototype = {
 
     _subscribe: function (ce, args, node) {
         var extra = this.processArgs(args),
-            abort,
-            handle;
+            abort, handle, sub;
 
         args[2] = node;
         args.shift();
@@ -97,7 +99,13 @@ SyntheticEvent.prototype = {
 
         if (!abort) {
             handle = ce.on.apply(ce, args);
-            handle.sub._extra = extra;
+
+            sub = handle.sub;
+            sub._extra = extra;
+
+            if (this.fireFilter) {
+                Y.Do.before(this._fireFilter, sub, '_notify', this, sub);
+            }
 
             if (!ce.initialized) {
                 this.init(node, handle.sub, ce);
@@ -126,7 +134,13 @@ SyntheticEvent.prototype = {
         return false;
     },
 
-    unsubscribe: function (args) {
+    _fireFilter: function (thisObj, args, ce, sub) {
+        if (!this.fireFilter(sub, args, thisObj, ce)) {
+            return new Y.Do.Prevent();
+        }
+    },
+
+    _detach: function (args) {
         var fn  = args[1],
             els = (typeof args[2] === 'string') ?
                     Y.Selector.query(args[2]) :
@@ -156,6 +170,10 @@ SyntheticEvent.prototype = {
             ce.initialized = false;
             ce.detach(this._unsubscribe, this);
         }
+    },
+
+    _delegate: function (args) {
+        
     }
 };
 
@@ -180,11 +198,15 @@ Y.Node.publish = Y.Event.define = function (type, config) {
 
         Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
             on: function () {
-                return synth.subscribe(toArray(arguments));
+                return synth._on(toArray(arguments));
             },
 
             detach: function () {
-                return synth.unsubscribe(toArray(arguments));
+                return synth._detach(toArray(arguments));
+            },
+
+            delegate: function () {
+                return synth._delegate(toArray(arguments));
             }
         };
 

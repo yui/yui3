@@ -38,7 +38,7 @@
                     div2 = Y.Node.one("#testNode2");
 
                 var flickHandler = function(e) {
-                    div.append("<div>flick, e:" + [e.velocity, e.distance, e.button] + "</div>");                    
+                    div.append("<div>flick, e:" + [e.flick.velocity, e.flick.distance, e.flick.button] + "</div>");
                 };
 
                 var moveStartHandler = function(e) {
@@ -56,13 +56,11 @@
                     e.target.append("<div>moveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
-                /* Waiting on synth event infrastructure to support this properly */
                 var flickCfg = {
                     minDistance:20,
-                    minVelocity:0,
+                    minVelocity:0
                 };
 
-                /* Waiting on synth event infrastructure to support this properly */
                 var moveStartCfg = {
                     minDistance: 10,
                     minTime: 5000,

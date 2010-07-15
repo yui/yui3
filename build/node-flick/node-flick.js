@@ -1,6 +1,5 @@
 YUI.add('node-flick', function(Y) {
 
-
     var HOST = "host",
         PARENT_NODE = "parentNode",
         BOUNDING_BOX = "boundingBox",
@@ -19,7 +18,7 @@ YUI.add('node-flick', function(Y) {
     function Flick(config) {
         Flick.superclass.constructor.apply(this, arguments);
     }
-    
+
     Flick.ATTRS = {
 
         deceleration : {
@@ -29,7 +28,7 @@ YUI.add('node-flick', function(Y) {
         bounce : {
             value: 0.7
         },
-        
+
         bounceDistance : {
             value: 150
         },
@@ -120,7 +119,7 @@ YUI.add('node-flick', function(Y) {
          * @protected
          */
         _onFlick: function(e) {
-            this._v = e.velocity * e.direction;
+            this._v = e.flick.velocity * e.flick.direction;
             this._flick = true;
 
             this._flickAnim();
@@ -292,4 +291,4 @@ YUI.add('node-flick', function(Y) {
     Y.Plugin.Flick = Flick;
 
 
-}, '@VERSION@' ,{requires:['node-base', 'plugin']});
+}, '@VERSION@' ,{requires:['event-flick', 'plugin']});

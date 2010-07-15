@@ -68,13 +68,19 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
+    <span class="nx">processArgs</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="c1">//fireFilter : null,</span>
+    <span class="c1">//allowDups  : false,</span>
+
     <span class="nx">init</span>       <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
     <span class="nx">on</span>         <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
     <span class="nx">detach</span>     <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
     <span class="nx">destroy</span>    <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
-    <span class="nx">processArgs</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
-    <span class="nx">filterSubs</span> <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
-    <span class="c1">//allowDups  : false,</span>
+
+    <span class="nx">initDelegate</span>   <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">onDelegate</span>     <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">detachDelegate</span> <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">destroyDelegate</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
     <span class="nx">_getEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
@@ -91,9 +97,6 @@
             <span class="nx">ce</span><span class="p">.</span><span class="nx">fn</span>      <span class="o">=</span> <span class="nx">noop</span><span class="p">;</span>
             <span class="nx">ce</span><span class="p">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-            <span class="c1">// Add support for notifying only a subset of subscribers</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterSubs</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="s1">&#39;_procSubs&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-
             <span class="nx">ce</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span><span class="s1">&#39;detach&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
 
             <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}))[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">;</span>
@@ -102,7 +105,7 @@
         <span class="k">return</span> <span class="nx">ce</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">handles</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nx">query</span>   <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
             <span class="nx">els</span>     <span class="o">=</span> <span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">:</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
@@ -134,8 +137,7 @@
 
     <span class="nx">_subscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">extra</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">),</span>
-            <span class="nx">abort</span><span class="p">,</span>
-            <span class="nx">handle</span><span class="p">;</span>
+            <span class="nx">abort</span><span class="p">,</span> <span class="nx">handle</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
 
         <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
         <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
@@ -146,7 +148,13 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">abort</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-            <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span> <span class="o">=</span> <span class="nx">extra</span><span class="p">;</span>
+
+            <span class="nx">sub</span> <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">;</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span> <span class="o">=</span> <span class="nx">extra</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fireFilter</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_fireFilter</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="s1">&#39;_notify&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">sub</span><span class="p">);</span>
+            <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
@@ -175,7 +183,13 @@
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="nx">unsubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_fireFilter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">thisObj</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">fireFilter</span><span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">thisObj</span><span class="p">,</span> <span class="nx">ce</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">Prevent</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">fn</span>  <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
             <span class="nx">els</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">:</span>
@@ -205,6 +219,10 @@
             <span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
         <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_delegate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        
     <span class="p">}</span>
 <span class="p">};</span>
 
@@ -229,11 +247,15 @@
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
             <span class="p">},</span>
 
             <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">_detach</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+            <span class="p">},</span>
+
+            <span class="nx">delegate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">_delegate</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
             <span class="p">}</span>
         <span class="p">};</span>
 

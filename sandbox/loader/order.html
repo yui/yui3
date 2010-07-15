@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>YUI 3.0</title>
+<script src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js"></script>
+<!--
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+-->
+
+<style id="styleoverrides">
+    body {
+        background-color: #f7f7f7
+    }
+</style>
+</head>
+<body>
+
+<input id="button1" type="button" value="Button 1" class="button" />
+<input id="button2" type="button" value="Button 2" class="button" />
+<input id="text1" type="text" value="something" class="nothing" />
+
+<script>
+
+    YUI.add('testModule', function(Y) {
+            Y.testModule = {};
+    }, '1.0.0', {requires: ['base', 'node', 'event', 'dragdrop', 'dd-constrain']});
+
+YUI.add('usesgallery', function(Y) {
+        // code
+    }, '1.0.0', {
+        requires: ['overlay','gallery-overlay-extras']                                                                                                                                   
+    });
+
+    YUI().use('node', 'event', 'testModule', function(Y) {
+        console.log('script 1');
+    });
+    
+    YUI().use('testModule', 'node', 'event', function(Y) {
+        console.log('script 2');
+    });
+
+    YUI().use('usesgallery', function(Y) {
+        console.log('script 3');
+    });
+
+</script> 
+
+
+</body>
+</html>
+

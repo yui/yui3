@@ -40,7 +40,7 @@ groups.gallery = {
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
-    patterns:  { 'gallery-': {},
+    patterns:  { 'gallery-':    {             },
                  'gallerycss-': { type: 'css' } }
 };
 

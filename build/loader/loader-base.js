@@ -42,7 +42,7 @@ groups.gallery = {
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
-    patterns:  { 'gallery-': {},
+    patterns:  { 'gallery-':    {             },
                  'gallerycss-': { type: 'css' } }
 };
 
@@ -194,8 +194,9 @@ Y.Env.meta = META;
 
 Y.Loader = function(o) {
 
-    var defaults = Y.Env.meta.modules, i, onPage = GLOBAL_ENV.mods,
-        self = this;
+    var defaults = Y.Env.meta.modules, 
+        onPage   = GLOBAL_ENV.mods,
+        self     = this;
 
     /**
      * Internal callback to handle multiple internal insert() calls
@@ -580,6 +581,13 @@ Y.Loader = function(o) {
 
     // Y.on('yui:load', self.loadNext, self);
 
+    /**
+     * Cached sorted calculate results
+     * @property results
+     * @since 3.2.0
+     */
+    self.results = {};
+
 };
 
 Y.Loader.prototype = {
@@ -652,14 +660,14 @@ Y.Loader.prototype = {
      * @param mod {string} optional: the name of a module to skin
      * @return {string} the full skin module name
      */
-    formatSkin: function(skin, mod) {
+    formatSkin: Y.cached(function(skin, mod) {
         var s = this.SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
 
         return s;
-    },
+    }),
 
     /**
      * Adds the skin def to the module info
@@ -689,6 +697,7 @@ Y.Loader.prototype = {
                     group: mdef.group,
                     type:  'css',
                     after: sinf.after,
+                    after_map: YArray.hash(sinf.after),
                     path:  (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
                     ext:   ext
                 });
@@ -746,6 +755,7 @@ Y.Loader.prototype = {
      *     <dt>optional:</dt>   <dd>array of optional modules for this component</dd>
      *     <dt>supersedes:</dt> <dd>array of the modules this component replaces</dd>
      *     <dt>after:</dt>      <dd>array of modules the components which, if present, should be sorted above this one</dd>
+     *     <dt>after_map:</dt>  <dd>faster alternative to 'after' -- supply a hash instead of an array</dd>
      *     <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
      *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
      *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
@@ -966,10 +976,13 @@ Y.Loader.prototype = {
                 d.push(r[i]);
                 hash[r[i]] = true;
                 m = this.getModule(r[i]);
-                add = this.getRequires(m);
-                intl = intl || YArray.indexOf(add, 'intl') > -1;
-                for (j=0; j<add.length; j++) {
-                    d.push(add[j]);
+                if (m) {
+                    add = this.getRequires(m);
+                    // intl = intl || YArray.indexOf(add, 'intl') > -1;
+                    intl = intl || ('intl' in m.expanded_map);
+                    for (j=0; j<add.length; j++) {
+                        d.push(add[j]);
+                    }
                 }
             }
         }
@@ -982,10 +995,14 @@ Y.Loader.prototype = {
                     d.push(r[i]);
                     hash[r[i]] = true;
                     m = this.getModule(r[i]);
-                    add = this.getRequires(m);
-                    intl = intl || YArray.indexOf(add, 'intl') > -1;
-                    for (j=0; j<add.length; j++) {
-                        d.push(add[j]);
+
+                    if (m) {
+                        add = this.getRequires(m);
+                        // intl = intl || YArray.indexOf(add, 'intl') > -1;
+                        intl = intl || ('intl' in m.expanded_map);
+                        for (j=0; j<add.length; j++) {
+                            d.push(add[j]);
+                        }
                     }
                 }
             }
@@ -997,7 +1014,8 @@ Y.Loader.prototype = {
                     d.push(o[i]);
                     hash[o[i]] = true;
                     add = this.getRequires(info[o[i]]);
-                    intl = intl || YArray.indexOf(add, 'intl') > -1;
+                    // intl = intl || YArray.indexOf(add, 'intl') > -1;
+                    intl = intl || ('intl' in info[o[i]].expanded_map);
                     for (j=0; j<add.length; j++) {
                         d.push(add[j]);
                     }
@@ -1021,7 +1039,9 @@ Y.Loader.prototype = {
             d.unshift('intl');
         }
 
-        mod.expanded = YObject.keys(YArray.hash(d));
+        mod.expanded_map = YArray.hash(d);
+        mod.expanded = YObject.keys(mod.expanded_map);
+
         return mod.expanded;
     },
 
@@ -1056,7 +1076,6 @@ Y.Loader.prototype = {
         return m.provides;
     },
 
-
     /**
      * Calculates the dependency tree, the result is stored in the sorted 
      * property
@@ -1066,15 +1085,24 @@ Y.Loader.prototype = {
      */
     calculate: function(o, type) {
         if (o || type || this.dirty) {
-            this._config(o);
-            this._setup();
-            this._explode();
-            if (this.allowRollup) {
-                this._rollup();
+
+            var key = YObject.keys(this.required).sort().join() + this.ignoreRegistered + type,
+            sorted = this.results[key];
+
+            this.key = key;
+            
+            if (sorted) {
+                this.sorted = YObject.keys(this._reduce(YArray.hash(sorted)));
+            } else {
+                this._config(o);
+                this._setup();
+                this._explode();
+                if (this.allowRollup) {
+                    this._rollup();
+                }
+                this._reduce();
+                this._sort();
             }
-            this._reduce();
-            this._sort();
-            // this.dirty = false;
         }
     },
 
@@ -1123,21 +1151,20 @@ Y.Loader.prototype = {
                 if (m && m.skinnable) {
                     o = this.skin.overrides;
                     if (o && o[name]) {
-                        for (i=0; i<o[name].length; i=i+1) {
+                        for (i=0; i<o[name].length; i++) {
                             smod = this._addSkin(o[name][i], name);
-                            if (YArray.indexOf(m.requires, smod) == -1) {
-                                m.requires.push(smod);
-                            }
+                            m.requires.push(smod);
                         }
                     } else {
 
                         smod = this._addSkin(this.skin.defaultSkin, name);
-                        if (YArray.indexOf(m.requires, smod) == -1) {
-                            m.requires.push(smod);
-                        }
+                        m.requires.push(smod);
                     }
 
                 }
+
+                // remove dups
+                m.requires = YObject.keys(YArray.hash(m.requires));
 
                 // Create lang pack modules
                 if (m && m.lang && m.lang.length) {
@@ -1269,8 +1296,11 @@ Y.Loader.prototype = {
      * @method _reduce
      * @private
      */
-    _reduce: function() {
-        var i, j, s, m, r=this.required, type = this.loadType;
+    _reduce: function(r) {
+
+        r = r || this.required;
+
+        var i, j, s, m, type = this.loadType;
         for (i in r) {
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
@@ -1290,6 +1320,8 @@ Y.Loader.prototype = {
                 }
             }
         }
+        
+        return r;
     },
 
     _finish: function(msg, success) {
@@ -1367,30 +1399,36 @@ Y.Loader.prototype = {
         // directly or by means of modules it supersedes.
             requires = Y.cached(function(mod1, mod2) {
 
-                var m = info[mod1], i, r, after, other = info[mod2], s;
+                var i, rm, after, after_map, s,
+                    m     = info[mod1], 
+                    other = info[mod2]; 
 
                 // if (loaded[mod2] || !m || !other) {
                 if (!m || !other) {
                     return false;
                 }
 
-                r     = m.expanded;
+                rm    = m.expanded_map;
                 after = m.after; 
+                after_map = m.after_map; 
 
                 // check if this module requires the other directly
-                if (r && YArray.indexOf(r, mod2) > -1) {
+                // if (r && YArray.indexOf(r, mod2) > -1) {
+                if (rm && (mod2 in rm)) {
                     return true;
                 }
 
                 // check if this module should be sorted after the other
-                if (after && YArray.indexOf(after, mod2) > -1) {
+                if (after_map && (mod2 in after_map)) {
+                    return true;
+                } else if (after && YArray.indexOf(after, mod2) > -1) {
                     return true;
                 }
 
                 // check if this module requires one the other supersedes
                 s = info[mod2] && info[mod2].supersedes;
                 if (s) {
-                    for (i=0; i<s.length; i=i+1) {
+                    for (i=0; i<s.length; i++) {
                         if (requires(mod1, s[i])) {
                             return true;
                         }
@@ -1412,7 +1450,7 @@ Y.Loader.prototype = {
             moved = false;
 
             // start the loop after items that are already sorted
-            for (j=p; j<l; j=j+1) {
+            for (j=p; j<l; j++) {
 
                 // check the next module on the list to see if its
                 // dependencies have been met
@@ -1420,7 +1458,7 @@ Y.Loader.prototype = {
 
                 // check everything below current item and move if we
                 // find a requirement for the current item
-                for (k=j+1; k<l; k=k+1) {
+                for (k=j+1; k<l; k++) {
                     doneKey = a + s[k];
 
                     if (!done[doneKey] && requires(a, s[k])) {
@@ -1448,7 +1486,8 @@ Y.Loader.prototype = {
                     break;
                 // this item is sorted, move our pointer and keep going
                 } else {
-                    p = p + 1;
+                    // p = p + 1;
+                    p++;
                 }
             }
 
@@ -1461,6 +1500,8 @@ Y.Loader.prototype = {
         }
 
         this.sorted = s;
+
+        this.results[this.key] = s;
     },
 
     _insert: function(source, o, type) {
