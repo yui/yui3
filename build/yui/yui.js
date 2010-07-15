@@ -564,8 +564,9 @@ proto = {
                 if (redo && data) {
                     
                     // newData = data.concat();
-                    
                     newData = r.concat();
+
+                    newData = missing.concat();
                     newData.push(function() {
                         if (Y._attach(data)) {
                             notify(response);
