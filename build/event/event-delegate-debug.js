@@ -62,48 +62,60 @@ delegate.notifySub = function (thisObj, args, ce) {
     // Only notify subs if the event occurred on a targeted element
     var currentTarget = this.getCurrentTarget.apply(this, args),
         originalEvent = args[0],
-        e, ret;
+        container     = originalEvent.currentTarget,
+        i, ret, target;
 
     if (currentTarget) {
+        // Support multiple matches up the the container subtree
+        currentTarget = toArray(currentTarget);
 
-        // Create a new facade to avoid corrupting facade sent to direct subs
-        args[0] = e = new Y.DOMEventFacade(originalEvent, currentTarget, ce);
+        for (i = currentTarget.length - 1; i >= 0; --i) {
+            target = currentTarget[i];
 
-        e.container = originalEvent.currentTarget;
+            // New facade to avoid corrupting facade sent to direct subs
+            args[0] = new Y.DOMEventFacade(originalEvent, target, ce);
 
-        thisObj = this.context || currentTarget;
+            args[0].container = container;
+        
+            thisObj = this.context || target;
 
-        ret = this.fn.apply(thisObj, args);
+            ret = this.fn.apply(thisObj, args);
 
-        if (this.once) {
-            ce._delete(this);
+            if (ret === false) {
+                break; // once() callback should only be called once, duh
+            }
         }
-    }
 
-    return ret;
+        return ret;
+    }
 };
 
 delegate.compileFilter = Y.cached(function (selector) {
-    var matches = selector.replace(/,/g, ' *,') + ' *';
+    var descendantOfSelector = selector.replace(/,/g, ' *,') + ' *';
     return function (e) {
         var container = e.currentTarget._node,
+            matches = [],
             currentTarget;
 
         if (selectorTest(e.target._node, selector, container)) {
-            return e.target;
+            matches.push(e.target);
         }
 
         currentTarget = e.target._node;
-        if (selectorTest(currentTarget, matches)) {
+        if (selectorTest(currentTarget, descendantOfSelector)) {
             while (currentTarget !== container) {
                 if (selectorTest(currentTarget, selector, container)) {
-                    return Y.one(currentTarget);
+                    matches.push(Y.one(currentTarget));
                 }
                 currentTarget = currentTarget.parentNode;
             }
         }
 
-        return false;
+        if (matches.length <= 1) {
+            matches = matches[0]; // single match or undefined
+        }
+
+        return matches;
     };
 });
 

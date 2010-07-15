@@ -313,7 +313,21 @@
 				    
 				},
                 
-				
+                test_multiple_matches_in_subtree: function () {
+                    var ids = [];
+
+                    Y.delegate('click', function (e) {
+                        ids.push(this.get('id'));
+                    }, '#div-1', 'div');
+
+					Y.Event.simulate(Y.one('#div-1-2-1-1 em')._node, 'click');
+
+                    Y.Assert.areSame(3, ids.length, "Delegate handler should have fired three times, once for each div in #div-1");
+                    Y.Assert.areSame('div-1-2', ids[0], "First delegate callback should be from the highest div in the subtree");
+                    Y.Assert.areSame('div-1-2-1', ids[1]);
+                    Y.Assert.areSame('div-1-2-1-1', ids[2]);
+                },
+
 				test_successful_purge: function () {
 				
 					var bHandler1Called = false,
