@@ -121,6 +121,7 @@
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">stopPropagation</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">e</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
@@ -131,6 +132,7 @@
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">e</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
@@ -139,6 +141,7 @@
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">preventDefault</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
@@ -150,6 +153,8 @@
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">halt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">immediate</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">e</span><span class="p">.</span><span class="nx">halt</span><span class="p">(</span><span class="nx">immediate</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="p">(</span><span class="nx">immediate</span><span class="p">)</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">};</span>
 
 <span class="p">};</span>

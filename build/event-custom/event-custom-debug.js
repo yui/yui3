@@ -2045,6 +2045,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.stopPropagation = function() {
         e.stopPropagation();
+        this.stopped = 1;
     };
 
     /**
@@ -2055,6 +2056,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.stopImmediatePropagation = function() {
         e.stopImmediatePropagation();
+        this.stopped = 2;
     };
 
     /**
@@ -2063,6 +2065,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.preventDefault = function() {
         e.preventDefault();
+        this.prevented = 1;
     };
 
     /**
@@ -2074,6 +2077,8 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.halt = function(immediate) {
         e.halt(immediate);
+        this.prevented = 1;
+        this.stopped = (immediate) ? 2 : 1;
     };
 
 };
