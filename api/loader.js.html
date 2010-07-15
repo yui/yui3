@@ -953,7 +953,8 @@
             <span class="nx">o</span>    <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">optional</span><span class="p">,</span> 
             <span class="nx">intl</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">intl</span><span class="p">,</span>
             <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span>
-            <span class="nx">hash</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">hash</span> <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">INTL</span> <span class="o">=</span> <span class="s1">&#39;intl&#39;</span><span class="p">;</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">r</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Y.log(mod.name + &#39; requiring &#39; + r[i]);</span>
@@ -963,8 +964,7 @@
                 <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
-                    <span class="c1">// intl = intl || YArray.indexOf(add, &#39;intl&#39;) &gt; -1;</span>
-                    <span class="nx">intl</span> <span class="o">=</span> <span class="nx">intl</span> <span class="o">||</span> <span class="p">(</span><span class="s1">&#39;intl&#39;</span> <span class="k">in</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">);</span>
+                    <span class="nx">intl</span> <span class="o">=</span> <span class="nx">intl</span> <span class="o">||</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">INTL</span> <span class="k">in</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">));</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">j</span><span class="o">&lt;</span><span class="nx">add</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">add</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
                     <span class="p">}</span>
@@ -983,8 +983,7 @@
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
-                        <span class="c1">// intl = intl || YArray.indexOf(add, &#39;intl&#39;) &gt; -1;</span>
-                        <span class="nx">intl</span> <span class="o">=</span> <span class="nx">intl</span> <span class="o">||</span> <span class="p">(</span><span class="s1">&#39;intl&#39;</span> <span class="k">in</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">);</span>
+                        <span class="nx">intl</span> <span class="o">=</span> <span class="nx">intl</span> <span class="o">||</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">INTL</span> <span class="k">in</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">));</span>
                         <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">j</span><span class="o">&lt;</span><span class="nx">add</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">add</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
                         <span class="p">}</span>
@@ -998,9 +997,9 @@
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">hash</span><span class="p">[</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
                     <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                     <span class="nx">hash</span><span class="p">[</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">info</span><span class="p">[</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]]);</span>
-                    <span class="c1">// intl = intl || YArray.indexOf(add, &#39;intl&#39;) &gt; -1;</span>
-                    <span class="nx">intl</span> <span class="o">=</span> <span class="nx">intl</span> <span class="o">||</span> <span class="p">(</span><span class="s1">&#39;intl&#39;</span> <span class="k">in</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">);</span>
+                    <span class="nx">m</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+                    <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+                    <span class="nx">intl</span> <span class="o">=</span> <span class="nx">intl</span> <span class="o">||</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">INTL</span> <span class="k">in</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">));</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">j</span><span class="o">&lt;</span><span class="nx">add</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">add</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
                     <span class="p">}</span>
@@ -1022,7 +1021,7 @@
                 <span class="p">}</span>
             <span class="p">}</span>
 
-            <span class="nx">d</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="s1">&#39;intl&#39;</span><span class="p">);</span>
+            <span class="nx">d</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">INTL</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded_map</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>

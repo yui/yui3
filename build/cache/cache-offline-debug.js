@@ -44,7 +44,7 @@ Y.mix(CacheOffline, {
         expires: {
             value: 86400000, //one day
             validator: function(v) {
-                return Y.Lang.isNumber(v) && v >= 0;
+                return Y.Lang.isDate(v) || (Y.Lang.isNumber(v) && v >= 0);
             }
         },
 
@@ -144,7 +144,7 @@ var localStorage = Y.config.win.localStorage,
             expires = this.get("expires");
             
         entry.expires = isDate(expires) ? expires :
-            (expires ? new Date().getTime() + expires : null);
+            (expires ? new Date(new Date().getTime() + this.get("expires")) : null);
 
         localStorage.setItem(JSON.stringify({"request":request}), JSON.stringify(entry));
         Y.log("Cached offline entry: " + Y.dump(entry), "info", "cache");
@@ -211,10 +211,11 @@ var localStorage = Y.config.win.localStorage,
         }
         
         if(entry) {
-            cached = entry.cached;
-            entry.cached = cached ? new Date(cached) : cached;
+            entry.cached = new Date(entry.cached);
             expires = entry.expires;
+            expires = !expires ? null : new Date(expires);
             if(!expires || new Date() < expires) {
+                entry.expires = expires;
                 this.fire("retrieve", {entry: entry});
                 Y.log("Retrieved offlinecached response: " + Y.dump(entry) +
                         " for request: " + Y.dump(request), "info", "cache");
@@ -237,7 +238,7 @@ var localStorage = Y.config.win.localStorage,
     _defAddFn: function(e) {
         var expires = this.get("expires");
         e.entry.expires = isDate(expires) ? expires :
-            (expires ? new Date().getTime() + this.get("expires") : null);
+            (expires ? new Date(new Date().getTime() + this.get("expires")) : null);
         Y.log("Added expires property: " + Y.dump(e.entry), "info", "cache");
         
         CacheOffline.superclass._defAddFn.call(this, e);

@@ -130,6 +130,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
+        editor.focus();
     });
     editor.on('frame:keydown', function(e) {
         if (e.keyCode === 13) {
@@ -139,7 +140,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             inst.all('br').remove(); //Remove the BR
             var html = editor.getContent();
             editor.set('content', '');
-            alert('Send: ' + html);
+            //alert('Send: ' + html);
             editor.focus();
         }
     });
