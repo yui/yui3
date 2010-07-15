@@ -110,6 +110,7 @@ var NOT_FOUND       = {},
     _queue          = YUI.Env._loaderQueue,
     META            = GLOBAL_ENV[VERSION],
     L               = Y.Lang,
+    ON_PAGE         = GLOBAL_ENV.mods,
     _path           = Y.cached(function(dir, file, type, nomin) {
                         var path = dir + '/' + file;
                         if (!nomin) {
@@ -125,7 +126,6 @@ Y.Env.meta = META;
 Y.Loader = function(o) {
 
     var defaults = Y.Env.meta.modules, 
-        onPage   = GLOBAL_ENV.mods,
         self     = this;
 
     /**
@@ -427,9 +427,9 @@ Y.Loader = function(o) {
     // }
     //
     //
-    // for (i in onPage) {
-    //     if ((!(i in self.moduleInfo)) && onPage[i].details) {
-    //         self.addModule(onPage[i].details, i);
+    // for (i in ON_PAGE) {
+    //     if ((!(i in self.moduleInfo)) && ON_PAGE[i].details) {
+    //         self.addModule(ON_PAGE[i].details, i);
     //     }
     // }
 
@@ -437,7 +437,7 @@ Y.Loader = function(o) {
         self.addModule(v, k);
     });
 
-    YObject.each(onPage, function(v, k) {
+    YObject.each(ON_PAGE, function(v, k) {
         if ((!(k in self.moduleInfo)) && ('details' in v)) {
             self.addModule(v.details, k);
         }
@@ -889,6 +889,30 @@ Y.Loader.prototype = {
             return NO_REQUIREMENTS;
         }
 
+        var i, m, j, add, packName, lang,
+            adddef = ON_PAGE[mod.name] && ON_PAGE[mod.name].details,
+            d      = [], 
+            r      = mod.requires, 
+            o      = mod.optional, 
+            intl   = mod.lang || mod.intl,
+            info   = this.moduleInfo,
+            hash   = {},
+            INTL   = 'intl';
+
+
+        if (mod.temp && adddef) {
+            delete mod.expanded;
+            delete mod.temp;
+            if (adddef.requires) {
+                mod.requires = mod.requires.concat(adddef.requires);
+            }
+            if (adddef.optional) {
+                mod.optional = (mod.optional) ? mod.optional.concat(adddef.optional) : adddef.optional;
+            }
+            // console.log('temp mod: ' + mod.name + ', ' + mod.requires);
+            // console.log(adddef);
+        }
+
         if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
             // Y.log('already expanded ' + mod.name);
             return mod.expanded;
@@ -898,14 +922,6 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
 
-        var i, m, j, add, packName, lang,
-            d    = [], 
-            r    = mod.requires, 
-            o    = mod.optional, 
-            intl = mod.lang || mod.intl,
-            info = this.moduleInfo,
-            hash = {},
-            INTL = 'intl';
 
         for (i=0; i<r.length; i++) {
             // Y.log(mod.name + ' requiring ' + r[i]);
@@ -1026,6 +1042,9 @@ Y.Loader.prototype = {
             sorted = this.results[key];
 
             this.key = key;
+
+            // console.log('calc key: ' + key);
+            // console.log(this);
             
             if (sorted) {
                 this.sorted = YObject.keys(this._reduce(YArray.hash(sorted)));
@@ -1162,23 +1181,27 @@ Y.Loader.prototype = {
      * @private
      */
     _explode: function() {
-        var r = this.required, m, reqs;
+        var r = this.required, m, reqs, done = {};
+
         // the setup phase is over, all modules have been created
         this.dirty = false;
 
         YObject.each(r, function(v, name) {
-            m = this.getModule(name);
-            if (m) {
-                var expound = m.expound;
+            if (!done[name]) {
+                done[name] = true;
+                m = this.getModule(name);
+                if (m) {
+                    var expound = m.expound;
 
-                if (expound) {
-                    r[expound] = this.getModule(expound);
-                    reqs = this.getRequires(r[expound]);
+                    if (expound) {
+                        r[expound] = this.getModule(expound);
+                        reqs = this.getRequires(r[expound]);
+                        Y.mix(r, YArray.hash(reqs));
+                    }
+
+                    reqs = this.getRequires(m);
                     Y.mix(r, YArray.hash(reqs));
                 }
-
-                reqs = this.getRequires(m);
-                Y.mix(r, YArray.hash(reqs));
             }
         }, this);
 
@@ -1221,6 +1244,7 @@ Y.Loader.prototype = {
 Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
+                    m.temp = true;
                 }
             }
         }

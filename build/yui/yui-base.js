@@ -114,11 +114,10 @@ if (typeof YUI === 'undefined') {
                 loader.attaching        = null;
                 loader.data             = null;
                 loader.required         = [];
+                loader.loadType         = null;
             } else {
                 loader = new Y.Loader(Y.config);
             }
-
-            // loader.sig = Y.config._sig;
 
             return loader;
         };
@@ -627,6 +626,7 @@ proto = {
         // the module metadata specifies
         YArray.each(args, process);
 
+        // console.log(args);
         len = missing.length;
 
         if (len) {
