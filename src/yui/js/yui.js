@@ -566,14 +566,15 @@ proto = {
                 }
 
                 if (redo && data) {
-                    // Y.log('redo: ' + r);
-                    // Y.log('redo: ' + data);
-                    // Y.log('redo: ' + missing);
-                    // Y.log('redo: ' + args);
+                    // Y.log('redo r: ' + r);
+                    // Y.log('redo data: ' + data);
+                    // Y.log('redo missing: ' + missing);
+                    // Y.log('redo args: ' + args);
                     
                     // newData = data.concat();
-                    
                     newData = r.concat();
+
+                    newData = missing.concat();
                     newData.push(function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
