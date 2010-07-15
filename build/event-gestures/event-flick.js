@@ -89,25 +89,12 @@ Y.Event.define('flick', {
         return params;
     },
 
-    filterSubs: function (subs, args) {
-        var i,
-            sub,
-            params, 
-            absDistance,
-            e = args[0];
+    fireFilter: function (sub, args) {
+        var e      = args[0],
+            params = sub._extra;
 
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-
-                sub = subs[i];
-                params = sub._extra;
-                absDistance = Math.abs(e.distance);
-
-                if (e.velocity < params.minVelocity || absDistance < params.minDistance) {   
-                    subs[i] = null;
-                }
-            }
-        }
+        return Math.abs(e.distance) >= params.minDistance &&
+                        e.velocity  >= params.minVelocity;
     },
 
     _onStart: function(e, node, subscriber, ce) {

@@ -21,14 +21,19 @@ SyntheticEvent.prototype = {
         }
     },
 
+    processArgs: noop,
+    //fireFilter : null,
+    //allowDups  : false,
+
     init       : noop,
     on         : noop,
     detach     : noop,
     destroy    : noop,
-    delegate   : noop,
-    processArgs: noop,
-    filterSubs : noop,
-    //allowDups  : false,
+
+    initDelegate   : noop,
+    onDelegate     : noop,
+    detachDelegate : noop,
+    destroyDelegate: noop,
 
     _getEvent: function (node) {
         var ce = node.getEvent(this.type),
@@ -44,9 +49,6 @@ SyntheticEvent.prototype = {
             ce.domkey  = yuid;
             ce.fn      = noop;
             ce.capture = false;
-
-            // Add support for notifying only a subset of subscribers
-            Y.Do.before(this.filterSubs, ce, '_procSubs', this);
 
             ce.monitor('detach', this._unsubscribe, this);
 
@@ -88,8 +90,7 @@ SyntheticEvent.prototype = {
 
     _subscribe: function (ce, args, node) {
         var extra = this.processArgs(args),
-            abort,
-            handle;
+            abort, handle, sub;
 
         args[2] = node;
         args.shift();
@@ -100,7 +101,13 @@ SyntheticEvent.prototype = {
 
         if (!abort) {
             handle = ce.on.apply(ce, args);
-            handle.sub._extra = extra;
+
+            sub = handle.sub;
+            sub._extra = extra;
+
+            if (this.fireFilter) {
+                Y.Do.before(this._fireFilter, sub, '_notify', this, sub);
+            }
 
             if (!ce.initialized) {
                 this.init(node, handle.sub, ce);
@@ -127,6 +134,12 @@ SyntheticEvent.prototype = {
         }
 
         return false;
+    },
+
+    _fireFilter: function (thisObj, args, ce, sub) {
+        if (!this.fireFilter(sub, args, thisObj, ce)) {
+            return new Y.Do.Prevent();
+        }
     },
 
     _detach: function (args) {

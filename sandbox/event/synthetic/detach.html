@@ -45,8 +45,8 @@ Y.Event.define('test', {
     init: function (node, sub, notifier) {
         Y.log("init " + this.type + ": " + node.get('text'));
         node.setData('testHandle', node.on('click', function (e) {
-            //notifier.fire("alpha");
-            notifier.fire();
+            notifier.fire("alpha");
+            //notifier.fire();
         }));
     },
 
@@ -70,30 +70,19 @@ Y.Event.define('test', {
         Y.log("destroy " + this.type + ": " + node.get('text'));
     },
 
-    filterSubs: function (subs, args) {
-    /*
-        var skip = [], i;
-        for (i in subs) {
-            if (subs.hasOwnProperty(i) && subs[i]._extra === args[1]) {
-                skip.push(i);
-            }
-        }
-
-        for (i = skip.length - 1; i >= 0; --i) {
-            delete subs[skip[i]];
-        }
-    */
+    fireFilter: function (sub, fireArgs, thisObj, ce) {
+        return fireArgs[1] && sub._extra !== fireArgs[1];
     }
 });
 
 var outer = Y.one('#outer'),
     inner = Y.one('#inner'),
-    mode  = 1,
+    mode  = 2,
     handle;
 
 function notify(e) {
     //console.log('Fired', this, arguments);
-    Y.log('Fired ' + e.type + ' from ' + this.get('text'));
+    Y.log('fired ' + e.type + ' from ' + this.get('text'));
 }
 
 Y.one('#attach').on('click', function (e) {
