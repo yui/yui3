@@ -3,6 +3,7 @@ YUI.add('history-html5-test', function (Y) {
 var win          = Y.config.win,
     lastLength,
     location     = win.location,
+    chrome5      = Y.UA.chrome && Y.UA.chrome < 6,
     noHTML5      = !Y.HistoryBase.html5,
     originalPath = location.pathname;
 
@@ -13,9 +14,9 @@ Y.Test.Runner.add(new Y.Test.Case({
         // Ignore all tests in browsers without HTML5 history support.
         ignore: {
             'add() should change state': noHTML5,
-            'add() should set a custom URL': noHTML5,
+            'add() should set a custom URL': noHTML5 || chrome5,
             'replace() should change state without a new history entry':  noHTML5,
-            'replace() should set a custom URL': noHTML5
+            'replace() should set a custom URL': noHTML5 || chrome5
         }
     },
 
@@ -56,6 +57,10 @@ Y.Test.Runner.add(new Y.Test.Case({
         }
     },
 
+    // Note: Google Chrome <= 5 is buggy and doesn't update location.href or
+    // location.pathname when the URL is changed via pushState() or
+    // replaceState(), so it's excluded from this test. This bug is not present
+    // in Chrome 6.
     'add() should set a custom URL': function () {
         this.history.add({foo: 'bar', baz: 'quux'}, {url: '/foo'});
         Y.Assert.areSame('/foo', location.pathname);
@@ -85,6 +90,10 @@ Y.Test.Runner.add(new Y.Test.Case({
         }
     },
 
+    // Note: Google Chrome <= 5 is buggy and doesn't update location.href or
+    // location.pathname when the URL is changed via pushState() or
+    // replaceState(), so it's excluded from this test. This bug is not present
+    // in Chrome 6.
     'replace() should set a custom URL': function () {
         this.history.replace({foo: 'bar', baz: 'quux'}, {url: '/foo'});
         Y.Assert.areSame('/foo', location.pathname);
