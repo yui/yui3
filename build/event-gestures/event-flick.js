@@ -93,11 +93,10 @@ Y.Event.define('flick', {
     },
 
     fireFilter: function (sub, args) {
-        var e      = args[0],
+        var flick = args[0].flick,
             params = sub._extra;
 
-        return Math.abs(e.distance) >= params.minDistance &&
-                        e.velocity  >= params.minVelocity;
+        return (Math.abs(flick.distance) >= params.minDistance) && (flick.velocity  >= params.minVelocity);
     },
 
     _onStart: function(e, node, subscriber, ce) {
