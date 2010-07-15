@@ -23,6 +23,7 @@ SyntheticEvent.prototype = {
     on         : noop,
     detach     : noop,
     destroy    : noop,
+    delegate   : noop,
     processArgs: noop,
     filterSubs : noop,
     //allowDups  : false,
@@ -53,7 +54,7 @@ SyntheticEvent.prototype = {
         return ce;
     },
 
-    subscribe: function (args) {
+    _on: function (args) {
         var handles = [],
             query   = (typeof args[2] === 'string') ? args[2] : null,
             els     = (query) ? Y.Selector.query(query) : toArray(args[2]),
@@ -126,7 +127,7 @@ SyntheticEvent.prototype = {
         return false;
     },
 
-    unsubscribe: function (args) {
+    _detach: function (args) {
         var fn  = args[1],
             els = (typeof args[2] === 'string') ?
                     Y.Selector.query(args[2]) :
@@ -156,6 +157,10 @@ SyntheticEvent.prototype = {
             ce.initialized = false;
             ce.detach(this._unsubscribe, this);
         }
+    },
+
+    _delegate: function (args) {
+        
     }
 };
 
@@ -180,11 +185,15 @@ Y.Node.publish = Y.Event.define = function (type, config) {
 
         Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
             on: function () {
-                return synth.subscribe(toArray(arguments));
+                return synth._on(toArray(arguments));
             },
 
             detach: function () {
-                return synth.unsubscribe(toArray(arguments));
+                return synth._detach(toArray(arguments));
+            },
+
+            delegate: function () {
+                return synth._delegate(toArray(arguments));
             }
         };
 

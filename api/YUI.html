@@ -608,7 +608,7 @@ value.  If the values are equal, the wrapped function is executed again.</span>
                                                     
                                                 
                                                         , 
-                                                         spec
+                                                         filter
                                                     
                                                 
                                                         , 
@@ -624,17 +624,20 @@ value.  If the values are equal, the wrapped function is executed again.</span>
                                         
                                         <div class="description" property="yui:description">
                                             Sets up event delegation on a container element.  The delegated event
-will use a supplied selector to test if the target or one of the
-descendants of the target match it.  The supplied callback function 
-will only be executed if a match was encountered, and, in fact, 
-will be executed for each element that matches if you supply an 
-ambiguous selector.
+will use a supplied filter to test if the callback should be executed.
+This filter can be either a selector string or a function that returns
+a Node to use as the currentTarget for the event.
 The event object for the delegated event is supplied to the callback
 function.  It is modified slightly in order to support all properties
 that may be needed for event delegation.  'currentTarget' is set to
-the element that matched the delegation specifcation.  'container' is
-set to the element that the listener is bound to (this normally would
-be the 'currentTarget').
+the element that matched the selector string filter or the Node returned
+from the filter function.  'container' is set to the element that the
+listener is delegated from (this normally would be the 'currentTarget').
+Filter functions will be called with the arguments that would be passed to
+the callback function, including the event object as the first parameter.
+The function should return false (or a falsey value) if the success criteria
+aren't met, and the Node to use as the event's currentTarget and 'this'
+object if they are.
                                         </div>
 
                                         <div class="description">
@@ -661,11 +664,11 @@ will be provided the event object for the delegated event.</span>
                                                         <span property="yui:description">  the element that is the delegation container</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">spec</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        <code><span property="yui:name">filter</span>
+                                                        &lt;<span property="yui:type">string|function</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  a selector that must match the target of the
-event.</span>
+event or a function that returns a Node or false.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
