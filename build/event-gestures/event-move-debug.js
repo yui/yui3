@@ -44,7 +44,7 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
     define = Y.Event.define;
 
-define('movestart', {
+define('gesturemovestart', {
 
     init: function (node, subscriber, ce) {
 
@@ -105,12 +105,12 @@ define('movestart', {
             start = (button === undefined) || (button = e.button);
         }
 
-        Y.log("movestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance);
+        Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance);
 
         if (start) {
 
             if (minTime === 0 || minDistance === 0) {
-                Y.log("movestart: No minTime or minDistance.");
+                Y.log("gesturemovestart: No minTime or minDistance.");
                 this._start(e, node, ce, params);
             } else {
 
@@ -118,8 +118,8 @@ define('movestart', {
 
                 if (minTime > 0) {
 
-                    Y.log("movestart: minTime specified. Setup timer.");
-                    Y.log("movestart: initialTime for minTime = " + new Date().getTime());
+                    Y.log("gesturemovestart: minTime specified. Setup timer.");
+                    Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime());
                     
                     params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
 
@@ -130,12 +130,12 @@ define('movestart', {
 
                 if (minDistance > 0) {
 
-                    Y.log("movestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.");
-                    Y.log("movestart: initialXY for minDistance = " + startXY);
+                    Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.");
+                    Y.log("gesturemovestart: initialXY for minDistance = " + startXY);
 
                     params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
                         if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
-                            Y.log("movestart: minDistance hit.");
+                            Y.log("gesturemovestart: minDistance hit.");
                             this._start(e, node, ce, params);
                         }
                     }, this));
@@ -164,9 +164,9 @@ define('movestart', {
             this._cancel(params);
         }
 
-        e.type = "movestart";
+        e.type = "gesturemovestart";
 
-        Y.log("movestart: Firing start: " + new Date().getTime());
+        Y.log("gesturemovestart: Firing start: " + new Date().getTime());
 
         node.setData(_MOVE_START, e);
         ce.fire(e);
@@ -176,7 +176,7 @@ define('movestart', {
     MIN_DISTANCE : 0
 });
 
-define('move', {
+define('gesturemove', {
 
     init : function (node, subscriber, ce) {
 
@@ -223,7 +223,7 @@ define('move', {
             if (move) {
                 origE.preventDefault();
 
-                e.type = "move";
+                e.type = "gesturemove";
                 node.setData(_MOVE, e);
                 ce.fire(e);
             }
@@ -231,7 +231,7 @@ define('move', {
     }
 });
 
-define('moveend', {
+define('gesturemoveend', {
 
     init : function (node, subscriber, ce) {
 
@@ -281,7 +281,7 @@ define('moveend', {
 
             if (moveEnd) {
                 origE.preventDefault();
-                e.type = "moveend";
+                e.type = "gesturemoveend";
 
                 node.clearData(_MOVE_START);
                 node.clearData(_MOVE);

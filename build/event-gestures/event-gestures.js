@@ -251,7 +251,7 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
     define = Y.Event.define;
 
-define('movestart', {
+define('gesturemovestart', {
 
     init: function (node, subscriber, ce) {
 
@@ -364,7 +364,7 @@ define('movestart', {
             this._cancel(params);
         }
 
-        e.type = "movestart";
+        e.type = "gesturemovestart";
 
 
         node.setData(_MOVE_START, e);
@@ -375,7 +375,7 @@ define('movestart', {
     MIN_DISTANCE : 0
 });
 
-define('move', {
+define('gesturemove', {
 
     init : function (node, subscriber, ce) {
 
@@ -422,7 +422,7 @@ define('move', {
             if (move) {
                 origE.preventDefault();
 
-                e.type = "move";
+                e.type = "gesturemove";
                 node.setData(_MOVE, e);
                 ce.fire(e);
             }
@@ -430,7 +430,7 @@ define('move', {
     }
 });
 
-define('moveend', {
+define('gesturemoveend', {
 
     init : function (node, subscriber, ce) {
 
@@ -480,7 +480,7 @@ define('moveend', {
 
             if (moveEnd) {
                 origE.preventDefault();
-                e.type = "moveend";
+                e.type = "gesturemoveend";
 
                 node.clearData(_MOVE_START);
                 node.clearData(_MOVE);

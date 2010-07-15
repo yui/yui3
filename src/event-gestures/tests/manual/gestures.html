@@ -45,15 +45,15 @@
                     var target = e.target;
 
                     target.set("innerHTML", "");
-                    target.append("<div>movestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    target.append("<div>gesturemovestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveHandler = function(e) {
-                    e.target.append("<div>move, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    e.target.append("<div>gesturemove, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveEndHandler = function(e) {
-                    e.target.append("<div>moveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    e.target.append("<div>gesturemoveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var flickCfg = {
@@ -75,13 +75,13 @@
 
                 div.on("flick", flickHandler, flickCfg);
 
-                div.on("movestart", moveStartHandler, moveStartCfg);
-                div.on("move", moveHandler);
-                div.on("moveend", moveEndHandler);
+                div.on("gesturemovestart", moveStartHandler, moveStartCfg);
+                div.on("gesturemove", moveHandler);
+                div.on("gesturemoveend", moveEndHandler);
 
-                div2.on("movestart", moveStartHandler, moveStartCfg2);
-                div2.on("move", moveHandler);
-                div2.on("moveend", moveEndHandler);
+                div2.on("gesturemovestart", moveStartHandler, moveStartCfg2);
+                div2.on("gesturemove", moveHandler);
+                div2.on("gesturemoveend", moveEndHandler);
 
                 div.addClass("active");
             });
