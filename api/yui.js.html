@@ -77,7 +77,10 @@
     <span class="cm">/*global YUI_config*/</span>
     <span class="kd">var</span> <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> 
+            <span class="nx">Y</span>            <span class="o">=</span> <span class="k">this</span><span class="p">,</span> 
+            <span class="nx">a</span>            <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> 
+            <span class="nx">l</span>            <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> 
             <span class="nx">globalConfig</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
         <span class="c1">// Allow instantiation without the new operator</span>
@@ -151,7 +154,23 @@
                             <span class="k">if</span> <span class="p">(</span><span class="nx">hasWin</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">remove</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">handleLoad</span><span class="p">);</span>
                             <span class="p">}</span>
-                        <span class="p">};</span>
+                        <span class="p">},</span>
+        <span class="nx">getLoader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">loader</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">loaders</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">_sig</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">loader</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span>            <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="nx">loader</span><span class="p">.</span><span class="nx">attaching</span>        <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="nx">loader</span><span class="p">.</span><span class="nx">data</span>             <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="nx">loader</span><span class="p">.</span><span class="nx">required</span>         <span class="o">=</span> <span class="p">[];</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="c1">// loader.sig = Y.config._sig;</span>
+
+            <span class="k">return</span> <span class="nx">loader</span><span class="p">;</span>
+        <span class="p">};</span>
 
 <span class="c1">//  Stamp the documentElement (HTML) with a class of &quot;yui-loaded&quot; to </span>
 <span class="c1">//  enable styles that need to key off of JS being enabled.</span>
@@ -169,13 +188,18 @@
         
 <span class="nx">proto</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">_config</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
+
+        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="nx">NOOP</span><span class="p">;</span>
+        
         <span class="kd">var</span> <span class="nx">attr</span><span class="p">,</span>
             <span class="nx">name</span><span class="p">,</span> 
             <span class="nx">detail</span><span class="p">,</span>
             <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> 
             <span class="nx">mods</span>   <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span>
             <span class="nx">groups</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">groups</span><span class="p">;</span>
+
+        <span class="nx">config</span><span class="p">.</span><span class="nx">_sig</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+
         <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">attr</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
@@ -194,6 +218,8 @@
                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;win&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">contentWindow</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
                     <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nb">document</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;_yuid&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// preserve the guid</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">;</span>
                 <span class="p">}</span>
@@ -217,6 +243,7 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">mods</span><span class="o">:</span>         <span class="p">{},</span> <span class="c1">// flat module map</span>
                 <span class="nx">versions</span><span class="o">:</span>     <span class="p">{},</span> <span class="c1">// version module map</span>
+                <span class="nx">loaders</span><span class="o">:</span>      <span class="p">{},</span>
                 <span class="nx">base</span><span class="o">:</span>         <span class="nx">BASE</span><span class="p">,</span>
                 <span class="nx">cdn</span><span class="o">:</span>          <span class="nx">BASE</span> <span class="o">+</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
                 <span class="nx">bootstrapped</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
@@ -238,6 +265,9 @@
                             <span class="c1">//uild/yuiloader-dom-event/yuiloader-dom-event.js</span>
                             <span class="c1">//&amp;3.0.0/build/yui/yui-min.js&quot;; // debug url</span>
                             <span class="c1">//Y.log(&#39;src) &#39; + src);</span>
+
+<span class="c1">// http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&amp;3.1.1/build/oop/oop-min.js&amp;3.1.1/build/event-custom/event-custom-min.js&amp;3.1.1/build/attribute/attribute-min.js</span>
+
                             <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">srcPattern</span><span class="p">);</span>
                             <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
@@ -280,6 +310,7 @@
 
         <span class="c1">// configuration defaults</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">||</span> <span class="p">{</span>
+            <span class="nx">_sig</span><span class="o">:</span>              <span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="nx">win</span><span class="o">:</span>               <span class="nx">win</span><span class="p">,</span>
             <span class="nx">doc</span><span class="o">:</span>               <span class="nx">doc</span><span class="p">,</span>
             <span class="nx">debug</span><span class="o">:</span>             <span class="kc">true</span><span class="p">,</span>
@@ -635,12 +666,16 @@
         <span class="c1">// use loader to expand dependencies and sort the </span>
         <span class="c1">// requirements if it is available.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+            <span class="c1">// loader = new Y.Loader(config);</span>
+            <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="c1">// loader.allowRollup = false;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">calculate</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">.</span><span class="nx">sorted</span><span class="p">;</span>
+
+            <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">loaders</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">_sig</span><span class="p">]</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">;</span>
+
         <span class="p">}</span>
 
         <span class="c1">// process each requirement and any additional requirements </span>
@@ -661,7 +696,8 @@
             <span class="c1">// Y.log(&#39;Using loader to fetch missing dependencies: &#39; + missing, &#39;info&#39;, &#39;yui&#39;);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Using Loader&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+            <span class="c1">// loader = new Y.Loader(config);</span>
+            <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span> <span class="o">=</span> <span class="nx">handleLoader</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">attaching</span> <span class="o">=</span> <span class="nx">args</span><span class="p">;</span>
