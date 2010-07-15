@@ -913,7 +913,8 @@ Y.Loader.prototype = {
             // console.log(adddef);
         }
 
-        if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        // if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
             // Y.log('already expanded ' + mod.name);
             return mod.expanded;
         }
