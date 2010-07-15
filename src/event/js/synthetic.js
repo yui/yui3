@@ -197,6 +197,8 @@ Y.Node.publish = Y.Event.define = function (type, config) {
         type = synth.type;
 
         Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
+            eventDef: synth,
+
             on: function () {
                 return synth._on(toArray(arguments));
             },
