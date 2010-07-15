@@ -1015,7 +1015,7 @@ Y.Loader.prototype = {
                     hash[o[i]] = true;
                     add = this.getRequires(info[o[i]]);
                     // intl = intl || YArray.indexOf(add, 'intl') > -1;
-                    intl = intl || ('intl' in m.expanded_map);
+                    intl = intl || ('intl' in info[o[i]].expanded_map);
                     for (j=0; j<add.length; j++) {
                         d.push(add[j]);
                     }

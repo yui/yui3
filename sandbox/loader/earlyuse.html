@@ -15,10 +15,11 @@ Y = new YUI({
     someotherlib: {
       fullpath: 'someotherlib.js'
     }
-  }
+  },
+  loadOptional: true
 });
 
-Y.use('event', 'somelib', function(Y) {
+Y.use('event', 'slider', 'somelib', function(Y) {
   // Y.log("somelib: " + typeof(Y.somelib));
 });
 
