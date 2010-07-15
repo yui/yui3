@@ -568,9 +568,13 @@ proto = {
 
                 if (redo && data) {
                     // Y.log('redo: ' + r);
+                    // Y.log('redo: ' + data);
                     // Y.log('redo: ' + missing);
                     // Y.log('redo: ' + args);
-                    newData = data.concat();
+                    
+                    // newData = data.concat();
+                    
+                    newData = r.concat();
                     newData.push(function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {

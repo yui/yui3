@@ -904,7 +904,8 @@ Y.Loader.prototype = {
             o    = mod.optional, 
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
-            hash = {};
+            hash = {},
+            INTL = 'intl';
 
         for (i=0; i<r.length; i++) {
             // Y.log(mod.name + ' requiring ' + r[i]);
@@ -914,8 +915,7 @@ Y.Loader.prototype = {
                 m = this.getModule(r[i]);
                 if (m) {
                     add = this.getRequires(m);
-                    // intl = intl || YArray.indexOf(add, 'intl') > -1;
-                    intl = intl || ('intl' in m.expanded_map);
+                    intl = intl || (m.expanded_map && (INTL in m.expanded_map));
                     for (j=0; j<add.length; j++) {
                         d.push(add[j]);
                     }
@@ -934,8 +934,7 @@ Y.Loader.prototype = {
 
                     if (m) {
                         add = this.getRequires(m);
-                        // intl = intl || YArray.indexOf(add, 'intl') > -1;
-                        intl = intl || ('intl' in m.expanded_map);
+                        intl = intl || (m.expanded_map && (INTL in m.expanded_map));
                         for (j=0; j<add.length; j++) {
                             d.push(add[j]);
                         }
@@ -949,9 +948,9 @@ Y.Loader.prototype = {
                 if (!hash[o[i]]) {
                     d.push(o[i]);
                     hash[o[i]] = true;
-                    add = this.getRequires(info[o[i]]);
-                    // intl = intl || YArray.indexOf(add, 'intl') > -1;
-                    intl = intl || ('intl' in info[o[i]].expanded_map);
+                    m = info[o[i]];
+                    add = this.getRequires(m);
+                    intl = intl || (m.expanded_map && (INTL in m.expanded_map));
                     for (j=0; j<add.length; j++) {
                         d.push(add[j]);
                     }
@@ -973,7 +972,7 @@ Y.Loader.prototype = {
                 }
             }
 
-            d.unshift('intl');
+            d.unshift(INTL);
         }
 
         mod.expanded_map = YArray.hash(d);
