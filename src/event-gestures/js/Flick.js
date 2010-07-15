@@ -76,7 +76,7 @@ Y.Event.define('flick', {
     },
 
     processArgs: function(args) {
-        var params = (args[3]) ? args.splice(3, 1)[0] : {};
+        var params = (args[3]) ? Y.merge(args.splice(3, 1)[0]) : {};
 
         if (!(MIN_VELOCITY in params)) {
             params.minVelocity = this.MIN_VELOCITY;
