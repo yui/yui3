@@ -6,7 +6,6 @@
  * @submodule event-flick
  */
 
-// TODO: Better way to sniff 'n' switch touch support?
 var EVENT = ("ontouchstart" in Y.config.win) ? {
         start: "touchstart",
         end: "touchend"
@@ -72,6 +71,10 @@ Y.Event.define('flick', {
         }
     },
 
+    publishConfig: {
+        emitFacade:false
+    },
+
     processArgs: function(args) {
         var params = (args[3]) ? args.splice(3, 1)[0] : {};
 
@@ -109,17 +112,13 @@ Y.Event.define('flick', {
         }
 
         if (start) {
-
             origE.preventDefault();
 
-            node.setData(_FLICK_START, {
-                time : new Date().getTime(),
-                pageX: e.pageX, 
-                pageY: e.pageY,
-                clientX: e.clientX, 
-                clientY: e.clientY,
-                _e : e
-            });
+            e.flick = {
+                time : new Date().getTime()
+            };
+
+            node.setData(_FLICK_START, e);
 
             endHandle = node.getData(_FLICK_END_HANDLE);
 
@@ -135,10 +134,9 @@ Y.Event.define('flick', {
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
-            valid = node.getData(_FLICK_START),
-            start = valid,
+            start = node.getData(_FLICK_START),
+            valid = !!start,
             endEvent = e,
-
             startTime,
             time,
             params,
@@ -162,7 +160,7 @@ Y.Event.define('flick', {
 
                 endEvent.preventDefault();
 
-                startTime = start.time;
+                startTime = start.flick.time;
                 endTime = new Date().getTime();
                 time = endTime - startTime;
 
@@ -180,23 +178,19 @@ Y.Event.define('flick', {
                 velocity = absDistance/time;
 
                 if (isFinite(velocity)) {
-                    ce.fire({
+
+                    e.type = "flick";
+                    e.flick = {
+                        time:time,
                         distance: distance,
-                        time: time,
                         direction: distance/absDistance,
-                        velocity: velocity,
+                        velocity:velocity,
                         axis: axis,
-                        button: e.button,
-                        start: start,
-                        end: {
-                            time: endTime,
-                            clientX: endEvent.clientX, 
-                            clientY: endEvent.clientY,
-                            pageX: endEvent.pageX,
-                            pageY: endEvent.pageY,
-                            _e : e 
-                        }
-                    });
+                        start : start
+                    };
+
+                    ce.fire(e);
+
                 }
 
                 node.clearData(_FLICK_START);

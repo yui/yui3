@@ -1,4 +1,3 @@
-
     var HOST = "host",
         PARENT_NODE = "parentNode",
         BOUNDING_BOX = "boundingBox",
@@ -118,7 +117,7 @@
          * @protected
          */
         _onFlick: function(e) {
-            this._v = e.velocity * e.direction;
+            this._v = e.flick.velocity * e.flick.direction;
             this._flick = true;
 
             this._flickAnim();
@@ -249,6 +248,7 @@
                 node.setStyle('-webkit-transition', null);
                 node.setStyle('-webkit-transition-timing-function', null);
             }
+
             node.setStyle('-webkit-transform', 'translate3d('+(x*-1)+'px,'+(y*-1)+'px,0)');            
         },
 

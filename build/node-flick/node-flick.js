@@ -1,6 +1,5 @@
 YUI.add('node-flick', function(Y) {
 
-
     var HOST = "host",
         PARENT_NODE = "parentNode",
         BOUNDING_BOX = "boundingBox",
@@ -120,7 +119,7 @@ YUI.add('node-flick', function(Y) {
          * @protected
          */
         _onFlick: function(e) {
-            this._v = e.velocity * e.direction;
+            this._v = e.flick.velocity * e.flick.direction;
             this._flick = true;
 
             this._flickAnim();
