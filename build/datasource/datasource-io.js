@@ -127,7 +127,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
                         if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
-                        	defIOConfig.on.success.vapply(defIOConfig.context || Y, arguments);
+                        	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
                         }
                     },
                     failure: function (id, response, e) {
@@ -158,6 +158,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
 });
   
 Y.DataSource.IO = DSIO;
+
 
 
 }, '@VERSION@' ,{requires:['datasource-local', 'io']});

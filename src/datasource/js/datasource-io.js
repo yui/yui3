@@ -126,7 +126,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received IO data response for \"" + request + "\"", "info", "datasource-io");
                         if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
-                        	defIOConfig.on.success.vapply(defIOConfig.context || Y, arguments);
+                        	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
                         }
                     },
                     failure: function (id, response, e) {

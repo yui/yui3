@@ -186,6 +186,40 @@
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
+            testIOConfig: function() {
+                var ds = new Y.DataSource.IO({
+                    source: "./php/ysearch_json_madonna.php",
+                    ioConfig: {
+                        method: "POST",
+                        data: "foo=bar",
+                        timeout: 1
+                    }
+                });
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleFailure",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isObject(e.error, "Expected error from timeout.");
+                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isObject(e.response, "Expected response object.");
+                        OBJECTASSERT.ownsKeys({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
+                    })]
+                });
+
+                ds.sendRequest({
+                    request: null,
+                    callback: {
+                        success: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        },
+                        failure: handler.handleFailure
+                    }
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
             testIOPost: function() {
                 var ds = new Y.DataSource.IO({
                     source: "./php/ysearch_json_madonna.php"
