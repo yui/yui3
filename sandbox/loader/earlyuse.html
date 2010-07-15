@@ -18,8 +18,16 @@ Y = new YUI({
   }
 });
 
-Y.use('somelib', function(Y) {
-  Y.log("somelib: " + typeof(Y.somelib));
+Y.use('event', 'somelib', function(Y) {
+  // Y.log("somelib: " + typeof(Y.somelib));
+});
+
+Y.use('event', 'somelib', function(Y) {
+  // Y.log("somelib: " + typeof(Y.somelib));
+});
+
+Y.use('event', 'somelib', function(Y) {
+  // Y.log("somelib: " + typeof(Y.somelib));
 });
 </script>
 </body>

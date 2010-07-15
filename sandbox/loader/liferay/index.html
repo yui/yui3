@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<!--
+<script src="http://yui.yahooapis.com/3.1.0/build/yui/yui-min.js"></script>
+-->
+<script src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+var YUI_config = {
+	groups: {
+	   alloy: {
+               modules: {
+					'aui-state-interaction': {skinnable:false, requires:['aui-base','plugin']},
+					'aui-data-set': {skinnable:false, requires:['oop','collection','base']},
+					'aui-button-item': {skinnable:true, requires:['aui-base','aui-state-interaction','widget-child']},
+					'aui-base': {skinnable:false, requires:['aui-node','aui-component','aui-delayed-task','event','oop','widget-css']},
+					'aui-component': {skinnable:false, requires:['widget']},
+					'aui-editable': {skinnable:true, requires:['aui-base','aui-form-combobox']},
+					'aui-form': {submodules: {'aui-form-validator': {requires:['aui-base','aui-event-input','selector-css3','substitute']}, 'aui-form-textfield': {requires:['aui-form-field']}, 'aui-form-textarea': {skinnable:true, requires:['aui-form-textfield']}, 'aui-form-field': {requires:['aui-base','aui-component','substitute']}, 'aui-form-combobox': {skinnable:true, requires:['aui-form-textarea','aui-toolbar']}, 'aui-form-base': {requires:['aui-base','aui-data-set','aui-form-field','querystring-parse']} }, use:['aui-form-base','aui-form-combobox','aui-form-field','aui-form-textarea','aui-form-textfield','aui-form-validator'], skinnable:false},
+					'aui-toolbar': {skinnable:true, requires:['aui-base','aui-button-item','aui-data-set','widget-parent']},
+					'aui-node': {submodules: {'aui-node-fx': {requires:['aui-base','anim','anim-node-plugin']}, 'aui-node-html5-print': {requires:['aui-node-html5']}, 'aui-node-html5': {requires:['collection','aui-base']}, 'aui-node-base': {requires:['aui-base']} }, use:['aui-node-base','aui-node-html5','aui-node-html5-print','aui-node-fx'], skinnable:false},
+					'aui-delayed-task': {skinnable:false}
+			}
+	    },
+
+		liferay: {
+			base: '/yui-loader-performance/',
+			patterns: {
+				'liferay-': {
+					configFn: function(config) {
+						
+					}
+				}
+			}
+		}
+	}
+};
+
+YUI().use('aui-editable', 'liferay-test', function(Y){
+	//console.log(Y);
+});
+
+</script>
+
+</body>
+</html>
