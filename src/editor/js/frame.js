@@ -405,7 +405,14 @@
         * @chainable        
         */
         focus: function() {
-            this.getInstance().one('win').focus();
+            try {
+                Y.one('win').focus();
+                Y.later(100, this, function() {
+                    this.getInstance().one('win').focus();
+                });
+            } catch (ferr) {
+                Y.log('Frame focus failed', 'warn', 'frame');
+            }
             return this;
         },
         /**
