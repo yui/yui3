@@ -391,7 +391,18 @@ Y.mix(DSIO, {
         io: {
             value: Y.io,
             cloneDefaultValue: false
-        }
+        },
+        
+        /**
+         * Default IO Config.
+         *
+         * @attribute ioConfig
+         * @type Object
+         * @default null
+         */
+         ioConfig: {
+         	value: null
+         }
     }
 });
     
@@ -447,20 +458,27 @@ Y.extend(DSIO, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var uri = this.get("source"),
             io = this.get("io"),
+            defIOConfig = this.get("ioConfig"),
             request = e.request,
-            cfg = Y.mix(e.cfg, {
-                on: {
+            cfg = Y.merge(defIOConfig, e.cfg, {
+                on: Y.merge(defIOConfig, {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
+                        if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
+                        	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
+                        }
                     },
                     failure: function (id, response, e) {
                         e.error = new Error("IO data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
+                        if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
+                        	defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
+                        }
                     }
-                },
+                }),
                 context: this,
-                arguments: e
+                "arguments": e
             });
         
         // Support for POST transactions
@@ -478,7 +496,6 @@ Y.extend(DSIO, Y.DataSource.Local, {
 });
   
 Y.DataSource.IO = DSIO;
-    
 
 
 
