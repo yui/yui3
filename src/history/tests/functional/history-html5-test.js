@@ -3,7 +3,7 @@ YUI.add('history-html5-test', function (Y) {
 var win          = Y.config.win,
     lastLength,
     location     = win.location,
-    chrome5      = Y.UA.chrome && Y.UA.chrome < 6,
+    urlBug       = (Y.UA.chrome && Y.UA.chrome < 6) || (Y.UA.webkit && navigator.vendor.indexOf('Apple') !== -1),
     noHTML5      = !Y.HistoryBase.html5,
     originalPath = location.pathname;
 
@@ -15,9 +15,9 @@ Y.Test.Runner.add(new Y.Test.Case({
         ignore: {
             'Y.History should === Y.HistoryHTML5 when history-hash is not loaded': noHTML5,
             'add() should change state': noHTML5,
-            'add() should set a custom URL': noHTML5 || chrome5,
+            'add() should set a custom URL': noHTML5 || urlBug,
             'replace() should change state without a new history entry':  noHTML5,
-            'replace() should set a custom URL': noHTML5 || chrome5
+            'replace() should set a custom URL': noHTML5 || urlBug
         }
     },
 
