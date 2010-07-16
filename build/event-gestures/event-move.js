@@ -212,7 +212,7 @@ define('gesturemove', {
 
     _onMove : function(e, node, subscriber, ce) {
 
-        var move = true,
+        var move = subscriber._extra.standAlone || node.getData(_MOVE_START),
             origE = e;
 
         if (move) {
@@ -266,7 +266,7 @@ define('gesturemoveend', {
             subscriber[_MOVE_END_HANDLE] = null;
         }
     },
-    
+
     fireFilter: function (sub, args) {
         var node = args[0]._extra.node,
             standAlone= sub._extra.standAlone;
@@ -278,7 +278,7 @@ define('gesturemoveend', {
 
     _onEnd : function(e, node, subscriber, ce) {
 
-        var moveEnd = true,
+        var moveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
             origE = e;
 
         if (moveEnd) {
