@@ -55,8 +55,7 @@
 <span class="cm"> */</span>
 <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="kd">var</span> <span class="nx">_published</span><span class="p">,</span>
-    <span class="nx">INSTANCE</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">INSTANCE</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">,</span>
     <span class="nx">LOGEVENT</span>  <span class="o">=</span> <span class="s1">&#39;yui:log&#39;</span><span class="p">,</span>
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">,</span>
     <span class="nx">LEVELS</span>    <span class="o">=</span> <span class="p">{</span> <span class="nx">debug</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> 
@@ -84,9 +83,10 @@
 <span class="cm"> * @return {YUI}      YUI instance</span>
 <span class="cm"> */</span>
 <span class="nx">INSTANCE</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">cat</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">bail</span><span class="p">,</span> <span class="nx">excl</span><span class="p">,</span> <span class="nx">incl</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span>
-        <span class="nx">Y</span> <span class="o">=</span> <span class="nx">INSTANCE</span><span class="p">,</span> 
-        <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">bail</span><span class="p">,</span> <span class="nx">excl</span><span class="p">,</span> <span class="nx">incl</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">fire</span><span class="p">,</span>
+        <span class="nx">Y</span>         <span class="o">=</span> <span class="nx">INSTANCE</span><span class="p">,</span> 
+        <span class="nx">c</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span>
+        <span class="nx">publisher</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span> <span class="o">:</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">globalEvents</span><span class="p">;</span>
     <span class="c1">// suppress log message if the config is off or the event stack</span>
     <span class="c1">// or the event call stack contains a consumer of the yui:log event</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
@@ -112,16 +112,16 @@
                     <span class="nx">opera</span><span class="p">.</span><span class="nx">postError</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_published</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">,</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">publisher</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">publisher</span> <span class="o">==</span> <span class="nx">Y</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">publisher</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">)))</span> <span class="p">{</span>
+                    <span class="nx">publisher</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">,</span> <span class="p">{</span>
                         <span class="nx">broadcast</span><span class="o">:</span> <span class="mi">2</span>
                     <span class="p">});</span>
-
-                    <span class="nx">_published</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-
                 <span class="p">}</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">,</span> <span class="p">{</span>
+
+                <span class="nx">publisher</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">,</span> <span class="p">{</span>
                     <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="p">,</span> 
                     <span class="nx">cat</span><span class="o">:</span> <span class="nx">cat</span><span class="p">,</span> 
                     <span class="nx">src</span><span class="o">:</span> <span class="nx">src</span>
