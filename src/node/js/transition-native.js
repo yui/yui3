@@ -47,13 +47,15 @@ Y.Node.DOM_EVENTS[TRANSITION_END] = 1;
 TransitionNative.NAME = 'transition';
 
 TransitionNative.DEFAULT_EASING = 'ease-in-out';
+TransitionNative.DEFAULT_DURATION = 0.5;
 
 TransitionNative.prototype = {
     constructor: TransitionNative,
     init: function(node, config) {
         this._node = node;
         this._config = config;
-        this._duration = config.duration || '0.5';
+        this._duration = ('duration' in config) ?
+            config.duration: this.constructor.DEFAULT_DURATION;
         this._easing = config.easing || this.constructor.DEFAULT_EASING;
     },
 
@@ -104,11 +106,15 @@ TransitionNative.prototype = {
             if (!/^(?:node|duration|iterations|easing)$/.test(attr)) {
                 transitions[attr] = config[attr];
                 transition = transitions[attr];
-                duration += this._prepDur(transition.duration || config.duration || 0.5) + ',';
-                easing += (transition.easing || config.easing || 'ease-in-out') + ',';
+                dur = (typeof transition.duration !== 'undefined') ? transition.duration :
+                        this._duration;
+
+                duration += this._prepDur(dur) + ',';
+                easing += (transition.easing || this._easing) + ',';
 
                 transitionText += attr + ',';
-                cssText += attr + ': ' + ((transition.value !== undefined) ? transition.value : transition) + '; ';
+                cssText += attr + ': ' + ((typeof transition.value !== 'undefined') ?
+                        transition.value : transition) + '; ';
             }
         }
 
