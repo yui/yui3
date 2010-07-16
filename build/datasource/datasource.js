@@ -1055,7 +1055,9 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     },
 
     /**
-     * Parses raw data into a normalized response.
+     * Parses raw data into a normalized response. To accommodate XHR responses,
+     * will first look for data in data.responseText. Otherwise will just work
+     * with data.
      *
      * @method _beforeDefDataFn
      * <dl>
@@ -1072,7 +1074,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = e.data ? (e.data.responseText ?  e.data.responseText : e.data) : e.data,
             response = Y.DataSchema.JSON.apply.call(this, this.get("schema"), data);
             
         // Default
