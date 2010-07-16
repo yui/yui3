@@ -131,7 +131,10 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @param easing {String} An easing equation if duration is set
      */
     scrollTo: function(x, y, duration, easing) {
-        var cb = this.get('contentBox');
+        var cb = this.get('contentBox'),
+            xMove = x * -1,
+            yMove = y * -1,
+            transition;
 
         if(x !== this.get('scrollX')) {
             this.set('scrollX', x, { src: UI });
@@ -141,17 +144,20 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
             this.set('scrollY', y, { src: UI });
         }
 
-        if(duration) {
-            cb.transition({
-                easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)',
-                duration : duration/1000,
-                transform: 'translate3d('+(x*-1)+'px,'+(y*-1)+'px,0)'
-            });
+        transition = {
+            easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)',
+            duration : duration/1000
+        };
+
+        if (Y.TransitionNative.supported) {
+            transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
-            cb.setStyle('transition', null);
-            cb.setStyle('transition-timing-function', null);
-            cb.setStyle('transform', 'translate3d('+(x*-1)+'px,'+(y*-1)+'px,0)');
+            transition.easing = 'ease-out';
+            transition.left = xMove; 
+            transition.top = yMove;
         }
+
+        cb.transition(transition);
     },
 
     /**
@@ -611,7 +617,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
         }
         
     },
-    
+
     /**
      * List of class names used in the scrollview's DOM
      *
