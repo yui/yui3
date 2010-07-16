@@ -151,7 +151,7 @@
      <span class="nx">_beforeDefResponseFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Add to Cache before returning</span>
         <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">cached</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">argument</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">);</span>
         <span class="p">}</span>
      <span class="p">}</span>
 <span class="p">};</span>
