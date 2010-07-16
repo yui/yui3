@@ -929,7 +929,7 @@ DataSourceCacheExtension.prototype = {
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
         if(e.response && !e.cached) {
-            this.add(e.request, e.response, (e.callback && e.callback.argument));
+            this.add(e.request, e.response);
         }
      }
 };
@@ -1070,7 +1070,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
+            response = Y.DataSchema.JSON.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1177,7 +1177,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
-            response = Y.DataSchema.XML.apply(this.get("schema"), data);
+            response = Y.DataSchema.XML.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1284,7 +1284,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Array.apply(this.get("schema"), data);
+            response = Y.DataSchema.Array.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1391,7 +1391,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Text.apply(this.get("schema"), data);
+            response = Y.DataSchema.Text.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
