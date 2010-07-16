@@ -62,8 +62,8 @@
         initializer : function() {
             this._node = this.get(HOST);
 
-            this.setBounds();
             this._setStyles();
+            this.setBounds();
 
             this._node.on(FLICK, Y.bind(this._onFlick, this), {
                 minDistance : this.get(MIN_DISTANCE),
@@ -73,12 +73,13 @@
 
         setBounds : function () {
             var box = this.get(BOUNDING_BOX),
+                node = this._node,
 
                 boxHeight = box.get(OFFSET_HEIGHT),
                 boxWidth = box.get(OFFSET_WIDTH),
 
-                contentHeight = this._node.get(OFFSET_HEIGHT),
-                contentWidth = this._node.get(OFFSET_WIDTH);
+                contentHeight = node.get(OFFSET_HEIGHT),
+                contentWidth = node.get(OFFSET_WIDTH);
 
             if (contentHeight > boxHeight) {
                 this._maxY = contentHeight - boxHeight;
@@ -133,6 +134,7 @@
 
             var y = this._y,
                 x = this._x,
+
                 maxY = this._maxY,
                 minY = this._minY,
                 maxX = this._maxX,
@@ -236,20 +238,23 @@
         },
 
         _anim : function(x, y, duration, easing) {
-            var node = this._node;
+            var node = this._node,
 
-            // TODO: Integrate Anim, once done
+                xn = x * -1,
+                yn = y * -1,
+
+                transform = 'translate('+ (xn) +'px,'+ (yn) +'px)';
 
             if(duration) {
-                easing = easing || 'cubic-bezier(0, 0.1, 0, 1.0)';
-                node.setStyle('-webkit-transition', duration+'ms -webkit-transform');
-                node.setStyle('-webkit-transition-timing-function', easing);
+                node.transition({
+                    easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)',
+                    duration : duration/1000,
+                    transform : transform
+                });
             } else {
-                node.setStyle('-webkit-transition', null);
-                node.setStyle('-webkit-transition-timing-function', null);
+               node.setStyle("-webkit-transition", null);
+               node.setStyle("-webkit-transform", transform);
             }
-
-            node.setStyle('-webkit-transform', 'translate3d('+(x*-1)+'px,'+(y*-1)+'px,0)');            
         },
 
         _bounce : function(val, max) {

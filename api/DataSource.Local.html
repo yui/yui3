@@ -384,22 +384,18 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                            (
                                                 
                                                         
-                                                         callback
+                                                         e
                                                     
                                                 
                                                         , 
-                                                         params
-                                                    
-                                                
-                                                        , 
-                                                         error
+                                                         caller
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Executes a given callback.  The third param determines whether to execute
+                                            Returns data to callback.
                                         </div>
 
                                         <div class="description">
@@ -407,22 +403,16 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The callback object.</span>
+                                                        <span property="yui:description">  Event Facade.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">params</span>
-                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        <code><span property="yui:name">caller</span>
+                                                        &lt;<span property="yui:type">DataSource</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  params to be passed to the callback method</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">error</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  whether an error occurred</span>
+                                                        <span property="yui:description">  Calling DataSource instance.</span>
                                                         </dd>
                                                 </dl>
 
