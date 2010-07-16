@@ -780,7 +780,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @submodule anim-easing
  */
 
-Y.Easing = {
+var Easing = {
 
     /**
      * Uniform speed between points.
@@ -1102,8 +1102,17 @@ Y.Easing = {
     }
 };
 
+// mappings for native css timing functions
+Easing.ease = Easing.easeBoth;
+Easing.linear = Easing.none;
+Easing['ease-in'] = Easing.easeIn;
+Easing['ease-out'] = Easing.easeOut;
+Easing['ease-in-out'] = Easing.easeBothStrong;
 
-}, '@VERSION@' ,{requires:['anim-base']});
+Y.Easing = Easing;
+
+
+}, '@VERSION@' );
 YUI.add('anim-node-plugin', function(Y) {
 
 /**

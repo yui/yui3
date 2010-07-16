@@ -27,7 +27,8 @@
             "transition": {
                 "requires": [
                     "transition-native",
-                    "node-style"
+                    "node-style",
+                    "anim-easing"
                 ]
             }
         }, 

@@ -18,9 +18,7 @@
                 ]
             }, 
             "anim-easing": {
-                "requires": [
-                    "anim-base"
-                ]
+                "requires": []
             }, 
             "anim-node-plugin": {
                 "requires": [
@@ -185,22 +183,10 @@
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset"
-        ], 
-        "path": "cssgrids/grids-min.css", 
-        "requires": [
+            "cssreset", 
             "cssfonts"
         ], 
-        "type": "css"
-    }, 
-    "cssgrids-context": {
-        "optional": [
-            "cssreset-context"
-        ], 
-        "path": "cssgrids/grids-context-min.css", 
-        "requires": [
-            "cssfonts-context"
-        ], 
+        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
     "cssreset": {
@@ -864,7 +850,8 @@
             "transition": {
                 "requires": [
                     "transition-native", 
-                    "node-style"
+                    "node-style", 
+                    "anim-easing"
                 ]
             }, 
             "transition-native": {
@@ -913,6 +900,7 @@
     }, 
     "node-flick": {
         "requires": [
+            "transition-native", 
             "event-flick", 
             "plugin"
         ]

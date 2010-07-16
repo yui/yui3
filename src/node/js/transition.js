@@ -110,7 +110,8 @@ Y.extend(Transition, TransitionNative, {
     _initAttrs: function() {
         var from = {},
             to =  {},
-            easing = this._easing,
+            easing = (typeof this._easing === 'string') ?
+                    Y.Easing[this._easing] : this._easing,
             attr = {},
             customAttr = Transition.behaviors,
             config = this._config,
@@ -127,7 +128,8 @@ Y.extend(Transition, TransitionNative, {
                     val = val.call(this, node);
                 } else if (typeof val === 'object') {
                     duration = val.duration * 1000 || this._duration * 1000;
-                    easing = val.easing || easing;
+                    easing = (typeof val.easing === 'string') ?
+                            Y.Easing[val.easing] : val.easing || easing;
                     val = val.value;
                 }
 
