@@ -73,6 +73,15 @@ Y.mix(DSLocal, {
     _tId: 0,
 
     /**
+     * Global in-progress transaction objects.
+     *
+     * @property DataSource.transactions
+     * @type Object
+     * @static
+     */
+    transactions: {},
+
+    /**
      * Returns data to callback.
      *
      * @method DataSource.issueCallback
