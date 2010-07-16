@@ -79,8 +79,8 @@ delegate.notifySub = function (thisObj, args, ce) {
 
             ret = this.fn.apply(thisObj, args);
 
-            if (ret === false) {
-                break; // once() callback should only be called once, duh
+            if (ret === false) { // stop further notifications
+                break;
             }
         }
 
