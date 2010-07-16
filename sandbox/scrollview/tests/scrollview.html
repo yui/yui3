@@ -28,10 +28,10 @@
 		<script src="../../../build/intl/intl-min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../../build/plugin/plugin-min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../../build/pluginhost/pluginhost-min.js" type="text/javascript" charset="utf-8"></script>
-		
+
 		-->
-		
-		<script src="../build/scrollview/scrollview-debug.js" type="text/javascript" charset="utf-8"></script>
+
+	   <script src="../build/scrollview/scrollview-debug.js" type="text/javascript" charset="utf-8"></script>
     </head>
     
     <body>
@@ -291,11 +291,11 @@
     			</li>
             </ul>
         </div>
-        
+
         <script type="text/javascript" charset="utf-8">
 
-            YUI().use('scrollview', function(Y) {
-			
+            YUI().use('transition-native', 'event-gestures', 'scrollview', function(Y) {
+
                 var scrollView = new Y.ScrollView({
                     contentBox: '#scrollable',
                     height: 372
