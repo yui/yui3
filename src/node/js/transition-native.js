@@ -1,19 +1,19 @@
 /**
-* The Transitionation Utility provides an API for creating advanced transitions.
-* @module anim
+* The Native Transition Utility provides an API wrapper for CSS transitions.
+* @module node
 */
 
 /**
-* Provides the base Transition class, for animating numeric properties.
+* Provides the base TransitionNative class.
 *
-* @module anim
-* @submodule anim-base
+* @module node
+* @submodule transition-native
 */
 
 /**
- * A class for constructing animation instances.
- * @class Transition
- * @for Transition
+ * A class for constructing transition instances.
+ * @class TransitionNative
+ * @for TransitionNative
  * @constructor
  * @extends Base
  */
@@ -22,27 +22,34 @@ var START = 'transitionstart',
     END = 'transitionend',
 
     TRANSITION = '-webkit-transition',
-    TRANSITION_CAMEL = 'WebkitTransition',
+    TRANSITION_CAMEL = 'WebkitTransitionNative',
     TRANSITION_PROPERTY = '-webkit-transition-property',
     TRANSITION_DURATION = '-webkit-transition-duration',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
-    TRANSITION_END = 'webkitTransitionEnd',
+    TRANSITION_END = 'webkitTransitionNativeEnd',
 
 
     _running = {},
 
-Transition = function() {
+TransitionNative = function() {
     this.init.apply(this, arguments);
 };
 
+TransitionNative.supported = false;
+TransitionNative.useNative = true;
+
+if (TRANSITION in Y.config.doc.documentElement.style) {
+    TransitionNative.supported = true;
+}
+
 Y.Node.DOM_EVENTS[TRANSITION_END] = 1; 
 
-Transition.NAME = 'transition';
+TransitionNative.NAME = 'transition';
 
-Transition.DEFAULT_EASING = 'ease-in-out';
+TransitionNative.DEFAULT_EASING = 'ease-in-out';
 
-Transition.prototype = {
-    constructor: Transition,
+TransitionNative.prototype = {
+    constructor: TransitionNative,
     init: function(node, config) {
         this._node = node;
         this._config = config;
@@ -144,10 +151,11 @@ Transition.prototype = {
     }
 };
 
-Y.TransitionNative = Transition;
+Y.TransitionNative = TransitionNative;
 
 Y.Node.prototype.transition = function(config) {
-    var anim = new Transition(this, config);
+    var anim = new TransitionNative(this, config);
     anim.run();
+    return this;
 };
 

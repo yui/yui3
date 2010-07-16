@@ -1,15 +1,15 @@
 YUI.add('transition', function(Y) {
 
 /**
-* The Transitionation Utility provides an API for creating advanced transitions.
-* @module anim
+* The Transition Utility provides an API for creating advanced transitions.
+* @module node
 */
 
 /**
 * Provides the base Transition class, for animating numeric properties.
 *
-* @module anim
-* @submodule anim-base
+* @module node
+* @submodule transition
 */
 
 /**
@@ -23,20 +23,22 @@ YUI.add('transition', function(Y) {
 var START = 'transitionstart',
     END = 'transitionend',
 
+    TransitionNative = Y.TransitionNative,
+
     NUM = Number;
 
 var _running = {},
-    _timer;
+    _timer,
 
-Y.Transition = function() {
+Transition = function() {
     this.init.apply(this, arguments);
 };
 
-Y.extend(Y.Transition, Y.TransitionNative, {
+Y.extend(Transition, TransitionNative, {
     _start: function() {
         _running[Y.stamp(this)] = this;
         this._startTime = new Date();
-        Y.Transition._startTimer();
+        Transition._startTimer();
     },
 
     _end: function(finish) {
@@ -65,7 +67,7 @@ Y.extend(Y.Transition, Y.TransitionNative, {
 
     _runAttrs: function(time) {
         var attr = this._runtimeAttr,
-            customAttr = Y.Transition.behaviors,
+            customAttr = Transition.behaviors,
             easing = attr.easing,
             node = this._node,
             done = false,
@@ -81,7 +83,7 @@ Y.extend(Y.Transition, Y.TransitionNative, {
                 d = attribute.duration;
                 t = time;
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
-                        customAttr[i].set : Y.Transition.DEFAULT_SETTER;
+                        customAttr[i].set : Transition.DEFAULT_SETTER;
 
                 done = (t >= d);
 
@@ -112,7 +114,7 @@ Y.extend(Y.Transition, Y.TransitionNative, {
             to =  {},
             easing = this._easing,
             attr = {},
-            customAttr = Y.Transition.behaviors,
+            customAttr = Transition.behaviors,
             config = this._config,
             duration,
             unit, begin, end;
@@ -132,17 +134,17 @@ Y.extend(Y.Transition, Y.TransitionNative, {
                 }
 
                 begin = (name in customAttr && 'get' in customAttr[name])  ?
-                        customAttr[name].get(this, name) : Y.Transition.DEFAULT_GETTER(this, name);
+                        customAttr[name].get(this, name) : Transition.DEFAULT_GETTER(this, name);
 
-                var mFrom = Y.Transition.RE_UNITS.exec(begin);
-                var mTo = Y.Transition.RE_UNITS.exec(val);
+                var mFrom = Transition.RE_UNITS.exec(begin);
+                var mTo = Transition.RE_UNITS.exec(val);
 
                 begin = mFrom ? mFrom[1] : begin;
                 end = mTo ? mTo[1] : val;
                 unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
 
-                if (!unit && Y.Transition.RE_DEFAULT_UNIT.test(name)) {
-                    unit = Y.Transition.DEFAULT_UNIT;
+                if (!unit && Transition.RE_DEFAULT_UNIT.test(name)) {
+                    unit = Transition.DEFAULT_UNIT;
                 }
 
                 if (!begin || !end) {
@@ -286,7 +288,7 @@ Y.extend(Y.Transition, Y.TransitionNative, {
 
     _startTimer: function() {
         if (!_timer) {
-            _timer = setInterval(Y.Transition._runFrame, Y.Transition._intervalTime);
+            _timer = setInterval(Transition._runFrame, Transition._intervalTime);
         }
     },
 
@@ -311,20 +313,25 @@ Y.extend(Y.Transition, Y.TransitionNative, {
         }
 
         if (done) {
-            Y.Transition._stopTimer();
+            Transition._stopTimer();
         }
     },
 
     RE_UNITS: /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/
 }, true); 
 
-Y.Transition.behaviors.top = Y.Transition.behaviors.left;
+Transition.behaviors.top = Transition.behaviors.left;
+
+Y.Transition = Transition;
 
 Y.Node.prototype.transition = function(config) {
-    var anim = new Y.Transition(this, config);
-    anim.run();
-};
+    var Constructor = (TransitionNative.supported &&
+            TransitionNative.useNative) ? TransitionNative : Transition,
+        anim = new Constructor(this, config);
 
+    anim.run();
+    return this;
+};
 
 
 }, '@VERSION@' ,{requires:['transition-native', 'node-style']});
