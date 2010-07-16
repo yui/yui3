@@ -42,17 +42,17 @@
 		</div>
 
         <script type="text/javascript" charset="utf-8">
-			YUI().use('event-gestures', 'scrollview', 'paginator-plugin', function(Y) {
+			YUI().use('transition-native', 'event-gestures', 'scrollview', 'paginator-plugin', function(Y) {
 
                 var scrollView = new Y.ScrollView({
                     contentBox: '#scrollable',
                     width: 320
                 });
-			
-				scrollView.plug(Y.Plugin.PaginatorPlugin, {
+
+				scrollView.plug(Y.Plugin.ScrollViewPaginator, {
 					selector: 'li'
 				});
-                
+
 				scrollView.render();
 
 				Y.one('#next-page').on('click', Y.bind(scrollView.pages.next, scrollView.pages));

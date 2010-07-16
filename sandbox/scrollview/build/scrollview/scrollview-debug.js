@@ -26,6 +26,8 @@ var getClassName = Y.ClassNameManager.getClassName,
     EV_SCROLL_FLICK = 'flick',
     UI = 'ui';
 
+Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
+
 /**
  * ScrollView provides a scrollable container for devices which do not 
  * support overflow: hidden
@@ -95,19 +97,20 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
 
         var cb = this.get('contentBox'); 
 
-        // TODO: Integrate with transitions
-        cb._node.addEventListener('webkitTransitionEnd', Y.bind(this._transitionEnded, this), false);
-        cb._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        cb.on('transitionend', Y.bind(this._transitionEnded, this), false);
+        cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
 
         cb.on("flick", Y.bind(this._flick, this), {
             minDistance:0
         });
 
-        this.after('scrollYChange', this._afterScrollYChange);
-        this.after('scrollXChange', this._afterScrollXChange);
-        this.after('heightChange', this._afterHeightChange);
-        this.after('widthChange', this._afterWidthChange);
-        this.after('renderedChange', function() { Y.later(0, this, '_uiDimensionsChange'); });
+        this.after({
+            'scrollYChange' : this._afterScrollYChange,
+            'scrollXChange' : this._afterScrollXChange,
+            'heightChange'  : this._afterHeightChange,
+            'widthChange'   : this._afterWidthChange,
+            'renderedChange': function() { Y.later(0, this, '_uiDimensionsChange'); } 
+        });
     },
 
     /**
@@ -131,26 +134,28 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      */
     scrollTo: function(x, y, duration, easing) {
         var cb = this.get('contentBox');
-        
+
         if(x !== this.get('scrollX')) {
             this.set('scrollX', x, { src: UI });
         }
-        
+
         if(y !== this.get('scrollY')) {
             this.set('scrollY', y, { src: UI });
         }
 
         if(duration) {
-            easing = easing || 'cubic-bezier(0, 0.1, 0, 1.0)';
-            cb.setStyle('-webkit-transition', duration+'ms -webkit-transform');
-            cb.setStyle('-webkit-transition-timing-function', easing);
+            cb.transition({
+                easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)',
+                duration : duration/1000,
+                transform: 'translate3d('+(x*-1)+'px,'+(y*-1)+'px,0)'
+            });
         } else {
-            cb.setStyle('-webkit-transition', null);
-            cb.setStyle('-webkit-transition-timing-function', null);
+            cb.setStyle('transition', null);
+            cb.setStyle('transition-timing-function', null);
+            cb.setStyle('transform', 'translate3d('+(x*-1)+'px,'+(y*-1)+'px,0)');
         }
-        cb.setStyle('-webkit-transform', 'translate3d('+(x*-1)+'px,'+(y*-1)+'px,0)');
     },
-        
+
     /**
      * gesturemovestart event handler
      *
@@ -162,9 +167,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
 
         this._killTimer();
 
-        this._moveEvt = this.get('boundingBox').on('gesturemove', Y.bind(this._onGestureMove, this));
-        this._moveEndEvt = this.get('boundingBox').on('gesturemoveend', Y.bind(this._onGestureMoveEnd, this));
-        
+        var bb = this.get('boundingBox');
+
+        this._moveEvt = bb.on('gesturemove', Y.bind(this._onGestureMove, this));
+        this._moveEndEvt = bb.on('gesturemoveend', Y.bind(this._onGestureMoveEnd, this));
+
         this._moveStartY = e.clientY + this.get('scrollY');
         this._moveStartX = e.clientX + this.get('scrollX');
         
@@ -214,13 +221,10 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
             maxX = this._maxScrollX,
             startPoint = this._scrollsVertical ? this._moveStartClientY : this._moveStartClientX,
             endPoint = this._scrollsVertical ? this._moveEndClientY : this._moveEndClientX,
-            distance = startPoint - endPoint,
-            time = +(new Date()) - this._moveStartTime;
+            distance = startPoint - endPoint;
 
-        /*
         this._moveEvt.detach();
         this._moveEndEvt.detach();
-        */
 
         this._scrolledHalfway = false;
         this._snapToEdge = false;
@@ -391,7 +395,8 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @protected
      */
     _flick: function(e) {
-        this._currentVelocity = e.flick.velocity * e.flick.direction; // px per ms
+        var flick = e.flick;
+        this._currentVelocity = flick.velocity * flick.direction;
         this._flicking = true;
         this._flickFrame();
 
