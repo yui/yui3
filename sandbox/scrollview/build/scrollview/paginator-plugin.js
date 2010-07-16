@@ -151,11 +151,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /**
-     * After host touchstart handler, reset min/max scroll values on the host
+     * After host movestart handler, reset min/max scroll values on the host
      * based on the page elements
      *
      * @method _setBoundaryPoints
-     * @param e {Event.Facade} The touchstart event
+     * @param e {Event.Facade} The gesturemovestart event
      */
     _setBoundaryPoints: function(e) {
         var host = this.get('host'),

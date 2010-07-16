@@ -71,7 +71,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @protected
      */
     _uiSizeCB: function() {},
-        
+
     /**
      * TranstionEnd event handler
      *
@@ -81,24 +81,33 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     _transitionEnded: function() {
         this.fire(EV_SCROLL_END);
     },
-    
+
     /**
      * bindUI implementation
      *
-     * Hooks up events for touching the widget
+     * Hooks up events for the widget
      * @method bindUI
      */
     bindUI: function() {
-        this.get('boundingBox').on('touchstart', this._onTouchstart, this);
-        this.get('contentBox')._node.addEventListener('webkitTransitionEnd', Y.bind(this._transitionEnded, this), false);
-        this.get('contentBox')._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        this.get('boundingBox').on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
+
+        var cb = this.get('contentBox'); 
+
+        // TODO: Integrate with transitions
+        cb._node.addEventListener('webkitTransitionEnd', Y.bind(this._transitionEnded, this), false);
+        cb._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+
+        cb.on("flick", Y.bind(this._flick, this), {
+            minDistance:0
+        });
+
         this.after('scrollYChange', this._afterScrollYChange);
         this.after('scrollXChange', this._afterScrollXChange);
         this.after('heightChange', this._afterHeightChange);
         this.after('widthChange', this._afterWidthChange);
         this.after('renderedChange', function() { Y.later(0, this, '_uiDimensionsChange'); });
     },
-    
+
     /**
      * syncUI implementation
      *
@@ -108,7 +117,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     syncUI: function() {
         this.scrollTo(this.get('scrollX'), this.get('scrollY'));
     },
-    
+
     /**
      * Scroll the element to a given y coordinate
      *
@@ -128,7 +137,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
         if(y !== this.get('scrollY')) {
             this.set('scrollY', y, { src: UI });
         }
-        
+
         if(duration) {
             easing = easing || 'cubic-bezier(0, 0.1, 0, 1.0)';
             cb.setStyle('-webkit-transition', duration+'ms -webkit-transform');
@@ -141,82 +150,76 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     },
         
     /**
-     * touchstart event handler
+     * gesturemovestart event handler
      *
-     * @method _onTouchstart
+     * @method _onGestureMoveStart
      * @param e {Event} The event
      * @private
      */
-    _onTouchstart: function(e) {
-        var touch;
+    _onGestureMoveStart: function(e) {
+
+        this._killTimer();
+
+        this._moveEvt = this.get('boundingBox').on('gesturemove', Y.bind(this._onGestureMove, this));
+        this._moveEndEvt = this.get('boundingBox').on('gesturemoveend', Y.bind(this._onGestureMoveEnd, this));
         
-        if(e.touches && e.touches.length === 1) {
-            
-            touch = e.touches[0];
-            
-            this._killTimer();
+        this._moveStartY = e.clientY + this.get('scrollY');
+        this._moveStartX = e.clientX + this.get('scrollX');
         
-            this._touchmoveEvt = this.get('boundingBox').on('touchmove', this._onTouchmove, this);
-            this._touchendEvt = this.get('boundingBox').on('touchend', this._onTouchend, this);
-        
-            this._touchstartY = e.touches[0].clientY + this.get('scrollY');
-            this._touchstartX = e.touches[0].clientX + this.get('scrollX');
-        
-            this._touchStartTime = (new Date()).getTime();
-            this._touchStartClientY = touch.clientY;
-            this._touchStartClientX = touch.clientX;
-            this._isDragging = false;
-            this._snapToEdge = false;
-    
-        }
+        this._moveStartTime = (new Date()).getTime();
+        this._moveStartClientY = e.clientY;
+        this._moveStartClientX = e.clientX;
+
+        this._isDragging = false;
+        this._snapToEdge = false;
+
     },    
     
     /**
-     * touchmove event handler
+     * gesturemove event handler
      *
-     * @method _onTouchmove
+     * @method _onGestureMove
      * @param e {Event} The event
      * @private
      */
-    _onTouchmove: function(e) {
-        var touch = e.touches[0];
-        
-        e.preventDefault();
-        
+    _onGestureMove: function(e) {
+
         this._isDragging = true;
-        this._touchEndClientY = touch.clientY;
-        this._touchEndClientX = touch.clientX;
+        this._moveEndClientY = e.clientY;
+        this._moveEndClientX = e.clientX;
         this._lastMoved = (new Date()).getTime();
-        
+
         if(this._scrollsVertical) {
-            this.set('scrollY', -(e.touches[0].clientY - this._touchstartY));
+            this.set('scrollY', -(e.clientY - this._moveStartY));
         }
         
         if(this._scrollsHorizontal) {
-            this.set('scrollX', -(e.touches[0].clientX - this._touchstartX));
+            this.set('scrollX', -(e.clientX - this._moveStartX));
         }
     },
-    
+
     /**
-     * touchend event handler
+     * gestureend event handler
      *
-     * @method _onTouchend
+     * @method _onGestureMoveEnd
      * @param e {Event} The event
      * @private
      */
-    _onTouchend: function(e) {
+    _onGestureMoveEnd: function(e) {
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
             minX = this._minScrollX,
             maxX = this._maxScrollX,
-            startPoint = this._scrollsVertical ? this._touchStartClientY : this._touchStartClientX,
-            endPoint = this._scrollsVertical ? this._touchEndClientY : this._touchEndClientX,
+            startPoint = this._scrollsVertical ? this._moveStartClientY : this._moveStartClientX,
+            endPoint = this._scrollsVertical ? this._moveEndClientY : this._moveEndClientX,
             distance = startPoint - endPoint,
-            time = +(new Date()) - this._touchStartTime;
-        
-        this._touchmoveEvt.detach();
-        this._touchendEvt.detach();
-        
+            time = +(new Date()) - this._moveStartTime;
+
+        /*
+        this._moveEvt.detach();
+        this._moveEndEvt.detach();
+        */
+
         this._scrolledHalfway = false;
         this._snapToEdge = false;
         this._isDragging = false;
@@ -257,19 +260,16 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
         if(this._snapToEdge) {
             return;
         }
-        
+
         // Check for staleness
-        if(+(new Date()) - this._touchStartTime > 100) {
+        if(+(new Date()) - this._moveStartTime > 100) {
             this.fire(EV_SCROLL_END, {
                 staleScroll: true
             });
             return;
         }
-        
-        // Check for flick
-        this._flick(distance, time);
     },
-    
+
     /**
      * after listener for changes to the scrollY attr
      *
@@ -379,7 +379,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
             bb.setStyle('overflow-x', 'auto');
         }
     },
-    
+
     /**
      * Execute a flick at the end of a scroll action
      *
@@ -388,11 +388,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @param time {Number} The number of ms the scroll event lasted before the flick
      * @protected
      */
-    _flick: function(distance, time) {
-        this._currentVelocity = distance / time; // px per ms
+    _flick: function(e) {
+        this._currentVelocity = e.flick.velocity * e.flick.direction; // px per ms
         this._flicking = true;
         this._flickFrame();
-        
+
         this.fire(EV_SCROLL_FLICK);
     },
 
@@ -401,7 +401,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      *
      * @method _flickFrame
      * @protected
-     */    
+     */
     _flickFrame: function() {
         var newY = this.get('scrollY'),
             maxY = this._maxScrollY,
@@ -413,10 +413,10 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
         this._currentVelocity = (this._currentVelocity*this.get('deceleration'));
 
         if(this._scrollsVertical) {
-            newY = this.get('scrollY') + (this._currentVelocity * FRAME_STEP);
+            newY = this.get('scrollY') - (this._currentVelocity * FRAME_STEP);
         }
         if(this._scrollsHorizontal) {
-            newX = this.get('scrollX') + (this._currentVelocity * FRAME_STEP);
+            newX = this.get('scrollX') - (this._currentVelocity * FRAME_STEP);
         }
         
         if(Math.abs(this._currentVelocity).toFixed(4) <= 0.015) {
