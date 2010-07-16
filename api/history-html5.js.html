@@ -94,9 +94,10 @@
 <span class="cm"> *   documentation for details.</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">HistoryBase</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
-    <span class="nx">doc</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
-    <span class="nx">win</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">HistoryBase</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
+    <span class="nx">doc</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+    <span class="nx">win</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+    <span class="nx">useHistoryHTML5</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useHistoryHTML5</span><span class="p">,</span>
 
     <span class="nx">SRC_POPSTATE</span> <span class="o">=</span> <span class="s1">&#39;popstate&#39;</span><span class="p">,</span>
     <span class="nx">SRC_REPLACE</span>  <span class="o">=</span> <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">SRC_REPLACE</span><span class="p">;</span>
@@ -168,9 +169,35 @@
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span> <span class="o">=</span> <span class="nx">HistoryHTML5</span><span class="p">;</span>
 
-<span class="c1">// Only point Y.History at HistoryHTML5 if it doesn&#39;t already exist and if the</span>
-<span class="c1">// current browser supports HTML5 history.</span>
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">&amp;&amp;</span> <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span><span class="p">)</span> <span class="p">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * If &lt;code&gt;true&lt;/code&gt;, the &lt;code&gt;Y.History&lt;/code&gt; alias will always point to</span>
+<span class="cm"> * &lt;code&gt;Y.HistoryHTML5&lt;/code&gt; when the history-html5 module is loaded, even if</span>
+<span class="cm"> * the current browser doesn&#39;t support HTML5 history.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * If &lt;code&gt;false&lt;/code&gt;, the &lt;code&gt;Y.History&lt;/code&gt; alias will always point to</span>
+<span class="cm"> * &lt;code&gt;Y.HistoryHash&lt;/code&gt; when the history-hash module is loaded, even if</span>
+<span class="cm"> * the current browser supports HTML5 history.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * If neither &lt;code&gt;true&lt;/code&gt; nor &lt;code&gt;false&lt;/code&gt;, the</span>
+<span class="cm"> * &lt;code&gt;Y.History&lt;/code&gt; alias will point to the best available history adapter</span>
+<span class="cm"> * that the browser supports. This is the default behavior.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property useHistoryHTML5</span>
+<span class="cm"> * @type boolean</span>
+<span class="cm"> * @for config</span>
+<span class="cm"> * @since 3.2.0</span>
+<span class="cm"> */</span>
+
+<span class="c1">// HistoryHTML5 will always win over HistoryHash unless useHistoryHTML5 is false</span>
+<span class="c1">// or HTML5 history is not supported.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">useHistoryHTML5</span> <span class="o">===</span> <span class="kc">true</span> <span class="o">||</span> <span class="p">(</span><span class="nx">useHistoryHTML5</span> <span class="o">!==</span> <span class="kc">false</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span><span class="p">))</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">HistoryHTML5</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>

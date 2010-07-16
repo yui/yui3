@@ -111,8 +111,8 @@ YUI.add('dd-ddm', function(Y) {
             this._pg = pg;
             //this._pg.on('mouseup', Y.bind(this._end, this));
             //this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            this._pg.on('move', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            this._pg.on('moveend', Y.bind(this._end, this));
+            this._pg.on('gesturemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on('gesturemoveend', Y.bind(this._end, this));
             
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));

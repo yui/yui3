@@ -104,7 +104,7 @@ DataSourceCacheExtension.prototype = {
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
         if(e.response && !e.cached) {
-            this.add(e.request, e.response, (e.callback && e.callback.argument));
+            this.add(e.request, e.response);
         }
      }
 };

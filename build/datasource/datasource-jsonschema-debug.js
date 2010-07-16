@@ -84,7 +84,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
+            response = Y.DataSchema.JSON.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {

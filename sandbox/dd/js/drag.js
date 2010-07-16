@@ -21,8 +21,8 @@ YUI.add('dd-drag', function(Y) {
         OFFSET_WIDTH = 'offsetWidth',        
         //MOUSE_UP = 'mouseup',
         //MOUSE_DOWN = 'mousedown',
-        MOUSE_UP = 'moveend',
-        MOUSE_DOWN = 'movestart',
+        MOUSE_UP = 'gesturemoveend',
+        MOUSE_DOWN = 'gesturemovestart',
         DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
@@ -962,7 +962,7 @@ YUI.add('dd-drag', function(Y) {
             });
             node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));
-            node.on('move', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
+            node.on('gesturemove', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
             //Should not need this, _handleMouseUp calls this..
             //node.on('moveend', Y.bind(DDM._end, DDM));
             

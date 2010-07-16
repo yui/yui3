@@ -75,17 +75,21 @@ Y.mix(DSLocal, {
     _tId: 0,
 
     /**
-     * Executes a given callback.  The third param determines whether to execute
+     * Returns data to callback.
      *
      * @method DataSource.issueCallback
-     * @param callback {Object} The callback object.
-     * @param params {Array} params to be passed to the callback method
-     * @param error {Boolean} whether an error occurred
+     * @param e {EventFacade} Event Facade.
+     * @param caller {DataSource} Calling DataSource instance.
      * @static
      */
-    issueCallback: function (e) {
+    issueCallback: function (e, caller) {
+        var error = (e.error || e.response.error);
+        if(error) {
+            e.error = e.error || e.response.error;
+            caller.fire("error", e);
+        }
         if(e.callback) {
-            var callbackFunc = (e.error && e.callback.failure) || e.callback.success;
+            var callbackFunc = (error && e.callback.failure) || e.callback.success;
             if (callbackFunc) {
                 callbackFunc(e);
             }
@@ -229,10 +233,7 @@ Y.extend(DSLocal, Y.Base, {
         // Problematic data
         if(LANG.isUndefined(data)) {
             e.error = new Error("Local source undefined");
-        }
-        if(e.error) {
-            this.fire("error", e);
-            Y.log("Error in response", "error", "datasource-local");
+            Y.log("Local source undefined", "error", "datasource-local");
         }
 
         this.fire("data", Y.mix({data:data}, e));
@@ -298,7 +299,7 @@ Y.extend(DSLocal, Y.Base, {
      */
     _defResponseFn: function(e) {
         // Send the response back to the callback
-        DSLocal.issueCallback(e);
+        DSLocal.issueCallback(e, this);
     },
     
     /**
@@ -475,7 +476,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
                     },
                     failure: function (id, response, e) {
                         e.error = new Error("IO data failure");
-                        this.fire("error", Y.mix({data:response}, e));
+                        Y.log("IO data failure", "error", "datasource-io");
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received IO data failure for \"" + request + "\"", "info", "datasource-io");
                         if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
@@ -591,7 +592,13 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
             // Works in Firefox only....
             onFailure: Y.bind(function(e) {
                 e.error = new Error("Script node data failure");
-                this.fire("error", e);
+                Y.log("Script node data failure", "error", "datasource-get");
+                this.fire("data", e);
+            }, this, e),
+            onTimeout: Y.bind(function(e) {
+                e.error = new Error("Script node data timeout");
+                Y.log("Script node data timeout", "error", "datasource-get");
+                this.fire("data", e);
             }, this, e)
         });
 
@@ -795,12 +802,14 @@ Y.extend(DSFn, Y.DataSource.Local, {
                 }
                 catch(error) {
                     e.error = error;
-                    this.fire("error", e);
+                    Y.log("Function execution failure", "error", "datasource-function");
+                    this.fire("data", e);
                 }
             }
             else {
                 e.error = new Error("Function data failure");
-                this.fire("error", e);
+                Y.log("Function data failure", "error", "datasource-function");
+                this.fire("data", e);
             }
             
         return e.tId;
@@ -920,7 +929,7 @@ DataSourceCacheExtension.prototype = {
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
         if(e.response && !e.cached) {
-            this.add(e.request, e.response, (e.callback && e.callback.argument));
+            this.add(e.request, e.response);
         }
      }
 };
@@ -1061,7 +1070,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
+            response = Y.DataSchema.JSON.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1168,7 +1177,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
-            response = Y.DataSchema.XML.apply(this.get("schema"), data);
+            response = Y.DataSchema.XML.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1275,7 +1284,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Array.apply(this.get("schema"), data);
+            response = Y.DataSchema.Array.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1382,7 +1391,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Text.apply(this.get("schema"), data);
+            response = Y.DataSchema.Text.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
