@@ -73,7 +73,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @protected
      */
     _uiSizeCB: function() {},
-        
+
     /**
      * TranstionEnd event handler
      *
@@ -83,7 +83,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     _transitionEnded: function() {
         this.fire(EV_SCROLL_END);
     },
-    
+
     /**
      * bindUI implementation
      *
@@ -92,8 +92,17 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      */
     bindUI: function() {
         this.get('boundingBox').on('touchstart', this._onTouchstart, this);
-        this.get('contentBox')._node.addEventListener('webkitTransitionEnd', Y.bind(this._transitionEnded, this), false);
-        this.get('contentBox')._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+
+        var cb = this.get('contentBox'); 
+
+        // TODO: Integrate with transitions
+        cb._node.addEventListener('webkitTransitionEnd', Y.bind(this._transitionEnded, this), false);
+        cb._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+
+        cb.on("flick", Y.bind(this._flick, this), {
+            minDistance:0
+        });
+
         this.after('scrollYChange', this._afterScrollYChange);
         this.after('scrollXChange', this._afterScrollXChange);
         this.after('heightChange', this._afterHeightChange);
@@ -267,9 +276,6 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
             });
             return;
         }
-        
-        // Check for flick
-        this._flick(distance, time);
     },
     
     /**
@@ -381,7 +387,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
             bb.setStyle('overflow-x', 'auto');
         }
     },
-    
+
     /**
      * Execute a flick at the end of a scroll action
      *
@@ -390,11 +396,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @param time {Number} The number of ms the scroll event lasted before the flick
      * @protected
      */
-    _flick: function(distance, time) {
-        this._currentVelocity = distance / time; // px per ms
+    _flick: function(e) {
+        this._currentVelocity = e.flick.velocity * e.flick.direction; // px per ms
         this._flicking = true;
         this._flickFrame();
-        
+
         this.fire(EV_SCROLL_FLICK);
     },
 
@@ -403,7 +409,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      *
      * @method _flickFrame
      * @protected
-     */    
+     */
     _flickFrame: function() {
         var newY = this.get('scrollY'),
             maxY = this._maxScrollY,
@@ -415,10 +421,10 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
         this._currentVelocity = (this._currentVelocity*this.get('deceleration'));
 
         if(this._scrollsVertical) {
-            newY = this.get('scrollY') + (this._currentVelocity * FRAME_STEP);
+            newY = this.get('scrollY') - (this._currentVelocity * FRAME_STEP);
         }
         if(this._scrollsHorizontal) {
-            newX = this.get('scrollX') + (this._currentVelocity * FRAME_STEP);
+            newX = this.get('scrollX') - (this._currentVelocity * FRAME_STEP);
         }
         
         if(Math.abs(this._currentVelocity).toFixed(4) <= 0.015) {
@@ -632,4 +638,4 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
 Y.ScrollView = Y.ScrollViewBase;
 
 
-}, '@VERSION@' ,{requires:['widget', 'event-touch']});
+}, '@VERSION@' ,{requires:['widget', 'event-gestures']});
