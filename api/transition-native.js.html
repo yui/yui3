@@ -48,21 +48,21 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm">* The Transitionation Utility provides an API for creating advanced transitions.</span>
-<span class="cm">* @module anim</span>
+<span class="cm">* The Native Transition Utility provides an API wrapper for CSS transitions.</span>
+<span class="cm">* @module node</span>
 <span class="cm">*/</span>
 
 <span class="cm">/**</span>
-<span class="cm">* Provides the base Transition class, for animating numeric properties.</span>
+<span class="cm">* Provides the base TransitionNative class.</span>
 <span class="cm">*</span>
-<span class="cm">* @module anim</span>
-<span class="cm">* @submodule anim-base</span>
+<span class="cm">* @module node</span>
+<span class="cm">* @submodule transition-native</span>
 <span class="cm">*/</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * A class for constructing animation instances.</span>
-<span class="cm"> * @class Transition</span>
-<span class="cm"> * @for Transition</span>
+<span class="cm"> * A class for constructing transition instances.</span>
+<span class="cm"> * @class TransitionNative</span>
+<span class="cm"> * @for TransitionNative</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @extends Base</span>
 <span class="cm"> */</span>
@@ -71,27 +71,34 @@
     <span class="nx">END</span> <span class="o">=</span> <span class="s1">&#39;transitionend&#39;</span><span class="p">,</span>
 
     <span class="nx">TRANSITION</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition&#39;</span><span class="p">,</span>
-    <span class="nx">TRANSITION_CAMEL</span> <span class="o">=</span> <span class="s1">&#39;WebkitTransition&#39;</span><span class="p">,</span>
+    <span class="nx">TRANSITION_CAMEL</span> <span class="o">=</span> <span class="s1">&#39;WebkitTransitionNative&#39;</span><span class="p">,</span>
     <span class="nx">TRANSITION_PROPERTY</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition-property&#39;</span><span class="p">,</span>
     <span class="nx">TRANSITION_DURATION</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition-duration&#39;</span><span class="p">,</span>
     <span class="nx">TRANSITION_TIMING_FUNCTION</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition-timing-function&#39;</span><span class="p">,</span>
-    <span class="nx">TRANSITION_END</span> <span class="o">=</span> <span class="s1">&#39;webkitTransitionEnd&#39;</span><span class="p">,</span>
+    <span class="nx">TRANSITION_END</span> <span class="o">=</span> <span class="s1">&#39;webkitTransitionNativeEnd&#39;</span><span class="p">,</span>
 
 
     <span class="nx">_running</span> <span class="o">=</span> <span class="p">{},</span>
 
-<span class="nx">Transition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="nx">TransitionNative</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
 
+<span class="nx">TransitionNative</span><span class="p">.</span><span class="nx">supported</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="nx">TransitionNative</span><span class="p">.</span><span class="nx">useNative</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">TRANSITION</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">TransitionNative</span><span class="p">.</span><span class="nx">supported</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">[</span><span class="nx">TRANSITION_END</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> 
 
-<span class="nx">Transition</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;transition&#39;</span><span class="p">;</span>
+<span class="nx">TransitionNative</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;transition&#39;</span><span class="p">;</span>
 
-<span class="nx">Transition</span><span class="p">.</span><span class="nx">DEFAULT_EASING</span> <span class="o">=</span> <span class="s1">&#39;ease-in-out&#39;</span><span class="p">;</span>
+<span class="nx">TransitionNative</span><span class="p">.</span><span class="nx">DEFAULT_EASING</span> <span class="o">=</span> <span class="s1">&#39;ease-in-out&#39;</span><span class="p">;</span>
 
-<span class="nx">Transition</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">constructor</span><span class="o">:</span> <span class="nx">Transition</span><span class="p">,</span>
+<span class="nx">TransitionNative</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">constructor</span><span class="o">:</span> <span class="nx">TransitionNative</span><span class="p">,</span>
     <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
@@ -193,11 +200,12 @@
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">TransitionNative</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">TransitionNative</span> <span class="o">=</span> <span class="nx">TransitionNative</span><span class="p">;</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">transition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transition</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TransitionNative</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
     <span class="nx">anim</span><span class="p">.</span><span class="nx">run</span><span class="p">();</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 
