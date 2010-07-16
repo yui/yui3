@@ -231,8 +231,8 @@
                     <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;-999px&#39;</span>
                 <span class="p">});</span>
 
-                <span class="nx">b</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
-                <span class="nx">p</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">p</span><span class="p">));</span>
+                <span class="nx">b</span><span class="p">.</span><span class="nx">prepend</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
+                <span class="nx">p</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">());</span>
                 <span class="nx">p</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-proxy&#39;</span><span class="p">);</span>
                 <span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="nx">p</span><span class="p">;</span>
             <span class="p">}</span>

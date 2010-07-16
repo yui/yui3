@@ -7,8 +7,7 @@ YUI.add('paginator-plugin', function(Y) {
  * @submodule paginator-plugin
  */
  
-var _classNames = Y.ScrollView.CLASS_NAMES,
-    BOUNCE_DECELERATION_CONST = .5,
+var BOUNCE_DECELERATION_CONST = 0.5,
     UI = Y.ScrollViewBase.UI_SRC;
 
 /**
@@ -151,11 +150,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /**
-     * After host touchstart handler, reset min/max scroll values on the host
+     * After host movestart handler, reset min/max scroll values on the host
      * based on the page elements
      *
      * @method _setBoundaryPoints
-     * @param e {Event.Facade} The touchstart event
+     * @param e {Event.Facade} The gesturemovestart event
      */
     _setBoundaryPoints: function(e) {
         var host = this.get('host'),
@@ -286,8 +285,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     scrollTo: function(index, duration, easing) {
         var host = this.get('host'),
-            x = host.get('scrollX'),
-            y = host.get('scrollY');
+            x = host.get('scrollX');
 
         if(host._scrollsHorizontal) {
             x = this._minPoints[index];
@@ -313,8 +311,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     
 });
 
-Y.namespace('Plugin');
-Y.Plugin.PaginatorPlugin = PaginatorPlugin;
+Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;
 
 
 }, '@VERSION@' ,{requires:['plugin']});

@@ -6,8 +6,7 @@
  */
 (function() {
 
-var _published,
-    INSTANCE  = Y,
+var INSTANCE  = Y,
     LOGEVENT  = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS    = { debug: 1, 
@@ -35,9 +34,10 @@ var _published,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
-        Y = INSTANCE, 
-        c = Y.config;
+    var bail, excl, incl, m, f, fire,
+        Y         = INSTANCE, 
+        c         = Y.config,
+        publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
@@ -63,16 +63,16 @@ INSTANCE.log = function(msg, cat, src, silent) {
                     opera.postError(m);
                 }
             }
-            if (Y.fire && !silent) {
-                if (!_published) {
-                    Y.publish(LOGEVENT, {
+
+            if (publisher && !silent) {
+
+                if (publisher == Y && (!publisher.getEvent(LOGEVENT))) {
+                    publisher.publish(LOGEVENT, {
                         broadcast: 2
                     });
-
-                    _published = 1;
-
                 }
-                Y.fire(LOGEVENT, {
+
+                publisher.fire(LOGEVENT, {
                     msg: msg, 
                     cat: cat, 
                     src: src

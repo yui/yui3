@@ -383,6 +383,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.cancelBubble = true;
         }
         wrapper.stopped = 1;
+        this.stopped = 1;
     };
 
     /**
@@ -398,6 +399,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
         wrapper.stopped = 2;
+        this.stopped = 2;
     };
 
     /**
@@ -413,6 +415,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         }
         e.returnValue = returnValue || false;
         wrapper.prevented = 1;
+        this.prevented = 1;
     };
 
     /**

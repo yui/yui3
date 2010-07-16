@@ -180,6 +180,7 @@ var NOT_FOUND       = {},
     _queue          = YUI.Env._loaderQueue,
     META            = GLOBAL_ENV[VERSION],
     L               = Y.Lang,
+    ON_PAGE         = GLOBAL_ENV.mods,
     _path           = Y.cached(function(dir, file, type, nomin) {
                         var path = dir + '/' + file;
                         if (!nomin) {
@@ -195,7 +196,6 @@ Y.Env.meta = META;
 Y.Loader = function(o) {
 
     var defaults = Y.Env.meta.modules, 
-        onPage   = GLOBAL_ENV.mods,
         self     = this;
 
     /**
@@ -497,9 +497,9 @@ Y.Loader = function(o) {
     // }
     //
     //
-    // for (i in onPage) {
-    //     if ((!(i in self.moduleInfo)) && onPage[i].details) {
-    //         self.addModule(onPage[i].details, i);
+    // for (i in ON_PAGE) {
+    //     if ((!(i in self.moduleInfo)) && ON_PAGE[i].details) {
+    //         self.addModule(ON_PAGE[i].details, i);
     //     }
     // }
 
@@ -507,7 +507,7 @@ Y.Loader = function(o) {
         self.addModule(v, k);
     });
 
-    YObject.each(onPage, function(v, k) {
+    YObject.each(ON_PAGE, function(v, k) {
         if ((!(k in self.moduleInfo)) && ('details' in v)) {
             self.addModule(v.details, k);
         }
@@ -588,6 +588,54 @@ Y.Loader = function(o) {
      */
     self.results = {};
 
+        // returns true if b is not loaded, and is required
+        // directly or by means of modules it supersedes.
+           self._requires = Y.cached(function(mod1, mod2) {
+
+                var i, rm, after, after_map, s,
+                    info  = self.moduleInfo, 
+                    m     = info[mod1], 
+                    other = info[mod2]; 
+
+                // if (loaded[mod2] || !m || !other) {
+                if (!m || !other) {
+                    return false;
+                }
+
+                rm    = m.expanded_map;
+                after = m.after; 
+                after_map = m.after_map; 
+
+                // check if this module requires the other directly
+                // if (r && YArray.indexOf(r, mod2) > -1) {
+                if (rm && (mod2 in rm)) {
+                    return true;
+                }
+
+                // check if this module should be sorted after the other
+                if (after_map && (mod2 in after_map)) {
+                    return true;
+                } else if (after && YArray.indexOf(after, mod2) > -1) {
+                    return true;
+                }
+
+                // check if this module requires one the other supersedes
+                s = info[mod2] && info[mod2].supersedes;
+                if (s) {
+                    for (i=0; i<s.length; i++) {
+                        if (self._requires(mod1, s[i])) {
+                            return true;
+                        }
+                    }
+                }
+
+                // external css files should be sorted below yui css
+                if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
+                    return true;
+                }
+
+                return false;
+            });
 };
 
 Y.Loader.prototype = {
@@ -956,21 +1004,37 @@ Y.Loader.prototype = {
             return NO_REQUIREMENTS;
         }
 
-        if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        var i, m, j, add, packName, lang,
+            adddef = ON_PAGE[mod.name] && ON_PAGE[mod.name].details,
+            d      = [], 
+            r      = mod.requires, 
+            o      = mod.optional, 
+            intl   = mod.lang || mod.intl,
+            info   = this.moduleInfo,
+            hash   = {},
+            INTL   = 'intl';
+
+        if (mod.temp && adddef) {
+            delete mod.expanded;
+            delete mod.temp;
+            if (adddef.requires) {
+                mod.requires = mod.requires.concat(adddef.requires);
+            }
+            if (adddef.optional) {
+                mod.optional = (mod.optional) ? mod.optional.concat(adddef.optional) : adddef.optional;
+            }
+            // console.log('temp mod: ' + mod.name + ', ' + mod.requires);
+            // console.log(adddef);
+        }
+
+        // if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
             return mod.expanded;
         }
 
 
         mod._parsed = true;
 
-        var i, m, j, add, packName, lang,
-            d    = [], 
-            r    = mod.requires, 
-            o    = mod.optional, 
-            intl = mod.lang || mod.intl,
-            info = this.moduleInfo,
-            hash = {},
-            INTL = 'intl';
 
         for (i=0; i<r.length; i++) {
             if (!hash[r[i]]) {
@@ -1089,6 +1153,9 @@ Y.Loader.prototype = {
             sorted = this.results[key];
 
             this.key = key;
+
+            // console.log('calc key: ' + key);
+            // console.log(this);
             
             if (sorted) {
                 this.sorted = YObject.keys(this._reduce(YArray.hash(sorted)));
@@ -1225,23 +1292,27 @@ Y.Loader.prototype = {
      * @private
      */
     _explode: function() {
-        var r = this.required, m, reqs;
+        var r = this.required, m, reqs, done = {};
+
         // the setup phase is over, all modules have been created
         this.dirty = false;
 
         YObject.each(r, function(v, name) {
-            m = this.getModule(name);
-            if (m) {
-                var expound = m.expound;
+            if (!done[name]) {
+                done[name] = true;
+                m = this.getModule(name);
+                if (m) {
+                    var expound = m.expound;
 
-                if (expound) {
-                    r[expound] = this.getModule(expound);
-                    reqs = this.getRequires(r[expound]);
+                    if (expound) {
+                        r[expound] = this.getModule(expound);
+                        reqs = this.getRequires(r[expound]);
+                        Y.mix(r, YArray.hash(reqs));
+                    }
+
+                    reqs = this.getRequires(m);
                     Y.mix(r, YArray.hash(reqs));
                 }
-
-                reqs = this.getRequires(m);
-                Y.mix(r, YArray.hash(reqs));
             }
         }, this);
 
@@ -1279,6 +1350,7 @@ Y.Loader.prototype = {
                 } else {
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
+                    m.temp = true;
                 }
             }
         }
@@ -1379,6 +1451,7 @@ Y.Loader.prototype = {
         }
         this._finish('timeout', false);
     },
+
     
     /**
      * Sorts the dependency tree.  The last step of calculate()
@@ -1389,58 +1462,10 @@ Y.Loader.prototype = {
 
         // create an indexed list
         var s = YObject.keys(this.required), 
-            info = this.moduleInfo, 
             // loaded = this.loaded,
             done = {},
-            p=0, l, a, b, j, k, moved, doneKey,
+            p=0, l, a, b, j, k, moved, doneKey;
 
-        // returns true if b is not loaded, and is required
-        // directly or by means of modules it supersedes.
-            requires = Y.cached(function(mod1, mod2) {
-
-                var i, rm, after, after_map, s,
-                    m     = info[mod1], 
-                    other = info[mod2]; 
-
-                // if (loaded[mod2] || !m || !other) {
-                if (!m || !other) {
-                    return false;
-                }
-
-                rm    = m.expanded_map;
-                after = m.after; 
-                after_map = m.after_map; 
-
-                // check if this module requires the other directly
-                // if (r && YArray.indexOf(r, mod2) > -1) {
-                if (rm && (mod2 in rm)) {
-                    return true;
-                }
-
-                // check if this module should be sorted after the other
-                if (after_map && (mod2 in after_map)) {
-                    return true;
-                } else if (after && YArray.indexOf(after, mod2) > -1) {
-                    return true;
-                }
-
-                // check if this module requires one the other supersedes
-                s = info[mod2] && info[mod2].supersedes;
-                if (s) {
-                    for (i=0; i<s.length; i++) {
-                        if (requires(mod1, s[i])) {
-                            return true;
-                        }
-                    }
-                }
-
-                // external css files should be sorted below yui css
-                if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
-                    return true;
-                }
-
-                return false;
-            });
 
         // keep going until we make a pass without moving anything
         for (;;) {
@@ -1460,7 +1485,7 @@ Y.Loader.prototype = {
                 for (k=j+1; k<l; k++) {
                     doneKey = a + s[k];
 
-                    if (!done[doneKey] && requires(a, s[k])) {
+                    if (!done[doneKey] && this._requires(a, s[k])) {
 
                         // extract the dependency so we can move it up
                         b = s.splice(k, 1);
@@ -2009,9 +2034,7 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "anim-easing": {
-                "requires": [
-                    "anim-base"
-                ]
+                "requires": []
             }, 
             "anim-node-plugin": {
                 "requires": [
@@ -2176,22 +2199,10 @@ YUI.Env[Y.version].modules = {
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset"
-        ], 
-        "path": "cssgrids/grids-min.css", 
-        "requires": [
+            "cssreset", 
             "cssfonts"
         ], 
-        "type": "css"
-    }, 
-    "cssgrids-context": {
-        "optional": [
-            "cssreset-context"
-        ], 
-        "path": "cssgrids/grids-context-min.css", 
-        "requires": [
-            "cssfonts-context"
-        ], 
+        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
     "cssreset": {
@@ -2851,6 +2862,18 @@ YUI.Env[Y.version].modules = {
                     "node-style", 
                     "node-pluginhost"
                 ]
+            }, 
+            "transition": {
+                "requires": [
+                    "transition-native", 
+                    "node-style", 
+                    "anim-easing"
+                ]
+            }, 
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
             }
         }, 
         "requires": [
@@ -2893,6 +2916,7 @@ YUI.Env[Y.version].modules = {
     }, 
     "node-flick": {
         "requires": [
+            "transition-native", 
             "event-flick", 
             "plugin"
         ]

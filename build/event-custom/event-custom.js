@@ -1141,6 +1141,7 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
+    YArray = Y.Array,
 
     _wildType = Y.cached(function(type) {
         return type.replace(/(.*)(:)(.*)/, "*$2$3");
@@ -1282,24 +1283,27 @@ ET.prototype = {
 
             f = fn; 
             c = context; 
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             ret = {};
 
             if (L.isArray(type)) {
                 isArr = true;
-            } else {
-                after = type._after;
-                delete type._after;
             }
 
+            after = type._after;
+            delete type._after;
+
             Y.each(type, function(v, k) {
+
 
                 if (L.isObject(v)) {
                     f = v.fn || ((L.isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 
-                args[0] = (isArr) ? v : ((after) ? AFTER_PREFIX + k : k);
+                var nv = (after) ? AFTER_PREFIX : '';
+
+                args[0] = nv + ((isArr) ? v : k);
                 args[1] = f;
                 args[2] = c;
 
@@ -1317,7 +1321,7 @@ ET.prototype = {
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             args.splice(2, 0, Node.getDOMNode(this));
             return Y.on.apply(Y, args);
         }
@@ -1327,7 +1331,7 @@ ET.prototype = {
         if (this instanceof YUI) {
 
             adapt = Y.Env.evt.plugins[type];
-            args  = Y.Array(arguments, 0, true);
+            args  = YArray(arguments, 0, true);
             args[0] = shorttype;
 
             if (Node) {
@@ -1358,7 +1362,7 @@ ET.prototype = {
 
         if (!handle) {
             ce = this._yuievt.events[type] || this.publish(type);
-            handle = ce._on(fn, context, (arguments.length > 3) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
+            handle = ce._on(fn, context, (arguments.length > 3) ? YArray(arguments, 3, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -1458,7 +1462,7 @@ ET.prototype = {
             return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             args[2] = Node.getDOMNode(this);
             Y.detach.apply(Y, args);
             return this;
@@ -1468,7 +1472,7 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
                 adapt.detach.apply(Y, args);
@@ -1689,7 +1693,7 @@ ET.prototype = {
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
             ce, ret, pre = this._yuievt.config.prefix, ce2,
-            args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
+            args = (typeIncluded) ? YArray(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
 
@@ -1771,11 +1775,16 @@ ET.prototype = {
      */
     after: function(type, fn) {
 
-        var a = Y.Array(arguments, 0, true);
+        var a = YArray(arguments, 0, true);
 
         switch (L.type(type)) {
             case 'function':
                 return Y.Do.after.apply(Y.Do, arguments);
+            case 'array':
+            //     YArray.each(a[0], function(v) {
+            //         v = AFTER_PREFIX + v;
+            //     });
+            //     break;
             case 'object':
                 a[0]._after = true;
                 break;
@@ -2031,6 +2040,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.stopPropagation = function() {
         e.stopPropagation();
+        this.stopped = 1;
     };
 
     /**
@@ -2041,6 +2051,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.stopImmediatePropagation = function() {
         e.stopImmediatePropagation();
+        this.stopped = 2;
     };
 
     /**
@@ -2049,6 +2060,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.preventDefault = function() {
         e.preventDefault();
+        this.prevented = 1;
     };
 
     /**
@@ -2060,6 +2072,8 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.halt = function(immediate) {
         e.halt(immediate);
+        this.prevented = 1;
+        this.stopped = (immediate) ? 2 : 1;
     };
 
 };

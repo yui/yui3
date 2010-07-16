@@ -80,7 +80,13 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
             // Works in Firefox only....
             onFailure: Y.bind(function(e) {
                 e.error = new Error("Script node data failure");
-                this.fire("error", e);
+                Y.log("Script node data failure", "error", "datasource-get");
+                this.fire("data", e);
+            }, this, e),
+            onTimeout: Y.bind(function(e) {
+                e.error = new Error("Script node data timeout");
+                Y.log("Script node data timeout", "error", "datasource-get");
+                this.fire("data", e);
             }, this, e)
         });
 

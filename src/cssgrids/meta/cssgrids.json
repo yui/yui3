@@ -2,9 +2,7 @@
     "cssgrids": {
         "path": "cssgrids/grids-min.css", 
         "optional": [
-            "cssreset"
-        ], 
-        "requires": [
+            "cssreset",
             "cssfonts"
         ], 
         "type": "css"

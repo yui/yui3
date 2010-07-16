@@ -33,9 +33,8 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
         emitFacade:false
     },
 
-    // TODO: Should this be in SynthEvent as the default?
     _defArgsProcessor = function(args) {
-        return args[3] ? args.splice(3,1)[0] : {};
+        return args[3] ? Y.merge(args.splice(3,1)[0]) : {};
     },
 
     _getRoot = function(node, subscriber) {
@@ -44,25 +43,26 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
     define = Y.Event.define;
 
-define('movestart', {
+define('gesturemovestart', {
 
-    init: function (node, subscriber, ce) {
+    on: function (node, subscriber, ce) {
 
-        node.setData(_MOVE_START_HANDLE, node.on(EVENT[START], 
-            this._onStart, 
+        // TODO: optimize to one listener per node.
+        subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START], 
+            this._onStart,
             this,
             node,
-            subscriber, 
-            ce));
+            subscriber,
+            ce);
 
     },
 
-    destroy: function (node, subscriber, ce) {
-        var startHandle = node.getData(_MOVE_START_HANDLE);
+    detach: function (node, subscriber, ce) {
+        var startHandle = subscriber[_MOVE_START_HANDLE];
 
         if (startHandle) {
             startHandle.detach();
-            node.clearData(_MOVE_START_HANDLE);
+            subscriber[_MOVE_START_HANDLE] = null;
         }
     },
 
@@ -82,13 +82,17 @@ define('movestart', {
 
     publishConfig: PUB_CFG,
 
+    fireFilter: function (sub, args) {
+        return args[0]._extra === sub._extra;
+    },
+
     _onStart : function(e, node, subscriber, ce) {
 
         e.preventDefault();
 
         var origE = e,
             params = subscriber._extra,
-            start = true,  
+            start = true,
             minTime = params.minTime,
             minDistance = params.minDistance,
             button = params.button,
@@ -105,12 +109,12 @@ define('movestart', {
             start = (button === undefined) || (button = e.button);
         }
 
-        Y.log("movestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance);
+        Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance);
 
         if (start) {
 
             if (minTime === 0 || minDistance === 0) {
-                Y.log("movestart: No minTime or minDistance.");
+                Y.log("gesturemovestart: No minTime or minDistance.");
                 this._start(e, node, ce, params);
             } else {
 
@@ -118,9 +122,9 @@ define('movestart', {
 
                 if (minTime > 0) {
 
-                    Y.log("movestart: minTime specified. Setup timer.");
-                    Y.log("movestart: initialTime for minTime = " + new Date().getTime());
-                    
+                    Y.log("gesturemovestart: minTime specified. Setup timer.");
+                    Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime());
+            
                     params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
 
                     params._hme = root.on(EVENT[END], Y.bind(function() {
@@ -130,12 +134,12 @@ define('movestart', {
 
                 if (minDistance > 0) {
 
-                    Y.log("movestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.");
-                    Y.log("movestart: initialXY for minDistance = " + startXY);
+                    Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.");
+                    Y.log("gesturemovestart: initialXY for minDistance = " + startXY);
 
                     params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
                         if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
-                            Y.log("movestart: minDistance hit.");
+                            Y.log("gesturemovestart: minDistance hit.");
                             this._start(e, node, ce, params);
                         }
                     }, this));
@@ -143,7 +147,7 @@ define('movestart', {
             }
         }
     },
-    
+
     _cancel : function(params) {
         if (params._ht) {
             params._ht.cancel();
@@ -160,13 +164,15 @@ define('movestart', {
     },
 
     _start : function(e, node, ce, params) {
+
         if (params) {
             this._cancel(params);
         }
 
-        e.type = "movestart";
+        e.type = "gesturemovestart";
+        e._extra = params;
 
-        Y.log("movestart: Firing start: " + new Date().getTime());
+        Y.log("gesturemovestart: Firing start: " + new Date().getTime());
 
         node.setData(_MOVE_START, e);
         ce.fire(e);
@@ -176,9 +182,9 @@ define('movestart', {
     MIN_DISTANCE : 0
 });
 
-define('move', {
+define('gesturemove', {
 
-    init : function (node, subscriber, ce) {
+    on : function (node, subscriber, ce) {
 
         var root = _getRoot(node, subscriber),
 
@@ -189,21 +195,28 @@ define('move', {
                 subscriber,
                 ce);
 
-        node.setData(_MOVE_HANDLE, moveHandle);
+        subscriber[_MOVE_HANDLE] = moveHandle;
     },
 
     processArgs : _defArgsProcessor,
 
-    destroy : function (node, subscriber, ce) {
-        var moveHandle = node.getData(_MOVE_HANDLE);
+    detach : function (node, subscriber, ce) {
+        var moveHandle = subscriber[_MOVE_HANDLE];
 
         if (moveHandle) {
             moveHandle.detach();
-            node.clearData(_MOVE_HANDLE);
+            subscriber[_MOVE_HANDLE] = null;
         }
     },
 
     publishConfig : PUB_CFG,
+
+    fireFilter: function (sub, args) {
+        var node = args[0]._extra.node,
+            standAlone= sub._extra.standAlone;
+
+        return standAlone || node.getData(_MOVE_START);
+    },
 
     _onMove : function(e, node, subscriber, ce) {
 
@@ -223,17 +236,21 @@ define('move', {
             if (move) {
                 origE.preventDefault();
 
-                e.type = "move";
-                node.setData(_MOVE, e);
+                e.type = "gesturemove";
+
+                e._extra = {
+                    node : node
+                };
+
                 ce.fire(e);
             }
         }
     }
 });
 
-define('moveend', {
+define('gesturemoveend', {
 
-    init : function (node, subscriber, ce) {
+    on : function (node, subscriber, ce) {
 
         var root = _getRoot(node, subscriber),
 
@@ -244,18 +261,25 @@ define('moveend', {
                 subscriber, 
                 ce);
 
-        node.setData(_MOVE_END_HANDLE, endHandle);
+        subscriber[_MOVE_END_HANDLE] = endHandle;
     },
 
     processArgs : _defArgsProcessor,
 
-    destroy : function (node, subscriber, ce) {
-        var endHandle = node.getData(_MOVE_END_HANDLE);
+    detach : function (node, subscriber, ce) {
+        var endHandle = subscriber[_MOVE_END_HANDLE];
     
         if (endHandle) {
             endHandle.detach();
-            node.clearData(_MOVE_END_HANDLE);
+            subscriber[_MOVE_END_HANDLE] = null;
         }
+    },
+
+    fireFilter: function (sub, args) {
+        var node = args[0]._extra.node,
+            standAlone= sub._extra.standAlone;
+
+        return standAlone || node.getData(_MOVE) || node.getData(_MOVE_START);
     },
 
     publishConfig : PUB_CFG,
@@ -281,12 +305,16 @@ define('moveend', {
 
             if (moveEnd) {
                 origE.preventDefault();
-                e.type = "moveend";
+
+                e.type = "gesturemoveend";
+                e._extra = {
+                    node:node
+                };
+
+                ce.fire(e);
 
                 node.clearData(_MOVE_START);
                 node.clearData(_MOVE);
-
-                ce.fire(e);
             }
         }
     }

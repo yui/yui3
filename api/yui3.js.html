@@ -72,9 +72,7 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;anim-easing&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;anim-base&quot;</span>
-                <span class="p">]</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;anim-node-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -239,22 +237,10 @@
     <span class="p">},</span> 
     <span class="s2">&quot;cssgrids&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;cssreset&quot;</span>
-        <span class="p">],</span> 
-        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssgrids/grids-min.css&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;cssreset&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;cssfonts&quot;</span>
         <span class="p">],</span> 
-        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
-    <span class="p">},</span> 
-    <span class="s2">&quot;cssgrids-context&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;cssreset-context&quot;</span>
-        <span class="p">],</span> 
-        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssgrids/grids-context-min.css&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;cssfonts-context&quot;</span>
-        <span class="p">],</span> 
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssgrids/grids-min.css&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
     <span class="p">},</span> 
     <span class="s2">&quot;cssreset&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -914,6 +900,18 @@
                     <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-pluginhost&quot;</span>
                 <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;transition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;transition-native&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;anim-easing&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;transition-native&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">},</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -956,6 +954,7 @@
     <span class="p">},</span> 
     <span class="s2">&quot;node-flick&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;transition-native&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;event-flick&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;plugin&quot;</span>
         <span class="p">]</span>

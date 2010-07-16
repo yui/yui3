@@ -38,7 +38,7 @@ var LANG = Y.Lang,
 
             if(LANG.isString(data_in) && LANG.isString(schema.resultDelimiter)) {
                 // Parse results data
-                data_out = SchemaText._parseResults(schema, data_in, data_out);
+                data_out = SchemaText._parseResults.call(this, schema, data_in, data_out);
             }
             else {
                 Y.log("Text data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-text");
@@ -86,7 +86,7 @@ var LANG = Y.Lang,
                             field = fields[j];
                             key = (!LANG.isUndefined(field.key)) ? field.key : field;
                             value = (!LANG.isUndefined(fields_in[key])) ? fields_in[key] : fields_in[j];
-                            result[key] = Y.DataSchema.Base.parse(value, field);
+                            result[key] = Y.DataSchema.Base.parse.call(this, value, field);
                         }
                     }
 
