@@ -612,18 +612,19 @@ YUI.add('history-hash', function(Y) {
  *   documentation for details.
  */
 
-var HistoryBase    = Y.HistoryBase,
-    Lang           = Y.Lang,
-    Obj            = Y.Object,
-    GlobalEnv      = YUI.namespace('Env.HistoryHash'),
+var HistoryBase = Y.HistoryBase,
+    Lang        = Y.Lang,
+    Obj         = Y.Object,
+    GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
-    SRC_HASH       = 'hash',
+    SRC_HASH    = 'hash',
 
     hashNotifiers,
     oldHash,
     oldUrl,
-    win            = Y.config.win,
-    location       = win.location;
+    win             = Y.config.win,
+    location        = win.location,
+    useHistoryHTML5 = Y.config.useHistoryHTML5;
 
 function HistoryHash() {
     HistoryHash.superclass.constructor.apply(this, arguments);
@@ -946,6 +947,7 @@ hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
  *   </dd>
  * </dl>
  * @for YUI
+ * @since 3.2.0
  */
 Y.Event.define('hashchange', {
     on: function (node, subscriber, notifier) {
@@ -1035,11 +1037,9 @@ if (HistoryBase.nativeHashChange) {
 
 Y.HistoryHash = HistoryHash;
 
-// Only point Y.History at HistoryHash if it doesn't already exist and if the
-// current browser doesn't support HTML5 history, or if the HistoryHTML5 class
-// is not present. The history-hash module is always loaded after history-html5
-// if history-html5 is loaded, so this check doesn't introduce a race condition.
-if (!Y.History && (!HistoryBase.html5 || !Y.HistoryHTML5)) {
+// HistoryHash will never win over HistoryHTML5 unless useHistoryHTML5 is false.
+if (useHistoryHTML5 === false || (!Y.History && useHistoryHTML5 !== true &&
+        (!HistoryBase.html5 || !Y.HistoryHTML5))) {
     Y.History = HistoryHash;
 }
 
@@ -1218,9 +1218,10 @@ YUI.add('history-html5', function(Y) {
  *   documentation for details.
  */
 
-var HistoryBase = Y.HistoryBase,
-    doc         = Y.config.doc,
-    win         = Y.config.win,
+var HistoryBase     = Y.HistoryBase,
+    doc             = Y.config.doc,
+    win             = Y.config.win,
+    useHistoryHTML5 = Y.config.useHistoryHTML5,
 
     SRC_POPSTATE = 'popstate',
     SRC_REPLACE  = HistoryBase.SRC_REPLACE;
@@ -1292,9 +1293,35 @@ if (!Y.Node.DOM_EVENTS.popstate) {
 
 Y.HistoryHTML5 = HistoryHTML5;
 
-// Only point Y.History at HistoryHTML5 if it doesn't already exist and if the
-// current browser supports HTML5 history.
-if (!Y.History && HistoryBase.html5) {
+/**
+ * <p>
+ * If <code>true</code>, the <code>Y.History</code> alias will always point to
+ * <code>Y.HistoryHTML5</code> when the history-html5 module is loaded, even if
+ * the current browser doesn't support HTML5 history.
+ * </p>
+ *
+ * <p>
+ * If <code>false</code>, the <code>Y.History</code> alias will always point to
+ * <code>Y.HistoryHash</code> when the history-hash module is loaded, even if
+ * the current browser supports HTML5 history.
+ * </p>
+ *
+ * <p>
+ * If neither <code>true</code> nor <code>false</code>, the
+ * <code>Y.History</code> alias will point to the best available history adapter
+ * that the browser supports. This is the default behavior.
+ * </p>
+ *
+ * @property useHistoryHTML5
+ * @type boolean
+ * @for config
+ * @since 3.2.0
+ */
+
+// HistoryHTML5 will always win over HistoryHash unless useHistoryHTML5 is false
+// or HTML5 history is not supported.
+if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
+        HistoryBase.html5)) {
     Y.History = HistoryHTML5;
 }
 
