@@ -87,7 +87,10 @@ Y.extend(Transition, TransitionNative, {
 
                 done = (t >= d);
 
-                if (t > d) {
+                if (d === 0) { // set instantly
+                    d = 1; // avoid dividing by zero in easings
+                    t = 1;
+                } else if (t > d) {
                     t = d; 
                 }
 
@@ -129,7 +132,7 @@ Y.extend(Transition, TransitionNative, {
                 if (typeof val === 'function') {
                     val = val.call(this, node);
                 } else if (typeof val === 'object') {
-                    duration = val.duration * 1000 || this._duration * 1000;
+                    duration = ('duration' in val) ? val.duration * 1000 : this._duration * 1000;
                     easing = (typeof val.easing === 'string') ?
                             Y.Easing[val.easing] : val.easing || easing;
                     val = val.value;
@@ -223,6 +226,8 @@ Y.extend(Transition, TransitionNative, {
         
         return -c/2 * ((--t)*(t-2) - 1) + b;
     },
+
+    DEFAULT_DURATION: 0.5,
 
     /**
      * Time in milliseconds passed to setInterval for frame processing 
