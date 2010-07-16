@@ -122,17 +122,21 @@
     <span class="nx">_tId</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Executes a given callback.  The third param determines whether to execute</span>
+<span class="cm">     * Returns data to callback.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method DataSource.issueCallback</span>
-<span class="cm">     * @param callback {Object} The callback object.</span>
-<span class="cm">     * @param params {Array} params to be passed to the callback method</span>
-<span class="cm">     * @param error {Boolean} whether an error occurred</span>
+<span class="cm">     * @param e {EventFacade} Event Facade.</span>
+<span class="cm">     * @param caller {DataSource} Calling DataSource instance.</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
-    <span class="nx">issueCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">issueCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">caller</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">error</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">error</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">error</span><span class="p">;</span>
+            <span class="nx">caller</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">}</span>
         <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">callbackFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">failure</span><span class="p">)</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">success</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">callbackFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">failure</span><span class="p">)</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">success</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">callbackFunc</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">callbackFunc</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
             <span class="p">}</span>
@@ -276,10 +280,7 @@
         <span class="c1">// Problematic data</span>
         <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Local source undefined&quot;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Error in response&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Local source undefined&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">data</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
@@ -345,7 +346,7 @@
 <span class="cm">     */</span>
     <span class="nx">_defResponseFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Send the response back to the callback</span>
-        <span class="nx">DSLocal</span><span class="p">.</span><span class="nx">issueCallback</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+        <span class="nx">DSLocal</span><span class="p">.</span><span class="nx">issueCallback</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
     <span class="p">},</span>
     
     <span class="cm">/**</span>

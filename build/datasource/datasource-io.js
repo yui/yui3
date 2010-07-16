@@ -132,7 +132,6 @@ Y.extend(DSIO, Y.DataSource.Local, {
                     },
                     failure: function (id, response, e) {
                         e.error = new Error("IO data failure");
-                        this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                         if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
                         	defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
