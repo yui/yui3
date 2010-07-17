@@ -998,6 +998,37 @@ YUI.Env[Y.version].modules = {
             "event-custom"
         ]
     }, 
+    "scrollview": {
+        "plugins": {
+            "scrollview-base": {
+                "path": "scrollview/scrollview-base-min.js", 
+                "requires": [
+                    "widget", 
+                    "event-gestures", 
+                    "transition"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-paginator": {
+                "path": "scrollview/scrollview-paginator-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-scrollbars": {
+                "path": "scrollview/scrollview-scrollbars-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "scrollview-base", 
+            "scrollview-scrollbars"
+        ]
+    }, 
     "slider": {
         "submodules": {
             "clickable-rail": {
