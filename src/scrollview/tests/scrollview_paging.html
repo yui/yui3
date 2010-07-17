@@ -5,24 +5,24 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
         <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	<link rel="stylesheet" href="assets/tests.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	    <link rel="stylesheet" href="assets/tests.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
-	<style type="text/css" media="screen">
-	#scrollable {
-	    white-space: nowrap;
-	    text-align: center;
-	}
-
-	#scrollable li {
-	    border-bottom: 0;
-	}
-	</style>
-
-	<script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+    	<style type="text/css" media="screen">
+    	#scrollable {
+    	    white-space: nowrap;
+    	    text-align: center;
+    	}
     
-    <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-base.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-scrollbars.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-paging.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    	#scrollable li {
+    	    border-bottom: 0;
+    	}
+    	</style>
+
+    	<script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        
+        <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-base.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-scrollbars.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-paginator.css" type="text/css" media="screen" title="no title" charset="utf-8">
     
     </head>
     
@@ -44,12 +44,12 @@
 	</div>
 
         <script type="text/javascript" charset="utf-8">
-	YUI().use('transition', 'event-gestures', 'scrollview', 'scrollview-paginator', function(Y) {
+	YUI({filter:"raw"}).use('scrollview', 'scrollview-paginator', function(Y) {
 
-                var scrollView = new Y.ScrollView({
-                    contentBox: '#scrollable',
-                    width: 320
-                });
+        var scrollView = new Y.ScrollView({
+            contentBox: '#scrollable',
+            width: 320   
+        });
 
 		scrollView.plug(Y.Plugin.ScrollViewPaginator, {
 		    selector: 'li'

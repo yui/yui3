@@ -6,7 +6,7 @@
  */
  
 var BOUNCE_DECELERATION_CONST = 0.5,
-    UI = Y.ScrollViewBase.UI_SRC;
+    UI = Y.ScrollView.UI_SRC;
 
 /**
  * Scrollview plugin that adds support for paging

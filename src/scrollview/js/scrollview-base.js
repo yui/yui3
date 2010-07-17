@@ -7,8 +7,6 @@
 
 var getClassName = Y.ClassNameManager.getClassName,
     SCROLLVIEW = 'scrollview',
-    FRAME_STEP = 10, // ms between animation frames
-    BOUNCE_RANGE = 150,
     CLASS_NAMES = {
         scrollbar: getClassName(SCROLLVIEW, 'scrollbar'),
         vertical: getClassName(SCROLLVIEW, 'vertical'),
@@ -152,14 +150,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         transition = {
-            easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)',
+            easing : easing || ScrollView.EASING,
             duration : duration/1000
         };
 
         if (Y.TransitionNative.supported) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
-            transition.easing = 'ease-out';
+            transition.easing = "ease-out";
             transition.left = xMove + "px"; 
             transition.top = yMove + "px";
         }
@@ -311,7 +309,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _uiScrollY : function(val, duration, easing) {
         duration = duration || this._snapToEdge ? 400 : 0;
-        easing = easing || this._snapToEdge ? 'ease-out' : null;
+        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
         this.scrollTo(this.get(SCROLL_X), val, duration, easing);
     },
@@ -340,7 +338,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _uiScrollX : function(val, duration, easing) {
         duration = duration || this._snapToEdge ? 400 : 0;
-        easing = easing || this._snapToEdge ? 'ease-out' : null;
+        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
             
         this.scrollTo(val, this.get(SCROLL_Y), duration, easing);
     },
@@ -377,23 +375,27 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _uiDimensionsChange: function() {
         var cb = this.get(CONTENT_BOX),
             bb = this.get(BOUNDING_BOX),
+
             height = this.get('height'),
             width = this.get('width'),
+
             scrollHeight = cb.get('scrollHeight'),
             scrollWidth = cb.get('scrollWidth');
+
+        
         
         if(height && scrollHeight > height) {
             this._scrollsVertical = true;
             this._maxScrollY = scrollHeight - height;
             this._minScrollY = 0;
-            bb.setStyle('overflow-y', 'auto');
+            bb.addClass(getClassName("scroll-v"));
         }
         
         if(width && scrollWidth > width) {
             this._scrollsHorizontal = true;
             this._maxScrollX = scrollWidth - width;
             this._minScrollX = 0;
-            bb.setStyle('overflow-x', 'auto');
+            bb.addClass(this.getClassName("scroll-h"));
         }
     },
 
@@ -483,7 +485,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this.set(SCROLL_X, newX);
         }
         
-        this._flickTimer = Y.later(FRAME_STEP, this, '_flickFrame');
+        this._flickTimer = Y.later(ScrollView.FRAME_STEP, this, '_flickFrame');
     },
     
     /**
@@ -648,8 +650,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     UI_SRC: UI,
 
-    BOUNCE_RANGE : BOUNCE_RANGE,
+    BOUNCE_RANGE : 150,
 
-    FRAME_STEP : FRAME_STEP
+    FRAME_STEP : 10,
+
+    EASING : 'cubic-bezier(0, 0.1, 0, 1.0)',
+
+    SNAP_EASING : 'ease-out'
 
 });
