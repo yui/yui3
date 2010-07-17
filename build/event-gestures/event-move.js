@@ -20,6 +20,10 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     _MOVE_HANDLE = "_mh",
     _MOVE_END_HANDLE = "_meh",
 
+    _DEL_MOVE_START_HANDLE = "_dmsh",
+    _DEL_MOVE_HANDLE = "_dmh",
+    _DEL_MOVE_END_HANDLE = "_dmeh",
+
     _MOVE_START = "_ms",
     _MOVE = "_m",
 
@@ -33,8 +37,9 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         emitFacade:false
     },
 
-    _defArgsProcessor = function(args) {
-        return args[3] ? Y.merge(args.splice(3,1)[0]) : {};
+    _defArgsProcessor = function(args, delegate) {
+        var iExtra = (delegate) ? 4 : 3;
+        return args[iExtra] ? Y.merge(args.splice(iExtra,1)[0]) : {};
     },
 
     _getRoot = function(node, subscriber) {
@@ -47,13 +52,33 @@ define('gesturemovestart', {
 
     on: function (node, subscriber, ce) {
 
-        // TODO: optimize to one listener per node.
         subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START], 
             this._onStart,
             this,
             node,
             subscriber,
             ce);
+
+    },
+
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+        
+        subscriber[_DEL_MOVE_START_HANDLE] = node.delegate(EVENT[START],
+            function(e) {
+                se._onStart(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
+
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_START_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_START_HANDLE] = null;
+        }
 
     },
 
@@ -66,8 +91,8 @@ define('gesturemovestart', {
         }
     },
 
-    processArgs : function(args) {
-        var params = _defArgsProcessor(args);
+    processArgs : function(args, delegate) {
+        var params = _defArgsProcessor(args, delegate);
 
         if (!(MIN_TIME in params)) {
             params[MIN_TIME] = this.MIN_TIME;
@@ -82,9 +107,13 @@ define('gesturemovestart', {
 
     publishConfig: PUB_CFG,
 
-    _onStart : function(e, node, subscriber, ce) {
+    _onStart : function(e, node, subscriber, ce, delegate) {
 
         e.preventDefault();
+
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var origE = e,
             params = subscriber._extra,
@@ -185,7 +214,16 @@ define('gesturemove', {
         subscriber[_MOVE_HANDLE] = moveHandle;
     },
 
-    processArgs : _defArgsProcessor,
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+
+        subscriber[_DEL_MOVE_HANDLE] = node.delegate(EVENT[MOVE],
+            function(e) {
+                se._onMove(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
 
     detach : function (node, subscriber, ce) {
         var moveHandle = subscriber[_MOVE_HANDLE];
@@ -195,13 +233,30 @@ define('gesturemove', {
             subscriber[_MOVE_HANDLE] = null;
         }
     },
+    
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_HANDLE] = null;
+        }
+
+    },
+
+    processArgs : _defArgsProcessor,
 
     publishConfig : PUB_CFG,
 
-    _onMove : function(e, node, subscriber, ce) {
+    _onMove : function(e, node, subscriber, ce, delegate) {
+
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var move = subscriber._extra.standAlone || node.getData(_MOVE_START),
             origE = e;
+
 
         if (move) {
 
@@ -214,6 +269,8 @@ define('gesturemove', {
             }
 
             if (move) {
+                
+
                 origE.preventDefault();
                 e.type = "gesturemove";
                 ce.fire(e);
@@ -238,7 +295,26 @@ define('gesturemoveend', {
         subscriber[_MOVE_END_HANDLE] = endHandle;
     },
 
-    processArgs : _defArgsProcessor,
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+
+        subscriber[_DEL_MOVE_END_HANDLE] = node.delegate(EVENT[END],
+            function(e) {
+                se._onEnd(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
+
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_END_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_END_HANDLE] = null;
+        }
+
+    },
 
     detach : function (node, subscriber, ce) {
         var endHandle = subscriber[_MOVE_END_HANDLE];
@@ -249,9 +325,15 @@ define('gesturemoveend', {
         }
     },
 
+    processArgs : _defArgsProcessor,
+
     publishConfig : PUB_CFG,
 
-    _onEnd : function(e, node, subscriber, ce) {
+    _onEnd : function(e, node, subscriber, ce, delegate) {
+
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var moveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
             origE = e;
