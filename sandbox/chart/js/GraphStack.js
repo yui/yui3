@@ -171,6 +171,21 @@ Y.extend(GraphStack, Y.Base, {
             case "markerseries" :
                 seriesClass = Y.MarkerSeries;
             break;
+            case "spline" :
+                seriesClass = Y.SplineSeries;
+            break;
+            case "areaspline" :
+                seriesClass = Y.AreaSplineSeries;
+            break;
+            case "stackedspline" :
+                seriesClass = Y.StackedSplineSeries;
+            break;
+            case "stackedareaspline" :
+                seriesClass = Y.StackedAreaSplineSeries;
+            break;
+            case "stackedmarkerseries" :
+                seriesClass = Y.StackedMarkerSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;

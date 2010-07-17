@@ -1342,6 +1342,205 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
     
     /**
      * @private
+     * @return {Object}
+     * Creates an array of start, end and control points for splines. 
+     */
+    getCurveControlPoints: function(xcoords, ycoords) 
+    {
+		var outpoints = [],
+            i = 1,
+            l = xcoords.length - 1,
+		    xvals = [],
+		    yvals = [];
+		
+		
+		// Too few points, need at least two
+		if (l < 1) 
+        {
+			return null;
+		} 
+        
+        outpoints[0] = {
+            startx: xcoords[0], 
+            starty: ycoords[0],
+            endx: xcoords[1],
+            endy: ycoords[1]
+        };
+        
+		// Special case, the Bezier should be a straight line
+        if (l === 1) 
+        {
+			outpoints[0].ctrlx1 = (2.0*xcoords[0] + xcoords[1])/3.0;  
+			outpoints[0].ctrly2 = (2.0*ycoords[0] + ycoords[1])/3.0;
+			outpoints[0].ctrlx2 = 2.0*outpoints[0].ctrlx1 - xcoords[0];
+            outpoints[0].ctrly2 = 2.0*outpoints[0].ctrly1 - ycoords[0];
+            return outpoints;
+		}
+
+		for (; i < l; ++i) 
+        {
+			outpoints.push({startx: Math.round(xcoords[i]), starty: Math.round(ycoords[i]), endx: Math.round(xcoords[i+1]), endy: Math.round(ycoords[i+1])});
+			xvals[i] = 4.0 * xcoords[i] + 2*xcoords[i+1];
+			yvals[i] = 4.0*ycoords[i] + 2*ycoords[i+1];
+		}
+		
+		xvals[0] = xcoords[0] + (2.0 * xcoords[1]);
+		xvals[l-1] = (8.0 * xcoords[l-1] + xcoords[l]) / 2.0;
+		xvals = this.getControlPoints(xvals.concat());
+        yvals[0] = ycoords[0] + (2.0 * ycoords[1]);
+		yvals[l-1] = (8.0 * ycoords[l-1] + ycoords[l]) / 2.0;	
+		yvals = this.getControlPoints(yvals.concat());
+		
+        for (i = 0; i < l; ++i) 
+        {
+			outpoints[i].ctrlx1 = Math.round(xvals[i]);
+            outpoints[i].ctrly1 = Math.round(yvals[i]);
+			
+			if (i < l-1) 
+            {
+				outpoints[i].ctrlx2 = Math.round(2*xcoords[i+1] - xvals[i+1]);
+                outpoints[i].ctrly2 = Math.round(2*ycoords[i+1] - yvals[i+1]);
+			}
+			else 
+            {
+				outpoints[i].ctrlx2 = Math.round((xcoords[l] + xvals[l-1])/2);
+                outpoints[i].ctrly2 = Math.round((ycoords[l] + yvals[l-1])/2);
+			}
+		}
+		
+		return outpoints;	
+	},
+
+    /**
+     * @private
+     */
+	getControlPoints: function(vals) 
+    {
+		var l = vals.length,
+            x = [],
+            tmp = [],
+            b = 2.0,
+            i = 1;
+		x[0] = vals[0] / b;
+		for (; i < l; ++i) 
+        {
+			tmp[i] = 1/b;
+			b = (i < l-1 ? 4.0 : 3.5) - tmp[i];
+			x[i] = (vals[i] - x[i-1]) / b;
+		}
+		
+		for (i = 1; i < l; ++i) 
+        {
+			x[l-i-1] -= tmp[l-i] * x[l-i];
+		}
+		
+		return x;
+	},
+   
+    /**
+     * @private
+     * Adjusts coordinate values for stacked series.
+     */
+    _stackCoordinates: function() 
+    {
+        var direction = this.get("direction"),
+            node = Y.Node.one(this._parentNode).get("parentNode"),
+            h = node.get("offsetHeight"),
+            order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            i = 0,
+            len,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            prevXCoords,
+            prevYCoords;
+        if(order === 0)
+        {
+            return;
+        }
+        prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
+        prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
+        if(direction === "vertical")
+        {
+            len = prevXCoords.length;
+            for(; i < len; ++i)
+            {
+                if(!isNaN(prevXCoords[i]) && !isNaN(xcoords[i]))
+                {
+                    xcoords[i] += prevXCoords[i];
+                }
+            }
+        }
+        else
+        {
+            len = prevYCoords.length;
+            for(; i < len; ++i)
+            {
+                if(!isNaN(prevYCoords[i]) && !isNaN(ycoords[i]))
+                {
+                    ycoords[i] = prevYCoords[i] - (h - ycoords[i]);
+                }
+            }
+        }
+    },
+
+    /**
+     * @private
+     * Concatenates coordinate array with the correct coordinates for closing an area stack.
+     */
+    _getAllStackedCoordinates: function(coords)
+    {
+        var order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            direction = this.get("direction"),
+            seriesCollection = graph.seriesTypes[type],
+            prevCoords,
+            allCoords = this.get(coords).concat(),
+            first = allCoords[0];
+        
+        if(order > 0)
+        {
+            prevCoords = seriesCollection[order - 1].get(coords).concat();
+            allCoords = allCoords.concat(prevCoords.concat().reverse());
+            allCoords.push(allCoords[0]);
+        }
+        else
+        {
+            if(direction === "vertical")
+            {
+                if(coords === "xcoords")
+                {
+                    allCoords.push(this._leftOrigin);
+                    allCoords.push(this._leftOrigin);
+                }
+                else
+                {
+                    allCoords.push(allCoords[allCoords.length-1]);
+                    allCoords.push(first);
+                }
+            }
+            else
+            {
+                if(coords === "xcoords")
+                {
+                    allCoords.push(allCoords[allCoords.length-1]);
+                    allCoords.push(first);
+                }
+                else
+                {
+                    allCoords.push(this._bottomOrigin);
+                    allCoords.push(this._bottomOrigin);
+                }
+            }
+        }
+        return allCoords;
+    },
+
+    /**
+     * @private
      * @return Default styles for the widget
      */
     _getDefaultStyles: function()
@@ -1753,6 +1952,385 @@ Y.LineSeries = LineSeries;
 		
 
 		
+function SplineSeries(config)
+{
+	SplineSeries.superclass.constructor.apply(this, arguments);
+}
+
+SplineSeries.NAME = "splineSeries";
+
+SplineSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+        value:"spline"
+    }
+};
+
+Y.extend(SplineSeries, Y.CartesianSeries, {
+	/**
+	 * @private
+	 */
+	drawSeries: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords = this.getCurveControlPoints(xcoords, ycoords),
+			len = curvecoords.length,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			styles = this.get("styles"),
+			graphic = this.get("graphic");
+        graphic.clear();
+        graphic.lineStyle(styles.weight, styles.color);
+        graphic.moveTo(xcoords[0], ycoords[0]);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        graphic.end();
+	},
+    
+	_getDefaultStyles: function()
+    {
+        return {
+            color: "#000000",
+            alpha: 1,
+            weight: 1,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+Y.SplineSeries = SplineSeries;
+
+
+		
+
+		
+function AreaSplineSeries(config)
+{
+	AreaSplineSeries.superclass.constructor.apply(this, arguments);
+}
+
+AreaSplineSeries.NAME = "areaSplineSeries";
+
+AreaSplineSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+        value:"areaSpline"
+    }
+};
+
+Y.extend(AreaSplineSeries, Y.CartesianSeries, {
+	/**
+	 * @private
+	 */
+	drawSeries: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords = this.getCurveControlPoints(xcoords, ycoords),
+			len = curvecoords.length,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			firstX = xcoords[0],
+            firstY = ycoords[0],
+            styles = this.get("styles"),
+			graphic = this.get("graphic");
+        graphic.clear();
+        graphic.beginFill(styles.color, styles.alpha);
+        graphic.moveTo(firstX, firstY);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        if(this.get("direction") === "vertical")
+        {
+            graphic.lineTo(this._leftOrigin, y);
+            graphic.lineTo(this._leftOrigin, firstY);
+        }
+        else
+        {
+            graphic.lineTo(x, this._bottomOrigin);
+            graphic.lineTo(firstX, this._bottomOrigin);
+        }
+        graphic.lineTo(firstX, firstY);
+        graphic.end();
+	},
+    
+	_getDefaultStyles: function()
+    {
+        return {
+            color: "#000000",
+            alpha: 1,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+Y.AreaSplineSeries = AreaSplineSeries;
+function StackedSplineSeries(config)
+{
+	StackedSplineSeries.superclass.constructor.apply(this, arguments);
+}
+
+StackedSplineSeries.NAME = "stackedSplineSeries";
+
+StackedSplineSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+        value:"stackedSpline"
+    }
+};
+
+Y.extend(StackedSplineSeries, Y.CartesianSeries, {
+    /**
+	 * @private
+	 */
+	drawSeries: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords,
+			len,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			styles = this.get("styles"),
+			graphic = this.get("graphic");
+        this._stackCoordinates();
+        curvecoords = this.getCurveControlPoints(xcoords.concat(), ycoords.concat());
+        len = curvecoords.length;
+        graphic.clear();
+        graphic.lineStyle(styles.weight, styles.color);
+        graphic.moveTo(xcoords[0], ycoords[0]);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        graphic.end();
+	},
+    
+	_getDefaultStyles: function()
+    {
+        return {
+            color: "#000000",
+            alpha: 1,
+            weight: 1,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+Y.StackedSplineSeries = StackedSplineSeries;
+function StackedAreaSplineSeries(config)
+{
+	StackedAreaSplineSeries.superclass.constructor.apply(this, arguments);
+}
+
+StackedAreaSplineSeries.NAME = "stackedAreaSplineSeries";
+
+StackedAreaSplineSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+        value:"stackedAreaSpline"
+    }
+};
+
+Y.extend(StackedAreaSplineSeries, Y.CartesianSeries, {
+	/**
+	 * @private
+	 */
+	drawSeries: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords,
+            order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            prevXCoords,
+            prevYCoords,
+			len,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			firstX,
+            firstY,
+            styles = this.get("styles"),
+			graphic = this.get("graphic");
+        this._stackCoordinates();
+		firstX = xcoords[0];
+        firstY = ycoords[0];
+        curvecoords = this.getCurveControlPoints(xcoords, ycoords);
+        len = curvecoords.length;
+        graphic.clear();
+        graphic.beginFill(styles.color, styles.alpha);
+        graphic.moveTo(firstX, firstY);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        if(order > 0)
+        {
+            prevXCoords = seriesCollection[order - 1].get("xcoords").concat().reverse();
+            prevYCoords = seriesCollection[order - 1].get("ycoords").concat().reverse();
+            curvecoords = this.getCurveControlPoints(prevXCoords, prevYCoords);
+            i = 0;
+            len = curvecoords.length;
+            graphic.lineTo(prevXCoords[0], prevYCoords[0]);
+            for(; i < len; i = ++i)
+            {
+                x = curvecoords[i].endx;
+                y = curvecoords[i].endy;
+                cx1 = curvecoords[i].ctrlx1;
+                cx2 = curvecoords[i].ctrlx2;
+                cy1 = curvecoords[i].ctrly1;
+                cy2 = curvecoords[i].ctrly2;
+                graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+            }
+        }
+        else
+        {
+            if(this.get("direction") === "vertical")
+            {
+                graphic.lineTo(this._leftOrigin, ycoords[ycoords.length-1]);
+                graphic.lineTo(this._leftOrigin, firstY);
+            }
+            else
+            {
+                graphic.lineTo(xcoords[xcoords.length-1], this._bottomOrigin);
+                graphic.lineTo(firstX, this._bottomOrigin);
+            }
+
+        }
+        graphic.lineTo(firstX, firstY);
+        graphic.end();
+	},
+
+	_getDefaultStyles: function()
+    {
+        return {
+            color: "#000000",
+            alpha: 1,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+Y.StackedAreaSplineSeries = StackedAreaSplineSeries;
+function StackedMarkerSeries(config)
+{
+	StackedMarkerSeries.superclass.constructor.apply(this, arguments);
+}
+
+StackedMarkerSeries.NAME = "stackedMarkerSeries";
+
+StackedMarkerSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+        value:"stackedMarker"
+    }
+};
+
+Y.extend(StackedMarkerSeries, Y.MarkerSeries, {
+    setAreaData: function()
+    {   
+        StackedMarkerSeries.superclass.setAreaData.apply(this);
+        this._stackCoordinates.apply(this);
+    }
+});
+
+Y.StackedMarkerSeries = StackedMarkerSeries;
 function ColumnSeries(config)
 {
 	ColumnSeries.superclass.constructor.apply(this, arguments);
@@ -2458,19 +3036,11 @@ Y.extend(StackedLineSeries, Y.CartesianSeries, {
         var xcoords = this.get("xcoords"),
 			ycoords = this.get("ycoords"),
             direction = this.get("direction"),
-            node = Y.Node.one(this._parentNode).get("parentNode"),
-            h = node.get("offsetHeight"),
-            order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
-			prevXCoords,
-            prevYCoords,
-			len = xcoords.length,
-			lastX = xcoords[0],
-			lastY = ycoords[0],
-			lastValidX = lastX,
-			lastValidY = lastY,
+			len = direction === "vertical" ? ycoords.length : xcoords.length,
+			lastX,
+			lastY,
+			lastValidX,
+			lastValidY,
 			nextX,
 			nextY,
 			i = 0,
@@ -2483,37 +3053,9 @@ Y.extend(StackedLineSeries, Y.CartesianSeries, {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
-        if(order > 0)
-        {
-            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
-            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
-            if(direction === "vertical")
-            {
-                len = prevXCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevXCoords[i]) && !isNaN(xcoords[i]))
-                    {
-                        xcoords[i] += prevXCoords[i];
-                    }
-                }
-                lastX = lastValidX = xcoords[0];
-                len = xcoords.length;
-            }
-            else
-            {
-                len = prevYCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevYCoords[i]) && !isNaN(ycoords[i]))
-                    {
-                        ycoords[i] = prevYCoords[i] - (h - ycoords[i]);
-                    }
-                }
-                lastY = lastValidY = ycoords[0];
-                len = ycoords.length;
-            }
-        }
+        this._stackCoordinates();
+        lastX = lastValidX = xcoords[0];
+        lastY = lastValidY = ycoords[0];
         graphic.clear();
         graphic.lineStyle(styles.weight, styles.color);
         graphic.moveTo(lastX, lastY);
@@ -2647,11 +3189,6 @@ Y.extend(StackedLineSeries, Y.CartesianSeries, {
 });
 
 Y.StackedLineSeries = StackedLineSeries;
-
-
-		
-
-		
 function StackedAreaSeries(config)
 {
 	StackedAreaSeries.superclass.constructor.apply(this, arguments);
@@ -2664,10 +3201,7 @@ StackedAreaSeries.ATTRS = {
 		/**
 		 * Indicates the type of graph.
 		 */
-        value:"stacked"
-    },
-    direction: {
-        value:"horizontal"
+        value:"stackedArea"
     }
 };
 
@@ -2681,17 +3215,8 @@ Y.extend(StackedAreaSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var direction = this.get("direction"),
-            node = Y.Node.one(this._parentNode).get("parentNode"),
-            h = node.get("offsetHeight"),
-            order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
-            xcoords = this.get("xcoords"),
+        var xcoords = this.get("xcoords"),
 			ycoords = this.get("ycoords"),
-			prevXCoords,
-            prevYCoords,
             allXCoords,
             allYCoords,
             len = xcoords.length,
@@ -2704,62 +3229,11 @@ Y.extend(StackedAreaSeries, Y.CartesianSeries, {
 			i = 0,
 			styles = this.get("styles"),
 			graphic = this.get("graphic");
-        if(order > 0)
-        {
-            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
-            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
-            if(direction === "vertical")
-            {
-                len = prevXCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevXCoords[i]) && !isNaN(xcoords[i]))
-                    {
-                        xcoords[i] += prevXCoords[i];
-                    }
-                }
-            }
-            else
-            {
-                len = prevYCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevYCoords[i]) && !isNaN(ycoords[i]))
-                    {
-                        ycoords[i] = prevYCoords[i] - (h - ycoords[i]);
-                    }
-                }
-            }
-            allYCoords = ycoords.concat();
-            allXCoords = xcoords.concat();
-            allXCoords = allXCoords.concat(prevXCoords.concat().reverse());
-            allYCoords = allYCoords.concat(prevYCoords.concat().reverse());
-            firstX = allXCoords[0];
-            firstY = allYCoords[0];
-            allXCoords.push(firstX);
-            allYCoords.push(firstY);
-        }
-        else
-        {
-            allYCoords = ycoords.concat();
-            allXCoords = xcoords.concat();
-            if(direction === "vertical")
-            {
-                allXCoords.push(this._leftOrigin);
-                allXCoords.push(this._leftOrigin);
-                allYCoords.push(allYCoords[allYCoords.length-1]);
-                allYCoords.push(firstY);
-            }
-            else
-            {
-                allXCoords.push(allXCoords[allXCoords.length-1]);
-                allXCoords.push(firstX);
-                allYCoords.push(this._bottomOrigin);
-                allYCoords.push(this._bottomOrigin);
-            }
-            allXCoords.push(firstX);
-            allYCoords.push(firstY);
-        }
+        this._stackCoordinates();
+        allXCoords = this._getAllStackedCoordinates("xcoords");
+        allYCoords = this._getAllStackedCoordinates("ycoords");
+        firstX = allXCoords[0];
+        firstY = allYCoords[0];
         len = allXCoords.length;
         graphic.clear();
         graphic.beginFill(styles.color, styles.alpha);
@@ -3317,6 +3791,21 @@ Y.extend(GraphStack, Y.Base, {
             break;
             case "markerseries" :
                 seriesClass = Y.MarkerSeries;
+            break;
+            case "spline" :
+                seriesClass = Y.SplineSeries;
+            break;
+            case "areaspline" :
+                seriesClass = Y.AreaSplineSeries;
+            break;
+            case "stackedspline" :
+                seriesClass = Y.StackedSplineSeries;
+            break;
+            case "stackedareaspline" :
+                seriesClass = Y.StackedAreaSplineSeries;
+            break;
+            case "stackedmarkerseries" :
+                seriesClass = Y.StackedMarkerSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;
