@@ -6,7 +6,7 @@
  * @submodule event-flick
  */
 
-var EVENT = ("ontouchstart" in Y.config.win) ? {
+var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
         end: "touchend"
     } : {

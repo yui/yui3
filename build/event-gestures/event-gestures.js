@@ -8,7 +8,7 @@ YUI.add('event-flick', function(Y) {
  * @submodule event-flick
  */
 
-var EVENT = ("ontouchstart" in Y.config.win) ? {
+var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
         end: "touchend"
     } : {
@@ -201,7 +201,7 @@ YUI.add('event-move', function(Y) {
 
 // TODO: Better way to sniff 'n' switch touch support?
 
-var EVENT = ("ontouchstart" in Y.config.win) ? {
+var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
         move: "touchmove",
         end: "touchend"
