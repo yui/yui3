@@ -161,7 +161,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
             currentX = this.get('host').get('scrollX') * -1,
-            currentY = this.get('host').get('scrollY') * -1;
+            currentY = this.get('host').get('scrollY') * -1,
+            node;
 
         if(!this._showingScrollBars) {
             this.show();
@@ -180,7 +181,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 scrollSize = 1;
             }
 
-            transform = 'translate3d(0, '+scrollPos+'px, 0)';
+            transform = 'translate(0, '+scrollPos+'px)';
 
             if(scrollPos > (height - scrollSize))
             {
@@ -198,21 +199,23 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if(this.verticalScrollSize != (scrollSize-8))
             {
                 this.verticalScrollSize = (scrollSize-8);
-                verticalNode.get('children').item(1).setStyles({
-                    '-webkit-transition-property': (duration > 0 ? '-webkit-transform' : null),                                
-                    '-webkit-transform': 'translate3d(0,0,0) scaleY('+(scrollSize-8)+')',
-                    '-webkit-transition-duration': (duration > 0 ? duration+'ms' : null)
+
+                node = verticalNode.get('children').item(1);
+
+                node.transition({
+                    duration : duration/1000,                                
+                    transform: 'translate(0,0) scaleY('+(scrollSize-8)+')'
                 });
             }
-            verticalNode.setStyles({
-                '-webkit-transition-property': (duration > 0 ? '-webkit-transform' : null),        
-                '-webkit-transform':  transform,
-                '-webkit-transition-duration': (duration > 0 ? duration+'ms' : null)
+            
+            verticalNode.transition({
+                transform :  transform,
+                duration : duration/1000
             });
-            verticalNode.get('children').item(2).setStyles({
-                '-webkit-transition-property': (duration > 0 ? '-webkit-transform' : null),                
-                '-webkit-transform': 'translate3d(0,'+(scrollSize-10)+'px,0)',
-                '-webkit-transition-duration': (duration > 0 ? duration+'ms' : null)
+
+            verticalNode.get('children').item(2).transition({
+                transform : 'translate(0,'+(scrollSize-10)+'px)',
+                duration : duration/1000
             });
 
         }
@@ -225,14 +228,14 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 scrollSize = 1;
             }
 
-            transform = 'translate3d('+scrollPos+'px, 0, 0)';
+            transform = 'translate('+scrollPos+'px, 0)';
 
             if(scrollPos > (width - scrollSize)) {
                 scrollSize = scrollSize - (scrollPos - (width - scrollSize));
             }
 
             if(scrollPos < 0) {
-                transform = 'translate3d(0,0,0)';
+                transform = 'translate(0,0)';
                 scrollSize = scrollSize + scrollPos;
             }
 
@@ -240,21 +243,21 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
             if(this.horizontalScrollSize != (scrollSize-16)) {
                 this.horizontalScrollSize = (scrollSize-16);
-                horizontalNode.get('children').item(1).setStyles({
-                    '-webkit-transition-property': (duration > 0 ? '-webkit-transform' : null),                                
-                    '-webkit-transform': 'translate3d(0,0,0) scaleX('+this.horizontalScrollSize+')',
-                    '-webkit-transition-duration': (duration > 0 ? duration+'ms' : null)
+
+                horizontalNode.get('children').item(1).transition({
+                    transform : 'translate(0,0) scaleX('+this.horizontalScrollSize+')',
+                    duration : duration/1000
                 });
             }
-            horizontalNode.setStyles({
-                '-webkit-transition-property': (duration > 0 ? '-webkit-transform' : null),        
-                '-webkit-transform':  transform,
-                '-webkit-transition-duration': duration+'ms'
+
+            horizontalNode.transition({
+                transform :  transform,
+                duration : duration+'ms'
             });
-            horizontalNode.get('children').item(2).setStyles({
-                '-webkit-transition-property': (duration > 0 ? '-webkit-transform' : null),                
-                '-webkit-transform': 'translate3d('+(scrollSize-12)+'px,0,0)',
-                '-webkit-transition-duration': (duration > 0 ? duration+'ms' : null)
+
+            horizontalNode.get('children').item(2).transition({
+                transform : 'translate('+(scrollSize-12)+'px,0)',
+                duration : duration/1000
             });
         }
     },
@@ -277,16 +280,21 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         if(animated) {
             if(verticalNode) {
-                verticalNode.setStyle('-webkit-transition', 'opacity .6s');
+                verticalNode.transition({
+                    opacity : 0.6
+                });
             }
             if(horizontalNode) {
-                horizontalNode.setStyle('-webkit-transition', 'opacity .6s');
+                horizontalNode.transition({
+                    opacity: 0.6
+                });
             }
         }
 
         if(verticalNode) {
             verticalNode.addClass(_classNames.showing);
         }
+
         if(horizontalNode) {
             horizontalNode.addClass(_classNames.showing);
         }
@@ -310,16 +318,22 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         if(animated) {
             if(verticalNode) {
-                verticalNode.setStyle('-webkit-transition', 'opacity .6s');
+                verticalNode.transition({
+                    opacity: 0.6
+                });
             }
+
             if(horizontalNode) {
-                horizontalNode.setStyle('-webkit-transition', 'opacity .6s');
+                horizontalNode.transition({
+                    opacity: 0.6
+                });
             }
         }
 
         if(verticalNode) {
             verticalNode.removeClass(_classNames.showing);
         }
+
         if(horizontalNode) {
             horizontalNode.removeClass(_classNames.showing);
         }
