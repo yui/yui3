@@ -282,10 +282,6 @@ define('gesturemovestart', {
 
     publishConfig: PUB_CFG,
 
-    fireFilter: function (sub, args) {
-        return args[0]._extra === sub._extra;
-    },
-
     _onStart : function(e, node, subscriber, ce) {
 
         e.preventDefault();
@@ -370,7 +366,6 @@ define('gesturemovestart', {
         }
 
         e.type = "gesturemovestart";
-        e._extra = params;
 
         Y.log("gesturemovestart: Firing start: " + new Date().getTime());
 
@@ -411,13 +406,6 @@ define('gesturemove', {
 
     publishConfig : PUB_CFG,
 
-    fireFilter: function (sub, args) {
-        var node = args[0]._extra.node,
-            standAlone= sub._extra.standAlone;
-
-        return standAlone || node.getData(_MOVE_START);
-    },
-
     _onMove : function(e, node, subscriber, ce) {
 
         var move = subscriber._extra.standAlone || node.getData(_MOVE_START),
@@ -435,13 +423,7 @@ define('gesturemove', {
 
             if (move) {
                 origE.preventDefault();
-
                 e.type = "gesturemove";
-
-                e._extra = {
-                    node : node
-                };
-
                 ce.fire(e);
             }
         }
@@ -475,13 +457,6 @@ define('gesturemoveend', {
         }
     },
 
-    fireFilter: function (sub, args) {
-        var node = args[0]._extra.node,
-            standAlone= sub._extra.standAlone;
-
-        return standAlone || node.getData(_MOVE) || node.getData(_MOVE_START);
-    },
-
     publishConfig : PUB_CFG,
 
     _onEnd : function(e, node, subscriber, ce) {
@@ -507,10 +482,6 @@ define('gesturemoveend', {
                 origE.preventDefault();
 
                 e.type = "gesturemoveend";
-                e._extra = {
-                    node:node
-                };
-
                 ce.fire(e);
 
                 node.clearData(_MOVE_START);
