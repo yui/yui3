@@ -230,7 +230,7 @@ table, tr, td
                                                         xKey:"date",
                                                         yKey:"expenses",
                                                         styles:taxgraphstyles});
-                   var graphstack = new Y.GraphStack({parent:"#chart", seriesCollection:[{
+                   var graph = new Y.CartesianGraph({parent:"#chart", seriesCollection:[{
                                                                                             type:"areaspline",
                                                                                             xAxis:timeaxis,
                                                                                             yAxis:numericaxis,

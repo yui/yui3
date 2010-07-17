@@ -3619,14 +3619,14 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
 });
 
 Y.StackedBarSeries = StackedBarSeries;
-function GraphStack(config)
+function CartesianGraph(config)
 {
-    GraphStack.superclass.constructor.apply(this, arguments);
+    CartesianGraph.superclass.constructor.apply(this, arguments);
 }
 
-GraphStack.NAME = "graphstack";
+CartesianGraph.NAME = "cartesianGraph";
 
-GraphStack.ATTRS = {
+CartesianGraph.ATTRS = {
     seriesCollection: {
         lazyAdd: false,
 
@@ -3647,7 +3647,7 @@ GraphStack.ATTRS = {
     }
 };
 
-Y.extend(GraphStack, Y.Base, {
+Y.extend(CartesianGraph, Y.Base, {
     /**
      * @private 
      * @description Collection of series to be displayed in the graph.
@@ -3816,7 +3816,7 @@ Y.extend(GraphStack, Y.Base, {
 
 });
 
-Y.GraphStack = GraphStack;
+Y.CartesianGraph = CartesianGraph;
 /**
  * Renders an axis.
  */
