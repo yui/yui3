@@ -496,7 +496,7 @@
                 <span class="nx">ce2</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">getSibling</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">ce2</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
+                    <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span>                
                 <span class="p">}</span>
 
                 <span class="nx">oldbubble</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">bubbling</span><span class="p">;</span>
@@ -519,9 +519,15 @@
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">t</span><span class="p">;</span>
                     <span class="nx">bc</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">broadcast</span><span class="p">;</span>
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+                    <span class="c1">// default publish may not have emitFacade true -- that</span>
+                    <span class="c1">// shouldn&#39;t be what the implementer meant to do</span>
+                    <span class="nx">ce</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span> <span class="o">||</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">details</span> <span class="o">||</span> <span class="p">[]);</span>
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="nx">bc</span><span class="p">;</span>
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
 
                     <span class="c1">// stopPropagation() was called</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">.</span><span class="nx">stopped</span><span class="p">)</span> <span class="p">{</span>

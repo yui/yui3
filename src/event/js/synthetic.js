@@ -1,6 +1,47 @@
-var DOMMap  = Y.Env.evt.dom_map,
-    toArray = Y.Array,
-    noop    = function () {};
+var DOMMap   = Y.Env.evt.dom_map,
+    toArray  = Y.Array,
+    YLang    = Y.Lang,
+    isObject = YLang.isObject,
+    isString = YLang.isString,
+    noop     = function () {};
+
+function Notifier(handle, emitFacade, delegate) {
+    this.handle     = handle;
+    this.emitFacade = emitFacade;
+    this.delegate   = delegate;
+}
+
+Notifier.prototype.fire = function (e) {
+    var args  = toArray(arguments, 0, true),
+        ce    = this.handle.evt,
+        event = e,
+        mix;
+
+    if (this.emitFacade) {
+        mix = isObject(e) && !e.preventDefault;
+
+        if (!e || !e.preventDefault) {
+            ce.details = args.slice();
+            event = ce._getFacade();
+        }
+
+        if (mix) {
+            Y.mix(event, e, true);
+            args[0] = event;
+        } else {
+            args.unshift(event);
+        }
+
+        event.type = ce.type;
+
+        if (this.delegate) {
+            event.container  = ce.host;
+            ce.currentTarget = event.currentTarget;
+        }
+    }
+
+    ce.fire.apply(ce, args);
+};
 
 function SyntheticEvent() {
     this._init.apply(this, arguments);
@@ -14,71 +55,118 @@ SyntheticEvent.prototype = {
             this.publishConfig = {};
         }
 
-        if (!('emitFacade' in this.publishConfig)) {
-            this.publishConfig.emitFacade = true;
-        }
+        this.emitFacade = ('emitFacade' in this.publishConfig) ? 
+                            this.publishConfig.emitFacade :
+                            true;
     },
 
+    /**
+     * <p>Implement this function if the event supports a different subscription
+     * signature.  This function is used by both on() and delegate().  The
+     * second parameter indicates that the event is being subscribed via
+     * delegate().</p>
+     *
+     * <p>Implementations must remove extra arguments from the args list before
+     * returning.  The required args list order for on() subscriptions is</p>
+     *
+     * <pre><code>(type, callback, target, thisObj, argN...)</code></pre>
+     *
+     * <p>The required args list order for delegate() subscriptions is</p>
+     *
+     * <pre><code>(type, callback, target, filter, thisObj, argN...)</code></pre>
+     *
+     * <p>The return value from this function will be stored on the subscription
+     * in the '_extra' property for reference elsewhere.</p>
+     *
+     * @method processArgs
+     * @param args {Array} the parmeters passed to Y.on(..) or Y.delegate(..)
+     * @param delegate {Boolean} true if the originating subscription is from
+     *                           Y.delegate.
+     * @return {any}
+     */
     processArgs: noop,
-    //fireFilter : null,
     //allowDups  : false,
 
-    init       : noop,
     on         : noop,
     detach     : noop,
-    destroy    : noop,
 
-    initDelegate   : noop,
-    onDelegate     : noop,
+    delegate       : noop,
     detachDelegate : noop,
-    destroyDelegate: noop,
 
-    _getEvent: function (node) {
-        var ce = node.getEvent(this.type),
-            yuid, key;
+    _subscribe: function (node, args, extra, delegate) {
+        var el       = node._node,
+            yuid     = Y.stamp(el),
+            key      = 'event:' + yuid + this.type,
+            events   = DOMMap[yuid],
+            ce       = (events) ? events[key] : null,
+            dispatcher = new Y.CustomEvent(this.type, this.publishConfig),
+            handle     = dispatcher.on.apply(dispatcher, args),
+            sub        = handle.sub;
+
+        dispatcher._delete = Y.bind(this._deleteSub, this, dispatcher);
+        dispatcher.emitFacade = false;   // Handled by the notifier
+        dispatcher.host = node;          // I forget what this is for
+        dispatcher.currentTarget = node; // for generating facades
+        dispatcher.target = node;        // for generating facades
+        dispatcher.el = el;              // For category detach
+        if (delegate) {
+            dispatcher.contextFn = this._delegateContextFn;
+        }
+
+        sub._extra  = extra;
+        sub.node    = node;
+
+        handle.notifier = new Notifier(handle, this.emitFacade, delegate);
 
         if (!ce) {
-            yuid = Y.stamp(node._node);
-            key  = 'event:' + yuid + this.type;
+            if (!DOMMap[yuid]) {
+                DOMMap[yuid] = {};
+            }
 
-            ce         = node.publish(this.type, this.publishConfig);
-            ce.el      = node._node;
-            ce.key     = key;
-            ce.domkey  = yuid;
-            ce.fn      = noop;
-            ce.capture = false;
+            ce = DOMMap[yuid][key] = {
+                type     : this.type,
+                el       : el,
+                key      : key,
+                domkey   : yuid,
+                fn       : noop,
+                capture  : false,
+                notifiers: [],
 
-            ce.monitor('detach', this._unsubscribe, this);
-
-            (DOMMap[yuid] || (DOMMap[yuid] = {}))[key] = ce;
+                detachAll: this._purge
+            };
         }
-        
-        return ce;
+
+        ce.notifiers.push(handle);
+
+        return handle;
     },
 
     _on: function (args) {
-        var handles = [],
-            query   = (typeof args[2] === 'string') ? args[2] : null,
-            els     = (query) ? Y.Selector.query(query) : toArray(args[2]),
+        var handles  = [],
+            selector = args[2],
+            nodes    = Y.all(selector),
             handle;
 
-        if (!els.length && query) {
+        if (!nodes.size() && isString(selector)) {
             handle = Y.on('available', function () {
                 Y.mix(handle, Y.on.apply(Y, args), true);
-            }, query);
+            }, selector);
 
             return handle;
         }
 
-        Y.each(els, function (el) {
-            var node = Y.one(el),
-                ce   = this._getEvent(node);
+        nodes.each(function (node) {
+            var subArgs  = args.slice(),
+                extra    = this.processArgs(subArgs);
 
-            handle = this._subscribe(ce, args.slice(), node);
+            // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
+            subArgs.splice(0, 4, subArgs[1], subArgs[3] || node);
 
-            if (handle) {
-                handles.push(handle);
-            }
+            handle = this._subscribe(node, subArgs, extra);
+
+            this.on(node, handle.sub, handle.notifier);
+
+            handles.push(handle);
         }, this);
 
         return (handles.length === 1) ?
@@ -86,39 +174,8 @@ SyntheticEvent.prototype = {
             new Y.EventHandle(handles);
     },
 
-    _subscribe: function (ce, args, node) {
-        var extra = this.processArgs(args),
-            abort, handle, sub;
-
-        args[2] = node;
-        args.shift();
-
-        if (!this.allowDups) {
-            abort = this.findDup.apply(this, [ce.subscribers].concat(args));
-        }
-
-        if (!abort) {
-            handle = ce.on.apply(ce, args);
-
-            sub = handle.sub;
-            sub._extra = extra;
-
-            if (this.fireFilter) {
-                Y.Do.before(this._fireFilter, sub, '_notify', this, sub);
-            }
-
-            if (!ce.initialized) {
-                this.init(node, handle.sub, ce);
-                ce.initialized = true;
-            }
-
-            this.on(node, handle.sub, ce);
-        }
-        
-        return handle;
-    },
-
-    findDup: function (subs, fn, context) {
+    /*
+    isDup: function (subs, fn, context) {
         var id, sub;
 
         for (id in subs) {
@@ -133,49 +190,104 @@ SyntheticEvent.prototype = {
 
         return false;
     },
-
-    _fireFilter: function (thisObj, args, ce, sub) {
-        if (!this.fireFilter(sub, args, thisObj, ce)) {
-            return new Y.Do.Prevent();
-        }
-    },
+    */
 
     _detach: function (args) {
-        var fn  = args[1],
-            els = (typeof args[2] === 'string') ?
-                    Y.Selector.query(args[2]) :
-                    toArray(args[2]);
+        var nodes = Y.all(args[2]),
+            type  = this.type;
         
-        if (els.length) {
-            Y.each(els, function (el) {
-                var node = Y.one(el),
-                    ce   = node.getEvent(this.type);
+        // (type, fn, el, context, filter?) => (fn, context, filter?)
+        args.splice(0, 3, args[1]);
 
-                if (ce) {
-                    ce.detach(fn, node);
+        nodes.each(function (node) {
+            var yuid   = Y.stamp(node._node),
+                events = DOMMap[yuid],
+                ce     = (events) ? events['event:' + yuid + type] : null,
+                notifiers, i, handle;
+
+            if (ce) {
+                notifiers = ce.notifiers;
+                for (i = notifiers.length - 1; i >= 0; --i) {
+                    handle = notifiers[i];
+                    if (this.subMatch(handle.sub, args)) {
+                        handle.detach();
+                        notifiers.splice(i, 1);
+                    }
                 }
-            }, this);
+            }
+        }, this);
+    },
+
+    _deleteSub: function (notifier, sub) {
+        if (sub && sub.fn) {
+            notifier.subscribers = {};
+            notifier.subCount = 0;
+
+            if (sub.filter) {
+                this.detachDelegate(sub.node, sub, notifier);
+            } else {
+                this.detach(sub.node, sub, notifier);
+            }
+
+            delete sub.fn;
+            delete sub.node;
+            delete sub.context;
         }
     },
 
-    _unsubscribe: function (e) {
-        var ce   = e.ce,
-            node = e.sub.context;
+    _purge: function () {
+        var notifiers = this.notifiers,
+            i = notifiers.length;
 
-        this.detach(node, e.sub, ce);
-
-        if (!ce.hasSubs()) {
-            this.destroy(node, e.sub, ce);
-
-            ce.initialized = false;
-            ce.detach(this._unsubscribe, this);
+        while (--i >= 0) {
+            notifiers[i].detach();
         }
+    },
+
+    subMatch: function (sub, args) {
+        // Default detach cares only about the callback matching
+        return !args[0] || sub.fn === args[0];
     },
 
     _delegate: function (args) {
-        
+        var el   = args[2],
+            node = Y.all(el).item(0),
+            extra, filter, handle, sub;
+
+        if (!node && isString(el)) {
+            handle = Y.on('available', function () {
+                Y.mix(handle, Y.delegate.apply(Y, args), true);
+            }, el);
+        }
+
+        if (!handle && node) {
+            extra  = this.processArgs(args, true);
+            filter = args[3];
+
+            // (type, fn, el, filter, thisObj, ...) => (fn, thisObj, ...)
+            args.splice(0, 5, args[1], args[4]);
+            handle = this._subscribe(node, args, extra, true);
+
+            sub = handle.sub;
+            sub.filter = filter;
+
+            this.delegate(node, handle.sub, handle.notifier, filter);
+        }
+
+        // Return an empty event handle to keep Y.on from falling back to
+        // a custom event subscription.
+        return handle || new Y.EventHandle();
+    },
+
+    // Called from custom events for delegate subscribers
+    _delegateContextFn: function () {
+        return this.currentTarget;
     }
+
 };
+
+Y.SyntheticEvent = SyntheticEvent;
+Y.SyntheticEvent.Notifier = Notifier;
 
 Y.Node.publish = Y.Event.define = function (type, config) {
     if (!config) {

@@ -47,9 +47,50 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">DOMMap</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">dom_map</span><span class="p">,</span>
-    <span class="nx">toArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
-    <span class="nx">noop</span>    <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">DOMMap</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">dom_map</span><span class="p">,</span>
+    <span class="nx">toArray</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+    <span class="nx">YLang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">isObject</span> <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">,</span>
+    <span class="nx">isString</span> <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isString</span><span class="p">,</span>
+    <span class="nx">noop</span>     <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+
+<span class="kd">function</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">handle</span>     <span class="o">=</span> <span class="nx">handle</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="nx">emitFacade</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span>   <span class="o">=</span> <span class="nx">delegate</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Notifier</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fire</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">args</span>  <span class="o">=</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+        <span class="nx">ce</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handle</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
+        <span class="nx">event</span> <span class="o">=</span> <span class="nx">e</span><span class="p">,</span>
+        <span class="nx">mix</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">mix</span> <span class="o">=</span> <span class="nx">isObject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span> <span class="o">||</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+            <span class="nx">event</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">_getFacade</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mix</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">event</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">container</span>  <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+<span class="p">};</span>
 
 <span class="kd">function</span> <span class="nx">SyntheticEvent</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -63,71 +104,118 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;emitFacade&#39;</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;emitFacade&#39;</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">)</span> <span class="o">?</span> 
+                            <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">:</span>
+                            <span class="kc">true</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Implement this function if the event supports a different subscription</span>
+<span class="cm">     * signature.  This function is used by both on() and delegate().  The</span>
+<span class="cm">     * second parameter indicates that the event is being subscribed via</span>
+<span class="cm">     * delegate().&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;Implementations must remove extra arguments from the args list before</span>
+<span class="cm">     * returning.  The required args list order for on() subscriptions is&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;pre&gt;&lt;code&gt;(type, callback, target, thisObj, argN...)&lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;The required args list order for delegate() subscriptions is&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;pre&gt;&lt;code&gt;(type, callback, target, filter, thisObj, argN...)&lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;The return value from this function will be stored on the subscription</span>
+<span class="cm">     * in the &#39;_extra&#39; property for reference elsewhere.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method processArgs</span>
+<span class="cm">     * @param args {Array} the parmeters passed to Y.on(..) or Y.delegate(..)</span>
+<span class="cm">     * @param delegate {Boolean} true if the originating subscription is from</span>
+<span class="cm">     *                           Y.delegate.</span>
+<span class="cm">     * @return {any}</span>
+<span class="cm">     */</span>
     <span class="nx">processArgs</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
-    <span class="c1">//fireFilter : null,</span>
     <span class="c1">//allowDups  : false,</span>
 
-    <span class="nx">init</span>       <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
     <span class="nx">on</span>         <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
     <span class="nx">detach</span>     <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
-    <span class="nx">destroy</span>    <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
-    <span class="nx">initDelegate</span>   <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
-    <span class="nx">onDelegate</span>     <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+    <span class="nx">delegate</span>       <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
     <span class="nx">detachDelegate</span> <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
-    <span class="nx">destroyDelegate</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
-    <span class="nx">_getEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
-            <span class="nx">yuid</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
+    <span class="nx">_subscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">extra</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span>       <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">yuid</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
+            <span class="nx">key</span>      <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">yuid</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
+            <span class="nx">events</span>   <span class="o">=</span> <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">],</span>
+            <span class="nx">ce</span>       <span class="o">=</span> <span class="p">(</span><span class="nx">events</span><span class="p">)</span> <span class="o">?</span> <span class="nx">events</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">),</span>
+            <span class="nx">handle</span>     <span class="o">=</span> <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">dispatcher</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span>
+            <span class="nx">sub</span>        <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">;</span>
+
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">_delete</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_deleteSub</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">dispatcher</span><span class="p">);</span>
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>   <span class="c1">// Handled by the notifier</span>
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">host</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>          <span class="c1">// I forget what this is for</span>
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span> <span class="c1">// for generating facades</span>
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>        <span class="c1">// for generating facades</span>
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="p">;</span>              <span class="c1">// For category detach</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">contextFn</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_delegateContextFn</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span>  <span class="o">=</span> <span class="nx">extra</span><span class="p">;</span>
+        <span class="nx">sub</span><span class="p">.</span><span class="nx">node</span>    <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+
+        <span class="nx">handle</span><span class="p">.</span><span class="nx">notifier</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">yuid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">);</span>
-            <span class="nx">key</span>  <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">yuid</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="p">}</span>
 
-            <span class="nx">ce</span>         <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">);</span>
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">el</span>      <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">key</span>     <span class="o">=</span> <span class="nx">key</span><span class="p">;</span>
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">domkey</span>  <span class="o">=</span> <span class="nx">yuid</span><span class="p">;</span>
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">fn</span>      <span class="o">=</span> <span class="nx">noop</span><span class="p">;</span>
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">][</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">type</span>     <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
+                <span class="nx">el</span>       <span class="o">:</span> <span class="nx">el</span><span class="p">,</span>
+                <span class="nx">key</span>      <span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
+                <span class="nx">domkey</span>   <span class="o">:</span> <span class="nx">yuid</span><span class="p">,</span>
+                <span class="nx">fn</span>       <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+                <span class="nx">capture</span>  <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nx">notifiers</span><span class="o">:</span> <span class="p">[],</span>
 
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">monitor</span><span class="p">(</span><span class="s1">&#39;detach&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-
-            <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}))[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">;</span>
+                <span class="nx">detachAll</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_purge</span>
+            <span class="p">};</span>
         <span class="p">}</span>
-        
-        <span class="k">return</span> <span class="nx">ce</span><span class="p">;</span>
+
+        <span class="nx">ce</span><span class="p">.</span><span class="nx">notifiers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="nx">_on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">handles</span> <span class="o">=</span> <span class="p">[],</span>
-            <span class="nx">query</span>   <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">els</span>     <span class="o">=</span> <span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">:</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+        <span class="kd">var</span> <span class="nx">handles</span>  <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">selector</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="nx">nodes</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">selector</span><span class="p">),</span>
             <span class="nx">handle</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">els</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">isString</span><span class="p">(</span><span class="nx">selector</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
-            <span class="p">},</span> <span class="nx">query</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">selector</span><span class="p">);</span>
 
             <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">els</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
-                <span class="nx">ce</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getEvent</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="nx">nodes</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">subArgs</span>  <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">(),</span>
+                <span class="nx">extra</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">(</span><span class="nx">subArgs</span><span class="p">);</span>
 
-            <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_subscribe</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">(),</span> <span class="nx">node</span><span class="p">);</span>
+            <span class="c1">// (type, fn, el, thisObj, ...) =&gt; (fn, thisObj, ...)</span>
+            <span class="nx">subArgs</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nx">subArgs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">subArgs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">||</span> <span class="nx">node</span><span class="p">);</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_subscribe</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subArgs</span><span class="p">,</span> <span class="nx">extra</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">notifier</span><span class="p">);</span>
+
+            <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
         <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="nx">handles</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span>
@@ -135,96 +223,120 @@
             <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">handles</span><span class="p">);</span>
     <span class="p">},</span>
 
-    <span class="nx">_subscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">extra</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">),</span>
-            <span class="nx">abort</span><span class="p">,</span> <span class="nx">handle</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
+    <span class="cm">/*</span>
+<span class="cm">    isDup: function (subs, fn, context) {</span>
+<span class="cm">        var id, sub;</span>
 
-        <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-        <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+<span class="cm">        for (id in subs) {</span>
+<span class="cm">            if (subs.hasOwnProperty(id)) {</span>
+<span class="cm">                sub = subs[id];</span>
+<span class="cm">                if ((!fn      || sub.fn === fn) &amp;&amp;</span>
+<span class="cm">                    (!context || sub.context === context)) {</span>
+<span class="cm">                    return true;</span>
+<span class="cm">                }</span>
+<span class="cm">            }</span>
+<span class="cm">        }</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">allowDups</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">abort</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">findDup</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="nx">ce</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">args</span><span class="p">));</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">abort</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-
-            <span class="nx">sub</span> <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">;</span>
-            <span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span> <span class="o">=</span> <span class="nx">extra</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fireFilter</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_fireFilter</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="s1">&#39;_notify&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">sub</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-                <span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="nx">findDup</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">subs</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
-
-        <span class="k">for</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">sub</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
-                <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">fn</span>      <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
-                    <span class="p">(</span><span class="o">!</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">===</span> <span class="nx">context</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="nx">_fireFilter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">thisObj</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">fireFilter</span><span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">thisObj</span><span class="p">,</span> <span class="nx">ce</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">Prevent</span><span class="p">();</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
+<span class="cm">        return false;</span>
+<span class="cm">    },</span>
+<span class="cm">    */</span>
 
     <span class="nx">_detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">fn</span>  <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-            <span class="nx">els</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">:</span>
-                    <span class="nx">toArray</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+        <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+            <span class="nx">type</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
         
-        <span class="k">if</span> <span class="p">(</span><span class="nx">els</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">els</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
-                    <span class="nx">ce</span>   <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+        <span class="c1">// (type, fn, el, context, filter?) =&gt; (fn, context, filter?)</span>
+        <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+        <span class="nx">nodes</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">yuid</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">),</span>
+                <span class="nx">events</span> <span class="o">=</span> <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">],</span>
+                <span class="nx">ce</span>     <span class="o">=</span> <span class="p">(</span><span class="nx">events</span><span class="p">)</span> <span class="o">?</span> <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">yuid</span> <span class="o">+</span> <span class="nx">type</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">notifiers</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">handle</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">notifiers</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">handle</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">subMatch</span><span class="p">(</span><span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">args</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+                        <span class="nx">notifiers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_deleteSub</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sub</span> <span class="o">&amp;&amp;</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">notifier</span><span class="p">.</span><span class="nx">subscribers</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">notifier</span><span class="p">.</span><span class="nx">subCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">detachDelegate</span><span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">delete</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
-    <span class="nx">_unsubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">ce</span>   <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ce</span><span class="p">,</span>
-            <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
+    <span class="nx">_purge</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">notifiers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">notifiers</span><span class="p">,</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">.</span><span class="nx">hasSubs</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">initialized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-            <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="k">while</span> <span class="p">(</span><span class="o">--</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">notifiers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
         <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">subMatch</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Default detach cares only about the callback matching</span>
+        <span class="k">return</span> <span class="o">!</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
     <span class="p">},</span>
 
     <span class="nx">_delegate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        
+        <span class="kd">var</span> <span class="nx">el</span>   <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">el</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="nx">extra</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">handle</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">el</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">handle</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">extra</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">filter</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+
+            <span class="c1">// (type, fn, el, filter, thisObj, ...) =&gt; (fn, thisObj, ...)</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">args</span><span class="p">[</span><span class="mi">4</span><span class="p">]);</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_subscribe</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">extra</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+            <span class="nx">sub</span> <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">;</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">notifier</span><span class="p">,</span> <span class="nx">filter</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Return an empty event handle to keep Y.on from falling back to</span>
+        <span class="c1">// a custom event subscription.</span>
+        <span class="k">return</span> <span class="nx">handle</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="c1">// Called from custom events for delegate subscribers</span>
+    <span class="nx">_delegateContextFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
     <span class="p">}</span>
+
 <span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span> <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">Notifier</span> <span class="o">=</span> <span class="nx">Notifier</span><span class="p">;</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">publish</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>

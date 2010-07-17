@@ -1470,8 +1470,8 @@ delegate.notifySub = function (thisObj, args, ce) {
 
             ret = this.fn.apply(thisObj, args);
 
-            if (ret === false) {
-                break; // once() callback should only be called once, duh
+            if (ret === false) { // stop further notifications
+                break;
             }
         }
 
@@ -1483,28 +1483,21 @@ delegate.compileFilter = Y.cached(function (selector) {
     var descendantOfSelector = selector.replace(/,/g, ' *,') + ' *';
     return function (e) {
         var container = e.currentTarget._node,
-            matches = [],
-            currentTarget;
+            target    = e.target._node,
+            match     = [];
 
-        if (selectorTest(e.target._node, selector, container)) {
-            matches.push(e.target);
-        }
-
-        currentTarget = e.target._node;
-        if (selectorTest(currentTarget, descendantOfSelector)) {
-            while (currentTarget !== container) {
-                if (selectorTest(currentTarget, selector, container)) {
-                    matches.push(Y.one(currentTarget));
-                }
-                currentTarget = currentTarget.parentNode;
+        while (target !== container) {
+            if (selectorTest(target, selector, container)) {
+                match.push(Y.one(target));
             }
+            target = target.parentNode;
         }
 
-        if (matches.length <= 1) {
-            matches = matches[0]; // single match or undefined
+        if (match.length <= 1) {
+            match = match[0]; // single match or undefined
         }
 
-        return matches;
+        return match;
     };
 });
 

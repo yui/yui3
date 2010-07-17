@@ -11,9 +11,9 @@
 <body class="yui-skin-sam">
 <div id="outer">
     <div id="inner">
-        <button type="button" class="go">Do it</button>
-        <button type="button" class="go">Do it</button>
-        <button type="button" class="go">Do it</button>
+        <button type="button" class="go">Button 1</button>
+        <button type="button" class="go">Button 2</button>
+        <button type="button" class="go">Button 3</button>
     </div>
 </div>
 <div>
@@ -28,47 +28,66 @@
 </div>
 <ul id="output"></ul>
 
-<script src="../../../../build/yui/yui.js"></script>
-<script src="../../../../build/event/event-synthetic.js"></script>
+<script src="../../../build/yui/yui.js"></script>
+<!--script src="js/synthetic.js"></script-->
+<!--script src="../../../build/event/event-synthetic.js"></script-->
 <script>
 YUI({
     useBrowserConsole: false,
     filter: 'raw'
-}).use('event-synthetic', function (Y) {
+}).use('event-synthetic', 'event-custom', 'node', function (Y) {
 
 Y.on('yui:log', function (e) {
     Y.one("#output").append("<li>" + e.msg + "</li>");
 });
 
 Y.Event.define('test', {
-    on: function (node, sub, ce) {
-        sub._cat = Y.guid();
-        node.on(sub._cat + '|click', function (e) {
-            ce.fire();
+    //init: function (node, sub, notifier) {
+    on: function (node, sub, notifier) {
+        Y.log("on " + this.type + ": " + node.get('text'));
+        sub.testHandle = node.on('click', function (e) {
+            //notifier.fire(e);
+            notifier.fire();
         });
-        Y.log('Subscribed');
     },
-    detach: function (node, sub, ce) {
-        node.detach(sub._cat + '|*');
-        Y.log("Detached");
+
+    detach: function (node, sub, notifier) {
+        Y.log("detach " + this.type + ": " + node.get('text'));
+        node.getData('testHandle').detach();
+    },
+
+    delegate: function (container, sub, notifier, filter) {
+        Y.log("delegate " + this.type);
+        sub.delegateHandle = container.delegate('click', function (e) {
+            notifier.fire(e);
+        }, filter);
+    },
+
+    detachDelegate: function (container, sub, notifier, filter) {
+        Y.log("detachDelegate " + this.type);
+        sub.delegateHandle.detach();
     }
 });
 
 var outer = Y.one('#outer'),
     inner = Y.one('#inner'),
-    mode  = 2,
+    mode  = 1,
     handle;
 
-function notify() {
+function notify(e) {
+    var ctText = e.currentTarget.get('text'),
+        thisText = this.get('text');
+
     //console.log('Fired', this, arguments);
-    Y.log('Fired');
+    Y.log('fired ' + e.type + ' from ' + ctText + ' (' + thisText + ')');
 }
 
 Y.one('#attach').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').on('test', notify); break;
         case 2: Y.all('.go').on('test', notify); break;
-        case 3: Y.on('test', notify, '.go');
+        case 3: Y.on('test', notify, '.go'); break;
+        case 4: Y.delegate('test', notify, '#outer', '.go'); break;
     }
 });
 
@@ -76,7 +95,8 @@ Y.one('#attach_handle').on('click', function (e) {
     switch(mode) {
         case 1: handle = Y.one('.go').on('test', notify); break;
         case 2: handle = Y.all('.go').on('test', notify); break;
-        case 3: handle = Y.on('test', notify, '.go');
+        case 3: handle = Y.on('test', notify, '.go'); break;
+        case 4: handle = Y.delegate('test', notify, '#outer', '.go'); break;
     }
 });
 
@@ -84,7 +104,8 @@ Y.one('#attach_cat').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').on('foo|test', notify); break;
         case 2: Y.all('.go').on('foo|test', notify); break;
-        case 3: Y.on('foo|test', notify, '.go');
+        case 3: Y.on('foo|test', notify, '.go'); break;
+        case 4: Y.delegate('foo|test', notify, '#outer', '.go'); break;
     }
 });
 
@@ -92,7 +113,8 @@ Y.one('#detach').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').detach('test', notify); break;
         case 2: Y.all('.go').detach('test', notify); break;
-        case 3: Y.detach('test', notify, '.go');
+        case 3: Y.detach('test', notify, '.go'); break;
+        case 4: Y.detach('test', notify, '#outer', '.go'); break;
     }
 });
 
@@ -104,15 +126,17 @@ Y.one('#detach_cat').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').detach('foo|test'); break;
         case 2: Y.all('.go').detach('foo|test'); break;
-        case 3: Y.detach('foo|test');
+        case 3: Y.detach('foo|test'); break;
+        case 3: Y.one('#outer').detach('foo|test'); break;
     }
 });
 
 Y.one('#detach_nofn').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').detach('test'); break;
-        case 2: all('.go').detach('test'); break;
-        case 3: Y.detach('foo|*');
+        case 2: Y.all('.go').detach('test'); break;
+        case 3: Y.detach('foo|*'); break;
+        case 1: Y.one('#outer').detach('test'); break;
     }
 });
 
