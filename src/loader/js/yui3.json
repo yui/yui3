@@ -18,9 +18,7 @@
                 ]
             }, 
             "anim-easing": {
-                "requires": [
-                    "anim-base"
-                ]
+                "requires": []
             }, 
             "anim-node-plugin": {
                 "requires": [
@@ -185,22 +183,10 @@
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset"
-        ], 
-        "path": "cssgrids/grids-min.css", 
-        "requires": [
+            "cssreset", 
             "cssfonts"
         ], 
-        "type": "css"
-    }, 
-    "cssgrids-context": {
-        "optional": [
-            "cssreset-context"
-        ], 
-        "path": "cssgrids/grids-context-min.css", 
-        "requires": [
-            "cssfonts-context"
-        ], 
+        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
     "cssreset": {
@@ -252,7 +238,8 @@
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local"
+                    "datasource-local", 
+                    "cache-base"
                 ]
             }, 
             "datasource-function": {
@@ -615,7 +602,8 @@
         "plugins": {
             "event-synthetic": {
                 "requires": [
-                    "node-base"
+                    "node-base", 
+                    "event-custom"
                 ]
             }, 
             "event-touch": {
@@ -858,6 +846,18 @@
                     "node-style", 
                     "node-pluginhost"
                 ]
+            }, 
+            "transition": {
+                "requires": [
+                    "transition-native", 
+                    "node-style", 
+                    "anim-easing"
+                ]
+            }, 
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
             }
         }, 
         "requires": [
@@ -897,6 +897,13 @@
                 ]
             }
         }
+    }, 
+    "node-flick": {
+        "requires": [
+            "transition-native", 
+            "event-flick", 
+            "plugin"
+        ]
     }, 
     "node-focusmanager": {
         "requires": [

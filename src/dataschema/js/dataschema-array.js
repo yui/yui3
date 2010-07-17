@@ -36,7 +36,7 @@ var LANG = Y.Lang,
             if(LANG.isArray(data_in)) {
                 if(LANG.isArray(schema.resultFields)) {
                     // Parse results data
-                    data_out = SchemaArray._parseResults(schema.resultFields, data_in, data_out);
+                    data_out = SchemaArray._parseResults.call(this, schema.resultFields, data_in, data_out);
                 }
                 else {
                     data_out.results = data_in;
@@ -75,7 +75,7 @@ var LANG = Y.Lang,
                         field = fields[j];
                         key = (!LANG.isUndefined(field.key)) ? field.key : field;
                         value = (!LANG.isUndefined(item[key])) ? item[key] : item[j];
-                        result[key] = Y.DataSchema.Base.parse(value, field);
+                        result[key] = Y.DataSchema.Base.parse.call(this, value, field);
                     }
                 }
                 else if(type === 0) {

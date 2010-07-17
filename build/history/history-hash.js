@@ -16,18 +16,19 @@ YUI.add('history-hash', function(Y) {
  *   documentation for details.
  */
 
-var HistoryBase    = Y.HistoryBase,
-    Lang           = Y.Lang,
-    Obj            = Y.Object,
-    GlobalEnv      = YUI.namespace('Env.HistoryHash'),
+var HistoryBase = Y.HistoryBase,
+    Lang        = Y.Lang,
+    Obj         = Y.Object,
+    GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
-    SRC_HASH       = 'hash',
+    SRC_HASH    = 'hash',
 
     hashNotifiers,
     oldHash,
     oldUrl,
-    win            = Y.config.win,
-    location       = win.location;
+    win             = Y.config.win,
+    location        = win.location,
+    useHistoryHTML5 = Y.config.useHistoryHTML5;
 
 function HistoryHash() {
     HistoryHash.superclass.constructor.apply(this, arguments);
@@ -200,9 +201,9 @@ Y.extend(HistoryHash, HistoryBase, {
             prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
-        // since getHash() is called every 20ms or so to poll for changes in
-        // browsers that don't support native onhashchange. An additional
-        // function call would add unnecessary overhead.
+        // since getHash() is called every 50ms to poll for changes in browsers
+        // that don't support native onhashchange. An additional function call
+        // would add unnecessary overhead.
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     }),
@@ -350,6 +351,7 @@ hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
  *   </dd>
  * </dl>
  * @for YUI
+ * @since 3.2.0
  */
 Y.Event.define('hashchange', {
     on: function (node, subscriber, notifier) {
@@ -439,11 +441,9 @@ if (HistoryBase.nativeHashChange) {
 
 Y.HistoryHash = HistoryHash;
 
-// Only point Y.History at HistoryHash if it doesn't already exist and if the
-// current browser doesn't support HTML5 history, or if the HistoryHTML5 class
-// is not present. The history-hash module is always loaded after history-html5
-// if history-html5 is loaded, so this check doesn't introduce a race condition.
-if (!Y.History && (!HistoryBase.html5 || !Y.HistoryHTML5)) {
+// HistoryHash will never win over HistoryHTML5 unless useHistoryHTML5 is false.
+if (useHistoryHTML5 === false || (!Y.History && useHistoryHTML5 !== true &&
+        (!HistoryBase.html5 || !Y.HistoryHTML5))) {
     Y.History = HistoryHash;
 }
 

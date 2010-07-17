@@ -88,12 +88,12 @@ Y.extend(DSFn, Y.DataSource.Local, {
                 }
                 catch(error) {
                     e.error = error;
-                    this.fire("error", e);
+                    this.fire("data", e);
                 }
             }
             else {
                 e.error = new Error("Function data failure");
-                this.fire("error", e);
+                this.fire("data", e);
             }
             
         return e.tId;

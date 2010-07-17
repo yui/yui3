@@ -21,9 +21,22 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
     Y_DOM = Y.DOM,
 
+    TRANSFORM = 'transform',
+    VENDOR_TRANSFORM = [
+        'WebkitTransform',
+        'MozTransform',
+        'OTransform'
+    ],
+
     re_color = /color$/i,
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
+
+Y.Array.each(VENDOR_TRANSFORM, function(val) {
+    if (val in DOCUMENT[DOCUMENT_ELEMENT].style) {
+        TRANSFORM = val;
+    }
+});
 
 Y.mix(Y_DOM, {
     DEFAULT_UNIT: 'px',
@@ -158,4 +171,25 @@ if (Y.UA.webkit) {
     };
 
 }
+
+Y_DOM._multiplyMatrix = function(a, b) {
+    var c = [
+        a[0][0] * b[0][0] + a[0][1] * b[1][0],
+        a[0][0] * a[0][1] + a[0][1] * b[1][1],
+        a[1][0] * b[0][0] + a[1][1] * b[1][0],
+        a[1][0] * b[0][1] + b[1][1] * b[1][1]
+    ];
+
+    return c;
+};
+
+Y_DOM.CUSTOM_STYLES.transform = {
+    set: function(node, val, style) {
+        style[TRANSFORM] = val;
+    },
+
+    get: function(node, style) {
+        return Y_DOM.getComputedStyle(node, TRANSFORM);
+    }
+};
 })(Y);

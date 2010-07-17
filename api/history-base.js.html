@@ -254,10 +254,9 @@
             <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defChangeFn</span>
         <span class="p">});</span>
 
-        <span class="c1">// If initialState was provided and is a simple object, merge it into</span>
-        <span class="c1">// the current state.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">_isSimpleObject</span><span class="p">(</span><span class="nx">initialState</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span> <span class="nx">initialState</span><span class="p">));</span>
+        <span class="c1">// If initialState was provided, merge it into the current state.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">initialState</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">initialState</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 

@@ -75,17 +75,30 @@ Y.mix(DSLocal, {
     _tId: 0,
 
     /**
-     * Executes a given callback.  The third param determines whether to execute
+     * Global in-progress transaction objects.
      *
-     * @method DataSource.issueCallback
-     * @param callback {Object} The callback object.
-     * @param params {Array} params to be passed to the callback method
-     * @param error {Boolean} whether an error occurred
+     * @property DataSource.transactions
+     * @type Object
      * @static
      */
-    issueCallback: function (e) {
+    transactions: {},
+
+    /**
+     * Returns data to callback.
+     *
+     * @method DataSource.issueCallback
+     * @param e {EventFacade} Event Facade.
+     * @param caller {DataSource} Calling DataSource instance.
+     * @static
+     */
+    issueCallback: function (e, caller) {
+        var error = (e.error || e.response.error);
+        if(error) {
+            e.error = e.error || e.response.error;
+            caller.fire("error", e);
+        }
         if(e.callback) {
-            var callbackFunc = (e.error && e.callback.failure) || e.callback.success;
+            var callbackFunc = (error && e.callback.failure) || e.callback.success;
             if (callbackFunc) {
                 callbackFunc(e);
             }
@@ -229,10 +242,7 @@ Y.extend(DSLocal, Y.Base, {
         // Problematic data
         if(LANG.isUndefined(data)) {
             e.error = new Error("Local source undefined");
-        }
-        if(e.error) {
-            this.fire("error", e);
-            Y.log("Error in response", "error", "datasource-local");
+            Y.log("Local source undefined", "error", "datasource-local");
         }
 
         this.fire("data", Y.mix({data:data}, e));
@@ -298,7 +308,7 @@ Y.extend(DSLocal, Y.Base, {
      */
     _defResponseFn: function(e) {
         // Send the response back to the callback
-        DSLocal.issueCallback(e);
+        DSLocal.issueCallback(e, this);
     },
     
     /**
@@ -395,7 +405,18 @@ Y.mix(DSIO, {
         io: {
             value: Y.io,
             cloneDefaultValue: false
-        }
+        },
+        
+        /**
+         * Default IO Config.
+         *
+         * @attribute ioConfig
+         * @type Object
+         * @default null
+         */
+         ioConfig: {
+         	value: null
+         }
     }
 });
     
@@ -451,22 +472,33 @@ Y.extend(DSIO, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var uri = this.get("source"),
             io = this.get("io"),
+            defIOConfig = this.get("ioConfig"),
             request = e.request,
-            cfg = Y.mix(e.cfg, {
-                on: {
+            cfg = Y.merge(defIOConfig, e.cfg, {
+                on: Y.merge(defIOConfig, {
                     success: function (id, response, e) {
+                        delete Y.DataSource.Local.transactions[e.tId];
+
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received IO data response for \"" + request + "\"", "info", "datasource-io");
+                        if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
+                        	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
+                        }
                     },
                     failure: function (id, response, e) {
+                        delete Y.DataSource.Local.transactions[e.tId];
+
                         e.error = new Error("IO data failure");
-                        this.fire("error", Y.mix({data:response}, e));
+                        Y.log("IO data failure", "error", "datasource-io");
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received IO data failure for \"" + request + "\"", "info", "datasource-io");
+                        if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
+                        	defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
+                        }
                     }
-                },
+                }),
                 context: this,
-                arguments: e
+                "arguments": e
             });
         
         // Support for POST transactions
@@ -478,13 +510,12 @@ Y.extend(DSIO, Y.DataSource.Local, {
                 uri += request;
             }
         }
-        io(uri, cfg);
+        Y.DataSource.Local.transactions[e.tId] = io(uri, cfg);
         return e.tId;
     }
 });
   
 Y.DataSource.IO = DSIO;
-    
 
 
 
@@ -511,9 +542,6 @@ var DSGet = function() {
     
     
 Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
-
-// Y.DataSouce.Get.prototype
-
     /**
      * Passes query string to Get Utility. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -537,7 +565,8 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
         var uri  = this.get("source"),
             get  = this.get("get"),
             guid = Y.guid().replace(/\-/g, '_'),
-            generateRequest = this.get( "generateRequestCallback" );
+            generateRequest = this.get( "generateRequestCallback" ),
+            o;
 
         /**
          * Stores the most recent request id for validation against stale
@@ -552,6 +581,7 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
         // Dynamically add handler function with a closure to the callback stack
         YUI.Env.DataSource.callbacks[guid] = Y.bind(function(response) {
             delete YUI.Env.DataSource.callbacks[guid];
+            delete Y.DataSource.Local.transactions[e.tId];
 
             var process = this.get('asyncMode') !== "ignoreStaleResponses" ||
                           this._last === guid;
@@ -569,12 +599,24 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
 
         Y.log("DataSource is querying URL " + uri, "info", "datasource-get");
 
-        get.script(uri, {
+        Y.DataSource.Local.transactions[e.tId] = get.script(uri, {
             autopurge: true,
             // Works in Firefox only....
             onFailure: Y.bind(function(e) {
+                delete YUI.Env.DataSource.callbacks[guid];
+                delete Y.DataSource.Local.transactions[e.tId];
+
                 e.error = new Error("Script node data failure");
-                this.fire("error", e);
+                Y.log("Script node data failure", "error", "datasource-get");
+                this.fire("data", e);
+            }, this, e),
+            onTimeout: Y.bind(function(e) {
+                delete YUI.Env.DataSource.callbacks[guid];
+                delete Y.DataSource.Local.transactions[e.tId];
+
+                e.error = new Error("Script node data timeout");
+                Y.log("Script node data timeout", "error", "datasource-get");
+                this.fire("data", e);
             }, this, e)
         });
 
@@ -596,8 +638,6 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
     }
 
 }, {
-
-// Y.DataSouce.Get static properties
 
     /**
      * Class name.
@@ -778,12 +818,14 @@ Y.extend(DSFn, Y.DataSource.Local, {
                 }
                 catch(error) {
                     e.error = error;
-                    this.fire("error", e);
+                    Y.log("Function execution failure", "error", "datasource-function");
+                    this.fire("data", e);
                 }
             }
             else {
                 e.error = new Error("Function data failure");
-                this.fire("error", e);
+                Y.log("Function data failure", "error", "datasource-function");
+                this.fire("data", e);
             }
             
         return e.tId;
@@ -903,7 +945,7 @@ DataSourceCacheExtension.prototype = {
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
         if(e.response && !e.cached) {
-            this.add(e.request, e.response, (e.callback && e.callback.argument));
+            this.add(e.request, e.response);
         }
      }
 };
@@ -1026,7 +1068,9 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     },
 
     /**
-     * Parses raw data into a normalized response.
+     * Parses raw data into a normalized response. To accommodate XHR responses,
+     * will first look for data in data.responseText. Otherwise will just work
+     * with data.
      *
      * @method _beforeDefDataFn
      * <dl>
@@ -1043,8 +1087,8 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
+        var data = e.data ? (e.data.responseText ?  e.data.responseText : e.data) : e.data,
+            response = Y.DataSchema.JSON.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1151,7 +1195,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
-            response = Y.DataSchema.XML.apply(this.get("schema"), data);
+            response = Y.DataSchema.XML.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1258,7 +1302,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Array.apply(this.get("schema"), data);
+            response = Y.DataSchema.Array.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -1365,7 +1409,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Text.apply(this.get("schema"), data);
+            response = Y.DataSchema.Text.apply.call(this, this.get("schema"), data);
             
         // Default
         if(!response) {

@@ -63,18 +63,19 @@
 <span class="cm"> *   documentation for details.</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">HistoryBase</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
-    <span class="nx">Lang</span>           <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-    <span class="nx">Obj</span>            <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
-    <span class="nx">GlobalEnv</span>      <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.HistoryHash&#39;</span><span class="p">),</span>
+<span class="kd">var</span> <span class="nx">HistoryBase</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
+    <span class="nx">Lang</span>        <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">Obj</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
+    <span class="nx">GlobalEnv</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.HistoryHash&#39;</span><span class="p">),</span>
 
-    <span class="nx">SRC_HASH</span>       <span class="o">=</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_HASH</span>    <span class="o">=</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span>
 
     <span class="nx">hashNotifiers</span><span class="p">,</span>
     <span class="nx">oldHash</span><span class="p">,</span>
     <span class="nx">oldUrl</span><span class="p">,</span>
-    <span class="nx">win</span>            <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-    <span class="nx">location</span>       <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+    <span class="nx">win</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+    <span class="nx">location</span>        <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">,</span>
+    <span class="nx">useHistoryHTML5</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useHistoryHTML5</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">HistoryHash</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -247,9 +248,9 @@
             <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">;</span>
 
         <span class="c1">// Slight code duplication here, but execution speed is of the essence</span>
-        <span class="c1">// since getHash() is called every 20ms or so to poll for changes in</span>
-        <span class="c1">// browsers that don&#39;t support native onhashchange. An additional</span>
-        <span class="c1">// function call would add unnecessary overhead.</span>
+        <span class="c1">// since getHash() is called every 50ms to poll for changes in browsers</span>
+        <span class="c1">// that don&#39;t support native onhashchange. An additional function call</span>
+        <span class="c1">// would add unnecessary overhead.</span>
         <span class="k">return</span> <span class="nx">prefix</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span>
                     <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">}),</span>
@@ -397,6 +398,7 @@
 <span class="cm"> *   &lt;/dd&gt;</span>
 <span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> * @for YUI</span>
+<span class="cm"> * @since 3.2.0</span>
 <span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
@@ -486,11 +488,9 @@
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">;</span>
 
-<span class="c1">// Only point Y.History at HistoryHash if it doesn&#39;t already exist and if the</span>
-<span class="c1">// current browser doesn&#39;t support HTML5 history, or if the HistoryHTML5 class</span>
-<span class="c1">// is not present. The history-hash module is always loaded after history-html5</span>
-<span class="c1">// if history-html5 is loaded, so this check doesn&#39;t introduce a race condition.</span>
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span><span class="p">))</span> <span class="p">{</span>
+<span class="c1">// HistoryHash will never win over HistoryHTML5 unless useHistoryHTML5 is false.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">useHistoryHTML5</span> <span class="o">===</span> <span class="kc">false</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">&amp;&amp;</span> <span class="nx">useHistoryHTML5</span> <span class="o">!==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span>
+        <span class="p">(</span><span class="o">!</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span><span class="p">)))</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>

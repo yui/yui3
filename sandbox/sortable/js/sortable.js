@@ -291,7 +291,27 @@ YUI.add('sortable', function(Y) {
         */
         _join_inner: function(sel) {
             sel.delegate.dd.addToGroup(this.get(ID));
-        }
+        },
+        /**
+        * @method getOrdering A custom callback to allow a user to extract some sort of id or any other data from the node to use in the "ordering list" and then that data should be returned from the callback.
+        * @param Function callback 
+        * @description Returns either the Nodes array or a custom array based on the current DOM ordering.
+        * @returns Array
+        */
+        getOrdering: function(callback) {
+            var ordering = [];
+
+            if (!Y.Lang.isFunction(callback)) {
+                callback = function (node) {
+                    return node;
+                };
+            }
+
+            this.get(CONT).all(this.get(NODES)).each(function(node) {
+                ordering.push(callback(node));
+            });
+            return ordering;
+       }
     }, {
         NAME: 'sortable',
         ATTRS: {

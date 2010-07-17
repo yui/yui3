@@ -66,10 +66,9 @@
         <span class="nx">DRAG_NODE</span> <span class="o">=</span> <span class="s1">&#39;dragNode&#39;</span><span class="p">,</span>
         <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="p">,</span>
         <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="p">,</span>        
-        <span class="c1">//MOUSE_UP = &#39;mouseup&#39;,</span>
-        <span class="c1">//MOUSE_DOWN = &#39;mousedown&#39;,</span>
-        <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="s1">&#39;moveend&#39;</span><span class="p">,</span>
-        <span class="nx">MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;movestart&#39;</span><span class="p">,</span>
+        <span class="nx">GESTURE_MOVE</span> <span class="o">=</span> <span class="s1">&#39;gesturemove&#39;</span><span class="p">,</span>
+        <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="nx">GESTURE_MOVE</span> <span class="o">+</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span>
+        <span class="nx">MOUSE_DOWN</span> <span class="o">=</span> <span class="nx">GESTURE_MOVE</span> <span class="o">+</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span>
         <span class="nx">DRAG_START</span> <span class="o">=</span> <span class="s1">&#39;dragstart&#39;</span><span class="p">,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @event drag:mouseDown</span>
@@ -1009,7 +1008,7 @@
             <span class="p">});</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">MOUSE_UP</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_handleMouseUp</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">DRAG_START</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_fixDragStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;move&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_move</span><span class="p">,</span> <span class="nx">DDM</span><span class="p">),</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;throttleTime&#39;</span><span class="p">)));</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">GESTURE_MOVE</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_move</span><span class="p">,</span> <span class="nx">DDM</span><span class="p">),</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;throttleTime&#39;</span><span class="p">)));</span>
             <span class="c1">//Should not need this, _handleMouseUp calls this..</span>
             <span class="c1">//node.on(&#39;moveend&#39;, Y.bind(DDM._end, DDM));</span>
             

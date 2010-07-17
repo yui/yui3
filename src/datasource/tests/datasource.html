@@ -140,7 +140,7 @@
                         ASSERT.isNumber(e.tId, "error: Expected transaction ID.");
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
-                        ASSERT.isUndefined(e.response, "error: Expected undefined response.");
+                        ASSERT.isObject(e.response, "error: Expected normalized response object.");
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
@@ -180,6 +180,40 @@
                         failure: function(e) {
                             ASSERT.fail("IO failure case.");
                         }
+                    }
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testIOConfig: function() {
+                var ds = new Y.DataSource.IO({
+                    source: "x",
+                    ioConfig: {
+                        method: "POST",
+                        data: "foo=bar",
+                        timeout: 1
+                    }
+                });
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleFailure",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isObject(e.error, "Expected error from timeout.");
+                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isObject(e.response, "Expected response object.");
+                        OBJECTASSERT.ownsKeys({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
+                    })]
+                });
+
+                ds.sendRequest({
+                    request: null,
+                    callback: {
+                        success: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        },
+                        failure: handler.handleFailure
                     }
                 });
 
@@ -289,6 +323,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isObject(e.data, "error: Expected raw data.");
+                        ASSERT.isObject(e.response, "error: Expected normalized response object.");
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
@@ -408,6 +443,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isUndefined(e.data, "error: Expected undefined data.");
+                        ASSERT.isObject(e.response, "error: Expected normalized response object.");
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
@@ -528,6 +564,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isUndefined(e.data, "error: Expected undefined data.");
+                        ASSERT.isObject(e.response, "error: Expected normalized response object.");
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
@@ -560,6 +597,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isUndefined(e.data, "error: Expected undefined data.");
+                        ASSERT.isObject(e.response, "error: Expected normalized response object.");
                         ASSERT.isObject(e.error, "error: Expected error.");
                         ASSERT.areSame("myException", e.error.message, "error: Expected message.");
                     })]
@@ -725,6 +763,33 @@
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testSchemaError: function() {
+                var ds = new Y.DataSource.IO({
+                    source: "./php/ysearch_json_madonna.php"
+                });
+                ds.plug({fn: Y.Plugin.DataSourceJSONSchema});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleFailure",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isObject(e.response, "Expected normalized response object.");
+                        ASSERT.isObject(e.error, "Expected response error.");
+                    })]
+                });
+
+                ds.sendRequest({
+                    callback: {
+                        success: Y.bind(function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }, this),
+                        failure: Y.bind(handler.handleFailure, this)
+                    }
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             }
         });
         
@@ -770,10 +835,7 @@
                 ds.sendRequest({request:"a"});
                 ds.sendRequest({request:"b"});
                 ds.sendRequest({request:"c", callback:{success:function(e){
-                    if(!e.cached) {
-                        ASSERT.isNotUndefined("Entry should have a 'cached' property");
-                        //ASSERT.isDate("Entry should have a 'cached' property");
-                    }
+                    ASSERT.isInstanceOf(Date, e.cached);
                 }}});
             },
 

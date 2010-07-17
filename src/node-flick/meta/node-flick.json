@@ -1,0 +1,9 @@
+{
+    "node-flick": {
+        "requires": [
+            "transition-native",
+            "event-flick",
+            "plugin"
+        ]   
+    }
+}

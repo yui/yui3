@@ -69,7 +69,7 @@
 <span class="cm"> * @submodule anim-easing</span>
 <span class="cm"> */</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span> <span class="o">=</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">Easing</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Uniform speed between points.</span>
@@ -390,6 +390,15 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span><span class="p">.</span><span class="nx">bounceOut</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">d</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
+
+<span class="c1">// mappings for native css timing functions</span>
+<span class="nx">Easing</span><span class="p">.</span><span class="nx">ease</span> <span class="o">=</span> <span class="nx">Easing</span><span class="p">.</span><span class="nx">easeBoth</span><span class="p">;</span>
+<span class="nx">Easing</span><span class="p">.</span><span class="nx">linear</span> <span class="o">=</span> <span class="nx">Easing</span><span class="p">.</span><span class="nx">none</span><span class="p">;</span>
+<span class="nx">Easing</span><span class="p">[</span><span class="s1">&#39;ease-in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Easing</span><span class="p">.</span><span class="nx">easeIn</span><span class="p">;</span>
+<span class="nx">Easing</span><span class="p">[</span><span class="s1">&#39;ease-out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Easing</span><span class="p">.</span><span class="nx">easeOut</span><span class="p">;</span>
+<span class="nx">Easing</span><span class="p">[</span><span class="s1">&#39;ease-in-out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Easing</span><span class="p">.</span><span class="nx">easeBothStrong</span><span class="p">;</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span> <span class="o">=</span> <span class="nx">Easing</span><span class="p">;</span>
 </pre></div>
 
                     </div>

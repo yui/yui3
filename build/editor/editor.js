@@ -388,7 +388,13 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function() {
-            this.getInstance().one('win').focus();
+            try {
+                Y.one('win').focus();
+                Y.later(100, this, function() {
+                    this.getInstance().one('win').focus();
+                });
+            } catch (ferr) {
+            }
             return this;
         },
         /**
@@ -732,9 +738,6 @@ YUI.add('selection', function(Y) {
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, sel;
         if (childs) {
-            sel = new Y.Selection();
-            sel.setCursor();
-
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
                 if (!node.test(Y.Selection.BLOCKS)) {
@@ -755,8 +758,6 @@ YUI.add('selection', function(Y) {
                 }
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
-
-            sel.focusCursor();
         }
     };
 
@@ -1018,7 +1019,7 @@ YUI.add('selection', function(Y) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
-                if (node.test('body')) {
+                if (node && node.test('body')) {
                     b = Y.Node.create('<span></span>');
                     node.append(b);
                     node = b;
@@ -1029,9 +1030,16 @@ YUI.add('selection', function(Y) {
                 newNode = Y.Node.create(html);
                 range.pasteHTML('<span id="rte-insert"></span>');
                 inHTML = Y.one('#rte-insert');
-                inHTML.set('id', '');
-                inHTML.replace(newNode);
-                return newNode;
+                if (inHTML) {
+                    inHTML.set('id', '');
+                    inHTML.replace(newNode);
+                    return newNode;
+                } else {
+                    Y.on('available', function() {
+                        inHTML.set('id', '');
+                        inHTML.replace(newNode);
+                    }, '#rte-insert');
+                }
             } else {
                 //TODO using Y.Node.create here throws warnings & strips first white space character
                 //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
@@ -1206,9 +1214,9 @@ YUI.add('selection', function(Y) {
         focusCursor: function() {
             var cur = this.getCursor();
             if (cur) {
-                cur.set('id', '');
-                cur.set('innerHTML', ' ');
-                this.selectNode(cur);
+                cur.removeAttribute('id');
+                cur.set('innerHTML', '&nbsp;&nbsp;');
+                this.selectNode(cur, true, true);
             }
         },
         /**
@@ -1735,7 +1743,8 @@ YUI.add('editor-base', function(Y) {
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        this.execCommand('inserthtml', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+                        this.execCommand('inserthtml', EditorBase.TABKEY + inst.Selection.CURSOR);
+                        var sel = new inst.Selection().focusCursor();
                         e.changedEvent.halt();
                     }
                     break;
@@ -2008,14 +2017,24 @@ YUI.add('editor-base', function(Y) {
         * @return {String} The filtered content of the Editor
         */
         getContent: function() {
-            var html = this.getInstance().Selection.unfilter();
+            var html = '', inst = this.getInstance();
+            if (inst && inst.Selection) {
+                html = inst.Selection.unfilter();
+            }
             //Removing the _yuid from the objects in IE
             html = html.replace(/ _yuid="([^>]*)"/g, '');
             return html;
         }
     }, {
         /**
-        * @method filter_rgb
+        * @static
+        * @property TABKEY
+        * @description The HTML markup to use for the tabkey
+        */
+        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+        /**
+        * @static
+        * @method FILTER_RGB
         * @param String css The CSS string containing rgb(#,#,#);
         * @description Converts an RGB color string to a hex color, example: rgb(0, 255, 0) converts to #00ff00
         * @return String
@@ -2039,6 +2058,11 @@ YUI.add('editor-base', function(Y) {
             }
             return css;
         },        
+        /**
+        * @static
+        * @property TAG2CMD
+        * @description A hash table of tags to their execcomand's
+        */
         TAG2CMD: {
             'b': 'bold',
             'strong': 'bold',

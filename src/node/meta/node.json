@@ -18,6 +18,18 @@
                     "node-style", 
                     "node-pluginhost"
                 ]
+            },
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
+            },
+            "transition": {
+                "requires": [
+                    "transition-native",
+                    "node-style",
+                    "anim-easing"
+                ]
             }
         }, 
         "requires": [

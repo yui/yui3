@@ -47,5 +47,4 @@ Y.Env.evt.plugins.mousewheel = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});

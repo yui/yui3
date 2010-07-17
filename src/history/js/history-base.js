@@ -205,10 +205,9 @@ Y.mix(HistoryBase.prototype, {
             defaultFn: this._defChangeFn
         });
 
-        // If initialState was provided and is a simple object, merge it into
-        // the current state.
-        if (_isSimpleObject(initialState)) {
-            this.add(Y.merge(GlobalEnv._state, initialState));
+        // If initialState was provided, merge it into the current state.
+        if (initialState) {
+            this.add(initialState);
         }
     },
 

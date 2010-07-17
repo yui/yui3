@@ -953,10 +953,14 @@ Y.CustomEvent.prototype = {
      */
     _delete: function(s) {
         if (s) {
-            delete s.fn;
-            delete s.context;
-            delete this.subscribers[s.id];
-            delete this.afters[s.id];
+            if (this.subscribers[s.id]) {
+                delete this.subscribers[s.id];
+                this.subCount--;
+            }
+            if (this.afters[s.id]) {
+                delete this.afters[s.id];
+                this.afterCount--;
+            }
         }
 
         if (this.host) {
@@ -964,6 +968,11 @@ Y.CustomEvent.prototype = {
                 ce: this, 
                 sub: s
             });
+        }
+
+        if (s) {
+            delete s.fn;
+            delete s.context;
         }
     }
 };
@@ -1132,6 +1141,7 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
+    YArray = Y.Array,
 
     _wildType = Y.cached(function(type) {
         return type.replace(/(.*)(:)(.*)/, "*$2$3");
@@ -1273,24 +1283,27 @@ ET.prototype = {
 
             f = fn; 
             c = context; 
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             ret = {};
 
             if (L.isArray(type)) {
                 isArr = true;
-            } else {
-                after = type._after;
-                delete type._after;
             }
 
+            after = type._after;
+            delete type._after;
+
             Y.each(type, function(v, k) {
+
 
                 if (L.isObject(v)) {
                     f = v.fn || ((L.isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 
-                args[0] = (isArr) ? v : ((after) ? AFTER_PREFIX + k : k);
+                var nv = (after) ? AFTER_PREFIX : '';
+
+                args[0] = nv + ((isArr) ? v : k);
                 args[1] = f;
                 args[2] = c;
 
@@ -1308,7 +1321,7 @@ ET.prototype = {
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             args.splice(2, 0, Node.getDOMNode(this));
             return Y.on.apply(Y, args);
         }
@@ -1318,7 +1331,7 @@ ET.prototype = {
         if (this instanceof YUI) {
 
             adapt = Y.Env.evt.plugins[type];
-            args  = Y.Array(arguments, 0, true);
+            args  = YArray(arguments, 0, true);
             args[0] = shorttype;
 
             if (Node) {
@@ -1349,7 +1362,7 @@ ET.prototype = {
 
         if (!handle) {
             ce = this._yuievt.events[type] || this.publish(type);
-            handle = ce._on(fn, context, (arguments.length > 3) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
+            handle = ce._on(fn, context, (arguments.length > 3) ? YArray(arguments, 3, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -1408,15 +1421,17 @@ ET.prototype = {
         var parts = _parseType(type, this._yuievt.config.prefix), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
-        handle, adapt, store = Y.Env.evt.handles, cat, args,
+        adapt, store = Y.Env.evt.handles, detachhost, cat, args,
         ce,
 
-        keyDetacher = function(lcat, ltype) {
-            var handles = lcat[ltype];
+        keyDetacher = function(lcat, ltype, host) {
+            var handles = lcat[ltype], ce, i;
             if (handles) {
-                while (handles.length) {
-                    handle = handles.pop();
-                    handle.detach();
+                for (i = handles.length - 1; i >= 0; --i) {
+                    ce = handles[i].evt;
+                    if (ce.host === host || ce.el === host) {
+                        handles[i].detach();
+                    }
                 }
             }
         };
@@ -1425,14 +1440,15 @@ ET.prototype = {
 
             cat = store[detachcategory];
             type = parts[1];
+            detachhost = (isNode) ? Y.Node.getDOMNode(this) : this;
 
             if (cat) {
                 if (type) {
-                    keyDetacher(cat, type);
+                    keyDetacher(cat, type, detachhost);
                 } else {
                     for (i in cat) {
                         if (cat.hasOwnProperty(i)) {
-                            keyDetacher(cat, i);
+                            keyDetacher(cat, i, detachhost);
                         }
                     }
                 }
@@ -1446,7 +1462,7 @@ ET.prototype = {
             return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             args[2] = Node.getDOMNode(this);
             Y.detach.apply(Y, args);
             return this;
@@ -1456,7 +1472,7 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
                 adapt.detach.apply(Y, args);
@@ -1677,7 +1693,7 @@ ET.prototype = {
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
             ce, ret, pre = this._yuievt.config.prefix, ce2,
-            args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
+            args = (typeIncluded) ? YArray(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
 
@@ -1759,11 +1775,16 @@ ET.prototype = {
      */
     after: function(type, fn) {
 
-        var a = Y.Array(arguments, 0, true);
+        var a = YArray(arguments, 0, true);
 
         switch (L.type(type)) {
             case 'function':
                 return Y.Do.after.apply(Y.Do, arguments);
+            case 'array':
+            //     YArray.each(a[0], function(v) {
+            //         v = AFTER_PREFIX + v;
+            //     });
+            //     break;
             case 'object':
                 a[0]._after = true;
                 break;

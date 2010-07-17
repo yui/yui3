@@ -28,7 +28,10 @@ if (typeof YUI === 'undefined') {
     /*global YUI_config*/
     var YUI = function() {
 
-        var Y = this, a = arguments, i, l = a.length, proto, prop,
+        var proto, prop, i, 
+            Y            = this, 
+            a            = arguments, 
+            l            = a.length, 
             globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
@@ -102,7 +105,22 @@ if (typeof YUI === 'undefined') {
                             if (hasWin) {
                                 remove(window, 'load', handleLoad);
                             }
-                        };
+                        },
+        getLoader = function(Y, o) {
+            var loader = YUI.Env.loaders[Y.config._sig];
+            if (loader) {
+                loader.ignoreRegistered = false;
+                loader.onEnd            = null;
+                loader.attaching        = null;
+                loader.data             = null;
+                loader.required         = [];
+                loader.loadType         = null;
+            } else {
+                loader = new Y.Loader(Y.config);
+            }
+
+            return loader;
+        };
 
 //  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
 //  enable styles that need to key off of JS being enabled.
@@ -120,13 +138,18 @@ if (VERSION.indexOf('@') > -1) {
         
 proto = {
     _config: function(o) {
-        o = o || {};
+
+        o = o || NOOP;
+        
         var attr,
             name, 
             detail,
             config = this.config, 
             mods   = config.modules,
             groups = config.groups;
+
+        config._sig += this.stamp(o);
+
         for (name in o) {
             if (o.hasOwnProperty(name)) {
                 attr = o[name];
@@ -145,6 +168,8 @@ proto = {
                 } else if (name == 'win') {
                     config[name] = attr.contentWindow || attr;
                     config.doc = config[name].document;
+                } else if (name == '_yuid') {
+                    // preserve the guid
                 } else {
                     config[name] = attr;
                 }
@@ -168,6 +193,7 @@ proto = {
             Y.Env = {
                 mods:         {}, // flat module map
                 versions:     {}, // version module map
+                loaders:      {},
                 base:         BASE,
                 cdn:          BASE + VERSION + '/build/',
                 bootstrapped: false,
@@ -189,6 +215,9 @@ proto = {
                             //uild/yuiloader-dom-event/yuiloader-dom-event.js
                             //&3.0.0/build/yui/yui-min.js"; // debug url
                             //Y.log('src) ' + src);
+
+// http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js
+
                             match = src.match(srcPattern);
                             b = match && match[1];
                             if (b) {
@@ -231,6 +260,7 @@ proto = {
 
         // configuration defaults
         Y.config = Y.config || {
+            _sig:              '',
             win:               win,
             doc:               doc,
             debug:             true,
@@ -536,10 +566,15 @@ proto = {
                 }
 
                 if (redo && data) {
-                    // Y.log('redo: ' + r);
-                    // Y.log('redo: ' + missing);
-                    // Y.log('redo: ' + args);
-                    newData = data.concat();
+                    // Y.log('redo r: ' + r);
+                    // Y.log('redo data: ' + data);
+                    // Y.log('redo missing: ' + missing);
+                    // Y.log('redo args: ' + args);
+                    
+                    // newData = data.concat();
+                    newData = r.concat();
+
+                    newData = missing.concat();
                     newData.push(function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
@@ -586,12 +621,16 @@ proto = {
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (Y.Loader) {
-            loader = new Y.Loader(config);
+            // loader = new Y.Loader(config);
+            loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
             // loader.allowRollup = false;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+
+            YUI.Env.loaders[Y.config._sig] = loader;
+
         }
 
         // process each requirement and any additional requirements 
@@ -599,6 +638,7 @@ proto = {
         YArray.each(args, process);
 
         Y.log('Module requirements: ' + args, 'info', 'yui');
+        // console.log(args);
         len = missing.length;
 
         if (len) {
@@ -612,7 +652,8 @@ proto = {
             // Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
             Y.log('Using Loader', 'info', 'yui');
             Y._loading = true;
-            loader = new Y.Loader(config);
+            // loader = new Y.Loader(config);
+            loader = getLoader(Y);
             loader.onEnd = handleLoader;
             loader.context = Y;
             loader.attaching = args;

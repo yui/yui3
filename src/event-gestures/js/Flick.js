@@ -6,7 +6,6 @@
  * @submodule event-flick
  */
 
-// TODO: Better way to sniff 'n' switch touch support?
 var EVENT = ("ontouchstart" in Y.config.win) ? {
         start: "touchstart",
         end: "touchend"
@@ -44,8 +43,7 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
 Y.Event.define('flick', {
 
-    // The initialization implementation. Called for the first subscription per node.
-    init: function (node, subscriber, ce) {
+    on: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
             this._onStart,
@@ -54,29 +52,31 @@ Y.Event.define('flick', {
             subscriber, 
             ce);
  
-        node.setData(_FLICK_START_HANDLE, startHandle);
+        subscriber[_FLICK_START_HANDLE] = startHandle;
     },
 
-    // The destroy implementation. Called for the last detach per node.
-    destroy: function (node, subscriber, ce) {
+    detach: function (node, subscriber, ce) {
 
-        var startHandle = node.getData(_FLICK_START_HANDLE),
-            endHandle = node.getData(_FLICK_END_HANDLE);
+        var startHandle = subscriber[_FLICK_START_HANDLE],
+            endHandle = subscriber[_FLICK_END_HANDLE];
 
         if (startHandle) {
             startHandle.detach();
-            node.clearData(_FLICK_START_HANDLE);
+            subscriber[_FLICK_START_HANDLE] = null;
         }
 
         if (endHandle) {
             endHandle.detach();
-            node.clearData(_FLICK_END_HANDLE);
+            subscriber[_FLICK_END_HANDLE] = null;
         }
     },
 
-    // How to process the additional spec args
+    publishConfig: {
+        emitFacade:false
+    },
+
     processArgs: function(args) {
-        var params = (args[3]) ? args.splice(3, 1)[0] : {};
+        var params = (args[3]) ? Y.merge(args.splice(3, 1)[0]) : {};
 
         if (!(MIN_VELOCITY in params)) {
             params.minVelocity = this.MIN_VELOCITY;
@@ -91,12 +91,12 @@ Y.Event.define('flick', {
         return params;
     },
 
-    // Internal DOM listener to identify the start of the gesture 
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
             endHandle,
-            doc; 
+            doc,
+            origE = e; 
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -104,47 +104,40 @@ Y.Event.define('flick', {
         }
 
         if (start) {
+            origE.preventDefault();
 
-            e.preventDefault();
+            e.flick = {
+                time : new Date().getTime()
+            };
 
-            node.setData(_FLICK_START, {
-                time : new Date().getTime(),
-                pageX: e.pageX, 
-                pageY: e.pageY,
-                clientX: e.clientX, 
-                clientY: e.clientY,
-                _e : e
-            });
+            subscriber[_FLICK_START] = e;
 
-            endHandle = node.getData(_FLICK_END_HANDLE);
+            endHandle = subscriber[_FLICK_END_HANDLE];
 
             if (!endHandle) {
                 doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
-                node.setData(_FLICK_END_HANDLE,endHandle);
+                subscriber[_FLICK_END_HANDLE] = endHandle;
             }
         }
     },
 
-    // Internal DOM listener to identify the end of the gesture. Fires the 
-    // synthetic flick event. 
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
-            valid = node.getData(_FLICK_START),
-            start = valid,
+            start = subscriber[_FLICK_START],
+            valid = !!start,
             endEvent = e,
-
             startTime,
             time,
             params,
             xyDistance, 
             distance,
             absDistance,
-            velocity, 
+            velocity,
             axis;
-            
+
         if (valid) {
 
             if (e.changedTouches) {
@@ -157,7 +150,9 @@ Y.Event.define('flick', {
 
             if (valid) {
 
-                startTime = start.time;
+                endEvent.preventDefault();
+
+                startTime = start.flick.time;
                 endTime = new Date().getTime();
                 time = endTime - startTime;
 
@@ -174,30 +169,27 @@ Y.Event.define('flick', {
                 absDistance = Math.abs(distance); 
                 velocity = absDistance/time;
 
-                if (isFinite(velocity) && velocity >= params.minVelocity && absDistance >= params.minDistance) {
-                    ce.fire({
+                if (isFinite(velocity) && (absDistance >= params.minDistance) && (velocity  >= params.minVelocity)) {
+
+                    e.type = "flick";
+                    e.flick = {
+                        time:time,
                         distance: distance,
-                        time: time,
-                        velocity: velocity,
+                        direction: distance/absDistance,
+                        velocity:velocity,
                         axis: axis,
-                        button: e.button,
-                        start: start,
-                        end: {
-                            time: endTime,
-                            clientX: endEvent.clientX, 
-                            clientY: endEvent.clientY,
-                            pageX: endEvent.pageX,
-                            pageY: endEvent.pageY,
-                            _e : e 
-                        }
-                    });
+                        start : start
+                    };
+
+                    ce.fire(e);
+
                 }
 
-                node.clearData(_FLICK_START);
+                subscriber[_FLICK_START] = null;
             }
         }
     },
 
     MIN_VELOCITY : 0,
-    MIN_DISTANCE : 10
+    MIN_DISTANCE : 0
 });
