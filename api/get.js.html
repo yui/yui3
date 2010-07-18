@@ -280,7 +280,8 @@
 <span class="cm">     */</span>
     <span class="nx">_next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Y.log(&quot;_next: &quot; + id + &quot;, loaded: &quot; + (loaded || &quot;nothing&quot;), &quot;info&quot;, &quot;get&quot;);</span>
-        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
+            <span class="nx">insertBefore</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;cancel timer&#39;);</span>
@@ -347,11 +348,15 @@
         <span class="c1">// add the node to the queue so we can return it to the user supplied callback</span>
         <span class="nx">q</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
 
-        <span class="c1">// add it to the head or insert it before &#39;insertBefore&#39;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="c1">// add it to the head or insert it before &#39;insertBefore&#39;.  Work around IE</span>
+        <span class="c1">// bug if there is a base tag.</span>
+        <span class="nx">insertBefore</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span> <span class="o">||</span> 
+                       <span class="nx">d</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;base&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">insertBefore</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="p">(</span><span class="nx">insertBefore</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;inserting before: &#39;</span> <span class="o">+</span> <span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;inserting before: &#39;</span> <span class="o">+</span> <span class="nx">insertBefore</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;get&#39;</span><span class="p">);</span>
                 <span class="nx">s</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">s</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -430,10 +435,6 @@
 
         <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">charset</span> <span class="o">||</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">||</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">;</span>
-        <span class="c1">// var charset = opts.charset || q.attributes.charset;</span>
-        <span class="c1">// if (charset) {</span>
-        <span class="c1">//     q.attributes.charset = charset;</span>
-        <span class="c1">// }</span>
 
         <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
 
@@ -517,16 +518,20 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_purge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tId</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">insertBefore</span><span class="p">,</span>
             <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">tId</span><span class="p">];</span>
+            
         <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">n</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">nodes</span><span class="p">;</span> 
             <span class="nx">l</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="nx">d</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
             <span class="nx">h</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;head&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">,</span> <span class="nx">tId</span><span class="p">);</span>
+            <span class="nx">insertBefore</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span> <span class="o">||</span> 
+                           <span class="nx">d</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;base&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">insertBefore</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="p">(</span><span class="nx">insertBefore</span><span class="p">,</span> <span class="nx">tId</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">h</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
                 <span class="p">}</span>
@@ -680,7 +685,9 @@
 <span class="cm">         * loaded.</span>
 <span class="cm">         * &lt;/dd&gt;</span>
 <span class="cm">         * &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
-<span class="cm">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling.  If this</span>
+<span class="cm">         * is not specified, nodes will be inserted before a base tag should it exist.</span>
+<span class="cm">         * Otherwise, the nodes will be appended to the end of the document head.&lt;/dd&gt;</span>
 <span class="cm">         * &lt;/dl&gt;</span>
 <span class="cm">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
 <span class="cm">         * &lt;dd&gt;Node charset, default utf-8 (deprecated, use the attributes config)&lt;/dd&gt;</span>
