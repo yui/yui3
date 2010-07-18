@@ -7,7 +7,8 @@ YUI.add('scrollview-scrollbars', function(Y) {
  * @submodule scrollbars-plugin
  */
  
-var _classNames = Y.ScrollView.CLASS_NAMES;
+var _classNames = Y.ScrollView.CLASS_NAMES,
+    nativeTrans = Y.TransitionNative.supported;
 
 /**
  * Scrollview plugin that adds scroll indicators to the scrollview
@@ -154,6 +155,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             scrollSize = 0,
             scrollPos = 1,
             transform,
+            transformX,
+            transformY,
+            transition,
             height = this.get('host').get('height'),
             width = this.get('host').get('width'),
             scrollHeight = cb.get('scrollHeight'),
@@ -181,7 +185,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 scrollSize = 1;
             }
 
-            transform = 'translate(0, '+scrollPos+'px)';
+            if (nativeTrans) {
+                transform = 'translate(0, '+scrollPos+'px)';
+            } else {
+                transformX = 0;
+                transformY = scrollPos;
+            }
 
             if(scrollPos > (height - scrollSize))
             {
@@ -190,7 +199,13 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
             if(scrollPos < 0)
             {
-                transform = 'translate3d(0,0,0)';
+                if (nativeTrans) {
+                    transform = 'translate(0,0)';
+                } else {
+                    transformX = 0;
+                    transformY = 0;
+                }
+
                 scrollSize = scrollSize + scrollPos;
             }
 
@@ -201,26 +216,52 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 this.verticalScrollSize = (scrollSize-8);
 
                 node = verticalNode.get('children').item(1);
+                
+                transition = {
+                    duration : duration/1000                                
+                };
 
-                node.transition({
-                    duration : duration/1000,                                
-                    transform: 'translate(0,0) scaleY('+(scrollSize-8)+')'
-                });
+                if(nativeTrans) {
+                    transition.transform = 'translate(0,0) scaleY('+(scrollSize-8)+')';
+                } else {
+                    transition.top = 0;
+                    transition.right = 0;
+                    transition.height = (scrollSize-8);
+                }
+
+                node.transition(transition);
             }
-            
-            verticalNode.transition({
-                transform :  transform,
-                duration : duration/1000
-            });
 
-            verticalNode.get('children').item(2).transition({
-                transform : 'translate(0,'+(scrollSize-10)+'px)',
+            transition = {
                 duration : duration/1000
-            });
+            };
+             
+            if (nativeTrans) {
+                transition.transform = transform;
+            } else {
+                transition.right = transformX;
+                transition.top = transformY;
+            }
+
+            verticalNode.transition(transition);
+
+            transition = {
+                duration : duration/1000
+            };
+            
+            if (nativeTrans) {
+                transition.transform = 'translate(0,'+(scrollSize-10)+'px)'; 
+            } else {
+                transition.right = 0;
+                transition.top = scrollSize-10;
+            }
+
+            verticalNode.get('children').item(2).transition(transition);
 
         }
         
         if(horizontalNode) {
+
             scrollSize = Math.floor(width * (width/scrollWidth));
             scrollPos = Math.floor((currentX/(scrollWidth - width) ) * (width-scrollSize)) * -1;
 
@@ -228,14 +269,24 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 scrollSize = 1;
             }
 
-            transform = 'translate('+scrollPos+'px, 0)';
+            if (nativeTrans) {
+                transform = 'translate('+scrollPos+'px, 0)';
+            } else {
+                transformX = scrollPos;
+                transformY = 0;
+            }                        
 
             if(scrollPos > (width - scrollSize)) {
                 scrollSize = scrollSize - (scrollPos - (width - scrollSize));
             }
 
             if(scrollPos < 0) {
-                transform = 'translate(0,0)';
+                if (nativeTrans) {
+                    transform = 'translate(0,0)';
+                } else {
+                    transformX = 0;
+                    transformY = 0;
+                }  
                 scrollSize = scrollSize + scrollPos;
             }
 
@@ -244,21 +295,46 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if(this.horizontalScrollSize != (scrollSize-16)) {
                 this.horizontalScrollSize = (scrollSize-16);
 
-                horizontalNode.get('children').item(1).transition({
-                    transform : 'translate(0,0) scaleX('+this.horizontalScrollSize+')',
+                transition = {
                     duration : duration/1000
-                });
+                };
+
+                if (nativeTrans) {
+                    transition.transform = 'translate(0,0) scaleX('+this.horizontalScrollSize+')'; 
+                } else {
+                    transition.bottom = 0;
+                    transition.left = 0;
+                    transition.width = this.horizontalScrollSize;                     
+                }
+
+                horizontalNode.get('children').item(1).transition(transition);
             }
 
-            horizontalNode.transition({
-                transform :  transform,
-                duration : duration+'ms'
-            });
-
-            horizontalNode.get('children').item(2).transition({
-                transform : 'translate('+(scrollSize-12)+'px,0)',
+            transition = {
                 duration : duration/1000
-            });
+            };
+            
+            if (nativeTrans) {
+                transition.transform = transform;
+            } else {
+                transition.bottom = transformX;
+                transition.top = transformY;
+            }
+
+            horizontalNode.transition(transition);
+
+            transition = {
+                duration : duration/1000
+            };
+
+            if (nativeTrans) {
+                transform = 'translate('+(scrollSize-12)+'px,0)';
+            } else {
+                transition.left = transformX;
+                transition.bottom = 0;
+            }
+
+            horizontalNode.get('children').item(2).transition(transition);
         }
     },
     
@@ -268,36 +344,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @method show
      * @param animated {Boolean} Whether or not to animate the showing 
      */
-    show: function(animated) {    
-        var verticalNode = this.get('verticalNode'),
-            horizontalNode = this.get('horizontalNode');
-
-        this._showingScrollBars = true;
-        
-        if(this._flashTimer) {
-            this._flashTimer.cancel();
-        }
-
-        if(animated) {
-            if(verticalNode) {
-                verticalNode.transition({
-                    opacity : 0.6
-                });
-            }
-            if(horizontalNode) {
-                horizontalNode.transition({
-                    opacity: 0.6
-                });
-            }
-        }
-
-        if(verticalNode) {
-            verticalNode.addClass(_classNames.showing);
-        }
-
-        if(horizontalNode) {
-            horizontalNode.addClass(_classNames.showing);
-        }
+    show: function(animated) {
+        this._show(true, animated);
     },
 
     /**
@@ -307,35 +355,36 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @param animated {Boolean} Whether or not to animate the hiding
      */
     hide: function(animated) {
-        var verticalNode = this.get('verticalNode'),
-            horizontalNode = this.get('horizontalNode');
+        this._show(false, animated);
+    },
 
-        this._showingScrollBars = false;
+    /**
+     * Hide/Show implementation method
+     * 
+     * @method _show
+     * @param {Object} show
+     * @param {Object} animated
+     */
+    _show : function(show, animated) {
+        var verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode'),
+            transition = {
+                duration : (animated) ? 0.6 : 0,
+                opacity : (show) ? 1 : 0
+            };
+
+        this._showingScrollBars = show;
 
         if(this._flashTimer) {
             this._flashTimer.cancel();
         }
 
-        if(animated) {
-            if(verticalNode) {
-                verticalNode.transition({
-                    opacity: 0.6
-                });
-            }
-
-            if(horizontalNode) {
-                horizontalNode.transition({
-                    opacity: 0.6
-                });
-            }
-        }
-
         if(verticalNode) {
-            verticalNode.removeClass(_classNames.showing);
+            verticalNode.transition(transition);
         }
 
         if(horizontalNode) {
-            horizontalNode.removeClass(_classNames.showing);
+            horizontalNode.transition(transition);
         }
     },
 

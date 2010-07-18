@@ -1,6 +1,6 @@
 .yui-skin-sam .yui3-scrollview-scrollbar { 
     -webkit-transform: translate3d(0, 0, 0);
-    -moz-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0); 
 }
 
 .yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-b, 
@@ -63,6 +63,6 @@
 
     -moz-transform: translate3d(0,0,0) scaleX(1); 
     -moz-transform-origin: 0 0;
-     
+
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAGCAYAAAACEPQxAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABVJREFUeNpiYGBgSGMCEgzYCIAAAwALEABx0pRbLAAAAABJRU5ErkJggg==);
 }

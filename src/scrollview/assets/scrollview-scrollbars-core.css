@@ -17,10 +17,6 @@
     left: 0; 
 }
 
-.yui3-scrollview-scrollbar.yui3-scrollview-showing { 
-    opacity: 1; 
-}
-
 .yui3-scrollview-scrollbar .yui3-scrollview-b, 
 .yui3-scrollview-scrollbar .yui3-scrollview-middle { 
     position: absolute; 
