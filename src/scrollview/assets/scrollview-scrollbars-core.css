@@ -43,11 +43,11 @@
     height: 1px;
 }
 
-.yui3-scrollview-scrollbar.yui3-scrollview-horizontal > .yui3-scrollview-child { 
+.yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-child { 
     display: inline-block; 
-    top: 0; 
+    top: 0;
     left: 0; 
-    bottom: auto; 
+    bottom: auto;
     right: auto;  
 }
 
@@ -58,7 +58,7 @@
 }
 
 .yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-middle { 
-    top: auto;
+    top: 0;
     left: 4px; 
     width: 1px; 
     height: 6px;
