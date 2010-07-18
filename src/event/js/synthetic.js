@@ -282,7 +282,7 @@ Y.mix(SyntheticEvent, {
 
 Y.SyntheticEvent = SyntheticEvent;
 
-Y.Node.publish = Y.Event.define = function (type, config) {
+Y.Node.publish = Y.Event.define = function (type, config, force) {
     if (!config) {
         config = {};
     }
@@ -292,7 +292,7 @@ Y.Node.publish = Y.Event.define = function (type, config) {
                         Y.merge({ type: type }, config),
         Impl, synth;
 
-    if (!Y.Node.DOM_EVENTS[eventDef.type]) {
+    if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
         Impl = function () {
             SyntheticEvent.apply(this, arguments);
         };
