@@ -1613,17 +1613,19 @@ delegate listeners, this is the event delegation specification.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            <p>Implement this function if the event supports a different subscription
-signature.  This function is used by both on() and delegate().  The
-second parameter indicates that the event is being subscribed via
-delegate().</p>
-<p>Implementations must remove extra arguments from the args list before
-returning.  The required args list order for on() subscriptions is</p>
-<pre><code>(type, callback, target, thisObj, argN...)</code></pre>
+                                            <p>Implement this function if the event supports a different
+subscription signature.  This function is used by both on() and
+delegate().  The second parameter indicates that the event is being
+subscribed via delegate().</p>
+<p>Implementations must remove extra arguments from the args list
+before returning.  The required args list order for on()
+subscriptions is</p> <pre><code>(type, callback, target, thisObj,
+argN...)</code></pre>
 <p>The required args list order for delegate() subscriptions is</p>
-<pre><code>(type, callback, target, filter, thisObj, argN...)</code></pre>
-<p>The return value from this function will be stored on the subscription
-in the '_extra' property for reference elsewhere.</p>
+<pre><code>(type, callback, target, filter, thisObj,
+argN...)</code></pre>
+<p>The return value from this function will be stored on the
+subscription in the '_extra' property for reference elsewhere.</p>
                                         </div>
 
                                         <div class="description">
@@ -1634,14 +1636,13 @@ in the '_extra' property for reference elsewhere.</p>
                                                         <code><span property="yui:name">args</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the parmeters passed to Y.on(..) or Y.delegate(..)</span>
+                                                        <span property="yui:description">  parmeters passed to Y.on(..) or Y.delegate(..)</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">delegate</span>
                                                         &lt;<span property="yui:type">Boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  true if the originating subscription is from
-Y.delegate.</span>
+                                                        <span property="yui:description">  true if the subscription is from Y.delegate</span>
                                                         </dd>
                                                 </dl>
 
