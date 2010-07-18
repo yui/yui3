@@ -70,11 +70,7 @@ Y.Event.define('flick', {
             subscriber[_FLICK_END_HANDLE] = null;
         }
     },
-
-    publishConfig: {
-        emitFacade:false
-    },
-
+    
     processArgs: function(args) {
         var params = (args[3]) ? Y.merge(args.splice(3, 1)[0]) : {};
 
