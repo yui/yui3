@@ -231,7 +231,8 @@ Y.Get = function() {
      */
     _next = function(id, loaded) {
         // Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
-        var q = queues[id], msg, w, d, h, n, url, s;
+        var q = queues[id], msg, w, d, h, n, url, s,
+            insertBefore;
 
         if (q.timer) {
             // Y.log('cancel timer');
@@ -298,11 +299,15 @@ Y.Get = function() {
         // add the node to the queue so we can return it to the user supplied callback
         q.nodes.push(n);
 
-        // add it to the head or insert it before 'insertBefore'
-        if (q.insertBefore) {
-            s = _get(q.insertBefore, id);
+        // add it to the head or insert it before 'insertBefore'.  Work around IE
+        // bug if there is a base tag.
+        insertBefore = q.insertBefore || 
+                       d.getElementsByTagName('base')[0];
+
+        if (insertBefore) {
+            s = _get(insertBefore, id);
             if (s) {
-                Y.log('inserting before: ' + q.insertBefore);
+                Y.log('inserting before: ' + insertBefore, 'info', 'get');
                 s.parentNode.insertBefore(n, s);
             }
         } else {
@@ -468,7 +473,7 @@ Y.Get = function() {
      * @private
      */
     _purge = function(tId) {
-        var n, l, d, h, s, i, node, attr,
+        var n, l, d, h, s, i, node, attr, insertBefore,
             q = queues[tId];
         if (q) {
             n = q.nodes; 
@@ -476,8 +481,11 @@ Y.Get = function() {
             d = q.win.document;
             h = d.getElementsByTagName("head")[0];
 
-            if (q.insertBefore) {
-                s = _get(q.insertBefore, tId);
+            insertBefore = q.insertBefore || 
+                           d.getElementsByTagName('base')[0];
+
+            if (insertBefore) {
+                s = _get(insertBefore, tId);
                 if (s) {
                     h = s.parentNode;
                 }

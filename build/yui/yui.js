@@ -2727,7 +2727,8 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-        var q = queues[id], msg, w, d, h, n, url, s;
+        var q = queues[id], msg, w, d, h, n, url, s,
+            insertBefore;
 
         if (q.timer) {
             // q.timer.cancel();
@@ -2790,9 +2791,13 @@ Y.Get = function() {
         // add the node to the queue so we can return it to the user supplied callback
         q.nodes.push(n);
 
-        // add it to the head or insert it before 'insertBefore'
-        if (q.insertBefore) {
-            s = _get(q.insertBefore, id);
+        // add it to the head or insert it before 'insertBefore'.  Work around IE
+        // bug if there is a base tag.
+        insertBefore = q.insertBefore || 
+                       d.getElementsByTagName('base')[0];
+
+        if (insertBefore) {
+            s = _get(insertBefore, id);
             if (s) {
                 s.parentNode.insertBefore(n, s);
             }
@@ -2955,7 +2960,7 @@ Y.Get = function() {
      * @private
      */
     _purge = function(tId) {
-        var n, l, d, h, s, i, node, attr,
+        var n, l, d, h, s, i, node, attr, insertBefore,
             q = queues[tId];
         if (q) {
             n = q.nodes; 
@@ -2963,8 +2968,11 @@ Y.Get = function() {
             d = q.win.document;
             h = d.getElementsByTagName("head")[0];
 
-            if (q.insertBefore) {
-                s = _get(q.insertBefore, tId);
+            insertBefore = q.insertBefore || 
+                           d.getElementsByTagName('base')[0];
+
+            if (insertBefore) {
+                s = _get(insertBefore, tId);
                 if (s) {
                     h = s.parentNode;
                 }
@@ -3335,7 +3343,7 @@ var INSTANCE  = Y,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f, fire,
+    var bail, excl, incl, m, f,
         Y         = INSTANCE, 
         c         = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
