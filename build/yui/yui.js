@@ -229,7 +229,6 @@ proto = {
 
                                     if (match) {
                                         filter = filter.substr(0, match);
-                                        console.log('FILTER: ' + filter);
                                     }
                                 }
 
