@@ -386,10 +386,6 @@ Y.Get = function() {
 
         q.attributes = q.attributes || {};
         q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
-        // var charset = opts.charset || q.attributes.charset;
-        // if (charset) {
-        //     q.attributes.charset = charset;
-        // }
 
         _next(id);
 
@@ -475,6 +471,7 @@ Y.Get = function() {
     _purge = function(tId) {
         var n, l, d, h, s, i, node, attr, insertBefore,
             q = queues[tId];
+            
         if (q) {
             n = q.nodes; 
             l = n.length;
@@ -639,7 +636,9 @@ Y.Get = function() {
          * loaded.
          * </dd>
          * <dt>insertBefore</dt>
-         * <dd>node or node id that will become the new node's nextSibling</dd>
+         * <dd>node or node id that will become the new node's nextSibling.  If this
+         * is not specified, nodes will be inserted before a base tag should it exist.
+         * Otherwise, the nodes will be appended to the end of the document head.</dd>
          * </dl>
          * <dt>charset</dt>
          * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
