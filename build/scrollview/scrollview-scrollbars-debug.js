@@ -52,9 +52,9 @@ ScrollbarsPlugin.NS = 'scrollbars';
  */
 ScrollbarsPlugin.SCROLLBAR_TEMPLATE = [
     '<div>',
-    '<b class="' + _classNames.child + ' ' + _classNames.b + '"></b>',
+    '<span class="' + _classNames.child + ' ' + _classNames.top + '"></span>',
     '<span class="' + _classNames.child + ' ' + _classNames.middle + '"></span>',
-    '<b class="' + _classNames.child + ' ' + _classNames.b + '"></b>',
+    '<span class="' + _classNames.child + ' ' + _classNames.bottom + '"></span>',
     '</div>'
 ].join('');
 
@@ -328,7 +328,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             };
 
             if (nativeTrans) {
-                transform = 'translate('+(scrollSize-12)+'px,0)';
+                transition.transform = 'translate('+(scrollSize-12)+'px,0)';
             } else {
                 transition.left = transformX;
                 transition.bottom = 0;
