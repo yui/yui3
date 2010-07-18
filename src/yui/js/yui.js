@@ -216,7 +216,7 @@ proto = {
                             //&3.0.0/build/yui/yui-min.js"; // debug url
                             //Y.log('src) ' + src);
 
-                            src = 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js';
+                            // src = 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js';
 
                             match = src.match(srcPattern);
                             b = match && match[1];
