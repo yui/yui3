@@ -2866,8 +2866,7 @@ YUI.Env[Y.version].modules = {
             "transition": {
                 "requires": [
                     "transition-native", 
-                    "node-style", 
-                    "anim-easing"
+                    "node-style"
                 ]
             }, 
             "transition-native": {

@@ -112,11 +112,16 @@ Y.extend(Transition, TransitionNative, {
         }
     },
 
+    _initEasing: function(easing) {
+
+    },
+
     _initAttrs: function() {
         var from = {},
             to =  {},
-            easing = (typeof this._easing === 'string') ?
-                    Y.Easing[this._easing] : this._easing,
+            //easing = (typeof this._easing === 'string') ?
+            //        Y.Easing[this._easing] : this._easing,
+            easing = this._easing,
             attr = {},
             customAttr = Transition.behaviors,
             config = this._config,
@@ -133,8 +138,8 @@ Y.extend(Transition, TransitionNative, {
                     val = val.call(this, node);
                 } else if (typeof val === 'object') {
                     duration = ('duration' in val) ? val.duration * 1000 : this._duration * 1000;
-                    easing = (typeof val.easing === 'string') ?
-                            Y.Easing[val.easing] : val.easing || easing;
+                    //easing = (typeof val.easing === 'string') ?
+                    //        Y.Easing[val.easing] : val.easing || easing;
                     val = val.value;
                 }
 
@@ -154,6 +159,14 @@ Y.extend(Transition, TransitionNative, {
 
                 if (!begin || !end) {
                     return;
+                }
+
+                if (typeof easing === 'string') {
+                    if (easing.indexOf('cubic-bezier') > -1) {
+                        easing = easing.substring(13, easing.length - 1).split(',');
+                    } else if (Transition.easings[easing]) {
+                        easing = Transitions[easing];
+                    }
                 }
 
                 attr[name] = {
@@ -218,6 +231,7 @@ Y.extend(Transition, TransitionNative, {
      */
     DEFAULT_UNIT: 'px',
 
+/*
     DEFAULT_EASING: function (t, b, c, d) {
         // easeBoth
         if ((t/=d/2) < 1) {
@@ -226,6 +240,9 @@ Y.extend(Transition, TransitionNative, {
         
         return -c/2 * ((--t)*(t-2) - 1) + b;
     },
+*/
+
+    DEFAULT_EASING: 'ease-both',
 
     DEFAULT_DURATION: 0.5,
 
@@ -259,8 +276,14 @@ Y.extend(Transition, TransitionNative, {
      * @static
      */
     DEFAULT_SETTER: function(anim, att, from, to, elapsed, duration, fn, unit) {
+        from = Number(from);
+        to = Number(to);
+
         var node = anim._node,
-            val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
+            //val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
+            val = Transition.cubicBezier(fn, elapsed / duration);
+
+        val = from + val[0] * (to - from);
 
         if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
             unit = unit || '';
@@ -322,6 +345,37 @@ Y.extend(Transition, TransitionNative, {
         if (done) {
             Transition._stopTimer();
         }
+    },
+
+    getBezier: function(points, t) {  
+        var n = points.length;
+        var tmp = [];
+
+        for (var i = 0; i < n; ++i){
+            tmp[i] = [points[i][0], points[i][1]]; // save input
+        }
+        
+        for (var j = 1; j < n; ++j) {
+            for (i = 0; i < n - j; ++i) {
+                tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
+                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
+            }
+        }
+
+        return [ tmp[0][0], tmp[0][1] ]; 
+    },
+
+    cubicBezier: function(p, t) {
+        var val = Y.Transition.getBezier([[0, 0], [p[0], p[2]], [p[1], p[3]], [1, 0]], t);
+        return val;
+    },
+
+    easings: {
+        ease: [0.25, 0, 1, 0.25],
+        linear: [0, 0, 1, 1],
+        'ease-in': [0.42, 0, 1, 1],
+        'ease-out': [0, 0, 0.58, 1],
+        'ease-in-out': [0.42, 0, 0.58, 1]
     },
 
     RE_UNITS: /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/
