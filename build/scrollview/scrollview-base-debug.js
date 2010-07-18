@@ -30,7 +30,8 @@ var getClassName = Y.ClassNameManager.getClassName,
     BOUNCE = "bounce",
     
     BOUNDING_BOX = "boundingBox",
-    CONTENT_BOX = "contentBox";
+    CONTENT_BOX = "contentBox",
+    nativeTrans = Y.TransitionNative.supported;
 
 Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
 
@@ -104,7 +105,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var cb = this.get(CONTENT_BOX); 
 
         cb.on('transitionend', Y.bind(this._transitionEnded, this), false);
-        cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        
+        // TODO: Fires way to often when using non-native transitions
+        if (nativeTrans) {
+            cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        }
 
         cb.on("flick", Y.bind(this._flick, this), {
             minDistance:0
@@ -157,7 +162,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             duration : duration/1000
         };
 
-        if (Y.TransitionNative.supported) {
+        if (nativeTrans) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
             transition.easing = "ease-out";
@@ -382,18 +387,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             height = this.get('height'),
             width = this.get('width'),
 
-            scrollHeight = cb.get('scrollHeight'),
-            scrollWidth = cb.get('scrollWidth');
+            scrollHeight = bb.get('scrollHeight'),
+            scrollWidth = bb.get('scrollWidth');
 
-        
-        
         if(height && scrollHeight > height) {
             this._scrollsVertical = true;
             this._maxScrollY = scrollHeight - height;
             this._minScrollY = 0;
             bb.addClass(getClassName("scroll-v"));
         }
-        
+
         if(width && scrollWidth > width) {
             this._scrollsHorizontal = true;
             this._maxScrollX = scrollWidth - width;
