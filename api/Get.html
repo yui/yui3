@@ -1123,7 +1123,9 @@ data that is supplied to the callback when the script(s) are
 loaded.
 </dd>
 <dt>insertBefore</dt>
-<dd>node or node id that will become the new node's nextSibling</dd>
+<dd>node or node id that will become the new node's nextSibling.  If this
+is not specified, nodes will be inserted before a base tag should it exist.
+Otherwise, the nodes will be appended to the end of the document head.</dd>
 </dl>
 <dt>charset</dt>
 <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>

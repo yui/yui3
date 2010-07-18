@@ -36,7 +36,7 @@ var INSTANCE  = Y,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f, fire,
+    var bail, excl, incl, m, f,
         Y         = INSTANCE, 
         c         = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
