@@ -125,12 +125,16 @@ Y.extend(DSIO, Y.DataSource.Local, {
             cfg = Y.merge(defIOConfig, e.cfg, {
                 on: Y.merge(defIOConfig, {
                     success: function (id, response, e) {
+                        delete Y.DataSource.Local.transactions[e.tId];
+
                         this.fire("data", Y.mix({data:response}, e));
                         if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
                         	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
                         }
                     },
                     failure: function (id, response, e) {
+                        delete Y.DataSource.Local.transactions[e.tId];
+
                         e.error = new Error("IO data failure");
                         this.fire("data", Y.mix({data:response}, e));
                         if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
@@ -151,7 +155,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
                 uri += request;
             }
         }
-        io(uri, cfg);
+        Y.DataSource.Local.transactions[e.tId] = io(uri, cfg);
         return e.tId;
     }
 });

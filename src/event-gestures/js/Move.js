@@ -1,6 +1,6 @@
 // TODO: Better way to sniff 'n' switch touch support?
 
-var EVENT = ("ontouchstart" in Y.config.win) ? {
+var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
         move: "touchmove",
         end: "touchend"
@@ -18,6 +18,10 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
     _MOVE_HANDLE = "_mh",
     _MOVE_END_HANDLE = "_meh",
 
+    _DEL_MOVE_START_HANDLE = "_dmsh",
+    _DEL_MOVE_HANDLE = "_dmh",
+    _DEL_MOVE_END_HANDLE = "_dmeh",
+
     _MOVE_START = "_ms",
     _MOVE = "_m",
 
@@ -31,8 +35,9 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
         emitFacade:false
     },
 
-    _defArgsProcessor = function(args) {
-        return args[3] ? Y.merge(args.splice(3,1)[0]) : {};
+    _defArgsProcessor = function(args, delegate) {
+        var iExtra = (delegate) ? 4 : 3;
+        return args[iExtra] ? Y.merge(args.splice(iExtra,1)[0]) : {};
     },
 
     _getRoot = function(node, subscriber) {
@@ -45,13 +50,33 @@ define('gesturemovestart', {
 
     on: function (node, subscriber, ce) {
 
-        // TODO: optimize to one listener per node.
         subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START], 
             this._onStart,
             this,
             node,
             subscriber,
             ce);
+
+    },
+
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+        
+        subscriber[_DEL_MOVE_START_HANDLE] = node.delegate(EVENT[START],
+            function(e) {
+                se._onStart(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
+
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_START_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_START_HANDLE] = null;
+        }
 
     },
 
@@ -64,8 +89,8 @@ define('gesturemovestart', {
         }
     },
 
-    processArgs : function(args) {
-        var params = _defArgsProcessor(args);
+    processArgs : function(args, delegate) {
+        var params = _defArgsProcessor(args, delegate);
 
         if (!(MIN_TIME in params)) {
             params[MIN_TIME] = this.MIN_TIME;
@@ -80,13 +105,13 @@ define('gesturemovestart', {
 
     publishConfig: PUB_CFG,
 
-    fireFilter: function (sub, args) {
-        return args[0]._extra === sub._extra;
-    },
-
-    _onStart : function(e, node, subscriber, ce) {
+    _onStart : function(e, node, subscriber, ce, delegate) {
 
         e.preventDefault();
+
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var origE = e,
             params = subscriber._extra,
@@ -107,12 +132,12 @@ define('gesturemovestart', {
             start = (button === undefined) || (button = e.button);
         }
 
-        Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance);
+        Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance, "event-gestures");
 
         if (start) {
 
             if (minTime === 0 || minDistance === 0) {
-                Y.log("gesturemovestart: No minTime or minDistance.");
+                Y.log("gesturemovestart: No minTime or minDistance.", "event-gestures");
                 this._start(e, node, ce, params);
             } else {
 
@@ -120,8 +145,8 @@ define('gesturemovestart', {
 
                 if (minTime > 0) {
 
-                    Y.log("gesturemovestart: minTime specified. Setup timer.");
-                    Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime());
+                    Y.log("gesturemovestart: minTime specified. Setup timer.", "event-gestures");
+                    Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
             
                     params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
 
@@ -132,12 +157,12 @@ define('gesturemovestart', {
 
                 if (minDistance > 0) {
 
-                    Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.");
-                    Y.log("gesturemovestart: initialXY for minDistance = " + startXY);
+                    Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.", "event-gestures");
+                    Y.log("gesturemovestart: initialXY for minDistance = " + startXY, "event-gestures");
 
                     params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
                         if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
-                            Y.log("gesturemovestart: minDistance hit.");
+                            Y.log("gesturemovestart: minDistance hit.", "event-gestures");
                             this._start(e, node, ce, params);
                         }
                     }, this));
@@ -168,9 +193,8 @@ define('gesturemovestart', {
         }
 
         e.type = "gesturemovestart";
-        e._extra = params;
 
-        Y.log("gesturemovestart: Firing start: " + new Date().getTime());
+        Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
 
         node.setData(_MOVE_START, e);
         ce.fire(e);
@@ -196,7 +220,16 @@ define('gesturemove', {
         subscriber[_MOVE_HANDLE] = moveHandle;
     },
 
-    processArgs : _defArgsProcessor,
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+
+        subscriber[_DEL_MOVE_HANDLE] = node.delegate(EVENT[MOVE],
+            function(e) {
+                se._onMove(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
 
     detach : function (node, subscriber, ce) {
         var moveHandle = subscriber[_MOVE_HANDLE];
@@ -206,20 +239,31 @@ define('gesturemove', {
             subscriber[_MOVE_HANDLE] = null;
         }
     },
+    
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_HANDLE] = null;
+        }
+
+    },
+
+    processArgs : _defArgsProcessor,
 
     publishConfig : PUB_CFG,
 
-    fireFilter: function (sub, args) {
-        var node = args[0]._extra.node,
-            standAlone= sub._extra.standAlone;
+    _onMove : function(e, node, subscriber, ce, delegate) {
 
-        return standAlone || node.getData(_MOVE_START);
-    },
-
-    _onMove : function(e, node, subscriber, ce) {
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var move = subscriber._extra.standAlone || node.getData(_MOVE_START),
             origE = e;
+
+        Y.log("onMove:" + move,"event-gestures");
 
         if (move) {
 
@@ -232,14 +276,11 @@ define('gesturemove', {
             }
 
             if (move) {
+                
+                Y.log("onMove2:" + move,"event-gestures");
+
                 origE.preventDefault();
-
                 e.type = "gesturemove";
-
-                e._extra = {
-                    node : node
-                };
-
                 ce.fire(e);
             }
         }
@@ -262,7 +303,26 @@ define('gesturemoveend', {
         subscriber[_MOVE_END_HANDLE] = endHandle;
     },
 
-    processArgs : _defArgsProcessor,
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+
+        subscriber[_DEL_MOVE_END_HANDLE] = node.delegate(EVENT[END],
+            function(e) {
+                se._onEnd(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
+
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_END_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_END_HANDLE] = null;
+        }
+
+    },
 
     detach : function (node, subscriber, ce) {
         var endHandle = subscriber[_MOVE_END_HANDLE];
@@ -273,16 +333,15 @@ define('gesturemoveend', {
         }
     },
 
-    fireFilter: function (sub, args) {
-        var node = args[0]._extra.node,
-            standAlone= sub._extra.standAlone;
-
-        return standAlone || node.getData(_MOVE) || node.getData(_MOVE_START);
-    },
+    processArgs : _defArgsProcessor,
 
     publishConfig : PUB_CFG,
 
-    _onEnd : function(e, node, subscriber, ce) {
+    _onEnd : function(e, node, subscriber, ce, delegate) {
+
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var moveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
             origE = e;
@@ -305,10 +364,6 @@ define('gesturemoveend', {
                 origE.preventDefault();
 
                 e.type = "gesturemoveend";
-                e._extra = {
-                    node:node
-                };
-
                 ce.fire(e);
 
                 node.clearData(_MOVE_START);

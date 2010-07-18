@@ -7,48 +7,62 @@ YUI.add('event-delegate', function(Y) {
  * @submodule event-delegate
  */
 
-var toArray      = Y.Array,
-    YLang        = Y.Lang,
-    isString     = YLang.isString,
-    selectorTest = Y.Selector.test;
+var toArray          = Y.Array,
+    YLang            = Y.Lang,
+    isString         = YLang.isString,
+    selectorTest     = Y.Selector.test,
+    detachCategories = Y.Env.evt.handles;
 
 function delegate(type, fn, el, filter) {
-    if (!type || !fn || !el || !filter) {
-        return;
+    var args     = toArray(arguments, 0, true),
+        query    = isString(el) ? el : null,
+        typeBits = type.split(/\|/),
+        synth, container, categories, cat, handle;
+
+    if (typeBits.length > 1) {
+        cat  = typeBits.shift();
+        type = typeBits.shift();
     }
 
-    var args  = toArray(arguments, 0, true),
-        synth = Y.Node.DOM_EVENTS[type],
-        query = isString(el) ? el : null,
-        container, handle;
+    synth = Y.Node.DOM_EVENTS[type];
 
     if (YLang.isObject(synth) && synth.delegate) {
-        return synth.delegate.apply(synth, arguments);
+        handle = synth.delegate.apply(synth, arguments);
     }
 
-    container = (query) ? Y.Selector.query(query, null, true) : el;
-
-    if (!container && isString(el)) {
-        handle = Y.on('available', function () {
-            Y.mix(handle, Y.delegate.apply(Y, args), true);
-        }, el);
-
-        return handle;
-    }
-
-    if (container) {
-        args.splice(2, 2, container); // remove the filter
-
-        if (isString(filter)) {
-            filter = Y.delegate.compileFilter(filter);
+    if (!handle) {
+        if (!type || !fn || !el || !filter) {
+            return;
         }
 
-        handle = Y.on.apply(Y, args);
-        handle.sub.getCurrentTarget = filter;
-        handle.sub._notify = Y.delegate.notifySub;
+        container = (query) ? Y.Selector.query(query, null, true) : el;
 
-        return handle;
+        if (!container && isString(el)) {
+            handle = Y.on('available', function () {
+                Y.mix(handle, Y.delegate.apply(Y, args), true);
+            }, el);
+        }
+
+        if (!handle && container) {
+            args.splice(2, 2, container); // remove the filter
+
+            if (isString(filter)) {
+                filter = Y.delegate.compileFilter(filter);
+            }
+
+            handle = Y.on.apply(Y, args);
+            handle.sub.getCurrentTarget = filter;
+            handle.sub._notify = Y.delegate.notifySub;
+        }
     }
+
+    if (handle && cat) {
+        categories = detachCategories[cat]  || (detachCategories[cat] = {});
+        categories = categories[type] || (categories[type] = []);
+        categories.push(handle);
+    }
+
+    return handle;
 }
 
 delegate.notifySub = function (thisObj, args, ce) {
@@ -80,8 +94,8 @@ delegate.notifySub = function (thisObj, args, ce) {
 
             ret = this.fn.apply(thisObj, args);
 
-            if (ret === false) {
-                break; // once() callback should only be called once, duh
+            if (ret === false) { // stop further notifications
+                break;
             }
         }
 
@@ -90,31 +104,23 @@ delegate.notifySub = function (thisObj, args, ce) {
 };
 
 delegate.compileFilter = Y.cached(function (selector) {
-    var descendantOfSelector = selector.replace(/,/g, ' *,') + ' *';
     return function (e) {
         var container = e.currentTarget._node,
-            matches = [],
-            currentTarget;
+            target    = e.target._node,
+            match     = [];
 
-        if (selectorTest(e.target._node, selector, container)) {
-            matches.push(e.target);
-        }
-
-        currentTarget = e.target._node;
-        if (selectorTest(currentTarget, descendantOfSelector)) {
-            while (currentTarget !== container) {
-                if (selectorTest(currentTarget, selector, container)) {
-                    matches.push(Y.one(currentTarget));
-                }
-                currentTarget = currentTarget.parentNode;
+        while (target !== container) {
+            if (selectorTest(target, selector, container)) {
+                match.push(Y.one(target));
             }
+            target = target.parentNode;
         }
 
-        if (matches.length <= 1) {
-            matches = matches[0]; // single match or undefined
+        if (match.length <= 1) {
+            match = match[0]; // single match or undefined
         }
 
-        return matches;
+        return match;
     };
 });
 

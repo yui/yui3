@@ -1,4 +1,5 @@
 var VMLGraphics = function(config) {
+    
     this.initializer.apply(this, arguments);
 };
 
@@ -145,7 +146,9 @@ VMLGraphics.prototype = {
      * Draws a bezier curve
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._path += ' c ' + cp1x + ", " + cp1y + ", " + cp2x + ", " + cp2y + ", " + x + ", " + y;
+        this._shape = "shape";
+        this._path += ' c ' + Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y;
+        this._trackSize(x, y);
     },
 
     /**
@@ -194,12 +197,6 @@ VMLGraphics.prototype = {
         this.lineTo(x, y + h);
         this.lineTo(x, y);
         this._drawVML();
-    },
-
-    getShape: function(config)
-    {
-
-
     },
 
     /**
@@ -359,7 +356,6 @@ VMLGraphics.prototype = {
             w = this._width,
             h = this._height,
             fillProps = this._fillProps;
-        
         if(this._path)
         {
             if(this._fill || this._fillProps)
@@ -476,6 +472,41 @@ VMLGraphics.prototype = {
     {
         return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
     
+    },
+    
+    /**
+     * Returns a shape.
+     */
+    getShape: function(config) {
+        var node,
+            shape,
+            path,
+            fill = config.fill;
+        this._width = config.w;
+        this._height = config.h;
+        this._x = 0;
+        this._y = 0;
+        shape = config.shape || "shape";
+        node = this._createGraphicNode(shape);
+        node.style.width = config.w + "px";
+        node.style.height = config.h + "px";
+        node.strokecolor = config.border.color;
+        node.strokeweight = config.border.width;
+        if(fill.type === "linear" || fill.type === "radial")
+        {
+            this.beginGradientFill(fill);
+        }
+        else if(fill.type === "bitmap")
+        {
+            this.beginBitmapFill(fill);
+        }
+        else
+        {
+            this.beginFill(fill.color, fill.alpha); 
+        }
+        node.filled = true;
+        node.appendChild(this._getFill());
+       return node; 
     }
 };
 

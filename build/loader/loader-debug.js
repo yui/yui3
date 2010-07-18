@@ -2896,8 +2896,7 @@ YUI.Env[Y.version].modules = {
             "transition": {
                 "requires": [
                     "transition-native", 
-                    "node-style", 
-                    "anim-easing"
+                    "node-style"
                 ]
             }, 
             "transition-native": {
@@ -3037,6 +3036,37 @@ YUI.Env[Y.version].modules = {
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "scrollview": {
+        "plugins": {
+            "scrollview-base": {
+                "path": "scrollview/scrollview-base-min.js", 
+                "requires": [
+                    "widget", 
+                    "event-gestures", 
+                    "transition"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-paginator": {
+                "path": "scrollview/scrollview-paginator-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-scrollbars": {
+                "path": "scrollview/scrollview-scrollbars-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "scrollview-base", 
+            "scrollview-scrollbars"
         ]
     }, 
     "slider": {

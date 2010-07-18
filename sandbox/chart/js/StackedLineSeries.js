@@ -27,19 +27,11 @@ Y.extend(StackedLineSeries, Y.CartesianSeries, {
         var xcoords = this.get("xcoords"),
 			ycoords = this.get("ycoords"),
             direction = this.get("direction"),
-            node = Y.Node.one(this._parentNode).get("parentNode"),
-            h = node.get("offsetHeight"),
-            order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
-			prevXCoords,
-            prevYCoords,
-			len = xcoords.length,
-			lastX = xcoords[0],
-			lastY = ycoords[0],
-			lastValidX = lastX,
-			lastValidY = lastY,
+			len = direction === "vertical" ? ycoords.length : xcoords.length,
+			lastX,
+			lastY,
+			lastValidX,
+			lastValidY,
 			nextX,
 			nextY,
 			i = 0,
@@ -52,37 +44,9 @@ Y.extend(StackedLineSeries, Y.CartesianSeries, {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
-        if(order > 0)
-        {
-            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
-            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
-            if(direction === "vertical")
-            {
-                len = prevXCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevXCoords[i]) && !isNaN(xcoords[i]))
-                    {
-                        xcoords[i] += prevXCoords[i];
-                    }
-                }
-                lastX = lastValidX = xcoords[0];
-                len = xcoords.length;
-            }
-            else
-            {
-                len = prevYCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevYCoords[i]) && !isNaN(ycoords[i]))
-                    {
-                        ycoords[i] = prevYCoords[i] - (h - ycoords[i]);
-                    }
-                }
-                lastY = lastValidY = ycoords[0];
-                len = ycoords.length;
-            }
-        }
+        this._stackCoordinates();
+        lastX = lastValidX = xcoords[0];
+        lastY = lastValidY = ycoords[0];
         graphic.clear();
         graphic.lineStyle(styles.weight, styles.color);
         graphic.moveTo(lastX, lastY);
@@ -216,8 +180,3 @@ Y.extend(StackedLineSeries, Y.CartesianSeries, {
 });
 
 Y.StackedLineSeries = StackedLineSeries;
-
-
-		
-
-		

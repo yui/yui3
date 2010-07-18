@@ -201,7 +201,9 @@ references the plugin instance.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Parses raw data into a normalized response.
+                                            Parses raw data into a normalized response. To accommodate XHR responses,
+will first look for data in data.responseText. Otherwise will just work
+with data.
                                         </div>
 
                                         <div class="description">

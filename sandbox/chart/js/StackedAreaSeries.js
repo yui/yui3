@@ -10,10 +10,7 @@ StackedAreaSeries.ATTRS = {
 		/**
 		 * Indicates the type of graph.
 		 */
-        value:"stacked"
-    },
-    direction: {
-        value:"horizontal"
+        value:"stackedArea"
     }
 };
 
@@ -27,17 +24,8 @@ Y.extend(StackedAreaSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var direction = this.get("direction"),
-            node = Y.Node.one(this._parentNode).get("parentNode"),
-            h = node.get("offsetHeight"),
-            order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
-            xcoords = this.get("xcoords"),
+        var xcoords = this.get("xcoords"),
 			ycoords = this.get("ycoords"),
-			prevXCoords,
-            prevYCoords,
             allXCoords,
             allYCoords,
             len = xcoords.length,
@@ -50,62 +38,11 @@ Y.extend(StackedAreaSeries, Y.CartesianSeries, {
 			i = 0,
 			styles = this.get("styles"),
 			graphic = this.get("graphic");
-        if(order > 0)
-        {
-            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
-            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
-            if(direction === "vertical")
-            {
-                len = prevXCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevXCoords[i]) && !isNaN(xcoords[i]))
-                    {
-                        xcoords[i] += prevXCoords[i];
-                    }
-                }
-            }
-            else
-            {
-                len = prevYCoords.length;
-                for(; i < len; ++i)
-                {
-                    if(!isNaN(prevYCoords[i]) && !isNaN(ycoords[i]))
-                    {
-                        ycoords[i] = prevYCoords[i] - (h - ycoords[i]);
-                    }
-                }
-            }
-            allYCoords = ycoords.concat();
-            allXCoords = xcoords.concat();
-            allXCoords = allXCoords.concat(prevXCoords.concat().reverse());
-            allYCoords = allYCoords.concat(prevYCoords.concat().reverse());
-            firstX = allXCoords[0];
-            firstY = allYCoords[0];
-            allXCoords.push(firstX);
-            allYCoords.push(firstY);
-        }
-        else
-        {
-            allYCoords = ycoords.concat();
-            allXCoords = xcoords.concat();
-            if(direction === "vertical")
-            {
-                allXCoords.push(this._leftOrigin);
-                allXCoords.push(this._leftOrigin);
-                allYCoords.push(allYCoords[allYCoords.length-1]);
-                allYCoords.push(firstY);
-            }
-            else
-            {
-                allXCoords.push(allXCoords[allXCoords.length-1]);
-                allXCoords.push(firstX);
-                allYCoords.push(this._bottomOrigin);
-                allYCoords.push(this._bottomOrigin);
-            }
-            allXCoords.push(firstX);
-            allYCoords.push(firstY);
-        }
+        this._stackCoordinates();
+        allXCoords = this._getAllStackedCoordinates("xcoords");
+        allYCoords = this._getAllStackedCoordinates("ycoords");
+        firstX = allXCoords[0];
+        firstY = allYCoords[0];
         len = allXCoords.length;
         graphic.clear();
         graphic.beginFill(styles.color, styles.alpha);

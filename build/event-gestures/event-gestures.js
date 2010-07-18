@@ -8,7 +8,7 @@ YUI.add('event-flick', function(Y) {
  * @submodule event-flick
  */
 
-var EVENT = ("ontouchstart" in Y.config.win) ? {
+var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
         end: "touchend"
     } : {
@@ -45,7 +45,7 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
 Y.Event.define('flick', {
 
-    init: function (node, subscriber, ce) {
+    on: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
             this._onStart,
@@ -54,22 +54,22 @@ Y.Event.define('flick', {
             subscriber, 
             ce);
  
-        node.setData(_FLICK_START_HANDLE, startHandle);
+        subscriber[_FLICK_START_HANDLE] = startHandle;
     },
 
-    destroy: function (node, subscriber, ce) {
+    detach: function (node, subscriber, ce) {
 
-        var startHandle = node.getData(_FLICK_START_HANDLE),
-            endHandle = node.getData(_FLICK_END_HANDLE);
+        var startHandle = subscriber[_FLICK_START_HANDLE],
+            endHandle = subscriber[_FLICK_END_HANDLE];
 
         if (startHandle) {
             startHandle.detach();
-            node.clearData(_FLICK_START_HANDLE);
+            subscriber[_FLICK_START_HANDLE] = null;
         }
 
         if (endHandle) {
             endHandle.detach();
-            node.clearData(_FLICK_END_HANDLE);
+            subscriber[_FLICK_END_HANDLE] = null;
         }
     },
 
@@ -92,13 +92,6 @@ Y.Event.define('flick', {
         return params;
     },
 
-    fireFilter: function (sub, args) {
-        var flick = args[0].flick,
-            params = sub._extra;
-
-        return (Math.abs(flick.distance) >= params.minDistance) && (flick.velocity  >= params.minVelocity);
-    },
-
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
@@ -118,15 +111,15 @@ Y.Event.define('flick', {
                 time : new Date().getTime()
             };
 
-            node.setData(_FLICK_START, e);
+            subscriber[_FLICK_START] = e;
 
-            endHandle = node.getData(_FLICK_END_HANDLE);
+            endHandle = subscriber[_FLICK_END_HANDLE];
 
             if (!endHandle) {
                 doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
-                node.setData(_FLICK_END_HANDLE,endHandle);
+                subscriber[_FLICK_END_HANDLE] = endHandle;
             }
         }
     },
@@ -134,7 +127,7 @@ Y.Event.define('flick', {
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
-            start = node.getData(_FLICK_START),
+            start = subscriber[_FLICK_START],
             valid = !!start,
             endEvent = e,
             startTime,
@@ -145,7 +138,7 @@ Y.Event.define('flick', {
             absDistance,
             velocity,
             axis;
-            
+
         if (valid) {
 
             if (e.changedTouches) {
@@ -177,7 +170,7 @@ Y.Event.define('flick', {
                 absDistance = Math.abs(distance); 
                 velocity = absDistance/time;
 
-                if (isFinite(velocity)) {
+                if (isFinite(velocity) && (absDistance >= params.minDistance) && (velocity  >= params.minVelocity)) {
 
                     e.type = "flick";
                     e.flick = {
@@ -193,13 +186,13 @@ Y.Event.define('flick', {
 
                 }
 
-                node.clearData(_FLICK_START);
+                subscriber[_FLICK_START] = null;
             }
         }
     },
 
     MIN_VELOCITY : 0,
-    MIN_DISTANCE : 10
+    MIN_DISTANCE : 0
 });
 
 
@@ -208,7 +201,7 @@ YUI.add('event-move', function(Y) {
 
 // TODO: Better way to sniff 'n' switch touch support?
 
-var EVENT = ("ontouchstart" in Y.config.win) ? {
+var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
         move: "touchmove",
         end: "touchend"
@@ -226,6 +219,10 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
     _MOVE_HANDLE = "_mh",
     _MOVE_END_HANDLE = "_meh",
 
+    _DEL_MOVE_START_HANDLE = "_dmsh",
+    _DEL_MOVE_HANDLE = "_dmh",
+    _DEL_MOVE_END_HANDLE = "_dmeh",
+
     _MOVE_START = "_ms",
     _MOVE = "_m",
 
@@ -239,8 +236,9 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
         emitFacade:false
     },
 
-    _defArgsProcessor = function(args) {
-        return args[3] ? Y.merge(args.splice(3,1)[0]) : {};
+    _defArgsProcessor = function(args, delegate) {
+        var iExtra = (delegate) ? 4 : 3;
+        return args[iExtra] ? Y.merge(args.splice(iExtra,1)[0]) : {};
     },
 
     _getRoot = function(node, subscriber) {
@@ -253,13 +251,33 @@ define('gesturemovestart', {
 
     on: function (node, subscriber, ce) {
 
-        // TODO: optimize to one listener per node.
         subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START], 
             this._onStart,
             this,
             node,
             subscriber,
             ce);
+
+    },
+
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+        
+        subscriber[_DEL_MOVE_START_HANDLE] = node.delegate(EVENT[START],
+            function(e) {
+                se._onStart(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
+
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_START_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_START_HANDLE] = null;
+        }
 
     },
 
@@ -272,8 +290,8 @@ define('gesturemovestart', {
         }
     },
 
-    processArgs : function(args) {
-        var params = _defArgsProcessor(args);
+    processArgs : function(args, delegate) {
+        var params = _defArgsProcessor(args, delegate);
 
         if (!(MIN_TIME in params)) {
             params[MIN_TIME] = this.MIN_TIME;
@@ -288,13 +306,13 @@ define('gesturemovestart', {
 
     publishConfig: PUB_CFG,
 
-    fireFilter: function (sub, args) {
-        return args[0]._extra === sub._extra;
-    },
-
-    _onStart : function(e, node, subscriber, ce) {
+    _onStart : function(e, node, subscriber, ce, delegate) {
 
         e.preventDefault();
+
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var origE = e,
             params = subscriber._extra,
@@ -369,7 +387,6 @@ define('gesturemovestart', {
         }
 
         e.type = "gesturemovestart";
-        e._extra = params;
 
 
         node.setData(_MOVE_START, e);
@@ -396,7 +413,16 @@ define('gesturemove', {
         subscriber[_MOVE_HANDLE] = moveHandle;
     },
 
-    processArgs : _defArgsProcessor,
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+
+        subscriber[_DEL_MOVE_HANDLE] = node.delegate(EVENT[MOVE],
+            function(e) {
+                se._onMove(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
 
     detach : function (node, subscriber, ce) {
         var moveHandle = subscriber[_MOVE_HANDLE];
@@ -406,20 +432,30 @@ define('gesturemove', {
             subscriber[_MOVE_HANDLE] = null;
         }
     },
+    
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_HANDLE] = null;
+        }
+
+    },
+
+    processArgs : _defArgsProcessor,
 
     publishConfig : PUB_CFG,
 
-    fireFilter: function (sub, args) {
-        var node = args[0]._extra.node,
-            standAlone= sub._extra.standAlone;
+    _onMove : function(e, node, subscriber, ce, delegate) {
 
-        return standAlone || node.getData(_MOVE_START);
-    },
-
-    _onMove : function(e, node, subscriber, ce) {
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var move = subscriber._extra.standAlone || node.getData(_MOVE_START),
             origE = e;
+
 
         if (move) {
 
@@ -432,14 +468,10 @@ define('gesturemove', {
             }
 
             if (move) {
+                
+
                 origE.preventDefault();
-
                 e.type = "gesturemove";
-
-                e._extra = {
-                    node : node
-                };
-
                 ce.fire(e);
             }
         }
@@ -462,7 +494,26 @@ define('gesturemoveend', {
         subscriber[_MOVE_END_HANDLE] = endHandle;
     },
 
-    processArgs : _defArgsProcessor,
+    delegate : function(node, subscriber, ce, filter) {
+
+        var se = this;
+
+        subscriber[_DEL_MOVE_END_HANDLE] = node.delegate(EVENT[END],
+            function(e) {
+                se._onEnd(e, node, subscriber, ce, true);
+            },
+            filter);
+    },
+
+    detachDelegate : function(node, subscriber, ce, filter) {
+        var handle = subscriber[_DEL_MOVE_END_HANDLE];
+
+        if (handle) {
+            handle.detach();
+            subscriber[_DEL_MOVE_END_HANDLE] = null;
+        }
+
+    },
 
     detach : function (node, subscriber, ce) {
         var endHandle = subscriber[_MOVE_END_HANDLE];
@@ -473,16 +524,15 @@ define('gesturemoveend', {
         }
     },
 
-    fireFilter: function (sub, args) {
-        var node = args[0]._extra.node,
-            standAlone= sub._extra.standAlone;
-
-        return standAlone || node.getData(_MOVE) || node.getData(_MOVE_START);
-    },
+    processArgs : _defArgsProcessor,
 
     publishConfig : PUB_CFG,
 
-    _onEnd : function(e, node, subscriber, ce) {
+    _onEnd : function(e, node, subscriber, ce, delegate) {
+
+        if (delegate) {
+            node = e.currentTarget;
+        }
 
         var moveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
             origE = e;
@@ -505,10 +555,6 @@ define('gesturemoveend', {
                 origE.preventDefault();
 
                 e.type = "gesturemoveend";
-                e._extra = {
-                    node:node
-                };
-
                 ce.fire(e);
 
                 node.clearData(_MOVE_START);
