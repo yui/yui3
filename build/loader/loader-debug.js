@@ -179,6 +179,7 @@ var NOT_FOUND       = {},
     YArray          = Y.Array,
     _queue          = YUI.Env._loaderQueue,
     META            = GLOBAL_ENV[VERSION],
+    SKIN_PREFIX     = "skin-",
     L               = Y.Lang,
     ON_PAGE         = GLOBAL_ENV.mods,
     _path           = Y.cached(function(dir, file, type, nomin) {
@@ -651,7 +652,6 @@ Y.Loader.prototype = {
         }
     },
 
-    SKIN_PREFIX: "skin-",
 
     _config: function(o) {
         var i, j, val, f, group, groupName, self = this;
@@ -710,7 +710,7 @@ Y.Loader.prototype = {
      * @return {string} the full skin module name
      */
     formatSkin: Y.cached(function(skin, mod) {
-        var s = this.SKIN_PREFIX + skin;
+        var s = SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
@@ -729,8 +729,7 @@ Y.Loader.prototype = {
      * @private
      */
     _addSkin: function(skin, mod, parent) {
-        var mdef, pkg,
-            name = this.formatSkin(skin), 
+        var mdef, pkg, name,
             info = this.moduleInfo,
             sinf = this.skin, 
             ext  = info[mod] && info[mod].ext;
@@ -751,7 +750,7 @@ Y.Loader.prototype = {
                     ext:   ext
                 });
 
-                // Y.log('adding skin ' + name);
+                // Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg);
                 // console.log(info[name]);
             }
         }
@@ -960,6 +959,7 @@ Y.Loader.prototype = {
             for (i in plugins) {
                 if (plugins.hasOwnProperty(i)) {
                     plug = plugins[i];
+                    plug.pkg = name;
                     plug.path = plug.path || _path(name, i, o.type);
                     plug.requires = plug.requires || [];
                     plug.group = o.group;
@@ -1017,6 +1017,7 @@ Y.Loader.prototype = {
             hash   = {},
             INTL   = 'intl';
 
+        // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
             delete mod.expanded;
             delete mod.temp;
@@ -1026,6 +1027,7 @@ Y.Loader.prototype = {
             if (adddef.optional) {
                 mod.optional = (mod.optional) ? mod.optional.concat(adddef.optional) : adddef.optional;
             }
+            // skins?
             // console.log('temp mod: ' + mod.name + ', ' + mod.requires);
             // console.log(adddef);
         }
@@ -1039,7 +1041,6 @@ Y.Loader.prototype = {
         // Y.log("getRequires: " + mod.name + " (dirty:" + this.dirty + ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
-
 
         for (i=0; i<r.length; i++) {
             // Y.log(mod.name + ' requiring ' + r[i]);
@@ -1062,7 +1063,7 @@ Y.Loader.prototype = {
         if (r) {
             for (i=0; i<r.length; i++) {
                 if (!hash[r[i]]) {
-                    d.push(r[i]);
+                    // d.push(r[i]); // should not need the submodule as a dep
                     hash[r[i]] = true;
                     m = this.getModule(r[i]);
 
@@ -1180,7 +1181,7 @@ Y.Loader.prototype = {
     },
 
     _addLangPack: function(lang, m, packName) {
-        var name = m.name, 
+        var name     = m.name, 
             packPath = _path((m.pkg || name), packName, JS, true),
             existing = this.moduleInfo[packName];
 
@@ -1188,14 +1189,12 @@ Y.Loader.prototype = {
             return existing;
         }
 
-        this.addModule({
-            path: packPath,
-            intl: true,
-            langPack: true,
-            ext: m.ext,
-            group: m.group,
-            supersedes: []
-        }, packName, true);
+        this.addModule({ path:       packPath,
+                         intl:       true,
+                         langPack:   true,
+                         ext:        m.ext,
+                         group:      m.group,
+                         supersedes: []       }, packName, true);
 
         if (lang) {
             Y.Env.lang = Y.Env.lang || {};
@@ -1229,7 +1228,6 @@ Y.Loader.prototype = {
                             m.requires.push(smod);
                         }
                     } else {
-
                         smod = this._addSkin(this.skin.defaultSkin, name);
                         m.requires.push(smod);
                     }
@@ -1270,7 +1268,7 @@ Y.Loader.prototype = {
 
         // remove modules on the force list from the loaded list
         if (this.force) {
-            for (i=0; i<this.force.length; i=i+1) {
+            for (i=0; i<this.force.length; i++) {
                 if (this.force[i] in l) {
                     delete l[this.force[i]];
                 }
@@ -1907,7 +1905,9 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
         if (u) {
             if (hasFilter) {
-                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
+                f = (L.isString(modFilter)) ? 
+                    this.FILTER_DEFS[modFilter.toUpperCase()] || null : 
+                    modFilter;
             }
             if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
@@ -2945,10 +2945,12 @@ YUI.Env[Y.version].modules = {
     }, 
     "node-flick": {
         "requires": [
-            "transition-native", 
+            "classnamemanager", 
+            "transition", 
             "event-flick", 
             "plugin"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "node-focusmanager": {
         "requires": [

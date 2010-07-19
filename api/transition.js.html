@@ -209,7 +209,7 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">easing</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;cubic-bezier&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="nx">easing</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">easings</span><span class="p">[</span><span class="nx">easing</span><span class="p">])</span> <span class="p">{</span>
-                        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">Transitions</span><span class="p">[</span><span class="nx">easing</span><span class="p">];</span>
+                        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">easings</span><span class="p">[</span><span class="nx">easing</span><span class="p">];</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
 

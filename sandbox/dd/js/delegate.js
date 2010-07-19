@@ -42,6 +42,12 @@ YUI.add('dd-delegate', function(Y) {
         _shimState: null,
         /**
         * @private
+        * @property _handles
+        * @description Array of event handles to be destroyed
+        */
+        _handles: null,
+        /**
+        * @private
         * @method _onNodeChange
         * @description Listens to the nodeChange event and sets the dragNode on the temp dd instance.
         * @param {Event} e The Event.
@@ -107,7 +113,6 @@ YUI.add('dd-delegate', function(Y) {
         _onMouseLeave: function(e) {
             Y.DD.DDM._noShim = this._shimState;
         },
-        _handles: null,
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.

@@ -3,6 +3,8 @@
         BOUNDING_BOX = "boundingBox",
         OFFSET_HEIGHT = "offsetHeight",
         OFFSET_WIDTH = "offsetWidth",
+        SCROLL_HEIGHT = "scrollHeight",
+        SCROLL_WIDTH = "scrollWidth",
         BOUNCE = "bounce",
         MIN_DISTANCE = "minDistance",
         MIN_VELOCITY = "minVelocity",
@@ -11,7 +13,9 @@
         STEP = "step",
         DURATION = "duration",
         EASING = "easing",
-        FLICK = "flick";
+        FLICK = "flick",
+        
+        getClassName = Y.ClassNameManager.getClassName;
 
     function Flick(config) {
         Flick.superclass.constructor.apply(this, arguments);
@@ -49,11 +53,15 @@
             value:10
         },
 
-        duration : {},
+        duration : {
+            value:null
+        },
 
-        easing : {}
+        easing : {
+            value:null
+        }
     };
-
+    
     Flick.NAME = "pluginFlick";
     Flick.NS = "flick";
 
@@ -62,7 +70,7 @@
         initializer : function() {
             this._node = this.get(HOST);
 
-            this._setStyles();
+            this._renderClasses();
             this.setBounds();
 
             this._node.on(FLICK, Y.bind(this._onFlick, this), {
@@ -78,8 +86,8 @@
                 boxHeight = box.get(OFFSET_HEIGHT),
                 boxWidth = box.get(OFFSET_WIDTH),
 
-                contentHeight = node.get(OFFSET_HEIGHT),
-                contentWidth = node.get(OFFSET_WIDTH);
+                contentHeight = node.get(SCROLL_HEIGHT),
+                contentWidth = node.get(SCROLL_WIDTH);
 
             if (contentHeight > boxHeight) {
                 this._maxY = contentHeight - boxHeight;
@@ -94,19 +102,14 @@
             }
 
             this._x = this._y = 0;
+
+            node.set("top", this._y + "px");
+            node.set("left", this._x + "px");
         },
 
-        _setStyles : function() {
-            var box = this.get(BOUNDING_BOX);
-
-            // TODO: Cross-browser and class based
-            box.setStyle("overflow", "hidden");
-
-            if (box.getStyle("position") !== "absolute") {
-                box.setStyle("position", "relative");
-            }
-
-            this._node.setStyle("position", "absolute");
+        _renderClasses : function() {
+            this.get(BOUNDING_BOX).addClass(Flick.CLASS_NAMES.box);
+            this._node.addClass(Flick.CLASS_NAMES.content);
         },
 
         /**
@@ -120,7 +123,6 @@
         _onFlick: function(e) {
             this._v = e.flick.velocity * e.flick.direction;
             this._flick = true;
-
             this._flickAnim();
         },
 
@@ -155,7 +157,7 @@
                 y = y - (velocity * step);
             }
 
-            if (Math.abs(velocity).toFixed(4) <= 0.015) {
+            if (Math.abs(velocity).toFixed(4) <= Flick.VELOCITY_THRESHOLD) {
 
                 this._flick = false;
 
@@ -193,7 +195,6 @@
                     this._v *= bounce;
                 }
 
-
                 if (this._scrollX) {
                     this._setX(x);
                 }
@@ -228,8 +229,8 @@
                 y = this._y;
             }
 
-            duration = duration || this._snapToEdge ? 400 : 0;
-            easing = easing || this._snapToEdge ? 'ease-out' : null;
+            duration = duration || this._snapToEdge ? Flick.SNAP_DURATION : 0;
+            easing = easing || this._snapToEdge ? Flick.SNAP_EASING : null;
 
             this._x = x;
             this._y = y;
@@ -238,23 +239,22 @@
         },
 
         _anim : function(x, y, duration, easing) {
-            var node = this._node,
-
-                xn = x * -1,
+            var xn = x * -1,
                 yn = y * -1,
 
-                transform = 'translate('+ (xn) +'px,'+ (yn) +'px)';
+                transition = {
+                    duration : duration / 1000,
+                    easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)'
+                };
 
-            if(duration) {
-                node.transition({
-                    easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)',
-                    duration : duration/1000,
-                    transform : transform
-                });
+            if (Y.TransitionNative.supported) {
+                transition.transform = 'translate('+ (xn) + 'px,' + (yn) +'px)'; 
             } else {
-               node.setStyle("-webkit-transition", null);
-               node.setStyle("-webkit-transform", transform);
+                transition.left = xn + 'px';
+                transition.top = yn + 'px';
             }
+            
+            this._node.transition(transition);
         },
 
         _bounce : function(val, max) {
@@ -285,10 +285,15 @@
             if(this._flickTimer) {
                 this._flickTimer.cancel();
             }
+        }
 
-            if(fireEvent) {
-                // this.fire(EV_SCROLL_END);
-            }
+    }, {
+        VELOCITY_THRESHOLD : 0.015,
+        SNAP_DURATION : 400,
+        SNAP_EASING : 'ease-out',
+        CLASS_NAMES : {
+            box: getClassName(Flick.NS),
+            content: getClassName(Flick.NS, "content")
         }
     });
 

@@ -70,10 +70,7 @@ Y.mix(Cache, {
         * @type Boolean
         */
         uniqueKeys: {
-            value: false,
-            validator: function(value) {
-                return (LANG.isBoolean(value));
-            }
+            value: false
         },
 
         /**
@@ -166,7 +163,7 @@ Y.extend(Cache, Y.Base, {
     * @private
     */
     destructor: function() {
-        this._entries = null;
+        this._entries = [];
         Y.log("Cache destroyed", "info", "cache");
     },
 
@@ -294,7 +291,7 @@ Y.extend(Cache, Y.Base, {
      * @param response {Object} Response value.
      */
     add: function(request, response) {
-        if(this.get("entries") && ((this.get("max") === null) || this.get("max") > 0) &&
+        if(this.get("initialized") && ((this.get("max") === null) || this.get("max") > 0) &&
                 (LANG.isValue(request) || LANG.isNull(request) || LANG.isUndefined(request))) {
             this.fire("add", {entry: {request:request, response:response, cached: new Date()}});
         }

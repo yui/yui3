@@ -31,10 +31,6 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
 
     NODE_TYPE = "nodeType",
 
-    PUB_CFG = {
-        emitFacade:false
-    },
-
     _defArgsProcessor = function(args, delegate) {
         var iExtra = (delegate) ? 4 : 3;
         return args[iExtra] ? Y.merge(args.splice(iExtra,1)[0]) : {};
@@ -102,8 +98,6 @@ define('gesturemovestart', {
 
         return params;
     },
-
-    publishConfig: PUB_CFG,
 
     _onStart : function(e, node, subscriber, ce, delegate) {
 
@@ -252,8 +246,6 @@ define('gesturemove', {
 
     processArgs : _defArgsProcessor,
 
-    publishConfig : PUB_CFG,
-
     _onMove : function(e, node, subscriber, ce, delegate) {
 
         if (delegate) {
@@ -334,8 +326,6 @@ define('gesturemoveend', {
     },
 
     processArgs : _defArgsProcessor,
-
-    publishConfig : PUB_CFG,
 
     _onEnd : function(e, node, subscriber, ce, delegate) {
 

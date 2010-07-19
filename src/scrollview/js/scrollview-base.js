@@ -27,8 +27,13 @@ var getClassName = Y.ClassNameManager.getClassName,
     SCROLL_X = "scrollX",
     BOUNCE = "bounce",
     
+    DIM_X = "x",
+    DIM_Y = "y",
+
     BOUNDING_BOX = "boundingBox",
-    CONTENT_BOX = "contentBox";
+    CONTENT_BOX = "contentBox",
+
+    NATIVE_TRANSITIONS = Y.TransitionNative.supported;
 
 Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
 
@@ -102,7 +107,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var cb = this.get(CONTENT_BOX); 
 
         cb.on('transitionend', Y.bind(this._transitionEnded, this), false);
-        cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        
+        // TODO: Fires way to often when using non-native transitions
+        if (NATIVE_TRANSITIONS) {
+            cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        }
 
         cb.on("flick", Y.bind(this._flick, this), {
             minDistance:0
@@ -155,7 +164,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             duration : duration/1000
         };
 
-        if (Y.TransitionNative.supported) {
+        if (NATIVE_TRANSITIONS) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
             transition.easing = "ease-out";
@@ -174,7 +183,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveStart: function(e) {
-
         this._killTimer();
 
         var bb = this.get(BOUNDING_BOX);
@@ -191,7 +199,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         this._isDragging = false;
         this._snapToEdge = false;
-
     },    
     
     /**
@@ -202,7 +209,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMove: function(e) {
-
         this._isDragging = true;
         this._moveEndClientY = e.clientY;
         this._moveEndClientX = e.clientX;
@@ -374,28 +380,29 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _uiDimensionsChange: function() {
-        var cb = this.get(CONTENT_BOX),
-            bb = this.get(BOUNDING_BOX),
+        var bb = this.get(BOUNDING_BOX),
 
             height = this.get('height'),
             width = this.get('width'),
 
-            scrollHeight = cb.get('scrollHeight'),
-            scrollWidth = cb.get('scrollWidth');
+            // Use bb instead of cb. cb doesn't gives us the right results
+            // in FF (due to overflow:hidden)
+            scrollHeight = bb.get('scrollHeight'),
+            scrollWidth = bb.get('scrollWidth');
 
-        
-        
         if(height && scrollHeight > height) {
             this._scrollsVertical = true;
             this._maxScrollY = scrollHeight - height;
             this._minScrollY = 0;
+            this._scrollHeight = scrollHeight;
             bb.addClass(getClassName("scroll-v"));
         }
-        
+
         if(width && scrollWidth > width) {
             this._scrollsHorizontal = true;
             this._maxScrollX = scrollWidth - width;
             this._minScrollX = 0;
+            this._scrollWidth = scrollWidth;
             bb.addClass(this.getClassName("scroll-h"));
         }
     },
@@ -507,18 +514,18 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Setter for the scrollX ATTR
-     *
-     * @method _setScrollX
-     * @param val {Number} The new scrollX value
-     * @protected
-     */    
-    _setScrollX: function(val) {
+     * @method _setScroll
+     * @private
+     * @param {Number} val
+     * @param {String} dim
+     */
+    _setScroll : function(val, dim) {
         var bouncing = this.get(BOUNCE),
             range = ScrollView.BOUNCE_RANGE,
+            maxScroll = (dim == DIM_X) ? this._maxScrollX : this._maxScrollY,
 
             min = bouncing ? -range : 0,
-            max = bouncing ? this._maxScrollX + range : this._maxScrollX;
+            max = bouncing ? maxScroll + range : maxScroll;
 
         if(!bouncing || !this._isDragging) {
             if(val < min) {
@@ -530,7 +537,18 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         return val;
     },
-    
+
+    /**
+     * Setter for the scrollX ATTR
+     *
+     * @method _setScrollX
+     * @param val {Number} The new scrollX value
+     * @protected
+     */    
+    _setScrollX: function(val) {
+        return this._setScroll(val, DIM_X);
+    },
+
     /**
      * Setter for the scrollY ATTR
      *
@@ -539,21 +557,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _setScrollY: function(val) {
-        var bouncing = this.get(BOUNCE),
-            range = ScrollView.BOUNCE_RANGE,
-        
-            min = bouncing ? -range : 0,
-            max = bouncing ? this._maxScrollY + range : this._maxScrollY;
-
-        if(!bouncing || !this._isDragging) {
-            if(val < min) {
-                val = min;
-            } else if(val > max) {
-                val = max;
-            }            
-        }
-
-        return val;
+        return this._setScroll(val, DIM_Y);
     }
     
 }, {
@@ -571,7 +575,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * @static
     */
    NAME: 'scrollview',
-   
+
    /**
     * Static property used to define the default attribute configuration of
     * the Widget.

@@ -57,12 +57,16 @@
     <span class="nx">CacheOffline</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">}</span>
 
+<span class="kd">var</span> <span class="nx">localStorage</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">,</span>
+    <span class="nx">isDate</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isDate</span><span class="p">,</span>
+    <span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">,</span>
+
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
     <span class="c1">//</span>
     <span class="c1">// CacheOffline static properties</span>
     <span class="c1">//</span>
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">CacheOffline</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">cacheOfflineStatic</span> <span class="o">=</span> <span class="p">{</span>
     <span class="cm">/**</span>
 <span class="cm">     * Class name.</span>
 <span class="cm">     *</span>
@@ -82,6 +86,21 @@
         <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
 
         <span class="cm">/**</span>
+<span class="cm">        * @attribute sandbox</span>
+<span class="cm">        * @description A string that must be passed in via the constructor.</span>
+<span class="cm">        * This identifier is used to sandbox one cache instance&#39;s entries</span>
+<span class="cm">        * from another. Calling the cache instance&#39;s flush and length methods</span>
+<span class="cm">        * or get(&quot;entries&quot;) will apply to only these sandboxed entries.</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        * @default &quot;default&quot;</span>
+<span class="cm">        * @initOnly</span>
+<span class="cm">        */</span>
+        <span class="nx">sandbox</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="nx">writeOnce</span><span class="o">:</span> <span class="s2">&quot;initOnly&quot;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
 <span class="cm">        * @attribute expires</span>
 <span class="cm">        * @description Absolute Date when data expires or</span>
 <span class="cm">        * relative number of milliseconds. Zero disables expiration.</span>
@@ -98,54 +117,92 @@
         <span class="cm">/**</span>
 <span class="cm">        * @attribute max</span>
 <span class="cm">        * @description Disabled.</span>
-<span class="cm">        * @readonly</span>
+<span class="cm">        * @readOnly</span>
 <span class="cm">        * @default null</span>
 <span class="cm">        */</span>
         <span class="nx">max</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">readonly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="p">}</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
 <span class="cm">        * @attribute uniqueKeys</span>
 <span class="cm">        * @description Always true for CacheOffline.</span>
-<span class="cm">        * @readonly</span>
+<span class="cm">        * @readOnly</span>
 <span class="cm">        * @default true</span>
 <span class="cm">        */</span>
         <span class="nx">uniqueKeys</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">readonly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="cm">/**</span>
+<span class="cm">     * Removes all items from all sandboxes. Useful if localStorage has</span>
+<span class="cm">     * exceeded quota. Only supported on browsers that implement HTML 5</span>
+<span class="cm">     * localStorage.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method flushAll</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">flushAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">store</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="c1">// FF2.x and FF3.0.x</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">store</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+                        <span class="k">delete</span> <span class="nx">store</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;All sandboxes of OfflineCache flushed&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Could not flush all OfflineCache sandboxes.&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">});</span>
+    <span class="p">},</span>
 
 
-<span class="kd">var</span> <span class="nx">localStorage</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">,</span>
-    <span class="nx">isDate</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isDate</span><span class="p">,</span>
-    <span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">,</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// CacheOffline events</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+
+    <span class="cm">/**</span>
+<span class="cm">    * @event error</span>
+<span class="cm">    * @description Fired when an entry could not be added, most likely due to</span>
+<span class="cm">    * exceeded browser quota.</span>
+<span class="cm">    * &lt;dl&gt;</span>
+<span class="cm">    * &lt;dt&gt;error (Object)&lt;/dt&gt; &lt;dd&gt;The error object.&lt;/dd&gt;</span>
+<span class="cm">    * &lt;/dl&gt;</span>
+<span class="cm">    */</span>
+
     <span class="nx">cacheOfflinePrototype</span> <span class="o">=</span>  <span class="nx">localStorage</span> <span class="o">?</span> <span class="p">{</span>
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
     <span class="c1">//</span>
     <span class="c1">// CacheOffline protected methods</span>
     <span class="c1">//</span>
     <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
-
     <span class="cm">/**</span>
-<span class="cm">     * Sets max.</span>
+<span class="cm">     * Always return null.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _setMax</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="c1">//_setMax: function(value) {</span>
-        <span class="c1">//return null;</span>
-    <span class="c1">//},</span>
-    
+    <span class="nx">_setMax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Gets size.</span>
 <span class="cm">     *</span>
@@ -153,7 +210,16 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_getSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="nx">l</span><span class="o">=</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Match sandbox id</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">key</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;sandbox&quot;</span><span class="p">))</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">count</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -163,17 +229,18 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_getEntries</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">entries</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">entries</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="nx">l</span><span class="o">=</span><span class="k">this</span><span class="p">.</span><span class="nx">_getSize</span><span class="p">();</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">entries</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Could be null if instance was destroyed</span>
-            <span class="k">for</span><span class="p">(;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">entries</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">key</span><span class="p">(</span><span class="nx">i</span><span class="p">));</span>
+            <span class="nx">l</span><span class="o">=</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">sandbox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;sandbox&quot;</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Match sandbox id</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">key</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">sandbox</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">entries</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">key</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nx">substring</span><span class="p">(</span><span class="nx">sandbox</span><span class="p">.</span><span class="nx">length</span><span class="p">));</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">entries</span><span class="p">;</span>
     <span class="p">},</span>
-
 
     <span class="cm">/**</span>
 <span class="cm">     * Adds entry to cache.</span>
@@ -193,8 +260,15 @@
         <span class="nx">entry</span><span class="p">.</span><span class="nx">expires</span> <span class="o">=</span> <span class="nx">isDate</span><span class="p">(</span><span class="nx">expires</span><span class="p">)</span> <span class="o">?</span> <span class="nx">expires</span> <span class="o">:</span>
             <span class="p">(</span><span class="nx">expires</span> <span class="o">?</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;expires&quot;</span><span class="p">))</span> <span class="o">:</span> <span class="kc">null</span><span class="p">);</span>
 
-        <span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="s2">&quot;request&quot;</span><span class="o">:</span><span class="nx">request</span><span class="p">}),</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">entry</span><span class="p">));</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Cached offline entry: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">entry</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;sandbox&quot;</span><span class="p">)</span><span class="o">+</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="s2">&quot;request&quot;</span><span class="o">:</span><span class="nx">request</span><span class="p">}),</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">entry</span><span class="p">));</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Cached offline entry: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">entry</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">error</span><span class="o">:</span><span class="nx">error</span><span class="p">});</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Could not cache offline entry: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">entry</span><span class="p">)</span> <span class="o">+</span>
+            <span class="s2">&quot; due to error: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">error</span><span class="p">),</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -205,24 +279,22 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_defFlushFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">store</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
-            <span class="p">}</span>
-            <span class="c1">// FF2.x and FF3.0.x</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="nx">store</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
-                        <span class="k">delete</span> <span class="nx">store</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">key</span><span class="p">,</span>
+            <span class="nx">i</span><span class="o">=</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(;</span> <span class="nx">i</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Match sandbox id</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">key</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">key</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;sandbox&quot;</span><span class="p">))</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">localStorage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;OfflineCache flushed&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">);</span>
     <span class="p">},</span>
-
+    
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// CacheOffline public methods</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
     <span class="cm">/**</span>
 <span class="cm">     * Adds a new entry to the cache of the format</span>
 <span class="cm">     * {request:request, response:response, expires: expires}.</span>
@@ -247,7 +319,7 @@
         <span class="kd">var</span> <span class="nx">entry</span><span class="p">,</span> <span class="nx">expires</span><span class="p">,</span> <span class="nx">cached</span><span class="p">;</span>
 
         <span class="k">try</span> <span class="p">{</span>
-            <span class="nx">request</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="s2">&quot;request&quot;</span><span class="o">:</span><span class="nx">request</span><span class="p">});</span>
+            <span class="nx">request</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;sandbox&quot;</span><span class="p">)</span><span class="o">+</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="s2">&quot;request&quot;</span><span class="o">:</span><span class="nx">request</span><span class="p">});</span>
             <span class="k">try</span> <span class="p">{</span>
                 <span class="nx">entry</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">request</span><span class="p">));</span>
             <span class="p">}</span>
@@ -256,7 +328,7 @@
         <span class="p">}</span>
         <span class="k">catch</span><span class="p">(</span><span class="nx">e2</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">}</span>
-        
+
         <span class="k">if</span><span class="p">(</span><span class="nx">entry</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">entry</span><span class="p">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">entry</span><span class="p">.</span><span class="nx">cached</span><span class="p">);</span>
             <span class="nx">expires</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">expires</span><span class="p">;</span>
@@ -272,6 +344,16 @@
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Always return null.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setMax</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setMax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Adds entry to cache with an expires property.</span>
 <span class="cm">     *</span>
@@ -312,6 +394,7 @@
     <span class="p">}</span>
 <span class="p">};</span>
 
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">CacheOffline</span><span class="p">,</span> <span class="nx">cacheOfflineStatic</span><span class="p">);</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">CacheOffline</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Cache</span><span class="p">,</span> <span class="nx">cacheOfflinePrototype</span><span class="p">);</span>
 
 
@@ -419,7 +502,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Cache", "name": "add", "url": "Cache.html#method_add", "type": "method"}, {"access": "", "host": "Cache", "name": "add", "url": "Cache.html#event_add", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "add", "url": "CacheOffline.html#method_add", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defAddFn", "url": "Cache.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_defAddFn", "url": "CacheOffline.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defFlushFn", "url": "Cache.html#method__defFlushFn", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_defFlushFn", "url": "CacheOffline.html#method__defFlushFn", "type": "method"}, {"access": "private", "host": "Cache", "name": "destructor", "url": "Cache.html#method_destructor", "type": "method"}, {"access": "private", "host": "Cache", "name": "_entries", "url": "Cache.html#property__entries", "type": "property"}, {"access": "", "host": "Cache", "name": "entries", "url": "Cache.html#config_entries", "type": "config"}, {"access": "", "host": "Cache", "name": "entriesChange", "url": "Cache.html#event_entriesChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "expires", "url": "CacheOffline.html#config_expires", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "expiresChange", "url": "CacheOffline.html#event_expiresChange", "type": "event"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#method_flush", "type": "method"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#event_flush", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_getEntries", "url": "Cache.html#method__getEntries", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_getEntries", "url": "CacheOffline.html#method__getEntries", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_getSize", "url": "Cache.html#method__getSize", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_getSize", "url": "CacheOffline.html#method__getSize", "type": "method"}, {"access": "private", "host": "Cache", "name": "initializer", "url": "Cache.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_isMatch", "url": "Cache.html#method__isMatch", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_isMatch", "url": "CacheOffline.html#method__isMatch", "type": "method"}, {"access": "", "host": "Cache", "name": "max", "url": "Cache.html#config_max", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "max", "url": "CacheOffline.html#config_max", "type": "config"}, {"access": "", "host": "Cache", "name": "maxChange", "url": "Cache.html#event_maxChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "maxChange", "url": "CacheOffline.html#event_maxChange", "type": "event"}, {"access": "", "host": "Cache", "name": "NAME", "url": "Cache.html#property_NAME", "type": "property"}, {"access": "", "host": "CacheOffline", "name": "NAME", "url": "CacheOffline.html#property_NAME", "type": "property"}, {"access": "", "host": "Cache", "name": "request", "url": "Cache.html#event_request", "type": "event"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#method_retrieve", "type": "method"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#event_retrieve", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "retrieve", "url": "CacheOffline.html#method_retrieve", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_setMax", "url": "Cache.html#method__setMax", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_setMax", "url": "CacheOffline.html#method__setMax", "type": "method"}, {"access": "", "host": "Cache", "name": "size", "url": "Cache.html#config_size", "type": "config"}, {"access": "", "host": "Cache", "name": "sizeChange", "url": "Cache.html#event_sizeChange", "type": "event"}, {"access": "", "host": "Cache", "name": "uniqueKeys", "url": "Cache.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "uniqueKeys", "url": "CacheOffline.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "Cache", "name": "uniqueKeysChange", "url": "Cache.html#event_uniqueKeysChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "uniqueKeysChange", "url": "CacheOffline.html#event_uniqueKeysChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Cache", "name": "add", "url": "Cache.html#method_add", "type": "method"}, {"access": "", "host": "Cache", "name": "add", "url": "Cache.html#event_add", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "add", "url": "CacheOffline.html#method_add", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defAddFn", "url": "Cache.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_defAddFn", "url": "CacheOffline.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defFlushFn", "url": "Cache.html#method__defFlushFn", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_defFlushFn", "url": "CacheOffline.html#method__defFlushFn", "type": "method"}, {"access": "private", "host": "Cache", "name": "destructor", "url": "Cache.html#method_destructor", "type": "method"}, {"access": "private", "host": "Cache", "name": "_entries", "url": "Cache.html#property__entries", "type": "property"}, {"access": "", "host": "Cache", "name": "entries", "url": "Cache.html#config_entries", "type": "config"}, {"access": "", "host": "Cache", "name": "entriesChange", "url": "Cache.html#event_entriesChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "error", "url": "CacheOffline.html#event_error", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "expires", "url": "CacheOffline.html#config_expires", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "expiresChange", "url": "CacheOffline.html#event_expiresChange", "type": "event"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#method_flush", "type": "method"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#event_flush", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "flushAll", "url": "CacheOffline.html#method_flushAll", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_getEntries", "url": "Cache.html#method__getEntries", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_getEntries", "url": "CacheOffline.html#method__getEntries", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_getSize", "url": "Cache.html#method__getSize", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_getSize", "url": "CacheOffline.html#method__getSize", "type": "method"}, {"access": "private", "host": "Cache", "name": "initializer", "url": "Cache.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_isMatch", "url": "Cache.html#method__isMatch", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_isMatch", "url": "CacheOffline.html#method__isMatch", "type": "method"}, {"access": "", "host": "Cache", "name": "max", "url": "Cache.html#config_max", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "max", "url": "CacheOffline.html#config_max", "type": "config"}, {"access": "", "host": "Cache", "name": "maxChange", "url": "Cache.html#event_maxChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "maxChange", "url": "CacheOffline.html#event_maxChange", "type": "event"}, {"access": "", "host": "Cache", "name": "NAME", "url": "Cache.html#property_NAME", "type": "property"}, {"access": "", "host": "CacheOffline", "name": "NAME", "url": "CacheOffline.html#property_NAME", "type": "property"}, {"access": "", "host": "Cache", "name": "request", "url": "Cache.html#event_request", "type": "event"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#method_retrieve", "type": "method"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#event_retrieve", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "retrieve", "url": "CacheOffline.html#method_retrieve", "type": "method"}, {"access": "", "host": "CacheOffline", "name": "sandbox", "url": "CacheOffline.html#config_sandbox", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "sandboxChange", "url": "CacheOffline.html#event_sandboxChange", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_setMax", "url": "Cache.html#method__setMax", "type": "method"}, {"access": "protected", "host": "CacheOffline", "name": "_setMax", "url": "CacheOffline.html#method__setMax", "type": "method"}, {"access": "", "host": "Cache", "name": "size", "url": "Cache.html#config_size", "type": "config"}, {"access": "", "host": "Cache", "name": "sizeChange", "url": "Cache.html#event_sizeChange", "type": "event"}, {"access": "", "host": "Cache", "name": "uniqueKeys", "url": "Cache.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "CacheOffline", "name": "uniqueKeys", "url": "CacheOffline.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "Cache", "name": "uniqueKeysChange", "url": "Cache.html#event_uniqueKeysChange", "type": "event"}, {"access": "", "host": "CacheOffline", "name": "uniqueKeysChange", "url": "CacheOffline.html#event_uniqueKeysChange", "type": "event"}];
 </script>
 </body>
 </html>
