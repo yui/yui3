@@ -69,7 +69,7 @@ delegate.notifySub = function (thisObj, args, ce) {
     // Preserve args for other subscribers
     args = args.slice();
     if (this.args) {
-        args = args.push.apply(args, this.args);
+        args.push.apply(args, this.args);
     }
 
     // Only notify subs if the event occurred on a targeted element

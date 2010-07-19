@@ -5,6 +5,7 @@ var DOMMap   = Y.Env.evt.dom_map,
     YLang    = Y.Lang,
     isObject = YLang.isObject,
     isString = YLang.isString,
+    query    = Y.Selector.query,
     noop     = function () {};
 
 function Notifier(handle, emitFacade, delegate) {
@@ -40,7 +41,7 @@ Notifier.prototype.fire = function (e) {
         if (this.delegate) {
             event.container = ce.host;
         }
-    } else if (this.delegate) {
+    } else if (this.delegate && isObject(e) && e.currentTarget) {
         args.shift();
     }
 
@@ -152,11 +153,13 @@ Y.mix(SyntheticEvent, {
         _on: function (args, delegate) {
             var handles  = [],
                 selector = args[2],
-                nodes    = Y.all(selector),
                 method   = delegate ? 'delegate' : 'on',
-                handle;
+                nodes, handle;
 
-            if (!nodes.size() && isString(selector)) {
+            // Can't just use Y.all because it doesn't support window (yet?)
+            nodes = (isString(selector)) ? query(selector) : toArray(selector);
+
+            if (!nodes.length && isString(selector)) {
                 handle = Y.on('available', function () {
                     Y.mix(handle, Y[method].apply(Y, args), true);
                 }, selector);
@@ -164,24 +167,29 @@ Y.mix(SyntheticEvent, {
                 return handle;
             }
 
-            nodes.each(function (node) {
+            Y.each(nodes, function (node) {
                 var subArgs = args.slice(),
-                    extra   = this.processArgs(subArgs, delegate),
-                    filter;
+                    extra, filter;
 
-                if (delegate) {
-                    filter = subArgs.splice(3, 1)[0];
-                }
+                node = Y.one(node);
 
-                // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
-                subArgs.splice(0, 4, subArgs[1], subArgs[3]);
+                if (node) {
+                    extra = this.processArgs(subArgs, delegate);
 
-                if (this.allowDups || !this.getSubs(node, args, null, true)) {
-                    handle = this._getNotifier(node, subArgs, extra, filter);
+                    if (delegate) {
+                        filter = subArgs.splice(3, 1)[0];
+                    }
 
-                    this[method](node, handle.sub, handle.notifier, filter);
+                    // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
+                    subArgs.splice(0, 4, subArgs[1], subArgs[3]);
 
-                    handles.push(handle);
+                    if (this.allowDups || !this.getSubs(node, args,null,true)) {
+                        handle = this._getNotifier(node, subArgs, extra,filter);
+
+                        this[method](node, handle.sub, handle.notifier, filter);
+
+                        handles.push(handle);
+                    }
                 }
             }, this);
 
@@ -234,20 +242,28 @@ Y.mix(SyntheticEvent, {
         },
 
         _detach: function (args) {
-            var nodes = Y.all(args[2]);
+            // Can't use Y.all because it doesn't support window (yet?)
+            var target = args[2],
+                els    = (isString(target)) ?
+                            query(target) : toArray(target),
+                node, i, len, handles, j;
             
             // (type, fn, el, context, filter?) => (type, fn, context, filter?)
             args.splice(2, 1);
 
-            nodes.each(function (node) {
-                var handles = this.getSubs(node, args), i;
+            for (i = 0, len = els.length; i < len; ++i) {
+                node = Y.one(els[i]);
 
-                if (handles) {
-                    for (i = handles.length - 1; i >= 0; --i) {
-                        handles[i].detach();
+                if (node) {
+                    handles = this.getSubs(node, args);
+
+                    if (handles) {
+                        for (j = handles.length - 1; j >= 0; --j) {
+                            handles[j].detach();
+                        }
                     }
                 }
-            }, this);
+            }
         },
 
         getSubs: function (node, args, filter, first) {
@@ -284,17 +300,15 @@ Y.mix(SyntheticEvent, {
 
 Y.SyntheticEvent = SyntheticEvent;
 
-Y.Node.publish = Y.Event.define = function (type, config) {
+Y.Node.publish = Y.Event.define = function (type, config, force) {
     if (!config) {
         config = {};
     }
 
-    var eventDef = (Y.Lang.isObject(type)) ?
-                        type :
-                        Y.merge({ type: type }, config),
+    var eventDef = (isObject(type)) ? type : Y.merge({ type: type }, config),
         Impl, synth;
 
-    if (!Y.Node.DOM_EVENTS[eventDef.type]) {
+    if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
         Impl = function () {
             SyntheticEvent.apply(this, arguments);
         };
