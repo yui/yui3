@@ -153,6 +153,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             yMove = y * -1,
             transition;
 
+        duration = duration || 0;
+        easing = easing || ScrollView.EASING;
+
         if(x !== this.get(SCROLL_X)) {
             this.set(SCROLL_X, x, { src: UI });
         }
@@ -162,7 +165,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         transition = {
-            easing : easing || ScrollView.EASING,
+            easing : easing,
             duration : duration/1000
         };
 
