@@ -406,7 +406,7 @@ var localStorage = Y.config.win.localStorage,
         */
         sandbox: {
             value: "default",
-            initOnly: true
+            writeOnce: "initOnly"
         },
 
         /**
