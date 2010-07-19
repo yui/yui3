@@ -267,4 +267,4 @@ YUI.add('widget-position', function(Y) {
     Y.WidgetPosition = Position;
 
 
-}, '@VERSION@' ,{requires:['widget']});
+}, '@VERSION@' ,{requires:['base-build', 'node-screen', 'widget']});

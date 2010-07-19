@@ -1,39 +1,62 @@
 {
     "widget": {
         "plugins": {
-            "widget-child": {}, 
-            "widget-parent": {
+            "widget-child": {
                 "requires": [
-                    "arraylist"
+                    "base-build"
                 ]
             }, 
-            "widget-position": {}, 
+            "widget-parent": {
+                "requires": [
+                    "base-build",
+                    "arraylist"
+                ]
+            },
+            "widget-position": {
+                "requires": [
+                    "base-build",
+                    "node-screen"
+                ]
+            },
             "widget-position-align": {
                 "requires": [
                     "widget-position"
                 ]
-            }, 
+            },
             "widget-position-constrain": {
                 "requires": [
                     "widget-position"
                 ]
             }, 
             "widget-stack": {
+                "requires": [
+                    "base-build"
+                ],
                 "skinnable": true
-            }, 
-            "widget-stdmod": {}
-        }, 
-        "skinnable": true, 
+            },
+            "widget-stdmod": {
+                "requires": [
+                    "base-build"
+                ]
+            }
+        },
+
+        "skinnable": true,
+         
         "submodules": {
             "widget-base": {
                 "requires": [
                     "attribute", 
                     "event-focus", 
-                    "base", 
-                    "node", 
+                    "base-base",
+                    "base-pluginhost",
+                    "node-base",
+                    "node-style",
+                    "node-event-delegate",
                     "classnamemanager"
                 ]
-            }, 
+            },
+
             "widget-htmlparser": {
                 "requires": [
                     "widget-base"
@@ -43,9 +66,9 @@
     },
 
     "widget-locale" : {
-	"requires" : [
-	    "widget-base"
-	],
-	"path": "widget/widget-locale-min.js"
+    	"requires" : [
+    	    "widget-base"
+    	],
+    	"path": "widget/widget-locale-min.js"
     }
 }

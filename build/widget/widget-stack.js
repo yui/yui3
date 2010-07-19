@@ -393,4 +393,4 @@ YUI.add('widget-stack', function(Y) {
     Y.WidgetStack = Stack;
 
 
-}, '@VERSION@' ,{requires:['widget']});
+}, '@VERSION@' ,{requires:['base-build', 'widget']});

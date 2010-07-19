@@ -1136,13 +1136,23 @@ YUI.Env[Y.version].modules = {
     }, 
     "widget": {
         "plugins": {
-            "widget-child": {}, 
+            "widget-child": {
+                "requires": [
+                    "base-build"
+                ]
+            }, 
             "widget-parent": {
                 "requires": [
+                    "base-build", 
                     "arraylist"
                 ]
             }, 
-            "widget-position": {}, 
+            "widget-position": {
+                "requires": [
+                    "base-build", 
+                    "node-screen"
+                ]
+            }, 
             "widget-position-align": {
                 "requires": [
                     "widget-position"
@@ -1154,9 +1164,16 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "widget-stack": {
+                "requires": [
+                    "base-build"
+                ], 
                 "skinnable": true
             }, 
-            "widget-stdmod": {}
+            "widget-stdmod": {
+                "requires": [
+                    "base-build"
+                ]
+            }
         }, 
         "skinnable": true, 
         "submodules": {
@@ -1164,8 +1181,11 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "attribute", 
                     "event-focus", 
-                    "base", 
-                    "node", 
+                    "base-base", 
+                    "base-pluginhost", 
+                    "node-base", 
+                    "node-style", 
+                    "node-event-delegate", 
                     "classnamemanager"
                 ]
             }, 
