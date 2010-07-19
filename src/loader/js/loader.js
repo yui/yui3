@@ -680,7 +680,7 @@ Y.Loader.prototype = {
                     ext:   ext
                 });
 
-                // Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg);
+                // Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
                 // console.log(info[name]);
             }
         }
@@ -898,6 +898,7 @@ Y.Loader.prototype = {
                     if (o.skinnable) {
                         this._addSkin(this.skin.defaultSkin, i, name);
                     }
+
                 }
             }
         }
@@ -1355,10 +1356,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
     _onSuccess: function() {
         // Y.log('loader _onSuccess, skipping: ' + Y.Object.keys(this.skipped), "info", "loader");
         var skipped = Y.merge(this.skipped), fn;
+
         YObject.each(skipped, function(k) {
             delete this.inserted[k];
         }, this);
+
         this.skipped = {};
+
+        Y.mix(this.loaded, this.inserted);
+
         fn = this.onSuccess;
         if (fn) {
             fn.call(this.context, {
@@ -1583,6 +1589,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
         var s, len, i, m, url, fn, msg, attr, group, groupName, j, frag, 
             comboSource, comboSources, mods, combining, urls, comboBase,
+            provided,
             type          = this.loadType, 
             self          = this,
             handleSuccess = function(o) {
@@ -1593,8 +1600,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
                                 var i, len = combining.length;
 
                                 for (i=0; i<len; i++) {
-                                    self.loaded[combining[i]]   = true;
-                                    self.inserted[combining[i]] = true;
+                                    // self.loaded[combining[i]]   = true;
+                                    // self.inserted[combining[i]] = true;
+
+                                    provided = this.getProvides(combining[i]);
+
+                                    Y.mix(self.loaded, provided);
+                                    Y.mix(self.inserted, provided);
                                 }
 
                                 handleSuccess(o);
@@ -1726,8 +1738,12 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             // centralize this in the callback
-            this.inserted[mname] = true;
-            this.loaded[mname] = true;
+            // this.inserted[mname] = true;
+            // this.loaded[mname] = true;
+
+            provided = this.getProvides(mname);
+            Y.mix(this.loaded, provided);
+            Y.mix(this.inserted, provided);
 
             if (this.onProgress) {
                 this.onProgress.call(this.context, {

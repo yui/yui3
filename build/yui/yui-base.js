@@ -107,7 +107,8 @@ if (typeof YUI === 'undefined') {
                             }
                         },
         getLoader = function(Y, o) {
-            var loader = YUI.Env.loaders[Y.config._sig];
+            // var loader = YUI.Env.loaders[Y.config._sig];
+            var loader = Y.Env._loader;
             if (loader) {
                 loader.ignoreRegistered = false;
                 loader.onEnd            = null;
@@ -117,6 +118,7 @@ if (typeof YUI === 'undefined') {
                 loader.loadType         = null;
             } else {
                 loader = new Y.Loader(Y.config);
+                Y.Env._loader = loader;
             }
 
             return loader;
@@ -615,7 +617,9 @@ proto = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             args = Y.Object.keys(mods);
+
         }
+
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
@@ -628,9 +632,10 @@ proto = {
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
 
-            YUI.Env.loaders[Y.config._sig] = loader;
+            // YUI.Env.loaders[Y.config._sig] = loader;
 
         }
+
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
