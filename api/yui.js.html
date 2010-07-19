@@ -277,7 +277,7 @@
                                 <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
                                     <span class="nx">match</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;js&#39;</span><span class="p">);</span>
 
-                                    <span class="k">if</span> <span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                                         <span class="nx">filter</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">match</span><span class="p">);</span>
                                     <span class="p">}</span>
                                 <span class="p">}</span>
