@@ -1183,13 +1183,23 @@
     <span class="p">},</span> 
     <span class="s2">&quot;widget&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;widget-child&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;widget-child&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-build&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;widget-parent&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;arraylist&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
-            <span class="s2">&quot;widget-position&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;widget-position&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-screen&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;widget-position-align&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;widget-position&quot;</span>
@@ -1201,9 +1211,16 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;widget-stack&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-build&quot;</span>
+                <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">},</span> 
-            <span class="s2">&quot;widget-stdmod&quot;</span><span class="o">:</span> <span class="p">{}</span>
+            <span class="s2">&quot;widget-stdmod&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-build&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
         <span class="p">},</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1211,8 +1228,11 @@
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;attribute&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;event-focus&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;base-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;base-pluginhost&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;classnamemanager&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
