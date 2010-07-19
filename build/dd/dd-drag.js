@@ -1200,4 +1200,4 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base','event-synthetic', 'event-gestures']});
+}, '@VERSION@' ,{requires:['dd-ddm-base','event-synthetic', 'event-gestures'], skinnable:false});

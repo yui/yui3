@@ -120,6 +120,9 @@
             if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
                 same = true;
             }
+            if (same && moveType == 'move') {
+                moveType = 'insert';
+            }
             switch (moveType) {
                 case 'insert':
                     dir = ((this._up) ? 'before' : 'after');

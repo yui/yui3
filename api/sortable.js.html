@@ -168,6 +168,9 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">).</span><span class="nx">contains</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">)))</span> <span class="p">{</span>
                 <span class="nx">same</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">same</span> <span class="o">&amp;&amp;</span> <span class="nx">moveType</span> <span class="o">==</span> <span class="s1">&#39;move&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">moveType</span> <span class="o">=</span> <span class="s1">&#39;insert&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
             <span class="k">switch</span> <span class="p">(</span><span class="nx">moveType</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">case</span> <span class="s1">&#39;insert&#39;</span><span class="o">:</span>
                     <span class="nx">dir</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_up</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;before&#39;</span> <span class="o">:</span> <span class="s1">&#39;after&#39;</span><span class="p">);</span>
