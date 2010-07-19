@@ -156,7 +156,8 @@
                             <span class="p">}</span>
                         <span class="p">},</span>
         <span class="nx">getLoader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">loader</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">loaders</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">_sig</span><span class="p">];</span>
+            <span class="c1">// var loader = YUI.Env.loaders[Y.config._sig];</span>
+            <span class="kd">var</span> <span class="nx">loader</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">loader</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span>            <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -166,6 +167,7 @@
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">loadType</span>         <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">;</span>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">loader</span><span class="p">;</span>
@@ -674,7 +676,10 @@
         <span class="c1">// YUI().use(&#39;*&#39;); // bind everything available</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">firstArg</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">mods</span><span class="p">);</span>
+
         <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;before loader requirements: &#39;</span> <span class="o">+</span> <span class="nx">args</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">r</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
         
         <span class="c1">// use loader to expand dependencies and sort the </span>
         <span class="c1">// requirements if it is available.</span>
@@ -687,15 +692,17 @@
             <span class="nx">loader</span><span class="p">.</span><span class="nx">calculate</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">.</span><span class="nx">sorted</span><span class="p">;</span>
 
-            <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">loaders</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">_sig</span><span class="p">]</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">;</span>
+            <span class="c1">// YUI.Env.loaders[Y.config._sig] = loader;</span>
 
         <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;after loader requirements: &#39;</span> <span class="o">+</span> <span class="nx">args</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">r</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
 
         <span class="c1">// process each requirement and any additional requirements </span>
         <span class="c1">// the module metadata specifies</span>
         <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">process</span><span class="p">);</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Module requirements: &#39;</span> <span class="o">+</span> <span class="nx">args</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;after process requirements: &#39;</span> <span class="o">+</span> <span class="nx">args</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">r</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
         <span class="c1">// console.log(args);</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
