@@ -172,7 +172,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (NATIVE_TRANSITIONS) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
-            transition.easing = "ease-out";
             transition.left = xMove + "px"; 
             transition.top = yMove + "px";
         }
