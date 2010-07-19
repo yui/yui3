@@ -15,11 +15,16 @@
             top: 100px;
             left: 100px;
         }
+        #test iframe {
+            border: 1px solid blue;
+        }
         #test {
             height: 260px;
             width: 550px;
             border-top: 3px solid red;
             float: left;
+            padding: 5px;
+            _background-color: orange; 
         }
         #test1 button {
             background-color: #ccc;
@@ -31,7 +36,7 @@
             display: none;
         }
         #smilies {
-            width: 180px;
+            width: 175px;
             height: 260px;
             border-top: 3px solid red;
             border-left: 3px solid red;
@@ -109,6 +114,50 @@
 <button id="focusEditor">Focus Editor</button>
 
 <div id="stub">
+    <div><br></div>
+    <div style="font-family: ; font-size: ;"><br>
+        <div style="font-family: times new roman, new york, times, serif; font-size: 12pt;">
+            <font size="2" face="Tahoma">
+            <hr size="1">
+            <b><span style="font-weight:bold;">From:</span></b> yahoo-account-services-us@cc.yahoo-inc.com<br>
+            <b><span style="font-weight: bold;">To:</span></b> hb.stone@yahoo.com<br>
+            <b><span style="font-weight: bold;">Cc:</span></b> <br>
+            <b><span style="font-weight: bold;">Sent:</span></b> 2010-07-09 14:19:12<br>
+            <b><span style="font-weight: bold;">Subject:</span></b> Verify this email address<br>
+            </font><br>
+            <div id=yiv759936264>
+                <div style="direction:ltr;">
+                    <img src="https://s.yimg.com/lq/i/brand/purplelogo/base/us.gif" vspace="10" hspace="20">
+                    <hr noshade width="95%"> <br><br> 
+                    <table border="0" width="735">
+                        <tbody>
+                            <tr>
+                                <td width="10%">&nbsp;</td>
+                                <td width="80%">  <font size="+1" color="#631266" face="Arial">  <b>Verify this email address</b>  </font>  <br>  </td>
+                                <td width="10%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr noshade width="95%">
+                    <table width="750"> 
+                        <tbody>
+                            <tr>
+                                <td width="2.5%">&nbsp;</td>
+                                <td>  <font face="Arial" size="-3"></font>  </td>
+                            </tr>
+                            <tr>
+                                <td width="2.5%">&nbsp;</td>
+                                <td>  <font face="Arial" size="-3"><p>Copyright © 2010 Yahoo! Inc. All rights reserved.<a rel="nofollow" target="_blank" href='http://docs.yahoo.com/info/copyright/copyright.html'>Copyright/IP Policy</a> | <a rel="nofollow" target="_blank" href='http://docs.yahoo.com/info/terms/'>Terms of Service</a></p>  <p>NOTICE: We collect personal information on this site. To learn more about how we use your information, see our <a rel="nofollow" target="_blank" href='http://privacy.yahoo.com/'>Privacy Policy</a>.</p><br>  </font>  </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><br><br>
+        </div>
+    </div>
 </div>
 <!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
@@ -118,27 +167,9 @@ This is some <strong>other</strong> loose test.
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
-<div><hr>This is some loose test.</div>
-<ol>
-    <li class="davglass" style="font-family: courier new">Item #1</li>
-    <li>Item #1</li>
-    <li><a href="http://yuilibrary.com/">Item #1</a></li>
-</ol>
-<p>This is <span style="font-family: Courier New">another</span> test.</p>
-This is some more loose test.
-<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
-This is some more loose test.
-<style>
-del {
-    background-color: yellow;
-    font-weight: bold;
-    color: black;
-}
-.foo {
-    text-decoration: underline overline;
-}
-</style>
-This is some more loose test.
+<hr>
+<p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
+<ul>
 </div-->
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
@@ -262,21 +293,25 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             var fname = e.fontFamily,
             size = e.fontSize;
             f_options.item(0).set('selected', true);
-            f_options.each(function(v) {
-                var val = v.get('value').toLowerCase();
-                if (val === fname.toLowerCase()) {
-                    v.set('selected', true);
-                }
-            });
+            if (fname) {
+                f_options.each(function(v) {
+                    var val = v.get('value').toLowerCase();
+                    if (val === fname.toLowerCase()) {
+                        v.set('selected', true);
+                    }
+                });
+            }
             s_options.item(0).set('selected', true);
-            size = size.replace('px', '');
-            s_options.each(function(v) {
-                var val = v.get('value').toLowerCase(),
-                    txt = v.get('text');
-                if (size === txt) {
-                    v.set('selected', true);
-                }
-            });
+            if (size) {
+                size = size.replace('px', '');
+                s_options.each(function(v) {
+                    var val = v.get('value').toLowerCase(),
+                        txt = v.get('text');
+                    if (size === txt) {
+                        v.set('selected', true);
+                    }
+                });
+            }
         }
     };
 
@@ -303,8 +338,12 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         extracss: 'body { color: red; }'
     });
     editor.after('nodeChange', function(e) {
-        if (e.changedType !== 'execcommand') {
-            updateButtons(e);
+        //if (e.changedType !== 'execcommand') {
+        switch (e.changedType) {
+            case 'keyup':
+            case 'mouseup':
+                updateButtons(e);
+                break;
         }
         
         if (e.changedType === 'keyup') {
