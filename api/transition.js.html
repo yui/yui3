@@ -159,11 +159,14 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
+    <span class="nx">_initEasing</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">},</span>
+
     <span class="nx">_initAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">from</span> <span class="o">=</span> <span class="p">{},</span>
             <span class="nx">to</span> <span class="o">=</span>  <span class="p">{},</span>
-            <span class="nx">easing</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">_easing</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">_easing</span><span class="p">]</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_easing</span><span class="p">,</span>
+            <span class="nx">easing</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_easing</span><span class="p">,</span>
             <span class="nx">attr</span> <span class="o">=</span> <span class="p">{},</span>
             <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
             <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
@@ -180,8 +183,6 @@
                     <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">duration</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;duration&#39;</span> <span class="k">in</span> <span class="nx">val</span><span class="p">)</span> <span class="o">?</span> <span class="nx">val</span><span class="p">.</span><span class="nx">duration</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_duration</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
-                    <span class="nx">easing</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span><span class="p">.</span><span class="nx">easing</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span>
-                            <span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span><span class="p">[</span><span class="nx">val</span><span class="p">.</span><span class="nx">easing</span><span class="p">]</span> <span class="o">:</span> <span class="nx">val</span><span class="p">.</span><span class="nx">easing</span> <span class="o">||</span> <span class="nx">easing</span><span class="p">;</span>
                     <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
                 <span class="p">}</span>
 
@@ -202,6 +203,14 @@
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">begin</span> <span class="o">||</span> <span class="o">!</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;invalid &quot;from&quot; or &quot;to&quot; for &quot;&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;transition&#39;</span><span class="p">);</span>
                     <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">easing</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">easing</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;cubic-bezier&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="nx">easing</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">easings</span><span class="p">[</span><span class="nx">easing</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">Transitions</span><span class="p">[</span><span class="nx">easing</span><span class="p">];</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
 
                 <span class="nx">attr</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -266,14 +275,7 @@
 <span class="cm">     */</span>
     <span class="nx">DEFAULT_UNIT</span><span class="o">:</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
 
-    <span class="nx">DEFAULT_EASING</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// easeBoth</span>
-        <span class="k">if</span> <span class="p">((</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="o">--</span><span class="nx">t</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
-    <span class="p">},</span>
+    <span class="nx">DEFAULT_EASING</span><span class="o">:</span> <span class="s1">&#39;ease-both&#39;</span><span class="p">,</span>
 
     <span class="nx">DEFAULT_DURATION</span><span class="o">:</span> <span class="mf">0.5</span><span class="p">,</span>
 
@@ -307,8 +309,14 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">DEFAULT_SETTER</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">unit</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">from</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">from</span><span class="p">);</span>
+        <span class="nx">to</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">to</span><span class="p">);</span>
+
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">,</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">),</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">to</span><span class="p">)</span> <span class="o">-</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">),</span> <span class="nx">duration</span><span class="p">);</span>
+            <span class="c1">//val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">cubicBezier</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">elapsed</span> <span class="o">/</span> <span class="nx">duration</span><span class="p">);</span>
+
+        <span class="nx">val</span> <span class="o">=</span> <span class="nx">from</span> <span class="o">+</span> <span class="nx">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nx">to</span> <span class="o">-</span> <span class="nx">from</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span> <span class="o">||</span> <span class="nx">att</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">unit</span> <span class="o">=</span> <span class="nx">unit</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
@@ -370,6 +378,37 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Transition</span><span class="p">.</span><span class="nx">_stopTimer</span><span class="p">();</span>
         <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">getBezier</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">points</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>  
+        <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">points</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">){</span>
+            <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">points</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nx">points</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]];</span> <span class="c1">// save input</span>
+        <span class="p">}</span>
+        
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span> <span class="o">-</span> <span class="nx">j</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">t</span><span class="p">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)][</span><span class="mi">0</span><span class="p">];</span>
+                <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">t</span><span class="p">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)][</span><span class="mi">1</span><span class="p">];</span> 
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">[</span> <span class="nx">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nx">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="p">];</span> 
+    <span class="p">},</span>
+
+    <span class="nx">cubicBezier</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">getBezier</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="nx">t</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">easings</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">ease</span><span class="o">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
+        <span class="nx">linear</span><span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;ease-in&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mf">0.42</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;ease-out&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;ease-in-out&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mf">0.42</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
     <span class="p">},</span>
 
     <span class="nx">RE_UNITS</span><span class="o">:</span> <span class="sr">/^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/</span>

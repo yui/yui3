@@ -43,7 +43,7 @@
             testDestructor: function() {
                 var cache = new Y.Cache();
                 cache.destroy();
-                ASSERT.isNull(cache.get("entries"), "Expected null array.");
+                ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
             }
         });
         

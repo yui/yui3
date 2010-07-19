@@ -2945,10 +2945,12 @@ YUI.Env[Y.version].modules = {
     }, 
     "node-flick": {
         "requires": [
-            "transition-native", 
+            "classnamemanager", 
+            "transition", 
             "event-flick", 
             "plugin"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "node-focusmanager": {
         "requires": [

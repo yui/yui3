@@ -216,7 +216,7 @@ proto = {
                             //&3.0.0/build/yui/yui-min.js"; // debug url
                             //Y.log('src) ' + src);
 
-// http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js
+                            // src = 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js';
 
                             match = src.match(srcPattern);
                             b = match && match[1];
@@ -224,6 +224,15 @@ proto = {
                                 // this is to set up the path to the loader.  The file 
                                 // filter for loader should match the yui include.
                                 filter = match[2];
+
+                                if (filter) {
+                                    match = filter.indexOf('js');
+
+                                    if (match) {
+                                        filter = filter.substr(0, match);
+                                    }
+                                }
+
                                 // extract correct path for mixed combo urls
                                 // http://yuilibrary.com/projects/yui3/ticket/2528423
                                 match = src.match(comboPattern);

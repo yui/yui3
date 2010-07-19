@@ -5,7 +5,8 @@
  * @submodule scrollbars-plugin
  */
  
-var _classNames = Y.ScrollView.CLASS_NAMES;
+var _classNames = Y.ScrollView.CLASS_NAMES,
+    NATIVE_TRANSITIONS = Y.TransitionNative.supported;
 
 /**
  * Scrollview plugin that adds scroll indicators to the scrollview
@@ -49,9 +50,9 @@ ScrollbarsPlugin.NS = 'scrollbars';
  */
 ScrollbarsPlugin.SCROLLBAR_TEMPLATE = [
     '<div>',
-    '<b class="' + _classNames.child + ' ' + _classNames.b + '"></b>',
+    '<span class="' + _classNames.child + ' ' + _classNames.top + '"></span>',
     '<span class="' + _classNames.child + ' ' + _classNames.middle + '"></span>',
-    '<b class="' + _classNames.child + ' ' + _classNames.b + '"></b>',
+    '<span class="' + _classNames.child + ' ' + _classNames.bottom + '"></span>',
     '</div>'
 ].join('');
 
@@ -97,6 +98,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @method initializer
      */    
     initializer: function() {
+        this._host = this.get("host");
+        
         this.afterHostMethod('_uiScrollY', this._update);
         this.afterHostMethod('_uiScrollX', this._update);
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
@@ -112,10 +115,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */    
     _hostDimensionsChange: function() {
-        var host = this.get('host'),
-            boundingBox = this.get('host').get('boundingBox'),
+        var host = this._host,
+            boundingBox = host.get('boundingBox'),
+            
             verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
+            
             verticalNodeInDoc = verticalNode.inDoc(),
             horizontalNodeInDoc = horizontalNode.inDoc();
 
@@ -148,18 +153,22 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _update: function(currentPos, duration, easing) {
-        var cb = this.get('host').get('contentBox'),
+        var host = this._host,
+            cb = host.get('contentBox'),
             scrollSize = 0,
             scrollPos = 1,
             transform,
-            height = this.get('host').get('height'),
-            width = this.get('host').get('width'),
-            scrollHeight = cb.get('scrollHeight'),
-            scrollWidth = cb.get('scrollWidth'),
+            transformX,
+            transformY,
+            transition,
+            height = host.get('height'),
+            width = host.get('width'),
+            scrollHeight = host._scrollHeight || cb.get('scrollHeight'),
+            scrollWidth = host._scrollWidth || cb.get('scrollWidth'),
             verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
-            currentX = this.get('host').get('scrollX') * -1,
-            currentY = this.get('host').get('scrollY') * -1,
+            currentX = host.get('scrollX') * -1,
+            currentY = host.get('scrollY') * -1,
             node;
 
         if(!this._showingScrollBars) {
@@ -179,46 +188,80 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 scrollSize = 1;
             }
 
-            transform = 'translate(0, '+scrollPos+'px)';
+            if (NATIVE_TRANSITIONS) {
+                transform = 'translate(0, '+scrollPos+'px)';
+            } else {
+                transformX = 0;
+                transformY = scrollPos;
+            }
 
-            if(scrollPos > (height - scrollSize))
-            {
+            if(scrollPos > (height - scrollSize)) {
                 scrollSize = scrollSize - (scrollPos - (height - scrollSize));
             }
 
-            if(scrollPos < 0)
-            {
-                transform = 'translate3d(0,0,0)';
+            if(scrollPos < 0) {
+                if (NATIVE_TRANSITIONS) {
+                    transform = 'translate(0,0)';
+                } else {
+                    transformX = 0;
+                    transformY = 0;
+                }
+
                 scrollSize = scrollSize + scrollPos;
             }
 
             duration = duration || 0;
 
-            if(this.verticalScrollSize != (scrollSize-8))
-            {
+            if(this.verticalScrollSize != (scrollSize-8)) {
                 this.verticalScrollSize = (scrollSize-8);
 
                 node = verticalNode.get('children').item(1);
+                
+                transition = {
+                    duration : duration/1000                                
+                };
 
-                node.transition({
-                    duration : duration/1000,                                
-                    transform: 'translate(0,0) scaleY('+(scrollSize-8)+')'
-                });
+                if(NATIVE_TRANSITIONS) {
+                    transition.transform = 'translate(0,0) scaleY('+(scrollSize-8)+')';
+                } else {
+                    transition.top = 4;
+                    transition.right = 0;
+                    transition.height = (scrollSize-8);
+                }
+
+                node.transition(transition);
             }
-            
-            verticalNode.transition({
-                transform :  transform,
-                duration : duration/1000
-            });
 
-            verticalNode.get('children').item(2).transition({
-                transform : 'translate(0,'+(scrollSize-10)+'px)',
+            transition = {
                 duration : duration/1000
-            });
+            };
+             
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = transform;
+            } else {
+                transition.right = transformX;
+                transition.top = transformY;
+            }
+
+            verticalNode.transition(transition);
+
+            transition = {
+                duration : duration/1000
+            };
+
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = 'translate(0,'+(scrollSize-10)+'px)'; 
+            } else {
+                transition.right = 0;
+                transition.top = scrollSize-4;
+            }
+
+            verticalNode.get('children').item(2).transition(transition);
 
         }
-        
+
         if(horizontalNode) {
+
             scrollSize = Math.floor(width * (width/scrollWidth));
             scrollPos = Math.floor((currentX/(scrollWidth - width) ) * (width-scrollSize)) * -1;
 
@@ -226,14 +269,27 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 scrollSize = 1;
             }
 
-            transform = 'translate('+scrollPos+'px, 0)';
+            if (NATIVE_TRANSITIONS) {
+                transform = 'translate('+scrollPos+'px, 0)';
+            } else {
+                transformX = scrollPos;
+                transformY = 0;
+            }
 
-            if(scrollPos > (width - scrollSize)) {
+            if(scrollPos > (width - scrollSize))
+            {
                 scrollSize = scrollSize - (scrollPos - (width - scrollSize));
             }
 
-            if(scrollPos < 0) {
-                transform = 'translate(0,0)';
+            if(scrollPos < 0)
+            {
+                if (NATIVE_TRANSITIONS) {
+                    transform = 'translate(0,0)';
+                } else {
+                    transformX = 0;
+                    transformY = 0;
+                }
+
                 scrollSize = scrollSize + scrollPos;
             }
 
@@ -242,22 +298,49 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if(this.horizontalScrollSize != (scrollSize-16)) {
                 this.horizontalScrollSize = (scrollSize-16);
 
-                horizontalNode.get('children').item(1).transition({
-                    transform : 'translate(0,0) scaleX('+this.horizontalScrollSize+')',
-                    duration : duration/1000
-                });
+                node = horizontalNode.get('children').item(1);
+
+                transition = {
+                    duration : duration/1000                                
+                };
+
+                if(NATIVE_TRANSITIONS) {
+                    transition.transform = 'translate(0,0) scaleX('+(scrollSize-16)+')';
+                } else {
+                    transition.bottom = 0;
+                    transition.left = 4;
+                    transition.width = (scrollSize-16);
+                }
+
+                node.transition(transition);
             }
 
-            horizontalNode.transition({
-                transform :  transform,
-                duration : duration+'ms'
-            });
-
-            horizontalNode.get('children').item(2).transition({
-                transform : 'translate('+(scrollSize-12)+'px,0)',
+            transition = {
                 duration : duration/1000
-            });
-        }
+            };
+             
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = transform;
+            } else {
+                transition.bottom = transformY;
+                transition.left = transformX;
+            }
+
+            horizontalNode.transition(transition);
+
+            transition = {
+                duration : duration/1000
+            };
+
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = 'translate('+(scrollSize-12)+'px,0)'; 
+            } else {
+                transition.bottom = 0;
+                transition.left = scrollSize-12;
+            }
+
+            horizontalNode.get('children').item(2).transition(transition);
+        }                
     },
     
     /**
@@ -266,36 +349,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @method show
      * @param animated {Boolean} Whether or not to animate the showing 
      */
-    show: function(animated) {    
-        var verticalNode = this.get('verticalNode'),
-            horizontalNode = this.get('horizontalNode');
-
-        this._showingScrollBars = true;
-        
-        if(this._flashTimer) {
-            this._flashTimer.cancel();
-        }
-
-        if(animated) {
-            if(verticalNode) {
-                verticalNode.transition({
-                    opacity : 0.6
-                });
-            }
-            if(horizontalNode) {
-                horizontalNode.transition({
-                    opacity: 0.6
-                });
-            }
-        }
-
-        if(verticalNode) {
-            verticalNode.addClass(_classNames.showing);
-        }
-
-        if(horizontalNode) {
-            horizontalNode.addClass(_classNames.showing);
-        }
+    show: function(animated) {
+        this._show(true, animated);
     },
 
     /**
@@ -305,35 +360,36 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @param animated {Boolean} Whether or not to animate the hiding
      */
     hide: function(animated) {
-        var verticalNode = this.get('verticalNode'),
-            horizontalNode = this.get('horizontalNode');
+        this._show(false, animated);
+    },
 
-        this._showingScrollBars = false;
+    /**
+     * Hide/Show implementation method
+     * 
+     * @method _show
+     * @param {Object} show
+     * @param {Object} animated
+     */
+    _show : function(show, animated) {
+        var verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode'),
+            transition = {
+                duration : (animated) ? 0.6 : 0,
+                opacity : (show) ? 1 : 0
+            };
+
+        this._showingScrollBars = show;
 
         if(this._flashTimer) {
             this._flashTimer.cancel();
         }
 
-        if(animated) {
-            if(verticalNode) {
-                verticalNode.transition({
-                    opacity: 0.6
-                });
-            }
-
-            if(horizontalNode) {
-                horizontalNode.transition({
-                    opacity: 0.6
-                });
-            }
-        }
-
         if(verticalNode) {
-            verticalNode.removeClass(_classNames.showing);
+            verticalNode.transition(transition);
         }
 
         if(horizontalNode) {
-            horizontalNode.removeClass(_classNames.showing);
+            horizontalNode.transition(transition);
         }
     },
 
@@ -343,12 +399,14 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @method flash
      */
     flash: function() {
-        var shouldFlash = false;
-        if(this.get('host')._scrollsVertical && this.get('host').get('contentBox').get('scrollHeight') > this.get('host').get('height')) {
+        var shouldFlash = false,
+            host = this._host;
+
+        if(host._scrollsVertical && (host._scrollHeight > host.get('height'))) {
             shouldFlash = true;
         }
-        
-        if(this.get('host')._scrollsHorizontal && this.get('host').get('contentBox').get('scrollWidth') > this.get('host').get('width')) {
+
+        if(host._scrollsHorizontal && (host._scrollWidth > this.get('host').get('width'))) {
             shouldFlash = true;
         }
         

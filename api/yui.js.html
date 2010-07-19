@@ -265,7 +265,7 @@
                             <span class="c1">//&amp;3.0.0/build/yui/yui-min.js&quot;; // debug url</span>
                             <span class="c1">//Y.log(&#39;src) &#39; + src);</span>
 
-<span class="c1">// http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&amp;3.1.1/build/oop/oop-min.js&amp;3.1.1/build/event-custom/event-custom-min.js&amp;3.1.1/build/attribute/attribute-min.js</span>
+                            <span class="c1">// src = &#39;http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&amp;3.1.1/build/oop/oop-min.js&amp;3.1.1/build/event-custom/event-custom-min.js&amp;3.1.1/build/attribute/attribute-min.js&#39;;</span>
 
                             <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">srcPattern</span><span class="p">);</span>
                             <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
@@ -273,6 +273,15 @@
                                 <span class="c1">// this is to set up the path to the loader.  The file </span>
                                 <span class="c1">// filter for loader should match the yui include.</span>
                                 <span class="nx">filter</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+
+                                <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">match</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;js&#39;</span><span class="p">);</span>
+
+                                    <span class="k">if</span> <span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+                                        <span class="nx">filter</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">match</span><span class="p">);</span>
+                                    <span class="p">}</span>
+                                <span class="p">}</span>
+
                                 <span class="c1">// extract correct path for mixed combo urls</span>
                                 <span class="c1">// http://yuilibrary.com/projects/yui3/ticket/2528423</span>
                                 <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">comboPattern</span><span class="p">);</span>

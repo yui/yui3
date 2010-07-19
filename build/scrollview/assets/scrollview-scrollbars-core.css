@@ -17,49 +17,48 @@
     left: 0; 
 }
 
-.yui3-scrollview-scrollbar.yui3-scrollview-showing { 
-    opacity: 1; 
-}
-
-.yui3-scrollview-scrollbar .yui3-scrollview-b, 
+.yui3-scrollview-scrollbar .yui3-scrollview-top,
+.yui3-scrollview-scrollbar .yui3-scrollview-bottom, 
 .yui3-scrollview-scrollbar .yui3-scrollview-middle { 
     position: absolute; 
-    right: 1px; 
+    right: 0px; 
     display: block; 
     width: 100%; 
     height: 4px;  
 }
 
-.yui3-scrollview-scrollbar .yui3-scrollview-b:first-child { 
+.yui3-scrollview-scrollbar .yui3-scrollview-top { 
     top: 0; 
 }
 
-.yui3-scrollview-scrollbar .yui3-scrollview-b:last-child { 
+.yui3-scrollview-scrollbar .yui3-scrollview-bottom { 
     bottom: 0; 
 }
 
-.yui3-scrollview-scrollbar .yui3-scrollview-middle { 
+.yui3-scrollview-scrollbar .yui3-scrollview-middle {
+    display: -moz-inline-stack; 
     display: inline-block;
     position: absolute; 
     top: 4px; 
     height: 1px;
 }
 
-.yui3-scrollview-scrollbar.yui3-scrollview-horizontal > .yui3-scrollview-child { 
+.yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-child { 
     display: inline-block; 
-    top: 0; 
+    top: 0;
     left: 0; 
-    bottom: auto; 
+    bottom: auto;
     right: auto;  
 }
 
-.yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-b { 
+.yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-top,
+.yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-bottom { 
     width: 4px; 
     height: 6px; 
 }
 
 .yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-middle { 
-    top: auto; 
+    top: 0;
     left: 4px; 
     width: 1px; 
     height: 6px;
