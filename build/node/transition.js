@@ -119,8 +119,6 @@ Y.extend(Transition, TransitionNative, {
     _initAttrs: function() {
         var from = {},
             to =  {},
-            //easing = (typeof this._easing === 'string') ?
-            //        Y.Easing[this._easing] : this._easing,
             easing = this._easing,
             attr = {},
             customAttr = Transition.behaviors,
@@ -138,8 +136,6 @@ Y.extend(Transition, TransitionNative, {
                     val = val.call(this, node);
                 } else if (typeof val === 'object') {
                     duration = ('duration' in val) ? val.duration * 1000 : this._duration * 1000;
-                    //easing = (typeof val.easing === 'string') ?
-                    //        Y.Easing[val.easing] : val.easing || easing;
                     val = val.value;
                 }
 
@@ -165,7 +161,7 @@ Y.extend(Transition, TransitionNative, {
                     if (easing.indexOf('cubic-bezier') > -1) {
                         easing = easing.substring(13, easing.length - 1).split(',');
                     } else if (Transition.easings[easing]) {
-                        easing = Transitions[easing];
+                        easing = Transition.easings[easing];
                     }
                 }
 
@@ -230,17 +226,6 @@ Y.extend(Transition, TransitionNative, {
      * @static
      */
     DEFAULT_UNIT: 'px',
-
-/*
-    DEFAULT_EASING: function (t, b, c, d) {
-        // easeBoth
-        if ((t/=d/2) < 1) {
-            return c/2*t*t + b;
-        }
-        
-        return -c/2 * ((--t)*(t-2) - 1) + b;
-    },
-*/
 
     DEFAULT_EASING: 'ease-both',
 
@@ -395,4 +380,4 @@ Y.Node.prototype.transition = function(config) {
 };
 
 
-}, '@VERSION@' ,{requires:['transition-native', 'node-style', 'anim-easing']});
+}, '@VERSION@' ,{requires:['transition-native', 'node-style']});

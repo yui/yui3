@@ -160,7 +160,7 @@ Y.extend(Transition, TransitionNative, {
                     if (easing.indexOf('cubic-bezier') > -1) {
                         easing = easing.substring(13, easing.length - 1).split(',');
                     } else if (Transition.easings[easing]) {
-                        easing = Transitions[easing];
+                        easing = Transition.easings[easing];
                     }
                 }
 
