@@ -228,7 +228,7 @@ Y.extend(Transition, TransitionNative, {
      */
     DEFAULT_UNIT: 'px',
 
-    DEFAULT_EASING: 'ease-both',
+    DEFAULT_EASING: 'ease-in-out',
 
     DEFAULT_DURATION: 0.5,
 
