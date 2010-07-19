@@ -161,10 +161,14 @@
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
          *        cannot be modified by invoking the set method.</dd>
          *
-         *    <dt>writeOnce &#60;boolean&#62;</dt>
-         *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+         *    <dt>writeOnce &#60;boolean&#62; or &#60;string&#62;</dt>
+         *    <dd>
+         *        Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
          *        can only have their values set once, be it through the default configuration, 
-         *        constructor configuration arguments, or by invoking set.</dd>
+         *        constructor configuration arguments, or by invoking set.
+         *        <p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
+         *        (when used with Base, this means it can only be set during construction)</p>
+         *    </dd>
          *
          *    <dt>setter &#60;Function | String&#62;</dt>
          *    <dd>
@@ -1020,9 +1024,9 @@
                 o = {};
 
                 Y.each(data, function(cfg, cfgProp) {
-                    if (attrName) {
-                        if(attrName in cfg) {
-                            o[cfgProp] = cfg[attrName];
+                    if (name) {
+                        if(name in cfg) {
+                            o[cfgProp] = cfg[name];
                         }
                     } else {
                         Y.each(cfg, function(attrCfg, attr) {
