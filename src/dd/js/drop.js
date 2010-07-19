@@ -299,7 +299,7 @@
             DDM._unregTarget(this);
             if (this.shim && (this.shim !== this.get(NODE))) {
                 this.shim.detachAll();
-                this.shim.get('parentNode').removeChild(this.shim);
+                this.shim.remove();
                 this.shim = null;
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop');
