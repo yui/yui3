@@ -228,7 +228,7 @@ proto = {
                                 if (filter) {
                                     match = filter.indexOf('js');
 
-                                    if (match) {
+                                    if (match > -1) {
                                         filter = filter.substr(0, match);
                                     }
                                 }
