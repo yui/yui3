@@ -381,8 +381,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _uiDimensionsChange: function() {
-        var cb = this.get(CONTENT_BOX),
-            bb = this.get(BOUNDING_BOX),
+        var bb = this.get(BOUNDING_BOX),
 
             height = this.get('height'),
             width = this.get('width'),
@@ -394,6 +393,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._scrollsVertical = true;
             this._maxScrollY = scrollHeight - height;
             this._minScrollY = 0;
+            this._scrollHeight = scrollHeight;
             bb.addClass(getClassName("scroll-v"));
         }
 
@@ -401,6 +401,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._scrollsHorizontal = true;
             this._maxScrollX = scrollWidth - width;
             this._minScrollX = 0;
+            this._scrollWidth = scrollWidth;
             bb.addClass(this.getClassName("scroll-h"));
         }
     },
