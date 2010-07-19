@@ -577,7 +577,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * @static
     */
    NAME: 'scrollview',
-   
+
    /**
     * Static property used to define the default attribute configuration of
     * the Widget.
