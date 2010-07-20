@@ -67,23 +67,17 @@
 <span class="cm"> * @extends Base</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">START</span> <span class="o">=</span> <span class="s1">&#39;transitionstart&#39;</span><span class="p">,</span>
-    <span class="nx">END</span> <span class="o">=</span> <span class="s1">&#39;transitionend&#39;</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">END</span> <span class="o">=</span> <span class="s1">&#39;transitionend&#39;</span><span class="p">,</span>
 
     <span class="nx">TransitionNative</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">TransitionNative</span><span class="p">,</span>
 
-    <span class="nx">NUM</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">;</span>
-
-<span class="kd">var</span> <span class="nx">_running</span> <span class="o">=</span> <span class="p">{},</span>
-    <span class="nx">_timer</span><span class="p">,</span>
-
-<span class="nx">Transition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="nx">Transition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Transition</span><span class="p">,</span> <span class="nx">TransitionNative</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">_start</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
         <span class="nx">Transition</span><span class="p">.</span><span class="nx">_startTimer</span><span class="p">();</span>
     <span class="p">},</span>
@@ -94,16 +88,14 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_runAttrs</span><span class="p">(</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">duration</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">delete</span> <span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)];</span>
+        <span class="k">delete</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_startTime</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="nx">_runFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">_startTime</span><span class="p">,</span>
-            <span class="nx">done</span> <span class="o">=</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&gt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_totalDuration</span><span class="p">),</span>
-            <span class="nx">attribute</span><span class="p">,</span>
-            <span class="nx">setter</span><span class="p">;</span>
+            <span class="nx">done</span> <span class="o">=</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&gt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_totalDuration</span><span class="p">);</span>
             
         <span class="k">this</span><span class="p">.</span><span class="nx">_runAttrs</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
 
@@ -115,7 +107,6 @@
     <span class="nx">_runAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_runtimeAttr</span><span class="p">,</span>
             <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
-            <span class="nx">easing</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
             <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">attribute</span><span class="p">,</span>
@@ -159,10 +150,6 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
-    <span class="nx">_initEasing</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="p">},</span>
-
     <span class="nx">_initAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">from</span> <span class="o">=</span> <span class="p">{},</span>
             <span class="nx">to</span> <span class="o">=</span>  <span class="p">{},</span>
@@ -171,6 +158,8 @@
             <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
             <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
             <span class="nx">duration</span><span class="p">,</span>
+            <span class="nx">val</span><span class="p">,</span>
+            <span class="nx">name</span><span class="p">,</span>
             <span class="nx">unit</span><span class="p">,</span> <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_totalDuration</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -180,7 +169,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="sr">/^(?:node|duration|iterations|easing)$/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">duration</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_duration</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">duration</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;duration&#39;</span> <span class="k">in</span> <span class="nx">val</span><span class="p">)</span> <span class="o">?</span> <span class="nx">val</span><span class="p">.</span><span class="nx">duration</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_duration</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
                     <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
@@ -313,7 +302,6 @@
         <span class="nx">to</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">to</span><span class="p">);</span>
 
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="c1">//val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">cubicBezier</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">elapsed</span> <span class="o">/</span> <span class="nx">duration</span><span class="p">);</span>
 
         <span class="nx">val</span> <span class="o">=</span> <span class="nx">from</span> <span class="o">+</span> <span class="nx">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nx">to</span> <span class="o">-</span> <span class="nx">from</span><span class="p">);</span>
@@ -350,14 +338,14 @@
     <span class="p">},</span>
 
     <span class="nx">_startTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_timer</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">_timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_runFrame</span><span class="p">,</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_intervalTime</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_runFrame</span><span class="p">,</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">intervalTime</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="nx">_stopTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">_timer</span><span class="p">);</span>
-        <span class="nx">_timer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span><span class="p">);</span>
+        <span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -367,11 +355,12 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>    
     <span class="nx">_runFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">anim</span> <span class="k">in</span> <span class="nx">_running</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">_running</span><span class="p">[</span><span class="nx">anim</span><span class="p">].</span><span class="nx">_runFrame</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">anim</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">anim</span> <span class="k">in</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">anim</span><span class="p">].</span><span class="nx">_runFrame</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                <span class="nx">_running</span><span class="p">[</span><span class="nx">anim</span><span class="p">].</span><span class="nx">_runFrame</span><span class="p">();</span>
+                <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">anim</span><span class="p">].</span><span class="nx">_runFrame</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -399,7 +388,7 @@
     <span class="p">},</span>
 
     <span class="nx">cubicBezier</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">getBezier</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="nx">t</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">getBezier</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="nx">t</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
     <span class="p">},</span>
 
@@ -410,6 +399,9 @@
         <span class="s1">&#39;ease-out&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
         <span class="s1">&#39;ease-in-out&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mf">0.42</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
     <span class="p">},</span>
+
+    <span class="nx">_running</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="nx">_timer</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
     <span class="nx">RE_UNITS</span><span class="o">:</span> <span class="sr">/^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/</span>
 <span class="p">},</span> <span class="kc">true</span><span class="p">);</span> 
