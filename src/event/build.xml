@@ -7,7 +7,6 @@
         <sequential>
             <ant antfile="build-event.xml" target="@{target}"/>
             <ant antfile="build-touch.xml" target="@{target}"/>
-            <ant antfile="build-synthetic.xml" target="@{target}"/>
         </sequential>
     </macrodef>
 

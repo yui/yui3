@@ -1361,7 +1361,7 @@ Y.Loader.prototype = {
     },
 
     _conditions: function() {
-        var provides, cond, m, reqs,
+        var provides, cond, m, reqs, go,
             conditions = this.conditions,
             r = this.required;
 
@@ -1373,12 +1373,20 @@ Y.Loader.prototype = {
                         cond = conditions[trigger];
                         if (cond) {
                             YObject.each(cond, function(test, condmod) {
-                                if (test && test.test && test.test(Y, r)) {
-                                    m = this.getModule(condmod);
-                                    if (m) {
-                                        r[condmod] = true;
-                                        reqs = this.getRequires(m);
-                                        Y.mix(r, YArray.hash(reqs));
+                                if (!((condmod in r) || (condmod in this.loaded))) {
+                                    if (test) {
+                                        go = (test.ua && Y.UA[test.ua]) || 
+                                             (test.test && test.test(Y, r));
+                                    }
+
+                                    if (go) {
+                                        m = this.getModule(condmod);
+                                        if (m) {
+                                            r[condmod] = true;
+                                            reqs = this.getRequires(m);
+                                            Y.mix(r, YArray.hash(reqs));
+                                        }
+
                                     }
                                 }
                             }, this);

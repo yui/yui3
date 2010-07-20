@@ -44,7 +44,7 @@ Y.on('yui:log', function (e) {
 Y.Event.define('test', {
     //allowDups: true,
 
-    publishConfig: { emitFacade: false },
+    //publishConfig: { emitFacade: false },
 
     on: function (node, sub, notifier) {
         Y.log("on " + this.type + ": " + node.get('text'));
@@ -62,7 +62,9 @@ Y.Event.define('test', {
     delegate: function (container, sub, notifier, filter) {
         Y.log("delegate " + this.type);
         sub.delegateHandle = container.delegate('click', function (e) {
-            notifier.fire();//{ currentTarget: e.currentTarget });
+            notifier.fire(e);
+            //notifier.fire();
+            //notifier.fire({ currentTarget: e.currentTarget });
         }, filter);
     },
 
@@ -100,28 +102,40 @@ function notify(e, extra) {
 
 Y.one('#attach').on('click', function (e) {
     switch (mode) {
-        case 1: Y.one('.go').on('test', notify); break;//, obj, 1); break;
-        case 2: Y.all('.go').on('test', notify); break;//, obj, 1); break;
-        case 3: Y.on('test', notify, '.go'); break;//, obj, 1); break;
-        case 4: Y.delegate('test', notify, '#outer', '.go'); break;//, obj, 1); break;
+        case 1: Y.one('.go').on('test', notify); break;
+        //case 1: Y.one('.go').on('test', notify, obj, 1); break;
+        case 2: Y.all('.go').on('test', notify); break;
+        //case 2: Y.all('.go').on('test', notify, obj, 1); break;
+        case 3: Y.on('test', notify, '.go'); break;
+        //case 3: Y.on('test', notify, '.go', obj, 1); break;
+        case 4: Y.delegate('test', notify, '#outer', '.go'); break;
+        //case 4: Y.delegate('test', notify, '#outer', '.go', obj, 1); break;
     }
 });
 
 Y.one('#attach_handle').on('click', function (e) {
     switch(mode) {
-        case 1: handle = Y.one('.go').on('test', notify, obj, 1); break;
-        case 2: handle = Y.all('.go').on('test', notify, obj, 1); break;
-        case 3: handle = Y.on('test', notify, '.go', obj, 1); break;
-        case 4: handle = Y.delegate('test', notify, '#outer', '.go', obj, 1); break;
+        case 1: handle = Y.one('.go').on('test', notify); break;
+        //case 1: handle = Y.one('.go').on('test', notify, obj, 1); break;
+        case 2: handle = Y.all('.go').on('test', notify); break;
+        //case 2: handle = Y.all('.go').on('test', notify, obj, 1); break;
+        case 3: handle = Y.on('test', notify, '.go'); break;
+        //case 3: handle = Y.on('test', notify, '.go', obj, 1); break;
+        case 4: handle = Y.delegate('test', notify, '#outer', '.go'); break;
+        //case 4: handle = Y.delegate('test', notify, '#outer', '.go', obj, 1); break;
     }
 });
 
 Y.one('#attach_cat').on('click', function (e) {
     switch (mode) {
-        case 1: Y.one('.go').on('foo|test', notify, obj, 1); break;
-        case 2: Y.all('.go').on('foo|test', notify, obj, 1); break;
-        case 3: Y.on('foo|test', notify, '.go', obj, 1); break;
-        case 4: Y.delegate('foo|test', notify, '#outer', '.go', obj, 1); break;
+        case 1: Y.one('.go').on('foo|test', notify); break;
+        //case 1: Y.one('.go').on('foo|test', notify, obj, 1); break;
+        case 2: Y.all('.go').on('foo|test', notify); break;
+        //case 2: Y.all('.go').on('foo|test', notify, obj, 1); break;
+        case 3: Y.on('foo|test', notify, '.go'); break;
+        //case 3: Y.on('foo|test', notify, '.go', obj, 1); break;
+        case 4: Y.delegate('foo|test', notify, '#outer', '.go'); break;
+        //case 4: Y.delegate('foo|test', notify, '#outer', '.go', obj, 1); break;
     }
 });
 
