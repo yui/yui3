@@ -77,8 +77,7 @@ Y.extend(Transition, TransitionNative, {
                 done = (t >= d);
 
                 if (d === 0) { // set instantly
-                    d = 1; // avoid dividing by zero in easings
-                    t = 1;
+                    d = t = 1; // avoid dividing by zero in easings
                 } else if (t > d) {
                     t = d; 
                 }
@@ -119,11 +118,14 @@ Y.extend(Transition, TransitionNative, {
             val = config[name];
             if (!/^(?:node|duration|iterations|easing)$/.test(name)) {
                 duration = this._duration * 1000;
+                if (val.value) {
+                    duration = (('duration' in val) ? val.duration : this._duration) * 1000;
+                    easing = val.easing || easing;
+                    val = val.value;
+                }
+                
                 if (typeof val === 'function') {
                     val = val.call(this, this._node);
-                } else if (typeof val === 'object') {
-                    duration = ('duration' in val) ? val.duration * 1000 : this._duration * 1000;
-                    val = val.value;
                 }
 
                 begin = (name in customAttr && 'get' in customAttr[name])  ?
@@ -320,27 +322,29 @@ Y.extend(Transition, TransitionNative, {
         }
     },
 
-    getBezier: function(points, t) {  
-        var n = points.length;
-        var tmp = [];
-
-        for (var i = 0; i < n; ++i){
-            tmp[i] = [points[i][0], points[i][1]]; // save input
-        }
-        
-        for (var j = 1; j < n; ++j) {
-            for (i = 0; i < n - j; ++i) {
-                tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
-                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
-            }
-        }
-
-        return [ tmp[0][0], tmp[0][1] ]; 
-    },
-
     cubicBezier: function(p, t) {
-        var val = Transition.getBezier([[0, 0], [p[0], p[2]], [p[1], p[3]], [1, 0]], t);
-        return val;
+        var x0 = 0,
+            y0 = 0,
+            x1 = p[0],
+            y1 = p[1],
+            x2 = p[2],
+            y2 = p[3],
+            x3 = 1,
+            y3 = 0,
+
+            A = x3 - 3 * x2 + 3 * x1 - x0,
+            B = 3 * x2 - 6 * x1 + 3 * x0,
+            C = 3 * x1 - 3 * x0,
+            D = x0,
+            E = y3 - 3 * y2 + 3 * y1 - y0,
+            F = 3 * y2 - 6 * y1 + 3 * y0,
+            G = 3 * y1 - 3 * y0,
+            H = y0,
+
+            x = (((A*t) + B)*t + C)*t + D,
+            y = (((E*t) + F)*t + G)*t + H;
+
+        return [x, y];
     },
 
     easings: {
