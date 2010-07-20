@@ -2,12 +2,16 @@ body {
     font: 13px Helvetica;
 	min-height: 420px;
 }
-header {
+
+.header {
     display: block;
     color: #fff;
     height: 44px;
     position: relative;
     z-index: 2;
+
+    background-color:#6d83a1;
+
     background: -webkit-gradient(
         linear,
         left top,
@@ -18,8 +22,19 @@ header {
         color-stop(0.50, #8094ae),      
         to(#6d83a1)     
     );
+
+    background: -moz-linear-gradient(
+        top,
+        #d8dee6,
+        #b0bccc 1%,
+        #889bb3 49%,      
+        #8094ae 50%,      
+        #6d83a1
+    );
+
 	border-bottom: 1px solid #2d3033;
 }
+
 h1 {
 	color: #fff;
 	padding: 10px 0;

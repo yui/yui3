@@ -105,7 +105,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
         this.doAfter('scrollEnd', this.flash);
     },
-    
+
     /**
      * Set up the DOM nodes for the scrollbars. This method is invoked whenver the
      * host's _uiDimensionsChange fires, giving us the opportunity to remove un-needed
@@ -117,16 +117,19 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     _hostDimensionsChange: function() {
         var host = this._host,
             boundingBox = host.get('boundingBox'),
-            
+
             verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
             
             verticalNodeInDoc = verticalNode.inDoc(),
-            horizontalNodeInDoc = horizontalNode.inDoc();
+            horizontalNodeInDoc = horizontalNode.inDoc(),
+
+            basic = (Y.UA.ie && Y.UA.ie <= 8) ? host.getClassName("scrollbar", "basic") : "";
 
         // Vertical
         if(host._scrollsVertical && !verticalNodeInDoc) {
             boundingBox.append(verticalNode);
+            verticalNode.addClass(basic);
         } else if(!host._scrollsVertical && verticalNodeInDoc) {
             verticalNode.remove();
         }
@@ -134,6 +137,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         // Horizontal
         if(host._scrollsHorizontal && !horizontalNodeInDoc) {
             boundingBox.append(horizontalNode);
+            horizontalNode.addClass(basic);
         } else if(!host._scrollsHorizontal && horizontalNodeInDoc) {
             horizontalNode.remove();
         }

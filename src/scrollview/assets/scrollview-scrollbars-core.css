@@ -36,8 +36,11 @@
 }
 
 .yui3-scrollview-scrollbar .yui3-scrollview-middle {
-    display: -moz-inline-stack; 
-    display: inline-block;
+    /*
+    display:-moz-inline-stack;
+    display:inline-block;
+    *display:inline;
+    */
     position: absolute; 
     top: 4px; 
     height: 1px;

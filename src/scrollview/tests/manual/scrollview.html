@@ -10,11 +10,11 @@
 
         <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
     </head>
-    
+
     <body class="yui-skin-sam">
-        <header>
+        <div class="header">
         	<h1>Y.ScrollView</h1>
-        </header>
+        </div>
         <div id="scrollable" class="yui3-scrollview-loading">
             <ul>
     			<li>
@@ -271,7 +271,7 @@
 
         <script type="text/javascript" charset="utf-8">
 
-            YUI({filter:"raw"}).use('scrollview', function(Y) {
+            YUI({filter:"raw"}).use('node', 'scrollview', function(Y) {
 
                 var scrollView = new Y.ScrollView({
                     contentBox: '#scrollable',
@@ -279,8 +279,6 @@
                 });
 
                 scrollView.render();
-				
-		          Y.later(200, window, scrollTo, [0, 0]);
             });
 
         </script>
