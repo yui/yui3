@@ -299,37 +299,6 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
-    "datatable": {
-        "submodules": {
-            "column": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "columnset": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "datatable-base": {
-                "requires": [
-                    "columnset", 
-                    "rowset", 
-                    "widget"
-                ]
-            }, 
-            "row": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "rowset": {
-                "requires": [
-                    "base"
-                ]
-            }
-        }
-    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
@@ -607,12 +576,6 @@ YUI.Env[Y.version].modules = {
     "event": {
         "expound": "node-base", 
         "plugins": {
-            "event-synthetic": {
-                "requires": [
-                    "node-base", 
-                    "event-custom"
-                ]
-            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -633,27 +596,33 @@ YUI.Env[Y.version].modules = {
             }, 
             "event-focus": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-key": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mouseenter": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
+                ]
+            }, 
+            "event-synthetic": {
+                "requires": [
+                    "node-base", 
+                    "event-custom"
                 ]
             }
         }
@@ -1224,6 +1193,7 @@ YUI.Env[Y.version].modules = {
         }
     }
 };
+
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
