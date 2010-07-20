@@ -33,7 +33,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
 
-    NATIVE_TRANSITIONS = Y.TransitionNative.supported;
+    NATIVE_TRANSITIONS = Y.Transition.useNative;
 
 Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
 
@@ -166,6 +166,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             easing : easing,
             duration : duration/1000
         };
+
+        Y.log("Transition: duration, easing:" + transition.duration, transition.easing, "scrollview");        
 
         if (NATIVE_TRANSITIONS) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';

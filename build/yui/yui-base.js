@@ -150,7 +150,7 @@ proto = {
             mods   = config.modules,
             groups = config.groups;
 
-        config._sig += this.stamp(o);
+        // config._sig += this.stamp(o);
 
         for (name in o) {
             if (o.hasOwnProperty(name)) {
@@ -270,7 +270,7 @@ proto = {
 
         // configuration defaults
         Y.config = Y.config || {
-            _sig:              '',
+            // _sig:              '',
             win:               win,
             doc:               doc,
             debug:             true,

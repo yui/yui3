@@ -34,7 +34,11 @@
         <script>
         YUI({filter:"raw", combine:false}).use("node", "node-flick", function(Y) {
             var node = Y.Node.one("#content");
-            node.plug(Y.Plugin.Flick);            
+            node.plug(Y.Plugin.Flick);
+
+            node._node.onselectstart = function() {
+                return false;
+            };            
         });
         </script>
     </body>
