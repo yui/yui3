@@ -23,6 +23,9 @@ var getClassName = Y.ClassNameManager.getClassName,
     EV_SCROLL_CHANGE = 'scrollChange',
     EV_SCROLL_END = 'scrollEnd',
     EV_SCROLL_FLICK = 'flick',
+
+    FLICK = EV_SCROLL_FLICK,
+
     UI = 'ui',
 
     SCROLL_Y = "scrollY",
@@ -104,20 +107,21 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method bindUI
      */
     bindUI: function() {
+
+        var cb = this.get(CONTENT_BOX),
+            flick = this.get(FLICK); 
+
         this.get(BOUNDING_BOX).on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
-
-        var cb = this.get(CONTENT_BOX); 
-
         cb.on('transitionend', Y.bind(this._transitionEnded, this), false);
-        
+
         // TODO: Fires way to often when using non-native transitions
         if (NATIVE_TRANSITIONS) {
             cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
         }
 
-        cb.on("flick", Y.bind(this._flick, this), {
-            minDistance:0
-        });
+        if (flick) {
+            cb.on("flick", Y.bind(this._flick, this), flick);
+        }
 
         this.after({
             'scrollYChange' : this._afterScrollYChange,
@@ -638,8 +642,21 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          */
         bounce: {
             value: 0.7
+        },
+
+        /**
+         * The minimum distance and/or velocity which define a flick
+         *
+         * @attribute flick
+         * @type Object
+         * @default Object with properties minDistance = 10, minVelocity = 0.
+         */
+        flick: {
+            value: {
+                minDistance: 10,
+                minVelocity: 0
+            }
         }
-        
     },
 
     /**
