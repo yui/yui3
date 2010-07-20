@@ -30,9 +30,6 @@ var START = 'transitionstart',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
     TRANSITION_END = 'webkitTransitionNativeEnd',
 
-
-    _running = {},
-
 TransitionNative = function() {
     this.init.apply(this, arguments);
 };
@@ -62,7 +59,7 @@ TransitionNative.prototype = {
     },
 
     /**
-     * Starts or resumes an animation.
+     * Starts or an animation.
      * @method run
      * @chainable
      */    
@@ -123,7 +120,6 @@ TransitionNative.prototype = {
         transitionText = transitionText.replace(/,$/, ';');
         duration = duration.replace(/,$/, ';');
         easing = easing.replace(/,$/, ';');
-
 
         this._node.on(TRANSITION_END, function(e) {
             var event = e._event;

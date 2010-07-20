@@ -18,23 +18,17 @@
  * @extends Base
  */
 
-var START = 'transitionstart',
-    END = 'transitionend',
+var END = 'transitionend',
 
     TransitionNative = Y.TransitionNative,
 
-    NUM = Number;
-
-var _running = {},
-    _timer,
-
-Transition = function() {
-    this.init.apply(this, arguments);
+    Transition = function() {
+        this.init.apply(this, arguments);
 };
 
 Y.extend(Transition, TransitionNative, {
     _start: function() {
-        _running[Y.stamp(this)] = this;
+        Transition._running[Y.stamp(this)] = this;
         this._startTime = new Date();
         Transition._startTimer();
     },
@@ -45,16 +39,14 @@ Y.extend(Transition, TransitionNative, {
             this._runAttrs(duration, duration);
         }
 
-        delete _running[Y.stamp(this)];
+        delete Transition._running[Y.stamp(this)];
         this._running = false;
         this._startTime = null;
     },
 
     _runFrame: function() {
         var t = new Date() - this._startTime,
-            done = (t >= this._totalDuration),
-            attribute,
-            setter;
+            done = (t >= this._totalDuration);
             
         this._runAttrs(t);
 
@@ -66,7 +58,6 @@ Y.extend(Transition, TransitionNative, {
     _runAttrs: function(time) {
         var attr = this._runtimeAttr,
             customAttr = Transition.behaviors,
-            easing = attr.easing,
             node = this._node,
             done = false,
             attribute,
@@ -110,10 +101,6 @@ Y.extend(Transition, TransitionNative, {
         }
     },
 
-    _initEasing: function(easing) {
-
-    },
-
     _initAttrs: function() {
         var from = {},
             to =  {},
@@ -122,6 +109,8 @@ Y.extend(Transition, TransitionNative, {
             customAttr = Transition.behaviors,
             config = this._config,
             duration,
+            val,
+            name,
             unit, begin, end;
 
         this._totalDuration = 0;
@@ -131,7 +120,7 @@ Y.extend(Transition, TransitionNative, {
             if (!/^(?:node|duration|iterations|easing)$/.test(name)) {
                 duration = this._duration * 1000;
                 if (typeof val === 'function') {
-                    val = val.call(this, node);
+                    val = val.call(this, this._node);
                 } else if (typeof val === 'object') {
                     duration = ('duration' in val) ? val.duration * 1000 : this._duration * 1000;
                     val = val.value;
@@ -264,7 +253,6 @@ Y.extend(Transition, TransitionNative, {
         to = Number(to);
 
         var node = anim._node,
-            //val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
             val = Transition.cubicBezier(fn, elapsed / duration);
 
         val = from + val[0] * (to - from);
@@ -301,14 +289,14 @@ Y.extend(Transition, TransitionNative, {
     },
 
     _startTimer: function() {
-        if (!_timer) {
-            _timer = setInterval(Transition._runFrame, Transition._intervalTime);
+        if (!Transition._timer) {
+            Transition._timer = setInterval(Transition._runFrame, Transition.intervalTime);
         }
     },
 
     _stopTimer: function() {
-        clearInterval(_timer);
-        _timer = 0;
+        clearInterval(Transition._timer);
+        Transition._timer = null;
     },
 
     /**
@@ -318,11 +306,12 @@ Y.extend(Transition, TransitionNative, {
      * @static
      */    
     _runFrame: function() {
-        var done = true;
-        for (var anim in _running) {
-            if (_running[anim]._runFrame) {
+        var done = true,
+            anim;
+        for (anim in Transition._running) {
+            if (Transition._running[anim]._runFrame) {
                 done = false;
-                _running[anim]._runFrame();
+                Transition._running[anim]._runFrame();
             }
         }
 
@@ -350,7 +339,7 @@ Y.extend(Transition, TransitionNative, {
     },
 
     cubicBezier: function(p, t) {
-        var val = Y.Transition.getBezier([[0, 0], [p[0], p[2]], [p[1], p[3]], [1, 0]], t);
+        var val = Transition.getBezier([[0, 0], [p[0], p[2]], [p[1], p[3]], [1, 0]], t);
         return val;
     },
 
@@ -361,6 +350,9 @@ Y.extend(Transition, TransitionNative, {
         'ease-out': [0, 0, 0.58, 1],
         'ease-in-out': [0.42, 0, 0.58, 1]
     },
+
+    _running: {},
+    _timer: null,
 
     RE_UNITS: /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/
 }, true); 
