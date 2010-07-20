@@ -77,9 +77,6 @@
     <span class="nx">TRANSITION_TIMING_FUNCTION</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition-timing-function&#39;</span><span class="p">,</span>
     <span class="nx">TRANSITION_END</span> <span class="o">=</span> <span class="s1">&#39;webkitTransitionNativeEnd&#39;</span><span class="p">,</span>
 
-
-    <span class="nx">_running</span> <span class="o">=</span> <span class="p">{},</span>
-
 <span class="nx">TransitionNative</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
@@ -109,7 +106,7 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Starts or resumes an animation.</span>
+<span class="cm">     * Starts or an animation.</span>
 <span class="cm">     * @method run</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>    
@@ -170,8 +167,6 @@
         <span class="nx">transitionText</span> <span class="o">=</span> <span class="nx">transitionText</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,$/</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">);</span>
         <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,$/</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">);</span>
         <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,$/</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">);</span>
-
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">transitionText</span> <span class="o">+</span> <span class="nx">duration</span> <span class="o">+</span> <span class="nx">easing</span> <span class="o">+</span> <span class="nx">cssText</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">TRANSITION_END</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">event</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">_event</span><span class="p">;</span>
