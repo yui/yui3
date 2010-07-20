@@ -231,7 +231,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                     transition.transform = 'translate(0,0) scaleY('+(scrollSize-8)+')';
                 } else {
                     transition.top = 4;
-                    transition.right = 0;
+                    //transition.right = 0;
                     transition.height = (scrollSize-8);
                 }
 
@@ -245,7 +245,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if (NATIVE_TRANSITIONS) {
                 transition.transform = transform;
             } else {
-                transition.right = transformX;
+                //transition.right = transformX;
                 transition.top = transformY;
             }
 
@@ -258,7 +258,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if (NATIVE_TRANSITIONS) {
                 transition.transform = 'translate(0,'+(scrollSize-10)+'px)'; 
             } else {
-                transition.right = 0;
+                //transition.right = 0;
                 transition.top = scrollSize-4;
             }
 
@@ -313,7 +313,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 if(NATIVE_TRANSITIONS) {
                     transition.transform = 'translate(0,0) scaleX('+(scrollSize-16)+')';
                 } else {
-                    transition.bottom = 0;
+                    //transition.bottom = 0;
                     transition.left = 4;
                     transition.width = (scrollSize-16);
                 }
@@ -328,7 +328,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if (NATIVE_TRANSITIONS) {
                 transition.transform = transform;
             } else {
-                transition.bottom = transformY;
+                //transition.bottom = transformY;
                 transition.left = transformX;
             }
 
@@ -341,7 +341,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if (NATIVE_TRANSITIONS) {
                 transition.transform = 'translate('+(scrollSize-12)+'px,0)'; 
             } else {
-                transition.bottom = 0;
+                //transition.bottom = 0;
                 transition.left = scrollSize-12;
             }
 
