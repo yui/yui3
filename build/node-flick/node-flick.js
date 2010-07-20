@@ -151,6 +151,8 @@ YUI.add('node-flick', function(Y) {
 
             this._v = (velocity * deceleration);
 
+            this._snapToEdge = false;
+
             if (this._scrollX) {
                 x = x - (velocity * step);
             }
@@ -232,7 +234,7 @@ YUI.add('node-flick', function(Y) {
             }
 
             duration = duration || this._snapToEdge ? Flick.SNAP_DURATION : 0;
-            easing = easing || this._snapToEdge ? Flick.SNAP_EASING : null;
+            easing = easing || this._snapToEdge ? Flick.SNAP_EASING : Flick.EASING;
 
             this._x = x;
             this._y = y;
@@ -246,16 +248,17 @@ YUI.add('node-flick', function(Y) {
 
                 transition = {
                     duration : duration / 1000,
-                    easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)'
+                    easing : easing
                 };
 
-            if (Y.TransitionNative.supported) {
+
+            if (Y.Transition.useNative) {
                 transition.transform = 'translate('+ (xn) + 'px,' + (yn) +'px)'; 
             } else {
                 transition.left = xn + 'px';
                 transition.top = yn + 'px';
             }
-            
+
             this._node.transition(transition);
         },
 
@@ -292,6 +295,7 @@ YUI.add('node-flick', function(Y) {
     }, {
         VELOCITY_THRESHOLD : 0.015,
         SNAP_DURATION : 400,
+        EASING : 'cubic-bezier(0, 0.1, 0, 1.0)',
         SNAP_EASING : 'ease-out',
         CLASS_NAMES : {
             box: getClassName(Flick.NS),

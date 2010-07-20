@@ -177,21 +177,28 @@ Y.mix(Transition.prototype, {
         this._runtimeAttr = attr;
     },
 
-
-    // TODO: move to computedStyle? (browsers dont agree on default computed offsets)
     _getOffset: function(attr) {
         var node = this._node,
+            domNode = node._node,
             val = node.getComputedStyle(attr),
-            get = (attr === 'left') ? 'getX': 'getY',
-            set = (attr === 'left') ? 'setX': 'setY';
+            position,
+            offsetParent,
+            parentOffset,
+            offset;
 
         if (val === 'auto') {
-            var position = node.getStyle('position');
-            if (position === 'absolute' || position === 'fixed') {
-                val = node[get]();
-                node[set](val);
-            } else {
-                val = 0;
+            position = node.getStyle('position');
+            if (position === 'static' || position === 'relative') {
+                val = 0;    
+            } else if (domNode.getBoundingClientRect) {
+                offsetParent = domNode.offsetParent;
+                parentOffset = offsetParent.getBoundingClientRect()[attr];
+                offset = domNode.getBoundingClientRect()[attr];
+                if (attr === 'left' || attr === 'top') {
+                    val = offset - parentOffset;
+                } else {
+                    val = parentOffset - domNode.getBoundingClientRect()[attr];
+                }
             }
         }
 
@@ -361,7 +368,7 @@ Y.mix(Y.Transition, {
     RE_UNITS: /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/
 }, true); 
 
-Transition.behaviors.top = Transition.behaviors.left;
+Transition.behaviors.top = Transition.behaviors.bottom = Transition.behaviors.right = Transition.behaviors.left;
 
 Y.Transition = Transition;
 
