@@ -88,9 +88,10 @@ YUI({
             fullpath: 'js/lib2.js',
             condition: {
                 trigger: 'node-base',
-                test: function(Y, req) {
-                    return Y.UA.gecko;
-                }
+                ua: 'gecko'
+                // test: function(Y, req) {
+                //     return Y.UA.gecko;
+                // }
             }
         },
 
