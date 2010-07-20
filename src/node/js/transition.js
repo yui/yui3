@@ -15,19 +15,22 @@
  * @class Transition
  * @for Transition
  * @constructor
- * @extends Base
  */
 
 var END = 'transitionend',
+    Transition = Y.Transition;
 
-    TransitionNative = Y.TransitionNative,
-
-    Transition = function() {
-        this.init.apply(this, arguments);
-};
-
-Y.extend(Transition, TransitionNative, {
+Y.mix(Transition.prototype, {
     _start: function() {
+        if (Transition.useNative) {
+            this._runNative();
+        } else {
+            this._runTimer();
+        }
+    },
+
+    _runTimer: function() {
+        this._initAttrs();
         Transition._running[Y.stamp(this)] = this;
         this._startTime = new Date();
         Transition._startTimer();
@@ -197,10 +200,9 @@ Y.extend(Transition, TransitionNative, {
         this.detachAll();
         this._node = null;
     }
-},
+}, true);
 
-{
-    NAME: 'transition',
+Y.mix(Y.Transition, {
     /**
      * Regex of properties that should use the default unit.
      *
@@ -216,10 +218,6 @@ Y.extend(Transition, TransitionNative, {
      * @static
      */
     DEFAULT_UNIT: 'px',
-
-    DEFAULT_EASING: 'ease-in-out',
-
-    DEFAULT_DURATION: 0.5,
 
     /**
      * Time in milliseconds passed to setInterval for frame processing 
@@ -364,12 +362,3 @@ Y.extend(Transition, TransitionNative, {
 Transition.behaviors.top = Transition.behaviors.left;
 
 Y.Transition = Transition;
-
-Y.Node.prototype.transition = function(config) {
-    var Constructor = (TransitionNative.supported &&
-            TransitionNative.useNative) ? TransitionNative : Transition,
-        anim = new Constructor(this, config);
-
-    anim.run();
-    return this;
-};
