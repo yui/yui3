@@ -224,21 +224,28 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_runtimeAttr</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">;</span>
     <span class="p">},</span>
 
-
-    <span class="c1">// TODO: move to computedStyle? (browsers dont agree on default computed offsets)</span>
     <span class="nx">_getOffset</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">attr</span><span class="p">),</span>
-            <span class="nx">get</span> <span class="o">=</span> <span class="p">(</span><span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;left&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;getX&#39;</span><span class="o">:</span> <span class="s1">&#39;getY&#39;</span><span class="p">,</span>
-            <span class="nx">set</span> <span class="o">=</span> <span class="p">(</span><span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;left&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;setX&#39;</span><span class="o">:</span> <span class="s1">&#39;setY&#39;</span><span class="p">;</span>
+            <span class="nx">position</span><span class="p">,</span>
+            <span class="nx">offsetParent</span><span class="p">,</span>
+            <span class="nx">parentOffset</span><span class="p">,</span>
+            <span class="nx">offset</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">position</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;absolute&#39;</span> <span class="o">||</span> <span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;fixed&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">get</span><span class="p">]();</span>
-                <span class="nx">node</span><span class="p">[</span><span class="nx">set</span><span class="p">](</span><span class="nx">val</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">position</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;static&#39;</span> <span class="o">||</span> <span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;relative&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>    
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">getBoundingClientRect</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">offsetParent</span> <span class="o">=</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">offsetParent</span><span class="p">;</span>
+                <span class="nx">parentOffset</span> <span class="o">=</span> <span class="nx">offsetParent</span><span class="p">.</span><span class="nx">getBoundingClientRect</span><span class="p">()[</span><span class="nx">attr</span><span class="p">];</span>
+                <span class="nx">offset</span> <span class="o">=</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">getBoundingClientRect</span><span class="p">()[</span><span class="nx">attr</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;left&#39;</span> <span class="o">||</span> <span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;top&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">offset</span> <span class="o">-</span> <span class="nx">parentOffset</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">parentOffset</span> <span class="o">-</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">getBoundingClientRect</span><span class="p">()[</span><span class="nx">attr</span><span class="p">];</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -408,7 +415,7 @@
     <span class="nx">RE_UNITS</span><span class="o">:</span> <span class="sr">/^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/</span>
 <span class="p">},</span> <span class="kc">true</span><span class="p">);</span> 
 
-<span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
+<span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">bottom</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">;</span>
 </pre></div>
