@@ -1149,36 +1149,42 @@ Y.Loader.prototype = {
         for (name in info) {
             if (info.hasOwnProperty(name)) {
                 m = info[name];
-
-                // Create skin modules
-                if (m && m.skinnable) {
-                    o = this.skin.overrides;
-                    if (o && o[name]) {
-                        for (i=0; i<o[name].length; i++) {
-                            smod = this._addSkin(o[name][i], name);
+                if (m) {
+                    // Create skin modules
+                    if (m.skinnable) {
+                        o = this.skin.overrides;
+                        if (o && o[name]) {
+                            for (i=0; i<o[name].length; i++) {
+                                smod = this._addSkin(o[name][i], name);
+                                m.requires.push(smod);
+                            }
+                        } else {
+                            smod = this._addSkin(this.skin.defaultSkin, name);
                             m.requires.push(smod);
                         }
-                    } else {
-                        smod = this._addSkin(this.skin.defaultSkin, name);
-                        m.requires.push(smod);
+
                     }
 
-                }
+                    // remove dups
+                    m.requires = YObject.keys(YArray.hash(m.requires));
 
-                // remove dups
-                m.requires = YObject.keys(YArray.hash(m.requires));
+                    // Create lang pack modules
+                    if (m.lang && m.lang.length) {
+                        // Setup root package if the module has lang defined, 
+                        // it needs to provide a root language pack
+                        packName = this.getLangPackName(ROOT_LANG, name);
+                        this._addLangPack(null, m, packName);
+                    }
 
-                // Create lang pack modules
-                if (m && m.lang && m.lang.length) {
-                    // Setup root package if the module has lang defined, 
-                    // it needs to provide a root language pack
-                    packName = this.getLangPackName(ROOT_LANG, name);
-                    this._addLangPack(null, m, packName);
+                    // if (m.conditions) {
+                      //   this.conditions[condition
+                    // }
                 }
             }
         }
 
-        l = Y.merge(this.inserted);
+        //l = Y.merge(this.inserted);
+        l = {};
 
         // available modules
         if (!this.ignoreRegistered) {
@@ -1589,7 +1595,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
         var s, len, i, m, url, fn, msg, attr, group, groupName, j, frag, 
             comboSource, comboSources, mods, combining, urls, comboBase,
-            provided,
+            // provided,
             type          = this.loadType, 
             self          = this,
             handleSuccess = function(o) {
@@ -1601,12 +1607,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
                                 for (i=0; i<len; i++) {
                                     // self.loaded[combining[i]]   = true;
-                                    // self.inserted[combining[i]] = true;
+                                    self.inserted[combining[i]] = true;
 
-                                    provided = this.getProvides(combining[i]);
+                                    // provided = this.getProvides(combining[i]);
 
-                                    Y.mix(self.loaded, provided);
-                                    Y.mix(self.inserted, provided);
+                                    // Y.mix(self.loaded, provided);
+                                    // Y.mix(self.inserted, provided);
                                 }
 
                                 handleSuccess(o);
@@ -1738,12 +1744,12 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             // centralize this in the callback
-            // this.inserted[mname] = true;
+            this.inserted[mname] = true;
             // this.loaded[mname] = true;
 
-            provided = this.getProvides(mname);
-            Y.mix(this.loaded, provided);
-            Y.mix(this.inserted, provided);
+            // provided = this.getProvides(mname);
+            // Y.mix(this.loaded, provided);
+            // Y.mix(this.inserted, provided);
 
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
@@ -1778,7 +1784,7 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
             if (!m) {
                 msg = "Undefined module " + s[i] + " skipped";
                 Y.log(msg, 'warn', 'loader');
-                this.inserted[s[i]] = true;
+                // this.inserted[s[i]] = true;
                 this.skipped[s[i]]  = true;
                 continue;
 
