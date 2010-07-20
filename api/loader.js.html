@@ -1198,36 +1198,42 @@
         <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">m</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-
-                <span class="c1">// Create skin modules</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">skinnable</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">overrides</span><span class="p">;</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
-                        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">][</span><span class="nx">i</span><span class="p">],</span> <span class="nx">name</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Create skin modules</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">skinnable</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">overrides</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
+                            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">][</span><span class="nx">i</span><span class="p">],</span> <span class="nx">name</span><span class="p">);</span>
+                                <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">defaultSkin</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
                             <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">);</span>
                         <span class="p">}</span>
-                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">defaultSkin</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
-                        <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">);</span>
+
                     <span class="p">}</span>
 
-                <span class="p">}</span>
+                    <span class="c1">// remove dups</span>
+                    <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span> <span class="o">=</span> <span class="nx">YObject</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">));</span>
 
-                <span class="c1">// remove dups</span>
-                <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span> <span class="o">=</span> <span class="nx">YObject</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">));</span>
+                    <span class="c1">// Create lang pack modules</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">lang</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Setup root package if the module has lang defined, </span>
+                        <span class="c1">// it needs to provide a root language pack</span>
+                        <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
+                    <span class="p">}</span>
 
-                <span class="c1">// Create lang pack modules</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c1">// Setup root package if the module has lang defined, </span>
-                    <span class="c1">// it needs to provide a root language pack</span>
-                    <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
+                    <span class="c1">// if (m.conditions) {</span>
+                      <span class="c1">//   this.conditions[condition</span>
+                    <span class="c1">// }</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="nx">l</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inserted</span><span class="p">);</span>
+        <span class="c1">//l = Y.merge(this.inserted);</span>
+        <span class="nx">l</span> <span class="o">=</span> <span class="p">{};</span>
 
         <span class="c1">// available modules</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">ignoreRegistered</span><span class="p">)</span> <span class="p">{</span>
@@ -1638,7 +1644,7 @@
 
         <span class="kd">var</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">frag</span><span class="p">,</span> 
             <span class="nx">comboSource</span><span class="p">,</span> <span class="nx">comboSources</span><span class="p">,</span> <span class="nx">mods</span><span class="p">,</span> <span class="nx">combining</span><span class="p">,</span> <span class="nx">urls</span><span class="p">,</span> <span class="nx">comboBase</span><span class="p">,</span>
-            <span class="nx">provided</span><span class="p">,</span>
+            <span class="c1">// provided,</span>
             <span class="nx">type</span>          <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">loadType</span><span class="p">,</span> 
             <span class="nx">self</span>          <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">handleSuccess</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
@@ -1650,12 +1656,12 @@
 
                                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                                     <span class="c1">// self.loaded[combining[i]]   = true;</span>
-                                    <span class="c1">// self.inserted[combining[i]] = true;</span>
+                                    <span class="nx">self</span><span class="p">.</span><span class="nx">inserted</span><span class="p">[</span><span class="nx">combining</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-                                    <span class="nx">provided</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProvides</span><span class="p">(</span><span class="nx">combining</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                                    <span class="c1">// provided = this.getProvides(combining[i]);</span>
 
-                                    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">loaded</span><span class="p">,</span> <span class="nx">provided</span><span class="p">);</span>
-                                    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">inserted</span><span class="p">,</span> <span class="nx">provided</span><span class="p">);</span>
+                                    <span class="c1">// Y.mix(self.loaded, provided);</span>
+                                    <span class="c1">// Y.mix(self.inserted, provided);</span>
                                 <span class="p">}</span>
 
                                 <span class="nx">handleSuccess</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
@@ -1787,12 +1793,12 @@
             <span class="c1">// will pass that module name to this function.  Storing this</span>
             <span class="c1">// data to avoid loading the same module multiple times</span>
             <span class="c1">// centralize this in the callback</span>
-            <span class="c1">// this.inserted[mname] = true;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">inserted</span><span class="p">[</span><span class="nx">mname</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="c1">// this.loaded[mname] = true;</span>
 
-            <span class="nx">provided</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProvides</span><span class="p">(</span><span class="nx">mname</span><span class="p">);</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">,</span> <span class="nx">provided</span><span class="p">);</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inserted</span><span class="p">,</span> <span class="nx">provided</span><span class="p">);</span>
+            <span class="c1">// provided = this.getProvides(mname);</span>
+            <span class="c1">// Y.mix(this.loaded, provided);</span>
+            <span class="c1">// Y.mix(this.inserted, provided);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">onProgress</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">onProgress</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span> <span class="p">{</span>
@@ -1827,7 +1833,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Undefined module &quot;</span> <span class="o">+</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; skipped&quot;</span><span class="p">;</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;loader&#39;</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">inserted</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="c1">// this.inserted[s[i]] = true;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">skipped</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span>  <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="k">continue</span><span class="p">;</span>
 
