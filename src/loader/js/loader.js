@@ -416,6 +416,16 @@ Y.Loader = function(o) {
      */
     self.skin = Y.merge(Y.Env.meta.skin);
 
+
+    /*
+     * Map of conditional modules
+     * @since 3.2.0
+     */
+    self.conditions = {};
+
+    // map of modules with a hash of modules that meet the requirement
+    // self.provides = {};
+
     self.config = o;
     self._config(o);
     
@@ -511,6 +521,7 @@ Y.Loader = function(o) {
     self.skipped = {};
 
     // Y.on('yui:load', self.loadNext, self);
+
 
     /**
      * Cached sorted calculate results
@@ -744,6 +755,11 @@ Y.Loader.prototype = {
      *     <dt>lang:</dt>       <dd>array of BCP 47 language tags of
      *                              languages for which this module has localized resource bundles,
      *                              e.g., ["en-GB","zh-Hans-CN"]</dd>
+     *     <dt>condition:</dt>  <dd>Specifies that the module should be loaded automatically if
+     *                              a condition is met.  This is an object with two fields:
+     *                              [trigger] - the name of a module that can trigger the auto-load
+     *                              [test] - a function that returns true when the module is to be loaded
+     *                          </dd>
      * </dl>
      * @method addModule
      * @param o An object containing the module data
@@ -774,7 +790,8 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname;
+            overrides, skinname,
+            conditions = this.conditions, condmod;
             // , existing = this.moduleInfo[name], newr;
 
         // Adding a module again merges requirements to pick up new
@@ -806,7 +823,6 @@ Y.Loader.prototype = {
                 }
             }
         }
-
 
         if (subs) {
             sup = o.supersedes || []; 
@@ -901,6 +917,15 @@ Y.Loader.prototype = {
 
                 }
             }
+        }
+
+        if (o.condition) {
+            // console.log(this);
+            // console.log(conditions);
+
+            condmod = o.condition.trigger;
+            conditions[condmod] = conditions[condmod] || {};
+            conditions[condmod][name] = o.condition;
         }
 
         // this.dirty = true;
@@ -1056,6 +1081,7 @@ Y.Loader.prototype = {
      */
     getProvides: function(name) {
         var m = this.getModule(name), o, s;
+            // supmap = this.provides;
 
         if (!m) {
             return NOT_FOUND;
@@ -1073,6 +1099,11 @@ Y.Loader.prototype = {
 
             o[name] = true;
             m.provides = o;
+
+            // YObject.each(o, function(v, k) {
+            //     supmap[k] = supmap[k] || {};
+            //     supmap[k][name] = true;
+            // }, this);
         }
 
         return m.provides;
@@ -1102,6 +1133,7 @@ Y.Loader.prototype = {
                 this._config(o);
                 this._setup();
                 this._explode();
+                this._conditions();
                 if (this.allowRollup) {
                     this._rollup();
                 }
@@ -1146,6 +1178,7 @@ Y.Loader.prototype = {
     _setup: function() {
         var info = this.moduleInfo, name, i, j, m, o, l, smod,
             packName;
+
         for (name in info) {
             if (info.hasOwnProperty(name)) {
                 m = info[name];
@@ -1162,7 +1195,6 @@ Y.Loader.prototype = {
                             smod = this._addSkin(this.skin.defaultSkin, name);
                             m.requires.push(smod);
                         }
-
                     }
 
                     // remove dups
@@ -1176,9 +1208,6 @@ Y.Loader.prototype = {
                         this._addLangPack(null, m, packName);
                     }
 
-                    // if (m.conditions) {
-                      //   this.conditions[condition
-                    // }
                 }
             }
         }
@@ -1259,6 +1288,35 @@ Y.Loader.prototype = {
         }, this);
 
         // Y.log('After explode: ' + YObject.keys(r));
+    },
+
+    _conditions: function() {
+        var provides, cond, m, reqs,
+            conditions = this.conditions,
+            r = this.required;
+
+        YObject.each(r, function(moddef, name) {
+            if (!(name in this.loaded)) {
+                provides = this.getProvides(name);
+                YObject.each(provides, function(v, trigger) {
+                    if (!(trigger in this.loaded)) {
+                        cond = conditions[trigger];
+                        if (cond) {
+                            YObject.each(cond, function(test, condmod) {
+                                if (test && test.test && test.test(Y, r)) {
+                                    m = this.getModule(condmod);
+                                    if (m) {
+                                        r[condmod] = true;
+                                        reqs = this.getRequires(m);
+                                        Y.mix(r, YArray.hash(reqs));
+                                    }
+                                }
+                            }, this);
+                        }
+                    }
+                }, this);
+            }
+        }, this);
     },
 
     getModule: function(mname) {

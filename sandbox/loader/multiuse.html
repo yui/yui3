@@ -79,7 +79,34 @@ YUI().use(function(Y) {
 <script type="text/javascript">
 
 // Create the first YUI instance
-YUI().use('node', function (Y) {
+YUI({
+
+    modules: {
+
+        lib2: {
+            requires: ['yui'],
+            fullpath: 'js/lib2.js',
+            condition: {
+                trigger: 'node-base',
+                test: function(Y, req) {
+                    return Y.UA.gecko;
+                }
+            }
+        },
+
+        lib3: {
+            requires: ['yui'],
+            fullpath: 'js/lib3.js',
+            condition: {
+                trigger: 'event-base',
+                test: function(Y, req) {
+                    return Y.UA.gecko;
+                }
+            }
+        }
+    }
+
+}).use('node', function (Y) {
 
     Y.log('1');
     
@@ -131,6 +158,8 @@ YUI().use('event', function (Y) {
 YUI().use("console", function (Y) {
 
     Y.log('univ');
+
+    console.log(Y);
 
     // Configure the Console's logSource to Y.Global to make it universal
     new Y.Console({
