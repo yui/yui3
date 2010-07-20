@@ -6,7 +6,7 @@
  */
  
 var _classNames = Y.ScrollView.CLASS_NAMES,
-    NATIVE_TRANSITIONS = Y.TransitionNative.supported;
+    NATIVE_TRANSITIONS = Y.Transition.useNative;
 
 /**
  * Scrollview plugin that adds scroll indicators to the scrollview
