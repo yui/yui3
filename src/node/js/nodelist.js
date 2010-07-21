@@ -18,7 +18,7 @@ var NodeList = function(nodes) {
     if (typeof nodes === 'string') { // selector query
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType) { // domNode
+    } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
         nodes = [nodes];
     } else if (nodes instanceof Y.Node) {
         nodes = [nodes._node];
