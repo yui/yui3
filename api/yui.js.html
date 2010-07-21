@@ -358,9 +358,9 @@
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="c1">// Y.use(&#39;yui-base&#39;);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;yui-base&#39;</span><span class="p">);</span>
         <span class="c1">// Y.use.apply(Y, core);</span>
-        <span class="c1">// Y._attach(core);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">core</span><span class="p">);</span>
 
         <span class="c1">// Y.log(Y.id + &#39; initialized&#39;, &#39;info&#39;, &#39;yui&#39;);</span>
     <span class="p">},</span>
@@ -540,8 +540,8 @@
         <span class="c1">// console.log(arguments);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// this._attach([&#39;yui-base&#39;]);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">core</span> <span class="o">||</span> <span class="p">[</span><span class="s1">&#39;yui-base&#39;</span><span class="p">,</span> <span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;intl-base&#39;</span><span class="p">,</span> <span class="s1">&#39;loader&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-log&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-later&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-throttle&#39;</span><span class="p">]);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;yui-base&#39;</span><span class="p">]);</span>
+            <span class="c1">// this._attach( this.config.core || [&#39;yui-base&#39;, &#39;get&#39;, &#39;intl-base&#39;, &#39;loader&#39;, &#39;yui-log&#39;, &#39;yui-later&#39;, &#39;yui-throttle&#39;]);</span>
         <span class="p">}</span>
 
         <span class="kd">var</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">loader</span><span class="p">,</span> <span class="nx">handleBoot</span><span class="p">,</span>
