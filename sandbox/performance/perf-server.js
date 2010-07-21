@@ -5,12 +5,13 @@
  * See the README for details.
  */
 
-var fs       = require('fs'),
-    http     = require('http'),
-    mime     = require('./lib/mime'),
-    parseURL = require('url').parse,
-    path     = require('path'),
-    sys      = require('sys'),
+var fs          = require('fs'),
+    http        = require('http'),
+    mime        = require('./lib/mime'),
+    parseURL    = require('url').parse,
+    path        = require('path'),
+    querystring = require('querystring'),
+    sys         = require('sys'),
 
     config = readConfig('conf/config.json'),
     server = require('./lib/router').Server();
@@ -21,9 +22,12 @@ var fs       = require('fs'),
 server.get('/combo/([^/]+)/?', function (root) {
     var expires,
         fullPath,
+        i,
         lastModified,
+        len,
         mimeType,
         mtime,
+        query = this.request.parsedURL.search.substr(1).split('&'),
         relativePath,
         response = '',
         rootPath,
@@ -41,8 +45,10 @@ server.get('/combo/([^/]+)/?', function (root) {
         return;
     }
 
-    for (relativePath in this.query) {
-        if (!this.query.hasOwnProperty(relativePath)) {
+    for (i = 0, len = query.length; i <  len; ++i) {
+        relativePath = querystring.unescape(query[i], true);
+
+        if (!relativePath) {
             continue;
         }
 
@@ -80,9 +86,9 @@ server.get('/combo/([^/]+)/?', function (root) {
     // TODO: Currently, the last file extension is what determines the
     // Content-Type. Need to look into what the real ComboHandler does when
     // multiple file types are requested in a single request.
-    this.response.setHeader('Cache-Control', 'public;max-age=315569260');
     this.response.setHeader('Content-Type', mimeType + ';charset=utf-8');
-    this.response.setHeader('Expires', expires.toUTCString());
+    // this.response.setHeader('Cache-Control', 'public;max-age=315569260');
+    // this.response.setHeader('Expires', expires.toUTCString());
 
     if (lastModified) {
         this.response.setHeader('Last-Modified', lastModified.toUTCString());
