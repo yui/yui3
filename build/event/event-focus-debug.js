@@ -18,36 +18,51 @@ function define(type, proxy) {
         _proxy: function (e, notifier, delegate) {
             var node      = e.target,
                 el        = node._node,
-                thisObj   = (delegate) ? node : e.currentTarget,
                 notifiers = node.getData(nodeDataKey),
+                yuid      = Y.stamp(e.currentTarget),
                 handle;
+
+            notifier.currentTarget = (delegate) ? node : e.currentTarget;
 
             // Maintain a list to handle subscriptions from nested containers
             // div#a>div#b>input #a.on(focus..) #b.on(focus..), use one focus
             // or blur subscription that fires notifiers from #b then #a to
             // emulate bubble sequence.
             if (!notifiers) {
-                notifiers = [];
+                notifiers = {};
                 node.setData(nodeDataKey, notifiers);
 
-                handle = Event._attach([type, this._notify, el, thisObj]);
+                handle = Event._attach([type, this._notify, el]);
                 // remove element level subscription after execution
                 handle.sub.once = true;
             }
 
-            notifiers.push(notifier);
+            if (!notifiers[yuid]) {
+                notifiers[yuid] = [];
+            }
+            notifiers[yuid].push(notifier);
         },
 
         _notify: function (e) {
             var node      = e.currentTarget,
                 notifiers = node.getData(nodeDataKey),
-                i;
+                            // document.get('ownerDocument') returns null
+                doc       = node.get('ownerDocument') || node,
+                target    = node,
+                nots      = [],
+                i, len;
 
-            e.currentTarget = this;
+            // Walk up the parent axis until the origin node, 
+            while (target && target !== doc) {
+                nots.push.apply(nots, notifiers[Y.stamp(target)] || []);
+                target = target.get('parentNode');
+            }
+            nots.push.apply(nots, notifiers[Y.stamp(doc)] || []);
 
-            // reverse order to emulate bubble notification
-            for (i = notifiers.length - 1; i >= 0; --i) {
-                notifiers[i].fire(e);
+            for (i = 0, len = nots.length; i < len; ++i) {
+                e.currentTarget = nots[i].currentTarget;
+
+                nots[i].fire(e);
             }
 
             // leaving the element pristine, as if nothing ever happened...
@@ -63,7 +78,6 @@ function define(type, proxy) {
         },
 
         delegate: function (node, sub, notifier, filter) {
-
             if (isString(filter)) {
                 filter = Y.delegate.compileFilter(filter);
             }
