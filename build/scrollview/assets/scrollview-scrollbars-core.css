@@ -17,9 +17,7 @@
     left: 0; 
 }
 
-.yui3-scrollview-scrollbar .yui3-scrollview-top,
-.yui3-scrollview-scrollbar .yui3-scrollview-bottom, 
-.yui3-scrollview-scrollbar .yui3-scrollview-middle { 
+.yui3-scrollview-scrollbar .yui3-scrollview-child { 
     position: absolute; 
     right: 0px; 
     display: block; 
@@ -36,22 +34,19 @@
 }
 
 .yui3-scrollview-scrollbar .yui3-scrollview-middle {
-    /*
-    display:-moz-inline-stack;
-    display:inline-block;
-    *display:inline;
-    */
     position: absolute; 
     top: 4px; 
     height: 1px;
 }
 
 .yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-child { 
-    display: inline-block; 
+    display:-moz-inline-stack;
+    display:inline-block;
+    *display:inline;
     top: 0;
-    left: 0; 
+    left: 0;
     bottom: auto;
-    right: auto;  
+    right: auto; 
 }
 
 .yui3-scrollview-scrollbar.yui3-scrollview-horizontal .yui3-scrollview-top,
