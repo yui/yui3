@@ -507,38 +507,45 @@ proto = {
             r        = [], 
             ret      = true,
             fetchCSS = config.fetchCSS,
-            process  = function(name) {
+            process  = function(names) {
 
-                // add this module to full list of things to attach
-                r.push(name);
+                // var collection = YArray(names);
+                var collection = names;
 
-                // only attach a module once
-                if (used[name]) {
-                    return;
-                }
+                YArray.each(collection, function(name) {
 
-                var m = mods[name], req, use;
+                    // add this module to full list of things to attach
+                    r.push(name);
 
-                if (m) {
-                    used[name] = true;
-                    req = m.details.requires;
-                    use = m.details.use;
-                } else {
-                    // CSS files don't register themselves, see if it has been loaded
-                    if (!G_ENV._loaded[VERSION][name]) {
-                        missing.push(name);
-                    } else {
-                        used[name] = true; // probably css
+                    // only attach a module once
+                    if (used[name]) {
+                        return;
                     }
-                }
 
-                if (req) { // make sure requirements are attached
-                    YArray.each(YArray(req), process);
-                }
+                    var m = mods[name], req, use;
 
-                if (use) { // make sure we grab the submodule dependencies too
-                    YArray.each(YArray(use), process);
-                }
+                    if (m) {
+                        used[name] = true;
+                        req = m.details.requires;
+                        use = m.details.use;
+                    } else {
+                        // CSS files don't register themselves, see if it has been loaded
+                        if (!G_ENV._loaded[VERSION][name]) {
+                            missing.push(name);
+                        } else {
+                            used[name] = true; // probably css
+                        }
+                    }
+
+
+                    if (req) { // make sure requirements are attached
+                        process(req);
+                    }
+
+                    if (use) { // make sure we grab the submodule dependencies too
+                        process(use);
+                    }
+                });
             },
 
             notify = function(response) {
@@ -567,7 +574,8 @@ proto = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
-                    YArray.each(data, process);
+                    // YArray.each(data, process);
+                    process(data);
                     redo = missing.length;
                     if (redo) {
                         if (missing.sort().join() == origMissing.sort().join()) {
@@ -627,10 +635,9 @@ proto = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             args = Y.Object.keys(mods);
-
         }
 
-        Y.log('before loader requirements: ' + args + ', ' + r, 'info', 'yui');
+        // Y.log('before loader requirements: ' + args + ', ' + r, 'info', 'yui');
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
@@ -644,16 +651,16 @@ proto = {
             args = loader.sorted;
 
             // YUI.Env.loaders[Y.config._sig] = loader;
-
         }
 
-        Y.log('after loader requirements: ' + args + ', ' + r, 'info', 'yui');
+        // Y.log('after loader requirements: ' + args + ', ' + r, 'info', 'yui');
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        YArray.each(args, process);
+        // YArray.each(args, process);
+        process(args);
 
-        Y.log('after process requirements: ' + args + ', ' + r, 'info', 'yui');
+        Y.log('requested, requires: ' + args + ', ' + r, 'info', 'yui');
         // console.log(args);
         len = missing.length;
 
