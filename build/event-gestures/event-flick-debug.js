@@ -1,7 +1,14 @@
 YUI.add('event-flick', function(Y) {
 
-// TODO: Better way to sniff 'n' switch touch support?
-var EVENT = ("ontouchstart" in Y.config.win) ? {
+/**
+ * Adds support for a "flick" event, which is fired at the end of a touch or mouse based flick gesture, and provides 
+ * velocity of the flick, along with distance and time information.
+ *
+ * @module event-gestures
+ * @submodule event-flick
+ */
+
+var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
         end: "touchend"
     } : {
@@ -22,38 +29,52 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
     NODE_TYPE = "nodeType";
 
+/**
+ * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
+ * where the listener is attached. The subscriber can specify a minimum distance or velocity for
+ * which the event is to be fired.  
+ * 
+ * @event flick
+ * @param type {string} "flick"
+ * @param fn {function} The method the event invokes.
+ * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity
+ * of the flick gesture for which the event is to be fired.
+ *  
+ * @return {EventHandle} the detach handle
+ */
+
 Y.Event.define('flick', {
 
-    init: function (node, subscriber, ce) {
+    on: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
-            Y.bind(this._onStart, this),
-            null, // Don't want stuff mixed into the facade
+            this._onStart,
+            this,
             node,
             subscriber, 
             ce);
  
-        node.setData(_FLICK_START_HANDLE, startHandle);
+        subscriber[_FLICK_START_HANDLE] = startHandle;
     },
 
-    destroy: function (node, subscriber, ce) {
+    detach: function (node, subscriber, ce) {
 
-        var startHandle = node.getData(_FLICK_START_HANDLE),
-            endHandle = node.getData(_FLICK_END_HANDLE);
+        var startHandle = subscriber[_FLICK_START_HANDLE],
+            endHandle = subscriber[_FLICK_END_HANDLE];
 
         if (startHandle) {
             startHandle.detach();
-            node.clearData(_FLICK_START_HANDLE);
+            subscriber[_FLICK_START_HANDLE] = null;
         }
 
         if (endHandle) {
             endHandle.detach();
-            node.clearData(_FLICK_END_HANDLE);
+            subscriber[_FLICK_END_HANDLE] = null;
         }
     },
-
+    
     processArgs: function(args) {
-        var params = (args[3]) ? args.splice(3, 1) : {};
+        var params = (args[3]) ? Y.merge(args.splice(3, 1)[0]) : {};
 
         if (!(MIN_VELOCITY in params)) {
             params.minVelocity = this.MIN_VELOCITY;
@@ -72,7 +93,8 @@ Y.Event.define('flick', {
 
         var start = true, // always true for mouse
             endHandle,
-            doc; 
+            doc,
+            origE = e; 
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -80,25 +102,21 @@ Y.Event.define('flick', {
         }
 
         if (start) {
+            origE.preventDefault();
 
-            e.preventDefault();
+            e.flick = {
+                time : new Date().getTime()
+            };
 
-            node.setData(_FLICK_START, {
-                time : new Date().getTime(),
-                pageX: e.pageX, 
-                pageY: e.pageY,
-                clientX: e.clientX, 
-                clientY: e.clientY,
-                _e : e
-            });
+            subscriber[_FLICK_START] = e;
 
-            endHandle = node.getData(_FLICK_END_HANDLE);
+            endHandle = subscriber[_FLICK_END_HANDLE];
 
             if (!endHandle) {
                 doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
-                node.setData(_FLICK_END_HANDLE,endHandle);
+                subscriber[_FLICK_END_HANDLE] = endHandle;
             }
         }
     },
@@ -106,19 +124,18 @@ Y.Event.define('flick', {
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
-            valid = node.getData(_FLICK_START),
-            start = valid,
+            start = subscriber[_FLICK_START],
+            valid = !!start,
             endEvent = e,
-
             startTime,
             time,
             params,
             xyDistance, 
             distance,
             absDistance,
-            velocity, 
+            velocity,
             axis;
-            
+
         if (valid) {
 
             if (e.changedTouches) {
@@ -131,7 +148,9 @@ Y.Event.define('flick', {
 
             if (valid) {
 
-                startTime = start.time;
+                endEvent.preventDefault();
+
+                startTime = start.flick.time;
                 endTime = new Date().getTime();
                 time = endTime - startTime;
 
@@ -146,34 +165,31 @@ Y.Event.define('flick', {
 
                 distance = xyDistance[(axis === 'x') ? 0 : 1];
                 absDistance = Math.abs(distance); 
-                velocity = absDistance/time;
+                velocity = (time !== 0) ? absDistance/time : 0;
 
-                if (isFinite(velocity) && velocity >= params.minVelocity && absDistance >= params.minDistance) {
-                    ce.fire({
-                        distance:distance,
+                if (isFinite(velocity) && (absDistance >= params.minDistance) && (velocity  >= params.minVelocity)) {
+
+                    e.type = "flick";
+                    e.flick = {
                         time:time,
+                        distance: distance,
+                        direction: (absDistance !== 0) ? distance/absDistance : 1,
                         velocity:velocity,
-                        axis:axis,
-                        button: e.button,
-                        start: start,
-                        end : {
-                            time: endTime,
-                            clientX: endEvent.clientX, 
-                            clientY: endEvent.clientY,
-                            pageX: endEvent.pageX,
-                            pageY: endEvent.pageY,
-                            _e : e 
-                        }
-                    });
+                        axis: axis,
+                        start : start
+                    };
+
+                    ce.fire(e);
+
                 }
 
-                node.clearData(_FLICK_START);
+                subscriber[_FLICK_START] = null;
             }
         }
     },
 
     MIN_VELOCITY : 0,
-    MIN_DISTANCE : 10
+    MIN_DISTANCE : 0
 });
 
 

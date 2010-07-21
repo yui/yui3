@@ -28,7 +28,10 @@ if (typeof YUI === 'undefined') {
     /*global YUI_config*/
     var YUI = function() {
 
-        var Y = this, a = arguments, i, l = a.length, proto, prop,
+        var proto, prop, i, 
+            Y            = this, 
+            a            = arguments, 
+            l            = a.length, 
             globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
@@ -102,7 +105,24 @@ if (typeof YUI === 'undefined') {
                             if (hasWin) {
                                 remove(window, 'load', handleLoad);
                             }
-                        };
+                        },
+        getLoader = function(Y, o) {
+            // var loader = YUI.Env.loaders[Y.config._sig];
+            var loader = Y.Env._loader;
+            if (loader) {
+                loader.ignoreRegistered = false;
+                loader.onEnd            = null;
+                loader.attaching        = null;
+                loader.data             = null;
+                loader.required         = [];
+                loader.loadType         = null;
+            } else {
+                loader = new Y.Loader(Y.config);
+                Y.Env._loader = loader;
+            }
+
+            return loader;
+        };
 
 //  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
 //  enable styles that need to key off of JS being enabled.
@@ -120,13 +140,18 @@ if (VERSION.indexOf('@') > -1) {
         
 proto = {
     _config: function(o) {
-        o = o || {};
+
+        o = o || NOOP;
+        
         var attr,
             name, 
             detail,
             config = this.config, 
             mods   = config.modules,
             groups = config.groups;
+
+        // config._sig += this.stamp(o);
+
         for (name in o) {
             if (o.hasOwnProperty(name)) {
                 attr = o[name];
@@ -145,6 +170,8 @@ proto = {
                 } else if (name == 'win') {
                     config[name] = attr.contentWindow || attr;
                     config.doc = config[name].document;
+                } else if (name == '_yuid') {
+                    // preserve the guid
                 } else {
                     config[name] = attr;
                 }
@@ -168,6 +195,7 @@ proto = {
             Y.Env = {
                 mods:         {}, // flat module map
                 versions:     {}, // version module map
+                loaders:      {},
                 base:         BASE,
                 cdn:          BASE + VERSION + '/build/',
                 bootstrapped: false,
@@ -188,12 +216,24 @@ proto = {
                             //src = "http://yui.yahooapis.com/combo?2.8.0r4/b
                             //uild/yuiloader-dom-event/yuiloader-dom-event.js
                             //&3.0.0/build/yui/yui-min.js"; // debug url
+
+                            // src = 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js';
+
                             match = src.match(srcPattern);
                             b = match && match[1];
                             if (b) {
                                 // this is to set up the path to the loader.  The file 
                                 // filter for loader should match the yui include.
                                 filter = match[2];
+
+                                if (filter) {
+                                    match = filter.indexOf('js');
+
+                                    if (match > -1) {
+                                        filter = filter.substr(0, match);
+                                    }
+                                }
+
                                 // extract correct path for mixed combo urls
                                 // http://yuilibrary.com/projects/yui3/ticket/2528423
                                 match = src.match(comboPattern);
@@ -230,6 +270,7 @@ proto = {
 
         // configuration defaults
         Y.config = Y.config || {
+            // _sig:              '',
             win:               win,
             doc:               doc,
             debug:             true,
@@ -532,7 +573,11 @@ proto = {
                 }
 
                 if (redo && data) {
-                    newData = data.concat();
+                    
+                    // newData = data.concat();
+                    newData = r.concat();
+
+                    newData = missing.concat();
                     newData.push(function() {
                         if (Y._attach(data)) {
                             notify(response);
@@ -572,23 +617,31 @@ proto = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             args = Y.Object.keys(mods);
+
         }
+
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (Y.Loader) {
-            loader = new Y.Loader(config);
+            // loader = new Y.Loader(config);
+            loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
             // loader.allowRollup = false;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+
+            // YUI.Env.loaders[Y.config._sig] = loader;
+
         }
+
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
         YArray.each(args, process);
 
+        // console.log(args);
         len = missing.length;
 
         if (len) {
@@ -599,7 +652,8 @@ proto = {
         // dynamic load
         if (boot && len && Y.Loader) {
             Y._loading = true;
-            loader = new Y.Loader(config);
+            // loader = new Y.Loader(config);
+            loader = getLoader(Y);
             loader.onEnd = handleLoader;
             loader.context = Y;
             loader.attaching = args;
@@ -2296,6 +2350,41 @@ Y.UA = function() {
          * @type float
          */
         air: 0,
+        /**
+         * Detects Apple iPad's OS version
+         * @property ipad
+         * @type float
+         * @static
+         */
+        ipad: 0,
+        /**
+         * Detects Apple iPhone's OS version
+         * @property iphone
+         * @type float
+         * @static
+         */
+        iphone: 0,
+        /**
+         * Detects Apples iPod's OS version
+         * @property ipod
+         * @type float
+         * @static
+         */
+        ipod: 0,
+        /**
+         * General truthy check for iPad, iPhone or iPod
+         * @property itouch
+         * @type float
+         * @static
+         */
+        itouch: null,
+        /**
+         * Detects Googles Android OS version
+         * @property android 
+         * @type float
+         * @static
+         */
+        android: 0,
 
         /**
          * Google Caja version number or 0.
@@ -2354,10 +2443,27 @@ Y.UA = function() {
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
                 o.mobile = "Apple"; // iPhone or iPod Touch
+
+                m = ua.match(/OS ([^\s]*)/);
+                if (m && m[1]) {
+                    m = numberify(m[1].replace('_', '.'));
+                }
+                o.ipad = (navigator.platform == 'iPad') ? m : 0;
+                o.ipod = (navigator.platform == 'iPod') ? m : 0;
+                o.iphone = (navigator.platform == 'iPhone') ? m : 0;
+                o.itouch = o.ipad || o.iphone || o.ipod;
             } else {
                 m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
                     o.mobile = m[0]; // Nokia N-series, Android, webOS, ex: NokiaN95
+                }
+                if (/ Android/.test(ua)) {
+                    o.mobile = 'Android';
+                    m = ua.match(/Android ([^\s]*);/);
+                    if (m && m[1]) {
+                        o.android = numberify(m[1]);
+                    }
+
                 }
             }
 
@@ -2635,7 +2741,8 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-        var q = queues[id], msg, w, d, h, n, url, s;
+        var q = queues[id], msg, w, d, h, n, url, s,
+            insertBefore;
 
         if (q.timer) {
             // q.timer.cancel();
@@ -2698,9 +2805,13 @@ Y.Get = function() {
         // add the node to the queue so we can return it to the user supplied callback
         q.nodes.push(n);
 
-        // add it to the head or insert it before 'insertBefore'
-        if (q.insertBefore) {
-            s = _get(q.insertBefore, id);
+        // add it to the head or insert it before 'insertBefore'.  Work around IE
+        // bug if there is a base tag.
+        insertBefore = q.insertBefore || 
+                       d.getElementsByTagName('base')[0];
+
+        if (insertBefore) {
+            s = _get(insertBefore, id);
             if (s) {
                 s.parentNode.insertBefore(n, s);
             }
@@ -2779,10 +2890,6 @@ Y.Get = function() {
 
         q.attributes = q.attributes || {};
         q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
-        // var charset = opts.charset || q.attributes.charset;
-        // if (charset) {
-        //     q.attributes.charset = charset;
-        // }
 
         _next(id);
 
@@ -2863,16 +2970,20 @@ Y.Get = function() {
      * @private
      */
     _purge = function(tId) {
-        var n, l, d, h, s, i, node, attr,
+        var n, l, d, h, s, i, node, attr, insertBefore,
             q = queues[tId];
+            
         if (q) {
             n = q.nodes; 
             l = n.length;
             d = q.win.document;
             h = d.getElementsByTagName("head")[0];
 
-            if (q.insertBefore) {
-                s = _get(q.insertBefore, tId);
+            insertBefore = q.insertBefore || 
+                           d.getElementsByTagName('base')[0];
+
+            if (insertBefore) {
+                s = _get(insertBefore, tId);
                 if (s) {
                     h = s.parentNode;
                 }
@@ -3024,7 +3135,9 @@ Y.Get = function() {
          * loaded.
          * </dd>
          * <dt>insertBefore</dt>
-         * <dd>node or node id that will become the new node's nextSibling</dd>
+         * <dd>node or node id that will become the new node's nextSibling.  If this
+         * is not specified, nodes will be inserted before a base tag should it exist.
+         * Otherwise, the nodes will be appended to the end of the document head.</dd>
          * </dl>
          * <dt>charset</dt>
          * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
@@ -3215,8 +3328,7 @@ YUI.add('yui-log', function(Y) {
  */
 (function() {
 
-var _published,
-    INSTANCE  = Y,
+var INSTANCE  = Y,
     LOGEVENT  = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS    = { debug: 1, 
@@ -3245,8 +3357,9 @@ var _published,
  */
 INSTANCE.log = function(msg, cat, src, silent) {
     var bail, excl, incl, m, f,
-        Y = INSTANCE, 
-        c = Y.config;
+        Y         = INSTANCE, 
+        c         = Y.config,
+        publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
@@ -3272,16 +3385,16 @@ INSTANCE.log = function(msg, cat, src, silent) {
                     opera.postError(m);
                 }
             }
-            if (Y.fire && !silent) {
-                if (!_published) {
-                    Y.publish(LOGEVENT, {
+
+            if (publisher && !silent) {
+
+                if (publisher == Y && (!publisher.getEvent(LOGEVENT))) {
+                    publisher.publish(LOGEVENT, {
                         broadcast: 2
                     });
-
-                    _published = 1;
-
                 }
-                Y.fire(LOGEVENT, {
+
+                publisher.fire(LOGEVENT, {
                     msg: msg, 
                     cat: cat, 
                     src: src

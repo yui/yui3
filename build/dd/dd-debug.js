@@ -161,10 +161,11 @@ YUI.add('dd-ddm-base', function(Y) {
         _setupListeners: function() {
             this._createPG();
             this._active = true;
-            var doc = Y.one(Y.config.doc);
-            doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
-            doc.on('mouseup', Y.bind(this._end, this));
+            //var doc = Y.one(Y.config.doc);
+            //doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            //doc.on('mouseup', Y.bind(this._end, this));
+            //doc.on('move', Y.bind(this._move, this));
+            //doc.on('moveend', Y.bind(this._end, this));
         },
         /**
         * @private
@@ -351,6 +352,7 @@ YUI.add('dd-ddm-base', function(Y) {
 }, '@VERSION@' ,{requires:['node', 'base', 'yui-throttle'], skinnable:false});
 YUI.add('dd-ddm', function(Y) {
 
+    var GESTURE_MOVE = 'gesturemove';
 
     /**
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
@@ -455,14 +457,10 @@ YUI.add('dd-ddm', function(Y) {
             });
             pg.set('id', Y.stamp(pg));
             pg.addClass('yui3-dd-shim');
-            if (bd.get('firstChild')) {
-                bd.insertBefore(pg, bd.get('firstChild'));
-            } else {
-                bd.appendChild(pg);
-            }
+            bd.prepend(pg);
             this._pg = pg;
-            this._pg.on('mouseup', Y.bind(this._end, this));
-            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on(GESTURE_MOVE, Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on(GESTURE_MOVE + 'end', Y.bind(this._end, this));
             
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));
@@ -907,8 +905,9 @@ YUI.add('dd-drag', function(Y) {
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
-        MOUSE_UP = 'mouseup',
-        MOUSE_DOWN = 'mousedown',
+        GESTURE_MOVE = 'gesturemove',
+        MOUSE_UP = GESTURE_MOVE + 'end',
+        MOUSE_DOWN = GESTURE_MOVE + 'start',
         DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
@@ -1626,7 +1625,7 @@ YUI.add('dd-drag', function(Y) {
             this._ev_md = ev;
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                return false;
+                //return false;
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
@@ -1842,9 +1841,16 @@ YUI.add('dd-drag', function(Y) {
             this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
+            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
+                minDistance: this.get('clickPixelThresh'),
+                minTime: this.get('clickTimeThresh')
+            });
             node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));
+            node.on(GESTURE_MOVE, Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
+            //Should not need this, _handleMouseUp calls this..
+            //node.on('moveend', Y.bind(DDM._end, DDM));
+            
         },
         /**
         * @private
@@ -2080,7 +2086,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-base','event-synthetic', 'event-gestures'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
 
 
@@ -2268,8 +2274,8 @@ YUI.add('dd-proxy', function(Y) {
                     left: '-999px'
                 });
 
-                b.insertBefore(p, b.get('firstChild'));
-                p.set('id', Y.stamp(p));
+                b.prepend(p);
+                p.set('id', Y.guid());
                 p.addClass(DDM.CSS_PREFIX + '-proxy');
                 DDM._proxy = p;
             }
@@ -3551,9 +3557,9 @@ YUI.add('dd-drop', function(Y) {
         */
         destructor: function() {
             DDM._unregTarget(this);
-            if (this.shim) {
+            if (this.shim && (this.shim !== this.get(NODE))) {
                 this.shim.detachAll();
-                this.shim.get('parentNode').removeChild(this.shim);
+                this.shim.remove();
                 this.shim = null;
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop');
@@ -3889,6 +3895,12 @@ YUI.add('dd-delegate', function(Y) {
         _shimState: null,
         /**
         * @private
+        * @property _handles
+        * @description Array of event handles to be destroyed
+        */
+        _handles: null,
+        /**
+        * @private
         * @method _onNodeChange
         * @description Listens to the nodeChange event and sets the dragNode on the temp dd instance.
         * @param {Event} e The Event.
@@ -3954,7 +3966,6 @@ YUI.add('dd-delegate', function(Y) {
         _onMouseLeave: function(e) {
             Y.DD.DDM._noShim = this._shimState;
         },
-        _handles: null,
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
@@ -3975,7 +3986,7 @@ YUI.add('dd-delegate', function(Y) {
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
 
             //Attach the delegate to the container
-            this._handles.push(Y.delegate('mousedown', Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
+            this._handles.push(Y.delegate('gesturemovestart', Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
 
             this._handles.push(Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont));
 

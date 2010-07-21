@@ -352,6 +352,9 @@ response is received asynchronously.
                                             <span rel="yui:method" resource="Attribute.html#method__getAttr">                                        
                                             <a class="protected" href="Attribute.html#method__getAttr" property="yui:name" title="_getAttr">_getAttr</a><span class="protected">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrCfg">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrCfg" property="yui:name" title="_getAttrCfg">_getAttrCfg</a><span class="protected">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="Attribute.html#method__getAttrInitVal">                                        
                                             <a class="private" href="Attribute.html#method__getAttrInitVal" property="yui:name" title="_getAttrInitVal">_getAttrInitVal</a><span class="private">,</span>
                                             </span>
@@ -568,6 +571,50 @@ response is received asynchronously.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_ioConfigChange">
+                                    <h4>
+                                        <a name="event_ioConfigChange">ioConfigChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">ioConfigChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'ioConfig' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -636,6 +683,23 @@ response is received asynchronously.
      
                                     <div class="default">
                                         Default Value: Y.io
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_ioConfig">
+                                    <h4><a name="config_ioConfig">ioConfig</a>
+                                        <code>- <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Default IO Config.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: null
                                     </div>        
 
                                     <hr />
@@ -796,6 +860,7 @@ response is received asynchronously.
                         <h4>Events</h4>
                         <ul class="content">        
                                 <li class=""><a href="#event_ioChange" title="ioChange">ioChange</a></li>
+                                <li class=""><a href="#event_ioConfigChange" title="ioConfigChange">ioConfigChange</a></li>
                         </ul>
                     </div>
 
@@ -803,6 +868,7 @@ response is received asynchronously.
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
                                 <li class=""><a href="#config_io" title="io">io</a></li>
+                                <li class=""><a href="#config_ioConfig" title="ioConfig">ioConfig</a></li>
                         </ul>
                     </div>
 
@@ -816,7 +882,7 @@ response is received asynchronously.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "DataSource.Get", "name": "asyncMode", "url": "DataSource.Get.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "asyncModeChange", "url": "DataSource.Get.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCacheExtension", "name": "_beforeDefRequestFn", "url": "DataSourceCacheExtension.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCacheExtension", "name": "_beforeDefResponseFn", "url": "DataSourceCacheExtension.html#method__beforeDefResponseFn", "type": "method"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_defRequestFn", "url": "DataSource.Get.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.IO", "name": "_defRequestFn", "url": "DataSource.IO.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_generateRequest", "url": "DataSource.Get.html#method__generateRequest", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallback", "url": "DataSource.Get.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallbackChange", "url": "DataSource.Get.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "get", "url": "DataSource.Get.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "getChange", "url": "DataSource.Get.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCacheExtension", "name": "initializer", "url": "DataSourceCacheExtension.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.IO", "name": "initializer", "url": "DataSource.IO.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSource.IO", "name": "io", "url": "DataSource.IO.html#config_io", "type": "config"}, {"access": "", "host": "DataSource.IO", "name": "ioChange", "url": "DataSource.IO.html#event_ioChange", "type": "event"}, {"access": "protected", "host": "DataSource.Get", "name": "_last", "url": "DataSource.Get.html#property__last", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCacheExtension", "name": "NAME", "url": "DataSourceCacheExtension.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "NAME", "url": "DataSource.Get.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.IO", "name": "NAME", "url": "DataSource.IO.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCacheExtension", "name": "NS", "url": "DataSourceCacheExtension.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}, {"access": "private", "host": "DataSource.IO", "name": "_queue", "url": "DataSource.IO.html#property__queue", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParam", "url": "DataSource.Get.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParamChange", "url": "DataSource.Get.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataSource.Get", "name": "asyncMode", "url": "DataSource.Get.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "asyncModeChange", "url": "DataSource.Get.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCacheExtension", "name": "_beforeDefRequestFn", "url": "DataSourceCacheExtension.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCacheExtension", "name": "_beforeDefResponseFn", "url": "DataSourceCacheExtension.html#method__beforeDefResponseFn", "type": "method"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_defRequestFn", "url": "DataSource.Get.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.IO", "name": "_defRequestFn", "url": "DataSource.IO.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_generateRequest", "url": "DataSource.Get.html#method__generateRequest", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallback", "url": "DataSource.Get.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallbackChange", "url": "DataSource.Get.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "get", "url": "DataSource.Get.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "getChange", "url": "DataSource.Get.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCacheExtension", "name": "initializer", "url": "DataSourceCacheExtension.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.IO", "name": "initializer", "url": "DataSource.IO.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSource.IO", "name": "io", "url": "DataSource.IO.html#config_io", "type": "config"}, {"access": "", "host": "DataSource.IO", "name": "ioChange", "url": "DataSource.IO.html#event_ioChange", "type": "event"}, {"access": "", "host": "DataSource.IO", "name": "ioConfig", "url": "DataSource.IO.html#config_ioConfig", "type": "config"}, {"access": "", "host": "DataSource.IO", "name": "ioConfigChange", "url": "DataSource.IO.html#event_ioConfigChange", "type": "event"}, {"access": "protected", "host": "DataSource.Get", "name": "_last", "url": "DataSource.Get.html#property__last", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCacheExtension", "name": "NAME", "url": "DataSourceCacheExtension.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "NAME", "url": "DataSource.Get.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.IO", "name": "NAME", "url": "DataSource.IO.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCacheExtension", "name": "NS", "url": "DataSourceCacheExtension.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}, {"access": "private", "host": "DataSource.IO", "name": "_queue", "url": "DataSource.IO.html#property__queue", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParam", "url": "DataSource.Get.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParamChange", "url": "DataSource.Get.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}];
 </script>
 </body>
 </html>

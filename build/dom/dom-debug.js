@@ -832,6 +832,49 @@ hasClass = Y.DOM.hasClass;
 removeClass = Y.DOM.removeClass;
 addClass = Y.DOM.addClass;
 
+Y.mix(Y.DOM, {
+    /**
+     * Sets the width of the element to the given size, regardless
+     * of box model, border, padding, etc.
+     * @method setWidth
+     * @param {HTMLElement} element The DOM element. 
+     * @param {String|Int} size The pixel height to size to
+     */
+
+    setWidth: function(node, size) {
+        Y.DOM._setSize(node, 'width', size);
+    },
+
+    /**
+     * Sets the height of the element to the given size, regardless
+     * of box model, border, padding, etc.
+     * @method setHeight
+     * @param {HTMLElement} element The DOM element. 
+     * @param {String|Int} size The pixel height to size to
+     */
+
+    setHeight: function(node, size) {
+        Y.DOM._setSize(node, 'height', size);
+    },
+
+    _setSize: function(node, prop, val) {
+        val = (val > 0) ? val : 0;
+        var size = 0;
+
+        node.style[prop] = val + 'px';
+        size = (prop === 'height') ? node.offsetHeight : node.offsetWidth;
+
+        if (size > val) {
+            val = val - (size - val);
+
+            if (val < 0) {
+                val = 0;
+            }
+
+            node.style[prop] = val + 'px';
+        }
+    }
+});
 
 
 }, '@VERSION@' ,{requires:['oop']});
@@ -860,9 +903,22 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
     Y_DOM = Y.DOM,
 
+    TRANSFORM = 'transform',
+    VENDOR_TRANSFORM = [
+        'WebkitTransform',
+        'MozTransform',
+        'OTransform'
+    ],
+
     re_color = /color$/i,
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
+
+Y.Array.each(VENDOR_TRANSFORM, function(val) {
+    if (val in DOCUMENT[DOCUMENT_ELEMENT].style) {
+        TRANSFORM = val;
+    }
+});
 
 Y.mix(Y_DOM, {
     DEFAULT_UNIT: 'px',
@@ -997,6 +1053,27 @@ if (Y.UA.webkit) {
     };
 
 }
+
+Y_DOM._multiplyMatrix = function(a, b) {
+    var c = [
+        a[0][0] * b[0][0] + a[0][1] * b[1][0],
+        a[0][0] * a[0][1] + a[0][1] * b[1][1],
+        a[1][0] * b[0][0] + a[1][1] * b[1][0],
+        a[1][0] * b[0][1] + b[1][1] * b[1][1]
+    ];
+
+    return c;
+};
+
+Y_DOM.CUSTOM_STYLES.transform = {
+    set: function(node, val, style) {
+        style[TRANSFORM] = val;
+    },
+
+    get: function(node, style) {
+        return Y_DOM.getComputedStyle(node, TRANSFORM);
+    }
+};
 })(Y);
 (function(Y) {
 var PARSE_INT = parseInt,
@@ -1071,6 +1148,11 @@ Y.Color = {
     }
 };
 })(Y);
+
+
+
+}, '@VERSION@' ,{requires:['dom-base']});
+YUI.add('dom-style-ie', function(Y) {
 
 (function(Y) {
 var HAS_LAYOUT = 'hasLayout',
@@ -1346,52 +1428,9 @@ Y.DOM.IE.COMPUTED = IEComputed;
 Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 })(Y);
-Y.mix(Y.DOM, {
-    /**
-     * Sets the width of the element to the given size, regardless
-     * of box model, border, padding, etc.
-     * @method setWidth
-     * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
-     */
-
-    setWidth: function(node, size) {
-        Y.DOM._setSize(node, 'width', size);
-    },
-
-    /**
-     * Sets the height of the element to the given size, regardless
-     * of box model, border, padding, etc.
-     * @method setHeight
-     * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
-     */
-
-    setHeight: function(node, size) {
-        Y.DOM._setSize(node, 'height', size);
-    },
-
-    _getOffsetProp: function(node, prop) {
-        return 'offset' + prop.charAt(0).toUpperCase() + prop.substr(1);
-    },
-
-    _setSize: function(node, prop, val) {
-        var offset;
-
-        Y.DOM.setStyle(node, prop, val + 'px');
-        offset = node[Y.DOM._getOffsetProp(node, prop)];
-        val = val - (offset - val);
-
-        // TODO: handle size less than border/padding (add class?)
-        if (val < 0) {
-            val = 0; // no negative sizes
-        }
-        Y.DOM.setStyle(node, prop, val + 'px');
-    }
-});
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-style']});
 YUI.add('dom-screen', function(Y) {
 
 (function(Y) {
@@ -1551,8 +1590,11 @@ Y.mix(Y_DOM, {
                             }
 
                         if ((scrollTop || scrollLeft)) {
-                            xy[0] += scrollLeft;
-                            xy[1] += scrollTop;
+                            if (!Y.UA.itouch) {
+                                xy[0] += scrollLeft;
+                                xy[1] += scrollTop;
+                            }
+                            
                         }
                     } else { // default to current offsets
                         xy = Y_DOM._getOffset(node);
@@ -2709,5 +2751,5 @@ YUI.add('selector', function(Y){}, '@VERSION@' ,{use:['selector-native', 'select
 
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-style-ie', 'dom-screen', 'selector']});
 

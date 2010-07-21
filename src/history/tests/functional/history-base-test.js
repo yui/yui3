@@ -26,7 +26,10 @@ Y.Test.Runner.add(new Y.Test.Case({
 
     'Constructor should accept a config object containing an initial state': function () {
         var history = new Y.HistoryBase({initialState: {foo: 'bar'}});
-        Y.Assert.areSame(history.get().foo, 'bar');
+        Y.Assert.areSame('bar', history.get().foo);
+
+        history = new Y.HistoryBase({initialState: 'kittens'});
+        Y.Assert.areSame('kittens', history.get());
     },
 
     "Constructor should ignore an argument that isn't an object hash": function () {

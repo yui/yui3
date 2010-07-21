@@ -161,10 +161,14 @@
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
          *        cannot be modified by invoking the set method.</dd>
          *
-         *    <dt>writeOnce &#60;boolean&#62;</dt>
-         *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+         *    <dt>writeOnce &#60;boolean&#62; or &#60;string&#62;</dt>
+         *    <dd>
+         *        Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
          *        can only have their values set once, be it through the default configuration, 
-         *        constructor configuration arguments, or by invoking set.</dd>
+         *        constructor configuration arguments, or by invoking set.
+         *        <p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
+         *        (when used with Base, this means it can only be set during construction)</p>
+         *    </dd>
          *
          *    <dt>setter &#60;Function | String&#62;</dt>
          *    <dd>
@@ -1000,6 +1004,40 @@
             Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
 
             return val;
+        },
+
+        /**
+         * Returns an object with the configuration properties (and value)
+         * for the given attrubute. If attrName is not provided, returns the
+         * configuration properties for all attributes.
+         *
+         * @method _getAttrCfg
+         * @protected
+         * @param {String} name Optional. The attribute name. If not provided, the method will return the configuration for all attributes.
+         * @return {Object} The configuration properties for the given attribute, or all attributes.
+         */
+        _getAttrCfg : function(name) {
+            var o,
+                data = this._state.data;
+
+            if (data) {
+                o = {};
+
+                Y.each(data, function(cfg, cfgProp) {
+                    if (name) {
+                        if(name in cfg) {
+                            o[cfgProp] = cfg[name];
+                        }
+                    } else {
+                        Y.each(cfg, function(attrCfg, attr) {
+                           o[attr] = o[attr] || {};
+                           o[attr][cfgProp] = attrCfg;
+                        });
+                    }
+                });
+            }
+
+            return o;
         }
     };
 

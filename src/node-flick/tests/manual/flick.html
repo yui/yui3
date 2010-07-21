@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Node Plugin</title>
+        
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <style>
+        	#box {
+        	    border:1px solid black;
+                width:200px;
+                height:400px;
+                background-color:red;
+        	}
+            
+            #content {
+                border:1px solid blue;
+                background-color:#ccc;
+            }
+        </style>
+
+        <script src="../../../../build/yui/yui.js"></script>
+    </head>
+    <body>
+        <div id="box">
+            <div id="content">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ornare bibendum lectus eget consectetur. Suspendisse potenti. Vivamus et nunc leo. Sed egestas mattis risus, id porttitor ipsum rutrum vel. Duis eget lacus orci. Etiam vulputate venenatis fermentum. Sed non faucibus quam. Mauris in facilisis urna. Pellentesque quis diam non tellus dignissim porta. Sed nec arcu magna, at tincidunt nisi. Nullam ut sem id nibh pretium fermentum. Integer cursus arcu felis. Donec sit amet sapien magna, ut vehicula felis. Nulla dignissim mi sed lacus scelerisque scelerisque. Donec tincidunt interdum luctus. Sed iaculis fringilla magna vitae ullamcorper.
+                Quisque a leo diam. In malesuada sem aliquam diam volutpat volutpat. Vivamus pretium imperdiet felis a aliquet. Aliquam sit amet sagittis sapien. Donec a magna turpis, ornare ultrices metus. Quisque gravida sagittis varius. Duis sapien nulla, laoreet sit amet congue nec, vehicula vitae sapien. Cras vitae libero nibh. Nulla vulputate nisi non nunc convallis adipiscing vel ut purus. Etiam convallis mauris ornare lorem commodo quis rhoncus orci venenatis.
+                Fusce mollis rhoncus ligula, at tincidunt dui pellentesque ac. Phasellus commodo dictum accumsan. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut lobortis, ante sit amet vehicula gravida, felis libero consectetur diam, id auctor tellus ipsum et sapien. Morbi sit amet nisi leo, at accumsan elit. Sed eu enim eu urna convallis egestas. Etiam congue congue ipsum eu varius. Vestibulum placerat sem nec nisi interdum et ultricies ante dignissim. Nulla facilisi. Integer molestie, ipsum vitae dictum blandit, diam leo vestibulum libero, nec egestas enim ipsum ut magna. Curabitur commodo vulputate neque, mattis cursus libero auctor et.
+                Nullam eget libero dui. Phasellus mi magna, adipiscing porta consequat in, laoreet in nisl. Morbi vitae felis velit. Aenean bibendum erat at augue dapibus tincidunt. Nulla facilisi. Curabitur at odio diam. Sed metus massa, vulputate eget molestie vitae, ultrices ut mauris. Integer facilisis quam quis neque dictum consequat. Fusce varius consectetur pharetra. Curabitur est quam, pharetra sed hendrerit vitae, viverra eget ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque purus est, rhoncus sed faucibus quis, feugiat vel nulla. Proin enim arcu, vulputate quis aliquam id, elementum vitae odio. Donec quis magna est. Quisque non turpis in urna pharetra malesuada. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec lectus dui, suscipit at sollicitudin id, volutpat id mauris. Vivamus dictum convallis velit in volutpat. Nam interdum ornare mauris, ac facilisis neque pellentesque eu. Sed congue pellentesque felis, vel bibendum tellus sollicitudin luctus.                
+            </div>
+        </div>
+
+        <script>
+        YUI({filter:"raw", combine:false}).use("node", "node-flick", function(Y) {
+            var node = Y.Node.one("#content");
+            node.plug(Y.Plugin.Flick);
+
+            node._node.onselectstart = function() {
+                return false;
+            };            
+        });
+        </script>
+    </body>
+</html>

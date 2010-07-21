@@ -1,0 +1,22 @@
+.yui3-scrollview {
+	position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.yui3-scrollview-content {
+    position:relative;
+}
+
+.yui3-scrollview-loading {
+    display:none;
+}
+
+.yui3-scrollview-scroll-v {
+    overflow-y:hidden;    
+}
+
+.yui3-scrollview-scroll-h {
+    overflow-y:hidden;    
+}

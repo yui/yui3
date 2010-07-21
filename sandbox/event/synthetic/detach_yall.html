@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head></head>
+<body>
+    <button class="x">Button 1</button>
+    <button class="x">Button 2</button>
+
+    <button id="detach">Detach by category</button>
+
+    <script src="../../../build/yui/yui-min.js"></script>
+    <script>
+    YUI({filter:'raw'}).use('node', function (Y) {
+        Y.all('.x').on('foo|click', function (e) {
+            Y.log( e.currentTarget.get('text') );
+        });
+
+        Y.one('#detach').on('click', function () {
+            Y.all('.x').detach('foo|click');
+        });
+    });
+    </script>
+</body>
+</html>

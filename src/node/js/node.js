@@ -52,6 +52,8 @@ var DOT = '.',
 
         this._stateProxy = node; // when augmented with Attribute
 
+        Y.EventTarget.call(this, {emitFacade:true});
+
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
@@ -448,7 +450,8 @@ Y_Node.DEFAULT_GETTER = function(name) {
     return val;
 };
 
-Y.augment(Y_Node, Y.Event.Target);
+// Basic prototype augment - no lazy constructor invocation.
+Y.mix(Y_Node, Y.EventTarget, false, null, 1);
 
 Y.mix(Y_Node.prototype, {
 /**
@@ -457,25 +460,28 @@ Y.mix(Y_Node.prototype, {
  * @return {String} A string representation of the Node instance 
  */
     toString: function() {
-        var str = '',
-            errorMsg = this[UID] + ': not bound to a node',
+        var str = this[UID] + ': not bound to a node',
             node = this._node,
-            id = (node.getAttribute) ? node.getAttribute('id') : node.id; // form.id may be a field name
+            attrs, id, className;
 
         if (node) {
-            str += node[NODE_NAME];
+            attrs = node.attributes;
+            id = (attrs && attrs.id) ? node.getAttribute('id') : null;
+            className = (attrs && attrs.className) ? node.getAttribute('className') : null;
+            str = node[NODE_NAME];
+
             if (id) {
                 str += '#' + id; 
             }
 
-            if (node.className) {
-                str += '.' + node.className.replace(' ', '.'); 
+            if (className) {
+                str += '.' + className.replace(' ', '.'); 
             }
 
             // TODO: add yuid?
             str += ' ' + this[UID];
         }
-        return str || errorMsg;
+        return str;
     },
 
     /**

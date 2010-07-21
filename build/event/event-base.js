@@ -61,7 +61,6 @@ if (!GLOBAL_ENV._ready) {
 }
 
 })();
-
 YUI.add('event-base', function(Y) {
 
 (function() {
@@ -113,7 +112,6 @@ if (GLOBAL_ENV.DOMReady) {
 }
 
 })();
-
 (function() {
 
 /**
@@ -385,6 +383,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.cancelBubble = true;
         }
         wrapper.stopped = 1;
+        this.stopped = 1;
     };
 
     /**
@@ -400,6 +399,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
         wrapper.stopped = 2;
+        this.stopped = 2;
     };
 
     /**
@@ -415,6 +415,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         }
         e.returnValue = returnValue || false;
         wrapper.prevented = 1;
+        this.prevented = 1;
     };
 
     /**
@@ -441,7 +442,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 };
 
 })();
-
 (function() {
 /**
  * DOM event listener abstraction layer
@@ -1339,7 +1339,6 @@ Event._poll();
 
 })();
 
-
 /**
  * DOM event listener abstraction layer
  * @module event
@@ -1388,6 +1387,4 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['event-custom-base']});
-

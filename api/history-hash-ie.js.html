@@ -75,8 +75,12 @@
         <span class="c1">// this is a reasonable tradeoff. The only time the parent frame&#39;s hash</span>
         <span class="c1">// will be returned is if the iframe hasn&#39;t been created yet (i.e.,</span>
         <span class="c1">// before domready).</span>
-        <span class="k">return</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span>
-                <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">,</span>
+            <span class="nx">hash</span>   <span class="o">=</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span>
+                        <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">prefix</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span>
+                    <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getUrl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>

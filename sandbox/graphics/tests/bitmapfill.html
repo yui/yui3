@@ -1,0 +1,68 @@
+<html>
+<head>
+<style>
+/*Supplemental CSS for the YUI distribution*/
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+canvas {
+    border:5px solid red;
+}
+
+#demo, #demo2 {
+    width:800px;
+    height:600px;
+    display: inline-block;
+    zoom:1;
+}
+</style>
+<!-- BEGIN EXAMPLE CODE -->
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
+	<script type="text/javascript" src="../build/graphics/graphics.js"></script>
+		
+		
+<body>
+	<div>
+        
+        <div>
+        <input type="text" name="gradientRotationField" id="gradientRotationField" />
+        <button id="rotationbutton" type="button">Gradient Rotation</button>
+        </div>
+        <div id="appdiv"></div>
+		<div style="float:right" id="output"></div>
+		
+        <script>
+			YUI({}).use('node', 'json', 'event-custom', 'graphics', function (Y)
+			{
+
+                graphics = new Y.Graphic({width:800, height:600});
+                graphics.render(document.getElementById("appdiv"));
+                graphics.setSize(800, 600);
+                var img = new Image();
+                img.src = "checker.gif";
+                if(img.onload)
+                {
+                    img.onload = updateBitmapFill();
+                }
+                else
+                {
+                    updateBitmapFill();
+                }
+                function updateBitmapFill()
+                {
+                    graphics.clear();
+                    graphics.lineStyle(12, "#0000ff", 1);
+                    graphics.beginBitmapFill({bitmap:img, repeat:"repeat"});
+                    graphics.drawEllipse(300, 300, 300, 150);
+                    graphics.drawCircle(160, 160, 150);
+                    graphics.end();
+
+                }
+                Y.on("click", updateBitmapFill, "#rotationbutton");
+       
+            });
+
+		</script>
+	</div>
+</body>
+</html>

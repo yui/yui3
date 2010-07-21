@@ -72,6 +72,11 @@
                                     path: "event/event-min.js"
                                 }
                             }
+
+                        },
+                        yui2_dragdrop: {
+                            path: "dragdrop/dragdrop.js",
+                            requires: ['yui2_yahoo', 'yui2_dom', 'yui2_event']
                         }
                     }
                 }
@@ -92,7 +97,7 @@
                         //     path: "yahoo-dom-event/yahoo-dom-event.js"
                         // },
                         yui2_ydel: {
-                            path: "yuiloader-dom-event/yahooloader-dom-event.js",
+                            path: "yuiloader-dom-event/yuiloader-dom-event.js",
                             submodules: {
                                 yui2_yahoo: {
                                     path: "yahoo/yahoo-min.js"
@@ -109,16 +114,19 @@
                                 yui2_yuiloader: {
                                     path: "yuiloader/yuiloader-min.js"
                                 }
-                            }
+                            },
+                            supersedes: ['yui2_yde']
                         },
                         yui2_anim: {
                             path: "animation/animation.js",
-                            requires: ['yui2_yahoo', 'yui2_dom', 'yui2_event']
+                            requires: ['yui2_yahoo', 'yui2_dom', 'yui2_event'],
+                            optional: ['yui2_get']
                         }
                     }
                 }
-            }
-        }).use('yui2_anim', 'node', 'gallery-yql', 'cssbase', 'event-custom', function(Y) {
+            },
+            loadOptional: true
+        }).use('yui2_anim', 'yui2_dragdrop', 'node', 'gallery-yql', 'yui2-yahoo', 'cssbase', 'event-custom', function(Y) {
         // }).use('gallery-yql', function(Y) {
             Y.log(YAHOO.util.Anim);
         });

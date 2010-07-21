@@ -145,7 +145,10 @@ YUI.add('frame', function(Y) {
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 
-            this._iframe.setStyle('visibility', 'inherit');
+            this._iframe.setStyles({
+                visibility: 'inherit'
+            });
+            inst.one('body').setStyle('display', 'block');
         },
         /**
         * @private
@@ -407,7 +410,14 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function() {
-            this.getInstance().one('win').focus();
+            try {
+                Y.one('win').focus();
+                Y.later(100, this, function() {
+                    this.getInstance().one('win').focus();
+                });
+            } catch (ferr) {
+                Y.log('Frame focus failed', 'warn', 'frame');
+            }
             return this;
         },
         /**
@@ -445,13 +455,18 @@ YUI.add('frame', function(Y) {
     }, {
 
         DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
+        
+        //DEFAULT_CSS: 'html { } body { margin: -15px 0 0 -15px; padding: 7px 0 0 15px; display: block; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
+        //DEFAULT_CSS: 'html { height: 95%; } body { height: 100%; padding: 7px; margin: 0 0 0 -7px; postion: relative; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
+        //DEFAULT_CSS: 'html { margin: 0; padding: 0; border: none; border-size: 0; } body { height: 97%; margin: 0; padding: 0; display: block; background-color: gray; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
         /**
         * @static
         * @property HTML
         * @description The template string used to create the iframe
         * @type String
         */
-        HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="100%"></iframe>',
+        HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
+        //HTML: '<iframe border="0" frameBorder="0" width="100%" height="99%"></iframe>',
         /**
         * @static
         * @property PAGE_HTML
@@ -472,7 +487,8 @@ YUI.add('frame', function(Y) {
         * @description The meta-tag for Content-Type to add to the dynamic document
         * @type String
         */
-        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
+        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME

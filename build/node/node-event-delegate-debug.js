@@ -17,11 +17,11 @@ YUI.add('node-event-delegate', function(Y) {
  */
 Y.Node.prototype.delegate = function(type, fn, selector) {
 
-    var args = Array.prototype.slice.call(arguments, 3),
-        a = [type, fn, Y.Node.getDOMNode(this), selector];
-    a = a.concat(args);
+    var args = Y.Array(arguments, 0, true);
 
-    return Y.delegate.apply(Y, a);
+    args.splice(2, 0, this._node);
+
+    return Y.delegate.apply(Y, args);
 };
 
 

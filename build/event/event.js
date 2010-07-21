@@ -61,7 +61,6 @@ if (!GLOBAL_ENV._ready) {
 }
 
 })();
-
 YUI.add('event-base', function(Y) {
 
 (function() {
@@ -113,7 +112,6 @@ if (GLOBAL_ENV.DOMReady) {
 }
 
 })();
-
 (function() {
 
 /**
@@ -385,6 +383,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.cancelBubble = true;
         }
         wrapper.stopped = 1;
+        this.stopped = 1;
     };
 
     /**
@@ -400,6 +399,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
         wrapper.stopped = 2;
+        this.stopped = 2;
     };
 
     /**
@@ -415,6 +415,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         }
         e.returnValue = returnValue || false;
         wrapper.prevented = 1;
+        this.prevented = 1;
     };
 
     /**
@@ -441,7 +442,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 };
 
 })();
-
 (function() {
 /**
  * DOM event listener abstraction layer
@@ -1339,7 +1339,6 @@ Event._poll();
 
 })();
 
-
 /**
  * DOM event listener abstraction layer
  * @module event
@@ -1388,10 +1387,7 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['event-custom-base']});
-
-
 YUI.add('event-delegate', function(Y) {
 
 /**
@@ -1401,311 +1397,499 @@ YUI.add('event-delegate', function(Y) {
  * @submodule event-delegate
  */
 
-var Event = Y.Event,
-    Lang = Y.Lang,
+var toArray          = Y.Array,
+    YLang            = Y.Lang,
+    isString         = YLang.isString,
+    selectorTest     = Y.Selector.test,
+    detachCategories = Y.Env.evt.handles;
 
-    delegates = {},
-    
-    specialTypes = {
-        mouseenter: "mouseover",
-        mouseleave: "mouseout"
-    },
+function delegate(type, fn, el, filter) {
+    var args     = toArray(arguments, 0, true),
+        query    = isString(el) ? el : null,
+        typeBits = type.split(/\|/),
+        synth, container, categories, cat, handle;
 
-    resolveTextNode = function(n) {
-        try {
-            if (n && 3 == n.nodeType) {
-                return n.parentNode;
-            }
-        } catch(e) { }
-        return n;
-    },
+    if (typeBits.length > 1) {
+        cat  = typeBits.shift();
+        type = typeBits.shift();
+    }
 
-    delegateHandler = function(delegateKey, e, el) {
+    synth = Y.Node.DOM_EVENTS[type];
 
-        var target = resolveTextNode((e.target || e.srcElement)), 
-            tests  = delegates[delegateKey],
-            spec, 
-            ename,
-            matched,
-            fn,
-            ev;
+    if (YLang.isObject(synth) && synth.delegate) {
+        handle = synth.delegate.apply(synth, arguments);
+    }
 
-
-        var getMatch = function(el, selector, container) {
-            
-            var returnVal;
-            
-            if (!el || el === container) {
-                returnVal = false;
-            }
-            else {
-                returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
-            }
-            
-            return returnVal;
-            
-        };
-
-
-        for (spec in tests) {
-
-            if (tests.hasOwnProperty(spec)) {
-
-                ename  = tests[spec];
-                fn  = tests.fn;
-                matched = null;
-
-
-                if (Y.Selector.test(target, spec, el)) {
-                    matched = target;
-                }
-                else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
-                     
-                 //  The target is a descendant of an element matching 
-                 //  the selector, so crawl up to find the ancestor that 
-                 //  matches the selector
-                 
-                 matched = getMatch(target, spec, el);
-                 
-                }
-
-
-                if (matched) {
-
-                    if (!ev) {
-                        ev = new Y.DOMEventFacade(e, el);
-                        ev.container = ev.currentTarget;
-                    }
-
-                    ev.currentTarget = Y.one(matched);
-
-                    Y.publish(ename, {
-                           contextFn: function() {
-                               return ev.currentTarget;
-                           }
-                       });
-
-                    if (fn) {
-                        fn(ev, ename);
-                    }
-                    else {
-                        Y.fire(ename, ev);                              
-                    }
-                    
-                }
-
-            }
+    if (!handle) {
+        if (!type || !fn || !el || !filter) {
+            return;
         }
 
-    },
+        container = (query) ? Y.Selector.query(query, null, true) : el;
 
-    attach = function (type, key, element) {
-
-        var focusMethods = {
-                focus: Event._attachFocus,
-                blur: Event._attachBlur
-            },
-
-            attachFn = focusMethods[type],
-
-            args = [type, 
-            function (e) {
-                delegateHandler(key, (e || Y.config.win.event), element);
-            }, 
-            element];
-
-
-        if (attachFn) {
-            return attachFn(args, { capture: true, facade: false });
+        if (!container && isString(el)) {
+            handle = Y.on('available', function () {
+                Y.mix(handle, Y.delegate.apply(Y, args), true);
+            }, el);
         }
-        else {
-            return Event._attach(args, { facade: false });
+
+        if (!handle && container) {
+            args.splice(2, 2, container); // remove the filter
+
+            if (isString(filter)) {
+                filter = Y.delegate.compileFilter(filter);
+            }
+
+            handle = Y.on.apply(Y, args);
+            handle.sub.getCurrentTarget = filter;
+            handle.sub._notify = Y.delegate.notifySub;
         }
+    }
+
+    if (handle && cat) {
+        categories = detachCategories[cat]  || (detachCategories[cat] = {});
+        categories = categories[type] || (categories[type] = []);
+        categories.push(handle);
+    }
+
+    return handle;
+}
+
+delegate.notifySub = function (thisObj, args, ce) {
+    // Preserve args for other subscribers
+    args = args.slice();
+    if (this.args) {
+        args.push.apply(args, this.args);
+    }
+
+    // Only notify subs if the event occurred on a targeted element
+    var currentTarget = this.getCurrentTarget.apply(this, args),
+        originalEvent = args[0],
+        container     = originalEvent.currentTarget,
+        i, ret, target;
+
+    if (currentTarget) {
+        // Support multiple matches up the the container subtree
+        currentTarget = toArray(currentTarget);
+
+        for (i = currentTarget.length - 1; i >= 0; --i) {
+            target = currentTarget[i];
+
+            // New facade to avoid corrupting facade sent to direct subs
+            args[0] = new Y.DOMEventFacade(originalEvent, target, ce);
+
+            args[0].container = container;
         
-    },
+            thisObj = this.context || target;
 
-    sanitize = Y.cached(function(str) {
-        return str.replace(/[|,:]/g, '~');
-    });
+            ret = this.fn.apply(thisObj, args);
 
+            if (ret === false) { // stop further notifications
+                break;
+            }
+        }
 
+        return ret;
+    }
+};
+
+delegate.compileFilter = Y.cached(function (selector) {
+    return function (e) {
+        var container = e.currentTarget._node,
+            target    = e.target._node,
+            match     = [];
+
+        while (target !== container) {
+            if (selectorTest(target, selector, container)) {
+                match.push(Y.one(target));
+            }
+            target = target.parentNode;
+        }
+
+        if (match.length <= 1) {
+            match = match[0]; // single match or undefined
+        }
+
+        return match;
+    };
+});
 
 /**
  * Sets up event delegation on a container element.  The delegated event
- * will use a supplied selector to test if the target or one of the
- * descendants of the target match it.  The supplied callback function 
- * will only be executed if a match was encountered, and, in fact, 
- * will be executed for each element that matches if you supply an 
- * ambiguous selector.
+ * will use a supplied filter to test if the callback should be executed.
+ * This filter can be either a selector string or a function that returns
+ * a Node to use as the currentTarget for the event.
  *
  * The event object for the delegated event is supplied to the callback
  * function.  It is modified slightly in order to support all properties
  * that may be needed for event delegation.  'currentTarget' is set to
- * the element that matched the delegation specifcation.  'container' is
- * set to the element that the listener is bound to (this normally would
- * be the 'currentTarget').
+ * the element that matched the selector string filter or the Node returned
+ * from the filter function.  'container' is set to the element that the
+ * listener is delegated from (this normally would be the 'currentTarget').
+ *
+ * Filter functions will be called with the arguments that would be passed to
+ * the callback function, including the event object as the first parameter.
+ * The function should return false (or a falsey value) if the success criteria
+ * aren't met, and the Node to use as the event's currentTarget and 'this'
+ * object if they are.
  *
  * @method delegate
  * @param type {string} the event type to delegate
  * @param fn {function} the callback function to execute.  This function
  * will be provided the event object for the delegated event.
  * @param el {string|node} the element that is the delegation container
- * @param spec {string} a selector that must match the target of the
- * event.
+ * @param filter {string|function} a selector that must match the target of the
+ * event or a function that returns a Node or false.
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  * These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
  * @for YUI
  */
-Event.delegate = function (type, fn, el, spec) {
-
-    if (!spec) {
-        return false;
-    }
-
-
-    var args = Y.Array(arguments, 0, true),     
-        element = el,   // HTML element serving as the delegation container
-        availHandle;    
-
-
-    if (Lang.isString(el)) {
-        
-        //  Y.Selector.query returns an array of matches unless specified 
-        //  to return just the first match.  Since the primary use case for
-        //  event delegation is to use a single event handler on a container,
-        //  Y.delegate doesn't currently support being able to bind a 
-        //  single listener to multiple containers.
-        
-        element = Y.Selector.query(el, null, true);
-        
-        if (!element) { // Not found, check using onAvailable
-
-            availHandle = Event.onAvailable(el, function() {
-
-                availHandle.handle = Event.delegate.apply(Event, args);
-
-            }, Event, true, false);
-
-            return availHandle;
-            
-        }
-        
-    }
-
-
-    element = Y.Node.getDOMNode(element);
-
-
-    var guid = Y.stamp(element),
-            
-        // The Custom Event for the delegation spec
-        ename = 'delegate:' + guid + type + sanitize(spec),
-
-        // The key to the listener for the event type and container
-        delegateKey = type + guid,
-
-        delegate = delegates[delegateKey],
-
-        domEventHandle,
-        
-        ceHandle,
-        
-        listeners;
-    
-
-    if (!delegate) {
-
-        delegate = {};
-
-        if (specialTypes[type]) {
-            
-            if (!Event._fireMouseEnter) {
-                return false;               
-            }
-            
-            type = specialTypes[type];
-            delegate.fn = Event._fireMouseEnter;
-            
-        }
-
-        //  Create the DOM Event wrapper that will fire the Custom Event
-
-        domEventHandle = attach(type, delegateKey, element);
-
-
-        //  Hook into the _delete method for the Custom Event wrapper of this
-        //  DOM Event in order to clean up the 'delegates' map and unsubscribe
-        //  the associated Custom Event listeners fired by this DOM event
-        //  listener if/when the user calls "purgeElement" OR removes all 
-        //  listeners of the Custom Event.
-        
-        Y.after(function (sub) {
-
-            if (domEventHandle.sub == sub) {
-
-                //  Delete this event from the map of known delegates
-                delete delegates[delegateKey];
-
-
-                //  Unsubscribe all listeners of the Custom Event fired 
-                //  by this DOM event.
-                Y.detachAll(ename);
-                
-            }
-
-        }, domEventHandle.evt, "_delete");
-            
-        delegate.handle = domEventHandle;
-
-        delegates[delegateKey] = delegate;
-
-    }
-
-
-    listeners = delegate.listeners;
-
-    delegate.listeners = listeners ? (listeners + 1) : 1;
-    delegate[spec] = ename;
-
-
-    args[0] = ename;
-
-    // Remove element, delegation spec
-    args.splice(2, 2);
-        
-
-    // Subscribe to the Custom Event for the delegation spec
-
-    ceHandle = Y.on.apply(Y, args);
-
-
-    //  Hook into the detach method of the handle in order to clean up the 
-    //  'delegates' map and remove the associated DOM event handler 
-    //  responsible for firing this Custom Event if all listener for this 
-    //  event have been removed.
-
-    Y.after(function () {
-            
-        delegate.listeners = (delegate.listeners - 1);
-        
-        if (delegate.listeners === 0) {
-            delegate.handle.detach();
-        }
-
-    }, ceHandle, "detach");
-
-    return ceHandle;
-    
-};
-
-Y.delegate = Event.delegate;
-
+Y.delegate = Y.Event.delegate = delegate;
 
 
 }, '@VERSION@' ,{requires:['node-base']});
+YUI.add('event-synthetic', function(Y) {
 
+var DOMMap   = Y.Env.evt.dom_map,
+    toArray  = Y.Array,
+    YLang    = Y.Lang,
+    isObject = YLang.isObject,
+    isString = YLang.isString,
+    query    = Y.Selector.query,
+    noop     = function () {};
+
+function Notifier(handle, emitFacade, delegate) {
+    this.handle     = handle;
+    this.emitFacade = emitFacade;
+    this.delegate   = delegate;
+}
+
+Notifier.prototype.fire = function (e) {
+    // first arg to delegate notifier should be an object with currentTarget
+    var args    = toArray(arguments, 0, true),
+        handle  = this.handle,
+        ce      = handle.evt,
+        sub     = handle.sub,
+        thisObj = sub.context,
+        event   = e || {};
+
+    if (this.emitFacade) {
+        if (!e || !e.preventDefault) {
+            event = ce._getFacade();
+
+            if (isObject(e) && !e.preventDefault) {
+                Y.mix(event, e, true);
+                args[0] = event;
+            } else {
+                args.unshift(event);
+            }
+        }
+
+        event.type    = ce.type;
+        event.details = args.slice();
+
+        if (this.delegate) {
+            event.container = ce.host;
+        }
+    } else if (this.delegate && isObject(e) && e.currentTarget) {
+        args.shift();
+    }
+
+    sub.context = thisObj || event.currentTarget || ce.host;
+    ce.fire.apply(ce, args);
+    sub.context = thisObj; // reset for future firing
+};
+
+function SyntheticEvent() {
+    this._init.apply(this, arguments);
+}
+
+Y.mix(SyntheticEvent, {
+    Notifier: Notifier,
+
+    getRegistry: function (node, type, create) {
+        var el     = node._node,
+            yuid   = Y.stamp(el),
+            key    = 'event:' + yuid + type + '_synth_',
+            events = DOMMap[yuid] || (DOMMap[yuid] = {});
+
+        if (!events[key] && create) {
+            events[key] = {
+                type      : '_synth_',
+                fn        : noop,
+                capture   : false,
+                el        : el,
+                key       : key,
+                domkey    : yuid,
+                notifiers : [],
+
+                detachAll : function () {
+                    var notifiers = this.notifiers,
+                        i = notifiers.length;
+
+                    while (--i >= 0) {
+                        notifiers[i].detach();
+                    }
+                }
+            };
+        }
+
+        return (events[key]) ? events[key].notifiers : null;
+    },
+
+    _deleteSub: function (sub) {
+        if (sub && sub.fn) {
+            var synth = this.eventDef,
+                method = (sub.filter) ? 'detachDelegate' : 'detach';
+
+            this.subscribers = {};
+            this.subCount = 0;
+
+            synth[method](sub.node, sub, this.notifier, sub.filter);
+            synth._unregisterSub(sub);
+
+            delete sub.fn;
+            delete sub.node;
+            delete sub.context;
+        }
+    },
+
+    prototype: {
+        constructor: SyntheticEvent,
+
+        _init: function () {
+            var config = this.publishConfig || (this.publishConfig = {});
+
+            // The notification mechanism handles facade creation
+            this.emitFacade = ('emitFacade' in config) ?
+                                config.emitFacade :
+                                true;
+            config.emitFacade  = false;
+        },
+
+        /**
+         * <p>Implement this function if the event supports a different
+         * subscription signature.  This function is used by both on() and
+         * delegate().  The second parameter indicates that the event is being
+         * subscribed via delegate().</p>
+         *
+         * <p>Implementations must remove extra arguments from the args list
+         * before returning.  The required args list order for on()
+         * subscriptions is</p> <pre><code>(type, callback, target, thisObj,
+         * argN...)</code></pre>
+         *
+         * <p>The required args list order for delegate() subscriptions is</p>
+         *
+         * <pre><code>(type, callback, target, filter, thisObj,
+         * argN...)</code></pre>
+         *
+         * <p>The return value from this function will be stored on the
+         * subscription in the '_extra' property for reference elsewhere.</p>
+         *
+         * @method processArgs
+         * @param args {Array} parmeters passed to Y.on(..) or Y.delegate(..)
+         * @param delegate {Boolean} true if the subscription is from Y.delegate
+         * @return {any}
+         */
+        processArgs: noop,
+        //allowDups  : false,
+
+        on         : noop,
+        detach     : noop,
+
+        delegate       : noop,
+        detachDelegate : noop,
+
+        _on: function (args, delegate) {
+            var handles  = [],
+                selector = args[2],
+                method   = delegate ? 'delegate' : 'on',
+                nodes, handle;
+
+            // Can't just use Y.all because it doesn't support window (yet?)
+            nodes = (isString(selector)) ? query(selector) : toArray(selector);
+
+            if (!nodes.length && isString(selector)) {
+                handle = Y.on('available', function () {
+                    Y.mix(handle, Y[method].apply(Y, args), true);
+                }, selector);
+
+                return handle;
+            }
+
+            Y.each(nodes, function (node) {
+                var subArgs = args.slice(),
+                    extra, filter;
+
+                node = Y.one(node);
+
+                if (node) {
+                    extra = this.processArgs(subArgs, delegate);
+
+                    if (delegate) {
+                        filter = subArgs.splice(3, 1)[0];
+                    }
+
+                    // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
+                    subArgs.splice(0, 4, subArgs[1], subArgs[3]);
+
+                    if (this.allowDups || !this.getSubs(node, args,null,true)) {
+                        handle = this._getNotifier(node, subArgs, extra,filter);
+
+                        this[method](node, handle.sub, handle.notifier, filter);
+
+                        handles.push(handle);
+                    }
+                }
+            }, this);
+
+            return (handles.length === 1) ?
+                handles[0] :
+                new Y.EventHandle(handles);
+        },
+
+        _getNotifier: function (node, args, extra, filter) {
+            var dispatcher = new Y.CustomEvent(this.type, this.publishConfig),
+                handle     = dispatcher.on.apply(dispatcher, args),
+                notifier   = new Notifier(handle, this.emitFacade, filter),
+                registry   = SyntheticEvent.getRegistry(node, this.type, true),
+                sub        = handle.sub;
+
+            handle.notifier   = notifier;
+
+            sub.node   = node;
+            sub.filter = filter;
+            sub._extra = extra;
+
+            Y.mix(dispatcher, {
+                eventDef     : this,
+                notifier     : notifier,
+                host         : node,       // I forget what this is for
+                currentTarget: node,       // for generating facades
+                target       : node,       // for generating facades
+                el           : node._node, // For category detach
+
+                _delete      : SyntheticEvent._deleteSub
+            }, true);
+
+            registry.push(handle);
+
+            return handle;
+        },
+
+        _unregisterSub: function (sub) {
+            var notifiers = SyntheticEvent.getRegistry(sub.node, this.type),
+                i;
+                
+            if (notifiers) {
+                for (i = notifiers.length - 1; i >= 0; --i) {
+                    if (notifiers[i].sub === sub) {
+                        notifiers.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        },
+
+        _detach: function (args) {
+            // Can't use Y.all because it doesn't support window (yet?)
+            var target = args[2],
+                els    = (isString(target)) ?
+                            query(target) : toArray(target),
+                node, i, len, handles, j;
+            
+            // (type, fn, el, context, filter?) => (type, fn, context, filter?)
+            args.splice(2, 1);
+
+            for (i = 0, len = els.length; i < len; ++i) {
+                node = Y.one(els[i]);
+
+                if (node) {
+                    handles = this.getSubs(node, args);
+
+                    if (handles) {
+                        for (j = handles.length - 1; j >= 0; --j) {
+                            handles[j].detach();
+                        }
+                    }
+                }
+            }
+        },
+
+        getSubs: function (node, args, filter, first) {
+            var notifiers = SyntheticEvent.getRegistry(node, this.type),
+                handles = [],
+                i, len, handle;
+
+            if (notifiers) {
+                if (!filter) {
+                    filter = this.subMatch;
+                }
+
+                for (i = 0, len = notifiers.length; i < len; ++i) {
+                    handle = notifiers[i];
+                    if (filter.call(this, handle.sub, args)) {
+                        if (first) {
+                            return handle;
+                        } else {
+                            handles.push(notifiers[i]);
+                        }
+                    }
+                }
+            }
+
+            return handles.length && handles;
+        },
+
+        subMatch: function (sub, args) {
+            // Default detach cares only about the callback matching
+            return !args[1] || sub.fn === args[1];
+        }
+    }
+}, true);
+
+Y.SyntheticEvent = SyntheticEvent;
+
+Y.Node.publish = Y.Event.define = function (type, config, force) {
+    if (!config) {
+        config = {};
+    }
+
+    var eventDef = (isObject(type)) ? type : Y.merge({ type: type }, config),
+        Impl, synth;
+
+    if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
+        Impl = function () {
+            SyntheticEvent.apply(this, arguments);
+        };
+        Y.extend(Impl, SyntheticEvent, eventDef);
+        synth = new Impl();
+
+        type = synth.type;
+
+        Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
+            eventDef: synth,
+
+            on: function () {
+                return synth._on(toArray(arguments));
+            },
+
+            delegate: function () {
+                return synth._on(toArray(arguments), true);
+            },
+
+            detach: function () {
+                return synth._detach(toArray(arguments));
+            }
+        };
+
+    }
+};
+
+
+}, '@VERSION@' ,{requires:['node-base', 'event-custom']});
 YUI.add('event-mousewheel', function(Y) {
 
 /**
@@ -1755,195 +1939,44 @@ Y.Env.evt.plugins.mousewheel = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 YUI.add('event-mouseenter', function(Y) {
 
-/**
- * Adds support for mouseenter/mouseleave events
- * @module event
- * @submodule event-mouseenter
- */
-var Event = Y.Event,
-    Lang = Y.Lang,
+function notify(e, notifier) {
+    var current = e.currentTarget,
+        related = e.relatedTarget;
 
-    plugins = Y.Env.evt.plugins,
-    
-    listeners = {},
-
-    eventConfig = {
-
-        on: function(type, fn, el) {
-
-            var args = Y.Array(arguments, 0, true),     
-                element = el,
-                availHandle;
-
-
-            if (Lang.isString(el)) {
-
-                //  Need to use Y.all because if el is a string it could be a 
-                //  selector that returns a NodeList
-
-                element = Y.all(el);
-
-                if (element.size() === 0) { // Not found, check using onAvailable
-
-                    availHandle = Event.onAvailable(el, function() {
-
-                        availHandle.handle = Y.on.apply(Y, args);
-
-                    }, Event, true, false);
-        
-                    return availHandle;
-
-                }
-
-            }
-            
-
-            var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
-
-                //  The name of the custom event
-                sEventName = type + ":" + Y.stamp(element) + sDOMEvent,
-
-                listener = listeners[sEventName],
-
-                domEventHandle,
-                
-                ceHandle,
-                
-                nListeners;
-
-
-            //  Bind an actual DOM event listener that will call the 
-            //  the custom event                
-            if (!listener) {
-                
-                domEventHandle = Y.on(sDOMEvent, Y.rbind(Event._fireMouseEnter, Y, sEventName), element);
-
-                //  Hook into the _delete method for the Custom Event wrapper of this
-                //  DOM Event in order to clean up the 'listeners' map and unsubscribe
-                //  the associated Custom Event listeners fired by this DOM event
-                //  listener if/when the user calls "purgeElement" OR removes all 
-                //  listeners of the Custom Event.
-
-                Y.after(function (sub) {
-
-                    if (domEventHandle.sub == sub) {
-
-                        //  Delete this event from the map of known mouseenter 
-                        //  and mouseleave listeners
-                        delete listeners[sEventName];
-
-
-                        //  Unsubscribe all listeners of the Custom Event fired 
-                        //  by this DOM event.
-                        Y.detachAll(sEventName);
-
-                    }
-
-                }, domEventHandle.evt, "_delete");
-                
-
-                listener = {};              
-                listener.handle = domEventHandle;               
-
-                listeners[sEventName] = listener;
-
-            }
-
-            nListeners = listener.count;
-
-            listener.count = nListeners ? (nListeners + 1) : 1;
-
-            args[0] = sEventName;
-
-            // Remove the element from the args
-            args.splice(2, 1);
-
-            // Subscribe to the custom event
-            ceHandle = Y.on.apply(Y, args);
-    
-            //  Hook into the detach method of the handle in order to clean up the 
-            //  'listeners' map and remove the associated DOM event handler 
-            //  responsible for firing this Custom Event if all listener for this 
-            //  event have been removed.
-
-            Y.after(function () {
-
-                listener.count = (listener.count - 1);
-
-                if (listener.count === 0) {
-                    listener.handle.detach();
-                }
-
-            }, ceHandle, "detach"); 
-    
-    
-            return ceHandle;
-
-        }
-
-    };
-    
-
-Event._fireMouseEnter = function (e, eventName) {
-
-    var relatedTarget = e.relatedTarget,
-        currentTarget = e.currentTarget;
-
-    if (currentTarget !== relatedTarget && 
-        !currentTarget.contains(relatedTarget)) {
-
-        Y.publish(eventName, {
-               contextFn: function() {
-                   return currentTarget;
-               }
-           });          
-
-        Y.fire(eventName, e);
-
+    if (current !== related && !current.contains(related)) {
+        notifier.fire(e);
     }
+}
 
-};  
+var config = {
+    proxyType: "mouseover",
 
+    on: function (node, sub, notifier) {
+        sub.onHandle = node.on(this.proxyType, notify, null, notifier);
+    },
 
-/**
- * Sets up a "mouseenter" listener&#151;a listener that is called the first time 
- * the user's mouse enters the specified element(s).
- * 
- * @event mouseenter
- * @param type {string} "mouseenter"
- * @param fn {function} The method the event invokes.
- * @param el {string|node} The element(s) to assign the listener to.
- * @param spec {string} Optional.  String representing a selector that must 
- * match the target of the event in order for the listener to be called.
- * @return {EventHandle} the detach handle
- * @for YUI
- */
-plugins.mouseenter = eventConfig;
+    detach: function (node, sub) {
+        sub.onHandle.detach();
+    },
 
-/**
-* Sets up a "mouseleave" listener&#151;a listener that is called the first time 
-* the user's mouse leaves the specified element(s).
-* 
-* @event mouseleave
-* @param type {string} "mouseleave"
-* @param fn {function} The method the event invokes.
-* @param el {string|node} The element(s) to assign the listener to.
-* @param spec {string} Optional.  String representing a selector that must 
-* match the target of the event in order for the listener to be called.
-* @return {EventHandle} the detach handle
-* @for YUI
- */
-plugins.mouseleave = eventConfig;
+    delegate: function (node, sub, notifier, filter) {
+        sub.delegateHandle =
+            Y.delegate(this.proxyType, notify, node, filter, null, notifier);
+    },
+
+    detachDelegate: function (node, sub) {
+        sub.delegateHandle.detach();
+    }
+};
+
+Y.Event.define("mouseenter", config, true);
+Y.Event.define("mouseleave", Y.merge(config, { proxyType: "mouseout" }), true);
 
 
-
-}, '@VERSION@' ,{requires:['node-base']});
-
+}, '@VERSION@' ,{requires:['event-synthetic']});
 YUI.add('event-key', function(Y) {
 
 /**
@@ -2042,107 +2075,95 @@ Y.Env.evt.plugins.key = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
-
 YUI.add('event-focus', function(Y) {
 
-/**
- * Adds focus and blur event listener support.  These events normally
- * do not bubble, so this adds support for that so these events
- * can be used in event delegation scenarios.
- * 
- * @module event
- * @submodule event-focus
- */
-(function() {
+var Event    = Y.Event,
+    isString = Y.Lang.isString;
 
-var UA = Y.UA,
-    Event = Y.Event,
-    plugins = Y.Env.evt.plugins,
-    ie = UA.ie,
-    bUseMutation = (UA.opera || UA.webkit),
-    eventNames = {
-        focus: (ie ? 'focusin' : (bUseMutation ? 'DOMFocusIn' : 'focus')),
-        blur: (ie ? 'focusout' : (bUseMutation ? 'DOMFocusOut' : 'blur'))
-    },
+function define(type, proxy) {
+    var nodeDataKey = '_' + type + 'Notifiers';
 
-    //  Only need to use capture phase for Gecko since it doesn't support 
-    //  focusin, focusout, DOMFocusIn, or DOMFocusOut
-    CAPTURE_CONFIG = { capture: (UA.gecko ? true : false) },
+    Y.Event.define(type, {
+        _attach: function (el, notifier, delegate) {
+            return Event._attach(
+                [this._proxyEvent, this._proxy, el, this, notifier, delegate],
+                { capture: true });
+        },
 
+        _proxyEvent: proxy,
 
-    attach = function (args, config) {
+        _proxy: function (e, notifier, delegate) {
+            var node      = e.target,
+                el        = node._node,
+                thisObj   = (delegate) ? node : e.currentTarget,
+                notifiers = node.getData(nodeDataKey),
+                handle;
 
-        var a = Y.Array(args, 0, true),
-            el = args[2];
+            // Maintain a list to handle subscriptions from nested containers
+            // div#a>div#b>input #a.on(focus..) #b.on(focus..), use one focus
+            // or blur subscription that fires notifiers from #b then #a to
+            // emulate bubble sequence.
+            if (!notifiers) {
+                notifiers = [];
+                node.setData(nodeDataKey, notifiers);
 
-        config.overrides = config.overrides || {};
-        config.overrides.type = args[0];
-        
-        if (el) {
-            if (Y.DOM.isWindow(el)) {
-                config.capture = false;
+                handle = Event._attach([type, this._notify, el, thisObj]);
+                // remove element level subscription after execution
+                handle.sub.once = true;
             }
-            else {
-                a[0] = eventNames[a[0]];
+
+            notifiers.push(notifier);
+        },
+
+        _notify: function (e) {
+            var node      = e.currentTarget,
+                notifiers = node.getData(nodeDataKey),
+                i;
+
+            e.currentTarget = this;
+
+            // reverse order to emulate bubble notification
+            for (i = notifiers.length - 1; i >= 0; --i) {
+                notifiers[i].fire(e);
             }
+
+            // leaving the element pristine, as if nothing ever happened...
+            node.clearData(nodeDataKey);
+        },
+
+        on: function (node, sub, notifier) {
+            sub.onHandle = this._attach(node._node, notifier);
+        },
+
+        detach: function (node, sub) {
+            sub.onHandle.detach();
+        },
+
+        delegate: function (node, sub, notifier, filter) {
+
+            if (isString(filter)) {
+                filter = Y.delegate.compileFilter(filter);
+            }
+
+            var handle = this._attach(node._node, notifier, true);
+            handle.sub.getCurrentTarget = filter;
+            handle.sub._notify = Y.delegate.notifySub;
+
+            sub.delegateHandle = handle;
+        },
+
+        detachDelegate: function (node, sub) {
+            sub.delegateHandle.detach();
         }
+    }, true);
+}
 
-        return Event._attach(a, config);
-
-    },
-    
-    eventAdapter = {
-
-        on: function () {
-            return attach(arguments, CAPTURE_CONFIG);
-        }
-
-    };
+define('focus', ('onfocusin'  in Y.config.doc) ? "beforeactivate"   : "focus");
+define('blur',  ('onfocusout' in Y.config.doc) ? "beforedeactivate" : "blur");
 
 
-Event._attachFocus = attach;
-Event._attachBlur = attach;
-
-/**
- * Adds a DOM focus listener.  Uses the focusin event in IE, 
- * DOMFocusIn for Opera and Webkit, and the capture phase for Gecko so that
- * the event propagates in a way that enables event delegation.
- *
- * @for YUI
- * @event focus
- * @param type {string} 'focus'
- * @param fn {function} the callback function to execute
- * @param o {string|HTMLElement|collection} the element(s) to bind
- * @param context optional context object
- * @param args 0..n additional arguments to provide to the listener.
- * @return {EventHandle} the detach handle
- */
-plugins.focus = eventAdapter;
-
-/**
- * Adds a DOM blur listener.  Uses the focusout event in IE, 
- * DOMFocusOut for Opera and Webkit, and the capture phase for Gecko so that
- * the event propagates in a way that enables event delegation.
- *
- * @for YUI
- * @event blur
- * @param type {string} 'blur'
- * @param fn {function} the callback function to execute
- * @param o {string|HTMLElement|collection} the element(s) to bind
- * @param context optional context object
- * @param args 0..n additional arguments to provide to the listener.
- * @return {EventHandle} the detach handle
- */
-plugins.blur = eventAdapter;
-
-})();
-
-
-
-}, '@VERSION@' ,{requires:['node-base']});
-
+}, '@VERSION@' ,{requires:['event-synthetic']});
 YUI.add('event-resize', function(Y) {
 
 /**
@@ -2206,10 +2227,8 @@ Y.Env.evt.plugins.windowresize = {
 })();
 
 
-
 }, '@VERSION@' ,{requires:['node-base']});
 
 
-
-YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});
+YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-synthetic', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});
 

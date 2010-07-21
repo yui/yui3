@@ -2,10 +2,14 @@
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
 <title>Test</title>
-<!-- <script src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-min.js" type="text/javascript"></script> -->
-<script src="../../build/yui/yui-debug.js"></script>
+<!-- <script src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-min.js" type="text/javascript"></script>
+     
 <script src="../../build/loader/loader-debug.js"></script>
+     -->
+<script src="../../build/yui/yui-debug.js"></script>
 <script>
+
+/*
 
 YUI.add('lib1', function (Y) {
     Y.lib1 = true;
@@ -26,7 +30,7 @@ YUI({
         }
 
     }, errorFn: function(msg, e, data) {
-        alert('error: ' + msg + ', ' + data);
+        console.log('error: ' + msg + ', ' + data);
         return true;
     } 
     // , throwFail: false
@@ -46,7 +50,130 @@ YUI({
 YUI().use(function(Y) {
     Y.log('successful continue');
 });
+*/
 
 </script>
 
-</body></html>
+
+</head>
+<body>
+
+<div id="demo">
+    <div class="yui-g">
+        <div class="yui-u first">
+            <h4>YUI #1</h4>
+            <button type="button" id="yui1">Log from YUI instance #1</button>
+
+            <h4>YUI #2</h4>
+            <button type="button" id="yui2">Log from YUI instance #2</button>
+
+            <h4>YUI #3</h4>
+            <button type="button" id="yui3">Log from YUI instance #3</button>
+        </div>
+        <div class="yui-u" id="yconsole">
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+
+<script type="text/javascript">
+
+// Create the first YUI instance
+YUI({
+
+    modules: {
+
+        lib2: {
+            requires: ['yui'],
+            fullpath: 'js/lib2.js',
+            condition: {
+                trigger: 'node-base',
+                ua: 'gecko'
+                // test: function(Y, req) {
+                //     return Y.UA.gecko;
+                // }
+            }
+        },
+
+        lib3: {
+            requires: ['yui'],
+            fullpath: 'js/lib3.js',
+            condition: {
+                trigger: 'event-base',
+                test: function(Y, req) {
+                    return Y.UA.gecko;
+                }
+            }
+        }
+    }
+
+}).use('node', function (Y) {
+
+    Y.log('1');
+    
+    Y.one( "#yui1" ).on( "click", function () {
+        Y.log( "Message from YUI instance #1" );
+    });
+
+
+    console.log(Y.merge(YUI));
+
+    Y.use('node', function (Y) {
+        Y.log('2');
+        // console.log(Y.one( "#yui2" ));
+        Y.one( "#yui2" ).on( "click", function () {
+            Y.log( "I'm from the second use in the first instance" );
+        });
+    });
+
+});
+
+/*
+// Create the second YUI instance
+YUI().use('node', function (Y) {
+
+    console.log('2');
+
+    console.log(Y.one( "#yui2" ));
+
+    Y.one( "#yui2" ).on( "click", function () {
+        console.log( "I'm the second YUI instance" );
+    });
+
+});
+*/
+
+// Create a third YUI instance
+YUI().use('event', function (Y) {
+
+    Y.log('3');
+    // console.log(Y.merge(YUI));
+
+    Y.one( "#yui3" ).on( "click", function () {
+        Y.log( "And this is #3 YUI" );
+    });
+
+});
+
+// Create a separate YUI instance to listen to all instances' logging
+YUI().use("console", function (Y) {
+
+    Y.log('univ');
+
+    console.log(Y);
+
+    // Configure the Console's logSource to Y.Global to make it universal
+    new Y.Console({
+        logSource: Y.Global,
+        style: 'block',
+        newestOnTop: false,
+        width: "250px"
+    }).render( "#yconsole" );
+
+});
+
+</script>
+
+</body>
+</html>
+

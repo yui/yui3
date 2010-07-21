@@ -23,9 +23,7 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "anim-easing": {
-                "requires": [
-                    "anim-base"
-                ]
+                "requires": []
             }, 
             "anim-node-plugin": {
                 "requires": [
@@ -190,22 +188,10 @@ YUI.Env[Y.version].modules = {
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset"
-        ], 
-        "path": "cssgrids/grids-min.css", 
-        "requires": [
+            "cssreset", 
             "cssfonts"
         ], 
-        "type": "css"
-    }, 
-    "cssgrids-context": {
-        "optional": [
-            "cssreset-context"
-        ], 
-        "path": "cssgrids/grids-context-min.css", 
-        "requires": [
-            "cssfonts-context"
-        ], 
+        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
     "cssreset": {
@@ -257,7 +243,8 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local"
+                    "datasource-local", 
+                    "cache-base"
                 ]
             }, 
             "datasource-function": {
@@ -306,37 +293,6 @@ YUI.Env[Y.version].modules = {
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
-                ]
-            }
-        }
-    }, 
-    "datatable": {
-        "submodules": {
-            "column": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "columnset": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "datatable-base": {
-                "requires": [
-                    "columnset", 
-                    "rowset", 
-                    "widget"
-                ]
-            }, 
-            "row": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "rowset": {
-                "requires": [
-                    "base"
                 ]
             }
         }
@@ -484,7 +440,9 @@ YUI.Env[Y.version].modules = {
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base"
+                    "dd-ddm-base", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-drop": {
@@ -544,6 +502,15 @@ YUI.Env[Y.version].modules = {
             "dom-style": {
                 "requires": [
                     "dom-base"
+                ]
+            }, 
+            "dom-style-ie": {
+                "condition": {
+                    "trigger": "dom-style", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "dom-style"
                 ]
             }, 
             "selector": {
@@ -616,11 +583,6 @@ YUI.Env[Y.version].modules = {
     "event": {
         "expound": "node-base", 
         "plugins": {
-            "event-synthetic": {
-                "requires": [
-                    "node-base"
-                ]
-            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -641,27 +603,33 @@ YUI.Env[Y.version].modules = {
             }, 
             "event-focus": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-key": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mouseenter": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
+                ]
+            }, 
+            "event-synthetic": {
+                "requires": [
+                    "node-base", 
+                    "event-custom"
                 ]
             }
         }
@@ -861,6 +829,17 @@ YUI.Env[Y.version].modules = {
                     "node-style", 
                     "node-pluginhost"
                 ]
+            }, 
+            "transition": {
+                "requires": [
+                    "transition-native", 
+                    "node-style"
+                ]
+            }, 
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
             }
         }, 
         "requires": [
@@ -900,6 +879,15 @@ YUI.Env[Y.version].modules = {
                 ]
             }
         }
+    }, 
+    "node-flick": {
+        "requires": [
+            "classnamemanager", 
+            "transition", 
+            "event-flick", 
+            "plugin"
+        ], 
+        "skinnable": true
     }, 
     "node-focusmanager": {
         "requires": [
@@ -987,6 +975,37 @@ YUI.Env[Y.version].modules = {
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "scrollview": {
+        "plugins": {
+            "scrollview-base": {
+                "path": "scrollview/scrollview-base-min.js", 
+                "requires": [
+                    "widget", 
+                    "event-gestures", 
+                    "transition"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-paginator": {
+                "path": "scrollview/scrollview-paginator-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-scrollbars": {
+                "path": "scrollview/scrollview-scrollbars-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "scrollview-base", 
+            "scrollview-scrollbars"
         ]
     }, 
     "slider": {
@@ -1093,13 +1112,23 @@ YUI.Env[Y.version].modules = {
     }, 
     "widget": {
         "plugins": {
-            "widget-child": {}, 
+            "widget-child": {
+                "requires": [
+                    "base-build"
+                ]
+            }, 
             "widget-parent": {
                 "requires": [
+                    "base-build", 
                     "arraylist"
                 ]
             }, 
-            "widget-position": {}, 
+            "widget-position": {
+                "requires": [
+                    "base-build", 
+                    "node-screen"
+                ]
+            }, 
             "widget-position-align": {
                 "requires": [
                     "widget-position"
@@ -1111,9 +1140,16 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "widget-stack": {
+                "requires": [
+                    "base-build"
+                ], 
                 "skinnable": true
             }, 
-            "widget-stdmod": {}
+            "widget-stdmod": {
+                "requires": [
+                    "base-build"
+                ]
+            }
         }, 
         "skinnable": true, 
         "submodules": {
@@ -1121,8 +1157,11 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "attribute", 
                     "event-focus", 
-                    "base", 
-                    "node", 
+                    "base-base", 
+                    "base-pluginhost", 
+                    "node-base", 
+                    "node-style", 
+                    "node-event-delegate", 
                     "classnamemanager"
                 ]
             }, 

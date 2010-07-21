@@ -16,18 +16,19 @@ YUI.add('history-hash', function(Y) {
  *   documentation for details.
  */
 
-var HistoryBase    = Y.HistoryBase,
-    Lang           = Y.Lang,
-    Obj            = Y.Object,
-    GlobalEnv      = YUI.namespace('Env.HistoryHash'),
+var HistoryBase = Y.HistoryBase,
+    Lang        = Y.Lang,
+    YArray      = Y.Array,
+    GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
-    SRC_HASH       = 'hash',
+    SRC_HASH    = 'hash',
 
     hashNotifiers,
     oldHash,
     oldUrl,
-    win            = Y.config.win,
-    location       = win.location;
+    win             = Y.config.win,
+    location        = win.location,
+    useHistoryHTML5 = Y.config.useHistoryHTML5;
 
 function HistoryHash() {
     HistoryHash.superclass.constructor.apply(this, arguments);
@@ -140,7 +141,7 @@ Y.extend(HistoryHash, HistoryBase, {
         var encode = HistoryHash.encode,
             hash   = [];
 
-        Obj.each(params, function (value, key) {
+        Y.Object.each(params, function (value, key) {
             if (Lang.isValue(value)) {
                 hash.push(encode(key) + '=' + encode(value));
             }
@@ -200,9 +201,9 @@ Y.extend(HistoryHash, HistoryBase, {
             prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
-        // since getHash() is called every 20ms or so to poll for changes in
-        // browsers that don't support native onhashchange. An additional
-        // function call would add unnecessary overhead.
+        // since getHash() is called every 50ms to poll for changes in browsers
+        // that don't support native onhashchange. An additional function call
+        // would add unnecessary overhead.
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     }),
@@ -294,7 +295,6 @@ Y.extend(HistoryHash, HistoryBase, {
 });
 
 // -- Synthetic hashchange Event -----------------------------------------------
-hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
 
 // TODO: YUIDoc currently doesn't provide a good way to document synthetic DOM
 // events. For now, we're just documenting the hashchange event on the YUI
@@ -350,26 +350,31 @@ hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
  *   </dd>
  * </dl>
  * @for YUI
+ * @since 3.2.0
  */
+
+hashNotifiers = GlobalEnv._notifiers;
+
+if (!hashNotifiers) {
+    hashNotifiers = GlobalEnv._notifiers = [];
+}
+
 Y.Event.define('hashchange', {
     on: function (node, subscriber, notifier) {
-        // Ignore this subscriber if the node is anything other than the
+        // Ignore this subscription if the node is anything other than the
         // window or document body, since those are the only elements that
         // should support the hashchange event. Note that the body could also be
         // a frameset, but that's okay since framesets support hashchange too.
-        if ((node.compareTo(win) || node.compareTo(Y.config.doc.body)) &&
-                !Obj.owns(hashNotifiers, notifier.key)) {
-
-            hashNotifiers[notifier.key] = notifier;
+        if (node.compareTo(win) || node.compareTo(Y.config.doc.body)) {
+            hashNotifiers.push(notifier);
         }
     },
 
     detach: function (node, subscriber, notifier) {
-        // TODO: Is it safe to use hasSubs()? It's not marked private/protected,
-        // but also not documented. Also, subscriber counts don't seem to be
-        // updated after detach().
-        if (!notifier.hasSubs()) {
-            delete hashNotifiers[notifier.key];
+        var index = YArray.indexOf(hashNotifiers, notifier);
+
+        if (index !== -1) {
+            hashNotifiers.splice(index, 1);
         }
     }
 });
@@ -383,8 +388,9 @@ if (HistoryBase.nativeHashChange) {
         var newHash = HistoryHash.getHash(),
             newUrl  = HistoryHash.getUrl();
 
-        Obj.each(hashNotifiers, function (notifier) {
+        YArray.each(hashNotifiers, function (notifier) {
             notifier.fire({
+                _event : e,
                 oldHash: oldHash,
                 oldUrl : oldUrl,
                 newHash: newHash,
@@ -421,7 +427,7 @@ if (HistoryBase.nativeHashChange) {
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                Obj.each(hashNotifiers, function (notifier) {
+                YArray.each(hashNotifiers, function (notifier) {
                     notifier.fire({
                         oldHash: oldHash,
                         oldUrl : oldUrl,
@@ -439,11 +445,9 @@ if (HistoryBase.nativeHashChange) {
 
 Y.HistoryHash = HistoryHash;
 
-// Only point Y.History at HistoryHash if it doesn't already exist and if the
-// current browser doesn't support HTML5 history, or if the HistoryHTML5 class
-// is not present. The history-hash module is always loaded after history-html5
-// if history-html5 is loaded, so this check doesn't introduce a race condition.
-if (!Y.History && (!HistoryBase.html5 || !Y.HistoryHTML5)) {
+// HistoryHash will never win over HistoryHTML5 unless useHistoryHTML5 is false.
+if (useHistoryHTML5 === false || (!Y.History && useHistoryHTML5 !== true &&
+        (!HistoryBase.html5 || !Y.HistoryHTML5))) {
     Y.History = HistoryHash;
 }
 

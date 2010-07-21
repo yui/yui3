@@ -5,7 +5,18 @@ function Renderer(config)
 Renderer.NAME = "renderer";
 
 Renderer.ATTRS = {
-	/**
+    node: {
+        value: null
+    },
+    
+    /**
+	 * The graphic in which the series will be rendered.
+	 */
+	graphic: {
+        value: null
+    },
+	
+    /**
 	 * Hash of style properties for class
 	 */
 	styles:
@@ -32,6 +43,29 @@ Renderer.ATTRS = {
 };
 
 Renderer.prototype = {
+
+    /**
+     * @private
+     * Creates a <code>Graphic</code> instance.
+     */
+    _setCanvas: function()
+    {
+        var cb = this.get("contentBox"),
+            n = document.createElement("div"),
+            style = n.style;
+        cb.appendChild(n);
+        style.position = "absolute";
+        style.display = "block";
+        style.top = "0px"; 
+        style.left = "0px";
+        style.width = "100%";
+        style.height = "100%";
+        this.set("node", n);
+        this.set("graphic", new Y.Graphic());
+        this.get("graphic").render(this.get("node"));
+   },
+	
+
     /**
      * @private
      * @description Hash of newly set styles.
@@ -69,7 +103,7 @@ Renderer.prototype = {
         this._newStyles = {};
 		Y.Object.each(a, function(value, key, a)
 		{
-			if(b.hasOwnProperty(key) && Y.Lang.isObject(value))
+			if(b.hasOwnProperty(key) && Y.Lang.isObject(value) && !Y.Lang.isArray(value))
 			{
 				b[key] = this._mergeStyles(value, b[key]);
 			}

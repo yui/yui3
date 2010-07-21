@@ -10,13 +10,106 @@ Y.Test.Runner.add(new Y.Test.Case({
     name: 'HistoryHash',
 
     setUp: function () {
-        location.hash = '';
+        Y.HistoryHash.setHash('');
         this.history = new Y.HistoryHash();
     },
 
     tearDown: function () {
         delete this.history;
         Y.HistoryHash.hashPrefix = defaultPrefix;
+    },
+
+    _should: {
+        ignore: {
+            'hashchange should be case-sensitive (except in IE8+)': Y.UA.ie >= 8,
+            'hashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8
+        }
+    },
+
+    // -- onhashchange ---------------------------------------------------------
+    'synthetic hashchange event should fire when the hash changes': function () {
+        var changed = true;
+
+        Y.once('hashchange', function (e) {
+            changed = true;
+
+            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+
+            Y.ObjectAssert.ownsKeys([
+                'oldHash',
+                'oldUrl',
+                'newHash',
+                'newUrl'
+            ], e, 'Event facade is missing one or more properties');
+
+            if (Y.HistoryBase.nativeHashChange) {
+                Y.ObjectAssert.ownsKey('_event', e, 'Event facade is missing the _event property');
+            }
+        }, win);
+
+        Y.HistoryHash.setHash('#foo=bar');
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed, "Synthetic hashchange event wasn't fired.");
+        }, 50);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2528444
+    'hashchange should be case-sensitive (except in IE8+)': function () {
+        var changed;
+
+        Y.once('hashchange', function () {
+            changed = true;
+            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+        }, win);
+
+        Y.HistoryHash.setHash('#foo=bar');
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed);
+
+            changed = false;
+
+            Y.once('hashchange', function () {
+                changed = true;
+                Y.Assert.areSame('foo=baR', Y.HistoryHash.getHash());
+            }, win);
+
+            Y.HistoryHash.setHash('#foo=baR');
+
+            this.wait(function () {
+                Y.Assert.isTrue(changed, "Synthetic hashchange event wasn't fired.");
+            }, 50);
+        }, 50);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2528444
+    'hashchange should NOT be case-sensitive in IE8+': function () {
+        var changed;
+
+        Y.once('hashchange', function () {
+            changed = true;
+            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+        }, win);
+
+        Y.HistoryHash.setHash('#foo=bar');
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed);
+
+            changed = false;
+
+            Y.once('hashchange', function () {
+                changed = true;
+                Y.Assert.fail();
+            }, win);
+
+            Y.HistoryHash.setHash('#foo=baR');
+
+            this.wait(function () {
+                Y.Assert.isFalse(changed, "Synthetic hashchange event was fired when it shouldn't have been.");
+            }, 50);
+        }, 50);
     },
 
     // -- Static Properties and Methods ----------------------------------------
@@ -32,11 +125,26 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame('foo+bar%26baz%2Fquux%40moo%2B', Y.HistoryHash.encode('foo bar&baz/quux@moo+'));
     },
 
+    'setHash() should set the hash': function () {
+        var hash = 'foo+bar%26baz%2Fquux%40moo%2B' + Y.guid();
+
+        Y.HistoryHash.setHash(hash);
+        Y.Assert.areSame(hash, Y.HistoryHash.getHash());
+
+        Y.HistoryHash.hashPrefix = '!';
+
+        Y.HistoryHash.setHash('#withprefix');
+        Y.Assert.areSame('#!withprefix', location.hash);
+
+        Y.HistoryHash.setHash('withprefix');
+        Y.Assert.areSame('#!withprefix', location.hash);
+    },
+
     'getHash() should get the current raw (not decoded) hash string': function () {
-        location.hash = Y.HistoryHash.encode('foo bar&baz/quux@moo+');
+        Y.HistoryHash.setHash(Y.HistoryHash.encode('foo bar&baz/quux@moo+'));
         Y.Assert.areSame('foo+bar%26baz%2Fquux%40moo%2B', Y.HistoryHash.getHash());
 
-        location.hash = '!withprefix';
+        Y.HistoryHash.setHash('!withprefix');
         Y.Assert.areSame('!withprefix', Y.HistoryHash.getHash());
 
         Y.HistoryHash.hashPrefix = '!';
@@ -65,7 +173,7 @@ Y.Test.Runner.add(new Y.Test.Case({
     },
 
     'parseHash() should use the current hash if no argument is provided': function () {
-        location.hash = '#foo=bar&kittens=cute';
+        Y.HistoryHash.setHash('#foo=bar&kittens=cute');
 
         var parsed = Y.HistoryHash.parseHash();
 
@@ -73,8 +181,6 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame(2, Obj.size(parsed));
         Y.Assert.areSame('bar', parsed.foo);
         Y.Assert.areSame('cute', parsed.kittens);
-
-        location.hash = '';
     },
 
     'replaceHash() should replace the hash': function () {
@@ -92,24 +198,9 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame('#!withprefix', location.hash);
     },
 
-    'setHash() should set the hash': function () {
-        var hash = 'foo+bar%26baz%2Fquux%40moo%2B' + Y.guid();
-
-        Y.HistoryHash.setHash(hash);
-        Y.Assert.areSame(hash, Y.HistoryHash.getHash());
-
-        Y.HistoryHash.hashPrefix = '!';
-
-        Y.HistoryHash.setHash('#withprefix');
-        Y.Assert.areSame('#!withprefix', location.hash);
-
-        Y.HistoryHash.setHash('withprefix');
-        Y.Assert.areSame('#!withprefix', location.hash);
-    },
-
     // -- Instance Methods -----------------------------------------------------
     'add() should change the hash': function () {
-        location.hash = '#';
+        Y.HistoryHash.setHash('');
         this.history.add({a: 'apple', b: 'bumblebee'});
 
         Y.Assert.areSame('apple', this.history.get('a'));
@@ -124,4 +215,4 @@ Y.Test.Runner.add(new Y.Test.Case({
     }
 }));
 
-}, '@VERSION@', {requires:['test', 'history-hash']});
+}, '@VERSION@', {requires:['test', 'history-hash-ie']});

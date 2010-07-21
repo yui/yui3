@@ -75,6 +75,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.stopPropagation = function() {
         e.stopPropagation();
+        this.stopped = 1;
     };
 
     /**
@@ -85,6 +86,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.stopImmediatePropagation = function() {
         e.stopImmediatePropagation();
+        this.stopped = 2;
     };
 
     /**
@@ -93,6 +95,7 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.preventDefault = function() {
         e.preventDefault();
+        this.prevented = 1;
     };
 
     /**
@@ -104,6 +107,8 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.halt = function(immediate) {
         e.halt(immediate);
+        this.prevented = 1;
+        this.stopped = (immediate) ? 2 : 1;
     };
 
 };
@@ -445,7 +450,7 @@ ETProto.bubble = function(evt, args, target) {
                 ce2 = t.getSibling(type, ce);
 
                 if (ce2 && !ce) {
-                    ce = t.publish(type);
+                    ce = t.publish(type)                
                 }
 
                 oldbubble = t._yuievt.bubbling;
@@ -468,9 +473,15 @@ ETProto.bubble = function(evt, args, target) {
                     ce.currentTarget = t;
                     bc = ce.broadcast;
                     ce.broadcast = false;
+
+                    // default publish may not have emitFacade true -- that
+                    // shouldn't be what the implementer meant to do
+                    ce.emitFacade = true;
+
                     ret = ret && ce.fire.apply(ce, args || evt.details || []);
                     ce.broadcast = bc;
                     ce.originalTarget = null;
+
 
                     // stopPropagation() was called
                     if (ce.stopped) {

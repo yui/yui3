@@ -118,8 +118,17 @@ YUI.add('anim-base', function(Y) {
      * @static
      */
     Y.Anim.DEFAULT_SETTER = function(anim, att, from, to, elapsed, duration, fn, unit) {
-        unit = unit || '';
-        anim._node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
+        var node = anim._node,
+            val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
+
+        if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
+            unit = unit || '';
+            node.setStyle(att, val + unit);
+        } else if (node._node.attributes[att]) {
+            node.setAttribute(att, val);
+        } else {
+            node.set(att, val);
+        }
     };
 
     /**
@@ -128,8 +137,19 @@ YUI.add('anim-base', function(Y) {
      * @property DEFAULT_GETTER
      * @static
      */
-    Y.Anim.DEFAULT_GETTER = function(anim, prop) {
-        return anim._node.getComputedStyle(prop);
+    Y.Anim.DEFAULT_GETTER = function(anim, att) {
+        var node = anim._node,
+            val = '';
+
+        if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
+            val = node.getComputedStyle(att);
+        } else if (node._node.attributes[att]) {
+            val = node.getAttribute(att);
+        } else {
+            val = node.get(att);
+        }
+
+        return val;
     };
 
     Y.Anim.ATTRS = {
@@ -326,6 +346,7 @@ YUI.add('anim-base', function(Y) {
                 _running[i].pause();
             }
         }
+
         Y.Anim._stopTimer();
     };
 
@@ -448,6 +469,8 @@ YUI.add('anim-base', function(Y) {
         _resume: function() {
             this._set(PAUSED, false);
             _running[Y.stamp(this)] = this;
+            this._set(START_TIME, new Date() - this.get(ELAPSED_TIME));
+            Y.Anim._startTimer();
 
             /**
             * @event resume
@@ -756,7 +779,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @submodule anim-easing
  */
 
-Y.Easing = {
+var Easing = {
 
     /**
      * Uniform speed between points.
@@ -1078,8 +1101,17 @@ Y.Easing = {
     }
 };
 
+// mappings for native css timing functions
+Easing.ease = Easing.easeBoth;
+Easing.linear = Easing.none;
+Easing['ease-in'] = Easing.easeIn;
+Easing['ease-out'] = Easing.easeOut;
+Easing['ease-in-out'] = Easing.easeBothStrong;
 
-}, '@VERSION@' ,{requires:['anim-base']});
+Y.Easing = Easing;
+
+
+}, '@VERSION@' );
 YUI.add('anim-node-plugin', function(Y) {
 
 /**

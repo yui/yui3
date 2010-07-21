@@ -43,7 +43,7 @@
             testDestructor: function() {
                 var cache = new Y.Cache();
                 cache.destroy();
-                ASSERT.isNull(cache.get("entries"), "Expected null array.");
+                ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
             }
         });
         
@@ -105,14 +105,16 @@
 
             testRetrieve: function() {
                 var cache = new Y.Cache({max:2}),
-                    cachedresponse;
+                    cachedentry;
                 cache.add(1, "a");
                 cache.add("b", "c");
-                cachedresponse = cache.retrieve(1).response;
-                ASSERT.areSame("a", cachedresponse, "Expected first cached response.");
+                cachedentry = cache.retrieve(1);
+                ASSERT.areSame("a", cachedentry.response, "Expected first cached response.");
+                ASSERT.isInstanceOf(Date, cachedentry.cached, "Expected first cached Date.");
 
-                cachedresponse = cache.retrieve("b").response;
-                ASSERT.areSame("c", cachedresponse, "Expected second cached response.");
+                cachedentry = cache.retrieve("b");
+                ASSERT.areSame("c", cachedentry.response, "Expected second cached response.");
+                ASSERT.isInstanceOf(Date, cachedentry.cached, "Expected second cached Date.");
             },
 
             testNoMatch: function() {

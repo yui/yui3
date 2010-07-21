@@ -70,9 +70,22 @@
 
     <span class="nx">Y_DOM</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span>
 
+    <span class="nx">TRANSFORM</span> <span class="o">=</span> <span class="s1">&#39;transform&#39;</span><span class="p">,</span>
+    <span class="nx">VENDOR_TRANSFORM</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;WebkitTransform&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;MozTransform&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;OTransform&#39;</span>
+    <span class="p">],</span>
+
     <span class="nx">re_color</span> <span class="o">=</span> <span class="sr">/color$/i</span><span class="p">,</span>
     <span class="nx">re_unit</span> <span class="o">=</span> <span class="sr">/width|height|top|left|right|bottom|margin|padding/i</span><span class="p">;</span>
 
+
+<span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">VENDOR_TRANSFORM</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="k">in</span> <span class="nx">DOCUMENT</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">].</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">TRANSFORM</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">DEFAULT_UNIT</span><span class="o">:</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
@@ -207,6 +220,27 @@
     <span class="p">};</span>
 
 <span class="p">}</span>
+
+<span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_multiplyMatrix</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">];</span>
+
+    <span class="k">return</span> <span class="nx">c</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">style</span><span class="p">[</span><span class="nx">TRANSFORM</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">TRANSFORM</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 <span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
@@ -294,10 +328,10 @@
                         <ul class="content">        
                                 <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
                                 <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
-                                <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
                                 <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
                                 <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
                                 <li class=""><a href="dom-size.js.html" title="dom-size.js">dom-size.js</a></li>
+                                <li class=""><a href="dom-style-ie.js.html" title="dom-style-ie.js">dom-style-ie.js</a></li>
                                 <li class="selected"><a href="dom-style.js.html" title="dom-style.js">dom-style.js</a></li>
                                 <li class=""><a href="dom.js.html" title="dom.js">dom.js</a></li>
                                 <li class=""><a href="selector-css2.js.html" title="selector-css2.js">selector-css2.js</a></li>

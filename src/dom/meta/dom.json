@@ -27,6 +27,15 @@
                     "dom-base"
                 ]
             }, 
+            "dom-style-ie": {
+                "requires": [
+                    "dom-style"
+                ],
+                "condition": {
+                   "trigger": "dom-style",
+                   "ua": "ie"
+                }
+            }, 
             "selector": {
                 "requires": [
                     "dom-base"

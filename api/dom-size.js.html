@@ -72,22 +72,22 @@
         <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_setSize</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nx">size</span><span class="p">);</span>
     <span class="p">},</span>
 
-    <span class="nx">_getOffsetProp</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;offset&#39;</span> <span class="o">+</span> <span class="nx">prop</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">+</span> <span class="nx">prop</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-    <span class="p">},</span>
-
     <span class="nx">_setSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">offset</span><span class="p">;</span>
+        <span class="nx">val</span> <span class="o">=</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">val</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
-        <span class="nx">offset</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getOffsetProp</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">prop</span><span class="p">)];</span>
-        <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">-</span> <span class="p">(</span><span class="nx">offset</span> <span class="o">-</span> <span class="nx">val</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+        <span class="nx">size</span> <span class="o">=</span> <span class="p">(</span><span class="nx">prop</span> <span class="o">===</span> <span class="s1">&#39;height&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">;</span>
 
-        <span class="c1">// TODO: handle size less than border/padding (add class?)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// no negative sizes</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">size</span> <span class="o">&gt;</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">-</span> <span class="p">(</span><span class="nx">size</span> <span class="o">-</span> <span class="nx">val</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">});</span>
 </pre></div>
@@ -176,10 +176,10 @@
                         <ul class="content">        
                                 <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
                                 <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
-                                <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
                                 <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
                                 <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
                                 <li class="selected"><a href="dom-size.js.html" title="dom-size.js">dom-size.js</a></li>
+                                <li class=""><a href="dom-style-ie.js.html" title="dom-style-ie.js">dom-style-ie.js</a></li>
                                 <li class=""><a href="dom-style.js.html" title="dom-style.js">dom-style.js</a></li>
                                 <li class=""><a href="dom.js.html" title="dom.js">dom.js</a></li>
                                 <li class=""><a href="selector-css2.js.html" title="selector-css2.js">selector-css2.js</a></li>
