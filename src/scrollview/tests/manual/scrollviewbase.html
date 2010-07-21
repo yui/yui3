@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
         <title>Y.ScrollView (y)</title>
@@ -275,12 +275,14 @@
 
                 var scrollView = new Y.ScrollView({
                     contentBox: '#scrollable',
-                    height: 372
+                    height: 372,
+                    flick : {
+                        minDistance:0,
+                        minVelocity:0
+                    }
                 });
 
                 scrollView.render();
-				
-		        // Y.later(200, window, scrollTo, [0, 0]);
             });
 
         </script>
