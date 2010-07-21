@@ -4,7 +4,7 @@
  * @module yui
  * @submodule yui-base
  */
-(function() {
+// (function() {
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -212,4 +212,4 @@ L.type = function (o) {
     return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
-})();
+// })();

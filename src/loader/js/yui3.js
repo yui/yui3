@@ -3,7 +3,7 @@
  * @module loader
  * @submodule yui3
  */
-YUI.Env[Y.version].modules = {
+YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -1103,6 +1103,14 @@ YUI.Env[Y.version].modules = {
             "event-simulate"
         ], 
         "skinnable": true
+    }, 
+    "uploader": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
+        ]
     }, 
     "value-change": {
         "requires": [

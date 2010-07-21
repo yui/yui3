@@ -65,36 +65,51 @@
         <span class="nx">_proxy</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">node</span>      <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
                 <span class="nx">el</span>        <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-                <span class="nx">thisObj</span>   <span class="o">=</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
                 <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">nodeDataKey</span><span class="p">),</span>
+                <span class="nx">yuid</span>      <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">),</span>
                 <span class="nx">handle</span><span class="p">;</span>
+
+            <span class="nx">notifier</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
 
             <span class="c1">// Maintain a list to handle subscriptions from nested containers</span>
             <span class="c1">// div#a&gt;div#b&gt;input #a.on(focus..) #b.on(focus..), use one focus</span>
             <span class="c1">// or blur subscription that fires notifiers from #b then #a to</span>
             <span class="c1">// emulate bubble sequence.</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">notifiers</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">notifiers</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="nx">notifiers</span> <span class="o">=</span> <span class="p">{};</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">setData</span><span class="p">(</span><span class="nx">nodeDataKey</span><span class="p">,</span> <span class="nx">notifiers</span><span class="p">);</span>
 
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_notify</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">thisObj</span><span class="p">]);</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_notify</span><span class="p">,</span> <span class="nx">el</span><span class="p">]);</span>
                 <span class="c1">// remove element level subscription after execution</span>
                 <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="nx">notifiers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">notifier</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">notifiers</span><span class="p">[</span><span class="nx">yuid</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">notifiers</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="p">}</span>
+            <span class="nx">notifiers</span><span class="p">[</span><span class="nx">yuid</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">notifier</span><span class="p">);</span>
         <span class="p">},</span>
 
         <span class="nx">_notify</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">node</span>      <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
                 <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">nodeDataKey</span><span class="p">),</span>
-                <span class="nx">i</span><span class="p">;</span>
+                            <span class="c1">// document.get(&#39;ownerDocument&#39;) returns null</span>
+                <span class="nx">doc</span>       <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ownerDocument&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="nx">node</span><span class="p">,</span>
+                <span class="nx">target</span>    <span class="o">=</span> <span class="nx">node</span><span class="p">,</span>
+                <span class="nx">nots</span>      <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
-            <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+            <span class="c1">// Walk up the parent axis until the origin node, </span>
+            <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">nots</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">nots</span><span class="p">,</span> <span class="nx">notifiers</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">target</span><span class="p">)]</span> <span class="o">||</span> <span class="p">[]);</span>
+                <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">nots</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">nots</span><span class="p">,</span> <span class="nx">notifiers</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">doc</span><span class="p">)]</span> <span class="o">||</span> <span class="p">[]);</span>
 
-            <span class="c1">// reverse order to emulate bubble notification</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">notifiers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nots</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">nots</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">currentTarget</span><span class="p">;</span>
+
+                <span class="nx">nots</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="c1">// leaving the element pristine, as if nothing ever happened...</span>
@@ -110,7 +125,6 @@
         <span class="p">},</span>
 
         <span class="nx">delegate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">filter</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">filter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">compileFilter</span><span class="p">(</span><span class="nx">filter</span><span class="p">);</span>
             <span class="p">}</span>

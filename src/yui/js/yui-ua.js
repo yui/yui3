@@ -19,7 +19,7 @@
  * @class UA
  * @static
  */
-Y.UA = function() {
+Y.UA = YUI.Env.UA || function() {
 
     var numberify = function(s) {
             var c = 0;
@@ -275,6 +275,8 @@ Y.UA = function() {
             }
         }
     }
+
+    YUI.Env.UA = o;
     
     return o;
 }();

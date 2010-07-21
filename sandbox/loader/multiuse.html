@@ -104,6 +104,15 @@ YUI({
                     return Y.UA.gecko;
                 }
             }
+        },
+
+        lib4: {
+            requires: ['yui'],
+            fullpath: 'js/lib4.js',
+            condition: {
+                trigger: 'dom-style',
+                ua: 'gecko'
+            }
         }
     }
 
