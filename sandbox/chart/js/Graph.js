@@ -1,11 +1,11 @@
-function CartesianGraph(config)
+function Graph(config)
 {
-    CartesianGraph.superclass.constructor.apply(this, arguments);
+    Graph.superclass.constructor.apply(this, arguments);
 }
 
-CartesianGraph.NAME = "cartesianGraph";
+Graph.NAME = "graph";
 
-CartesianGraph.ATTRS = {
+Graph.ATTRS = {
     seriesCollection: {
         lazyAdd: false,
 
@@ -26,7 +26,7 @@ CartesianGraph.ATTRS = {
     }
 };
 
-Y.extend(CartesianGraph, Y.Base, {
+Y.extend(Graph, Y.Base, {
     /**
      * @private 
      * @description Collection of series to be displayed in the graph.
@@ -63,7 +63,7 @@ Y.extend(CartesianGraph, Y.Base, {
         for(; i < len; ++i)
         {	
             series = val[i];
-            if(!(series instanceof Y.CartesianSeries))
+            if(!(series instanceof Y.CartesianSeries) && !(series instanceof Y.PieSeries))
             {
                 this._createSeries(series);
                 continue;
@@ -80,7 +80,7 @@ Y.extend(CartesianGraph, Y.Base, {
     /**
      * @private
      * @description Adds a series to the graph.
-     * @param {CartesianSeries}
+     * @param {Series}
      */
     _addSeries: function(series)
     {
@@ -131,7 +131,7 @@ Y.extend(CartesianGraph, Y.Base, {
      * @private
      * @description Creates a series instance based on a specified type.
      * @param {String} Indicates type of series instance to be created.
-     * @return {CartesianSeries} Series instance created.
+     * @return {Series} Series instance created.
      */
     _getSeries: function(type)
     {
@@ -186,6 +186,9 @@ Y.extend(CartesianGraph, Y.Base, {
             case "stackedmarkerseries" :
                 seriesClass = Y.StackedMarkerSeries;
             break;
+            case "pieseries" :
+                seriesClass = Y.PieSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;
@@ -195,4 +198,4 @@ Y.extend(CartesianGraph, Y.Base, {
 
 });
 
-Y.CartesianGraph = CartesianGraph;
+Y.Graph = Graph;

@@ -148,7 +148,7 @@ table, tr, td
                     var taxgraphstyles = {
 						fill:
                         {
-                            color:"#ff0000",
+                            color:"#000000",
 						},
                         width:6, 
                         height:6,
@@ -173,7 +173,7 @@ table, tr, td
 							pattern:"%b %d, %y"
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"inside"
 						},
 						line:{
@@ -198,7 +198,7 @@ table, tr, td
                             }
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"outside"
 						},
 						line:{
@@ -230,7 +230,7 @@ table, tr, td
                                                         xKey:"date",
                                                         yKey:"expenses",
                                                         styles:taxgraphstyles});
-                   var graph = new Y.CartesianGraph({parent:"#chart", seriesCollection:[{
+                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
                                                                                             type:"areaspline",
                                                                                             xAxis:timeaxis,
                                                                                             yAxis:numericaxis,

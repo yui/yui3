@@ -54,7 +54,6 @@ VMLGraphics.prototype = {
             this._fillColor = color;
             this._fill = 1;
         }
-
         return this;
     },
 
@@ -219,6 +218,25 @@ VMLGraphics.prototype = {
         this._drawVML();
 	},
 
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    {
+        this._drawingComplete = false;
+        this._width = radius;
+        this._height = radius;
+        yRadius = yRadius || radius;
+        if(Math.abs(arc) > 360)
+        {
+            arc = 360;
+        }
+        startAngle *= 65535;
+        arc *= 65536;
+        this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + radius + " " + startAngle + " " + arc;
+        this._width = radius * 2;
+        this._height = this._width;
+        this._shape = "shape";
+        this._drawVML();
+    },
+
     end: function() {
         if(this._shape)
         {
@@ -280,7 +298,13 @@ VMLGraphics.prototype = {
         this._vml.style.height = h + 'px';
         this._vml.coordSize = w + ' ' + h;
     },
-    
+   
+    setPosition: function(x, y)
+    {
+        this._vml.style.left = x + "px";
+        this._vml.style.top = y + "px";
+    },
+
     /**
      * @private
      */
@@ -480,7 +504,6 @@ VMLGraphics.prototype = {
     getShape: function(config) {
         var node,
             shape,
-            path,
             fill = config.fill;
         this._width = config.w;
         this._height = config.h;

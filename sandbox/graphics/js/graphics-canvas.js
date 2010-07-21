@@ -302,6 +302,84 @@ Graphic.prototype = {
     },
 
     /**
+     * @private
+     * Draws a wedge.
+     * 
+     * @param x				x component of the wedge's center point
+     * @param y				y component of the wedge's center point
+     * @param startAngle	starting angle in degrees
+     * @param arc			sweep of the wedge. Negative values draw clockwise.
+     * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param yRadius		[optional] y radius for wedge.
+     */
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    {
+        var segs,
+            segAngle,
+            theta,
+            angle,
+            angleMid,
+            ax,
+            ay,
+            bx,
+            by,
+            cx,
+            cy,
+            i = 0;
+
+        this._drawingComplete = false;
+        // move to x,y position
+        this.moveTo(x, y);
+        
+        yRadius = yRadius || radius;
+        
+        // limit sweep to reasonable numbers
+        if(Math.abs(arc) > 360)
+        {
+            arc = 360;
+        }
+        
+        // First we calculate how many segments are needed
+        // for a smooth arc.
+        segs = Math.ceil(Math.abs(arc) / 45);
+        
+        // Now calculate the sweep of each segment.
+        segAngle = arc / segs;
+        
+        // The math requires radians rather than degrees. To convert from degrees
+        // use the formula (degrees/180)*Math.PI to get radians.
+        theta = -(segAngle / 180) * Math.PI;
+        
+        // convert angle startAngle to radians
+        angle = -(startAngle / 180) * Math.PI;
+        
+        // draw the curve in segments no larger than 45 degrees.
+        if(segs > 0)
+        {
+            // draw a line from the center to the start of the curve
+            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
+            ay = y + Math.sin(-startAngle / 180 * Math.PI) * yRadius;
+            this.lineTo(ax, ay);
+            // Loop for drawing curve segments
+            for(; i < segs; ++i)
+            {
+                angle += theta;
+                angleMid = angle - (theta / 2);
+                bx = x + Math.cos(angle) * radius;
+                by = y + Math.sin(angle) * yRadius;
+                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
+                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
+                this.quadraticCurveTo(cx, cy, bx, by);
+            }
+            // close the wedge by drawing a line to the center
+            this.lineTo(x, y);
+        }
+        this._trackPos(x, y);
+        this._trackSize(radius, radius);
+        this._drawShape();
+    },
+
+    /**
      * Ends a drawing
      */
     end: function() {
@@ -331,6 +409,12 @@ Graphic.prototype = {
         this._canvas.style.left = "0px";
         this._canvas.width = w;
         this._canvas.height = h;
+    },
+
+    setPosition: function(x, y)
+    {
+        this._node.style.left = x + "px";
+        this._node.style.top = y + "px";
     },
 
     /**

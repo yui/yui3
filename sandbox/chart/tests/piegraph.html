@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+/*Supplemental: CSS for the YUI distribution*/
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+table, tr, td
+{
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-spacing: 0px;
+    vertical-align:top;
+}
+</style>
+<!-- BEGIN EXAMPLE CODE -->	
+    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
+		
+</head>		
+<body class="yui3-skin-sam">
+		
+<div>
+        <input type="text" name="xLabelRotationField" id="xLabelRotationField" />
+        <button id="rotationbutton" type="button">Update Axes Label Rotation</button>
+        <input type="text" name="yLabelRotationField" id="yLabelRotationField" />
+        
+  <div style="position:absolute;top:50px;left:100px">      
+<table>
+<tr><td></td><td></td><td></td></tr>
+<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:400px;position:relative"></div></td><td><div id="chart" style="width:400px;height:400px;position:relative"></div></td><td></td></tr>
+<tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:400px"></div></td><td></td></tr>
+</table>
+</div>
+<script>
+
+			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'graphics', 'infographics', function (Y)
+				{
+					// Create data 
+					var mydata = {
+						id:"myData", 
+						data: [
+							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, {day:"Tuesday", taxes:50, expenses:9100, revenue:100}, 
+							{day:"Wednesday", taxes:4000, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
+						]
+					};					
+
+
+				
+                    var dataProvider = mydata;
+                    var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
+					timeaxis.addKey("day");
+                    
+                    var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
+					numericaxis.addKey("revenue");
+			        numericaxis.addKey("expenses");	
+                    numericaxis.addKey("taxes");
+                    var pieSeries = new Y.PieSeries({
+                                                        categoryAxis:timeaxis,
+                                                        valueAxis:numericaxis,
+                                                        categoryKey:"day",
+                                                        valueKey:"taxes",
+                                                        styles: {/*fillColors:["#eeeeee", "#ff0000", "#0000ff"], fillAlphas:[".2", "1"], borderWeights:[1], borderColors:["#ffcc00", "#000fff"],*/ padding: {left:50, top:50, right:50, bottom:50}}
+                                                    });
+                  var graph = new Y.Graph({parent:"#chart", seriesCollection:[pieSeries]});
+               });
+</script>
+<!-- END EXAMPLE CODE -->
+</div>
+</body>
+</html>

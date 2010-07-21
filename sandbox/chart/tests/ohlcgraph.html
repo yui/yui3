@@ -93,7 +93,7 @@ table, tr, td
 							pattern:"%b %d, %y"
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"inside"
 						},
 						line:{
@@ -119,7 +119,7 @@ table, tr, td
                             }
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"outside"
 						},
 						line:{
@@ -147,7 +147,7 @@ table, tr, td
                                                         yKey:"taxes",
                                                         styles:taxgraphstyles});
 
-                   var graph = new Y.CartesianGraph({parent:"#chart", seriesCollection:[{
+                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
                                                                                             type:"area",
                                                                                             xAxis:timeaxis,
                                                                                             yAxis:numericaxis,

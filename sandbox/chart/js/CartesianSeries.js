@@ -63,27 +63,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 	 */
 	GUID: "yuicartesianseries",
 	
-    /**
-     * @private
-     * Creates a <code>Graphic</code> instance.
-     */
-    _setCanvas: function()
-    {
-        var cb = this.get("contentBox"),
-            n = document.createElement("div"),
-            style = n.style;
-        cb.appendChild(n);
-        style.position = "absolute";
-        style.display = "block";
-        style.top = "0px"; 
-        style.left = "0px";
-        style.width = "100%";
-        style.height = "100%";
-        this.set("node", n);
-        this.set("graphic", new Y.Graphic());
-        this.get("graphic").render(this.get("node"));
-   },
-	
 	/**
 	 * @private (protected)
 	 * Handles updating the graph when the x < code>Axis</code> values
@@ -463,17 +442,6 @@ ATTRS: {
 			return value !== this.get("yKey");
 		}
 	},
-
-    node: {
-        value: null
-    },
-    
-    /**
-	 * The graphic in which the series will be rendered.
-	 */
-	graphic: {
-        value: null
-    },
 
     direction: {
         value: "horizontal"

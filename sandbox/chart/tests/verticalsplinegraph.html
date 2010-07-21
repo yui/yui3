@@ -173,7 +173,7 @@ table, tr, td
 							pattern:"%b %d, %y"
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"inside"
 						},
 						line:{
@@ -198,7 +198,7 @@ table, tr, td
                             }
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"outside"
 						},
 						line:{
@@ -231,7 +231,7 @@ table, tr, td
                                                         yKey:"date",
                                                         xKey:"expenses",
                                                         styles:taxgraphstyles});
-                   var graph = new Y.CartesianGraph({parent:"#chart", seriesCollection:[{
+                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
                                                                                             type:"areaspline",
                                                                                             direction:"vertical",
                                                                                             yAxis:timeaxis,
@@ -244,7 +244,7 @@ table, tr, td
                                                                                         markerSeries
                                                                                         ]});
 
-                    var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
+                    var axisrenderer = new Y.AxisRenderer({axis:numericaxis, position:"bottom", styles:bottomaxisstyles});
                     axisrenderer.render("#axis");
                     function updateAxisLabelRotation()
                     {
@@ -252,7 +252,7 @@ table, tr, td
                         vaxis.set("styles", {label:{rotation:document.getElementById("yLabelRotationField").value}});
                     }
                     Y.on("click", updateAxisLabelRotation, "#rotationbutton");
-                    var vaxis = new Y.AxisRenderer({position:"left", axis:numericaxis, styles:leftaxisstyles});
+                    var vaxis = new Y.AxisRenderer({position:"left", axis:timeaxis, styles:leftaxisstyles});
                     vaxis.render("#vertaxis");
                 });
 </script>
