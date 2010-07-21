@@ -165,7 +165,7 @@ Y.Event.define('flick', {
 
                 distance = xyDistance[(axis === 'x') ? 0 : 1];
                 absDistance = Math.abs(distance); 
-                velocity = absDistance/time;
+                velocity = (time !== 0) ? absDistance/time : 0;
 
                 if (isFinite(velocity) && (absDistance >= params.minDistance) && (velocity  >= params.minVelocity)) {
 
@@ -173,7 +173,7 @@ Y.Event.define('flick', {
                     e.flick = {
                         time:time,
                         distance: distance,
-                        direction: distance/absDistance,
+                        direction: (absDistance !== 0) ? distance/absDistance : 1,
                         velocity:velocity,
                         axis: axis,
                         start : start
