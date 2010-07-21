@@ -511,8 +511,13 @@ proto = {
             fetchCSS = config.fetchCSS,
             process  = function(names) {
 
+                if (!names.length) {
+                    return;
+                }
+
                 // var collection = YArray(names);
                 var collection = names;
+
 
                 YArray.each(collection, function(name) {
 
@@ -634,7 +639,7 @@ proto = {
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
-        if (Y.Loader) {
+        if (Y.Loader && args.length) {
             // loader = new Y.Loader(config);
             loader = getLoader(Y);
             loader.require(args);
