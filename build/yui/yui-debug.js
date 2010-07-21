@@ -195,10 +195,9 @@ proto = {
             Y.Env = {
                 mods:         {}, // flat module map
                 versions:     {}, // version module map
-                loaders:      {},
                 base:         BASE,
                 cdn:          BASE + VERSION + '/build/',
-                bootstrapped: false,
+                // bootstrapped: false,
                 _idx:         0,
                 _used:        {},
                 _attached:    {},
@@ -206,7 +205,7 @@ proto = {
                 _uidx:        0,
                 _guidp:       'y',
                 _loaded:      {},
-                getBase: function(srcPattern, comboPattern) {
+                getBase: G_ENV && G_ENV.getBase || function(srcPattern, comboPattern) {
                     var b, nodes, i, src, match;
                     // get from querystring
                     nodes = (doc && doc.getElementsByTagName('script')) || [];
@@ -310,8 +309,9 @@ proto = {
             }
         }
 
-        Y.use('yui-base');
-        Y.use.apply(Y, core);
+        // Y.use('yui-base');
+        // Y.use.apply(Y, core);
+        // Y._attach(core);
 
         // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
@@ -418,7 +418,8 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    if (!Y._attach(Y.Array(req))) {
+                    // if (!Y._attach(Y.Array(req))) {
+                    if (!Y._attach(req)) {
                         return false;
                     }
                 }
@@ -435,7 +436,8 @@ proto = {
                 }
 
                 if (use && use.length) {
-                    if (!Y._attach(Y.Array(use))) {
+                    // if (!Y._attach(Y.Array(use))) {
+                    if (!Y._attach(use)) {
                         return false;
                     }
                 }
@@ -486,8 +488,11 @@ proto = {
      */
     use: function() {
 
+        // console.log(arguments);
+
         if (!this.Array) {
-            this._attach(['yui-base']);
+            // this._attach(['yui-base']);
+            this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
         }
 
         var len, loader, handleBoot,
@@ -574,7 +579,6 @@ proto = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
-                    // YArray.each(data, process);
                     process(data);
                     redo = missing.length;
                     if (redo) {
@@ -657,7 +661,6 @@ proto = {
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        // YArray.each(args, process);
         process(args);
 
         Y.log('requested, requires: ' + args + ', ' + r, 'info', 'yui');
@@ -1319,7 +1322,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-(function() {
+// (function() {
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -1527,7 +1530,7 @@ L.type = function (o) {
     return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
-})();
+// })();
 
 /**
  * The YUI module contains the components required for building the YUI seed file.
