@@ -1104,6 +1104,14 @@ YUI.Env[Y.version].modules = {
         ], 
         "skinnable": true
     }, 
+    "uploader": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
+        ]
+    }, 
     "value-change": {
         "requires": [
             "event-focus", 

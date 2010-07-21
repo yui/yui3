@@ -574,7 +574,6 @@ proto = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
-                    // YArray.each(data, process);
                     process(data);
                     redo = missing.length;
                     if (redo) {
@@ -657,7 +656,6 @@ proto = {
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        // YArray.each(args, process);
         process(args);
 
         Y.log('requested, requires: ' + args + ', ' + r, 'info', 'yui');
