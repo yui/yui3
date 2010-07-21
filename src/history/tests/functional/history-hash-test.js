@@ -60,22 +60,22 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.once('hashchange', function () {
             changed = true;
-            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+            Y.Assert.areSame('a=c', Y.HistoryHash.getHash());
         }, win);
 
-        Y.HistoryHash.setHash('#foo=bar');
+        Y.HistoryHash.setHash('#a=b');
 
         this.wait(function () {
-            Y.Assert.isTrue(changed);
+            Y.Assert.isTrue(changed, "Synthetic hashchange event wasn't fired.");
 
             changed = false;
 
             Y.once('hashchange', function () {
                 changed = true;
-                Y.Assert.areSame('foo=baR', Y.HistoryHash.getHash());
+                Y.Assert.areSame('a=B', Y.HistoryHash.getHash());
             }, win);
 
-            Y.HistoryHash.setHash('#foo=baR');
+            Y.HistoryHash.setHash('#a=B');
 
             this.wait(function () {
                 Y.Assert.isTrue(changed, "Synthetic hashchange event wasn't fired.");
