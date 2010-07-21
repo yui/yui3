@@ -1,0 +1,10 @@
+{
+    "uploader": {
+        "requires": [
+            "event-custom", 
+            "node",
+            "base",
+            "swf"
+        ] 
+    }
+}
