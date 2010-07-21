@@ -15,6 +15,7 @@
 		FLASH_TYPE = "application/x-shockwave-flash",
 		FLASH_VER = "10.0.22",
 		EXPRESS_INSTALL_URL = "http://fpdownload.macromedia.com/pub/flashplayer/update/current/swf/autoUpdater.swf?" + Math.random(),
+		EVENT_HANDLER = "SWF.eventHandler",
 		possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", menu:"", name:"", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
 		
 		/**
@@ -38,7 +39,7 @@
 		 *        to be passed to the SWF.
 		 */
 				
-function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/) {
+function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
 	
 	
 	this._id = Y.guid("yuiswf");
@@ -55,7 +56,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	var flashURL = (shouldExpressInstall)?EXPRESS_INSTALL_URL:swfURL;
 	var objstring = '<object ';
 	var w, h;
-	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id;
+	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id + "&YUIBridgeCallback=" + EVENT_HANDLER;
 	
 	Y.SWF._instances[_id] = this;
     if (oElement && (isFlashVersionRight || shouldExpressInstall) && flashURL) {
@@ -101,22 +102,21 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 };
 
 /**
+ * @private
  * The static collection of all instances of the SWFs on the page.
  * @property _instances
- * @private
  * @type Object
  */
-
 
 SWF._instances = SWF._instances || {};
 
 /**
+ * @private
  * Handles an event coming from within the SWF and delegate it
  * to a specific instance of SWF.
  * @method eventHandler
  * @param swfid {String} the id of the SWF dispatching the event
  * @param event {Object} the event being transmitted.
- * @private
  */
 SWF.eventHandler = function (swfid, event) {
 	SWF._instances[swfid]._eventHandler(event);
@@ -130,12 +130,44 @@ SWF.prototype =
 	 * @method _eventHandler
 	 * @param event {Object} The event to be propagated from Flash.
 	 */
+	
 	_eventHandler: function(event)
 	{
-        this.fire(event.type, event);
+		if (event.type == "swfReady") 
+		{
+			this.publish("swfReady", {fireOnce:true});
+	     	this.fire("swfReady", event);
+        }
+		else if(event.type == "log")
+		{
+			Y.log(event.message, event.category, this.toString());
+		}
+        else
+		{
+			this.fire(event.type, event);
+        } 
 	},
 		
-
+	/**
+	 * Calls a specific function exposed by the SWF's
+	 * ExternalInterface.
+	 * @method callSWF
+	 * @param func {String} the name of the function to call
+	 * @param args {Object} the set of arguments to pass to the function.
+	 */
+	
+	callSWF: function (func, args)
+	{
+		if (!args) { 
+			  args= []; 
+		};	
+		if (this._swf._node[func]) {
+		return(this._swf._node[func].apply(this._swf._node, args));
+	    } else {
+		return null;
+	    }
+	},
+	
 	/**
 	 * Public accessor to the unique name of the SWF instance.
 	 *
@@ -148,7 +180,6 @@ SWF.prototype =
 	}
 };
 
-//
 Y.augment(SWF, Y.EventTarget);
 
 Y.SWF = SWF;
