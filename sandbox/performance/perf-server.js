@@ -26,10 +26,16 @@ server.get('/combo/([^/]+)/?', function (root) {
         mtime,
         relativePath,
         response = '',
-        rootPath = config.roots[root],
+        rootPath,
         stat;
 
-    if (!rootPath) {
+    // For now, we have to assume all root paths are relative to process.cwd()
+    // because Node's realpath() implementation won't traverse above that.
+    rootPath = path.normalize(path.join(process.cwd(), config.roots[root]));
+
+    try {
+        rootPath = fs.realpathSync(rootPath);
+    } catch (ex) {
         this.response.send404();
         this.end();
         return;
@@ -40,7 +46,18 @@ server.get('/combo/([^/]+)/?', function (root) {
             continue;
         }
 
-        fullPath = path.join(rootPath, relativePath);
+        fullPath = path.normalize(path.join(rootPath, relativePath));
+
+        // Don't allow traversal above the public root.
+        if (fullPath.indexOf(rootPath) !== 0) {
+            // Resist the temptation to change this to a 400. That would create
+            // an information disclosure vulnerability by signaling that the
+            // path exists.
+            this.response.send404();
+            this.end();
+            return;
+        }
+
         mimeType = mime.getType(path.extname(relativePath));
 
         try {
