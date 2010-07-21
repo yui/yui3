@@ -506,6 +506,15 @@ YUI.Env[Y.version].modules = {
                     "dom-base"
                 ]
             }, 
+            "dom-style-ie": {
+                "condition": {
+                    "trigger": "dom-style", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "dom-style"
+                ]
+            }, 
             "selector": {
                 "requires": [
                     "dom-base"
@@ -1193,7 +1202,6 @@ YUI.Env[Y.version].modules = {
         }
     }
 };
-
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
