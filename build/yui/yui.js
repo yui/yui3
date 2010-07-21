@@ -634,7 +634,7 @@ proto = {
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
-        if (Y.Loader) {
+        if (Y.Loader && args.length) {
             // loader = new Y.Loader(config);
             loader = getLoader(Y);
             loader.require(args);
