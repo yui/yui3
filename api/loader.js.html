@@ -1068,7 +1068,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">r</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">r</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">hash</span><span class="p">[</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
-                    <span class="c1">// d.push(r[i]); // should not need the submodule as a dep</span>
+                    <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span> <span class="c1">// should not need the submodule as a dep</span>
                     <span class="nx">hash</span><span class="p">[</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
 
@@ -1340,38 +1340,38 @@
     <span class="p">},</span>
 
     <span class="nx">_conditions</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">provides</span><span class="p">,</span> <span class="nx">cond</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">reqs</span><span class="p">,</span> <span class="nx">go</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">cond</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">reqs</span><span class="p">,</span> <span class="nx">go</span><span class="p">,</span>
             <span class="nx">conditions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">conditions</span><span class="p">,</span>
-            <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">;</span>
+            <span class="nx">r</span>          <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">;</span>
 
         <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">moddef</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">provides</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProvides</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
-                <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">provides</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">trigger</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="nx">cond</span> <span class="o">=</span> <span class="nx">conditions</span><span class="p">[</span><span class="nx">trigger</span><span class="p">];</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">cond</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">cond</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">test</span><span class="p">,</span> <span class="nx">condmod</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">((</span><span class="nx">condmod</span> <span class="k">in</span> <span class="nx">r</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">condmod</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">)))</span> <span class="p">{</span>
-                                    <span class="k">if</span> <span class="p">(</span><span class="nx">test</span><span class="p">)</span> <span class="p">{</span>
-                                        <span class="nx">go</span> <span class="o">=</span> <span class="p">(</span><span class="nx">test</span><span class="p">.</span><span class="nx">ua</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">[</span><span class="nx">test</span><span class="p">.</span><span class="nx">ua</span><span class="p">])</span> <span class="o">||</span> 
-                                             <span class="p">(</span><span class="nx">test</span><span class="p">.</span><span class="nx">test</span> <span class="o">&amp;&amp;</span> <span class="nx">test</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">r</span><span class="p">));</span>
-                                    <span class="p">}</span>
+                <span class="c1">// provides = this.getProvides(name);</span>
+                <span class="c1">// YObject.each(provides, function(v, trigger) {</span>
+                    <span class="c1">// if (!(name in this.loaded)) {</span>
+                <span class="nx">cond</span> <span class="o">=</span> <span class="nx">conditions</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">cond</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">cond</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">test</span><span class="p">,</span> <span class="nx">condmod</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">((</span><span class="nx">condmod</span> <span class="k">in</span> <span class="nx">r</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">condmod</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">)))</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">test</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">go</span> <span class="o">=</span> <span class="p">(</span><span class="nx">test</span><span class="p">.</span><span class="nx">ua</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">[</span><span class="nx">test</span><span class="p">.</span><span class="nx">ua</span><span class="p">])</span> <span class="o">||</span> 
+                                     <span class="p">(</span><span class="nx">test</span><span class="p">.</span><span class="nx">test</span> <span class="o">&amp;&amp;</span> <span class="nx">test</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">r</span><span class="p">));</span>
+                            <span class="p">}</span>
 
-                                    <span class="k">if</span> <span class="p">(</span><span class="nx">go</span><span class="p">)</span> <span class="p">{</span>
-                                        <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">condmod</span><span class="p">);</span>
-                                        <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
-                                            <span class="nx">r</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                                            <span class="nx">reqs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
-                                            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">reqs</span><span class="p">));</span>
-                                        <span class="p">}</span>
-
-                                    <span class="p">}</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">go</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">condmod</span><span class="p">);</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">r</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                    <span class="nx">reqs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+                                    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">reqs</span><span class="p">));</span>
                                 <span class="p">}</span>
-                            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+                            <span class="p">}</span>
                         <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+                    <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+                <span class="p">}</span>
+                    <span class="c1">// }</span>
+                <span class="c1">// }, this);</span>
             <span class="p">}</span>
         <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
     <span class="p">},</span>
