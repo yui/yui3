@@ -309,9 +309,9 @@ proto = {
             }
         }
 
-        // Y.use('yui-base');
+        Y.use('yui-base');
         // Y.use.apply(Y, core);
-        // Y._attach(core);
+        Y._attach(core);
 
         // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
@@ -491,8 +491,8 @@ proto = {
         // console.log(arguments);
 
         if (!this.Array) {
-            // this._attach(['yui-base']);
-            this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
+            this._attach(['yui-base']);
+            // this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
         }
 
         var len, loader, handleBoot,
