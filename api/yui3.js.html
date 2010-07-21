@@ -346,37 +346,6 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
-    <span class="s2">&quot;datatable&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;column&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;columnset&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;datatable-base&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;columnset&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;rowset&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;widget&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;row&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;rowset&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base&quot;</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">},</span> 
     <span class="s2">&quot;datatype&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;datatype-date&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -654,12 +623,6 @@
     <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;event-synthetic&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;event-custom&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
             <span class="s2">&quot;event-touch&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;node-base&quot;</span>
@@ -680,27 +643,33 @@
             <span class="p">},</span> 
             <span class="s2">&quot;event-focus&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;node-base&quot;</span>
+                    <span class="s2">&quot;event-synthetic&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;event-key&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;node-base&quot;</span>
+                    <span class="s2">&quot;event-synthetic&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;event-mouseenter&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;node-base&quot;</span>
+                    <span class="s2">&quot;event-synthetic&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;event-mousewheel&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;node-base&quot;</span>
+                    <span class="s2">&quot;event-synthetic&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;event-resize&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;node-base&quot;</span>
+                    <span class="s2">&quot;event-synthetic&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-synthetic&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-custom&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
