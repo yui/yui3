@@ -1117,6 +1117,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
                 "Y.all(Y.one('body'))");
 
+            node = Y.one('win');
+            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
+                "Y.all(Y.one('win'))");
+
+/* comparision fails in webkit, so using alert test below
+            Assert.areEqual(window, Y.all(window)._nodes[0], 
+                "Y.all(window)");
+*/
+
+            Assert.isNotUndefined(Y.all(window)._nodes[0].alert,
+                "Y.all(window)");
+
         },
 
         test_isEmpty: function() {

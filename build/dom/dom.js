@@ -1051,6 +1051,17 @@ if (Y.UA.webkit) {
 
 }
 
+Y_DOM._multiplyMatrix = function(a, b) {
+    var c = [
+        a[0][0] * b[0][0] + a[0][1] * b[1][0],
+        a[0][0] * a[0][1] + a[0][1] * b[1][1],
+        a[1][0] * b[0][0] + a[1][1] * b[1][0],
+        a[1][0] * b[0][1] + b[1][1] * b[1][1]
+    ];
+
+    return c;
+};
+
 Y_DOM.CUSTOM_STYLES.transform = {
     set: function(node, val, style) {
         style[TRANSFORM] = val;
@@ -1134,6 +1145,11 @@ Y.Color = {
     }
 };
 })(Y);
+
+
+
+}, '@VERSION@' ,{requires:['dom-base']});
+YUI.add('dom-style-ie', function(Y) {
 
 (function(Y) {
 var HAS_LAYOUT = 'hasLayout',
@@ -1408,7 +1424,7 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-style']});
 YUI.add('dom-screen', function(Y) {
 
 (function(Y) {
@@ -2717,5 +2733,5 @@ YUI.add('selector', function(Y){}, '@VERSION@' ,{use:['selector-native', 'select
 
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-style-ie', 'dom-screen', 'selector']});
 

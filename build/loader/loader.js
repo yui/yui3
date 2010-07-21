@@ -68,7 +68,6 @@ groups.yui2 = {
 
 YUI.Env[VERSION] = META;
 }());
-
 (function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
@@ -1995,9 +1994,7 @@ Y.Loader.prototype = {
 
 
 
-
 }, '@VERSION@' ,{requires:['get']});
-
 YUI.add('loader-rollup', function(Y) {
 
 /**
@@ -2097,9 +2094,7 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
-
 }, '@VERSION@' ,{requires:['loader-base']});
-
 YUI.add('loader-yui3', function(Y) {
 
 /**
@@ -2606,6 +2601,15 @@ YUI.Env[Y.version].modules = {
             "dom-style": {
                 "requires": [
                     "dom-base"
+                ]
+            }, 
+            "dom-style-ie": {
+                "condition": {
+                    "trigger": "dom-style", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "dom-style"
                 ]
             }, 
             "selector": {
@@ -3297,9 +3301,7 @@ YUI.Env[Y.version].modules = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['loader-base']});
-
 
 
 YUI.add('loader', function(Y){}, '@VERSION@' ,{use:['loader-base', 'loader-rollup', 'loader-yui3' ]});
