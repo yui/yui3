@@ -19,7 +19,6 @@
 .yui3-u-6,
 .yui3-u-5-6 {
     display: inline-block;
-    text-align:left;
     zoom: 1; *display: inline; /* IE < 8: fake inline-block */
     letter-spacing: normal;
     margin:0;
@@ -39,7 +38,7 @@
     width: 50%;
 }
 
-.yui3-u-3 {
+.yui3-u-1-3 {
     width: 33.33333%;
 }
 

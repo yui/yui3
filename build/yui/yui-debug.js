@@ -195,10 +195,9 @@ proto = {
             Y.Env = {
                 mods:         {}, // flat module map
                 versions:     {}, // version module map
-                loaders:      {},
                 base:         BASE,
                 cdn:          BASE + VERSION + '/build/',
-                bootstrapped: false,
+                // bootstrapped: false,
                 _idx:         0,
                 _used:        {},
                 _attached:    {},
@@ -206,7 +205,7 @@ proto = {
                 _uidx:        0,
                 _guidp:       'y',
                 _loaded:      {},
-                getBase: function(srcPattern, comboPattern) {
+                getBase: G_ENV && G_ENV.getBase || function(srcPattern, comboPattern) {
                     var b, nodes, i, src, match;
                     // get from querystring
                     nodes = (doc && doc.getElementsByTagName('script')) || [];
@@ -310,8 +309,9 @@ proto = {
             }
         }
 
-        Y.use('yui-base');
-        Y.use.apply(Y, core);
+        // Y.use('yui-base');
+        // Y.use.apply(Y, core);
+        // Y._attach(core);
 
         // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
@@ -418,7 +418,8 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    if (!Y._attach(Y.Array(req))) {
+                    // if (!Y._attach(Y.Array(req))) {
+                    if (!Y._attach(req)) {
                         return false;
                     }
                 }
@@ -435,7 +436,8 @@ proto = {
                 }
 
                 if (use && use.length) {
-                    if (!Y._attach(Y.Array(use))) {
+                    // if (!Y._attach(Y.Array(use))) {
+                    if (!Y._attach(use)) {
                         return false;
                     }
                 }
@@ -486,8 +488,11 @@ proto = {
      */
     use: function() {
 
+        // console.log(arguments);
+
         if (!this.Array) {
-            this._attach(['yui-base']);
+            // this._attach(['yui-base']);
+            this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
         }
 
         var len, loader, handleBoot,
@@ -507,38 +512,45 @@ proto = {
             r        = [], 
             ret      = true,
             fetchCSS = config.fetchCSS,
-            process  = function(name) {
+            process  = function(names) {
 
-                // add this module to full list of things to attach
-                r.push(name);
+                // var collection = YArray(names);
+                var collection = names;
 
-                // only attach a module once
-                if (used[name]) {
-                    return;
-                }
+                YArray.each(collection, function(name) {
 
-                var m = mods[name], req, use;
+                    // add this module to full list of things to attach
+                    r.push(name);
 
-                if (m) {
-                    used[name] = true;
-                    req = m.details.requires;
-                    use = m.details.use;
-                } else {
-                    // CSS files don't register themselves, see if it has been loaded
-                    if (!G_ENV._loaded[VERSION][name]) {
-                        missing.push(name);
-                    } else {
-                        used[name] = true; // probably css
+                    // only attach a module once
+                    if (used[name]) {
+                        return;
                     }
-                }
 
-                if (req) { // make sure requirements are attached
-                    YArray.each(YArray(req), process);
-                }
+                    var m = mods[name], req, use;
 
-                if (use) { // make sure we grab the submodule dependencies too
-                    YArray.each(YArray(use), process);
-                }
+                    if (m) {
+                        used[name] = true;
+                        req = m.details.requires;
+                        use = m.details.use;
+                    } else {
+                        // CSS files don't register themselves, see if it has been loaded
+                        if (!G_ENV._loaded[VERSION][name]) {
+                            missing.push(name);
+                        } else {
+                            used[name] = true; // probably css
+                        }
+                    }
+
+
+                    if (req) { // make sure requirements are attached
+                        process(req);
+                    }
+
+                    if (use) { // make sure we grab the submodule dependencies too
+                        process(use);
+                    }
+                });
             },
 
             notify = function(response) {
@@ -567,7 +579,7 @@ proto = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
-                    YArray.each(data, process);
+                    process(data);
                     redo = missing.length;
                     if (redo) {
                         if (missing.sort().join() == origMissing.sort().join()) {
@@ -627,10 +639,9 @@ proto = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             args = Y.Object.keys(mods);
-
         }
 
-        Y.log('before loader requirements: ' + args + ', ' + r, 'info', 'yui');
+        // Y.log('before loader requirements: ' + args + ', ' + r, 'info', 'yui');
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
@@ -644,16 +655,15 @@ proto = {
             args = loader.sorted;
 
             // YUI.Env.loaders[Y.config._sig] = loader;
-
         }
 
-        Y.log('after loader requirements: ' + args + ', ' + r, 'info', 'yui');
+        // Y.log('after loader requirements: ' + args + ', ' + r, 'info', 'yui');
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        YArray.each(args, process);
+        process(args);
 
-        Y.log('after process requirements: ' + args + ', ' + r, 'info', 'yui');
+        Y.log('requested, requires: ' + args + ', ' + r, 'info', 'yui');
         // console.log(args);
         len = missing.length;
 
@@ -1312,7 +1322,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-(function() {
+// (function() {
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -1520,7 +1530,7 @@ L.type = function (o) {
     return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
-})();
+// })();
 
 /**
  * The YUI module contains the components required for building the YUI seed file.
@@ -2268,7 +2278,7 @@ O.isEmpty = function(o) {
  * @class UA
  * @static
  */
-Y.UA = function() {
+Y.UA = YUI.Env.UA || function() {
 
     var numberify = function(s) {
             var c = 0;
@@ -2524,6 +2534,8 @@ Y.UA = function() {
             }
         }
     }
+
+    YUI.Env.UA = o;
     
     return o;
 }();
