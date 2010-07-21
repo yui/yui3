@@ -299,37 +299,6 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
-    "datatable": {
-        "submodules": {
-            "column": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "columnset": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "datatable-base": {
-                "requires": [
-                    "columnset", 
-                    "rowset", 
-                    "widget"
-                ]
-            }, 
-            "row": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "rowset": {
-                "requires": [
-                    "base"
-                ]
-            }
-        }
-    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
@@ -607,12 +576,6 @@ YUI.Env[Y.version].modules = {
     "event": {
         "expound": "node-base", 
         "plugins": {
-            "event-synthetic": {
-                "requires": [
-                    "node-base", 
-                    "event-custom"
-                ]
-            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -633,27 +596,33 @@ YUI.Env[Y.version].modules = {
             }, 
             "event-focus": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-key": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mouseenter": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
+                ]
+            }, 
+            "event-synthetic": {
+                "requires": [
+                    "node-base", 
+                    "event-custom"
                 ]
             }
         }
@@ -857,8 +826,7 @@ YUI.Env[Y.version].modules = {
             "transition": {
                 "requires": [
                     "transition-native", 
-                    "node-style", 
-                    "anim-easing"
+                    "node-style"
                 ]
             }, 
             "transition-native": {
@@ -907,10 +875,12 @@ YUI.Env[Y.version].modules = {
     }, 
     "node-flick": {
         "requires": [
-            "transition-native", 
+            "classnamemanager", 
+            "transition", 
             "event-flick", 
             "plugin"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "node-focusmanager": {
         "requires": [
@@ -1135,13 +1105,23 @@ YUI.Env[Y.version].modules = {
     }, 
     "widget": {
         "plugins": {
-            "widget-child": {}, 
+            "widget-child": {
+                "requires": [
+                    "base-build"
+                ]
+            }, 
             "widget-parent": {
                 "requires": [
+                    "base-build", 
                     "arraylist"
                 ]
             }, 
-            "widget-position": {}, 
+            "widget-position": {
+                "requires": [
+                    "base-build", 
+                    "node-screen"
+                ]
+            }, 
             "widget-position-align": {
                 "requires": [
                     "widget-position"
@@ -1153,9 +1133,16 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "widget-stack": {
+                "requires": [
+                    "base-build"
+                ], 
                 "skinnable": true
             }, 
-            "widget-stdmod": {}
+            "widget-stdmod": {
+                "requires": [
+                    "base-build"
+                ]
+            }
         }, 
         "skinnable": true, 
         "submodules": {
@@ -1163,8 +1150,11 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "attribute", 
                     "event-focus", 
-                    "base", 
-                    "node", 
+                    "base-base", 
+                    "base-pluginhost", 
+                    "node-base", 
+                    "node-style", 
+                    "node-event-delegate", 
                     "classnamemanager"
                 ]
             }, 
@@ -1203,6 +1193,7 @@ YUI.Env[Y.version].modules = {
         }
     }
 };
+
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

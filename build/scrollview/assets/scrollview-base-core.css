@@ -12,3 +12,11 @@
 .yui3-scrollview-loading {
     display:none;
 }
+
+.yui3-scrollview-scroll-v {
+    overflow-y:hidden;    
+}
+
+.yui3-scrollview-scroll-h {
+    overflow-y:hidden;    
+}

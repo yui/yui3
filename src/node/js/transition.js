@@ -15,26 +15,23 @@
  * @class Transition
  * @for Transition
  * @constructor
- * @extends Base
  */
 
-var START = 'transitionstart',
-    END = 'transitionend',
+var END = 'transitionend',
+    Transition = Y.Transition;
 
-    TransitionNative = Y.TransitionNative,
-
-    NUM = Number;
-
-var _running = {},
-    _timer,
-
-Transition = function() {
-    this.init.apply(this, arguments);
-};
-
-Y.extend(Transition, TransitionNative, {
+Y.mix(Transition.prototype, {
     _start: function() {
-        _running[Y.stamp(this)] = this;
+        if (Transition.useNative) {
+            this._runNative();
+        } else {
+            this._runTimer();
+        }
+    },
+
+    _runTimer: function() {
+        this._initAttrs();
+        Transition._running[Y.stamp(this)] = this;
         this._startTime = new Date();
         Transition._startTimer();
     },
@@ -45,16 +42,14 @@ Y.extend(Transition, TransitionNative, {
             this._runAttrs(duration, duration);
         }
 
-        delete _running[Y.stamp(this)];
+        delete Transition._running[Y.stamp(this)];
         this._running = false;
         this._startTime = null;
     },
 
     _runFrame: function() {
         var t = new Date() - this._startTime,
-            done = (t >= this._totalDuration),
-            attribute,
-            setter;
+            done = (t >= this._totalDuration);
             
         this._runAttrs(t);
 
@@ -66,7 +61,6 @@ Y.extend(Transition, TransitionNative, {
     _runAttrs: function(time) {
         var attr = this._runtimeAttr,
             customAttr = Transition.behaviors,
-            easing = attr.easing,
             node = this._node,
             done = false,
             attribute,
@@ -86,8 +80,7 @@ Y.extend(Transition, TransitionNative, {
                 done = (t >= d);
 
                 if (d === 0) { // set instantly
-                    d = 1; // avoid dividing by zero in easings
-                    t = 1;
+                    d = t = 1; // avoid dividing by zero in easings
                 } else if (t > d) {
                     t = d; 
                 }
@@ -113,12 +106,13 @@ Y.extend(Transition, TransitionNative, {
     _initAttrs: function() {
         var from = {},
             to =  {},
-            easing = (typeof this._easing === 'string') ?
-                    Y.Easing[this._easing] : this._easing,
+            easing = this._easing,
             attr = {},
             customAttr = Transition.behaviors,
             config = this._config,
             duration,
+            val,
+            name,
             unit, begin, end;
 
         this._totalDuration = 0;
@@ -127,13 +121,14 @@ Y.extend(Transition, TransitionNative, {
             val = config[name];
             if (!/^(?:node|duration|iterations|easing)$/.test(name)) {
                 duration = this._duration * 1000;
-                if (typeof val === 'function') {
-                    val = val.call(this, node);
-                } else if (typeof val === 'object') {
-                    duration = ('duration' in val) ? val.duration * 1000 : this._duration * 1000;
-                    easing = (typeof val.easing === 'string') ?
-                            Y.Easing[val.easing] : val.easing || easing;
+                if (val.value) {
+                    duration = (('duration' in val) ? val.duration : this._duration) * 1000;
+                    easing = val.easing || easing;
                     val = val.value;
+                }
+                
+                if (typeof val === 'function') {
+                    val = val.call(this, this._node);
                 }
 
                 begin = (name in customAttr && 'get' in customAttr[name])  ?
@@ -155,6 +150,14 @@ Y.extend(Transition, TransitionNative, {
                     return;
                 }
 
+                if (typeof easing === 'string') {
+                    if (easing.indexOf('cubic-bezier') > -1) {
+                        easing = easing.substring(13, easing.length - 1).split(',');
+                    } else if (Transition.easings[easing]) {
+                        easing = Transition.easings[easing];
+                    }
+                }
+
                 attr[name] = {
                     from: begin,
                     to: end,
@@ -172,21 +175,28 @@ Y.extend(Transition, TransitionNative, {
         this._runtimeAttr = attr;
     },
 
-
-    // TODO: move to computedStyle? (browsers dont agree on default computed offsets)
     _getOffset: function(attr) {
         var node = this._node,
+            domNode = node._node,
             val = node.getComputedStyle(attr),
-            get = (attr === 'left') ? 'getX': 'getY',
-            set = (attr === 'left') ? 'setX': 'setY';
+            position,
+            offsetParent,
+            parentOffset,
+            offset;
 
         if (val === 'auto') {
-            var position = node.getStyle('position');
-            if (position === 'absolute' || position === 'fixed') {
-                val = node[get]();
-                node[set](val);
-            } else {
-                val = 0;
+            position = node.getStyle('position');
+            if (position === 'static' || position === 'relative') {
+                val = 0;    
+            } else if (domNode.getBoundingClientRect) {
+                offsetParent = domNode.offsetParent;
+                parentOffset = offsetParent.getBoundingClientRect()[attr];
+                offset = domNode.getBoundingClientRect()[attr];
+                if (attr === 'left' || attr === 'top') {
+                    val = offset - parentOffset;
+                } else {
+                    val = parentOffset - domNode.getBoundingClientRect()[attr];
+                }
             }
         }
 
@@ -197,10 +207,9 @@ Y.extend(Transition, TransitionNative, {
         this.detachAll();
         this._node = null;
     }
-},
+}, true);
 
-{
-    NAME: 'transition',
+Y.mix(Y.Transition, {
     /**
      * Regex of properties that should use the default unit.
      *
@@ -216,17 +225,6 @@ Y.extend(Transition, TransitionNative, {
      * @static
      */
     DEFAULT_UNIT: 'px',
-
-    DEFAULT_EASING: function (t, b, c, d) {
-        // easeBoth
-        if ((t/=d/2) < 1) {
-            return c/2*t*t + b;
-        }
-        
-        return -c/2 * ((--t)*(t-2) - 1) + b;
-    },
-
-    DEFAULT_DURATION: 0.5,
 
     /**
      * Time in milliseconds passed to setInterval for frame processing 
@@ -258,8 +256,13 @@ Y.extend(Transition, TransitionNative, {
      * @static
      */
     DEFAULT_SETTER: function(anim, att, from, to, elapsed, duration, fn, unit) {
+        from = Number(from);
+        to = Number(to);
+
         var node = anim._node,
-            val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
+            val = Transition.cubicBezier(fn, elapsed / duration);
+
+        val = from + val[0] * (to - from);
 
         if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
             unit = unit || '';
@@ -293,14 +296,14 @@ Y.extend(Transition, TransitionNative, {
     },
 
     _startTimer: function() {
-        if (!_timer) {
-            _timer = setInterval(Transition._runFrame, Transition._intervalTime);
+        if (!Transition._timer) {
+            Transition._timer = setInterval(Transition._runFrame, Transition.intervalTime);
         }
     },
 
     _stopTimer: function() {
-        clearInterval(_timer);
-        _timer = 0;
+        clearInterval(Transition._timer);
+        Transition._timer = null;
     },
 
     /**
@@ -310,11 +313,12 @@ Y.extend(Transition, TransitionNative, {
      * @static
      */    
     _runFrame: function() {
-        var done = true;
-        for (var anim in _running) {
-            if (_running[anim]._runFrame) {
+        var done = true,
+            anim;
+        for (anim in Transition._running) {
+            if (Transition._running[anim]._runFrame) {
                 done = false;
-                _running[anim]._runFrame();
+                Transition._running[anim]._runFrame();
             }
         }
 
@@ -323,18 +327,45 @@ Y.extend(Transition, TransitionNative, {
         }
     },
 
+    cubicBezier: function(p, t) {
+        var x0 = 0,
+            y0 = 0,
+            x1 = p[0],
+            y1 = p[1],
+            x2 = p[2],
+            y2 = p[3],
+            x3 = 1,
+            y3 = 0,
+
+            A = x3 - 3 * x2 + 3 * x1 - x0,
+            B = 3 * x2 - 6 * x1 + 3 * x0,
+            C = 3 * x1 - 3 * x0,
+            D = x0,
+            E = y3 - 3 * y2 + 3 * y1 - y0,
+            F = 3 * y2 - 6 * y1 + 3 * y0,
+            G = 3 * y1 - 3 * y0,
+            H = y0,
+
+            x = (((A*t) + B)*t + C)*t + D,
+            y = (((E*t) + F)*t + G)*t + H;
+
+        return [x, y];
+    },
+
+    easings: {
+        ease: [0.25, 0, 1, 0.25],
+        linear: [0, 0, 1, 1],
+        'ease-in': [0.42, 0, 1, 1],
+        'ease-out': [0, 0, 0.58, 1],
+        'ease-in-out': [0.42, 0, 0.58, 1]
+    },
+
+    _running: {},
+    _timer: null,
+
     RE_UNITS: /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/
 }, true); 
 
-Transition.behaviors.top = Transition.behaviors.left;
+Transition.behaviors.top = Transition.behaviors.bottom = Transition.behaviors.right = Transition.behaviors.left;
 
 Y.Transition = Transition;
-
-Y.Node.prototype.transition = function(config) {
-    var Constructor = (TransitionNative.supported &&
-            TransitionNative.useNative) ? TransitionNative : Transition,
-        anim = new Constructor(this, config);
-
-    anim.run();
-    return this;
-};

@@ -16,7 +16,7 @@
 
 var HistoryBase = Y.HistoryBase,
     Lang        = Y.Lang,
-    Obj         = Y.Object,
+    YArray      = Y.Array,
     GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
     SRC_HASH    = 'hash',
@@ -139,7 +139,7 @@ Y.extend(HistoryHash, HistoryBase, {
         var encode = HistoryHash.encode,
             hash   = [];
 
-        Obj.each(params, function (value, key) {
+        Y.Object.each(params, function (value, key) {
             if (Lang.isValue(value)) {
                 hash.push(encode(key) + '=' + encode(value));
             }
@@ -293,7 +293,6 @@ Y.extend(HistoryHash, HistoryBase, {
 });
 
 // -- Synthetic hashchange Event -----------------------------------------------
-hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
 
 // TODO: YUIDoc currently doesn't provide a good way to document synthetic DOM
 // events. For now, we're just documenting the hashchange event on the YUI
@@ -351,25 +350,29 @@ hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
  * @for YUI
  * @since 3.2.0
  */
+
+hashNotifiers = GlobalEnv._notifiers;
+
+if (!hashNotifiers) {
+    hashNotifiers = GlobalEnv._notifiers = [];
+}
+
 Y.Event.define('hashchange', {
     on: function (node, subscriber, notifier) {
-        // Ignore this subscriber if the node is anything other than the
+        // Ignore this subscription if the node is anything other than the
         // window or document body, since those are the only elements that
         // should support the hashchange event. Note that the body could also be
         // a frameset, but that's okay since framesets support hashchange too.
-        if ((node.compareTo(win) || node.compareTo(Y.config.doc.body)) &&
-                !Obj.owns(hashNotifiers, notifier.key)) {
-
-            hashNotifiers[notifier.key] = notifier;
+        if (node.compareTo(win) || node.compareTo(Y.config.doc.body)) {
+            hashNotifiers.push(notifier);
         }
     },
 
     detach: function (node, subscriber, notifier) {
-        // TODO: Is it safe to use hasSubs()? It's not marked private/protected,
-        // but also not documented. Also, subscriber counts don't seem to be
-        // updated after detach().
-        if (!notifier.hasSubs()) {
-            delete hashNotifiers[notifier.key];
+        var index = YArray.indexOf(hashNotifiers, notifier);
+
+        if (index !== -1) {
+            hashNotifiers.splice(index, 1);
         }
     }
 });
@@ -383,8 +386,9 @@ if (HistoryBase.nativeHashChange) {
         var newHash = HistoryHash.getHash(),
             newUrl  = HistoryHash.getUrl();
 
-        Obj.each(hashNotifiers, function (notifier) {
+        YArray.each(hashNotifiers, function (notifier) {
             notifier.fire({
+                _event : e,
                 oldHash: oldHash,
                 oldUrl : oldUrl,
                 newHash: newHash,
@@ -421,7 +425,7 @@ if (HistoryBase.nativeHashChange) {
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                Obj.each(hashNotifiers, function (notifier) {
+                YArray.each(hashNotifiers, function (notifier) {
                     notifier.fire({
                         oldHash: oldHash,
                         oldUrl : oldUrl,

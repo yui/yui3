@@ -1,23 +1,20 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
         <title>Y.ScrollView (y)</title>
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
-        <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
         <link rel="stylesheet" href="assets/tests.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
-        <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-base.css" type="text/css" media="screen" title="no title" charset="utf-8">
-        <link rel="stylesheet" href="../../../build/scrollview/assets/skins/sam/scrollview-scrollbars.css" type="text/css" media="screen" title="no title" charset="utf-8">
-
-        <script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
     </head>
-    
+
     <body class="yui-skin-sam">
-        <header>
+        <div class="header">
         	<h1>Y.ScrollView</h1>
-        </header>
+        </div>
         <div id="scrollable" class="yui3-scrollview-loading">
             <ul>
     			<li>
@@ -274,7 +271,7 @@
 
         <script type="text/javascript" charset="utf-8">
 
-            YUI({filter:"raw"}).use('transition', 'event-gestures', 'scrollview', function(Y) {
+            YUI({filter:"raw"}).use('node', 'scrollview', function(Y) {
 
                 var scrollView = new Y.ScrollView({
                     contentBox: '#scrollable',
@@ -282,8 +279,6 @@
                 });
 
                 scrollView.render();
-				
-		Y.later(200, window, scrollTo, [0, 0]);
             });
 
         </script>

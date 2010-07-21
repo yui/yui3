@@ -370,4 +370,4 @@ Child.prototype = {
 Y.WidgetChild = Child;
 
 
-}, '@VERSION@' ,{requires:['widget']});
+}, '@VERSION@' ,{requires:['base-build', 'widget']});

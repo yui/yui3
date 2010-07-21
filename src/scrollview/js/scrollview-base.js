@@ -7,14 +7,13 @@
 
 var getClassName = Y.ClassNameManager.getClassName,
     SCROLLVIEW = 'scrollview',
-    FRAME_STEP = 10, // ms between animation frames
-    BOUNCE_RANGE = 150,
     CLASS_NAMES = {
         scrollbar: getClassName(SCROLLVIEW, 'scrollbar'),
         vertical: getClassName(SCROLLVIEW, 'vertical'),
         horizontal: getClassName(SCROLLVIEW, 'horizontal'),
         child: getClassName(SCROLLVIEW, 'child'),
-        b: getClassName(SCROLLVIEW, 'b'),
+        top: getClassName(SCROLLVIEW, 'top'),
+        bottom: getClassName(SCROLLVIEW, 'bottom'),
         middle: getClassName(SCROLLVIEW, 'middle'),
         showing: getClassName(SCROLLVIEW, 'showing')
     },
@@ -22,14 +21,22 @@ var getClassName = Y.ClassNameManager.getClassName,
     EV_SCROLL_CHANGE = 'scrollChange',
     EV_SCROLL_END = 'scrollEnd',
     EV_SCROLL_FLICK = 'flick',
+
+    FLICK = EV_SCROLL_FLICK,
+
     UI = 'ui',
 
     SCROLL_Y = "scrollY",
     SCROLL_X = "scrollX",
     BOUNCE = "bounce",
     
+    DIM_X = "x",
+    DIM_Y = "y",
+
     BOUNDING_BOX = "boundingBox",
-    CONTENT_BOX = "contentBox";
+    CONTENT_BOX = "contentBox",
+
+    NATIVE_TRANSITIONS = Y.Transition.useNative;
 
 Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
 
@@ -98,16 +105,21 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method bindUI
      */
     bindUI: function() {
+
+        var cb = this.get(CONTENT_BOX),
+            flick = this.get(FLICK); 
+
         this.get(BOUNDING_BOX).on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
-
-        var cb = this.get(CONTENT_BOX); 
-
         cb.on('transitionend', Y.bind(this._transitionEnded, this), false);
-        cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
 
-        cb.on("flick", Y.bind(this._flick, this), {
-            minDistance:0
-        });
+        // TODO: Fires way to often when using non-native transitions
+        if (NATIVE_TRANSITIONS) {
+            cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        }
+
+        if (flick) {
+            cb.on("flick", Y.bind(this._flick, this), flick);
+        }
 
         this.after({
             'scrollYChange' : this._afterScrollYChange,
@@ -143,6 +155,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             yMove = y * -1,
             transition;
 
+        duration = duration || 0;
+        easing = easing || ScrollView.EASING;
+
         if(x !== this.get(SCROLL_X)) {
             this.set(SCROLL_X, x, { src: UI });
         }
@@ -152,14 +167,15 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         transition = {
-            easing : easing || 'cubic-bezier(0, 0.1, 0, 1.0)',
+            easing : easing,
             duration : duration/1000
         };
 
-        if (Y.TransitionNative.supported) {
+        Y.log("Transition: duration, easing:" + transition.duration, transition.easing, "scrollview");        
+
+        if (NATIVE_TRANSITIONS) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
-            transition.easing = 'ease-out';
             transition.left = xMove + "px"; 
             transition.top = yMove + "px";
         }
@@ -175,7 +191,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveStart: function(e) {
-
         this._killTimer();
 
         var bb = this.get(BOUNDING_BOX);
@@ -192,7 +207,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         this._isDragging = false;
         this._snapToEdge = false;
-
     },    
     
     /**
@@ -203,7 +217,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMove: function(e) {
-
         this._isDragging = true;
         this._moveEndClientY = e.clientY;
         this._moveEndClientX = e.clientX;
@@ -311,7 +324,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _uiScrollY : function(val, duration, easing) {
         duration = duration || this._snapToEdge ? 400 : 0;
-        easing = easing || this._snapToEdge ? 'ease-out' : null;
+        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
         this.scrollTo(this.get(SCROLL_X), val, duration, easing);
     },
@@ -340,7 +353,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _uiScrollX : function(val, duration, easing) {
         duration = duration || this._snapToEdge ? 400 : 0;
-        easing = easing || this._snapToEdge ? 'ease-out' : null;
+        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
             
         this.scrollTo(val, this.get(SCROLL_Y), duration, easing);
     },
@@ -375,25 +388,30 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _uiDimensionsChange: function() {
-        var cb = this.get(CONTENT_BOX),
-            bb = this.get(BOUNDING_BOX),
+        var bb = this.get(BOUNDING_BOX),
+
             height = this.get('height'),
             width = this.get('width'),
-            scrollHeight = cb.get('scrollHeight'),
-            scrollWidth = cb.get('scrollWidth');
-        
+
+            // Use bb instead of cb. cb doesn't gives us the right results
+            // in FF (due to overflow:hidden)
+            scrollHeight = bb.get('scrollHeight'),
+            scrollWidth = bb.get('scrollWidth');
+
         if(height && scrollHeight > height) {
             this._scrollsVertical = true;
             this._maxScrollY = scrollHeight - height;
             this._minScrollY = 0;
-            bb.setStyle('overflow-y', 'auto');
+            this._scrollHeight = scrollHeight;
+            bb.addClass(getClassName("scroll-v"));
         }
-        
+
         if(width && scrollWidth > width) {
             this._scrollsHorizontal = true;
             this._maxScrollX = scrollWidth - width;
             this._minScrollX = 0;
-            bb.setStyle('overflow-x', 'auto');
+            this._scrollWidth = scrollWidth;
+            bb.addClass(this.getClassName("scroll-h"));
         }
     },
 
@@ -483,7 +501,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this.set(SCROLL_X, newX);
         }
         
-        this._flickTimer = Y.later(FRAME_STEP, this, '_flickFrame');
+        this._flickTimer = Y.later(ScrollView.FRAME_STEP, this, '_flickFrame');
     },
     
     /**
@@ -504,18 +522,18 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Setter for the scrollX ATTR
-     *
-     * @method _setScrollX
-     * @param val {Number} The new scrollX value
-     * @protected
-     */    
-    _setScrollX: function(val) {
+     * @method _setScroll
+     * @private
+     * @param {Number} val
+     * @param {String} dim
+     */
+    _setScroll : function(val, dim) {
         var bouncing = this.get(BOUNCE),
             range = ScrollView.BOUNCE_RANGE,
+            maxScroll = (dim == DIM_X) ? this._maxScrollX : this._maxScrollY,
 
             min = bouncing ? -range : 0,
-            max = bouncing ? this._maxScrollX + range : this._maxScrollX;
+            max = bouncing ? maxScroll + range : maxScroll;
 
         if(!bouncing || !this._isDragging) {
             if(val < min) {
@@ -527,7 +545,18 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         return val;
     },
-    
+
+    /**
+     * Setter for the scrollX ATTR
+     *
+     * @method _setScrollX
+     * @param val {Number} The new scrollX value
+     * @protected
+     */    
+    _setScrollX: function(val) {
+        return this._setScroll(val, DIM_X);
+    },
+
     /**
      * Setter for the scrollY ATTR
      *
@@ -536,21 +565,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _setScrollY: function(val) {
-        var bouncing = this.get(BOUNCE),
-            range = ScrollView.BOUNCE_RANGE,
-        
-            min = bouncing ? -range : 0,
-            max = bouncing ? this._maxScrollY + range : this._maxScrollY;
-
-        if(!bouncing || !this._isDragging) {
-            if(val < min) {
-                val = min;
-            } else if(val > max) {
-                val = max;
-            }            
-        }
-
-        return val;
+        return this._setScroll(val, DIM_Y);
     }
     
 }, {
@@ -568,7 +583,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * @static
     */
    NAME: 'scrollview',
-   
+
    /**
     * Static property used to define the default attribute configuration of
     * the Widget.
@@ -626,8 +641,21 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          */
         bounce: {
             value: 0.7
+        },
+
+        /**
+         * The minimum distance and/or velocity which define a flick
+         *
+         * @attribute flick
+         * @type Object
+         * @default Object with properties minDistance = 10, minVelocity = 0.
+         */
+        flick: {
+            value: {
+                minDistance: 10,
+                minVelocity: 0
+            }
         }
-        
     },
 
     /**
@@ -648,8 +676,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     UI_SRC: UI,
 
-    BOUNCE_RANGE : BOUNCE_RANGE,
+    BOUNCE_RANGE : 150,
 
-    FRAME_STEP : FRAME_STEP
+    FRAME_STEP : 10,
+
+    EASING : 'cubic-bezier(0, 0.1, 0, 1.0)',
+
+    SNAP_EASING : 'ease-out'
 
 });

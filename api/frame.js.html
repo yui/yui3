@@ -192,7 +192,10 @@
             <span class="nx">inst</span><span class="p">.</span><span class="nx">_use</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
             <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">use</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;visibility&#39;</span><span class="p">,</span> <span class="s1">&#39;inherit&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                <span class="nx">visibility</span><span class="o">:</span> <span class="s1">&#39;inherit&#39;</span>
+            <span class="p">});</span>
+            <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span> <span class="s1">&#39;block&#39;</span><span class="p">);</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
@@ -499,13 +502,18 @@
     <span class="p">},</span> <span class="p">{</span>
 
         <span class="nx">DEFAULT_CSS</span><span class="o">:</span> <span class="s1">&#39;html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }&#39;</span><span class="p">,</span>
+        
+        <span class="c1">//DEFAULT_CSS: &#39;html { } body { margin: -15px 0 0 -15px; padding: 7px 0 0 15px; display: block; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }&#39;,</span>
+        <span class="c1">//DEFAULT_CSS: &#39;html { height: 95%; } body { height: 100%; padding: 7px; margin: 0 0 0 -7px; postion: relative; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }&#39;,</span>
+        <span class="c1">//DEFAULT_CSS: &#39;html { margin: 0; padding: 0; border: none; border-size: 0; } body { height: 97%; margin: 0; padding: 0; display: block; background-color: gray; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }&#39;,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @static</span>
 <span class="cm">        * @property HTML</span>
 <span class="cm">        * @description The template string used to create the iframe</span>
 <span class="cm">        * @type String</span>
 <span class="cm">        */</span>
-        <span class="nx">HTML</span><span class="o">:</span> <span class="s1">&#39;&lt;iframe border=&quot;0&quot; frameBorder=&quot;0&quot; marginWidth=&quot;0&quot; marginHeight=&quot;0&quot; leftMargin=&quot;0&quot; topMargin=&quot;0&quot; allowTransparency=&quot;true&quot; width=&quot;100%&quot; height=&quot;100%&quot;&gt;&lt;/iframe&gt;&#39;</span><span class="p">,</span>
+        <span class="nx">HTML</span><span class="o">:</span> <span class="s1">&#39;&lt;iframe border=&quot;0&quot; frameBorder=&quot;0&quot; marginWidth=&quot;0&quot; marginHeight=&quot;0&quot; leftMargin=&quot;0&quot; topMargin=&quot;0&quot; allowTransparency=&quot;true&quot; width=&quot;100%&quot; height=&quot;99%&quot;&gt;&lt;/iframe&gt;&#39;</span><span class="p">,</span>
+        <span class="c1">//HTML: &#39;&lt;iframe border=&quot;0&quot; frameBorder=&quot;0&quot; width=&quot;100%&quot; height=&quot;99%&quot;&gt;&lt;/iframe&gt;&#39;,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @static</span>
 <span class="cm">        * @property PAGE_HTML</span>
@@ -526,7 +534,8 @@
 <span class="cm">        * @description The meta-tag for Content-Type to add to the dynamic document</span>
 <span class="cm">        * @type String</span>
 <span class="cm">        */</span>
-        <span class="nx">META</span><span class="o">:</span> <span class="s1">&#39;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;/&gt;&#39;</span><span class="p">,</span>
+        <span class="nx">META</span><span class="o">:</span> <span class="s1">&#39;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;/&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=EmulateIE7&quot;&gt;&#39;</span><span class="p">,</span>
+        <span class="c1">//META: &#39;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;/&gt;&#39;,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @static</span>
 <span class="cm">        * @property NAME</span>

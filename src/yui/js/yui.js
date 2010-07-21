@@ -107,7 +107,8 @@ if (typeof YUI === 'undefined') {
                             }
                         },
         getLoader = function(Y, o) {
-            var loader = YUI.Env.loaders[Y.config._sig];
+            // var loader = YUI.Env.loaders[Y.config._sig];
+            var loader = Y.Env._loader;
             if (loader) {
                 loader.ignoreRegistered = false;
                 loader.onEnd            = null;
@@ -117,6 +118,7 @@ if (typeof YUI === 'undefined') {
                 loader.loadType         = null;
             } else {
                 loader = new Y.Loader(Y.config);
+                Y.Env._loader = loader;
             }
 
             return loader;
@@ -148,7 +150,7 @@ proto = {
             mods   = config.modules,
             groups = config.groups;
 
-        config._sig += this.stamp(o);
+        // config._sig += this.stamp(o);
 
         for (name in o) {
             if (o.hasOwnProperty(name)) {
@@ -216,7 +218,7 @@ proto = {
                             //&3.0.0/build/yui/yui-min.js"; // debug url
                             //Y.log('src) ' + src);
 
-// http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js
+                            // src = 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js';
 
                             match = src.match(srcPattern);
                             b = match && match[1];
@@ -224,6 +226,15 @@ proto = {
                                 // this is to set up the path to the loader.  The file 
                                 // filter for loader should match the yui include.
                                 filter = match[2];
+
+                                if (filter) {
+                                    match = filter.indexOf('js');
+
+                                    if (match > -1) {
+                                        filter = filter.substr(0, match);
+                                    }
+                                }
+
                                 // extract correct path for mixed combo urls
                                 // http://yuilibrary.com/projects/yui3/ticket/2528423
                                 match = src.match(comboPattern);
@@ -260,7 +271,7 @@ proto = {
 
         // configuration defaults
         Y.config = Y.config || {
-            _sig:              '',
+            // _sig:              '',
             win:               win,
             doc:               doc,
             debug:             true,
@@ -616,7 +627,10 @@ proto = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             args = Y.Object.keys(mods);
+
         }
+
+        Y.log('before loader requirements: ' + args + ', ' + r, 'info', 'yui');
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
@@ -629,15 +643,17 @@ proto = {
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
 
-            YUI.Env.loaders[Y.config._sig] = loader;
+            // YUI.Env.loaders[Y.config._sig] = loader;
 
         }
+
+        Y.log('after loader requirements: ' + args + ', ' + r, 'info', 'yui');
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
         YArray.each(args, process);
 
-        Y.log('Module requirements: ' + args, 'info', 'yui');
+        Y.log('after process requirements: ' + args + ', ' + r, 'info', 'yui');
         // console.log(args);
         len = missing.length;
 

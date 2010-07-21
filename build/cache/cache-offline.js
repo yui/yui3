@@ -10,12 +10,16 @@ function CacheOffline() {
     CacheOffline.superclass.constructor.apply(this, arguments);
 }
 
+var localStorage = Y.config.win.localStorage,
+    isDate = Y.Lang.isDate,
+    JSON = Y.JSON,
+
     /////////////////////////////////////////////////////////////////////////////
     //
     // CacheOffline static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(CacheOffline, {
+    cacheOfflineStatic = {
     /**
      * Class name.
      *
@@ -35,6 +39,21 @@ Y.mix(CacheOffline, {
         /////////////////////////////////////////////////////////////////////////////
 
         /**
+        * @attribute sandbox
+        * @description A string that must be passed in via the constructor.
+        * This identifier is used to sandbox one cache instance's entries
+        * from another. Calling the cache instance's flush and length methods
+        * or get("entries") will apply to only these sandboxed entries.
+        * @type String
+        * @default "default"
+        * @initOnly
+        */
+        sandbox: {
+            value: "default",
+            writeOnce: "initOnly"
+        },
+
+        /**
         * @attribute expires
         * @description Absolute Date when data expires or
         * relative number of milliseconds. Zero disables expiration.
@@ -51,54 +70,90 @@ Y.mix(CacheOffline, {
         /**
         * @attribute max
         * @description Disabled.
-        * @readonly
+        * @readOnly
         * @default null
         */
         max: {
             value: null,
-            readonly: true,
-            setter: function() {
-                return null;
-            }
+            readOnly: true
         },
 
         /**
         * @attribute uniqueKeys
         * @description Always true for CacheOffline.
-        * @readonly
+        * @readOnly
         * @default true
         */
         uniqueKeys: {
             value: true,
-            readonly: true,
+            readOnly: true,
             setter: function() {
                 return true;
             }
         }
+    },
+    
+    /**
+     * Removes all items from all sandboxes. Useful if localStorage has
+     * exceeded quota. Only supported on browsers that implement HTML 5
+     * localStorage.
+     *
+     * @method flushAll
+     * @static
+     */
+    flushAll: function() {
+        var store = localStorage, key;
+        if(store) {
+            if(store.clear) {
+                store.clear();
+            }
+            // FF2.x and FF3.0.x
+            else {
+                for (key in store) {
+                    if (store.hasOwnProperty(key)) {
+                        store.removeItem(key);
+                        delete store[key];
+                    }
+                }
+            }
+        }
+        else {
+        }
     }
-});
+    },
 
 
-var localStorage = Y.config.win.localStorage,
-    isDate = Y.Lang.isDate,
-    JSON = Y.JSON,
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // CacheOffline events
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    /**
+    * @event error
+    * @description Fired when an entry could not be added, most likely due to
+    * exceeded browser quota.
+    * <dl>
+    * <dt>error (Object)</dt> <dd>The error object.</dd>
+    * </dl>
+    */
+
     cacheOfflinePrototype =  localStorage ? {
     /////////////////////////////////////////////////////////////////////////////
     //
     // CacheOffline protected methods
     //
     /////////////////////////////////////////////////////////////////////////////
-
     /**
-     * Sets max.
+     * Always return null.
      *
      * @method _setMax
      * @protected
      */
-    //_setMax: function(value) {
-        //return null;
-    //},
-    
+    _setMax: function(value) {
+        return null;
+    },
+
     /**
      * Gets size.
      *
@@ -106,7 +161,16 @@ var localStorage = Y.config.win.localStorage,
      * @protected
      */
     _getSize: function() {
-        return localStorage.length;
+        var count = 0,
+            i=0,
+            l=localStorage.length;
+        for(; i<l; ++i) {
+            // Match sandbox id
+            if(localStorage.key(i).indexOf(this.get("sandbox")) === 0) {
+                count++;
+            }
+        }
+        return count;
     },
 
     /**
@@ -116,17 +180,18 @@ var localStorage = Y.config.win.localStorage,
      * @protected
      */
     _getEntries: function() {
-        var entries = this._entries,
+        var entries = [],
             i=0,
-            l=this._getSize();
-        if(entries) { // Could be null if instance was destroyed
-            for(; i<l; ++i) {
-                entries[i] = JSON.parse(localStorage.key(i));
+            l=localStorage.length,
+            sandbox = this.get("sandbox");
+        for(; i<l; ++i) {
+            // Match sandbox id
+            if(localStorage.key(i).indexOf(sandbox) === 0) {
+                entries[i] = JSON.parse(localStorage.key(i).substring(sandbox.length));
             }
         }
         return entries;
     },
-
 
     /**
      * Adds entry to cache.
@@ -146,7 +211,12 @@ var localStorage = Y.config.win.localStorage,
         entry.expires = isDate(expires) ? expires :
             (expires ? new Date(new Date().getTime() + this.get("expires")) : null);
 
-        localStorage.setItem(JSON.stringify({"request":request}), JSON.stringify(entry));
+        try {
+            localStorage.setItem(this.get("sandbox")+JSON.stringify({"request":request}), JSON.stringify(entry));
+        }
+        catch(error) {
+            this.fire("error", {error:error});
+        }
     },
 
     /**
@@ -157,23 +227,22 @@ var localStorage = Y.config.win.localStorage,
      * @protected
      */
     _defFlushFn: function(e) {
-        var store = localStorage, key;
-        if(store) {
-            if(store.clear) {
-                store.clear();
-            }
-            // FF2.x and FF3.0.x
-            else {
-                for (key in store) {
-                    if (store.hasOwnProperty(key)) {
-                        store.removeItem(key);
-                        delete store[key];
-                    }
-                }
+        var key,
+            i=localStorage.length-1;
+        for(; i>-1; --i) {
+            // Match sandbox id
+            key = localStorage.key(i);
+            if(key.indexOf(this.get("sandbox")) === 0) {
+                localStorage.removeItem(key);
             }
         }
     },
-
+    
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // CacheOffline public methods
+    //
+    /////////////////////////////////////////////////////////////////////////////
     /**
      * Adds a new entry to the cache of the format
      * {request:request, response:response, expires: expires}.
@@ -198,7 +267,7 @@ var localStorage = Y.config.win.localStorage,
         var entry, expires, cached;
 
         try {
-            request = JSON.stringify({"request":request});
+            request = this.get("sandbox")+JSON.stringify({"request":request});
             try {
                 entry = JSON.parse(localStorage.getItem(request));
             }
@@ -207,7 +276,7 @@ var localStorage = Y.config.win.localStorage,
         }
         catch(e2) {
         }
-        
+
         if(entry) {
             entry.cached = new Date(entry.cached);
             expires = entry.expires;
@@ -221,6 +290,16 @@ var localStorage = Y.config.win.localStorage,
         return null;
     }
 } : {
+    /**
+     * Always return null.
+     *
+     * @method _setMax
+     * @protected
+     */
+    _setMax: function(value) {
+        return null;
+    },
+
     /**
      * Adds entry to cache with an expires property.
      *
@@ -260,6 +339,7 @@ var localStorage = Y.config.win.localStorage,
     }
 };
 
+Y.mix(CacheOffline, cacheOfflineStatic);
 Y.extend(CacheOffline, Y.Cache, cacheOfflinePrototype);
 
 

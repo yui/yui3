@@ -28,7 +28,7 @@
 </div>
 <ul id="output"></ul>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <!--script src="js/synthetic.js"></script-->
 <!--script src="../../../build/event/event-synthetic.js"></script-->
 <script>
@@ -42,7 +42,10 @@ Y.on('yui:log', function (e) {
 });
 
 Y.Event.define('test', {
-    //init: function (node, sub, notifier) {
+    //allowDups: true,
+
+    //publishConfig: { emitFacade: false },
+
     on: function (node, sub, notifier) {
         Y.log("on " + this.type + ": " + node.get('text'));
         sub.testHandle = node.on('click', function (e) {
@@ -53,13 +56,15 @@ Y.Event.define('test', {
 
     detach: function (node, sub, notifier) {
         Y.log("detach " + this.type + ": " + node.get('text'));
-        node.getData('testHandle').detach();
+        sub.testHandle.detach();
     },
 
     delegate: function (container, sub, notifier, filter) {
         Y.log("delegate " + this.type);
         sub.delegateHandle = container.delegate('click', function (e) {
             notifier.fire(e);
+            //notifier.fire();
+            //notifier.fire({ currentTarget: e.currentTarget });
         }, filter);
     },
 
@@ -71,41 +76,66 @@ Y.Event.define('test', {
 
 var outer = Y.one('#outer'),
     inner = Y.one('#inner'),
-    mode  = 1,
+    mode  = 4,
+    //obj   = null,
+    obj   = { get: function () { return 'Context set OK'; } },
     handle;
 
-function notify(e) {
-    var ctText = e.currentTarget.get('text'),
-        thisText = this.get('text');
+function notify(e, extra) {
+    var thisText = this.get('text'),
+        ctText, message;
 
-    //console.log('Fired', this, arguments);
-    Y.log('fired ' + e.type + ' from ' + ctText + ' (' + thisText + ')');
+    if (typeof e === 'object') {
+        ctText  = e.currentTarget.get('text');
+        message = 'fired ' + e.type + ' from ' + ctText + ' (' + thisText + ')';
+
+        if (extra) {
+            message += ' + ' + extra;
+        }
+    } else {
+        message = "fired from " + thisText + " with args (" +
+                  Y.Array(arguments,0,true).join() + ")";
+    }
+
+    Y.log(message);
 }
 
 Y.one('#attach').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').on('test', notify); break;
+        //case 1: Y.one('.go').on('test', notify, obj, 1); break;
         case 2: Y.all('.go').on('test', notify); break;
+        //case 2: Y.all('.go').on('test', notify, obj, 1); break;
         case 3: Y.on('test', notify, '.go'); break;
+        //case 3: Y.on('test', notify, '.go', obj, 1); break;
         case 4: Y.delegate('test', notify, '#outer', '.go'); break;
+        //case 4: Y.delegate('test', notify, '#outer', '.go', obj, 1); break;
     }
 });
 
 Y.one('#attach_handle').on('click', function (e) {
     switch(mode) {
         case 1: handle = Y.one('.go').on('test', notify); break;
+        //case 1: handle = Y.one('.go').on('test', notify, obj, 1); break;
         case 2: handle = Y.all('.go').on('test', notify); break;
+        //case 2: handle = Y.all('.go').on('test', notify, obj, 1); break;
         case 3: handle = Y.on('test', notify, '.go'); break;
+        //case 3: handle = Y.on('test', notify, '.go', obj, 1); break;
         case 4: handle = Y.delegate('test', notify, '#outer', '.go'); break;
+        //case 4: handle = Y.delegate('test', notify, '#outer', '.go', obj, 1); break;
     }
 });
 
 Y.one('#attach_cat').on('click', function (e) {
     switch (mode) {
         case 1: Y.one('.go').on('foo|test', notify); break;
+        //case 1: Y.one('.go').on('foo|test', notify, obj, 1); break;
         case 2: Y.all('.go').on('foo|test', notify); break;
+        //case 2: Y.all('.go').on('foo|test', notify, obj, 1); break;
         case 3: Y.on('foo|test', notify, '.go'); break;
+        //case 3: Y.on('foo|test', notify, '.go', obj, 1); break;
         case 4: Y.delegate('foo|test', notify, '#outer', '.go'); break;
+        //case 4: Y.delegate('foo|test', notify, '#outer', '.go', obj, 1); break;
     }
 });
 
@@ -127,7 +157,7 @@ Y.one('#detach_cat').on('click', function (e) {
         case 1: Y.one('.go').detach('foo|test'); break;
         case 2: Y.all('.go').detach('foo|test'); break;
         case 3: Y.detach('foo|test'); break;
-        case 3: Y.one('#outer').detach('foo|test'); break;
+        case 4: Y.one('#outer').detach('foo|test'); break;
     }
 });
 
@@ -136,12 +166,12 @@ Y.one('#detach_nofn').on('click', function (e) {
         case 1: Y.one('.go').detach('test'); break;
         case 2: Y.all('.go').detach('test'); break;
         case 3: Y.detach('foo|*'); break;
-        case 1: Y.one('#outer').detach('test'); break;
+        case 4: Y.one('#outer').detach('test'); break;
     }
 });
 
 Y.one('#remove').on('click', function (e) {
-    inner.remove(true);
+    outer.remove(true);
     Y.log('Detached');
 });
 

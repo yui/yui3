@@ -1,10 +1,11 @@
 /**
 * The Native Transition Utility provides an API wrapper for CSS transitions.
+* It is also the base module for the timer-based transition module.
 * @module node
 */
 
 /**
-* Provides the base TransitionNative class.
+* Provides the base Transition class.
 *
 * @module node
 * @submodule transition-native
@@ -12,8 +13,8 @@
 
 /**
  * A class for constructing transition instances.
- * @class TransitionNative
- * @for TransitionNative
+ * @class Transition
+ * @for Transition
  * @constructor
  * @extends Base
  */
@@ -22,35 +23,34 @@ var START = 'transitionstart',
     END = 'transitionend',
 
     TRANSITION = '-webkit-transition',
-    TRANSITION_CAMEL = 'WebkitTransitionNative',
+    TRANSITION_CAMEL = 'WebkitTransition',
     TRANSITION_PROPERTY = '-webkit-transition-property',
     TRANSITION_DURATION = '-webkit-transition-duration',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
-    TRANSITION_END = 'webkitTransitionNativeEnd',
+    TRANSITION_END = 'webkitTransitionEnd',
 
-
-    _running = {},
-
-TransitionNative = function() {
+Transition = function() {
     this.init.apply(this, arguments);
 };
 
-TransitionNative.supported = false;
-TransitionNative.useNative = true;
+Transition.re_keywords = /^(?:node|duration|iterations|easing)$/;
+
+Transition.useNative = false;
 
 if (TRANSITION in Y.config.doc.documentElement.style) {
-    TransitionNative.supported = true;
+    Transition.useNative = true;
+    Transition.supported = true; // TODO: remove
 }
 
 Y.Node.DOM_EVENTS[TRANSITION_END] = 1; 
 
-TransitionNative.NAME = 'transition';
+Transition.NAME = 'transition';
 
-TransitionNative.DEFAULT_EASING = 'ease-in-out';
-TransitionNative.DEFAULT_DURATION = 0.5;
+Transition.DEFAULT_EASING = 'ease-in-out';
+Transition.DEFAULT_DURATION = 0.5;
 
-TransitionNative.prototype = {
-    constructor: TransitionNative,
+Transition.prototype = {
+    constructor: Transition,
     init: function(node, config) {
         this._node = node;
         this._config = config;
@@ -60,13 +60,12 @@ TransitionNative.prototype = {
     },
 
     /**
-     * Starts or resumes an animation.
+     * Starts or an animation.
      * @method run
      * @chainable
      */    
     run: function() {
         if (!this._running) {
-            this._initAttrs();
             this._running = true;
             this._node.fire(START);
             this._start();
@@ -75,7 +74,7 @@ TransitionNative.prototype = {
     },
 
     _start: function() {
-        this._runAttrs();
+        this._runNative();
     },
 
     _prepDur: function(dur) {
@@ -88,7 +87,7 @@ TransitionNative.prototype = {
         return dur + 's';
     },
 
-    _runAttrs: function(time) {
+    _runNative: function(time) {
         var transitions = {}, 
             anim = this,
             style = this._node._node.style,
@@ -101,6 +100,11 @@ TransitionNative.prototype = {
             dur,
             attr;
 
+        this._totalDuration = 0;
+        if (config.transform && !config['-webkit-transform']) {
+            config['-webkit-transform'] = config.transform;
+            delete config.transform;
+        }
 
         for (attr in config) {
             if (!/^(?:node|duration|iterations|easing)$/.test(attr)) {
@@ -122,8 +126,6 @@ TransitionNative.prototype = {
         duration = duration.replace(/,$/, ';');
         easing = easing.replace(/,$/, ';');
 
-    Y.log(transitionText + duration + easing + cssText);
-
         this._node.on(TRANSITION_END, function(e) {
             var event = e._event;
 
@@ -142,25 +144,17 @@ TransitionNative.prototype = {
 
     },
 
-    _initAttrs: function() {
-        var config = this._config;
-        this._totalDuration = 0;
-        if (config.transform && !config['-webkit-transform']) {
-            config['-webkit-transform'] = config.transform;
-            delete config.transform;
-        }
-    },
-
     destroy: function() {
         this.detachAll();
         this._node = null;
     }
 };
 
-Y.TransitionNative = TransitionNative;
+Y.Transition = Transition;
+Y.TransitionNative = Transition; // TODO: remove
 
 Y.Node.prototype.transition = function(config) {
-    var anim = new TransitionNative(this, config);
+    var anim = new Transition(this, config);
     anim.run();
     return this;
 };

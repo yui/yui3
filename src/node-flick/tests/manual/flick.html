@@ -1,10 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>Touch/Gesture Events</title>
+        <title>Node Plugin</title>
         
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
 
         <style>
         	#box {
@@ -33,8 +32,13 @@
         </div>
 
         <script>
-        YUI({filter:"raw", combine:false}).use("node", "transition-native", "node-flick", function(Y) {
-            Y.Node.one("#content").plug(Y.Plugin.Flick);            
+        YUI({filter:"raw", combine:false}).use("node", "node-flick", function(Y) {
+            var node = Y.Node.one("#content");
+            node.plug(Y.Plugin.Flick);
+
+            node._node.onselectstart = function() {
+                return false;
+            };            
         });
         </script>
     </body>
