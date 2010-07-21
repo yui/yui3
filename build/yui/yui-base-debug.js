@@ -514,8 +514,13 @@ proto = {
             fetchCSS = config.fetchCSS,
             process  = function(names) {
 
+                if (!names.length) {
+                    return;
+                }
+
                 // var collection = YArray(names);
                 var collection = names;
+
 
                 YArray.each(collection, function(name) {
 
