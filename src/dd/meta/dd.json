@@ -16,7 +16,8 @@
                 "requires": [
                     "node", 
                     "base", 
-                    "yui-throttle"
+                    "yui-throttle",
+                    "classnamemanager"
                 ]
             }, 
             "dd-ddm-drop": {

@@ -102,7 +102,7 @@ YUI.add('dd-ddm', function(Y) {
                 width: '5px'
             });
             pg.set('id', Y.stamp(pg));
-            pg.addClass('yui3-dd-shim');
+            pg.addClass(Y.DD.DDM.CSS_PREFIX + '-shim');
             bd.prepend(pg);
             this._pg = pg;
             //this._pg.on(GESTURE_MOVE, Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
