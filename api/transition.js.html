@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>node&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>node&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_node.html" title="node">node</a>
                 
@@ -114,6 +114,7 @@
             <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">attribute</span><span class="p">,</span>
             <span class="nx">setter</span><span class="p">,</span>
+            <span class="nx">actualDuration</span><span class="p">,</span>
             <span class="nx">d</span><span class="p">,</span>
             <span class="nx">t</span><span class="p">,</span>
             <span class="nx">i</span><span class="p">;</span>
@@ -122,6 +123,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                 <span class="nx">d</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">duration</span><span class="p">;</span>
+                <span class="nx">actualDuration</span> <span class="o">=</span> <span class="nx">d</span><span class="p">;</span>
                 <span class="nx">t</span> <span class="o">=</span> <span class="nx">time</span><span class="p">;</span>
                 <span class="nx">setter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;set&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">?</span>
                         <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">set</span> <span class="o">:</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">DEFAULT_SETTER</span><span class="p">;</span>
@@ -141,10 +143,12 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">_skip</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-                        <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">END</span><span class="p">,</span> <span class="p">{</span>
-                            <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">d</span><span class="p">,</span>
-                            <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">i</span>
-                        <span class="p">});</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">actualDuration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// match native behavior which doesnt fire for zero duration</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">END</span><span class="p">,</span> <span class="p">{</span>
+                                <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">d</span><span class="p">,</span>
+                                <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">i</span>
+                            <span class="p">});</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
 
