@@ -186,7 +186,7 @@ var NOT_FOUND       = {},
     SKIN_PREFIX     = "skin-",
     L               = Y.Lang,
     ON_PAGE         = GLOBAL_ENV.mods,
-    _path           = Y.cached(function(dir, file, type, nomin) {
+    _path           = function(dir, file, type, nomin) {
                         var path = dir + '/' + file;
                         if (!nomin) {
                             path += '-min';
@@ -194,7 +194,7 @@ var NOT_FOUND       = {},
                         path += '.' + (type || CSS);
 
                         return path;
-                    });
+                    };
 
 Y.Env.meta = META;
 
@@ -724,14 +724,14 @@ Y.Loader.prototype = {
      * @param mod {string} optional: the name of a module to skin
      * @return {string} the full skin module name
      */
-    formatSkin: Y.cached(function(skin, mod) {
+    formatSkin: function(skin, mod) {
         var s = SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
 
         return s;
-    }),
+    },
 
     /**
      * Adds the skin def to the module info
@@ -1219,12 +1219,14 @@ Y.Loader.prototype = {
 
     _addLangPack: function(lang, m, packName) {
         var name     = m.name, 
-            packPath = _path((m.pkg || name), packName, JS, true),
+            packPath,
             existing = this.moduleInfo[packName];
 
         if (existing) {
             return existing;
         }
+
+        packPath = _path((m.pkg || name), packName, JS, true);
 
         this.addModule({ path:       packPath,
                          intl:       true,
@@ -1325,9 +1327,9 @@ Y.Loader.prototype = {
      * @param mname {string} the module to build it for
      * @return {string} the language pack module name
      */
-    getLangPackName: Y.cached(function(lang, mname) {
+    getLangPackName: function(lang, mname) {
         return ('lang/' + mname + ((lang) ? '_' + lang : ''));
-    }),
+    },
 
     /**
      * Inspects the required modules list looking for additional 
