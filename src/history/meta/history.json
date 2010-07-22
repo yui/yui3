@@ -32,6 +32,10 @@
             },
 
             "history-html5": {
+                "optional": [
+                    "json"
+                ],
+
                 "requires": [
                     "event-base",
                     "history-base",
