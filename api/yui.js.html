@@ -83,20 +83,28 @@
             <span class="nx">gconf</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">();</span>
+            <span class="nx">Y</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">();</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="c1">// set up the core environment</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">gconf</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">gconf</span><span class="p">);</span>
             <span class="p">}</span>
+            <span class="c1">// bind the specified additional modules for this instance</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
-            <span class="c1">// bind the specified additional modules for this instance</span>
+
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
     <span class="p">};</span>
 <span class="p">}</span>
 
