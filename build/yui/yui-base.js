@@ -308,9 +308,9 @@ proto = {
             }
         }
 
-        // Y.use('yui-base');
+        Y.use('yui-base');
         // Y.use.apply(Y, core);
-        // Y._attach(core);
+        Y._attach(core);
 
     },
 
@@ -488,8 +488,8 @@ proto = {
         // console.log(arguments);
 
         if (!this.Array) {
-            // this._attach(['yui-base']);
-            this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
+            this._attach(['yui-base']);
+            // this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
         }
 
         var len, loader, handleBoot,
@@ -511,8 +511,13 @@ proto = {
             fetchCSS = config.fetchCSS,
             process  = function(names) {
 
+                if (!names.length) {
+                    return;
+                }
+
                 // var collection = YArray(names);
                 var collection = names;
+
 
                 YArray.each(collection, function(name) {
 
@@ -634,7 +639,7 @@ proto = {
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
-        if (Y.Loader) {
+        if (Y.Loader && args.length) {
             // loader = new Y.Loader(config);
             loader = getLoader(Y);
             loader.require(args);

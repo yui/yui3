@@ -1,4 +1,3 @@
-(function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -1946,6 +1945,4 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
         return this._filter((base || this.base || "") + path, name);
     }
 };
-
-})();
 
