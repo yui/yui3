@@ -58,6 +58,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * which button should initiate a "gesturemovestart". This event can also be listened for using node.delegate(). 
  *
  * @event gesturemovestart
+ * @for YUI
  * @param type {string} "gesturemovestart"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousedown or touchstart.touches[0]) which contains position co-ordinates.
  * @param cfg {Object} Optional. An object which specifies:
@@ -235,6 +236,7 @@ define('gesturemovestart', {
  * <p>This event can also be listened for using node.delegate().</p>
  *
  * @event gesturemove
+ * @for YUI
  * @param type {string} "gesturemove"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousemove or touchmove.touches[0]) which contains position co-ordinates.
  * @param cfg {Object} Optional. An object which specifies:
@@ -339,8 +341,9 @@ define('gesturemove', {
  *
  * <p>This event can also be listened for using node.delegate().</p>
  *
- * @event gesturemove
- * @param type {string} "gesturemove"
+ * @event gesturemoveend
+ * @for YUI
+ * @param type {string} "gesturemoveend"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mouseup or touchend.changedTouches[0]).
  * @param cfg {Object} Optional. An object which specifies:
  * <dl>

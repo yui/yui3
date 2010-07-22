@@ -37,6 +37,7 @@ Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
  * ScrollView provides a srollable widget, supporting flick gestures, across both touch and mouse based devices. 
  *
  * @class ScrollView
+ * @namespace 
  * @param config {Object} Object literal with initial attribute values
  * @extends Widget
  * @constructor

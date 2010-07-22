@@ -4,6 +4,8 @@
  * to build input device agnostic components which behave the same in response to either touch or mouse based  
  * interaction.
  *
+ * <p>Documentation for events added by this module can be found in the event document for the <a href="YUI.html#events">YUI</event> global.</p>
+ *
  * @module event-gestures
  */
 
@@ -42,8 +44,9 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * which the event is to be fired. The subscriber can also specify if there is a particular axis which
  * they are interested in - "x" or "y". If no axis is specified, the axis along which there was most distance
  * covered is used.
- * 
+ *
  * @event flick
+ * @for YUI
  * @param type {string} "flick"
  * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.
  * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity  (in px/ms)
