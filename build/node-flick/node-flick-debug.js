@@ -242,7 +242,7 @@ YUI.add('node-flick', function(Y) {
          * The flick event listener. Kicks off the flick animation.
          *
          * @method _onFlick
-         * @param {EventFacade} e The flick event facade, containing e.flick.distance, e.flick.velocity etc.
+         * @param e {EventFacade} The flick event facade, containing e.flick.distance, e.flick.velocity etc.
          * @protected
          */
         _onFlick: function(e) {
