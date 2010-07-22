@@ -36,7 +36,15 @@
 		 *        The width and height of the SWF will be set to the width and height of this container element.
 		 * @param {String} swfURL The URL of the SWF to be embedded into the page.
 		 * @param {Object} p_oAttributes (optional) Configuration parameters for the Flash application and values for Flashvars
-		 *        to be passed to the SWF.
+		 *        to be passed to the SWF. The p_oAttributes object allows the following additional properties:
+		 *        <dl>
+         *          <dt>version : String</dt>
+         *          <dd>The minimum version of Flash required on the user's machine.</dd>
+         *          <dt>fixedAttributes : Object</dt>
+         *          <dd>An object literal containing one or more of the following String keys and their values: <code>align, 
+         *              allowFullScreen, allowNetworking, allowScriptAccess, base, bgcolor, menu, name, quality, salign, scale,
+         *              tabindex, wmode.</code> event from the thumb</dd>
+         *        </dl>
 		 */
 				
 function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
@@ -98,7 +106,16 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 				oElement.setContent(objstring);
 			
 				this._swf = Node.one("#" + _id);
-			}				
+			}
+	/**
+	* Fired when the Flash player version on the user's machine is below the required value.
+	*
+	* @event wrongflashversion
+    */
+	else {
+			this.publish("wrongflashversion", {fireOnce:true});
+	     	this.fire("wrongflashversion", event);
+		}		
 };
 
 /**
