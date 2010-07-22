@@ -149,7 +149,7 @@
                 <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;5px&#39;</span>
             <span class="p">});</span>
             <span class="nx">pg</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">pg</span><span class="p">));</span>
-            <span class="nx">pg</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui3-dd-shim&#39;</span><span class="p">);</span>
+            <span class="nx">pg</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-shim&#39;</span><span class="p">);</span>
             <span class="nx">bd</span><span class="p">.</span><span class="nx">prepend</span><span class="p">(</span><span class="nx">pg</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_pg</span> <span class="o">=</span> <span class="nx">pg</span><span class="p">;</span>
             <span class="c1">//this._pg.on(GESTURE_MOVE, Y.throttle(Y.bind(this._move, this), this.get(&#39;throttleTime&#39;)));</span>

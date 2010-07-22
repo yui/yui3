@@ -602,19 +602,19 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
         Y.DataSource.Local.transactions[e.tId] = get.script(uri, {
             autopurge: true,
             // Works in Firefox only....
-            onFailure: Y.bind(function(e) {
+            onFailure: Y.bind(function(e, o) {
                 delete YUI.Env.DataSource.callbacks[guid];
                 delete Y.DataSource.Local.transactions[e.tId];
 
-                e.error = new Error("Script node data failure");
+                e.error = new Error(o.msg || "Script node data failure");
                 Y.log("Script node data failure", "error", "datasource-get");
                 this.fire("data", e);
             }, this, e),
-            onTimeout: Y.bind(function(e) {
+            onTimeout: Y.bind(function(e, o) {
                 delete YUI.Env.DataSource.callbacks[guid];
                 delete Y.DataSource.Local.transactions[e.tId];
 
-                e.error = new Error("Script node data timeout");
+                e.error = new Error(o.msg || "Script node data timeout");
                 Y.log("Script node data timeout", "error", "datasource-get");
                 this.fire("data", e);
             }, this, e)

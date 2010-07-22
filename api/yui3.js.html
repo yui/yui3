@@ -52,7 +52,7 @@
 <span class="cm"> * @module loader</span>
 <span class="cm"> * @submodule yui3</span>
 <span class="cm"> */</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">modules</span> <span class="o">=</span> <span class="p">{</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">modules</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">modules</span> <span class="o">||</span> <span class="p">{</span>
     <span class="s2">&quot;anim&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;anim-base&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -470,7 +470,8 @@
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;yui-throttle&quot;</span>
+                    <span class="s2">&quot;yui-throttle&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;classnamemanager&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;dd-ddm-drop&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -749,6 +750,9 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;history-html5&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;json&quot;</span>
+                <span class="p">],</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;event-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 

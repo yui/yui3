@@ -8,14 +8,8 @@
 var getClassName = Y.ClassNameManager.getClassName,
     SCROLLVIEW = 'scrollview',
     CLASS_NAMES = {
-        scrollbar: getClassName(SCROLLVIEW, 'scrollbar'),
-        vertical: getClassName(SCROLLVIEW, 'vertical'),
-        horizontal: getClassName(SCROLLVIEW, 'horizontal'),
-        child: getClassName(SCROLLVIEW, 'child'),
-        top: getClassName(SCROLLVIEW, 'top'),
-        bottom: getClassName(SCROLLVIEW, 'bottom'),
-        middle: getClassName(SCROLLVIEW, 'middle'),
-        showing: getClassName(SCROLLVIEW, 'showing')
+        vertical: getClassName(SCROLLVIEW, 'vert'),
+        horizontal: getClassName(SCROLLVIEW, 'horiz')
     },
     EV_SCROLL_START = 'scrollStart',
     EV_SCROLL_CHANGE = 'scrollChange',
@@ -403,7 +397,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._maxScrollY = scrollHeight - height;
             this._minScrollY = 0;
             this._scrollHeight = scrollHeight;
-            bb.addClass(getClassName("scroll-v"));
+            bb.addClass(ScrollView.CLASS_NAMES.vertical);
         }
 
         if(width && scrollWidth > width) {
@@ -411,7 +405,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._maxScrollX = scrollWidth - width;
             this._minScrollX = 0;
             this._scrollWidth = scrollWidth;
-            bb.addClass(this.getClassName("scroll-h"));
+            bb.addClass(ScrollView.CLASS_NAMES.horizontal);
         }
     },
 
@@ -425,7 +419,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _flick: function(e) {
         var flick = e.flick;
-        this._currentVelocity = flick.velocity * flick.direction;
+        this._currentVelocity = flick.velocity;
         this._flicking = true;
         this._flickFrame();
 
@@ -487,7 +481,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._exceededYBoundary = true;
             this._currentVelocity *= this.get(BOUNCE);
         }
-        
+
         if(this._scrollsHorizontal && (newX < minX || newX > maxX)) {
             this._exceededXBoundary = true;
             this._currentVelocity *= this.get(BOUNCE);

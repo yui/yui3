@@ -101,7 +101,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         host = this._host = this.get('host');
         
         this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
-        this.afterHostMethod('_onTouchstart', this._setBoundaryPoints);
+        this.afterHostMethod('_onGestureMoveStart', this._setBoundaryPoints);
         this.afterHostMethod('_flick', this._afterFlick);
         this.afterHostEvent('scrollEnd', this._scrollEnded);
         this.after('indexChange', this._afterIndexChange);
@@ -173,7 +173,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host._maxScrollX = this._minPoints[pageIndex+1];
         }
     },
-    
+
     /**
      * Executed as soon as the flick event occurs. This is needed to
      * determine if the next or prev page should be activated.
@@ -203,7 +203,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             this.set('index', pageIndex-1, { src: UI });
         }
     },
-    
+
     /**
      * scrollEnd handler detects if a page needs to change
      *

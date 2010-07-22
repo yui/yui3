@@ -123,7 +123,7 @@ YUI.add('node-flick', function(Y) {
          * @protected
          */
         _onFlick: function(e) {
-            this._v = e.flick.velocity * e.flick.direction;
+            this._v = e.flick.velocity;
             this._flick = true;
             this._flickAnim();
         },

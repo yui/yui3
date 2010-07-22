@@ -27,35 +27,21 @@ if (typeof YUI === 'undefined') {
     /*global YUI*/
     /*global YUI_config*/
     var YUI = function() {
+        var i     = 0, 
+            Y     = this, 
+            a     = arguments, 
+            l     = a.length, 
+            gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
-        var proto, prop, i, 
-            Y            = this, 
-            a            = arguments, 
-            l            = a.length, 
-            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
-
-        // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            Y = new YUI();
-
-            for (i=0; i<l; i++) {
-                Y._config(a[i]);
-            }
-
-            for (prop in proto) {
-                if (proto.hasOwnProperty(prop)) {
-                    Y[prop] = proto[prop];
-                }
-            }
-
-            return Y; 
+            return new YUI();
         } else {
             // set up the core environment
             Y._init();
-            if (globalConfig) {
-                Y._config(globalConfig);
+            if (gconf) {
+                Y._config(gconf);
             }
-            for (i=0; i<l; i++) {
+            for (; i<l; i++) {
                 Y._config(a[i]);
             }
             // bind the specified additional modules for this instance
@@ -195,10 +181,9 @@ proto = {
             Y.Env = {
                 mods:         {}, // flat module map
                 versions:     {}, // version module map
-                loaders:      {},
                 base:         BASE,
                 cdn:          BASE + VERSION + '/build/',
-                bootstrapped: false,
+                // bootstrapped: false,
                 _idx:         0,
                 _used:        {},
                 _attached:    {},
@@ -206,7 +191,7 @@ proto = {
                 _uidx:        0,
                 _guidp:       'y',
                 _loaded:      {},
-                getBase: function(srcPattern, comboPattern) {
+                getBase: G_ENV && G_ENV.getBase || function(srcPattern, comboPattern) {
                     var b, nodes, i, src, match;
                     // get from querystring
                     nodes = (doc && doc.getElementsByTagName('script')) || [];
@@ -297,12 +282,10 @@ proto = {
      * @private
      */
     _setup: function(o) {
-
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
             extras = Y.config.core || ['get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
-
 
         for (i=0; i<extras.length; i++) {
             if (mods[extras[i]]) {
@@ -310,8 +293,8 @@ proto = {
             }
         }
 
-        Y.use('yui-base');
-        Y.use.apply(Y, core);
+        Y._attach(['yui-base']);
+        Y._attach(core);
 
         // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
@@ -327,7 +310,6 @@ proto = {
      * @return {object} the return value from the applied method or null
      */
     applyTo: function(id, method, args) {
-
         if (!(method in APPLY_TO_AUTH)) {
             this.log(method + ': applyTo not allowed', 'warn', 'yui');
             return null;
@@ -377,7 +359,6 @@ proto = {
      *
      */
     add: function(name, fn, version, details) {
-
         details = details || {};
         var env = YUI.Env,
             mod  = {
@@ -418,7 +399,8 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    if (!Y._attach(Y.Array(req))) {
+                    // if (!Y._attach(Y.Array(req))) {
+                    if (!Y._attach(req)) {
                         return false;
                     }
                 }
@@ -435,7 +417,8 @@ proto = {
                 }
 
                 if (use && use.length) {
-                    if (!Y._attach(Y.Array(use))) {
+                    // if (!Y._attach(Y.Array(use))) {
+                    if (!Y._attach(use)) {
                         return false;
                     }
                 }
@@ -486,8 +469,11 @@ proto = {
      */
     use: function() {
 
+        // console.log(arguments);
+
         if (!this.Array) {
             this._attach(['yui-base']);
+            // this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
         }
 
         var len, loader, handleBoot,
@@ -508,6 +494,10 @@ proto = {
             ret      = true,
             fetchCSS = config.fetchCSS,
             process  = function(names) {
+
+                if (!names.length) {
+                    return;
+                }
 
                 // var collection = YArray(names);
                 var collection = names;
@@ -538,11 +528,11 @@ proto = {
                     }
 
 
-                    if (req) { // make sure requirements are attached
+                    if (req && req.length) { // make sure requirements are attached
                         process(req);
                     }
 
-                    if (use) { // make sure we grab the submodule dependencies too
+                    if (use && use.length) { // make sure we grab the submodule dependencies too
                         process(use);
                     }
                 });
@@ -640,7 +630,7 @@ proto = {
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
-        if (Y.Loader) {
+        if (Y.Loader && args.length) {
             // loader = new Y.Loader(config);
             loader = getLoader(Y);
             loader.require(args);
