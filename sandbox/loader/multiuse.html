@@ -114,7 +114,9 @@ YUI({
                 ua: 'gecko'
             }
         }
-    }
+    },
+
+    filter: 'debug'
 
 }).use('node', function (Y) {
 
@@ -153,7 +155,9 @@ YUI().use('node', function (Y) {
 */
 
 // Create a third YUI instance
-YUI().use('event', function (Y) {
+YUI({
+    filter: 'debug'
+}).use('event', function (Y) {
 
     Y.log('3');
     // console.log(Y.merge(YUI));

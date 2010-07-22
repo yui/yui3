@@ -5,70 +5,74 @@ YUI.add('loader-base', function(Y) {
  * @module loader
  * @submodule loader-base
  */
-(function() {
-var VERSION         = Y.version,
-    CONFIG          = Y.config,
-    BUILD           = '/build/',
-    ROOT            = VERSION + BUILD,
-    CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.07-19-52',
-    GALLERY_ROOT    = GALLERY_VERSION + BUILD,
-    TNT             = '2in3',
-    TNT_VERSION     = CONFIG[TNT] || '3',
-    YUI2_VERSION    = CONFIG.yui2 || '2.8.1',
-    YUI2_ROOT       = TNT + '.' + TNT_VERSION + '/' + YUI2_VERSION + BUILD,
-    COMBO_BASE      = CDN_BASE + 'combo?',
-    META =          { version:   VERSION,
-                      root:      ROOT,
-                      base:      Y.Env.base,
-                      comboBase: COMBO_BASE,
-                      skin:      { defaultSkin: 'sam',
-                                   base:        'assets/skins/',
-                                   path:        'skin.css',
-                                   after:       [ 'cssreset', 
-                                                  'cssfonts', 
-                                                  'cssreset-context', 
-                                                  'cssfonts-context' ] },
-                      groups:    {},
-                      modules:   { /* METAGEN */ },
-                      patterns:  {}                                     },
-    groups =          META.groups;
 
-groups[VERSION] = {};
+if (!YUI.Env[Y.version]) {
 
-groups.gallery = {
-    base:      CDN_BASE + GALLERY_ROOT,
-    ext:       false,
-    combine:   true,
-    root:      GALLERY_ROOT,
-    comboBase: COMBO_BASE,
-    patterns:  { 'gallery-':    {             },
-                 'gallerycss-': { type: 'css' } }
-};
+    (function() {
+        var VERSION         = Y.version,
+            CONFIG          = Y.config,
+            BUILD           = '/build/',
+            ROOT            = VERSION + BUILD,
+            CDN_BASE        = Y.Env.base,
+            GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.07-19-52',
+            GALLERY_ROOT    = GALLERY_VERSION + BUILD,
+            TNT             = '2in3',
+            TNT_VERSION     = CONFIG[TNT] || '3',
+            YUI2_VERSION    = CONFIG.yui2 || '2.8.1',
+            YUI2_ROOT       = TNT + '.' + TNT_VERSION + '/' + YUI2_VERSION + BUILD,
+            COMBO_BASE      = CDN_BASE + 'combo?',
+            META =          { version:   VERSION,
+                              root:      ROOT,
+                              base:      Y.Env.base,
+                              comboBase: COMBO_BASE,
+                              skin:      { defaultSkin: 'sam',
+                                           base:        'assets/skins/',
+                                           path:        'skin.css',
+                                           after:       [ 'cssreset', 
+                                                          'cssfonts', 
+                                                          'cssreset-context', 
+                                                          'cssfonts-context' ] },
+                              groups:    {},
+                              // modules:   { /* METAGEN */ },
+                              patterns:  {}                                     },
+            groups =          META.groups;
 
-groups.yui2 = {
-    base:      CDN_BASE + YUI2_ROOT,
-    combine:   true,
-    ext:       false,
-    root:      YUI2_ROOT,
-    comboBase: COMBO_BASE,
-    patterns:  { 
-        'yui2-': {
-            configFn: function(me) {
-                if(/-skin|reset|fonts|grids|base/.test(me.name)) {
-                    me.type = 'css';
-                    me.path = me.path.replace(/\.js/, '.css');
-                    // this makes skins in builds earlier than 2.6.0 work as long as combine is false
-                    me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
-                }
+        groups[VERSION] = {};
+
+        groups.gallery = {
+            base:      CDN_BASE + GALLERY_ROOT,
+            ext:       false,
+            combine:   true,
+            root:      GALLERY_ROOT,
+            comboBase: COMBO_BASE,
+            patterns:  { 'gallery-':    { },
+                         'gallerycss-': { type: 'css' } }
+        };
+
+        groups.yui2 = {
+            base:      CDN_BASE + YUI2_ROOT,
+            combine:   true,
+            ext:       false,
+            root:      YUI2_ROOT,
+            comboBase: COMBO_BASE,
+            patterns:  { 
+                'yui2-': {
+                    configFn: function(me) {
+                        if(/-skin|reset|fonts|grids|base/.test(me.name)) {
+                            me.type = 'css';
+                            me.path = me.path.replace(/\.js/, '.css');
+                            // this makes skins in builds earlier than 2.6.0 work as long as combine is false
+                            me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
+                        }
+                    }
+                } 
             }
-        } 
-    }
-};
+        };
 
-YUI.Env[VERSION] = META;
-}());
-(function() {
+        YUI.Env[VERSION] = META;
+    }());
+}
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -182,7 +186,7 @@ var NOT_FOUND       = {},
     SKIN_PREFIX     = "skin-",
     L               = Y.Lang,
     ON_PAGE         = GLOBAL_ENV.mods,
-    _path           = Y.cached(function(dir, file, type, nomin) {
+    _path           = function(dir, file, type, nomin) {
                         var path = dir + '/' + file;
                         if (!nomin) {
                             path += '-min';
@@ -190,7 +194,7 @@ var NOT_FOUND       = {},
                         path += '.' + (type || CSS);
 
                         return path;
-                    });
+                    };
 
 Y.Env.meta = META;
 
@@ -719,14 +723,14 @@ Y.Loader.prototype = {
      * @param mod {string} optional: the name of a module to skin
      * @return {string} the full skin module name
      */
-    formatSkin: Y.cached(function(skin, mod) {
+    formatSkin: function(skin, mod) {
         var s = SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
 
         return s;
-    }),
+    },
 
     /**
      * Adds the skin def to the module info
@@ -1208,12 +1212,14 @@ Y.Loader.prototype = {
 
     _addLangPack: function(lang, m, packName) {
         var name     = m.name, 
-            packPath = _path((m.pkg || name), packName, JS, true),
+            packPath,
             existing = this.moduleInfo[packName];
 
         if (existing) {
             return existing;
         }
+
+        packPath = _path((m.pkg || name), packName, JS, true);
 
         this.addModule({ path:       packPath,
                          intl:       true,
@@ -1314,9 +1320,9 @@ Y.Loader.prototype = {
      * @param mname {string} the module to build it for
      * @return {string} the language pack module name
      */
-    getLangPackName: Y.cached(function(lang, mname) {
+    getLangPackName: function(lang, mname) {
         return ('lang/' + mname + ((lang) ? '_' + lang : ''));
-    }),
+    },
 
     /**
      * Inspects the required modules list looking for additional 
@@ -1990,8 +1996,6 @@ Y.Loader.prototype = {
     }
 };
 
-})();
-
 
 
 }, '@VERSION@' ,{requires:['get']});
@@ -2102,7 +2106,7 @@ YUI.add('loader-yui3', function(Y) {
  * @module loader
  * @submodule yui3
  */
-YUI.Env[Y.version].modules = {
+YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -2287,10 +2291,22 @@ YUI.Env[Y.version].modules = {
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset", 
-            "cssfonts"
+            "cssreset"
         ], 
         "path": "cssgrids/grids-min.css", 
+        "requires": [
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-context": {
+        "optional": [
+            "cssreset-context"
+        ], 
+        "path": "cssgrids/grids-context-min.css", 
+        "requires": [
+            "cssfonts-context"
+        ], 
         "type": "css"
     }, 
     "cssreset": {
@@ -2520,7 +2536,8 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "node", 
                     "base", 
-                    "yui-throttle"
+                    "yui-throttle", 
+                    "classnamemanager"
                 ]
             }, 
             "dd-ddm-drop": {
@@ -2799,6 +2816,9 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "history-html5": {
+                "optional": [
+                    "json"
+                ], 
                 "requires": [
                     "event-base", 
                     "history-base", 

@@ -1221,17 +1221,39 @@ YUI.add('history-html5', function(Y) {
  * @class HistoryHTML5
  * @extends HistoryBase
  * @constructor
- * @param {Object} config (optional) Configuration object. See the HistoryBase
- *   documentation for details.
+ * @param {Object} config (optional) Configuration object. The following
+ *   <code>HistoryHTML5</code>-specific properties are supported in addition to
+ *   those supported by <code>HistoryBase</code>:
+ *
+ * <dl>
+ *   <dt><strong>enableSessionFallback (Boolean)</strong></dt>
+ *   <dd>
+ *     <p>
+ *     Set this to <code>true</code> to store the most recent history state in
+ *     sessionStorage in order to seamlessly restore the previous state (if any)
+ *     when <code>HistoryHTML5</code> is instantiated after a
+ *     <code>window.onpopstate</code> event has already fired.
+ *     </p>
+ *
+ *     <p>
+ *     By default, this setting is <code>false</code>.
+ *     </p>
+ *   </dd>
+ * </dl>
  */
 
 var HistoryBase     = Y.HistoryBase,
     doc             = Y.config.doc,
     win             = Y.config.win,
+    sessionStorage  = win.sessionStorage,
     useHistoryHTML5 = Y.config.useHistoryHTML5,
 
-    SRC_POPSTATE = 'popstate',
-    SRC_REPLACE  = HistoryBase.SRC_REPLACE;
+    JSON = Y.JSON || win.JSON, // prefer YUI JSON, but fall back to native
+
+    ENABLE_FALLBACK = 'enableSessionFallback',
+    SESSION_KEY     = 'YUI_HistoryHTML5_state',
+    SRC_POPSTATE    = 'popstate',
+    SRC_REPLACE     = HistoryBase.SRC_REPLACE;
 
 function HistoryHTML5() {
     HistoryHTML5.superclass.constructor.apply(this, arguments);
@@ -1239,12 +1261,71 @@ function HistoryHTML5() {
 
 Y.extend(HistoryHTML5, HistoryBase, {
     // -- Initialization -------------------------------------------------------
-    _init: function () {
+    _init: function (config) {
         Y.on('popstate', this._onPopState, win, this);
+
         HistoryHTML5.superclass._init.apply(this, arguments);
+
+        config = this._config = config || {};
+
+        // If window.onload has already fired and the sessionStorage fallback is
+        // enabled, try to restore the last state from sessionStorage. This
+        // works around a shortcoming of the HTML5 history API: it's impossible
+        // to get the current state if the popstate event fires before you've
+        // subscribed to it. Since popstate fires immediately after onload,
+        // the last state may be lost if you return to a page from another page.
+        if (config[ENABLE_FALLBACK] && YUI.Env.windowLoaded) {
+            this._loadSessionState();
+        }
     },
 
     // -- Protected Methods ----------------------------------------------------
+
+    /**
+     * Returns a string unique to the current URL pathname that's suitable for
+     * use as a session storage key.
+     *
+     * @method _getSessionKey
+     * @return {String}
+     * @protected
+     */
+    _getSessionKey: function () {
+        return SESSION_KEY + '_' + win.location.pathname;
+    },
+
+    /**
+     * Attempts to load a state entry stored in session storage.
+     *
+     * @method _loadSessionState
+     * @protected
+     */
+    _loadSessionState: function () {
+        var lastState = JSON && sessionStorage &&
+                sessionStorage[this._getSessionKey()];
+
+        if (lastState) {
+            try {
+                this._resolveChanges(SRC_POPSTATE, JSON.parse(lastState) || null);
+            } catch (ex) {}
+        }
+    },
+
+    /**
+     * Stores the specified state entry in session storage if the
+     * <code>enableSessionFallback</code> config property is <code>true</code>
+     * and either <code>Y.JSON</code> or native JSON support is available and
+     * session storage is supported.
+     *
+     * @method _storeSessionState
+     * @param {mixed} state State to store. May be any type serializable to
+     *   JSON.
+     * @protected
+     */
+    _storeSessionState: function (state) {
+        if (this._config[ENABLE_FALLBACK] && JSON && sessionStorage) {
+            sessionStorage[this._getSessionKey()] = JSON.stringify(state || null);
+        }
+    },
 
     /**
      * Overrides HistoryBase's <code>_storeState()</code> and pushes or replaces
@@ -1263,6 +1344,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
             );
         }
 
+        this._storeSessionState(newState);
         HistoryHTML5.superclass._storeState.apply(this, arguments);
     },
 
@@ -1276,7 +1358,10 @@ Y.extend(HistoryHTML5, HistoryBase, {
      * @protected
      */
     _onPopState: function (e) {
-        this._resolveChanges(SRC_POPSTATE, e._event.state || {});
+        var state = e._event.state;
+
+        this._storeSessionState(state);
+        this._resolveChanges(SRC_POPSTATE, state || null);
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
@@ -1333,7 +1418,7 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base']});
+}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});
 
 
 YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie', 'history-html5']});

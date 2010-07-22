@@ -1,8 +1,7 @@
 /**
- * Adds pagination support for scrollview
+ * Provides a plugin, which adds pagination support to ScrollView instances
  *
- * @module scrollview
- * @submodule paginator-plugin
+ * @module scrollview-paginator
  */
  
 var BOUNCE_DECELERATION_CONST = 0.5,
@@ -11,7 +10,9 @@ var BOUNCE_DECELERATION_CONST = 0.5,
 /**
  * Scrollview plugin that adds support for paging
  *
- * @class PaginatorPlugin
+ * @class ScrollViewPaginatorPlugin
+ * @extends Plugin.Base 
+ * @constructor
  */
 function PaginatorPlugin() {
     PaginatorPlugin.superclass.constructor.apply(this, arguments);
@@ -20,34 +21,28 @@ function PaginatorPlugin() {
 /**
  * The identity of the plugin
  *
- * @property PaginatorPlugin.NAME
+ * @property ScrollViewPaginator.NAME
  * @type String
- * @default 'paginator-plugin'
- * @readOnly
- * @protected
+ * @default 'paginatorPlugin'
  * @static
  */
-PaginatorPlugin.NAME = 'paginatorPlugin';
+PaginatorPlugin.NAME = 'pluginScrollViewPaginator';
     
 /**
- * The plugin namespace property
+ * The namespace on which the plugin will reside
  *
- * @property PaginatorPlugin.NS
+ * @property ScrollViewPaginator.NS
  * @type String
  * @default 'pages'
- * @readOnly
- * @protected
  * @static
  */
 PaginatorPlugin.NS = 'pages';
 
 /**
- * ATTRS for scrollbars plugin
+ * The default attribute configuration for the plugin
  *
- * @property PaginatorPlugin.ATTRS
+ * @property ScrollViewPaginator.ATTRS
  * @type Object
- * @readOnly
- * @protected
  * @static
  */
 PaginatorPlugin.ATTRS = {
@@ -99,7 +94,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         host = this._host = this.get('host');
         
         this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
-        this.afterHostMethod('_onTouchstart', this._setBoundaryPoints);
+        this.afterHostMethod('_onGestureMoveStart', this._setBoundaryPoints);
         this.afterHostMethod('_flick', this._afterFlick);
         this.afterHostEvent('scrollEnd', this._scrollEnded);
         this.after('indexChange', this._afterIndexChange);
@@ -171,12 +166,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host._maxScrollX = this._minPoints[pageIndex+1];
         }
     },
-    
+
     /**
      * Executed as soon as the flick event occurs. This is needed to
      * determine if the next or prev page should be activated.
      * 
      * @method _afterFlick
+     * @param e {Event.Facade} The flick event facade.
      * @protected
      */
     _afterFlick: function(e) {
@@ -201,7 +197,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             this.set('index', pageIndex-1, { src: UI });
         }
     },
-    
+
     /**
      * scrollEnd handler detects if a page needs to change
      *

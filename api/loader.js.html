@@ -47,8 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-<span class="cm">/**</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * Loader dynamically loads script and css files.  It includes the dependency</span>
 <span class="cm"> * info for the version of the library in use, and will automatically pull in</span>
 <span class="cm"> * dependencies for the modules requested.  It supports rollup files and will</span>
@@ -161,7 +160,7 @@
     <span class="nx">SKIN_PREFIX</span>     <span class="o">=</span> <span class="s2">&quot;skin-&quot;</span><span class="p">,</span>
     <span class="nx">L</span>               <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
     <span class="nx">ON_PAGE</span>         <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
-    <span class="nx">_path</span>           <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_path</span>           <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
                         <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">;</span>
                         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">path</span> <span class="o">+=</span> <span class="s1">&#39;-min&#39;</span><span class="p">;</span>
@@ -169,7 +168,7 @@
                         <span class="nx">path</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">CSS</span><span class="p">);</span>
 
                         <span class="k">return</span> <span class="nx">path</span><span class="p">;</span>
-                    <span class="p">});</span>
+                    <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span> <span class="o">=</span> <span class="nx">META</span><span class="p">;</span>
 
@@ -699,14 +698,14 @@
 <span class="cm">     * @param mod {string} optional: the name of a module to skin</span>
 <span class="cm">     * @return {string} the full skin module name</span>
 <span class="cm">     */</span>
-    <span class="nx">formatSkin</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">skin</span><span class="p">,</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">formatSkin</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">skin</span><span class="p">,</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">SKIN_PREFIX</span> <span class="o">+</span> <span class="nx">skin</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">mod</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
-    <span class="p">}),</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Adds the skin def to the module info</span>
@@ -1194,12 +1193,14 @@
 
     <span class="nx">_addLangPack</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">name</span>     <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> 
-            <span class="nx">packPath</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">((</span><span class="nx">m</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">||</span> <span class="nx">name</span><span class="p">),</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">JS</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+            <span class="nx">packPath</span><span class="p">,</span>
             <span class="nx">existing</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">packName</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">existing</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">existing</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="nx">packPath</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">((</span><span class="nx">m</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">||</span> <span class="nx">name</span><span class="p">),</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">JS</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span>       <span class="nx">packPath</span><span class="p">,</span>
                          <span class="nx">intl</span><span class="o">:</span>       <span class="kc">true</span><span class="p">,</span>
@@ -1300,9 +1301,9 @@
 <span class="cm">     * @param mname {string} the module to build it for</span>
 <span class="cm">     * @return {string} the language pack module name</span>
 <span class="cm">     */</span>
-    <span class="nx">getLangPackName</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">mname</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">getLangPackName</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">mname</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;lang/&#39;</span> <span class="o">+</span> <span class="nx">mname</span> <span class="o">+</span> <span class="p">((</span><span class="nx">lang</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">lang</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
-    <span class="p">}),</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Inspects the required modules list looking for additional </span>
@@ -1995,8 +1996,6 @@
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_filter</span><span class="p">((</span><span class="nx">base</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">base</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">};</span>
-
-<span class="p">})();</span>
 </pre></div>
 
                     </div>

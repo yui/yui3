@@ -1,3 +1,12 @@
+*** 3.2.0 ***
+
+* Fixed ticket 2528646 : Fixed malformed HTML entities in JSON response, when
+using io-upload-iframe.
+
+* Fixed ticket 2528893 : Configuration HTTP headers should override preset
+HTTP headers, when identical.
+
+
 *** 3.1.1 ***
 
 * Fixed ticket #2528739 : Synchronous IO requests broken in IE

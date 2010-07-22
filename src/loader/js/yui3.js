@@ -3,7 +3,7 @@
  * @module loader
  * @submodule yui3
  */
-YUI.Env[Y.version].modules = {
+YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -188,10 +188,22 @@ YUI.Env[Y.version].modules = {
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset", 
-            "cssfonts"
+            "cssreset"
         ], 
         "path": "cssgrids/grids-min.css", 
+        "requires": [
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-context": {
+        "optional": [
+            "cssreset-context"
+        ], 
+        "path": "cssgrids/grids-context-min.css", 
+        "requires": [
+            "cssfonts-context"
+        ], 
         "type": "css"
     }, 
     "cssreset": {
@@ -421,7 +433,8 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "node", 
                     "base", 
-                    "yui-throttle"
+                    "yui-throttle", 
+                    "classnamemanager"
                 ]
             }, 
             "dd-ddm-drop": {
@@ -700,6 +713,9 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "history-html5": {
+                "optional": [
+                    "json"
+                ], 
                 "requires": [
                     "event-base", 
                     "history-base", 

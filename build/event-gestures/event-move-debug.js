@@ -1,6 +1,13 @@
 YUI.add('event-move', function(Y) {
 
-// TODO: Better way to sniff 'n' switch touch support?
+/**
+ * Adds lower level support for "gesturemovestart", "gesturemove" and "gesturemoveend" events, which can be used to create drag/drop
+ * interactions which work across touch and mouse input devices. They correspond to "touchstart", "touchmove" and "touchend" on touch input
+ * device, and "mousedown", "mousemove", "mouseup" on mouse based input devices.
+ *
+ * @module event-gestures
+ * @submodule event-move
+ */
 
 var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
@@ -43,6 +50,28 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     },
 
     define = Y.Event.define;
+
+/**
+ * Sets up a "gesturemovestart" event, that is fired on touch devices in response to a single finger "touchstart",
+ * and on mouse based devices in response to a "mousedown". The subscriber can specify the minimum time
+ * and distance thresholds which should be crossed before the "gesturemovestart" is fired and for the mouse,
+ * which button should initiate a "gesturemovestart". This event can also be listened for using node.delegate(). 
+ *
+ * @event gesturemovestart
+ * @param type {string} "gesturemovestart"
+ * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousedown or touchstart.touches[0]) which contains position co-ordinates.
+ * @param cfg {Object} Optional. An object which specifies:
+ * <dl>
+ * <dt>minDistance (defaults to 0)</dt>
+ * <dd>The minimum distance theshold which should be crossed before the gesturemovestart is fired</dd>
+ * <dt>minTime (defaults to 0)</dt>
+ * <dd>The minimum time theshold for which the finger/mouse should be help down before the gesturemovestart is fired</dd>
+ * <dt>button (no default)</dt>
+ * <dd>In the case of a mouse input device, if the event should only be fired for a specific mouse button.</dd>
+ * </dl>
+ *
+ * @return {EventHandle} the detach handle
+ */
 
 define('gesturemovestart', {
 
@@ -200,6 +229,32 @@ define('gesturemovestart', {
     MIN_DISTANCE : 0
 });
 
+/**
+ * Sets up a "gesturemove" event, that is fired on touch devices in response to a single finger "touchmove",
+ * and on mouse based devices in response to a "mousemove".
+ * 
+ * <p>By default this event is only fired when the same node
+ * has received a "gesturemovestart" event. The subscriber can set standAlone to true, in the configuration properties,
+ * if they want to listen for this event without an initial "gesturemovestart".</p>
+ * 
+ * <p>By default this event sets up it's internal "touchmove" and "mousemove" DOM listeners on the document element. The subscriber
+ * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p> 
+ *
+ * <p>This event can also be listened for using node.delegate().</p>
+ *
+ * @event gesturemove
+ * @param type {string} "gesturemove"
+ * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousemove or touchmove.touches[0]) which contains position co-ordinates.
+ * @param cfg {Object} Optional. An object which specifies:
+ * <dl>
+ * <dt>standAlone (defaults to false)</dt>
+ * <dd>true, if the subscriber should be notified even if a "gesturemovestart" has not occured on the same node.</dd>
+ * <dt>root (defaults to document)</dt>
+ * <dd>The node to which the internal DOM listeners should be attached.</dd>
+ * </dl>
+ *
+ * @return {EventHandle} the detach handle
+ */
 define('gesturemove', {
 
     on : function (node, subscriber, ce) {
@@ -281,6 +336,32 @@ define('gesturemove', {
     }
 });
 
+/**
+ * Sets up a "gesturemoveend" event, that is fired on touch devices in response to a single finger "touchend",
+ * and on mouse based devices in response to a "mouseup".
+ * 
+ * <p>By default this event is only fired when the same node
+ * has received a "gesturemove" or "gesturemovestart" event. The subscriber can set standAlone to true, in the configuration properties,
+ * if they want to listen for this event without a preceding "gesturemovestart" or "gesturemove".</p>
+ * 
+ * <p>By default this event sets up it's internal "touchend" and "mouseup" DOM listeners on the document element. The subscriber
+ * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p> 
+ *
+ * <p>This event can also be listened for using node.delegate().</p>
+ *
+ * @event gesturemove
+ * @param type {string} "gesturemove"
+ * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mouseup or touchend.changedTouches[0]).
+ * @param cfg {Object} Optional. An object which specifies:
+ * <dl>
+ * <dt>standAlone (defaults to false)</dt>
+ * <dd>true, if the subscriber should be notified even if a "gesturemovestart" or "gesturemove" has not occured on the same node.</dd>
+ * <dt>root (defaults to document)</dt>
+ * <dd>The node to which the internal DOM listeners should be attached.</dd>
+ * </dl>
+ *
+ * @return {EventHandle} the detach handle
+ */
 define('gesturemoveend', {
 
     on : function (node, subscriber, ce) {

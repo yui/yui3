@@ -183,10 +183,22 @@
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset", 
-            "cssfonts"
+            "cssreset"
         ], 
         "path": "cssgrids/grids-min.css", 
+        "requires": [
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-context": {
+        "optional": [
+            "cssreset-context"
+        ], 
+        "path": "cssgrids/grids-context-min.css", 
+        "requires": [
+            "cssfonts-context"
+        ], 
         "type": "css"
     }, 
     "cssreset": {
@@ -416,7 +428,8 @@
                 "requires": [
                     "node", 
                     "base", 
-                    "yui-throttle"
+                    "yui-throttle", 
+                    "classnamemanager"
                 ]
             }, 
             "dd-ddm-drop": {
@@ -695,6 +708,9 @@
                 ]
             }, 
             "history-html5": {
+                "optional": [
+                    "json"
+                ], 
                 "requires": [
                     "event-base", 
                     "history-base", 

@@ -84,6 +84,9 @@
 
 
 <span class="c1">// All internals kept private for security reasons</span>
+<span class="kd">function</span> <span class="nx">fromGlobal</span><span class="p">(</span><span class="nx">ref</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">||</span> <span class="k">this</span> <span class="o">||</span> <span class="p">{})[</span><span class="nx">ref</span><span class="p">];</span>
+<span class="p">}</span>
 
 
     <span class="cm">/**</span>
@@ -93,7 +96,9 @@
 <span class="cm">     * @type {Object}</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
-<span class="kd">var</span> <span class="nx">_JSON</span>  <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">||</span> <span class="p">{}).</span><span class="nx">JSON</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">_JSON</span>  <span class="o">=</span> <span class="nx">fromGlobal</span><span class="p">(</span><span class="s1">&#39;JSON&#39;</span><span class="p">),</span>
+    <span class="c1">// Create an indirect reference to eval to allow for minification</span>
+    <span class="nx">_eval</span>  <span class="o">=</span> <span class="nx">fromGlobal</span><span class="p">(</span><span class="s1">&#39;eval&#39;</span><span class="p">),</span>
     <span class="nx">Native</span> <span class="o">=</span> <span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">_JSON</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;[object JSON]&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">_JSON</span><span class="p">),</span>
     <span class="nx">useNative</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">Native</span><span class="p">,</span>
 
@@ -225,7 +230,7 @@
 
             <span class="c1">// Eval the text into a JavaScript data structure, apply any</span>
             <span class="c1">// reviver function, and return</span>
-            <span class="k">return</span> <span class="nx">_revive</span><span class="p">(</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">),</span> <span class="nx">reviver</span> <span class="p">);</span>
+            <span class="k">return</span> <span class="nx">_revive</span><span class="p">(</span> <span class="nx">_eval</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">),</span> <span class="nx">reviver</span> <span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">SyntaxError</span><span class="p">(</span><span class="s1">&#39;JSON.parse&#39;</span><span class="p">);</span>

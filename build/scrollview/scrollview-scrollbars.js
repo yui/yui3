@@ -1,70 +1,84 @@
 YUI.add('scrollview-scrollbars', function(Y) {
 
 /**
- * Adds support for scrollbars inside a scrollview
+ * Provides a plugin, which adds support for a scroll indicator to ScrollView instances
  *
- * @module scrollview
- * @submodule scrollbars-plugin
+ * @module scrollview-scrollbars
  */
- 
-var _classNames = Y.ScrollView.CLASS_NAMES,
-    NATIVE_TRANSITIONS = Y.Transition.useNative;
+
+var getClassName = Y.ClassNameManager.getClassName,
+    NATIVE_TRANSITIONS = Y.Transition.useNative,
+    _classNames,
+    SCROLLBAR = 'scrollbar',
+    SCROLLVIEW = 'scrollview';
 
 /**
- * Scrollview plugin that adds scroll indicators to the scrollview
+ * ScrollView plugin that adds scroll indicators to ScrollView instances
  *
- * @class ScrollbarsPlugin
+ * @class ScrollViewScrollbars
+ * @namespace Plugin
+ * @extends Plugin.Base
+ * @constructor
  */
 function ScrollbarsPlugin() {
     ScrollbarsPlugin.superclass.constructor.apply(this, arguments);
 }
 
+ScrollbarsPlugin.CLASS_NAMES = {
+    showing: getClassName(SCROLLVIEW, SCROLLBAR, 'showing'),
+    scrollbar: getClassName(SCROLLVIEW, SCROLLBAR),
+    scrollbarV: getClassName(SCROLLVIEW, SCROLLBAR, 'vert'),
+    scrollbarH: getClassName(SCROLLVIEW, SCROLLBAR, 'horiz'),
+    scrollbarVB: getClassName(SCROLLVIEW, SCROLLBAR, 'vert', 'basic'),
+    scrollbarHB: getClassName(SCROLLVIEW, SCROLLBAR, 'horiz', 'basic'),
+    child: getClassName(SCROLLVIEW, 'child'),
+    first: getClassName(SCROLLVIEW, 'first'),
+    middle: getClassName(SCROLLVIEW, 'middle'),
+    last: getClassName(SCROLLVIEW, 'last')
+};
+
+_classNames = ScrollbarsPlugin.CLASS_NAMES;
+
 /**
  * The identity of the plugin
  *
- * @property ScrollbarsPlugin.NAME
+ * @property ScrollViewScrollbars.NAME
  * @type String
  * @default 'scrollbars-plugin'
- * @readOnly
- * @protected
  * @static
  */
-ScrollbarsPlugin.NAME = 'scrollbars-plugin';
+ScrollbarsPlugin.NAME = 'pluginScrollViewScrollbars';
     
 /**
- * The plugin namespace property
+ * The namespace on which the plugin will reside.
  *
- * @property ScrollbarsPlugin.NS
+ * @property ScrollViewScrollbars.NS
  * @type String
  * @default 'scrollbars'
- * @readOnly
- * @protected
  * @static
  */
 ScrollbarsPlugin.NS = 'scrollbars';
 
 /**
- * Common HTML template for vertical/horizontal scrollbars
+ * HTML template for the scrollbar
  *
- * @property ScrollbarsPlugin.SCROLLBAR_TEMPLATE
- * @type String
+ * @property ScrollViewScrollbars.SCROLLBAR_TEMPLATE
+ * @type Object
  * @static
  */
 ScrollbarsPlugin.SCROLLBAR_TEMPLATE = [
     '<div>',
-    '<span class="' + _classNames.child + ' ' + _classNames.top + '"></span>',
+    '<span class="' + _classNames.child + ' ' + _classNames.first + '"></span>',
     '<span class="' + _classNames.child + ' ' + _classNames.middle + '"></span>',
-    '<span class="' + _classNames.child + ' ' + _classNames.bottom + '"></span>',
+    '<span class="' + _classNames.child + ' ' + _classNames.last + '"></span>',
     '</div>'
 ].join('');
 
 /**
- * ATTRS for scrollbars plugin
+ * The default attribute configuration for the plugin
  *
- * @property ScrollbarsPlugin.ATTRS
+ * @property ScrollViewScrollbars.ATTRS
  * @type Object
- * @readOnly
- * @protected
  * @static
  */
 ScrollbarsPlugin.ATTRS = {
@@ -101,7 +115,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */    
     initializer: function() {
         this._host = this.get("host");
-        
+
         this.afterHostMethod('_uiScrollY', this._update);
         this.afterHostMethod('_uiScrollX', this._update);
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
@@ -122,16 +136,15 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
             verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
-            
+
             verticalNodeInDoc = verticalNode.inDoc(),
-            horizontalNodeInDoc = horizontalNode.inDoc(),
+            horizontalNodeInDoc = horizontalNode.inDoc();
 
-            basic = (Y.UA.ie && Y.UA.ie <= 8) ? host.getClassName("scrollbar", "basic") : "";
-
-        // Vertical
         if(host._scrollsVertical && !verticalNodeInDoc) {
             boundingBox.append(verticalNode);
-            verticalNode.addClass(basic);
+            if (this._basic) {
+                verticalNode.addClass(_classNames.scrollbarVB);
+            }
         } else if(!host._scrollsVertical && verticalNodeInDoc) {
             verticalNode.remove();
         }
@@ -139,7 +152,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         // Horizontal
         if(host._scrollsHorizontal && !horizontalNodeInDoc) {
             boundingBox.append(horizontalNode);
-            horizontalNode.addClass(basic);
+            if (this._basic) {
+                horizontalNode.addClass(_classNames.scrollbarHB);
+            }
         } else if(!host._scrollsHorizontal && horizontalNodeInDoc) {
             horizontalNode.remove();
         }
@@ -160,6 +175,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */
     _update: function(currentPos, duration, easing) {
         var host = this._host,
+            basic = this._basic,
             cb = host.get('contentBox'),
             scrollSize = 0,
             scrollPos = 1,
@@ -167,6 +183,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             transformX,
             transformY,
             transition,
+            size,
             height = host.get('height'),
             width = host.get('width'),
             scrollHeight = host._scrollHeight || cb.get('scrollHeight'),
@@ -176,6 +193,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             currentX = host.get('scrollX') * -1,
             currentY = host.get('scrollY') * -1,
             node;
+
+        // TODO: Remove 4px cross dependency on CSS
 
         if(!this._showingScrollBars) {
             this.show();
@@ -218,21 +237,24 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
             duration = duration || 0;
 
-            if(this.verticalScrollSize != (scrollSize-8)) {
-                this.verticalScrollSize = (scrollSize-8);
+            size = (scrollSize-8);
+
+            if(this.verticalScrollSize != (size)) {
+                this.verticalScrollSize = (size);
 
                 node = verticalNode.get('children').item(1);
-                
+
                 transition = {
                     duration : duration/1000                                
                 };
 
                 if(NATIVE_TRANSITIONS) {
-                    transition.transform = 'translate(0,0) scaleY('+(scrollSize-8)+')';
+                    transition.transform = 'translate(0,0) scaleY('+(size)+')';
                 } else {
-                    transition.top = 4;
-                    //transition.right = 0;
-                    transition.height = (scrollSize-8);
+                    if (!basic) {
+                        transition.top = 4;
+                    }
+                    transition.height = size;
                 }
 
                 node.transition(transition);
@@ -241,11 +263,10 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             transition = {
                 duration : duration/1000
             };
-             
+
             if (NATIVE_TRANSITIONS) {
                 transition.transform = transform;
             } else {
-                //transition.right = transformX;
                 transition.top = transformY;
             }
 
@@ -258,8 +279,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if (NATIVE_TRANSITIONS) {
                 transition.transform = 'translate(0,'+(scrollSize-10)+'px)'; 
             } else {
-                //transition.right = 0;
-                transition.top = scrollSize-4;
+                if (!basic) { 
+                    transition.top = scrollSize-4; 
+                }
             }
 
             verticalNode.get('children').item(2).transition(transition);
@@ -301,8 +323,10 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
             duration = duration || 0;
 
-            if(this.horizontalScrollSize != (scrollSize-16)) {
-                this.horizontalScrollSize = (scrollSize-16);
+            size = (scrollSize-16);
+
+            if(this.horizontalScrollSize != (size)) {
+                this.horizontalScrollSize = size;
 
                 node = horizontalNode.get('children').item(1);
 
@@ -311,11 +335,13 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 };
 
                 if(NATIVE_TRANSITIONS) {
-                    transition.transform = 'translate(0,0) scaleX('+(scrollSize-16)+')';
+                    transition.transform = 'translate(0,0) scaleX('+(size)+')';
                 } else {
                     //transition.bottom = 0;
-                    transition.left = 4;
-                    transition.width = (scrollSize-16);
+                    if (!basic) {
+                        transition.left = 4;
+                    }
+                    transition.width = (size);
                 }
 
                 node.transition(transition);
@@ -324,7 +350,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             transition = {
                 duration : duration/1000
             };
-             
+
             if (NATIVE_TRANSITIONS) {
                 transition.transform = transform;
             } else {
@@ -345,7 +371,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                 transition.left = scrollSize-12;
             }
 
-            horizontalNode.get('children').item(2).transition(transition);
+            if (!basic) { horizontalNode.get('children').item(2).transition(transition); }
         }                
     },
     
@@ -370,11 +396,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * Hide/Show implementation method
+     * Internal hide/show implementation utility method
      * 
      * @method _show
      * @param {Object} show
      * @param {Object} animated
+     * @protected
      */
     _show : function(show, animated) {
         var verticalNode = this.get('verticalNode'),
@@ -423,7 +450,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * Setter for the verticalNode ATTR
+     * Setter for the verticalNode attribute
      *
      * @method _setVerticalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
@@ -433,13 +460,13 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         node = Y.one(node);
         if(node) {
             node.addClass(_classNames.scrollbar);
-            node.addClass(_classNames.vertical);
+            node.addClass(_classNames.scrollbarV);
         }
         return node;
     },
 
     /**
-     * Setter for the horizontalNode ATTR
+     * Setter for the horizontalNode attribute
      *
      * @method _setHorizontalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
@@ -449,10 +476,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         node = Y.one(node);
         if(node) {
             node.addClass(_classNames.scrollbar);
-            node.addClass(_classNames.horizontal);
+            node.addClass(_classNames.scrollbarH);
         }
         return node;
-    }
+    },
+
+    _basic: Y.UA.ie && Y.UA.ie <= 8
 
 });
 

@@ -1,18 +1,8 @@
 /**
- * Create a scrollable container of fixed height or width for devices which
- * do not support overflow: hidden
+ * The scrollview module does not add any new classes. It simply plugs the ScrollViewScrollbars plugin into the 
+ * base ScrollView class implementation, so that all scrollview instances have scrollbars enabled.
  * 
  * @module scrollview
  */
 
-/**
- * ScrollView provides a scrollable container for devices which do not 
- * support overflow: hidden
- *
- * @class ScrollView
- * @constructor
- * @extends ScrollViewBase
- * @uses Y.ScrollbarsPlugin
- * @param config {Object} Configuration object
- */ 
 Y.Base.plug(Y.ScrollView, Y.Plugin.ScrollViewScrollbars);
