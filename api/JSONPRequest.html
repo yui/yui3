@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: swf  YAHOO.widget.SWF   (YUI Library)</title>
+	<title>API: jsonp  JSONPRequest   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>SWF Utility&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>jsonp&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_swf.html" title="swf">swf</a>
-                 &gt; YAHOO.widget.SWF 
+            &gt; <a href="./module_jsonp.html" title="jsonp">jsonp</a>
+                 &gt; JSONPRequest 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">YAHOO.widget.SWF</b>
+                            Class <b property="yui:name">JSONPRequest</b>
                         <span class="extends">
                         </span>
 
@@ -59,50 +59,63 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Creates the SWF instance and keeps the configuration data
+                        <p>Provides a JSONPRequest class for repeated JSONP calls, and a convenience
+method Y.jsonp(url, callback) to instantiate and send a JSONP request.</p>
+<p>Both the constructor as well as the convenience function take two
+parameters: a url string and a callback.</p>
+<p>The url provided must include the placeholder string
+&quot;{callback}&quot; which will be replaced by a dynamically
+generated routing function to pass the data to your callback function.
+An example url might look like
+&quot;http://example.com/service?callback={callback}&quot;.</p>
+<p>The second parameter can be a callback function that accepts the JSON
+payload as its argument, or a configuration object supporting the keys:</p>
+<ul>
+<li>on - map of callback subscribers
+<ul>
+<li>success - function handler for successful transmission</li>
+<li>failure - function handler for failed transmission</li>
+<li>timeout - function handler for transactions that timeout</li>
+</ul>
+</li>
+<li>format  - override function for inserting the proxy name in the url</li>
+<li>timeout - the number of milliseconds to wait before giving up</li>
+<li>context - becomes <code>this</code> in the callbacks</li>
+<li>args    - array of subsequent parameters to pass to the callbacks</li>
+</ul>
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">YAHOO.widget.SWF</strong>
+                                <strong property="yui:name">JSONPRequest</strong>
                                 <code>
                                     (
   
                                         
                                                 
-                                                id
+                                                url
 
                                                 , 
-                                                swfURL
-
-                                                , 
-                                                p_oAttributes
+                                                callback
                                     )
                                 </code>
                                 <div class="description">
                                         <dl rel="yui:parameters">
                                             <dt>Parameters:</dt>
                                                 <dd rel="yui:parameter">
-                                                    <code><span property="yui:name">id</span>
-                                                    &lt;<span property="yui:type">String|HTMLElement</span>&gt;
-                                                    </code>
-                                                    <span property="yui:description"> The id of the element, or the element itself that the SWF will be inserted into.  
-The width and height of the SWF will be set to the width and height of this container element.</span>
-                                                </dd>
-                                                <dd rel="yui:parameter">
-                                                    <code><span property="yui:name">swfURL</span>
+                                                    <code><span property="yui:name">url</span>
                                                     &lt;<span property="yui:type">String</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"> The URL of the SWF to be embedded into the page.</span>
+                                                    <span property="yui:description">  the url of the JSONP service</span>
                                                 </dd>
                                                 <dd rel="yui:parameter">
-                                                    <code><span property="yui:name">p_oAttributes</span>
-                                                    &lt;<span property="yui:type">Object</span>&gt;
+                                                    <code><span property="yui:name">callback</span>
+                                                    &lt;<span property="yui:type">Object|Function</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"> (optional) Configuration parameters for the Flash application and values for Flashvars
-to be passed to the SWF.</span>
+                                                    <span property="yui:description">  the default callback configuration or
+success handler</span>
                                                 </dd>
                                         </dl>
                                     
@@ -116,17 +129,41 @@ to be passed to the SWF.</span>
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:property" resource="#property__instances">
-                                    <h4><a name="property__instances" property="yui:name">_instances</a>
-                                        - <code>private <span property="yui:type">Object</span></code>
+                                    <div class="protected" rel="yui:property" resource="#property__pattern">
+                                    <h4><a name="property__pattern" property="yui:name">_pattern</a>
+                                        - <code>protected <span property="yui:type">RegExp</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The static collection of all instances of the SWFs on the page.
+                                            RegExp used by the default URL formatter to insert the generated callback
+name into the JSONP url.  Looks for a query param callback=.  If a value
+is assigned, it will be clobbered.
                                         </div>
                                     </div>
      
                                         
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: /\bcallback=.*?(?=&|$)/i
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__template">
+                                    <h4><a name="property__template" property="yui:name">_template</a>
+                                        - <code>protected <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Template used by the default URL formatter to add the callback function
+name to the url.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: "callback={callback}"
+                                    </div>        
 
 
                                     <hr />
@@ -140,27 +177,31 @@ to be passed to the SWF.</span>
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:method" resource="#method__eventHandler">
+                                    <div class="protected" rel="yui:method" resource="#method__defaultCallback">
                                     <h4>
-                                        <a name="method__eventHandler">_eventHandler</a></h4>
+                                        <a name="method__defaultCallback">_defaultCallback</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         private 
+                                         protected 
                                         
                                         
-                                        void
-                                            <strong property="yui:name">_eventHandler</strong>
+                                        Function
+                                            <strong property="yui:name">_defaultCallback</strong>
                                            (
                                                 
                                                         
-                                                         event
+                                                         url
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Propagates a specific event from Flash to JS.
+                                            <p>Parses the url for a callback named explicitly in the string.
+Override this if the target JSONP service uses a different query
+parameter or url format.</p>
+<p>If the callback is declared inline, the corresponding function will
+be returned.  Otherwise null.</p>
                                         </div>
 
                                         <div class="description">
@@ -168,68 +209,20 @@ to be passed to the SWF.</span>
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">event</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The event to be propagated from Flash.</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_callSWF">
-                                    <h4>
-                                        <a name="method_callSWF">callSWF</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">callSWF</strong>
-                                           (
-                                                
-                                                        
-                                                         func
-                                                    
-                                                
-                                                        , 
-                                                         args
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Calls a specific function exposed by the SWF's
-ExternalInterface.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">func</span>
+                                                        <code><span property="yui:name">url</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the name of the function to call</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the set of arguments to pass to the function.</span>
+                                                        <span property="yui:description">  the url to search in</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Function
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the callback function if found, or null</dd>
+                                                </dl>
 
 
              
@@ -239,89 +232,208 @@ ExternalInterface.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method_eventHandler">
+                                    <div class="protected" rel="yui:method" resource="#method__format">
                                     <h4>
-                                        <a name="method_eventHandler">eventHandler</a></h4>
+                                        <a name="method__format">_format</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">eventHandler</strong>
-                                           (
-                                                
-                                                        
-                                                         swfid
-                                                    
-                                                
-                                                        , 
-                                                         event
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Handles an event coming from within the SWF and delegate it
-to a specific instance of SWF.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">swfid</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the id of the SWF dispatching the event</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">event</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the event being transmitted.</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_toString">
-                                    <h4>
-                                        <a name="method_toString">toString</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
+                                         protected 
                                         
                                         
                                         String
-                                            <strong property="yui:name">toString</strong>
+                                            <strong property="yui:name">_format</strong>
                                            (
+                                                
+                                                        
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         proxy
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Public accessor to the unique name of the SWF instance.
+                                            URL formatter that looks for callback= in the url and appends it
+if not present.  The supplied proxy name will be assigned to the query
+param.  Override this method by passing a function as the
+&quot;format&quot; property in the config object to the constructor.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type"> String </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the original url</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">proxy</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function name that will be used as a proxy to
+the configured callback methods.</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
                                                             String
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Unique name of the SWF instance.</dd>
+                                                    <dd property="yui:returnInfo">fully qualified JSONP url</dd>
                                                 </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__init">
+                                    <h4>
+                                        <a name="method__init">_init</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_init</strong>
+                                           (
+                                                
+                                                        
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         callback
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Set up the success and failure handlers and the regex pattern used
+to insert the temporary callback name in the url.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the url of the JSONP service</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">callback</span>
+                                                        &lt;<span property="yui:type">Object|Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Optional success callback or config
+object containing success and failure functions and
+the url regex.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_send">
+                                    <h4>
+                                        <a name="method_send">send</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">send</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Issues the JSONP request.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Y.jsonp">
+                                    <h4>
+                                        <a name="method_Y.jsonp">Y.jsonp</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        JSONPRequest
+                                            <strong property="yui:name">Y.jsonp</strong>
+                                           (
+                                                
+                                                        
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">String} the url of the JSONP service with the {callback</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 
+placeholder where the callback function name typically goes.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Function|Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Callback function accepting the JSON payload
+as its argument, or a configuration object (see above).</span>
+                                                        </dd>
+                                                </dl>
+
 
 
              
@@ -373,14 +485,18 @@ to a specific instance of SWF.
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class="selected"><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -390,15 +506,20 @@ to a specific instance of SWF.
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
-                                <li class="selected"><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
@@ -418,31 +539,34 @@ to a specific instance of SWF.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="YAHOO.widget.SWF.html" title="YAHOO.widget.SWF">YAHOO.widget.SWF</a></li>
+                                <li class="selected"><a href="JSONPRequest.html" title="JSONPRequest">JSONPRequest</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="swf.js.html" title="swf.js">swf.js</a></li>
+                                <li class=""><a href="jsonp-url.js.html" title="jsonp-url.js">jsonp-url.js</a></li>
+                                <li class=""><a href="jsonp.js.html" title="jsonp.js">jsonp.js</a></li>
                         </ul>
                     </div>
 
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property__instances" title="_instances">_instances</a></li>
+                                <li class="protected"><a href="#property__pattern" title="_pattern">_pattern</a></li>
+                                <li class="protected"><a href="#property__template" title="_template">_template</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#method__eventHandler" title="_eventHandler">_eventHandler</a></li>
-                                <li class=""><a href="#method_callSWF" title="callSWF">callSWF</a></li>
-                                <li class="private"><a href="#method_eventHandler" title="eventHandler">eventHandler</a></li>
-                                <li class=""><a href="#method_toString" title="toString">toString</a></li>
+                                <li class="protected"><a href="#method__defaultCallback" title="_defaultCallback">_defaultCallback</a></li>
+                                <li class="protected"><a href="#method__format" title="_format">_format</a></li>
+                                <li class="protected"><a href="#method__init" title="_init">_init</a></li>
+                                <li class=""><a href="#method_send" title="send">send</a></li>
+                                <li class=""><a href="#method_Y.jsonp" title="Y.jsonp">Y.jsonp</a></li>
                         </ul>
                     </div>
 
@@ -458,7 +582,7 @@ to a specific instance of SWF.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "YAHOO.widget.SWF", "name": "callSWF", "url": "YAHOO.widget.SWF.html#method_callSWF", "type": "method"}, {"access": "private", "host": "YAHOO.widget.SWF", "name": "_eventHandler", "url": "YAHOO.widget.SWF.html#method__eventHandler", "type": "method"}, {"access": "private", "host": "YAHOO.widget.SWF", "name": "eventHandler", "url": "YAHOO.widget.SWF.html#method_eventHandler", "type": "method"}, {"access": "private", "host": "YAHOO.widget.SWF", "name": "_instances", "url": "YAHOO.widget.SWF.html#property__instances", "type": "property"}, {"access": "", "host": "YAHOO.widget.SWF", "name": "toString", "url": "YAHOO.widget.SWF.html#method_toString", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "JSONPRequest", "name": "_defaultCallback", "url": "JSONPRequest.html#method__defaultCallback", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_format", "url": "JSONPRequest.html#method__format", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_init", "url": "JSONPRequest.html#method__init", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_pattern", "url": "JSONPRequest.html#property__pattern", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "send", "url": "JSONPRequest.html#method_send", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_template", "url": "JSONPRequest.html#property__template", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "Y.jsonp", "url": "JSONPRequest.html#method_Y.jsonp", "type": "method"}];
 </script>
 </body>
 </html>
