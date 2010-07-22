@@ -18,11 +18,26 @@ YUI({
 		}
 	}
 }).use('swfdetect', function (Y) {
-
-output = "";
-output += "Flash Major: " + String(Y.UA.flashMajor) + "<br/>";
-output += "Flash Minor: " + String(Y.UA.flashMinor) + "<br/>";
-output += "Flash Revision: " + String(Y.UA.flashRev) + "<br/>";
+	var flashMajor = String(Y.UA.flashMajor),
+		flashMinor = String(Y.UA.flashMinor),
+		flashRev = String(Y.UA.flashRev),
+		output = "";
+	
+	output += "Flash Major: " + flashMajor + "<br/>";
+	output += "Flash Minor: " + flashMinor + "<br/>";
+	output += "Flash Revision: " + flashRev + "<br/>";
+	output += 'Check major version: <br />';
+	output += '* Lower: ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor - 1)) + '<br/>';
+	output += '* Same ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor)) + '<br/>';
+	output += '* Higher? ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor + 1)) + '<br/>';
+	output += 'Check minor version: <br />';
+	output += '* Lower: ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor, flashMinor - 1)) + '<br/>';
+	output += '* Same ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor, flashMinor)) + '<br/>';
+	output += '* Higher? ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor, flashMinor + 1)) + '<br/>';
+	output += 'Check revision: <br />';
+	output += '* Lower: ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor, flashMinor, flashRev - 1)) + '<br/>';
+	output += '* Same ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor, flashMinor, flashRev)) + '<br/>';
+	output += '* Higher? ' + String(Y.SWFDetect.isFlashVersionAtLeast(flashMajor, flashMinor, flashRev + 1)) + '<br/>';
 
 document.getElementById('testoutput').innerHTML = output;
 });
