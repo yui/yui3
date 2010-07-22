@@ -13,6 +13,7 @@ var BOUNCE_DECELERATION_CONST = 0.5,
  * Scrollview plugin that adds support for paging
  *
  * @class ScrollViewPaginatorPlugin
+ * @namepace Plugin
  * @extends Plugin.Base 
  * @constructor
  */
