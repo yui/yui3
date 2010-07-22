@@ -1,8 +1,7 @@
 .yui3-g {
-    letter-spacing: -0.35em; /* webkit: collapse white-space between units */
+    letter-spacing: -0.31em; /* webkit: collapse white-space between units */
     *letter-spacing: normal;
-    Xwhite-space:nowrap;
-    word-spacing: -0.4em; /* IE < 8 && gecko: collapse white-space between units */
+    word-spacing: -0.43em; /* IE < 8 && gecko: collapse white-space between units */
 }
 
 .yui3-u,
@@ -16,22 +15,22 @@
 .yui3-u-2-5,
 .yui3-u-3-5,
 .yui3-u-4-5,
-.yui3-u-6,
-.yui3-u-5-6 {
+.yui3-u-1-6,
+.yui3-u-5-6,
+.yui3-u-1-8,
+.yui3-u-3-8,
+.yui3-u-5-8,
+.yui3-u-7-8 {
     display: inline-block;
     zoom: 1; *display: inline; /* IE < 8: fake inline-block */
     letter-spacing: normal;
-    margin:0;
-    overflow:hidden;
-    Xwhite-space: normal;
+    Xoverflow:hidden;
     word-spacing: normal;
     vertical-align: top;
-    *margin-left:-0.04em;
 }
 
 .yui3-u-1 {
     display: block;
-    margin: 0;
 }
 
 .yui3-u-1-2 {
@@ -66,14 +65,30 @@
     width: 60%;
 }
 
-.yui3-u-5-4 {
+.yui3-u-4-5 {
     width: 80%;
 }
 
 .yui3-u-1-6 {
-    width: 16.6666%;
+    width: 16.656%;
 }
 
 .yui3-u-5-6 {
-    width: 83.333%;
+    width: 83.33%;
+}
+
+.yui3-u-1-8 {
+    width: 12.5%;
+}
+
+.yui3-u-3-8 {
+    width: 37.5%;
+}
+
+.yui3-u-5-8 {
+    width: 62.5%;
+}
+
+.yui3-u-7-8 {
+    width: 87.5%;
 }
