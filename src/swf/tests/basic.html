@@ -37,13 +37,7 @@ newswf.on("swfReady", talkToFlash);
 
 
 function talkToFlash (e) {
-	newswf.callSWF("addText", ["\nExternalInterface bridge is working.\n"]);
-	
-	newswf.createInstance("mystr", "String", ["Hello world"]);
-	newswf.exposeMethod("mystr", "charAt", "mystr_charAt");
-	
-	alert(newswf.callSWF("mystr_charAt", [3]));
-	
+	newswf.callSWF("addText", ["\nExternalInterface bridge is working.\n"]);	
 }
 
 });

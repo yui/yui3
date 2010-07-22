@@ -1,4 +1,3 @@
-(function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -1019,7 +1018,7 @@ Y.Loader.prototype = {
         if (r) {
             for (i=0; i<r.length; i++) {
                 if (!hash[r[i]]) {
-                    // d.push(r[i]); // should not need the submodule as a dep
+                    d.push(r[i]); // should not need the submodule as a dep
                     hash[r[i]] = true;
                     m = this.getModule(r[i]);
 
@@ -1291,38 +1290,38 @@ Y.Loader.prototype = {
     },
 
     _conditions: function() {
-        var provides, cond, m, reqs, go,
+        var cond, m, reqs, go,
             conditions = this.conditions,
-            r = this.required;
+            r          = this.required;
 
         YObject.each(r, function(moddef, name) {
             if (!(name in this.loaded)) {
-                provides = this.getProvides(name);
-                YObject.each(provides, function(v, trigger) {
-                    if (!(trigger in this.loaded)) {
-                        cond = conditions[trigger];
-                        if (cond) {
-                            YObject.each(cond, function(test, condmod) {
-                                if (!((condmod in r) || (condmod in this.loaded))) {
-                                    if (test) {
-                                        go = (test.ua && Y.UA[test.ua]) || 
-                                             (test.test && test.test(Y, r));
-                                    }
+                // provides = this.getProvides(name);
+                // YObject.each(provides, function(v, trigger) {
+                    // if (!(name in this.loaded)) {
+                cond = conditions[name];
+                if (cond) {
+                    YObject.each(cond, function(test, condmod) {
+                        if (!((condmod in r) || (condmod in this.loaded))) {
+                            if (test) {
+                                go = (test.ua && Y.UA[test.ua]) || 
+                                     (test.test && test.test(Y, r));
+                            }
 
-                                    if (go) {
-                                        m = this.getModule(condmod);
-                                        if (m) {
-                                            r[condmod] = true;
-                                            reqs = this.getRequires(m);
-                                            Y.mix(r, YArray.hash(reqs));
-                                        }
-
-                                    }
+                            if (go) {
+                                m = this.getModule(condmod);
+                                if (m) {
+                                    r[condmod] = true;
+                                    reqs = this.getRequires(m);
+                                    Y.mix(r, YArray.hash(reqs));
                                 }
-                            }, this);
+
+                            }
                         }
-                    }
-                }, this);
+                    }, this);
+                }
+                    // }
+                // }, this);
             }
         }, this);
     },
@@ -1946,6 +1945,4 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
         return this._filter((base || this.base || "") + path, name);
     }
 };
-
-})();
 
