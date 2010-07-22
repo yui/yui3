@@ -1,0 +1,91 @@
+.yui-g,
+.yui-g-c,
+.yui-g-r {
+    letter-spacing: -0.31em; /* collapse white-space between units */
+    *letter-spacing: normal;
+    white-space:nowrap;
+    word-spacing: -1em; /* IE < 8: collapse white-space between units */
+}
+
+.yui-g-c {
+    text-align: center;
+}
+
+.yui-g-r {
+    text-align: right;
+}
+
+.yui-u,
+.yui-u-1,
+.yui-u-2,
+.yui-u-3,
+.yui-u-3-2,
+.yui-u-4,
+.yui-u-4-2,
+.yui-u-4-3,
+.yui-u-5,
+.yui-u-5-2,
+.yui-u-5-3,
+.yui-u-5-4,
+.yui-u-6,
+.yui-u-6-2,
+.yui-u-6-3,
+.yui-u-6-4,
+.yui-u-6-5 {
+    display: inline-block;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+    letter-spacing: normal;
+    margin-right: 10px;
+    white-space: normal;
+    word-spacing: normal;
+    vertical-align: top;
+}
+
+.yui-u-1 {
+    width: 30px;
+}
+
+.yui-u-2 {
+    width: 60px;
+}
+
+.yui-u-3 {
+    width: 90px;
+}
+
+.yui-u-4 {
+    width: 120px;
+}
+
+.yui-u-5 {
+    width: 150px;
+}
+
+.yui-u-6 {
+    width: 180px;
+}
+
+.yui-u-8 {
+    width: 240px;
+}
+
+.yui-u-12 {
+    width: 360px;
+}
+
+.yui-u-16 {
+    width: 480px;
+}
+
+.yui-u-18 {
+    width: 540px;
+}
+
+
+.yui-u-20 {
+    width: 600px;
+}
+
+.yui-u-24 {
+    display: block;
+}
