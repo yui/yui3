@@ -65,6 +65,7 @@ Y.mix(Transition.prototype, {
             done = false,
             attribute,
             setter,
+            actualDuration,
             d,
             t,
             i;
@@ -73,6 +74,7 @@ Y.mix(Transition.prototype, {
             if (attr[i].to) {
                 attribute = attr[i];
                 d = attribute.duration;
+                actualDuration = d;
                 t = time;
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
                         customAttr[i].set : Transition.DEFAULT_SETTER;
@@ -92,10 +94,12 @@ Y.mix(Transition.prototype, {
                     if (done) {
                         this._skip[i] = true;
 
-                        node.fire(END, {
-                            elapsedTime: d,
-                            propertyName: i
-                        });
+                        if (actualDuration > 0) { // match native behavior which doesnt fire for zero duration
+                            node.fire(END, {
+                                elapsedTime: d,
+                                propertyName: i
+                            });
+                        }
                     }
                 }
 
