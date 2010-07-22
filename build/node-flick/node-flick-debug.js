@@ -1,5 +1,16 @@
 YUI.add('node-flick', function(Y) {
 
+/**
+ * Provide a simple Flick plugin, which can be used along with the "flick" gesture event, to 
+ * animate the motion of the host node in response to a (mouse or touch) flick gesture. 
+ * 
+ * <p>The current implementation is designed to move the node, relative to the bounds of a parent node and is suitable
+ * for scroll/carousel type implementations. Future versions will remove that constraint, to allow open ended movement within
+ * the document.</p>
+ *
+ * @module node-flick
+ */
+
     var HOST = "host",
         PARENT_NODE = "parentNode",
         BOUNDING_BOX = "boundingBox",
@@ -19,57 +30,157 @@ YUI.add('node-flick', function(Y) {
         
         getClassName = Y.ClassNameManager.getClassName;
 
+    /**
+     * A plugin class which can be used to animate the motion of a node, in response to a flick gesture.
+     * 
+     * @class Flick
+     * @namespace Plugin
+     * @param {Object} config The initial attribute values for the plugin
+     */
     function Flick(config) {
         Flick.superclass.constructor.apply(this, arguments);
     }
 
     Flick.ATTRS = {
 
+        /**
+         * Drag coefficent for inertial scrolling. The closer to 1 this
+         * value is, the less friction during scrolling.
+         *
+         * @attribute deceleration
+         * @default 0.98
+         */
         deceleration : {
             value: 0.98
         },
 
+        /**
+         * Drag coefficient for intertial scrolling at the upper
+         * and lower boundaries of the scrollview. Set to 0 to 
+         * disable "rubber-banding".
+         *
+         * @attribute bounce
+         * @type Number
+         * @default 0.7
+         */
         bounce : {
             value: 0.7
         },
 
+        /**
+         * The bounce distance in pixels
+         *
+         * @attribute bounceDistance
+         * @type Number
+         * @default 150
+         */
         bounceDistance : {
             value: 150
         },
 
+        /**
+         * The minimum flick gesture velocity (px/ms) at which to trigger the flick response
+         *
+         * @attribute minVelocity
+         * @type Number
+         * @default 0
+         */
         minVelocity : {
             value: 0
         },
 
+        /**
+         * The minimum flick gesture distance (px) for which to trigger the flick response
+         *
+         * @attribute minVelocity
+         * @type Number
+         * @default 10
+         */
         minDistance : {
             value: 10
         },
 
+        /**
+         * The constraining box relative to which the flick animation and bounds should be calculated.
+         *
+         * @attribute boundingBox
+         * @type Node
+         * @default parentNode
+         */
         boundingBox : {
             valueFn : function() {
                 return this.get(HOST).get(PARENT_NODE);
             }
         },
 
+        /**
+         * The constraining box relative to which the flick animation and bounds should be calculated.
+         *
+         * @attribute boundingBox
+         * @type Node
+         * @default parentNode
+         */
         step : {
             value:10
         },
 
+        /**
+         * The custom duration to apply to the flick animation. By default,
+         * the animation duration is controlled by the deceleration factor.
+         *
+         * @attribute duration
+         * @type Number
+         * @default null
+         */
         duration : {
             value:null
         },
 
+        /**
+         * The custom transition easing to use for the flick animation. If not
+         * provided defaults to internally to Flick.EASING, or Flick.SNAP_EASING based
+         * on whether or not we're animating the flick or bounce step. 
+         *
+         * @attribute easing
+         * @type String
+         * @default null
+         */
         easing : {
             value:null
         }
     };
-    
+
+    /**
+     * The NAME of the Flick class. Used to prefix events generated
+     * by the plugin.
+     *
+     * @property Flick.NAME
+     * @static
+     * @type String
+     * @default "pluginFlick"
+     */
     Flick.NAME = "pluginFlick";
+
+    /**
+     * The namespace for the plugin. This will be the property on the node, which will 
+     * reference the plugin instance, when it's plugged in.
+     *
+     * @property Flick.NS
+     * @static
+     * @type String
+     * @default "flick"
+     */
     Flick.NS = "flick";
 
     Y.extend(Flick, Y.Plugin.Base, {
 
-        initializer : function() {
+        /**
+         * The initializer lifecycle implementation.
+         *
+         * @method initializer
+         * @param {Object} config The user configuration for the plugin  
+         */
+        initializer : function(config) {
             this._node = this.get(HOST);
 
             this._renderClasses();
@@ -81,6 +192,12 @@ YUI.add('node-flick', function(Y) {
             });
         },
 
+        /**
+         * Sets the min/max boundaries for the flick animation,
+         * based on the boundingBox dimensions.
+         * 
+         * @method setBounds
+         */
         setBounds : function () {
             var box = this.get(BOUNDING_BOX),
                 node = this._node,
@@ -109,17 +226,23 @@ YUI.add('node-flick', function(Y) {
             node.set("left", this._x + "px");
         },
 
+        /**
+         * Adds the CSS classes, necessary to set up overflow/position properties on the
+         * node and boundingBox. 
+         *
+         * @method _renderClasses
+         * @protected
+         */
         _renderClasses : function() {
             this.get(BOUNDING_BOX).addClass(Flick.CLASS_NAMES.box);
             this._node.addClass(Flick.CLASS_NAMES.content);
         },
 
         /**
-         * Execute a flick at the end of a scroll action
+         * The flick event listener. Kicks off the flick animation.
          *
-         * @method _flick
-         * @param distance {Number} The distance (in px) the user scrolled before the flick
-         * @param time {Number} The number of ms the scroll event lasted before the flick
+         * @method _onFlick
+         * @param {EventFacade} e The flick event facade, containing e.flick.distance, e.flick.velocity etc.
          * @protected
          */
         _onFlick: function(e) {
@@ -129,7 +252,7 @@ YUI.add('node-flick', function(Y) {
         },
 
         /**
-         * Execute a single frame in the flick animation
+         * Executes a single frame in the flick animation
          *
          * @method _flickFrame
          * @protected
@@ -211,14 +334,37 @@ YUI.add('node-flick', function(Y) {
             }
         },
 
+        /**
+         * Internal utility method to set the X offset position
+         *
+         * @param {Number} val
+         * @private
+         */
         _setX : function(val) {
             this._move(val, null, this.get(DURATION), this.get(EASING));
         },
 
+        /**
+         * Internal utility method to set the Y offset position
+         * 
+         * @param {Number} val
+         * @private
+         */
         _setY : function(val) {
             this._move(null, val, this.get(DURATION), this.get(EASING));
         },
 
+        /**
+         * Internal utility method to move the node to a given XY position,
+         * using transitions, if specified.
+         *
+         * @param {Number} x The X offset position
+         * @param {Number} y The Y offset position
+         * @param {Number} duration The duration to use for the transition animation
+         * @param {String} easing The easing to use for the transition animation.
+         *
+         * @private
+         */
         _move: function(x, y, duration, easing) {
 
             if (x !== null) {
@@ -242,6 +388,16 @@ YUI.add('node-flick', function(Y) {
             this._anim(x, y, duration, easing);
         },
 
+        /**
+         * Internal utility method to perform the transition step
+         *
+         * @param {Number} x The X offset position
+         * @param {Number} y The Y offset position
+         * @param {Number} duration The duration to use for the transition animation
+         * @param {String} easing The easing to use for the transition animation.
+         *
+         * @private
+         */
         _anim : function(x, y, duration, easing) {
             var xn = x * -1,
                 yn = y * -1,
@@ -263,6 +419,15 @@ YUI.add('node-flick', function(Y) {
             this._node.transition(transition);
         },
 
+        /**
+         * Internal utility method to constrain the offset value
+         * based on the bounce criteria. 
+         *
+         * @param {Number} x The offset value to constrain.
+         * @param {Number} max The max offset value.
+         *
+         * @private
+         */
         _bounce : function(val, max) {
             var bounce = this.get(BOUNCE),
                 dist = this.get(BOUNCE_DISTANCE),
@@ -284,20 +449,64 @@ YUI.add('node-flick', function(Y) {
          * Stop the animation timer
          *
          * @method _killTimer
-         * @param fireEvent {Boolean} If true, fire the scrollEnd event
          * @private
          */
-        _killTimer: function(fireEvent) {
+        _killTimer: function() {
             if(this._flickTimer) {
                 this._flickTimer.cancel();
             }
         }
 
     }, {
+
+        /**
+         * The threshold used to determine when the decelerated velocity of the node
+         * is practically 0.
+         *
+         * @property Flick.VELOCITY_THRESHOLD
+         * @static
+         * @type Number
+         * @default 0.015
+         */
         VELOCITY_THRESHOLD : 0.015,
-        SNAP_DURATION : 400,
+
+        /**
+         * The duration to use for the bounce snap-back transition
+         *
+         * @property Flick.SNAP_DURATION
+         * @static
+         * @type Number
+         * @default 400
+         */
+         SNAP_DURATION : 400,
+        
+        /**
+         * The default easing to use for the main flick movement transition
+         *
+         * @property Flick.EASING
+         * @static
+         * @type String
+         * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
+         */
         EASING : 'cubic-bezier(0, 0.1, 0, 1.0)',
+
+        /**
+         * The default easing to use for the bounce snap-back transition
+         *
+         * @property Flick.SNAP_EASING
+         * @static
+         * @type String
+         * @default 'ease-out'
+         */
         SNAP_EASING : 'ease-out',
+
+        /**
+         * The default CSS class names used by the plugin
+         *
+         * @property Flick.CLASS_NAMES
+         * @static
+         * @type Object
+         */
         CLASS_NAMES : {
             box: getClassName(Flick.NS),
             content: getClassName(Flick.NS, "content")
