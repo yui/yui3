@@ -34,20 +34,28 @@ if (typeof YUI === 'undefined') {
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
         if (!(Y instanceof YUI)) {
-            return new YUI();
+            Y = new YUI();
         } else {
             // set up the core environment
             Y._init();
             if (gconf) {
                 Y._config(gconf);
             }
+            // bind the specified additional modules for this instance
+            if (!l) {
+                Y._setup();
+            }
+        }
+
+        if (l) {
             for (; i<l; i++) {
                 Y._config(a[i]);
             }
-            // bind the specified additional modules for this instance
+
             Y._setup();
-            return Y;
         }
+
+        return Y;
     };
 }
 

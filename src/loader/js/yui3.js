@@ -188,10 +188,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset", 
-            "cssfonts"
+            "cssreset"
         ], 
         "path": "cssgrids/grids-min.css", 
+        "requires": [
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-context": {
+        "optional": [
+            "cssreset-context"
+        ], 
+        "path": "cssgrids/grids-context-min.css", 
+        "requires": [
+            "cssfonts-context"
+        ], 
         "type": "css"
     }, 
     "cssreset": {

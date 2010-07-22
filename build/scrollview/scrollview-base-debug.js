@@ -1,10 +1,9 @@
 YUI.add('scrollview-base', function(Y) {
 
 /**
- * ScrollView module
+ * The scrollview-base module provides a basic ScrollView Widget, without scrollbar indicators
  *
- * @module scrollview
- * @submodule scrollview-base
+ * @module scrollview-base
  */
 
 var getClassName = Y.ClassNameManager.getClassName,
@@ -13,8 +12,6 @@ var getClassName = Y.ClassNameManager.getClassName,
         vertical: getClassName(SCROLLVIEW, 'vert'),
         horizontal: getClassName(SCROLLVIEW, 'horiz')
     },
-    EV_SCROLL_START = 'scrollStart',
-    EV_SCROLL_CHANGE = 'scrollChange',
     EV_SCROLL_END = 'scrollEnd',
     EV_SCROLL_FLICK = 'flick',
 
@@ -37,11 +34,10 @@ var getClassName = Y.ClassNameManager.getClassName,
 Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
 
 /**
- * ScrollView provides a scrollable container for devices which do not 
- * support overflow: hidden
+ * ScrollView provides a srollable widget, supporting flick gestures, across both touch and mouse based devices. 
  *
  * @class ScrollView
- * @param config {Object} Object literal specifying scrollview configuration properties.
+ * @param config {Object} Object literal with initial attribute values
  * @extends Widget
  * @constructor
  */
@@ -63,15 +59,26 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /** 
-     * Publish events which occur during the scroll lifecycle
+     * Publishes events which occur during the scroll lifecycle
      *
      * @method _createEvents
      * @private
      */    
     _createEvents: function() {
-        this.publish(EV_SCROLL_START);
-        this.publish(EV_SCROLL_CHANGE);
+        /**
+         * Notification event fired at the end of a scroll transition
+         * 
+         * @event scrollEnd
+         * @param e {EventFacade} The default event facade.
+         */
         this.publish(EV_SCROLL_END);
+
+        /**
+         * Notification event fired at the end of a flick gesture (the flick animation may still be in progress)
+         * 
+         * @event flick
+         * @param e {EventFacade} The default event facade.
+         */
         this.publish(EV_SCROLL_FLICK);
     },
 
@@ -183,7 +190,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * gesturemovestart event handler
      *
      * @method _onGestureMoveStart
-     * @param e {Event} The event
+     * @param e {Event.Facade} The gesturemovestart event facade
      * @private
      */
     _onGestureMoveStart: function(e) {
@@ -209,7 +216,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * gesturemove event handler
      *
      * @method _onGestureMove
-     * @param e {Event} The event
+     * @param e {Event.Facade} The gesturemove event facade
      * @private
      */
     _onGestureMove: function(e) {
@@ -231,7 +238,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * gestureend event handler
      *
      * @method _onGestureMoveEnd
-     * @param e {Event} The event
+     * @param e {Event.Facade} The gesturemoveend event facade
      * @private
      */
     _onGestureMoveEnd: function(e) {
@@ -657,7 +664,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * List of class names used in the scrollview's DOM
      *
-     * @property CLASS_NAMES
+     * @property ScrollView.CLASS_NAMES
      * @type Object
      * @static
      */
@@ -666,18 +673,51 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * Flag used to source property changes initiated from the DOM
      *
-     * @property UI_SRC
+     * @property ScrollView.UI_SRC
      * @type String
      * @static
+     * @default "ui"
      */
     UI_SRC: UI,
 
+    /**
+     * The default bounce distance in pixels
+     *
+     * @property ScrollView.BOUNCE_RANGE
+     * @type Number
+     * @static
+     * @default 150
+     */
     BOUNCE_RANGE : 150,
 
+    /**
+     * The step amount used when animating the flick
+     *
+     * @property ScrollView.FRAME_STEP
+     * @type Number
+     * @static
+     * @default 10
+     */
     FRAME_STEP : 10,
 
+    /**
+     * The default easing used when animating the flick
+     *
+     * @property ScrollView.EASING
+     * @type String
+     * @static
+     * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
+     */
     EASING : 'cubic-bezier(0, 0.1, 0, 1.0)',
 
+    /**
+     * The default easing to use when animatiing the bounce snap back.
+     *
+     * @property ScrollView.SNAP_EASING
+     * @type String
+     * @static
+     * @default 'ease-out'
+     */
     SNAP_EASING : 'ease-out'
 
 });
