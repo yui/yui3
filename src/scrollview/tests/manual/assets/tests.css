@@ -43,22 +43,29 @@ h1 {
 	font-weight: bold;
 	text-shadow: 0 -1px 0 rgba(0,0,0,0.7);
 }
+
 #scrollable li {
     display: inline-block;
-	width: 100%;
+    width: 100%;
     border-bottom: 1px solid #ccc;
 }
-#scrollable li:last-child {            
-    border-bottom: 0;
+
+#scrollable.paged li {
+    display:-moz-inline-stack;
+    display: inline-block;
+    width: 100%;
+    *display:inline;
 }
+
 #scrollable li div {
     padding: 8px;
     font-size: 140%;
     font-weight: bold;
 }
+
 #scrollable img {
 	width: 300px;
-	margin: 10px 0;
-	height: auto;
-	-webkit-transform: translate3d(0, 0, 0); 
+	margin: 10px;
+    margin-bottom:10px;
+    -webkit-transform: translate3d(0, 0, 0); 
 }
