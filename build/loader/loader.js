@@ -2801,6 +2801,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "history-html5": {
+                "optional": [
+                    "json"
+                ], 
                 "requires": [
                     "event-base", 
                     "history-base", 
