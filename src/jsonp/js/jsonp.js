@@ -127,17 +127,6 @@ JSONPRequest.prototype = {
         return this;
     },
 
-    /** 
-     * Initiates the JSONP transaction.
-     *
-     * @method _dispatch
-     * @param url {String} fully formed url with callback 
-     * @param config {Object} configuration object
-     * @protected
-     */
-    _dispatch: function (url, config) {
-    },
-
     /**
      * Default url formatter.  Looks for callback= in the url and appends it
      * if not present.  The supplied proxy name will be assigned to the query

@@ -27,35 +27,21 @@ if (typeof YUI === 'undefined') {
     /*global YUI*/
     /*global YUI_config*/
     var YUI = function() {
+        var i     = 0, 
+            Y     = this, 
+            a     = arguments, 
+            l     = a.length, 
+            gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
-        var proto, prop, i, 
-            Y            = this, 
-            a            = arguments, 
-            l            = a.length, 
-            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
-
-        // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            Y = new YUI();
-
-            for (i=0; i<l; i++) {
-                Y._config(a[i]);
-            }
-
-            for (prop in proto) {
-                if (proto.hasOwnProperty(prop)) {
-                    Y[prop] = proto[prop];
-                }
-            }
-
-            return Y; 
+            return new YUI();
         } else {
             // set up the core environment
             Y._init();
-            if (globalConfig) {
-                Y._config(globalConfig);
+            if (gconf) {
+                Y._config(gconf);
             }
-            for (i=0; i<l; i++) {
+            for (; i<l; i++) {
                 Y._config(a[i]);
             }
             // bind the specified additional modules for this instance
@@ -295,12 +281,10 @@ proto = {
      * @private
      */
     _setup: function(o) {
-
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
             extras = Y.config.core || ['get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
-
 
         for (i=0; i<extras.length; i++) {
             if (mods[extras[i]]) {
@@ -308,8 +292,7 @@ proto = {
             }
         }
 
-        Y.use('yui-base');
-        // Y.use.apply(Y, core);
+        Y._attach(['yui-base']);
         Y._attach(core);
 
     },
@@ -325,7 +308,6 @@ proto = {
      * @return {object} the return value from the applied method or null
      */
     applyTo: function(id, method, args) {
-
         if (!(method in APPLY_TO_AUTH)) {
             this.log(method + ': applyTo not allowed', 'warn', 'yui');
             return null;
@@ -375,7 +357,6 @@ proto = {
      *
      */
     add: function(name, fn, version, details) {
-
         details = details || {};
         var env = YUI.Env,
             mod  = {
@@ -518,7 +499,6 @@ proto = {
                 // var collection = YArray(names);
                 var collection = names;
 
-
                 YArray.each(collection, function(name) {
 
                     // add this module to full list of things to attach
@@ -545,11 +525,11 @@ proto = {
                     }
 
 
-                    if (req) { // make sure requirements are attached
+                    if (req && req.length) { // make sure requirements are attached
                         process(req);
                     }
 
-                    if (use) { // make sure we grab the submodule dependencies too
+                    if (use && use.length) { // make sure we grab the submodule dependencies too
                         process(use);
                     }
                 });
