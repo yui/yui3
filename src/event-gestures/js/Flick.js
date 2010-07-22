@@ -1,4 +1,13 @@
 /**
+ * The gestures module provides gesture events such as "flick", which normalize user interactions
+ * across touch and mouse or pointer based input devices. This layer can be used by application developers
+ * to build input device agnostic components which behave the same in response to either touch or mouse based  
+ * interaction.
+ *
+ * @module event-gestures
+ */
+
+/**
  * Adds support for a "flick" event, which is fired at the end of a touch or mouse based flick gesture, and provides 
  * velocity of the flick, along with distance and time information.
  *
@@ -30,14 +39,16 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
 /**
  * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
  * where the listener is attached. The subscriber can specify a minimum distance or velocity for
- * which the event is to be fired.  
+ * which the event is to be fired. The subscriber can also specify if there is a particular axis which
+ * they are interested in - "x" or "y". If no axis is specified, the axis along which there was most distance
+ * covered is used.
  * 
  * @event flick
  * @param type {string} "flick"
- * @param fn {function} The method the event invokes.
- * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity
- * of the flick gesture for which the event is to be fired.
- *  
+ * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.
+ * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity  (in px/ms)
+ * of the flick gesture for which the event is to be fired and an axis of interest. e.g. { minDistance:10, minVelocity:0.5, axis:"x" }.
+ *
  * @return {EventHandle} the detach handle
  */
 
@@ -130,7 +141,6 @@ Y.Event.define('flick', {
             params,
             xyDistance, 
             distance,
-            absDistance,
             velocity,
             axis;
 
@@ -160,18 +170,15 @@ Y.Event.define('flick', {
                 ];
 
                 axis = params.axis || (Math.abs(xyDistance[0]) >= Math.abs(xyDistance[1])) ? 'x' : 'y';
-
                 distance = xyDistance[(axis === 'x') ? 0 : 1];
-                absDistance = Math.abs(distance); 
-                velocity = (time !== 0) ? absDistance/time : 0;
+                velocity = (time !== 0) ? distance/time : 0;
 
-                if (isFinite(velocity) && (absDistance >= params.minDistance) && (velocity  >= params.minVelocity)) {
+                if (isFinite(velocity) && (Math.abs(distance) >= params.minDistance) && (Math.abs(velocity)  >= params.minVelocity)) {
 
                     e.type = "flick";
                     e.flick = {
                         time:time,
                         distance: distance,
-                        direction: (absDistance !== 0) ? distance/absDistance : 1,
                         velocity:velocity,
                         axis: axis,
                         start : start

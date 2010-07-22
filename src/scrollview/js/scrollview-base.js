@@ -419,7 +419,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _flick: function(e) {
         var flick = e.flick;
-        this._currentVelocity = flick.velocity * flick.direction;
+        this._currentVelocity = flick.velocity;
         this._flicking = true;
         this._flickFrame();
 
