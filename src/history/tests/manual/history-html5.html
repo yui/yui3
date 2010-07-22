@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>history-html5 test</title>
+    <link rel="stylesheet" href="../assets/test-console.css">
     <style>
         #critters {
             list-style: none;
@@ -66,7 +68,7 @@ var Y = YUI({
         }
     }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
-    var history    = new Y.History(),
+    var history    = new Y.HistoryHTML5({enableSessionFallback: true}),
         bookmarked = history.get(),
         images  = {
             aardvark : 'http://farm3.static.flickr.com/2380/3530738527_4d1e318df2.jpg', // http://www.flickr.com/photos/dipthongasaurus_rex/3530738527/
