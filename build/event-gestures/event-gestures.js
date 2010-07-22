@@ -83,9 +83,9 @@ Y.Event.define('flick', {
             subscriber[_FLICK_END_HANDLE] = null;
         }
     },
-    
+
     processArgs: function(args) {
-        var params = (args[3]) ? Y.merge(args.splice(3, 1)[0]) : {};
+        var params = (args[3] !== undefined) ? Y.merge(args.splice(3, 1)[0]) : {};
 
         if (!(MIN_VELOCITY in params)) {
             params.minVelocity = this.MIN_VELOCITY;
@@ -244,7 +244,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
 
     _defArgsProcessor = function(args, delegate) {
         var iExtra = (delegate) ? 4 : 3;
-        return args[iExtra] ? Y.merge(args.splice(iExtra,1)[0]) : {};
+        return (args[iExtra] !== undefined) ? Y.merge(args.splice(iExtra,1)[0]) : {};
     },
 
     _getRoot = function(node, subscriber) {

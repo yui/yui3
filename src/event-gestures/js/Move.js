@@ -40,7 +40,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
 
     _defArgsProcessor = function(args, delegate) {
         var iExtra = (delegate) ? 4 : 3;
-        return args[iExtra] ? Y.merge(args.splice(iExtra,1)[0]) : {};
+        return (args[iExtra] !== undefined) ? Y.merge(args.splice(iExtra,1)[0]) : {};
     },
 
     _getRoot = function(node, subscriber) {
