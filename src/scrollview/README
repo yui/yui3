@@ -1,0 +1,13 @@
+ScrollView is a new component, which leverages the 
+synthetic gesture layer, normalizing touch and mouse
+based input added in 3.2. It also leverages the transitions 
+normalization layer added in 3.2 to optimize animation
+performance.
+
+The scrollview/tests/manual folder contains basic 
+examples of vertical, horizontal and paged scrolling 
+for the preview release.
+
+3.2
+
+* New beta component

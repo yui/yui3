@@ -1,10 +1,9 @@
 /**
- * Adds support for scrollbars inside a scrollview
+ * Provides a plugin, which adds support for a scroll indicator to ScrollView instances
  *
- * @module scrollview
- * @submodule scrollbars-plugin
+ * @module scrollview-scrollbars
  */
- 
+
 var getClassName = Y.ClassNameManager.getClassName,
     NATIVE_TRANSITIONS = Y.Transition.useNative,
     _classNames,
@@ -12,9 +11,12 @@ var getClassName = Y.ClassNameManager.getClassName,
     SCROLLVIEW = 'scrollview';
 
 /**
- * Scrollview plugin that adds scroll indicators to the scrollview
+ * ScrollView plugin that adds scroll indicators to ScrollView instances
  *
- * @class ScrollbarsPlugin
+ * @class ScrollViewScrollbars
+ * @namespace Plugin
+ * @extends Plugin.Base
+ * @constructor
  */
 function ScrollbarsPlugin() {
     ScrollbarsPlugin.superclass.constructor.apply(this, arguments);
@@ -38,32 +40,28 @@ _classNames = ScrollbarsPlugin.CLASS_NAMES;
 /**
  * The identity of the plugin
  *
- * @property ScrollbarsPlugin.NAME
+ * @property ScrollViewScrollbars.NAME
  * @type String
  * @default 'scrollbars-plugin'
- * @readOnly
- * @protected
  * @static
  */
-ScrollbarsPlugin.NAME = 'scrollbars-plugin';
+ScrollbarsPlugin.NAME = 'pluginScrollViewScrollbars';
     
 /**
- * The plugin namespace property
+ * The namespace on which the plugin will reside.
  *
- * @property ScrollbarsPlugin.NS
+ * @property ScrollViewScrollbars.NS
  * @type String
  * @default 'scrollbars'
- * @readOnly
- * @protected
  * @static
  */
 ScrollbarsPlugin.NS = 'scrollbars';
 
 /**
- * Common HTML template for vertical/horizontal scrollbars
+ * HTML template for the scrollbar
  *
- * @property ScrollbarsPlugin.SCROLLBAR_TEMPLATE
- * @type String
+ * @property ScrollViewScrollbars.SCROLLBAR_TEMPLATE
+ * @type Object
  * @static
  */
 ScrollbarsPlugin.SCROLLBAR_TEMPLATE = [
@@ -75,12 +73,10 @@ ScrollbarsPlugin.SCROLLBAR_TEMPLATE = [
 ].join('');
 
 /**
- * ATTRS for scrollbars plugin
+ * The default attribute configuration for the plugin
  *
- * @property ScrollbarsPlugin.ATTRS
+ * @property ScrollViewScrollbars.ATTRS
  * @type Object
- * @readOnly
- * @protected
  * @static
  */
 ScrollbarsPlugin.ATTRS = {
@@ -398,11 +394,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * Hide/Show implementation method
+     * Internal hide/show implementation utility method
      * 
      * @method _show
      * @param {Object} show
      * @param {Object} animated
+     * @protected
      */
     _show : function(show, animated) {
         var verticalNode = this.get('verticalNode'),
@@ -451,7 +448,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * Setter for the verticalNode ATTR
+     * Setter for the verticalNode attribute
      *
      * @method _setVerticalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
@@ -467,7 +464,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * Setter for the horizontalNode ATTR
+     * Setter for the horizontalNode attribute
      *
      * @method _setHorizontalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
