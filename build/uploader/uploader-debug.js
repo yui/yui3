@@ -10,7 +10,7 @@ var Event = Y.Event,
     Node = Y.Node;
 
 var SWFURL = Y.config.base + "/uploader/assets/uploader.swf";
-		
+
 /**
  * The Uploader widget is a tool for uploading files to the server.
  * @module uploader
