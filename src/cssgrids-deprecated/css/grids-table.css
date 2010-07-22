@@ -1,0 +1,54 @@
+.yui-g {
+    display: table;
+}
+.yui-g > div {
+    display: table-cell;
+}
+
+.yui-u-1 {
+    width: 100%;
+}
+
+.yui-u-2 {
+    width: 50%;
+}
+
+.yui-u-3 {
+    width: 33.3333%;
+}
+
+.yui-u-3-2 {
+    width: 66.6666%;
+}
+
+.yui-u-4 {
+    width: 25%;
+}
+
+.yui-u-4-3 {
+    width: 75%;
+}
+
+.yui-u-5 {
+    width: 20%;
+}
+
+.yui-u-5-2 {
+    width: 40%;
+}
+
+.yui-u-5-3 {
+    width: 60%;
+}
+
+.yui-u-5-4 {
+    width: 80%;
+}
+
+.yui-u-6 {
+    width: 16.6666%;
+}
+
+.yui-u-6-5 {
+    width: 83.3333%;
+}
