@@ -21,11 +21,10 @@ YUI.add('swf', function(Y) {
 		possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", menu:"", name:"", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
 		
 		/**
-		 * The SWF utility is a tool for embedding Flash applications in HTMl pages.
+		 * The SWF utility is a tool for embedding Flash applications in HTML pages.
 		 * @module swf
 		 * @title SWF Utility
-		 * @requires yahoo, dom, event
-		 * @namespace YAHOO.widget
+		 * @requires event-custom, node, swfdetect
 		 */
 
 		/**
