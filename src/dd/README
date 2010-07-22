@@ -1,3 +1,14 @@
+**** version 3.2.0 ***
+Moved to new Gesture support. DD now works off both mouse events and touch events natively
+
+    * #2528693 3.1.0PR1 DD Examples fail in Opera 10.5
+    * #2528765 DD uses window references
+    * #2528797 Drag and drop breaks input text select()
+    * #2528959 Mouseenter event bubbles up when using both modules dd-plugin and dd-constrain
+    * #2529070 Drop destroy is throwing errors when the node is removed with .remove(true) using dd delegate
+    * #2529094 DD hard codes CSS prefix
+
+
 **** version 3.1.0 ***
 No changes.
 
