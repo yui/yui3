@@ -50,6 +50,11 @@
 <script src="tests/perf-loops-yui3.js"></script>
 <script src="tests/startup/perf-startup-yui3-local.js"></script>
 <script src="tests/startup/perf-startup-yui3-3.1.1.js"></script>
+<script src="tests/perf-offlinedata-localstorage.js"></script>
+<script src="tests/perf-offlinedata-db.js"></script>
+<script src="tests/perf-offlinedata-localstorage-lg.js"></script>
+<script src="tests/perf-offlinedata-db-lg.js"></script>
+
 <script>
 var Y = YUI({
     comboBase: '/combo/yui3-local?',
@@ -70,6 +75,10 @@ var Y = YUI({
     'perf-loops-yui3',
     'perf-startup-yui3-local',
     'perf-startup-yui3-3.1.1',
+    'perf-localstorage',
+    'perf-db',
+    'perf-localstorage-lg',
+    'perf-db-lg',
 
 function (Y) {
     var SRC_UI = 'ui',
