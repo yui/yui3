@@ -18,7 +18,9 @@
         },
         
         /**
-         * Asserts that an object has a property with the given name.
+         * Asserts that an object has a property with the given name. The property may exist either
+         * on the object instance or in its prototype chain. The same as testing 
+         * "property" in object.
          * @param {String} propertyName The name of the property to test.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
@@ -27,13 +29,15 @@
          */    
         hasKey: function (propertyName, object, message) {
             Y.Assert._increment();               
-            if (!Y.Object.hasKey(object, propertyName)){
+            if (!(propertyName in object)){
                 Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
         },
         
         /**
-         * Asserts that an object has all properties of a reference object.
+         * Asserts that an object has all properties of a reference object. The properties may exist either
+         * on the object instance or in its prototype chain. The same as testing 
+         * "property" in object.
          * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
@@ -43,7 +47,7 @@
         hasKeys: function (properties, object, message) {
             Y.Assert._increment();  
             for (var i=0; i < properties.length; i++){
-                if (!Y.Object.hasKey(object, properties[i])){
+                if (!(properties[i] in object)){
                     Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
                 }      
             }
