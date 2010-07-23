@@ -695,7 +695,7 @@
         })); 
         Y.Test.Runner.add(suite);
 
-        if (parent && parent != window) {
+        if (parent && parent != window && Y.Test.Manager) {
             Y.Test.Manager.load();
         } else {
             Y.Test.Runner.run();

@@ -1,5 +1,11 @@
 YUI.add('event-focus', function(Y) {
 
+/**
+ * Adds bubbling and delegation support to DOM events focus and blur.
+ * 
+ * @module event
+ * @submodule event-focus
+ */
 var Event    = Y.Event,
     isString = Y.Lang.isString;
 

@@ -144,11 +144,11 @@ Y.UA = YUI.Env.UA || function() {
         ipod: 0,
         /**
          * General truthy check for iPad, iPhone or iPod
-         * @property itouch
+         * @property ios
          * @type float
          * @static
          */
-        itouch: null,
+        ios: null,
         /**
          * Detects Googles Android OS version
          * @property android 
@@ -222,7 +222,7 @@ Y.UA = YUI.Env.UA || function() {
                 o.ipad = (navigator.platform == 'iPad') ? m : 0;
                 o.ipod = (navigator.platform == 'iPod') ? m : 0;
                 o.iphone = (navigator.platform == 'iPhone') ? m : 0;
-                o.itouch = o.ipad || o.iphone || o.ipod;
+                o.ios = o.ipad || o.iphone || o.ipod;
             } else {
                 m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {

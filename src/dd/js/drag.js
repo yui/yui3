@@ -846,7 +846,7 @@
         * @description The method passed to setTimeout to determine if the clickTimeThreshold was met.
         */
         _timeoutCheck: function() {
-            if (!this.get('lock') && !this._dragThreshMet) {
+            if (!this.get('lock') && !this._dragThreshMet && this._ev_md) {
                 this._fromTimeout = this._dragThreshMet = true;
                 this.start();
                 this._alignNode([this._ev_md.pageX, this._ev_md.pageY], true);
@@ -961,9 +961,10 @@
                 minDistance: 0,
                 minTime: 0
             });
-            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
+            node.setData('dd', true);
+            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this), { standAlone: true });
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));
-            node.on(GESTURE_MOVE, Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
+            node.on(GESTURE_MOVE, Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), { standAlone: true });
             //Should not need this, _handleMouseUp calls this..
             //node.on('moveend', Y.bind(DDM._end, DDM));
             
@@ -1031,8 +1032,9 @@
             if (this._clickTimeout) {
                 this._clickTimeout.cancel();
             }
-            this._dragThreshMet = false;
-            this._fromTimeout = false;
+            this._dragThreshMet = this._fromTimeout = false;
+            this._ev_md = null;
+
             if (!this.get('lock') && this.get(DRAGGING)) {
                 this.fire(EV_END, {
                     pageX: this.lastXY[0],

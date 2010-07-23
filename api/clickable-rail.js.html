@@ -106,8 +106,9 @@
         <span class="nx">_bindClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">addHandle</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">rail</span> <span class="p">);</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">rail</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;mousedown&#39;</span><span class="p">,</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_onRailMouseDown</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rail</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_onRailMouseDown</span><span class="p">,</span> <span class="p">{},</span> <span class="k">this</span><span class="p">);</span>
+                
         <span class="p">},</span>
 
         <span class="cm">/**</span>
