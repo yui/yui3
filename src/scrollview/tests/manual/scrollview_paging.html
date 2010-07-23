@@ -26,38 +26,40 @@
         <div class="header">
         	<h1>Y.ScrollView: Paging</h1>
         </div>
+
         <div id="scrollable" class="yui3-scrollview-loading paged">
 			<ul>
-				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:1px solid red" /></li>
-				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:1px solid blue" /></li>
-				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:1px solid green" /></li>
-				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:1px solid yellow" /></li>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:2px solid red" /></li>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:2px solid blue" /></li>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:2px solid green" /></li>
+				<li><img src="http://farm4.static.flickr.com/3358/3644583408_d7e8d4ee44.jpg" style="border:2px solid yellow" /></li>
 			</ul>
         </div>
-	<div id="pager">
-		<button id="prev-page">Prev</button>
-		<button id="next-page">Next</button>
-	</div>
+
+    	<div id="pager">
+    		<button id="prev-page">Prev</button>
+    		<button id="next-page">Next</button>
+    	</div>
 
         <script type="text/javascript" charset="utf-8">
-	YUI({filter:"raw"}).use('scrollview', 'scrollview-paginator', function(Y) {
+    	YUI({filter:"raw"}).use('scrollview', 'scrollview-paginator', function(Y) {
 
-        var scrollView = new Y.ScrollView({
-            contentBox: '#scrollable',
-            width: 320,
-            flick: {
-                minVelocity:0.8
-            }   
-        });
-
-		scrollView.plug(Y.Plugin.ScrollViewPaginator, {
-		    selector: 'li'
-		});
-
-		scrollView.render();
-
-		Y.one('#next-page').on('click', Y.bind(scrollView.pages.next, scrollView.pages));
-		Y.one('#prev-page').on('click', Y.bind(scrollView.pages.prev, scrollView.pages));
+            var scrollView = new Y.ScrollView({
+                contentBox : '#scrollable',
+                width : 320,
+                flick : {
+                    minVelocity:0.3
+                }
+            });
+    
+    		scrollView.plug(Y.Plugin.ScrollViewPaginator, {
+    		    selector: 'li'
+    		});
+    
+    		scrollView.render();
+    
+    		Y.one('#next-page').on('click', Y.bind(scrollView.pages.next, scrollView.pages));
+    		Y.one('#prev-page').on('click', Y.bind(scrollView.pages.prev, scrollView.pages));
 
         });
         </script>

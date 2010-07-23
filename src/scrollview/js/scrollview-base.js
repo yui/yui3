@@ -178,7 +178,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (NATIVE_TRANSITIONS) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
-            transition.left = xMove + "px"; 
+            transition.left = xMove + "px";
             transition.top = yMove + "px";
         }
 
@@ -193,6 +193,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveStart: function(e) {
+
+        var preventable = e._orig || e;
+        preventable.preventDefault();
+
         this._killTimer();
 
         var bb = this.get(BOUNDING_BOX);
@@ -219,6 +223,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMove: function(e) {
+
+        var preventable = e._orig || e;
+        preventable.preventDefault();
+        
         this._isDragging = true;
         this._moveEndClientY = e.clientY;
         this._moveEndClientX = e.clientX;
@@ -241,6 +249,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveEnd: function(e) {
+        
+        var preventable = e._orig || e;
+        preventable.preventDefault();
+        
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
             minX = this._minScrollX,
@@ -356,7 +368,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _uiScrollX : function(val, duration, easing) {
         duration = duration || this._snapToEdge ? 400 : 0;
         easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
-            
+
         this.scrollTo(val, this.get(SCROLL_Y), duration, easing);
     },
     
@@ -427,6 +439,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _flick: function(e) {
         var flick = e.flick;
+        
         this._currentVelocity = flick.velocity;
         this._flicking = true;
         this._flickFrame();
