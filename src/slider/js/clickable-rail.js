@@ -58,7 +58,7 @@ Y.ClickableRail = Y.mix( ClickableRail, {
             this._dd.addHandle( this.rail );
 
             this.rail.on( this._evtGuid + 'gesturemovestart',
-                Y.bind(this._onRailMouseDown, this));
+                this._onRailMouseDown, {}, this);
                 
         },
 
