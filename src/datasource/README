@@ -1,3 +1,9 @@
+3.2
+   * Removed hardcoded DataSource.IO from DataSourceJSONSchema.
+   * Added ability to cancel underlying IO and Get transactions.
+   * Better DataSource error handling.
+   * Added ioConfig Attribute to DataSource.IO.
+
 3.1.1
     * No changes.
 
