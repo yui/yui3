@@ -209,6 +209,10 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">!==</span> <span class="nx">origE</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">_orig</span> <span class="o">=</span> <span class="nx">origE</span><span class="p">;</span>
+            <span class="p">}</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">minTime</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">minDistance</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;gesturemovestart: No minTime or minDistance.&quot;</span><span class="p">,</span> <span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_start</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
@@ -374,6 +378,10 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">move</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">!==</span> <span class="nx">origE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">_orig</span> <span class="o">=</span> <span class="nx">origE</span><span class="p">;</span>
+                <span class="p">}</span>
                 
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onMove2:&quot;</span> <span class="o">+</span> <span class="nx">move</span><span class="p">,</span><span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
 
@@ -485,6 +493,10 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">moveEnd</span><span class="p">)</span> <span class="p">{</span>
                 <span class="c1">//origE.preventDefault();</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">!==</span> <span class="nx">origE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">_orig</span> <span class="o">=</span> <span class="nx">origE</span><span class="p">;</span>
+                <span class="p">}</span>
 
                 <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;gesturemoveend&quot;</span><span class="p">;</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
