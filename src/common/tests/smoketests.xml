@@ -30,6 +30,10 @@
         <url>yui/tests/namespace.html</url>
         <url>yui/tests/object.html</url>
         <url>yql/tests/yql.html</url>
+        <url>test/tests/arrayassert.html</url>
+        <url>test/tests/mock.html</url>
+        <url>test/tests/objectassert.html</url>
+        <url>test/tests/testformat.html</url>
         <!--
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>
