@@ -398,12 +398,16 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function() {
-            try {
-                Y.one('win').focus();
-                Y.later(100, this, function() {
-                    this.getInstance().one('win').focus();
-                });
-            } catch (ferr) {
+            if (Y.UA.ie || Y.UA.gecko) {
+                this.getInstance().one('win').focus();
+            } else {
+                try {
+                    Y.one('win').focus();
+                    Y.later(100, this, function() {
+                        this.getInstance().one('win').focus();
+                    });
+                } catch (ferr) {
+                }
             }
             return this;
         },
