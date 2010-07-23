@@ -1848,9 +1848,10 @@ YUI.add('dd-drag', function(Y) {
                 minDistance: 0,
                 minTime: 0
             });
-            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
+            node.setData('dd', true);
+            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this), { standAlone: true });
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));
-            node.on(GESTURE_MOVE, Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
+            node.on(GESTURE_MOVE, Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), { standAlone: true });
             //Should not need this, _handleMouseUp calls this..
             //node.on('moveend', Y.bind(DDM._end, DDM));
             

@@ -1580,7 +1580,7 @@ Y.mix(Y_DOM, {
                             }
 
                         if ((scrollTop || scrollLeft)) {
-                            if (!Y.UA.itouch) {
+                            if (!Y.UA.ios) {
                                 xy[0] += scrollLeft;
                                 xy[1] += scrollTop;
                             }
