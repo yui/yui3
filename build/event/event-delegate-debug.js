@@ -13,6 +13,38 @@ var toArray          = Y.Array,
     selectorTest     = Y.Selector.test,
     detachCategories = Y.Env.evt.handles;
 
+/**
+ * <p>Sets up event delegation on a container element.  The delegated event
+ * will use a supplied selector or filtering function to test if the event
+ * references at least one node that should trigger the subscription callback.
+ * Selector string filters will trigger the callback if the event originated
+ * from a node that matches it or is contained in a node that matches it.
+ * Function filters accept the unfiltered event object and should return null
+ * if it does not qualify for firing the callbacks, a Node if the callback
+ * should be executed for one Node, or an array of Nodes if there were multiple
+ * nodes in touched by the event that meet the filtering criteria.</p>
+ *
+ * <p>The callback function will be executed only for those cases where the
+ * filter returns at least one match.  For each matching Node, the callback
+ * will be executed with its 'this' object set to the Node matched by the
+ * filter (unless a specific context was provided during subscription), and the
+ * provided event's <code>currentTarget</code> will also be set to the matching
+ * Node.  The containing Node from which the subscription was originally made
+ * can be referenced as <code>e.container</code>.
+ *
+ * @method delegate
+ * @param type {String} the event type to delegate
+ * @param fn {Function} the callback function to execute.  This function
+ *              will be provided the event object for the delegated event.
+ * @param el {String|node} the element that is the delegation container
+ * @param spec {string|Function} a selector that must match the target of the
+ *              event.
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ *              These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
+ */
 function delegate(type, fn, el, filter) {
     var args     = toArray(arguments, 0, true),
         query    = isString(el) ? el : null,
@@ -66,6 +98,19 @@ function delegate(type, fn, el, filter) {
     return handle;
 }
 
+/**
+ * Overrides the <code>_notify</code> method on the normal DOM subscription to inject the filtering logic and only proceed in the case of a match.
+ * 
+ * @method delegate.notifySub
+ * @param thisObj {Object} default 'this' object for the callback
+ * @param args {Array} arguments passed to the event's <code>fire()</code>
+ * @param ce {CustomEvent} the custom event managing the DOM subscriptions for
+ *              the subscribed event on the subscribing node.
+ * @return {Boolean} false if the event was stopped
+ * @private
+ * @static
+ * @since 3.2.0
+ */
 delegate.notifySub = function (thisObj, args, ce) {
     // Preserve args for other subscribers
     args = args.slice();
@@ -104,6 +149,19 @@ delegate.notifySub = function (thisObj, args, ce) {
     }
 };
 
+/**
+ * <p>Compiles a selector string into a filter function that returns an array of Nodes matching that selector starging from the event's target up the parent axis to the Node from which the subscription occurred.  If only one Node matches, it is returned (absent the array), and if none, undefined is returned.</p>
+ *
+ * <p>Previously compiled filter functions are returned if the same selector string is provided.</p>
+ *
+ * <p>This function may be useful when defining synthetic events for delegate handling.</p>
+ *
+ * @method delegate.compileFilter
+ * @param selector {String} the selector string to base the filtration on
+ * @return {Function}
+ * @since 3.2.0
+ * @static
+ */
 delegate.compileFilter = Y.cached(function (selector) {
     return function (e) {
         var container = e.currentTarget._node,
