@@ -127,6 +127,13 @@ YUI.add('frame', function(Y) {
                 defaultFn: this._defReadyFn
             });
         },
+        destructor: function() {
+            var inst = this.getInstance();
+
+            inst.one('doc').detachAll();
+            inst = null;
+            this._iframe.remove();
+        },
         /**
         * @private
         * @method _defReadyFn

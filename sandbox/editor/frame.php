@@ -80,16 +80,6 @@ echo($str);
 ?>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/drag.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../dd/js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
@@ -119,7 +109,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         Y.one('#out').prepend('<p>' + str + '</p>');
     };
 
-    var iframe = new Y.Frame({
+    iframe = new Y.Frame({
         designMode: true,
         content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
