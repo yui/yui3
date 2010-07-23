@@ -5,7 +5,16 @@
                 "requires": [
                     "selector-css2"
                 ]
-            }
+            },
+            "dom-style-ie": {
+                "requires": [
+                    "dom-style"
+                ],
+                "condition": {
+                   "trigger": "dom-style",
+                   "ua": "ie"
+                }
+            } 
         }, 
         "requires": [
             "oop"
@@ -26,15 +35,6 @@
                 "requires": [
                     "dom-base"
                 ]
-            }, 
-            "dom-style-ie": {
-                "requires": [
-                    "dom-style"
-                ],
-                "condition": {
-                   "trigger": "dom-style",
-                   "ua": "ie"
-                }
             }, 
             "selector": {
                 "requires": [
