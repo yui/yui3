@@ -180,7 +180,7 @@
 
     <span class="nx">_onStart</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="c1">// e.preventDefault();</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
@@ -377,7 +377,7 @@
                 
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onMove2:&quot;</span> <span class="o">+</span> <span class="nx">move</span><span class="p">,</span><span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
 
-                <span class="nx">origE</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="c1">// origE.preventDefault();</span>
                 <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;gesturemove&quot;</span><span class="p">;</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
             <span class="p">}</span>
@@ -484,7 +484,7 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">moveEnd</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">origE</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="c1">//origE.preventDefault();</span>
 
                 <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;gesturemoveend&quot;</span><span class="p">;</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
