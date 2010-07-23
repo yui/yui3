@@ -60,6 +60,7 @@ Transition.prototype = {
         this._easing = config.easing || this.constructor.DEFAULT_EASING;
         this._count = 0; // track number of animated properties
         this._totalDuration = 0;
+        this._running = false;
         return this;
     },
 
