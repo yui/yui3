@@ -1136,13 +1136,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * charset for dynamic nodes
- * @property charset
- * @type string
- * @deprecated use jsAttributes cssAttributes
- */
-
-/**
  * Object literal containing attributes to add to dynamically loaded script nodes.
  * @property jsAttributes
  * @type string
@@ -1179,7 +1172,7 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * name, and the value is an object literal specifying the metdata
  * for the module.  * See Loader.addModule for the supported module
  * metadata fields.  Also @see groups, which provides a way to
- * configure the base and combo spec for a 
+ * configure the base and combo spec for a set of modules.
  * <code>
  * modules: {
  * &nbsp; mymod1: {

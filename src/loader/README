@@ -2,8 +2,9 @@ YUI Loader
     Processes dependencies and dynamically loads script and css for YUI and external modules.
 
 3.2.0
+  * Conditional module support based on user agent detection or test function.
   * Added gallery css support
-  *
+  * performance optimizations, cached yui metadata, shared instances, etc
 
 3.1.1
   * Fixed ticket #2528771 : Loader has incorrect default for "base" - uses Y.Env, instead of Y.Env.base
