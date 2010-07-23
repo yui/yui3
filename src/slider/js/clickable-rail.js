@@ -145,10 +145,13 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @protected
          */
         _resolveThumb: function ( e ) {
+            /* Temporary workaround
             var primaryOnly = this._dd.get( 'primaryButtonOnly' ),
                 validClick  = !primaryOnly || e.button <= 1;
 
             return ( validClick ) ? this._dd : null;
+             */
+            return this._dd;
         },
 
         /**

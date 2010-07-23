@@ -194,10 +194,13 @@
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
         <span class="nx">_resolveThumb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">primaryOnly</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;primaryButtonOnly&#39;</span> <span class="p">),</span>
-                <span class="nx">validClick</span>  <span class="o">=</span> <span class="o">!</span><span class="nx">primaryOnly</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">button</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="cm">/* Temporary workaround</span>
+<span class="cm">            var primaryOnly = this._dd.get( &#39;primaryButtonOnly&#39; ),</span>
+<span class="cm">                validClick  = !primaryOnly || e.button &lt;= 1;</span>
 
-            <span class="k">return</span> <span class="p">(</span> <span class="nx">validClick</span> <span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+<span class="cm">            return ( validClick ) ? this._dd : null;</span>
+<span class="cm">             */</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">;</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
