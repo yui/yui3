@@ -56,6 +56,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * which button should initiate a "gesturemovestart". This event can also be listened for using node.delegate(). 
  *
  * @event gesturemovestart
+ * @for YUI
  * @param type {string} "gesturemovestart"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousedown or touchstart.touches[0]) which contains position co-ordinates.
  * @param cfg {Object} Optional. An object which specifies:
@@ -130,7 +131,7 @@ define('gesturemovestart', {
 
     _onStart : function(e, node, subscriber, ce, delegate) {
 
-        e.preventDefault();
+        // e.preventDefault();
 
         if (delegate) {
             node = e.currentTarget;
@@ -158,6 +159,10 @@ define('gesturemovestart', {
         Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance, "event-gestures");
 
         if (start) {
+
+            if (e !== origE) {
+                e._orig = origE;
+            }
 
             if (minTime === 0 || minDistance === 0) {
                 Y.log("gesturemovestart: No minTime or minDistance.", "event-gestures");
@@ -241,6 +246,7 @@ define('gesturemovestart', {
  * <p>This event can also be listened for using node.delegate().</p>
  *
  * @event gesturemove
+ * @for YUI
  * @param type {string} "gesturemove"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousemove or touchmove.touches[0]) which contains position co-ordinates.
  * @param cfg {Object} Optional. An object which specifies:
@@ -323,10 +329,14 @@ define('gesturemove', {
             }
 
             if (move) {
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
                 
                 Y.log("onMove2:" + move,"event-gestures");
 
-                origE.preventDefault();
+                // origE.preventDefault();
                 e.type = "gesturemove";
                 ce.fire(e);
             }
@@ -347,8 +357,9 @@ define('gesturemove', {
  *
  * <p>This event can also be listened for using node.delegate().</p>
  *
- * @event gesturemove
- * @param type {string} "gesturemove"
+ * @event gesturemoveend
+ * @for YUI
+ * @param type {string} "gesturemoveend"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mouseup or touchend.changedTouches[0]).
  * @param cfg {Object} Optional. An object which specifies:
  * <dl>
@@ -432,7 +443,11 @@ define('gesturemoveend', {
             }
 
             if (moveEnd) {
-                origE.preventDefault();
+                //origE.preventDefault();
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
 
                 e.type = "gesturemoveend";
                 ce.fire(e);

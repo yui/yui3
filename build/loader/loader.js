@@ -186,6 +186,12 @@ var NOT_FOUND       = {},
     SKIN_PREFIX     = "skin-",
     L               = Y.Lang,
     ON_PAGE         = GLOBAL_ENV.mods,
+
+    win             = Y.config.win,
+    localStorage    = win && win.localStorage,
+    modulekey       = META.md5, 
+    cache,
+
     _path           = function(dir, file, type, nomin) {
                         var path = dir + '/' + file;
                         if (!nomin) {
@@ -200,7 +206,7 @@ Y.Env.meta = META;
 
 Y.Loader = function(o) {
 
-    var defaults = Y.Env.meta.modules, 
+    var defaults = META.modules, 
         self     = this;
 
     /**
@@ -501,26 +507,34 @@ Y.Loader = function(o) {
     // self.provides = {};
 
     self.config = o;
-    self._config(o);
-    
     self._internal = true;
 
-    // for (i in defaults) {
-    //     if (defaults.hasOwnProperty(i)) {
-    //         self.addModule(defaults[i], i);
-    //     }
-    // }
-    //
-    //
-    // for (i in ON_PAGE) {
-    //     if ((!(i in self.moduleInfo)) && ON_PAGE[i].details) {
-    //         self.addModule(ON_PAGE[i].details, i);
-    //     }
-    // }
+    cache = GLOBAL_ENV._renderedMods;
 
-    YObject.each(defaults, function(v, k) {
-        self.addModule(v, k);
-    });
+    if (cache) {
+        self.moduleInfo = Y.merge(cache);
+    } else if (localStorage) {
+        cache = localStorage.getItem(modulekey);
+        if (cache) {
+            self.moduleInfo = JSON.parse(cache);
+        }
+        // console.log('cached rendered module info');
+    } 
+
+    if (!cache) {
+        YObject.each(defaults, function(v, k) {
+            self.addModule(v, k);
+        });
+        if (localStorage) {
+            try {
+                localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
+            } catch(e) { }
+        }
+    }
+
+    if (!GLOBAL_ENV._renderedMods) {
+        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+    }
 
     YObject.each(ON_PAGE, function(v, k) {
         if ((!(k in self.moduleInfo)) && ('details' in v)) {
@@ -529,6 +543,8 @@ Y.Loader = function(o) {
     });
 
     self._internal = false;
+
+    self._config(o);
 
     /**
      * List of rollup files found in the library metadata
@@ -597,61 +613,61 @@ Y.Loader = function(o) {
     // Y.on('yui:load', self.loadNext, self);
 
 
-    /**
+    /*
      * Cached sorted calculate results
      * @property results
      * @since 3.2.0
      */
-    self.results = {};
+    //self.results = {};
 
-        // returns true if b is not loaded, and is required
-        // directly or by means of modules it supersedes.
-           self._requires = Y.cached(function(mod1, mod2) {
+// returns true if b is not loaded, and is required
+// directly or by means of modules it supersedes.
+   self._requires = function(mod1, mod2) {
 
-                var i, rm, after, after_map, s,
-                    info  = self.moduleInfo, 
-                    m     = info[mod1], 
-                    other = info[mod2]; 
+        var i, rm, after, after_map, s,
+            info  = self.moduleInfo, 
+            m     = info[mod1], 
+            other = info[mod2]; 
 
-                // if (loaded[mod2] || !m || !other) {
-                if (!m || !other) {
-                    return false;
-                }
+        // if (loaded[mod2] || !m || !other) {
+        if (!m || !other) {
+            return false;
+        }
 
-                rm    = m.expanded_map;
-                after = m.after; 
-                after_map = m.after_map; 
+        rm    = m.expanded_map;
+        after = m.after; 
+        after_map = m.after_map; 
 
-                // check if this module requires the other directly
-                // if (r && YArray.indexOf(r, mod2) > -1) {
-                if (rm && (mod2 in rm)) {
+        // check if this module requires the other directly
+        // if (r && YArray.indexOf(r, mod2) > -1) {
+        if (rm && (mod2 in rm)) {
+            return true;
+        }
+
+        // check if this module should be sorted after the other
+        if (after_map && (mod2 in after_map)) {
+            return true;
+        } else if (after && YArray.indexOf(after, mod2) > -1) {
+            return true;
+        }
+
+        // check if this module requires one the other supersedes
+        s = info[mod2] && info[mod2].supersedes;
+        if (s) {
+            for (i=0; i<s.length; i++) {
+                if (self._requires(mod1, s[i])) {
                     return true;
                 }
+            }
+        }
 
-                // check if this module should be sorted after the other
-                if (after_map && (mod2 in after_map)) {
-                    return true;
-                } else if (after && YArray.indexOf(after, mod2) > -1) {
-                    return true;
-                }
+        // external css files should be sorted below yui css
+        if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
+            return true;
+        }
 
-                // check if this module requires one the other supersedes
-                s = info[mod2] && info[mod2].supersedes;
-                if (s) {
-                    for (i=0; i<s.length; i++) {
-                        if (self._requires(mod1, s[i])) {
-                            return true;
-                        }
-                    }
-                }
-
-                // external css files should be sorted below yui css
-                if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
-                    return true;
-                }
-
-                return false;
-            });
+        return false;
+    };
 };
 
 Y.Loader.prototype = {
@@ -1183,22 +1199,41 @@ Y.Loader.prototype = {
      * @param o optional options object
      * @param type optional argument to prune modules 
      */
+
     calculate: function(o, type) {
         if (o || type || this.dirty) {
 
-            var key = YObject.keys(this.required).sort().join() + this.ignoreRegistered + type,
-            sorted = this.results[key];
+            if (o) {
+                this._config(o);
+            }
 
-            this.key = key;
+            if (!this._init) {
+                this._setup();
+            }
+
+            // var key = YObject.keys(this.required) + YObject.keys(this.loaded) + '-' + this.ignoreRegistered + type + VERSION,
+            //     sorted = this.results[key];
+            // this.key = key;
 
             // console.log('calc key: ' + key);
             // console.log(this);
+
+            // if (!sorted && localStorage) {
+            //     sorted = localStorage.getItem(key);
+            //     if (sorted) {
+            //         sorted = JSON.parse(sorted);
+            //     }
+            // }
             
-            if (sorted) {
-                this.sorted = YObject.keys(this._reduce(YArray.hash(sorted)));
-            } else {
-                this._config(o);
-                this._setup();
+            // if (sorted) {
+            //     this.sorted = YObject.keys(this._reduce(YArray.hash(sorted)));
+            //     // this.sorted = sorted;
+            //     //
+            //         console.log('cached sort result: ' + key);
+            //         // console.log(this.loaded);
+            //         console.log(sorted);
+            //         console.log(this.sorted);
+            // } else {
                 this._explode();
                 this._conditions();
                 if (this.allowRollup) {
@@ -1206,7 +1241,7 @@ Y.Loader.prototype = {
                 }
                 this._reduce();
                 this._sort();
-            }
+            // }
         }
     },
 
@@ -1215,23 +1250,22 @@ Y.Loader.prototype = {
             packPath,
             existing = this.moduleInfo[packName];
 
-        if (existing) {
-            return existing;
-        }
+        if (!existing) {
 
-        packPath = _path((m.pkg || name), packName, JS, true);
+            packPath = _path((m.pkg || name), packName, JS, true);
 
-        this.addModule({ path:       packPath,
-                         intl:       true,
-                         langPack:   true,
-                         ext:        m.ext,
-                         group:      m.group,
-                         supersedes: []       }, packName, true);
+            this.addModule({ path:       packPath,
+                             intl:       true,
+                             langPack:   true,
+                             ext:        m.ext,
+                             group:      m.group,
+                             supersedes: []       }, packName, true);
 
-        if (lang) {
-            Y.Env.lang = Y.Env.lang || {};
-            Y.Env.lang[lang] = Y.Env.lang[lang] || {};
-            Y.Env.lang[lang][name] = true;
+            if (lang) {
+                Y.Env.lang = Y.Env.lang || {};
+                Y.Env.lang[lang] = Y.Env.lang[lang] || {};
+                Y.Env.lang[lang][name] = true;
+            }
         }
 
         return this.moduleInfo[packName];
@@ -1311,6 +1345,8 @@ Y.Loader.prototype = {
         }
 
         Y.mix(this.loaded, l);
+
+        this._init = true;
     },
     
     /**
@@ -1453,7 +1489,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // remove if already loaded
-                if ((this.loaded[i] && !this.forceMap[i] && !this.ignoreRegistered) || (type && m && m.type != type)) { 
+                if (((this.loaded[i] || ON_PAGE[i]) && !this.forceMap[i] && !this.ignoreRegistered) || (type && m && m.type != type)) { 
                     delete r[i];
                 // remove anything this module supersedes
                 } else {
@@ -1607,7 +1643,11 @@ Y.Loader.prototype = {
 
         this.sorted = s;
 
-        this.results[this.key] = s;
+        // this.results[this.key] = s;
+
+        // if (localStorage) {
+        //     localStorage.setItem(this.key, JSON.stringify(s));
+        // }
     },
 
     _insert: function(source, o, type) {
@@ -3327,6 +3367,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
+YUI.Env[Y.version].md5 = '36971749b14398ec7d0f363f7a063b24';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

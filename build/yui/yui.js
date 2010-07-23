@@ -496,6 +496,7 @@ proto = {
             boot     = config.bootstrap,
             missing  = [], 
             r        = [], 
+            star,
             ret      = true,
             fetchCSS = config.fetchCSS,
             process  = function(names) {
@@ -621,13 +622,14 @@ proto = {
  
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
+            star = true;
             args = Y.Object.keys(mods);
         }
 
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
-        if (Y.Loader && args.length) {
+        if (boot && !star && Y.Loader && args.length) {
             // loader = new Y.Loader(config);
             loader = getLoader(Y);
             loader.require(args);

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>scrollview-paginator&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>scrollview-paginator&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a>
                 
@@ -60,7 +60,7 @@
 <span class="cm"> * Scrollview plugin that adds support for paging</span>
 <span class="cm"> *</span>
 <span class="cm"> * @class ScrollViewPaginatorPlugin</span>
-<span class="cm"> * @namepace Plugin</span>
+<span class="cm"> * @namespace Plugin</span>
 <span class="cm"> * @extends Plugin.Base </span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> */</span>
@@ -77,7 +77,7 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">PaginatorPlugin</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;pluginScrollViewPaginator&#39;</span><span class="p">;</span>
-    
+
 <span class="cm">/**</span>
 <span class="cm"> * The namespace on which the plugin will reside</span>
 <span class="cm"> *</span>
@@ -96,7 +96,7 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">PaginatorPlugin</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * CSS selector for a page inside the scrollview. The scrollview</span>
 <span class="cm">     * will snap to the closest page.</span>
@@ -229,7 +229,7 @@
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
             <span class="nx">velocity</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_currentVelocity</span><span class="p">,</span>
 
-            <span class="nx">positive</span> <span class="o">=</span> <span class="nx">velocity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">inc</span> <span class="o">=</span> <span class="nx">velocity</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">speed</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">velocity</span><span class="p">),</span>
 
             <span class="nx">pageIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">),</span>
@@ -238,14 +238,15 @@
         <span class="c1">// @TODO: find the right minimum velocity to turn the page.</span>
         <span class="c1">// Right now, hard-coding at 1.</span>
         <span class="k">if</span><span class="p">(</span><span class="nx">speed</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">host</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="nx">positive</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="nx">host</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="nx">inc</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">positive</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">positive</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
         <span class="p">}</span>
+        
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -275,7 +276,7 @@
              <span class="p">}</span>
          <span class="p">}</span>
      <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * index attr change handler</span>
 <span class="cm">     *</span>
@@ -352,6 +353,9 @@
 <span class="cm">     * @method snapToCurrent</span>
 <span class="cm">     */</span>
     <span class="nx">snapToCurrent</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;scrollX&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minPoints</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)],</span> <span class="p">{</span>
             <span class="nx">duration</span><span class="o">:</span> <span class="mi">300</span><span class="p">,</span>
             <span class="nx">easing</span><span class="o">:</span> <span class="s1">&#39;ease-out&#39;</span>
@@ -394,6 +398,7 @@
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -446,7 +451,7 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="ScrollViewPaginatorPlugin.html" title="ScrollViewPaginatorPlugin">ScrollViewPaginatorPlugin</a></li>
+                                <li class=""><a href="Plugin.ScrollViewPaginatorPlugin.html" title="Plugin.ScrollViewPaginatorPlugin">Plugin.ScrollViewPaginatorPlugin</a></li>
                         </ul>
                     </div>
 
@@ -472,7 +477,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "ScrollViewPaginatorPlugin", "name": "_afterFlick", "url": "ScrollViewPaginatorPlugin.html#method__afterFlick", "type": "method"}, {"access": "protected", "host": "ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "destroy", "url": "ScrollViewPaginatorPlugin.html#method_destroy", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "index", "url": "ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "indexChange", "url": "ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "initializer", "url": "ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "next", "url": "ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "prev", "url": "ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "selector", "url": "ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "total", "url": "ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "ScrollViewPaginatorPlugin", "name": "totalChange", "url": "ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterFlick", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterFlick", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destroy", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

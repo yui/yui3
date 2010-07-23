@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-gestures&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>event-gestures&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-gestures.html" title="event-gestures">event-gestures</a>
                 
@@ -105,6 +105,7 @@
 <span class="cm"> * which button should initiate a &quot;gesturemovestart&quot;. This event can also be listened for using node.delegate(). </span>
 <span class="cm"> *</span>
 <span class="cm"> * @event gesturemovestart</span>
+<span class="cm"> * @for YUI</span>
 <span class="cm"> * @param type {string} &quot;gesturemovestart&quot;</span>
 <span class="cm"> * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousedown or touchstart.touches[0]) which contains position co-ordinates.</span>
 <span class="cm"> * @param cfg {Object} Optional. An object which specifies:</span>
@@ -179,7 +180,7 @@
 
     <span class="nx">_onStart</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="c1">// e.preventDefault();</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
@@ -207,6 +208,10 @@
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;gesturemovestart: params = button:&quot;</span> <span class="o">+</span> <span class="nx">button</span> <span class="o">+</span> <span class="s2">&quot;, minTime = &quot;</span> <span class="o">+</span> <span class="nx">minTime</span> <span class="o">+</span> <span class="s2">&quot;, minDistance = &quot;</span> <span class="o">+</span> <span class="nx">minDistance</span><span class="p">,</span> <span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">!==</span> <span class="nx">origE</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">_orig</span> <span class="o">=</span> <span class="nx">origE</span><span class="p">;</span>
+            <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">minTime</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">minDistance</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;gesturemovestart: No minTime or minDistance.&quot;</span><span class="p">,</span> <span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
@@ -290,6 +295,7 @@
 <span class="cm"> * &lt;p&gt;This event can also be listened for using node.delegate().&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @event gesturemove</span>
+<span class="cm"> * @for YUI</span>
 <span class="cm"> * @param type {string} &quot;gesturemove&quot;</span>
 <span class="cm"> * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousemove or touchmove.touches[0]) which contains position co-ordinates.</span>
 <span class="cm"> * @param cfg {Object} Optional. An object which specifies:</span>
@@ -372,10 +378,14 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">move</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">!==</span> <span class="nx">origE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">_orig</span> <span class="o">=</span> <span class="nx">origE</span><span class="p">;</span>
+                <span class="p">}</span>
                 
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onMove2:&quot;</span> <span class="o">+</span> <span class="nx">move</span><span class="p">,</span><span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
 
-                <span class="nx">origE</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="c1">// origE.preventDefault();</span>
                 <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;gesturemove&quot;</span><span class="p">;</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
             <span class="p">}</span>
@@ -396,8 +406,9 @@
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;This event can also be listened for using node.delegate().&lt;/p&gt;</span>
 <span class="cm"> *</span>
-<span class="cm"> * @event gesturemove</span>
-<span class="cm"> * @param type {string} &quot;gesturemove&quot;</span>
+<span class="cm"> * @event gesturemoveend</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> * @param type {string} &quot;gesturemoveend&quot;</span>
 <span class="cm"> * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mouseup or touchend.changedTouches[0]).</span>
 <span class="cm"> * @param cfg {Object} Optional. An object which specifies:</span>
 <span class="cm"> * &lt;dl&gt;</span>
@@ -481,7 +492,11 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">moveEnd</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">origE</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="c1">//origE.preventDefault();</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">!==</span> <span class="nx">origE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">_orig</span> <span class="o">=</span> <span class="nx">origE</span><span class="p">;</span>
+                <span class="p">}</span>
 
                 <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;gesturemoveend&quot;</span><span class="p">;</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
@@ -525,6 +540,7 @@
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class="selected"><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>

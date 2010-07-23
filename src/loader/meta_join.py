@@ -7,7 +7,7 @@ try:
 except:
    import simplejson
 
-import os, codecs
+import os, codecs, md5
 
 class MetaJoin(object):
 
@@ -25,6 +25,8 @@ class MetaJoin(object):
         DEST_DIR       = 'js'
         DEST_JSON      = 'yui3.json'
         DEST_JS        = 'yui3.js'
+
+        MD5_TOKEN = '{ /* MD5 */ }' 
 
         src_path       = os.path.abspath(SRC_DIR)
 
@@ -71,6 +73,12 @@ class MetaJoin(object):
 
         jsstr = readFile(template_path, TEMPLATE_FILE)
         jsstr = jsstr.replace(TEMPLATE_TOKEN, jsonstr)
+
+        m = md5.new()
+        m.update(jsstr)
+        sig = m.hexdigest()
+
+        jsstr = jsstr.replace(MD5_TOKEN, sig)
 
         # write the raw module json
         out = codecs.open(os.path.join(dest_path, DEST_JSON), 'w', 'utf-8')
