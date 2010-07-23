@@ -548,6 +548,7 @@
             <span class="nx">boot</span>     <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">bootstrap</span><span class="p">,</span>
             <span class="nx">missing</span>  <span class="o">=</span> <span class="p">[],</span> 
             <span class="nx">r</span>        <span class="o">=</span> <span class="p">[],</span> 
+            <span class="nx">star</span><span class="p">,</span>
             <span class="nx">ret</span>      <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">fetchCSS</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">fetchCSS</span><span class="p">,</span>
             <span class="nx">process</span>  <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">names</span><span class="p">)</span> <span class="p">{</span>
@@ -680,6 +681,7 @@
  
         <span class="c1">// YUI().use(&#39;*&#39;); // bind everything available</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">firstArg</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">star</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">mods</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -687,7 +689,7 @@
         
         <span class="c1">// use loader to expand dependencies and sort the </span>
         <span class="c1">// requirements if it is available.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">star</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// loader = new Y.Loader(config);</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
