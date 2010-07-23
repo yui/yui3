@@ -77,7 +77,7 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">PaginatorPlugin</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;pluginScrollViewPaginator&#39;</span><span class="p">;</span>
-    
+
 <span class="cm">/**</span>
 <span class="cm"> * The namespace on which the plugin will reside</span>
 <span class="cm"> *</span>
@@ -96,7 +96,7 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">PaginatorPlugin</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * CSS selector for a page inside the scrollview. The scrollview</span>
 <span class="cm">     * will snap to the closest page.</span>
@@ -229,7 +229,7 @@
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
             <span class="nx">velocity</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_currentVelocity</span><span class="p">,</span>
 
-            <span class="nx">positive</span> <span class="o">=</span> <span class="nx">velocity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">inc</span> <span class="o">=</span> <span class="nx">velocity</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">speed</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">velocity</span><span class="p">),</span>
 
             <span class="nx">pageIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">),</span>
@@ -238,14 +238,15 @@
         <span class="c1">// @TODO: find the right minimum velocity to turn the page.</span>
         <span class="c1">// Right now, hard-coding at 1.</span>
         <span class="k">if</span><span class="p">(</span><span class="nx">speed</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">host</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="nx">positive</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="nx">host</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="nx">inc</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">positive</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">positive</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
         <span class="p">}</span>
+        
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -275,7 +276,7 @@
              <span class="p">}</span>
          <span class="p">}</span>
      <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * index attr change handler</span>
 <span class="cm">     *</span>
@@ -352,6 +353,9 @@
 <span class="cm">     * @method snapToCurrent</span>
 <span class="cm">     */</span>
     <span class="nx">snapToCurrent</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;scrollX&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minPoints</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)],</span> <span class="p">{</span>
             <span class="nx">duration</span><span class="o">:</span> <span class="mi">300</span><span class="p">,</span>
             <span class="nx">easing</span><span class="o">:</span> <span class="s1">&#39;ease-out&#39;</span>
