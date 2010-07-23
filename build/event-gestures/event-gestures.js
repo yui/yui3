@@ -366,6 +366,10 @@ define('gesturemovestart', {
 
         if (start) {
 
+            if (e !== origE) {
+                e._orig = origE;
+            }
+
             if (minTime === 0 || minDistance === 0) {
                 this._start(e, node, ce, params);
             } else {
@@ -523,6 +527,10 @@ define('gesturemove', {
             }
 
             if (move) {
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
                 
 
                 // origE.preventDefault();
@@ -633,6 +641,10 @@ define('gesturemoveend', {
 
             if (moveEnd) {
                 //origE.preventDefault();
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
 
                 e.type = "gesturemoveend";
                 ce.fire(e);

@@ -368,6 +368,10 @@ define('gesturemovestart', {
 
         if (start) {
 
+            if (e !== origE) {
+                e._orig = origE;
+            }
+
             if (minTime === 0 || minDistance === 0) {
                 Y.log("gesturemovestart: No minTime or minDistance.", "event-gestures");
                 this._start(e, node, ce, params);
@@ -533,6 +537,10 @@ define('gesturemove', {
             }
 
             if (move) {
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
                 
                 Y.log("onMove2:" + move,"event-gestures");
 
@@ -644,6 +652,10 @@ define('gesturemoveend', {
 
             if (moveEnd) {
                 //origE.preventDefault();
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
 
                 e.type = "gesturemoveend";
                 ce.fire(e);
