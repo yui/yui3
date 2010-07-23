@@ -114,7 +114,7 @@ var NOT_FOUND       = {},
 
     win             = Y.config.win,
     localStorage    = win && win.localStorage,
-    modulekey       = 'ymd~' + VERSION, 
+    modulekey       = META.md5, 
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -131,7 +131,7 @@ Y.Env.meta = META;
 
 Y.Loader = function(o) {
 
-    var defaults = Y.Env.meta.modules, 
+    var defaults = META.modules, 
         self     = this;
 
     /**

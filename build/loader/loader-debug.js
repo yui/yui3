@@ -189,7 +189,7 @@ var NOT_FOUND       = {},
 
     win             = Y.config.win,
     localStorage    = win && win.localStorage,
-    modulekey       = 'ymd~' + VERSION, 
+    modulekey       = META.md5, 
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -206,7 +206,7 @@ Y.Env.meta = META;
 
 Y.Loader = function(o) {
 
-    var defaults = Y.Env.meta.modules, 
+    var defaults = META.modules, 
         self     = this;
 
     /**
@@ -613,12 +613,12 @@ Y.Loader = function(o) {
     // Y.on('yui:load', self.loadNext, self);
 
 
-    /**
+    /*
      * Cached sorted calculate results
      * @property results
      * @since 3.2.0
      */
-    self.results = {};
+    //self.results = {};
 
 // returns true if b is not loaded, and is required
 // directly or by means of modules it supersedes.
@@ -3397,6 +3397,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
+YUI.Env[Y.version].md5 = '36971749b14398ec7d0f363f7a063b24';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
