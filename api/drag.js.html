@@ -781,7 +781,9 @@
 <span class="cm">        * @param {Event.Facade}</span>
 <span class="cm">        */</span>
         <span class="nx">_defMouseDownFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ev</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ev</span><span class="p">,</span>
+                <span class="nx">preventable</span> <span class="o">=</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">_orig</span> <span class="o">||</span> <span class="nx">ev</span><span class="p">;</span>
+
             <span class="k">this</span><span class="p">.</span><span class="nx">_dragThreshMet</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_ev_md</span> <span class="o">=</span> <span class="nx">ev</span><span class="p">;</span>
             
@@ -790,7 +792,8 @@
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">validClick</span><span class="p">(</span><span class="nx">ev</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_fixIEMouseDown</span><span class="p">();</span>
-                <span class="nx">ev</span><span class="p">.</span><span class="nx">halt</span><span class="p">();</span>
+                <span class="nx">preventable</span><span class="p">.</span><span class="nx">halt</span><span class="p">();</span>
+                
                 <span class="k">this</span><span class="p">.</span><span class="nx">_setStartPosition</span><span class="p">([</span><span class="nx">ev</span><span class="p">.</span><span class="nx">pageX</span><span class="p">,</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">pageY</span><span class="p">]);</span>
 
                 <span class="nx">DDM</span><span class="p">.</span><span class="nx">activeDrag</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
@@ -1003,8 +1006,8 @@
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-draggable&#39;</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">MOUSE_DOWN</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_handleMouseDownEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="p">{</span>
-                <span class="nx">minDistance</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;clickPixelThresh&#39;</span><span class="p">),</span>
-                <span class="nx">minTime</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;clickTimeThresh&#39;</span><span class="p">)</span>
+                <span class="nx">minDistance</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">minTime</span><span class="o">:</span> <span class="mi">0</span>
             <span class="p">});</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">MOUSE_UP</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_handleMouseUp</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">DRAG_START</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_fixDragStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
