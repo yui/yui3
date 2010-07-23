@@ -1,4 +1,7 @@
-*** NOTE: This module is deprecated. This functionality will be provided in a future release. 
+*** NOTE: This module is deprecated and has been replaced by cssgrids. 
+
+**** version 3.2.0 PR1 ***	
+  * moved to cssgrids-deprecated
 
 **** version 3.0.0 ***	
   * deprecated for YUI 3

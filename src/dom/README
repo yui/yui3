@@ -1,3 +1,6 @@
+version 3.2.0 PR1
+- CSS "transform" vendor prefix is optional with set/getStyle
+
 version 3.1.1
 - Fixed viewportRegion() information in API doc (ticket #2528756)
 
