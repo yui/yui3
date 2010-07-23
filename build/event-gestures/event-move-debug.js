@@ -133,7 +133,7 @@ define('gesturemovestart', {
 
     _onStart : function(e, node, subscriber, ce, delegate) {
 
-        e.preventDefault();
+        // e.preventDefault();
 
         if (delegate) {
             node = e.currentTarget;
@@ -330,7 +330,7 @@ define('gesturemove', {
                 
                 Y.log("onMove2:" + move,"event-gestures");
 
-                origE.preventDefault();
+                // origE.preventDefault();
                 e.type = "gesturemove";
                 ce.fire(e);
             }
@@ -437,7 +437,7 @@ define('gesturemoveend', {
             }
 
             if (moveEnd) {
-                origE.preventDefault();
+                //origE.preventDefault();
 
                 e.type = "gesturemoveend";
                 ce.fire(e);
