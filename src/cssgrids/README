@@ -1,4 +1,10 @@
-*** NOTE: This module is deprecated. This functionality will be provided in a future release. 
+Note: this is the new version of Grids.
+
+For the deprecated version of grids use cssgrids-deprecated
+
+*** version 3.2.0 PR1 ***	
+    * Initial release of updated Grids modules
+
 
 **** version 3.0.0 ***	
   * deprecated for YUI 3

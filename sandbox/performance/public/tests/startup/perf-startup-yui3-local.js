@@ -14,7 +14,7 @@ Y.Performance.addTestGroup({
             iterations: 10,
 
             // Run each iteration in a new sandbox.
-            useStrictSandbox: true,
+            useStrictSandbox: false,
 
             preloadUrls: {
                 js: '/combo/yui3-local?build/yui/yui-min.js&build/loader/loader-min.js'
@@ -29,7 +29,7 @@ Y.Performance.addTestGroup({
         "jQueryish package w/ explicit dependencies + rollups + Loader": {
             duration: 500,
             iterations: 10,
-            useStrictSandbox: true,
+            useStrictSandbox: false,
             warmup: true,
 
             preloadUrls: {
@@ -47,7 +47,7 @@ Y.Performance.addTestGroup({
         "jQueryish package w/ YUI().use('*'), no Loader, no bootstrap" : {
             duration: 500,
             iterations: 10,
-            useStrictSandbox: true,
+            useStrictSandbox: false,
 
             preloadUrls: {
                 js: '/combo/yui3-local?build/yui/yui-base-min.js&build/oop/oop-min.js&build/yui/yui-later-min.js&build/event-custom/event-custom-min.js&build/event/event-base-min.js&build/dom/dom-base-min.js&build/dom/selector-native-min.js&build/dom/selector-css2-min.js&build/node/node-base-min.js&build/dom/selector-css3-min.js&build/dom/dom-style-min.js&build/dom/dom-screen-min.js&build/node/node-screen-min.js&build/node/node-style-min.js&build/event/event-delegate-min.js&build/event/event-synthetic-min.js&build/event/event-focus-min.js&build/event/event-mouseenter-min.js&build/event/event-resize-min.js&build/attribute/attribute-base-min.js&build/base/base-base-min.js&build/anim/anim-base-min.js&build/anim/anim-easing-min.js&build/anim/anim-scroll-min.js&build/anim/anim-xy-min.js&build/io/io-base-min.js&build/io/io-form-min.js&build/querystring/querystring-stringify-simple-min.js&build/json/json-parse-min.js&build/node/node-event-delegate-min.js'

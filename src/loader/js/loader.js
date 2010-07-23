@@ -421,7 +421,6 @@ Y.Loader = function(o) {
      */
     self.skin = Y.merge(Y.Env.meta.skin);
 
-
     /*
      * Map of conditional modules
      * @since 3.2.0
@@ -545,12 +544,28 @@ Y.Loader = function(o) {
      */
     //self.results = {};
 
+};
+
+Y.Loader.prototype = {
+
+    FILTER_DEFS: {
+        RAW: { 
+            'searchExp': "-min\\.js", 
+            'replaceStr': ".js"
+        },
+        DEBUG: { 
+            'searchExp': "-min\\.js", 
+            'replaceStr': "-debug.js"
+        }
+    },
+
+
 // returns true if b is not loaded, and is required
 // directly or by means of modules it supersedes.
-   self._requires = function(mod1, mod2) {
+   _requires: function(mod1, mod2) {
 
         var i, rm, after, after_map, s,
-            info  = self.moduleInfo, 
+            info  = this.moduleInfo, 
             m     = info[mod1], 
             other = info[mod2]; 
 
@@ -580,7 +595,7 @@ Y.Loader = function(o) {
         s = info[mod2] && info[mod2].supersedes;
         if (s) {
             for (i=0; i<s.length; i++) {
-                if (self._requires(mod1, s[i])) {
+                if (this._requires(mod1, s[i])) {
                     return true;
                 }
             }
@@ -592,22 +607,7 @@ Y.Loader = function(o) {
         }
 
         return false;
-    };
-};
-
-Y.Loader.prototype = {
-
-    FILTER_DEFS: {
-        RAW: { 
-            'searchExp': "-min\\.js", 
-            'replaceStr': ".js"
-        },
-        DEBUG: { 
-            'searchExp': "-min\\.js", 
-            'replaceStr': "-debug.js"
-        }
     },
-
 
     _config: function(o) {
         var i, j, val, f, group, groupName, self = this;

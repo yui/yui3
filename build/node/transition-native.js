@@ -183,6 +183,25 @@ Transition.prototype = {
 Y.Transition = Transition;
 Y.TransitionNative = Transition; // TODO: remove
 
+/** 
+    Animate one or more css properties to a given value.
+    <pre>example usage:
+        Y.one('#demo').transition({
+            duration: 1, // seconds
+            easing: 'ease-out',
+            height: '10px',
+            width: {
+                value: '10px',
+                duration: 2,
+                easing: 'ease-in'
+            }
+        });
+    </pre>
+    @for node
+    @method transition
+    @param {Object} An object containing one or more style properties, a duration and an easing.
+    @chainable
+*/
 Y.Node.prototype.transition = function(config) {
     var anim = (this._transition) ? this._transition.init(this, config) :
             new Transition(this, config);

@@ -95,6 +95,7 @@ YUI({
             }
         },
 
+
         lib3: {
             requires: ['yui'],
             fullpath: 'js/lib3.js',
@@ -104,7 +105,11 @@ YUI({
                     return Y.UA.gecko;
                 }
             }
-        },
+        }
+        
+        /*
+        ,
+
 
         lib4: {
             requires: ['yui'],
@@ -114,21 +119,23 @@ YUI({
                 ua: 'gecko'
             }
         }
+        */
     },
 
     filter: 'debug'
 
-}).use('node', function (Y) {
+}).use('dom', function (Y) {
 
-    Y.log('1');
+    console.log('1111');
     
-    Y.one( "#yui1" ).on( "click", function () {
-        Y.log( "Message from YUI instance #1" );
-    });
+    // Y.one( "#yui1" ).on( "click", function () {
+    //     Y.log( "Message from YUI instance #1" );
+    // });
 
+    // console.log(Y.merge(YUI));
+    console.log(Y);
 
-    console.log(Y.merge(YUI));
-
+/*
     Y.use('node', function (Y) {
         Y.log('2');
         // console.log(Y.one( "#yui2" ));
@@ -136,6 +143,7 @@ YUI({
             Y.log( "I'm from the second use in the first instance" );
         });
     });
+    */
 
 });
 
@@ -154,6 +162,7 @@ YUI().use('node', function (Y) {
 });
 */
 
+/*
 // Create a third YUI instance
 YUI({
     filter: 'debug'
@@ -184,6 +193,7 @@ YUI().use("console", function (Y) {
     }).render( "#yconsole" );
 
 });
+*/
 
 </script>
 
