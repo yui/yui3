@@ -1065,7 +1065,7 @@ Y.mix(Y_Node.prototype, {
     * @chainable
     */
     clearData: function(name) {
-        if (arguments.length) {
+        if (this._data && arguments.length) {
             delete this._data[name];
         } else {
             this._data = {};
