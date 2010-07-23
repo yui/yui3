@@ -470,7 +470,6 @@
 <span class="cm">     */</span>
     <span class="nx">self</span><span class="p">.</span><span class="nx">skin</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">skin</span><span class="p">);</span>
 
-
     <span class="cm">/*</span>
 <span class="cm">     * Map of conditional modules</span>
 <span class="cm">     * @since 3.2.0</span>
@@ -594,12 +593,28 @@
 <span class="cm">     */</span>
     <span class="c1">//self.results = {};</span>
 
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="nx">FILTER_DEFS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">RAW</span><span class="o">:</span> <span class="p">{</span> 
+            <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="s2">&quot;-min\\.js&quot;</span><span class="p">,</span> 
+            <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="s2">&quot;.js&quot;</span>
+        <span class="p">},</span>
+        <span class="nx">DEBUG</span><span class="o">:</span> <span class="p">{</span> 
+            <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="s2">&quot;-min\\.js&quot;</span><span class="p">,</span> 
+            <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="s2">&quot;-debug.js&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+
 <span class="c1">// returns true if b is not loaded, and is required</span>
 <span class="c1">// directly or by means of modules it supersedes.</span>
-   <span class="nx">self</span><span class="p">.</span><span class="nx">_requires</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod1</span><span class="p">,</span> <span class="nx">mod2</span><span class="p">)</span> <span class="p">{</span>
+   <span class="nx">_requires</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod1</span><span class="p">,</span> <span class="nx">mod2</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">rm</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">after_map</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
-            <span class="nx">info</span>  <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span> 
+            <span class="nx">info</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span> 
             <span class="nx">m</span>     <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">],</span> 
             <span class="nx">other</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod2</span><span class="p">];</span> 
 
@@ -629,7 +644,7 @@
         <span class="nx">s</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod2</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod2</span><span class="p">].</span><span class="nx">supersedes</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">_requires</span><span class="p">(</span><span class="nx">mod1</span><span class="p">,</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_requires</span><span class="p">(</span><span class="nx">mod1</span><span class="p">,</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
                     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -641,22 +656,7 @@
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span>
-<span class="p">};</span>
-
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
-
-    <span class="nx">FILTER_DEFS</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">RAW</span><span class="o">:</span> <span class="p">{</span> 
-            <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="s2">&quot;-min\\.js&quot;</span><span class="p">,</span> 
-            <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="s2">&quot;.js&quot;</span>
-        <span class="p">},</span>
-        <span class="nx">DEBUG</span><span class="o">:</span> <span class="p">{</span> 
-            <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="s2">&quot;-min\\.js&quot;</span><span class="p">,</span> 
-            <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="s2">&quot;-debug.js&quot;</span>
-        <span class="p">}</span>
     <span class="p">},</span>
-
 
     <span class="nx">_config</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
