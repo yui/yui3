@@ -33,7 +33,7 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
-Transition.re_keywords = /^(?:node|duration|iterations|easing)$/;
+Transition._reKeywords = /^(?:node|duration|iterations|easing)$/;
 
 Transition.useNative = false;
 
@@ -53,10 +53,14 @@ Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
         this._node = node;
+        node._transition = this; // cache for reuse
         this._config = config;
         this._duration = ('duration' in config) ?
             config.duration: this.constructor.DEFAULT_DURATION;
         this._easing = config.easing || this.constructor.DEFAULT_EASING;
+        this._count = 0; // track number of animated properties
+        this._totalDuration = 0;
+        return this;
     },
 
     /**
@@ -90,35 +94,46 @@ Transition.prototype = {
     _runNative: function(time) {
         var transitions = {}, 
             anim = this,
-            style = this._node._node.style,
-            config = this._config,
+            style = anim._node._node.style,
+            config = anim._config,
             cssText = '',
             transitionText = TRANSITION_PROPERTY + ': ',
             transition,
             duration = TRANSITION_DURATION + ': ',
             easing = TRANSITION_TIMING_FUNCTION + ': ',
+            node = anim._node,
+            val,
             dur,
             attr;
 
-        this._totalDuration = 0;
         if (config.transform && !config['-webkit-transform']) {
             config['-webkit-transform'] = config.transform;
             delete config.transform;
         }
 
         for (attr in config) {
-            if (!/^(?:node|duration|iterations|easing)$/.test(attr)) {
+            if (!Transition._reKeywords.test(attr)) {
                 transitions[attr] = config[attr];
                 transition = transitions[attr];
-                dur = (typeof transition.duration !== 'undefined') ? transition.duration :
-                        this._duration;
+                val = transition;
+                anim._count++;
 
-                duration += this._prepDur(dur) + ',';
-                easing += (transition.easing || this._easing) + ',';
+                if (typeof transition.value !== 'undefined') {
+                    val = transition.value; 
+                }
+
+                if (typeof val === 'function') {
+                    val = val.call(node, node);
+                }
+
+                dur = (typeof transition.duration !== 'undefined') ? transition.duration :
+                        anim._duration;
+
+                duration += anim._prepDur(dur) + ',';
+                easing += (transition.easing || anim._easing) + ',';
 
                 transitionText += attr + ',';
-                cssText += attr + ': ' + ((typeof transition.value !== 'undefined') ?
-                        transition.value : transition) + '; ';
+                cssText += attr + ': ' + val + '; ';
             }
         }
 
@@ -126,22 +141,35 @@ Transition.prototype = {
         duration = duration.replace(/,$/, ';');
         easing = easing.replace(/,$/, ';');
 
-        this._node.on(TRANSITION_END, function(e) {
-            var event = e._event;
-
-            if (event.elapsedTime >= anim._totalDuration)  {
-                style[TRANSITION_CAMEL] = '';
-                anim._running = false;
-            }
-
-            this.fire(END, {
-                elapsedTime: event.elapsedTime, propertyName: event.propertyName});
-        });
+        if (!anim._hasEndEvent) {
+            node.on(TRANSITION_END, this._onNativeEnd, this);
+        }
 
         setTimeout(function() { // allow any style init to occur (setStyle, etc)
             style.cssText += transitionText + duration + easing + cssText;
         }, 0);
 
+    },
+
+    _onNativeEnd: function(e) {
+        var event = e._event,
+            anim = this,
+            node = anim._node;
+
+        anim._hasEndEvent = true;
+
+        node.fire(END, {
+            elapsedTime: event.elapsedTime, propertyName: event.propertyName});
+
+        anim._count--;
+        if (event.elapsedTime >= anim._totalDuration && anim._count <= 0)  {
+            node._node.style[TRANSITION_CAMEL] = '';
+            node.fire('transitionsend', {
+                elapsedTime: event.elapsedTime
+            });
+
+            anim._running = false;
+        }
     },
 
     destroy: function() {
@@ -154,7 +182,8 @@ Y.Transition = Transition;
 Y.TransitionNative = Transition; // TODO: remove
 
 Y.Node.prototype.transition = function(config) {
-    var anim = new Transition(this, config);
+    var anim = (this._transition) ? this._transition.init(this, config) :
+            new Transition(this, config);
     anim.run();
     return this;
 };
