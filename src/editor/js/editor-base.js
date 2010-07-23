@@ -42,6 +42,17 @@
                 defaultFn: this._defNodeChangeFn
             });
         },
+        destructor: function() {
+            this.frame.destroy();
+
+            this.detachAll();
+        },
+        /**
+        * Copy certain styles from one node instance to another (used for new paragraph creation mainly)
+        * @method copyStyles
+        * @param {Node} from The Node instance to copy the styles from 
+        * @param {Node} to The Node instance to copy the styles to
+        */
         copyStyles: function(from, to) {
             var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
                 newStyles = {};
@@ -54,6 +65,11 @@
             }
             to.setStyles(newStyles);
         },
+        /**
+        * Utility method to create an empty paragraph when the document is empty.
+        * @private
+        * @method _fixFirstPara
+        */
         _fixFirstPara: function() {
             var inst = this.getInstance(), sel;
             inst.one('body').setContent('<p>&nbsp;</p>');
@@ -299,6 +315,11 @@
                 }
             }
         },
+        /**
+        * Fires nodeChange event
+        * @method _onFrameKeyPress
+        * @private
+        */
         _onFrameKeyPress: function(e) {
             var inst = this.frame.getInstance(),
                 sel = new inst.Selection();
@@ -352,8 +373,6 @@
         */
         getInstance: function() {
             return this.frame.getInstance();
-        },
-        destructor: function() {
         },
         /**
         * Renders the Y.Frame to the passed node.

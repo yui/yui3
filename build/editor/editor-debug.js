@@ -128,6 +128,13 @@ YUI.add('frame', function(Y) {
                 defaultFn: this._defReadyFn
             });
         },
+        destructor: function() {
+            var inst = this.getInstance();
+
+            inst.one('doc').detachAll();
+            inst = null;
+            this._iframe.remove();
+        },
         /**
         * @private
         * @method _defReadyFn
@@ -410,13 +417,17 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function() {
-            try {
-                Y.one('win').focus();
-                Y.later(100, this, function() {
-                    this.getInstance().one('win').focus();
-                });
-            } catch (ferr) {
-                Y.log('Frame focus failed', 'warn', 'frame');
+            if (Y.UA.ie || Y.UA.gecko) {
+                this.getInstance().one('win').focus();
+            } else {
+                try {
+                    Y.one('win').focus();
+                    Y.later(100, this, function() {
+                        this.getInstance().one('win').focus();
+                    });
+                } catch (ferr) {
+                    Y.log('Frame focus failed', 'warn', 'frame');
+                }
             }
             return this;
         },
@@ -1698,6 +1709,17 @@ YUI.add('editor-base', function(Y) {
                 defaultFn: this._defNodeChangeFn
             });
         },
+        destructor: function() {
+            this.frame.destroy();
+
+            this.detachAll();
+        },
+        /**
+        * Copy certain styles from one node instance to another (used for new paragraph creation mainly)
+        * @method copyStyles
+        * @param {Node} from The Node instance to copy the styles from 
+        * @param {Node} to The Node instance to copy the styles to
+        */
         copyStyles: function(from, to) {
             var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
                 newStyles = {};
@@ -1710,6 +1732,11 @@ YUI.add('editor-base', function(Y) {
             }
             to.setStyles(newStyles);
         },
+        /**
+        * Utility method to create an empty paragraph when the document is empty.
+        * @private
+        * @method _fixFirstPara
+        */
         _fixFirstPara: function() {
             var inst = this.getInstance(), sel;
             inst.one('body').setContent('<p>&nbsp;</p>');
@@ -1955,6 +1982,11 @@ YUI.add('editor-base', function(Y) {
                 }
             }
         },
+        /**
+        * Fires nodeChange event
+        * @method _onFrameKeyPress
+        * @private
+        */
         _onFrameKeyPress: function(e) {
             var inst = this.frame.getInstance(),
                 sel = new inst.Selection();
@@ -2008,8 +2040,6 @@ YUI.add('editor-base', function(Y) {
         */
         getInstance: function() {
             return this.frame.getInstance();
-        },
-        destructor: function() {
         },
         /**
         * Renders the Y.Frame to the passed node.

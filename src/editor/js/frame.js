@@ -126,6 +126,13 @@
                 defaultFn: this._defReadyFn
             });
         },
+        destructor: function() {
+            var inst = this.getInstance();
+
+            inst.one('doc').detachAll();
+            inst = null;
+            this._iframe.remove();
+        },
         /**
         * @private
         * @method _defReadyFn
@@ -408,13 +415,17 @@
         * @chainable        
         */
         focus: function() {
-            try {
-                Y.one('win').focus();
-                Y.later(100, this, function() {
-                    this.getInstance().one('win').focus();
-                });
-            } catch (ferr) {
-                Y.log('Frame focus failed', 'warn', 'frame');
+            if (Y.UA.ie || Y.UA.gecko) {
+                this.getInstance().one('win').focus();
+            } else {
+                try {
+                    Y.one('win').focus();
+                    Y.later(100, this, function() {
+                        this.getInstance().one('win').focus();
+                    });
+                } catch (ferr) {
+                    Y.log('Frame focus failed', 'warn', 'frame');
+                }
             }
             return this;
         },

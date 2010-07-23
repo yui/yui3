@@ -733,7 +733,9 @@
         * @param {Event.Facade}
         */
         _defMouseDownFn: function(e) {
-            var ev = e.ev;
+            var ev = e.ev,
+                preventable = ev._orig || ev;
+
             this._dragThreshMet = false;
             this._ev_md = ev;
             
@@ -742,7 +744,8 @@
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
-                ev.halt();
+                preventable.halt();
+                
                 this._setStartPosition([ev.pageX, ev.pageY]);
 
                 DDM.activeDrag = this;
@@ -955,8 +958,8 @@
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
-                minDistance: this.get('clickPixelThresh'),
-                minTime: this.get('clickTimeThresh')
+                minDistance: 0,
+                minTime: 0
             });
             node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));

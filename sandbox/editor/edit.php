@@ -114,7 +114,8 @@
 <button id="focusEditor">Focus Editor</button>
 
 <div id="stub">
-    <div><br></div>
+</div>
+    <!---div><br></div>
     <div style="font-family: ; font-size: ;"><br>
         <div style="font-family: times new roman, new york, times, serif; font-size: 12pt;">
             <font size="2" face="Tahoma">
@@ -158,7 +159,7 @@
             </div><br><br>
         </div>
     </div>
-</div>
+</div-->
 <!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
@@ -172,8 +173,8 @@ This is some <strong>other</strong> loose test.
 <ul>
 </div-->
 
-<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
