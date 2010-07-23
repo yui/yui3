@@ -42,6 +42,10 @@
                 };
 
                 var moveStartHandler = function(e) {
+
+                    var preventable = e._orig || e;
+                    preventable.preventDefault();
+
                     var target = e.target;
 
                     target.set("innerHTML", "");
@@ -49,10 +53,18 @@
                 };
 
                 var moveHandler = function(e) {
+                    
+                    var preventable = e._orig || e;
+                    preventable.preventDefault();
+                    
                     e.target.append("<div>gesturemove, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveEndHandler = function(e) {
+                    
+                    var preventable = e._orig || e;
+                    preventable.preventDefault();
+                    
                     e.target.append("<div>gesturemoveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 

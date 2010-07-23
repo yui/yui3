@@ -63,8 +63,11 @@ Y.mix(Transition.prototype, {
             customAttr = Transition.behaviors,
             node = this._node,
             done = false,
+            allDone = false,
             attribute,
             setter,
+            actualDuration,
+            elapsed,
             d,
             t,
             i;
@@ -73,6 +76,8 @@ Y.mix(Transition.prototype, {
             if (attr[i].to) {
                 attribute = attr[i];
                 d = attribute.duration;
+                actualDuration = d;
+                elapsed = time / 1000;
                 t = time;
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
                         customAttr[i].set : Transition.DEFAULT_SETTER;
@@ -91,11 +96,22 @@ Y.mix(Transition.prototype, {
 
                     if (done) {
                         this._skip[i] = true;
+                        this._count--;
 
-                        node.fire(END, {
-                            elapsedTime: d,
-                            propertyName: i
-                        });
+                        if (actualDuration > 0) { // match native behavior which doesnt fire for zero duration
+                            node.fire(END, {
+                                elapsedTime: elapsed,
+                                propertyName: i
+                            });
+                        }
+
+                        if (!allDone && this._count <= 0) {
+                            allDone = true;
+                            node.fire('transitionsend', {
+                                elapsedTime: elapsed 
+                            });
+                        }
+
                     }
                 }
 
@@ -115,20 +131,18 @@ Y.mix(Transition.prototype, {
             name,
             unit, begin, end;
 
-        this._totalDuration = 0;
-
         for (name in config) {
             val = config[name];
-            if (!/^(?:node|duration|iterations|easing)$/.test(name)) {
+            if (!Transition._reKeywords.test(name)) {
                 duration = this._duration * 1000;
-                if (val.value) {
+                if (typeof val.value !== 'undefined') {
                     duration = (('duration' in val) ? val.duration : this._duration) * 1000;
                     easing = val.easing || easing;
                     val = val.value;
                 }
                 
                 if (typeof val === 'function') {
-                    val = val.call(this, this._node);
+                    val = val.call(this._node, this._node);
                 }
 
                 begin = (name in customAttr && 'get' in customAttr[name])  ?
@@ -169,6 +183,7 @@ Y.mix(Transition.prototype, {
                 if (duration > this._totalDuration) {
                     this._totalDuration = duration;
                 }
+                this._count++;
             }
         }
         this._skip = {};

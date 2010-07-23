@@ -6,6 +6,8 @@ YUI.add('event-flick', function(Y) {
  * to build input device agnostic components which behave the same in response to either touch or mouse based  
  * interaction.
  *
+ * <p>Documentation for events added by this module can be found in the event document for the <a href="YUI.html#events">YUI</event> global.</p>
+ *
  * @module event-gestures
  */
 
@@ -44,8 +46,9 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * which the event is to be fired. The subscriber can also specify if there is a particular axis which
  * they are interested in - "x" or "y". If no axis is specified, the axis along which there was most distance
  * covered is used.
- * 
+ *
  * @event flick
+ * @for YUI
  * @param type {string} "flick"
  * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.
  * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity  (in px/ms)
@@ -260,6 +263,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * which button should initiate a "gesturemovestart". This event can also be listened for using node.delegate(). 
  *
  * @event gesturemovestart
+ * @for YUI
  * @param type {string} "gesturemovestart"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousedown or touchstart.touches[0]) which contains position co-ordinates.
  * @param cfg {Object} Optional. An object which specifies:
@@ -334,7 +338,7 @@ define('gesturemovestart', {
 
     _onStart : function(e, node, subscriber, ce, delegate) {
 
-        e.preventDefault();
+        // e.preventDefault();
 
         if (delegate) {
             node = e.currentTarget;
@@ -361,6 +365,10 @@ define('gesturemovestart', {
 
 
         if (start) {
+
+            if (e !== origE) {
+                e._orig = origE;
+            }
 
             if (minTime === 0 || minDistance === 0) {
                 this._start(e, node, ce, params);
@@ -437,6 +445,7 @@ define('gesturemovestart', {
  * <p>This event can also be listened for using node.delegate().</p>
  *
  * @event gesturemove
+ * @for YUI
  * @param type {string} "gesturemove"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousemove or touchmove.touches[0]) which contains position co-ordinates.
  * @param cfg {Object} Optional. An object which specifies:
@@ -518,9 +527,13 @@ define('gesturemove', {
             }
 
             if (move) {
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
                 
 
-                origE.preventDefault();
+                // origE.preventDefault();
                 e.type = "gesturemove";
                 ce.fire(e);
             }
@@ -541,8 +554,9 @@ define('gesturemove', {
  *
  * <p>This event can also be listened for using node.delegate().</p>
  *
- * @event gesturemove
- * @param type {string} "gesturemove"
+ * @event gesturemoveend
+ * @for YUI
+ * @param type {string} "gesturemoveend"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mouseup or touchend.changedTouches[0]).
  * @param cfg {Object} Optional. An object which specifies:
  * <dl>
@@ -626,7 +640,11 @@ define('gesturemoveend', {
             }
 
             if (moveEnd) {
-                origE.preventDefault();
+                //origE.preventDefault();
+
+                if (e !== origE) {
+                    e._orig = origE;
+                }
 
                 e.type = "gesturemoveend";
                 ce.fire(e);

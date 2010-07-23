@@ -123,6 +123,7 @@ YUI.add('test', function(Y) {
         this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
+
         
     Y.namespace("Test");
     
@@ -199,6 +200,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     /*
      * Runs test suites and test cases, providing events to allowing for the
@@ -1191,6 +1193,7 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
+
   
     /**
      * The Assert object provides functions to test JavaScript values against
@@ -1887,6 +1890,7 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
+
    
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
@@ -2209,6 +2213,7 @@ YUI.add('test', function(Y) {
         
     };
 
+
     /**
      * The ObjectAssert object provides functions to test JavaScript objects
      * for a variety of cases.
@@ -2228,7 +2233,9 @@ YUI.add('test', function(Y) {
         },
         
         /**
-         * Asserts that an object has a property with the given name.
+         * Asserts that an object has a property with the given name. The property may exist either
+         * on the object instance or in its prototype chain. The same as testing 
+         * "property" in object.
          * @param {String} propertyName The name of the property to test.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2237,13 +2244,15 @@ YUI.add('test', function(Y) {
          */    
         hasKey: function (propertyName, object, message) {
             Y.Assert._increment();               
-            if (!Y.Object.hasKey(object, propertyName)){
+            if (!(propertyName in object)){
                 Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
         },
         
         /**
-         * Asserts that an object has all properties of a reference object.
+         * Asserts that an object has all properties of a reference object. The properties may exist either
+         * on the object instance or in its prototype chain. The same as testing 
+         * "property" in object.
          * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2253,7 +2262,7 @@ YUI.add('test', function(Y) {
         hasKeys: function (properties, object, message) {
             Y.Assert._increment();  
             for (var i=0; i < properties.length; i++){
-                if (!Y.Object.hasKey(object, properties[i])){
+                if (!(properties[i] in object)){
                     Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
                 }      
             }
@@ -2309,6 +2318,7 @@ YUI.add('test', function(Y) {
 
         }     
     };
+
 
     
     /**
@@ -2394,6 +2404,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     Y.namespace("Test.Format");
     
@@ -2622,6 +2633,7 @@ YUI.add('test', function(Y) {
         
 
 
+
     Y.namespace("Coverage.Format");
     
     /**
@@ -2656,6 +2668,7 @@ YUI.add('test', function(Y) {
 
 
   
+
 
     Y.namespace("Test");
     
@@ -2822,6 +2835,7 @@ YUI.add('test', function(Y) {
         }
     
     };
+
     /**
      * Creates a new mock object.
      * @class Mock
@@ -2985,6 +2999,7 @@ YUI.add('test', function(Y) {
     Y.Mock.Value.String     = Y.Mock.Value(Y.Assert.isString);
     Y.Mock.Value.Object     = Y.Mock.Value(Y.Assert.isObject);
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
+
 /*Stub for future compatibility*/
 if (typeof YUITest == "undefined" || !YUITest) {
     YUITest = {
@@ -2993,6 +3008,7 @@ if (typeof YUITest == "undefined" || !YUITest) {
         CoverageFormat: Y.Coverage.Format
     };
 }
+
 
 
 }, '@VERSION@' ,{requires:['substitute','event-base']});

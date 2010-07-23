@@ -1,15 +1,15 @@
-3.1.1
+3.2.0
+   * Add cache-offline submodule. The cache submodule is renamed to cache-base
+   and the cache module is now a rollup.
 
+3.1.1
     * No changes.
 
 3.1.0
-
     * No changes.
 
 3.0.0
-
     * Added uniqueKeys Attribute.
 
 3.0.0 beta 1
-
     * Initial release.

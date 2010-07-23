@@ -13,6 +13,7 @@ var BOUNCE_DECELERATION_CONST = 0.5,
  * Scrollview plugin that adds support for paging
  *
  * @class ScrollViewPaginatorPlugin
+ * @namespace Plugin
  * @extends Plugin.Base 
  * @constructor
  */
@@ -29,7 +30,7 @@ function PaginatorPlugin() {
  * @static
  */
 PaginatorPlugin.NAME = 'pluginScrollViewPaginator';
-    
+
 /**
  * The namespace on which the plugin will reside
  *
@@ -48,7 +49,7 @@ PaginatorPlugin.NS = 'pages';
  * @static
  */
 PaginatorPlugin.ATTRS = {
-    
+
     /**
      * CSS selector for a page inside the scrollview. The scrollview
      * will snap to the closest page.
@@ -181,7 +182,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var host = this._host,
             velocity = host._currentVelocity,
 
-            positive = velocity > 0,
+            inc = velocity < 0,
             speed = Math.abs(velocity),
 
             pageIndex = this.get('index'),
@@ -190,14 +191,15 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // @TODO: find the right minimum velocity to turn the page.
         // Right now, hard-coding at 1.
         if(speed < 1) {
-            host._currentVelocity = positive ? 1 : -1;
+            host._currentVelocity = inc ? -1 : 1;
         }
 
-        if(positive && pageIndex < pageCount-1) {
+        if(inc && pageIndex < pageCount-1) {
             this.set('index', pageIndex+1, { src: UI });
-        } else if(!positive && pageIndex > 0){
+        } else if(!inc && pageIndex > 0) {
             this.set('index', pageIndex-1, { src: UI });
         }
+        
     },
 
     /**
@@ -227,7 +229,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              }
          }
      },
-    
+
     /**
      * index attr change handler
      *
@@ -304,6 +306,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method snapToCurrent
      */
     snapToCurrent: function() {
+
+        this._host._killTimer();
+
         this._host.set('scrollX', this._minPoints[this.get('index')], {
             duration: 300,
             easing: 'ease-out'

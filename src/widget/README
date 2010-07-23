@@ -12,7 +12,8 @@ It provides the following pieces of core functionality:
 
 3.2.0
 
-* No changes
+* Minimized widget dependencies from the complete node, base rollups,
+  to only the node and base submodules widget actually uses
 
 3.1.1
 

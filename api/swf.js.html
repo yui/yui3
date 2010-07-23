@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>SWF Utility&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>SWF Utility&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_swf.html" title="swf">swf</a>
                 
@@ -68,11 +68,10 @@
 		<span class="nx">possibleAttributes</span> <span class="o">=</span> <span class="p">{</span><span class="nx">align</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">allowFullScreen</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">allowNetworking</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">allowScriptAccess</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">base</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">bgcolor</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">menu</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">quality</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">salign</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">scale</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">tabindex</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">wmode</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">};</span>
 		
 		<span class="cm">/**</span>
-<span class="cm">		 * The SWF utility is a tool for embedding Flash applications in HTMl pages.</span>
+<span class="cm">		 * The SWF utility is a tool for embedding Flash applications in HTML pages.</span>
 <span class="cm">		 * @module swf</span>
 <span class="cm">		 * @title SWF Utility</span>
-<span class="cm">		 * @requires yahoo, dom, event</span>
-<span class="cm">		 * @namespace YAHOO.widget</span>
+<span class="cm">		 * @requires event-custom, node, swfdetect</span>
 <span class="cm">		 */</span>
 
 		<span class="cm">/**</span>
@@ -85,7 +84,15 @@
 <span class="cm">		 *        The width and height of the SWF will be set to the width and height of this container element.</span>
 <span class="cm">		 * @param {String} swfURL The URL of the SWF to be embedded into the page.</span>
 <span class="cm">		 * @param {Object} p_oAttributes (optional) Configuration parameters for the Flash application and values for Flashvars</span>
-<span class="cm">		 *        to be passed to the SWF.</span>
+<span class="cm">		 *        to be passed to the SWF. The p_oAttributes object allows the following additional properties:</span>
+<span class="cm">		 *        &lt;dl&gt;</span>
+<span class="cm">         *          &lt;dt&gt;version : String&lt;/dt&gt;</span>
+<span class="cm">         *          &lt;dd&gt;The minimum version of Flash required on the user&#39;s machine.&lt;/dd&gt;</span>
+<span class="cm">         *          &lt;dt&gt;fixedAttributes : Object&lt;/dt&gt;</span>
+<span class="cm">         *          &lt;dd&gt;An object literal containing one or more of the following String keys and their values: &lt;code&gt;align, </span>
+<span class="cm">         *              allowFullScreen, allowNetworking, allowScriptAccess, base, bgcolor, menu, name, quality, salign, scale,</span>
+<span class="cm">         *              tabindex, wmode.&lt;/code&gt; event from the thumb&lt;/dd&gt;</span>
+<span class="cm">         *        &lt;/dl&gt;</span>
 <span class="cm">		 */</span>
 				
 <span class="kd">function</span> <span class="nx">SWF</span> <span class="p">(</span><span class="nx">p_oElement</span> <span class="cm">/*:String*/</span><span class="p">,</span> <span class="nx">swfURL</span> <span class="cm">/*:String*/</span><span class="p">,</span> <span class="nx">p_oAttributes</span> <span class="cm">/*:Object*/</span> <span class="p">)</span> <span class="p">{</span>
@@ -147,7 +154,16 @@
 				<span class="nx">oElement</span><span class="p">.</span><span class="nx">setContent</span><span class="p">(</span><span class="nx">objstring</span><span class="p">);</span>
 			
 				<span class="k">this</span><span class="p">.</span><span class="nx">_swf</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">_id</span><span class="p">);</span>
-			<span class="p">}</span>				
+			<span class="p">}</span>
+	<span class="cm">/**</span>
+<span class="cm">	* Fired when the Flash player version on the user&#39;s machine is below the required value.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event wrongflashversion</span>
+<span class="cm">    */</span>
+	<span class="k">else</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;wrongflashversion&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">fireOnce</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+	     	<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;wrongflashversion&quot;</span><span class="p">,</span> <span class="nx">event</span><span class="p">);</span>
+		<span class="p">}</span>		
 <span class="p">};</span>
 
 <span class="cm">/**</span>
@@ -263,14 +279,19 @@
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -280,6 +301,10 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -289,6 +314,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
@@ -308,7 +334,7 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="YAHOO.widget.SWF.html" title="YAHOO.widget.SWF">YAHOO.widget.SWF</a></li>
+                                <li class=""><a href="SWF.html" title="SWF">SWF</a></li>
                         </ul>
                     </div>
 
@@ -333,7 +359,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "YAHOO.widget.SWF", "name": "callSWF", "url": "YAHOO.widget.SWF.html#method_callSWF", "type": "method"}, {"access": "private", "host": "YAHOO.widget.SWF", "name": "_eventHandler", "url": "YAHOO.widget.SWF.html#method__eventHandler", "type": "method"}, {"access": "private", "host": "YAHOO.widget.SWF", "name": "eventHandler", "url": "YAHOO.widget.SWF.html#method_eventHandler", "type": "method"}, {"access": "private", "host": "YAHOO.widget.SWF", "name": "_instances", "url": "YAHOO.widget.SWF.html#property__instances", "type": "property"}, {"access": "", "host": "YAHOO.widget.SWF", "name": "toString", "url": "YAHOO.widget.SWF.html#method_toString", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "SWF", "name": "callSWF", "url": "SWF.html#method_callSWF", "type": "method"}, {"access": "private", "host": "SWF", "name": "_eventHandler", "url": "SWF.html#method__eventHandler", "type": "method"}, {"access": "private", "host": "SWF", "name": "eventHandler", "url": "SWF.html#method_eventHandler", "type": "method"}, {"access": "private", "host": "SWF", "name": "_instances", "url": "SWF.html#property__instances", "type": "property"}, {"access": "", "host": "SWF", "name": "toString", "url": "SWF.html#method_toString", "type": "method"}, {"access": "", "host": "SWF", "name": "wrongflashversion", "url": "SWF.html#event_wrongflashversion", "type": "event"}];
 </script>
 </body>
 </html>
