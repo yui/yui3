@@ -18,7 +18,8 @@ YUI({
     }).render();    
             
 
-    var template = {
+    var editor = null,
+    template = {
         name: 'Editor Tests',
         setUp : function() {
         },
@@ -51,10 +52,11 @@ YUI({
                 Y.Assert.isInstanceOf(YUI, inst, 'Internal instance not created');
                 Y.Assert.isObject(inst.DD.Drag, 'DD Not loaded inside the frame');
                 Y.Assert.isObject(inst.DD.DDM, 'DD Not loaded inside the frame');
+                
+                iframe.destroy();
 
-                iframe._iframe.remove(true);
-                iframe._instance = null;
-                iframe = null;
+                Y.Assert.isNull(Y.one('#editor iframe'), 'iframe DOM node was not destroyed');
+
             }, 1500);
             
         },
@@ -62,8 +64,9 @@ YUI({
 
             Y.EditorBase.USE.push('dd');
             Y.EditorBase.USE.push('node-event-simulate');
-            var iframeReady = false,
-                editor = new Y.EditorBase({
+            var iframeReady = false;
+
+            editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
                 extracss: 'b { color: red; }'
             });
@@ -73,7 +76,6 @@ YUI({
                 iframeReady = true;
             });
             editor.on('nodeChange', function(e) {
-                console.log(arguments);
                 Y.Assert.areSame('mousedown', e.changedType, 'NodeChange working');
                 Y.Assert.isTrue(e.changedNode.test('b, body'), 'Changed Node');
 
@@ -87,12 +89,17 @@ YUI({
                 Y.Assert.isInstanceOf(YUI, inst, 'Internal instance not created');
                 Y.Assert.isObject(inst.DD.Drag, 'DD Not loaded inside the frame');
                 Y.Assert.isObject(inst.DD.DDM, 'DD Not loaded inside the frame');
-                console.log(Y);
                 Y.Assert.areSame(Y.EditorBase.FILTER_RGB(inst.one('b').getStyle('color')), '#ff0000', 'Extra CSS Failed');
                 inst.one('body').simulate('mousedown');
                 inst.one('b').simulate('mousedown');
 
             }, 1500);
+        },
+        test_window: function() {
+            Y.Assert.areEqual(Y.Node.getDOMNode(Y.one('#editor iframe').get('contentWindow')), Y.Node.getDOMNode(editor.getInstance().one('win')), 'Window object is not right');
+        },
+        test_doc: function() {
+            Y.Assert.areEqual(Y.Node.getDOMNode(Y.one('#editor iframe').get('contentWindow.document')), Y.Node.getDOMNode(editor.getInstance().one('doc')), 'Document object is not right');
         }
     };
     
