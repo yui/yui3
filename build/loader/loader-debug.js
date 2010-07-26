@@ -186,10 +186,9 @@ var NOT_FOUND       = {},
     SKIN_PREFIX     = "skin-",
     L               = Y.Lang,
     ON_PAGE         = GLOBAL_ENV.mods,
-
+    modulekey,
     win             = Y.config.win,
     localStorage    = win && win.localStorage,
-    modulekey       = META.md5, 
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -208,6 +207,8 @@ Y.Loader = function(o) {
 
     var defaults = META.modules, 
         self     = this;
+
+    modulekey       = META.md5;
 
     /**
      * Internal callback to handle multiple internal insert() calls
