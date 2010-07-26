@@ -160,10 +160,9 @@
     <span class="nx">SKIN_PREFIX</span>     <span class="o">=</span> <span class="s2">&quot;skin-&quot;</span><span class="p">,</span>
     <span class="nx">L</span>               <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
     <span class="nx">ON_PAGE</span>         <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
-
+    <span class="nx">modulekey</span><span class="p">,</span>
     <span class="nx">win</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
     <span class="nx">localStorage</span>    <span class="o">=</span> <span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">win</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">,</span>
-    <span class="nx">modulekey</span>       <span class="o">=</span> <span class="nx">META</span><span class="p">.</span><span class="nx">md5</span><span class="p">,</span> 
     <span class="nx">cache</span><span class="p">,</span>
 
     <span class="nx">_path</span>           <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
@@ -182,6 +181,8 @@
 
     <span class="kd">var</span> <span class="nx">defaults</span> <span class="o">=</span> <span class="nx">META</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span> 
         <span class="nx">self</span>     <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="nx">modulekey</span>       <span class="o">=</span> <span class="nx">META</span><span class="p">.</span><span class="nx">md5</span><span class="p">;</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Internal callback to handle multiple internal insert() calls</span>
