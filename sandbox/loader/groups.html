@@ -129,6 +129,27 @@
         }).use('yui2_anim', 'yui2_dragdrop', 'node', 'gallery-yql', 'yui2-yahoo', 'cssbase', 'event-custom', function(Y) {
         // }).use('gallery-yql', function(Y) {
             Y.log(YAHOO.util.Anim);
+            Y._config({
+                groups: {
+                    yui2c: {
+                        combine: true,
+                        base: 'http://yui.yahooapis.com/2.8.0r4/build/',
+                        comboBase: 'http://yui.yahooapis.com/combo?',
+                        root: '2.8.0r4/build/',
+                        modules:  {
+                            yui2_element: {
+                                path: "element/element.js",
+                                requires: ['yui2_yahoo', 'yui2_dom', 'yui2_event']
+                            }
+                        }
+                    }
+                }
+            });
+
+            Y.use('yui2_element', function() {
+                console.log(YAHOO.util.Element);
+            });
+
         });
         </script>
 

@@ -142,7 +142,8 @@ proto = {
             detail,
             config = this.config, 
             mods   = config.modules,
-            groups = config.groups;
+            groups = config.groups,
+            loader = this.Env._loader;
 
         // config._sig += this.stamp(o);
 
@@ -170,6 +171,10 @@ proto = {
                     config[name] = attr;
                 }
             }
+        }
+
+        if (loader) {
+            loader._config(o);
         }
     },
 
