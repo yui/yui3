@@ -153,7 +153,7 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _init: function (config) {
-        var initialState = config && config.initialState;
+        config = this._config = config || {};
 
         /**
          * Fired when the state changes. To be notified of all state changes
@@ -208,8 +208,8 @@ Y.mix(HistoryBase.prototype, {
         });
 
         // If initialState was provided, merge it into the current state.
-        if (initialState) {
-            this.add(initialState);
+        if (config.initialState) {
+            this.add(config.initialState);
         }
     },
 
@@ -1261,19 +1261,17 @@ Y.extend(HistoryHTML5, HistoryBase, {
     _init: function (config) {
         Y.on('popstate', this._onPopState, win, this);
 
-        HistoryHTML5.superclass._init.apply(this, arguments);
-
-        config = this._config = config || {};
-
         // If window.onload has already fired and the sessionStorage fallback is
         // enabled, try to restore the last state from sessionStorage. This
         // works around a shortcoming of the HTML5 history API: it's impossible
         // to get the current state if the popstate event fires before you've
         // subscribed to it. Since popstate fires immediately after onload,
         // the last state may be lost if you return to a page from another page.
-        if (config[ENABLE_FALLBACK] && YUI.Env.windowLoaded) {
+        if (config && config[ENABLE_FALLBACK] && YUI.Env.windowLoaded) {
             this._loadSessionState();
         }
+
+        HistoryHTML5.superclass._init.apply(this, arguments);
     },
 
     // -- Protected Methods ----------------------------------------------------
