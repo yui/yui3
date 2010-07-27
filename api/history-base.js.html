@@ -200,7 +200,7 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">initialState</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span><span class="p">;</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Fired when the state changes. To be notified of all state changes</span>
@@ -255,8 +255,8 @@
         <span class="p">});</span>
 
         <span class="c1">// If initialState was provided, merge it into the current state.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">initialState</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">initialState</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 

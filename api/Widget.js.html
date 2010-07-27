@@ -501,7 +501,7 @@
             <span class="k">delete</span> <span class="nx">_instances</span><span class="p">[</span><span class="nx">bbGuid</span><span class="p">];</span>
         <span class="p">}</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">_delegates</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">_delegates</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">info</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">instances</span><span class="p">[</span><span class="nx">widgetGuid</span><span class="p">])</span> <span class="p">{</span>
                 <span class="c1">//  Unregister this Widget instance as needing this delegated</span>
                 <span class="c1">//  event listener.</span>
@@ -509,8 +509,13 @@
 
                 <span class="c1">//  There are no more Widget instances using this delegated </span>
                 <span class="c1">//  event listener, so detach it.</span>
+
                 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">instances</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">info</span><span class="p">.</span><span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">_delegates</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">delete</span> <span class="nx">_delegates</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">});</span>
@@ -1275,17 +1280,15 @@
             <span class="nx">info</span> <span class="o">=</span> <span class="nx">_delegates</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span>
             <span class="nx">handle</span><span class="p">;</span>
 
-        <span class="c1">//  For each Node instance: Ensure that there is only one delegated </span>
+        <span class="c1">//  For each Node instance: Ensure that there is only one delegated</span>
         <span class="c1">//  event listener used to fire Widget UI events.</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Creating delegate for the &quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; event.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span>
 
             <span class="nx">handle</span> <span class="o">=</span> <span class="nx">parentNode</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
 
                 <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">getByNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-
                 <span class="c1">//  Make the DOM event a property of the custom event</span>
                 <span class="c1">//  so that developers still have access to it.</span>
                 <span class="nx">widget</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="p">{</span> <span class="nx">domEvent</span><span class="o">:</span> <span class="nx">evt</span> <span class="p">});</span>
@@ -1293,12 +1296,10 @@
             <span class="p">},</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">_getWidgetClassName</span><span class="p">());</span>
 
             <span class="nx">_delegates</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">info</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">instances</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">handle</span><span class="o">:</span> <span class="nx">handle</span> <span class="p">};</span>
-
         <span class="p">}</span>
 
         <span class="c1">//  Register this Widget as using this Node as a delegation container.</span>
         <span class="nx">info</span><span class="p">.</span><span class="nx">instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-
     <span class="p">},</span>
 
     <span class="cm">/**</span>

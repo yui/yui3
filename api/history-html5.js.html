@@ -133,19 +133,17 @@
     <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;popstate&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onPopState</span><span class="p">,</span> <span class="nx">win</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
 
-        <span class="nx">HistoryHTML5</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-
-        <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="p">{};</span>
-
         <span class="c1">// If window.onload has already fired and the sessionStorage fallback is</span>
         <span class="c1">// enabled, try to restore the last state from sessionStorage. This</span>
         <span class="c1">// works around a shortcoming of the HTML5 history API: it&#39;s impossible</span>
         <span class="c1">// to get the current state if the popstate event fires before you&#39;ve</span>
         <span class="c1">// subscribed to it. Since popstate fires immediately after onload,</span>
         <span class="c1">// the last state may be lost if you return to a page from another page.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">[</span><span class="nx">ENABLE_FALLBACK</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">[</span><span class="nx">ENABLE_FALLBACK</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_loadSessionState</span><span class="p">();</span>
         <span class="p">}</span>
+
+        <span class="nx">HistoryHTML5</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
