@@ -399,4 +399,4 @@ YUI.add('widget-position-align', function(Y) {
         Y.WidgetPositionAlign = PositionAlign;
 
 
-}, '@VERSION@' ,{requires:['widget', 'widget-position']});
+}, '@VERSION@' ,{requires:['widget-position']});

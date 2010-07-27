@@ -1133,19 +1133,22 @@
         "plugins": {
             "widget-child": {
                 "requires": [
-                    "base-build"
+                    "base-build", 
+                    "widget"
                 ]
             }, 
             "widget-parent": {
                 "requires": [
                     "base-build", 
-                    "arraylist"
+                    "arraylist", 
+                    "widget"
                 ]
             }, 
             "widget-position": {
                 "requires": [
                     "base-build", 
-                    "node-screen"
+                    "node-screen", 
+                    "widget"
                 ]
             }, 
             "widget-position-align": {
@@ -1160,13 +1163,15 @@
             }, 
             "widget-stack": {
                 "requires": [
-                    "base-build"
+                    "base-build", 
+                    "widget"
                 ], 
                 "skinnable": true
             }, 
             "widget-stdmod": {
                 "requires": [
-                    "base-build"
+                    "base-build", 
+                    "widget"
                 ]
             }
         }, 
@@ -1194,7 +1199,8 @@
     "widget-anim": {
         "requires": [
             "plugin", 
-            "anim-base"
+            "anim-base", 
+            "widget"
         ]
     }, 
     "widget-locale": {
