@@ -14,6 +14,7 @@ Y.Test.Runner.add(new Y.Test.Case({
     _should: {
         // Ignore all tests in browsers without HTML5 history support.
         ignore: {
+            'Y.HistoryHTML5 constructor should accept an initialState config property': noHTML5,
             'Y.History should === Y.HistoryHTML5 when history-hash is not loaded': noHTML5,
             'add() should change state': noHTML5,
             'add() should set a custom URL': noHTML5 || urlBug,
@@ -37,6 +38,13 @@ Y.Test.Runner.add(new Y.Test.Case({
         if (!noHTML5) {
             win.history.pushState(null, '', originalPath); // reset the URL path
         }
+    },
+
+    // -- Constructor ----------------------------------------------------------
+    // http://yuilibrary.com/projects/yui3/ticket/2529123
+    'Y.HistoryHTML5 constructor should accept an initialState config property': function () {
+        var history = new Y.HistoryHTML5({initialState: 'foo'});
+        Y.Assert.areSame('foo', history.get());
     },
 
     // -- useHistoryHTML5 ------------------------------------------------------

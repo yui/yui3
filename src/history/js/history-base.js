@@ -151,7 +151,7 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _init: function (config) {
-        var initialState = config && config.initialState;
+        config = this._config = config || {};
 
         /**
          * Fired when the state changes. To be notified of all state changes
@@ -206,8 +206,8 @@ Y.mix(HistoryBase.prototype, {
         });
 
         // If initialState was provided, merge it into the current state.
-        if (initialState) {
-            this.add(initialState);
+        if (config.initialState) {
+            this.add(config.initialState);
         }
     },
 
