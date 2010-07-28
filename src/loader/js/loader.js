@@ -113,7 +113,7 @@ var NOT_FOUND       = {},
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
     win             = Y.config.win,
-    localStorage    = win && win.localStorage,
+    localStorage    = win && win.JSON && win.localStorage,
     cache,
 
     _path           = function(dir, file, type, nomin) {
