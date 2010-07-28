@@ -1535,7 +1535,10 @@ Y.Loader.prototype = {
 
         this.skipped = {};
 
-        Y.mix(this.loaded, this.inserted);
+        // Y.mix(this.loaded, this.inserted);
+        YObject.each(this.inserted, function(v, k) {
+            Y.mix(this.loaded, this.getProvides(k));
+        }, this);
 
         fn = this.onSuccess;
         if (fn) {
