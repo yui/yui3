@@ -1,4 +1,92 @@
-Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
+function CartesianSeries(config)
+{
+    CartesianSeries.superclass.constructor.apply(this, arguments);
+}
+
+CartesianSeries.NAME = "cartesianSeries";
+
+CartesianSeries.ATTRS = {
+
+	type: {		
+  	    value: "cartesian"
+    },
+	/**
+	 * Order of this ISeries instance of this <code>type</code>.
+	 */
+	order: {
+	    value:NaN
+    },
+	/**
+	 * x coordinates for the series.
+	 */
+	xcoords: {
+        value: null
+	},
+	/**
+	 * y coordinates for the series
+	 */
+	ycoords: {
+        value: null
+	},
+	graph: {
+        value: null
+	},
+	/**
+	 * Reference to the <code>Axis</code> instance used for assigning 
+	 * x-values to the graph.
+	 */
+	xAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("xAxis");
+		},
+		
+        lazyAdd: false
+	},
+	
+	yAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("yAxis");
+		},
+		
+        lazyAdd: false
+	},
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the x-axis <code>Axis</code> instance.
+	 */
+	xKey: {
+        value: null,
+
+		validator: function(value)
+		{
+			return value !== this.get("xKey");
+		}
+	},
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the y-axis <code>Axis</code> instance.
+	 */
+	yKey: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("yKey");
+		}
+	},
+
+    direction: {
+        value: "horizontal"
+    }
+};
+
+Y.extend(CartesianSeries, Y.Renderer, {
     /**
      * @private
      */
@@ -9,14 +97,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
      */
     _bottomOrigin: null,
 
-    /**
-     * @private
-     */
-    renderUI: function()
-    {
-        this._setCanvas();
-    },
-    
     /**
      * @private
      */
@@ -37,25 +117,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this.after("xAxisChange", Y.bind(this.xAxisChangeHandler, this));
         this.after("yAxisChange", Y.bind(this.yAxisChangeHandler, this));
         this.after("stylesChange", Y.bind(this._updateHandler, this));
-    },
-   
-    /**
-     * @private
-     */
-    syncUI: function()
-    {
-        this.draw();
-    },
-
-    /**
-     * @private
-     */
-    _updateHandler: function(e)
-    {
-        if(this.get("rendered"))
-        {
-            this.draw();
-        }
     },
 
 	/**
@@ -151,6 +212,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 		{
             this.setAreaData();
             this.drawSeries();
+            this.fire("drawingComplete");
 		}
 	},
     
@@ -366,86 +428,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
                 bottom: 0
             }};
     }
-}, {
-ATTRS: {
-
-	type: {		
-  	    value: "cartesian"
-    },
-	/**
-	 * Order of this ISeries instance of this <code>type</code>.
-	 */
-	order: {
-	    value:NaN
-    },
-	/**
-	 * x coordinates for the series.
-	 */
-	xcoords: {
-        value: null
-	},
-	/**
-	 * y coordinates for the series
-	 */
-	ycoords: {
-        value: null
-	},
-	graph: {
-        value: null
-	},
-	/**
-	 * Reference to the <code>Axis</code> instance used for assigning 
-	 * x-values to the graph.
-	 */
-	xAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("xAxis");
-		},
-		
-        lazyAdd: false
-	},
-	
-	yAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("yAxis");
-		},
-		
-        lazyAdd: false
-	},
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the x-axis <code>Axis</code> instance.
-	 */
-	xKey: {
-        value: null,
-
-		validator: function(value)
-		{
-			return value !== this.get("xKey");
-		}
-	},
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the y-axis <code>Axis</code> instance.
-	 */
-	yKey: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("yKey");
-		}
-	},
-
-    direction: {
-        value: "horizontal"
-    }
-}
 });
 
+Y.CartesianSeries = CartesianSeries;

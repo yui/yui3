@@ -1070,6 +1070,7 @@ Y.CategoryAxis = CategoryAxis;
 		
 function Renderer(config)
 {
+    Renderer.superclass.constructor.apply(this, arguments);
 }
 
 Renderer.NAME = "renderer";
@@ -1112,7 +1113,45 @@ Renderer.ATTRS = {
 	}
 };
 
-Renderer.prototype = {
+Y.extend(Renderer, Y.Widget, {
+
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        if(!this.get("graphic"))
+        {
+            this._setCanvas();
+        }
+    },
+    
+    /**
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("stylesChange", Y.bind(this._updateHandler, this));
+    },
+   
+    /**
+     * @private
+     */
+    syncUI: function()
+    {
+        this.draw();
+    },
+
+    /**
+     * @private
+     */
+    _updateHandler: function(e)
+    {
+        if(this.get("rendered"))
+        {
+            this.draw();
+        }
+    },
 
     /**
      * @private
@@ -1133,9 +1172,8 @@ Renderer.prototype = {
         this.set("node", n);
         this.set("graphic", new Y.Graphic());
         this.get("graphic").render(this.get("node"));
-   },
+    },
 	
-
     /**
      * @private
      * @description Hash of newly set styles.
@@ -1171,7 +1209,11 @@ Renderer.prototype = {
 	_mergeStyles: function(a, b)
 	{
         this._newStyles = {};
-		Y.Object.each(a, function(value, key, a)
+		if(!b)
+        {
+            b = {};
+        }
+        Y.Object.each(a, function(value, key, a)
 		{
 			if(b.hasOwnProperty(key) && Y.Lang.isObject(value) && !Y.Lang.isArray(value))
 			{
@@ -1185,7 +1227,7 @@ Renderer.prototype = {
 		}, this);
 		return b;
 	},
-	
+
     /**
      * @private
      * @description Default style values.
@@ -1194,18 +1236,253 @@ Renderer.prototype = {
     {
         return {};
     }
-};
+});
 
 Y.Renderer = Renderer;
-Y.PieSeries = Y.Base.create("pieSeries", Y.Widget, [Y.Renderer], {
-    /**
-     * @private
-     */
-    renderUI: function()
-    {
-        this._setCanvas();
+function Marker(config)
+{
+	Marker.superclass.constructor.apply(this, arguments);
+}
+Marker.NAME = "marker";
+
+Marker.ATTRS = {
+    drawMethod: {
+        getter: function()
+        {
+            return this._drawMethod;
+        },
+        setter: function(val)
+        {
+            this._drawMethod = val;
+            return val;
+        }
     },
-    
+
+    state: {
+        value:"off"
+    },
+
+    index: {
+        value: null
+    }
+};
+
+Y.extend(Marker, Y.Renderer, {
+	bindUI: function()
+    {
+        this.after("stylesChange", Y.bind(this._updateHandler, this));
+        this.after("stateChange", Y.bind(this._updateHandler, this));
+        this.on("mouseover", Y.bind(this._handleMouseOver, this));
+        this.on("mousedown", Y.bind(this._handleMouseDown, this));
+        this.on("mouseout", Y.bind(this._handleMouseOut, this));
+        this.on("mouseup", Y.bind(this._handleMouseOver, this));
+    },
+
+    _handleMouseOver: function(e)
+    {
+        this.set("state", "over");
+    },
+
+    _handleMouseDown: function(e)
+    {
+        this.set("state", "down");
+    },
+
+    _handleMouseOut: function(e)
+    {
+        this.set("state", "off");
+    },
+
+    /**
+	 * @private (override)
+	 */
+	draw: function()
+    {
+        var graphic = this.get("graphic"),
+            styles = this._mergeStyles(this.get("styles"), {}),
+            state = this.get("state"),
+            node = this.get("node"),
+            stateStyles,
+            border,
+            fill,
+            borderWidth,
+            borderColor,
+            borderAlpha,
+            fillColor,
+            fillAlpha,
+            shape,
+            w,
+            h,
+            x = 0,
+            y = 0;
+        stateStyles = {
+                fill: this._mergeStyles(styles.fill, {}),
+                border: this._mergeStyles(styles.border, {}),
+                shape: styles.shape,
+                width: styles.width,
+                height: styles.height
+        };
+        if((state === "over" || state === "down") && styles[state])
+        {
+            stateStyles = this._mergeStyles(styles[state], stateStyles);
+        }
+        graphic.clear();
+        w = stateStyles.width;
+        h = stateStyles.height;
+        if(stateStyles.border && stateStyles.border.weight && stateStyles.border.weight > 0)
+        {
+            w += stateStyles.border.weight * 2;
+            h += stateStyles.border.weight * 2;
+            x += stateStyles.border.weight;
+            y += stateStyles.border.weight;
+        }
+        this.set("width", w);
+        this.set("height", h);
+        node.style.width = w + "px";
+        node.style.height = h + "px";
+        node.style.position = "absolute";
+        node.style.overflow = "visible"; 
+        graphic.setPosition(0, 0);
+        graphic.setSize(w, h);
+        if(stateStyles.border)
+        {
+            border = stateStyles.border;
+            borderWidth = border.weight || 0;
+            borderColor = border.color || "#000";
+            borderAlpha = border.alpha || 1;
+            if(borderWidth > 0)
+            {
+                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
+            }
+        }
+		if(stateStyles.fill)
+        {
+            fill = stateStyles.fill;
+            fillColor = fill.color || "#000";
+            fillAlpha = fill.alpha || 1;
+            graphic.beginFill(fillColor, fillAlpha);
+        }
+        this[stateStyles.shape](x, y, stateStyles);
+        graphic.end();
+	},
+
+    circle: function(x, y, config)
+    {
+        var graphic = this.get("graphic"),
+            w = config.width,
+            h = config.height;
+        graphic.drawEllipse(x, y, w, h);
+    },
+
+    _getDefaultStyles: function()
+    {
+        return {
+            fill:{
+                type: "solid",
+                color: "#000000",
+                alpha: 1,
+                colors:null,
+                alphas: null,
+                ratios: null
+            },
+            border:{
+                color: "#000000",
+                weight: 1,
+                alpha: 1
+            },
+            width: 6,
+            height: 6,
+            shape: "circle",
+
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            },
+
+            over: null,        
+            down: null
+        };
+    }
+});
+
+Y.Marker = Marker;
+function PieSeries(config)
+{
+    PieSeries.superclass.constructor.apply(this, arguments);
+}
+
+PieSeries.NAME = "pieSeries";
+
+PieSeries.ATTRS = {
+
+	type: {		
+  	    value: "pie"
+    },
+	/**
+	 * Order of this ISeries instance of this <code>type</code>.
+	 */
+	order: {
+	    value:NaN
+    },
+	graph: {
+        value: null
+	},
+	/**
+	 * Reference to the <code>Axis</code> instance used for assigning 
+	 * x-values to the graph.
+	 */
+	categoryAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("categoryAxis");
+		},
+		
+        lazyAdd: false
+	},
+	
+	valueAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("valueAxis");
+		},
+		
+        lazyAdd: false
+    },
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the category <code>Axis</code> instance.
+	 */
+	categoryKey: {
+        value: null,
+
+		validator: function(value)
+		{
+			return value !== this.get("categoryKey");
+		}
+	},
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the value <code>Axis</code> instance.
+	 */
+	valueKey: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("valueKey");
+		}
+	},
+
+    slices: null
+};
+
+Y.extend(PieSeries, Y.Renderer, {
     /**
      * @private
      */
@@ -1228,25 +1505,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.Widget, [Y.Renderer], {
         this.after("stylesChange", Y.bind(this._updateHandler, this));
     },
    
-    /**
-     * @private
-     */
-    syncUI: function()
-    {
-        this.draw();
-    },
-
-    /**
-     * @private
-     */
-    _updateHandler: function(e)
-    {
-        if(this.get("rendered"))
-        {
-            this.draw();
-        }
-    },
-
 	/**
 	 * Constant used to generate unique id.
 	 */
@@ -1415,11 +1673,20 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.Widget, [Y.Renderer], {
             borderAlphas:["1"]
         };
     }
-},{	
-ATTRS: {
+});
+	
+Y.PieSeries = PieSeries;
+function CartesianSeries(config)
+{
+    CartesianSeries.superclass.constructor.apply(this, arguments);
+}
+
+CartesianSeries.NAME = "cartesianSeries";
+
+CartesianSeries.ATTRS = {
 
 	type: {		
-  	    value: "pie"
+  	    value: "cartesian"
     },
 	/**
 	 * Order of this ISeries instance of this <code>type</code>.
@@ -1427,6 +1694,18 @@ ATTRS: {
 	order: {
 	    value:NaN
     },
+	/**
+	 * x coordinates for the series.
+	 */
+	xcoords: {
+        value: null
+	},
+	/**
+	 * y coordinates for the series
+	 */
+	ycoords: {
+        value: null
+	},
 	graph: {
         value: null
 	},
@@ -1434,57 +1713,58 @@ ATTRS: {
 	 * Reference to the <code>Axis</code> instance used for assigning 
 	 * x-values to the graph.
 	 */
-	categoryAxis: {
+	xAxis: {
 		value: null,
 
         validator: function(value)
 		{
-			return value !== this.get("categoryAxis");
+			return value !== this.get("xAxis");
 		},
 		
         lazyAdd: false
 	},
 	
-	valueAxis: {
+	yAxis: {
 		value: null,
 
         validator: function(value)
 		{
-			return value !== this.get("valueAxis");
+			return value !== this.get("yAxis");
 		},
 		
         lazyAdd: false
-    },
+	},
 	/**
 	 * Indicates which array to from the hash of value arrays in 
-	 * the category <code>Axis</code> instance.
+	 * the x-axis <code>Axis</code> instance.
 	 */
-	categoryKey: {
+	xKey: {
         value: null,
 
 		validator: function(value)
 		{
-			return value !== this.get("categoryKey");
+			return value !== this.get("xKey");
 		}
 	},
 	/**
 	 * Indicates which array to from the hash of value arrays in 
-	 * the value <code>Axis</code> instance.
+	 * the y-axis <code>Axis</code> instance.
 	 */
-	valueKey: {
+	yKey: {
 		value: null,
 
         validator: function(value)
 		{
-			return value !== this.get("valueKey");
+			return value !== this.get("yKey");
 		}
 	},
 
-    slices: null
-}
-});
+    direction: {
+        value: "horizontal"
+    }
+};
 
-Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
+Y.extend(CartesianSeries, Y.Renderer, {
     /**
      * @private
      */
@@ -1495,14 +1775,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
      */
     _bottomOrigin: null,
 
-    /**
-     * @private
-     */
-    renderUI: function()
-    {
-        this._setCanvas();
-    },
-    
     /**
      * @private
      */
@@ -1523,25 +1795,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this.after("xAxisChange", Y.bind(this.xAxisChangeHandler, this));
         this.after("yAxisChange", Y.bind(this.yAxisChangeHandler, this));
         this.after("stylesChange", Y.bind(this._updateHandler, this));
-    },
-   
-    /**
-     * @private
-     */
-    syncUI: function()
-    {
-        this.draw();
-    },
-
-    /**
-     * @private
-     */
-    _updateHandler: function(e)
-    {
-        if(this.get("rendered"))
-        {
-            this.draw();
-        }
     },
 
 	/**
@@ -1637,6 +1890,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 		{
             this.setAreaData();
             this.drawSeries();
+            this.fire("drawingComplete");
 		}
 	},
     
@@ -1852,89 +2106,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
                 bottom: 0
             }};
     }
-}, {
-ATTRS: {
-
-	type: {		
-  	    value: "cartesian"
-    },
-	/**
-	 * Order of this ISeries instance of this <code>type</code>.
-	 */
-	order: {
-	    value:NaN
-    },
-	/**
-	 * x coordinates for the series.
-	 */
-	xcoords: {
-        value: null
-	},
-	/**
-	 * y coordinates for the series
-	 */
-	ycoords: {
-        value: null
-	},
-	graph: {
-        value: null
-	},
-	/**
-	 * Reference to the <code>Axis</code> instance used for assigning 
-	 * x-values to the graph.
-	 */
-	xAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("xAxis");
-		},
-		
-        lazyAdd: false
-	},
-	
-	yAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("yAxis");
-		},
-		
-        lazyAdd: false
-	},
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the x-axis <code>Axis</code> instance.
-	 */
-	xKey: {
-        value: null,
-
-		validator: function(value)
-		{
-			return value !== this.get("xKey");
-		}
-	},
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the y-axis <code>Axis</code> instance.
-	 */
-	yKey: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("yKey");
-		}
-	},
-
-    direction: {
-        value: "horizontal"
-    }
-}
 });
 
+Y.CartesianSeries = CartesianSeries;
 function MarkerSeries(config)
 {
 	MarkerSeries.superclass.constructor.apply(this, arguments);
@@ -1966,60 +2140,45 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
             style = this.get("styles"),
             w = style.width,
             h = style.height,
-            fillColor = style.fill.color,
-            fillAlpha = style.fill.alpha,
-            fillType = style.fill.type || "solid",
-            borderWeight = style.border.weight,
-            borderColor = style.border.color,
-            borderAlpha = style.border.alpha || 1,
-            colors = style.fill.colors,
-            alphas = style.fill.alphas || [],
-            ratios = style.fill.ratios || [],
-            rotation = style.fill.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawCircle",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
-            left;
+            left,
+            markers = [],
+            marker,
+            mnode;
         for(; i < len; ++i)
         {
             top = ycoords[i];
             left = xcoords[i];
-            if(borderWeight > 0)
-            {
-                graphic.lineStyle(borderWeight, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, fillAlpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            marker = new Y.Marker({styles:this.get("styles")});
+            marker.render(this.get("node"));
+            mnode = marker.get("node");
+            mnode.style.top = (top - marker.get("height")/2) + "px";
+            mnode.style.left = (left - marker.get("width")/2) + "px";
+            marker.on("mouseover", Y.bind(this._markerEventHandler, this));
+            marker.on("mousedown", Y.bind(this._markerEventHandler, this));
+            marker.on("mouseup", Y.bind(this._markerEventHandler, this));
+            marker.on("mouseout", Y.bind(this._markerEventHandler, this));
+            markers.push(marker);
         }
+        this._markers = markers;
  	},
 
-    /**
-     * @private
-     * @description Draws a marker
-     */
-    drawMarker: function(graphic, func, left, top, w, h)
+    _markerEventHandler: function(e)
     {
-        if(func === "drawCircle")
-        {
-            graphic.drawCircle(left, top, w/2);
-        }
-        else
-        {
-            left -= w/2;
-            top -= h/2;
-            graphic[func].call(graphic, left, top, w, h);
-        }
+        var type = e.type,
+            marker = e.currentTarget,
+            mnode = marker.get("node"),
+            w = marker.get("width"),
+            h = marker.get("height"),
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            i = Y.Array.indexOf(this._markers, marker);
+            mnode.style.left = (xcoords[i] - w/2) + "px";
+            mnode.style.top = (ycoords[i] - h/2) + "px";    
     },
 
 	_getDefaultStyles: function()
@@ -4112,8 +4271,101 @@ Y.Graph = Graph;
 /**
  * Renders an axis.
  */
-Y.AxisRenderer = Y.Base.create("axisrenderer", Y.Widget, [Y.Renderer], {
-	/**
+function AxisRenderer(config)
+{
+    AxisRenderer.superclass.constructor.apply(this, arguments);
+}
+
+AxisRenderer.NAME = "axisRenderer";
+
+AxisRenderer.ATTRS = {
+        /**
+         * The graphic in which the axis line and ticks will be rendered.
+         */
+        graphic: {
+            value: null
+        },
+        
+        /**
+         * Reference to the <code>Axis</code> instance used for assigning 
+         * <code>AxisRenderer</code>.
+         */
+        axis: {
+            
+            value: null,
+
+            validator: function(value)
+            {
+                return value !== this.get("axis");
+            }
+        },
+
+        /**
+         * Contains the contents of the axis. 
+         */
+        node: {
+            value: null
+        },
+
+        /**
+         * Direction of the axis.
+         */
+        position: {
+            value: "bottom",
+
+            validator: function(val)
+            {
+                return ((val !== this.get("position")) && (val === "bottom" || val === "top" || val === "left" || val === "right"));
+            }
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the top of the axis.
+         */
+        topTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the bottom of the axis.
+         */
+        bottomTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the left of the axis.
+         */
+        leftTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the right side of the axis.
+         */
+        rightTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Indicates whether the axis overlaps the graph. If an axis is the inner most axis on a given
+         * position and the tick position is inside or cross, the axis will need to overlap the graph.
+         */
+        overlapGraph: {
+            value:true,
+
+            validator: function(val)
+            {
+                return Y.Lang.isBoolean(val);
+            }
+        }
+    };
+    Y.extend(AxisRenderer, Y.Renderer, {    
+    /**
      * @private
      * @description Triggered by a change in the axis attribute. Removes any old axis listeners and sets up listeners for the new axis.
      */
@@ -4275,98 +4527,9 @@ Y.AxisRenderer = Y.Base.create("axisrenderer", Y.Widget, [Y.Renderer], {
         };
     }
 
-}, {
-    NAME: "axisRenderer",
-
-    ATTRS:
-    {
-        /**
-         * The graphic in which the axis line and ticks will be rendered.
-         */
-        graphic: {
-            value: null
-        },
-        
-        /**
-         * Reference to the <code>Axis</code> instance used for assigning 
-         * <code>AxisRenderer</code>.
-         */
-        axis: {
-            
-            value: null,
-
-            validator: function(value)
-            {
-                return value !== this.get("axis");
-            }
-        },
-
-        /**
-         * Contains the contents of the axis. 
-         */
-        node: {
-            value: null
-        },
-
-        /**
-         * Direction of the axis.
-         */
-        position: {
-            value: "bottom",
-
-            validator: function(val)
-            {
-                return ((val !== this.get("position")) && (val === "bottom" || val === "top" || val === "left" || val === "right"));
-            }
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the top of the axis.
-         */
-        topTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the bottom of the axis.
-         */
-        bottomTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the left of the axis.
-         */
-        leftTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the right side of the axis.
-         */
-        rightTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Indicates whether the axis overlaps the graph. If an axis is the inner most axis on a given
-         * position and the tick position is inside or cross, the axis will need to overlap the graph.
-         */
-        overlapGraph: {
-            value:true,
-
-            validator: function(val)
-            {
-                return Y.Lang.isBoolean(val);
-            }
-        }
-    }
 });
-        
+
+Y.AxisRenderer = AxisRenderer;        
 /**
  * Contains algorithms for rendering a left axis.
  */

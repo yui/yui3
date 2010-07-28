@@ -1,5 +1,6 @@
 function Renderer(config)
 {
+    Renderer.superclass.constructor.apply(this, arguments);
 }
 
 Renderer.NAME = "renderer";
@@ -42,7 +43,45 @@ Renderer.ATTRS = {
 	}
 };
 
-Renderer.prototype = {
+Y.extend(Renderer, Y.Widget, {
+
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        if(!this.get("graphic"))
+        {
+            this._setCanvas();
+        }
+    },
+    
+    /**
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("stylesChange", Y.bind(this._updateHandler, this));
+    },
+   
+    /**
+     * @private
+     */
+    syncUI: function()
+    {
+        this.draw();
+    },
+
+    /**
+     * @private
+     */
+    _updateHandler: function(e)
+    {
+        if(this.get("rendered"))
+        {
+            this.draw();
+        }
+    },
 
     /**
      * @private
@@ -63,9 +102,8 @@ Renderer.prototype = {
         this.set("node", n);
         this.set("graphic", new Y.Graphic());
         this.get("graphic").render(this.get("node"));
-   },
+    },
 	
-
     /**
      * @private
      * @description Hash of newly set styles.
@@ -101,7 +139,11 @@ Renderer.prototype = {
 	_mergeStyles: function(a, b)
 	{
         this._newStyles = {};
-		Y.Object.each(a, function(value, key, a)
+		if(!b)
+        {
+            b = {};
+        }
+        Y.Object.each(a, function(value, key, a)
 		{
 			if(b.hasOwnProperty(key) && Y.Lang.isObject(value) && !Y.Lang.isArray(value))
 			{
@@ -115,7 +157,7 @@ Renderer.prototype = {
 		}, this);
 		return b;
 	},
-	
+
     /**
      * @private
      * @description Default style values.
@@ -124,6 +166,6 @@ Renderer.prototype = {
     {
         return {};
     }
-};
+});
 
 Y.Renderer = Renderer;

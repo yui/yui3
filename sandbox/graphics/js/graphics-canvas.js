@@ -10,7 +10,6 @@ Graphic.prototype = {
         this._initProps();
     },
 
-
     /** 
      *Specifies a bitmap fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
@@ -188,9 +187,15 @@ Graphic.prototype = {
      * Draws a circle
      */
 	drawCircle: function(x, y, radius) {
+        if(this._stroke && this._context.lineWidth > 0)
+        {
+            x += this._context.lineWidth;
+            y += this._context.lineWidth;
+            radius += this._context.lineWidth;
+        }
         var context = this._context,
-            startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180;
+            startAngle = 0,
+            endAngle = 2 * Math.PI;
         this._shape = {
             x:x - radius,
             y:y - radius,
@@ -216,6 +221,11 @@ Graphic.prototype = {
             w:w,
             h:h
         };
+        if(this._stroke && this._context.lineWidth > 0)
+        {
+            this._shape.w += this._context.lineWidth * 2;
+            this._shape.h += this._context.lineWidth * 2;
+        }
         var context = this._context,
             l = 8,
             theta = -(45/180) * Math.PI,
@@ -230,6 +240,7 @@ Graphic.prototype = {
         this._drawingComplete = false;
         this._trackPos(x, y);
         this._trackSize(x + w, y + h);
+
         context.beginPath();
         ax = centerX + Math.cos(0) * radius;
         ay = centerY + Math.sin(0) * yRadius;
@@ -411,6 +422,11 @@ Graphic.prototype = {
         this._canvas.height = h;
     },
 
+    getWidth: function()
+    {
+        return this._canvas.offsetWidth;
+    },
+
     setPosition: function(x, y)
     {
         this._node.style.left = x + "px";
@@ -433,6 +449,8 @@ Graphic.prototype = {
         this._node.appendChild(this._canvas);
         this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
         this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
+        this._canvas.style.position = "absolute";
+    
         return this;
     },
 
@@ -452,7 +470,7 @@ Graphic.prototype = {
 
         this._width = 0;
         this._height = 0;
-        this._shape = null;
+        //this._shape = null;
         this._x = 0;
         this._y = 0;
         this._fillType = null;
@@ -617,7 +635,7 @@ Graphic.prototype = {
             context.strokeStyle = this._strokeStyle;
             context.stroke();
         }
-        this._shape = null;
+        //this._shape = null;
         this._drawingComplete = true;
     },
 
@@ -670,7 +688,6 @@ Graphic.prototype = {
      */
     _createGraphic: function(config) {
         var graphic = Y.config.doc.createElement('canvas');
-
         // no size until drawn on
         graphic.width = 600;
         graphic.height = 600;

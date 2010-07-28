@@ -139,6 +139,24 @@ VMLGraphics.prototype = {
      */
     clear: function() {
         this._path = '';
+        this._removeChildren(this._vml);
+    },
+
+    /**
+     * @private
+     */
+    _removeChildren: function(node)
+    {
+        if(node.hasChildNodes())
+        {
+            var child;
+            while(node.firstChild)
+            {
+                child = node.firstChild;
+                this._removeChildren(child);
+                node.removeChild(child);
+            }
+        }
     },
 
     /**
@@ -504,32 +522,51 @@ VMLGraphics.prototype = {
     getShape: function(config) {
         var node,
             shape,
-            fill = config.fill;
-        this._width = config.w;
-        this._height = config.h;
-        this._x = 0;
-        this._y = 0;
+            fill = config.fill,
+            border = config.border;
+       // this._width = config.w;
+        //this._height = config.h;
+        //this._x = 0;
+        //this._y = 0;
         shape = config.shape || "shape";
         node = this._createGraphicNode(shape);
         node.style.width = config.w + "px";
         node.style.height = config.h + "px";
-        node.strokecolor = config.border.color;
-        node.strokeweight = config.border.width;
+        if(border)
+        {
+            node.strokecolor = border.color || "#000000";
+            node.strokeweight = border.width || 1;
+        }
+        else
+        {
+            node.stroked = false;
+        }
         if(fill.type === "linear" || fill.type === "radial")
         {
             this.beginGradientFill(fill);
+        node.appendChild(this._getFill());
         }
         else if(fill.type === "bitmap")
         {
             this.beginBitmapFill(fill);
+        node.appendChild(this._getFill());
         }
         else
         {
-            this.beginFill(fill.color, fill.alpha); 
+           // shape.fillColor = fill.color;
+            node.setAttribute("fillcolor", fill.color);
         }
+        node.style.display = "block";
+        node.style.position = "absolute";
+        node.coordsize = config.w + " " + config.h;
         node.filled = true;
-        node.appendChild(this._getFill());
-       return node; 
+        //this._vml.appendChild(node);
+        return node; 
+    },
+
+    addChild: function(child)
+    {
+        this._vml.appendChild(child);
     }
 };
 

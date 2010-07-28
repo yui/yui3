@@ -1,12 +1,78 @@
-Y.PieSeries = Y.Base.create("pieSeries", Y.Widget, [Y.Renderer], {
-    /**
-     * @private
-     */
-    renderUI: function()
-    {
-        this._setCanvas();
+function PieSeries(config)
+{
+    PieSeries.superclass.constructor.apply(this, arguments);
+}
+
+PieSeries.NAME = "pieSeries";
+
+PieSeries.ATTRS = {
+
+	type: {		
+  	    value: "pie"
     },
-    
+	/**
+	 * Order of this ISeries instance of this <code>type</code>.
+	 */
+	order: {
+	    value:NaN
+    },
+	graph: {
+        value: null
+	},
+	/**
+	 * Reference to the <code>Axis</code> instance used for assigning 
+	 * x-values to the graph.
+	 */
+	categoryAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("categoryAxis");
+		},
+		
+        lazyAdd: false
+	},
+	
+	valueAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("valueAxis");
+		},
+		
+        lazyAdd: false
+    },
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the category <code>Axis</code> instance.
+	 */
+	categoryKey: {
+        value: null,
+
+		validator: function(value)
+		{
+			return value !== this.get("categoryKey");
+		}
+	},
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the value <code>Axis</code> instance.
+	 */
+	valueKey: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("valueKey");
+		}
+	},
+
+    slices: null
+};
+
+Y.extend(PieSeries, Y.Renderer, {
     /**
      * @private
      */
@@ -29,25 +95,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.Widget, [Y.Renderer], {
         this.after("stylesChange", Y.bind(this._updateHandler, this));
     },
    
-    /**
-     * @private
-     */
-    syncUI: function()
-    {
-        this.draw();
-    },
-
-    /**
-     * @private
-     */
-    _updateHandler: function(e)
-    {
-        if(this.get("rendered"))
-        {
-            this.draw();
-        }
-    },
-
 	/**
 	 * Constant used to generate unique id.
 	 */
@@ -216,72 +263,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.Widget, [Y.Renderer], {
             borderAlphas:["1"]
         };
     }
-},{	
-ATTRS: {
-
-	type: {		
-  	    value: "pie"
-    },
-	/**
-	 * Order of this ISeries instance of this <code>type</code>.
-	 */
-	order: {
-	    value:NaN
-    },
-	graph: {
-        value: null
-	},
-	/**
-	 * Reference to the <code>Axis</code> instance used for assigning 
-	 * x-values to the graph.
-	 */
-	categoryAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("categoryAxis");
-		},
-		
-        lazyAdd: false
-	},
-	
-	valueAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("valueAxis");
-		},
-		
-        lazyAdd: false
-    },
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the category <code>Axis</code> instance.
-	 */
-	categoryKey: {
-        value: null,
-
-		validator: function(value)
-		{
-			return value !== this.get("categoryKey");
-		}
-	},
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the value <code>Axis</code> instance.
-	 */
-	valueKey: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("valueKey");
-		}
-	},
-
-    slices: null
-}
 });
-
+	
+Y.PieSeries = PieSeries;
