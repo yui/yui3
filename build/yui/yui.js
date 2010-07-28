@@ -39,7 +39,7 @@ if (typeof YUI === 'undefined') {
             // set up the core environment
             Y._init();
             if (gconf) {
-                Y._config(gconf);
+                Y.applyConfig(gconf);
             }
             // bind the specified additional modules for this instance
             if (!l) {
@@ -49,7 +49,7 @@ if (typeof YUI === 'undefined') {
 
         if (l) {
             for (; i<l; i++) {
-                Y._config(a[i]);
+                Y.applyConfig(a[i]);
             }
 
             Y._setup();
@@ -133,7 +133,16 @@ if (VERSION.indexOf('@') > -1) {
 }
         
 proto = {
-    _config: function(o) {
+    /**
+     * Applies a new configuration object to the YUI instance config.
+     * This will merge new group/module definitions, and will also
+     * update the loader cache if necessary.  Updating Y.config directly
+     * will not update the cache.
+     * @method applyConfig
+     * @param the configuration object
+     * @since 3.2.0
+     */
+    applyConfig: function(o) {
 
         o = o || NOOP;
         
@@ -176,6 +185,10 @@ proto = {
         if (loader) {
             loader._config(o);
         }
+    },
+
+    _config: function(o) {
+        this.applyConfig(o);
     },
 
     /**
@@ -860,7 +873,10 @@ proto = {
  * The config object contains all of the configuration options for
  * the YUI instance.  This object is supplied by the implementer 
  * when instantiating a YUI instance.  Some properties have default
- * values if they are not supplied by the implementer.
+ * values if they are not supplied by the implementer.  This should
+ * not be updated directly because some values are cached.  Use
+ * applyConfig() to update the config object on a YUI instance that
+ * has already been configured.
  *
  * @class config
  * @static
