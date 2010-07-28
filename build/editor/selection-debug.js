@@ -90,7 +90,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @method filter
     */
-    Y.Selection.filter = function() {
+    Y.Selection.filter = function(blocks) {
         var nodes = Y.all(Y.Selection.ALL),
             baseNodes = Y.all('strong,em'),
             ls;
@@ -133,8 +133,10 @@ YUI.add('selection', function(Y) {
                 v.remove();
             }
         });
-
-        Y.Selection.filterBlocks();
+        
+        if (blocks) {
+            Y.Selection.filterBlocks();
+        }
     };
 
     /**
@@ -143,7 +145,9 @@ YUI.add('selection', function(Y) {
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
-        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, sel;
+        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
+            sel, single, br;
+
         if (childs) {
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
@@ -165,6 +169,23 @@ YUI.add('selection', function(Y) {
                 }
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
+        }
+        single = Y.all('p');
+        if (single.size() === 1) {
+            Y.log('Only One Paragragh, focus it..', 'info', 'selection');
+            br = single.item(0).all('br');
+            if (br.size() === 1) {
+                br.item(0).remove();
+                var html = single.item(0).get('innerHTML');
+                if (html == '' || html == ' ') {
+                    single.set('innerHTML', '<span>&nbsp;</span>');
+                    sel = new Y.Selection();
+                    try {
+                        sel.selectNode(single.item(0).get('firstChild'), true);
+                    } catch (er) {}
+                    
+                }
+            }
         }
     };
 
@@ -452,17 +473,22 @@ YUI.add('selection', function(Y) {
                 //TODO using Y.Node.create here throws warnings & strips first white space character
                 //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
                 //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
-                inHTML = node.get(textContent);
-                txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
-                txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
-                
-                node.replace(txt, node);
-                newNode = Y.Node.create(html);
-                txt.insert(newNode, 'after');
-                if (txt2 && txt2.get('length')) {
-                    newNode.insert(cur, 'after');
-                    cur.insert(txt2, 'after');
-                    this.selectNode(cur, collapse);
+                if (offset > 0) {
+                    inHTML = node.get(textContent);
+                    txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
+                    txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
+                    
+                    node.replace(txt, node);
+                    newNode = Y.Node.create(html);
+                    txt.insert(newNode, 'after');
+                    if (txt2 && txt2.get('length')) {
+                        newNode.insert(cur, 'after');
+                        cur.insert(txt2, 'after');
+                        this.selectNode(cur, collapse);
+                    }
+                } else {
+                    newNode = Y.Node.create(html);
+                    node.append(newNode);
                 }
             }
             return newNode;
@@ -595,10 +621,10 @@ YUI.add('selection', function(Y) {
                     node = node.parentNode;
                 }
                 range.moveToElementText(node);
-                range.select();
                 if (collapse) {
                     range.collapse(((end) ? false : true));
                 }
+                range.select();
             }
             return this;
         },
@@ -618,16 +644,26 @@ YUI.add('selection', function(Y) {
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
         },
+        removeCursor: function(keep) {
+            var cur = this.getCursor();
+            if (cur) {
+                if (keep) {
+                    cur.removeAttribute('id');
+                    cur.set('innerHTML', '&nbsp;');
+                } else {
+                    cur.remove();
+                }
+            }
+            return cur;
+        },
         /**
         * Gets a stored cursor and focuses it for editing, must be called sometime after setCursor
         * @method focusCursor
         * @return {Node}
         */
         focusCursor: function() {
-            var cur = this.getCursor();
+            var cur = this.removeCursor(true);
             if (cur) {
-                cur.removeAttribute('id');
-                cur.set('innerHTML', '&nbsp;&nbsp;');
                 this.selectNode(cur, true, true);
             }
         },

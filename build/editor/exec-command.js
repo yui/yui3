@@ -123,6 +123,22 @@ YUI.add('exec-command', function(Y) {
                     return (new inst.Selection()).insertContent(html);
                 },
                 /**
+                * Inserts the provided HTML at the cursor, and focuses the cursor afterwards.
+                * @method COMMANDS.insertandfocus
+                * @static
+                * @param {String} cmd The command executed: insertandfocus
+                * @param {String} html The html to insert
+                * @return {Node} Node instance of the item touched by this command.
+                */
+                insertandfocus: function(cmd, html) {
+                    var inst = this.getInstance(), out, sel;
+                    html += inst.Selection.CURSOR;
+                    out = this.command('inserthtml', html);
+                    sel = new inst.Selection();
+                    sel.focusCursor();
+                    return out;
+                },
+                /**
                 * Inserts an image at the cursor position
                 * @method COMMANDS.insertimage
                 * @static
@@ -157,30 +173,14 @@ YUI.add('exec-command', function(Y) {
                     var inst = this.getInstance();
                     return (new inst.Selection()).getSelected().removeClass(cls);
                 },
-                bidi: function() {
-                    var inst = this.getInstance(),
-                        sel = new inst.Selection(),
-                        blockItem, dir,
-                        blocks = 'p,div,li,body'; //More??
-
-                    if (sel.anchorNode) {
-                        blockItem = sel.anchorNode;
-                        if (!sel.anchorNode.test(blocks)) {
-                            blockItem = sel.anchorNode.ancestor(blocks);
-                        }
-                        dir = blockItem.getAttribute('dir');
-                        if (dir === '') {
-                            dir = inst.one('html').getAttribute('dir');
-                        }
-                        if (dir === 'rtl') {
-                            dir = 'ltr';
-                        } else {
-                            dir = 'rtl';
-                        }
-                        blockItem.setAttribute('dir', dir);
-                    }
-                    return blockItem;
-                },
+                /**
+                * Adds a background color to the current selection, or creates a new element and applies it
+                * @method COMMANDS.backcolor
+                * @static
+                * @param {String} cmd The command executed: backcolor
+                * @param {String} val The color value to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
@@ -203,28 +203,52 @@ YUI.add('exec-command', function(Y) {
                         this._command('styleWithCSS', false);
                     }
                 },
+                /**
+                * Sugar method, calles backcolor
+                * @method COMMANDS.hilitecolor
+                * @static
+                * @param {String} cmd The command executed: backcolor
+                * @param {String} val The color value to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 hilitecolor: function() {
-                    ExecCommand.COMMANDS.backcolor.apply(this, arguments);
+                    return ExecCommand.COMMANDS.backcolor.apply(this, arguments);
                 },
+                /**
+                * Adds a font name to the current selection, or creates a new element and applies it
+                * @method COMMANDS.fontname
+                * @static
+                * @param {String} cmd The command executed: fontname
+                * @param {String} val The font name to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 fontname: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
 
                     if (sel.isCollapsed) {
                         n = this.command('inserthtml', '<span style="font-family: ' + val + '">&nbsp;</span>');
-                        sel.selectNode(n.get('firstChild'));
+                        sel.selectNode(n.get('firstChild'), true);
                         return n;
                     } else {
                         return this._command('fontname', val);
                     }
                 },
+                /**
+                * Adds a fontsize to the current selection, or creates a new element and applies it
+                * @method COMMANDS.fontsize
+                * @static
+                * @param {String} cmd The command executed: fontsize
+                * @param {String} val The font size to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 fontsize: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
 
                     if (sel.isCollapsed) {
                         n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
-                        sel.selectNode(n.get('firstChild'));
+                        sel.selectNode(n.get('firstChild'), true);
                         return n;
                     } else {
                         return this._command('fontsize', val);

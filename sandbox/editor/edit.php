@@ -184,6 +184,7 @@ This is some <strong>other</strong> loose test.
 <script type="text/javascript" src="js/lists.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -204,7 +205,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
@@ -238,9 +239,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     }, '#test1 > div', 'button');
 
     Y.delegate('change', function(e) {
-        //console.log(e);
         var cmd = e.currentTarget.get('id'),
             val = e.currentTarget.get('value');
+        
         editor.frame.focus();
         var ex_return = editor.execCommand(cmd, val);
     }, '#test1 > div', 'select');
@@ -336,7 +337,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
-        extracss: 'body { color: red; }'
+        extracss: 'body { color: red; } p { border: 1px solid green; padding: .25em; margin: 1em; }'
     });
     editor.after('nodeChange', function(e) {
         //if (e.changedType !== 'execcommand') {
@@ -362,7 +363,21 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     });
     //Disabled for IE testing..
     //editor.plug(Y.Plugin.EditorLists);
-    editor.plug(Y.Plugin.EditorTab);
+    //editor.plug(Y.Plugin.EditorTab);
+    editor.plug(Y.Plugin.EditorBidi);
+
+    editor.on('frame:keydown', function(e) {
+        if (e.keyCode === 13) {
+            if (e.ctrlKey) {
+                //console.log('Control Pressed');
+                //editor.execCommand('insertandfocus', '<br>');
+            } else {
+                //console.log('Not Pressed');
+            }
+            //console.log(e);
+            //e.frameEvent.halt();
+        }
+    });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
 

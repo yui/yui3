@@ -704,7 +704,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @method filter
     */
-    Y.Selection.filter = function() {
+    Y.Selection.filter = function(blocks) {
         var nodes = Y.all(Y.Selection.ALL),
             baseNodes = Y.all('strong,em'),
             ls;
@@ -746,8 +746,10 @@ YUI.add('selection', function(Y) {
                 v.remove();
             }
         });
-
-        Y.Selection.filterBlocks();
+        
+        if (blocks) {
+            Y.Selection.filterBlocks();
+        }
     };
 
     /**
@@ -756,7 +758,9 @@ YUI.add('selection', function(Y) {
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
-        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, sel;
+        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
+            sel, single, br;
+
         if (childs) {
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
@@ -778,6 +782,22 @@ YUI.add('selection', function(Y) {
                 }
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
+        }
+        single = Y.all('p');
+        if (single.size() === 1) {
+            br = single.item(0).all('br');
+            if (br.size() === 1) {
+                br.item(0).remove();
+                var html = single.item(0).get('innerHTML');
+                if (html == '' || html == ' ') {
+                    single.set('innerHTML', '<span>&nbsp;</span>');
+                    sel = new Y.Selection();
+                    try {
+                        sel.selectNode(single.item(0).get('firstChild'), true);
+                    } catch (er) {}
+                    
+                }
+            }
         }
     };
 
@@ -1064,17 +1084,22 @@ YUI.add('selection', function(Y) {
                 //TODO using Y.Node.create here throws warnings & strips first white space character
                 //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
                 //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
-                inHTML = node.get(textContent);
-                txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
-                txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
-                
-                node.replace(txt, node);
-                newNode = Y.Node.create(html);
-                txt.insert(newNode, 'after');
-                if (txt2 && txt2.get('length')) {
-                    newNode.insert(cur, 'after');
-                    cur.insert(txt2, 'after');
-                    this.selectNode(cur, collapse);
+                if (offset > 0) {
+                    inHTML = node.get(textContent);
+                    txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
+                    txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
+                    
+                    node.replace(txt, node);
+                    newNode = Y.Node.create(html);
+                    txt.insert(newNode, 'after');
+                    if (txt2 && txt2.get('length')) {
+                        newNode.insert(cur, 'after');
+                        cur.insert(txt2, 'after');
+                        this.selectNode(cur, collapse);
+                    }
+                } else {
+                    newNode = Y.Node.create(html);
+                    node.append(newNode);
                 }
             }
             return newNode;
@@ -1203,10 +1228,10 @@ YUI.add('selection', function(Y) {
                     node = node.parentNode;
                 }
                 range.moveToElementText(node);
-                range.select();
                 if (collapse) {
                     range.collapse(((end) ? false : true));
                 }
+                range.select();
             }
             return this;
         },
@@ -1226,16 +1251,26 @@ YUI.add('selection', function(Y) {
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
         },
+        removeCursor: function(keep) {
+            var cur = this.getCursor();
+            if (cur) {
+                if (keep) {
+                    cur.removeAttribute('id');
+                    cur.set('innerHTML', '&nbsp;');
+                } else {
+                    cur.remove();
+                }
+            }
+            return cur;
+        },
         /**
         * Gets a stored cursor and focuses it for editing, must be called sometime after setCursor
         * @method focusCursor
         * @return {Node}
         */
         focusCursor: function() {
-            var cur = this.getCursor();
+            var cur = this.removeCursor(true);
             if (cur) {
-                cur.removeAttribute('id');
-                cur.set('innerHTML', '&nbsp;&nbsp;');
                 this.selectNode(cur, true, true);
             }
         },
@@ -1376,6 +1411,22 @@ YUI.add('exec-command', function(Y) {
                     return (new inst.Selection()).insertContent(html);
                 },
                 /**
+                * Inserts the provided HTML at the cursor, and focuses the cursor afterwards.
+                * @method COMMANDS.insertandfocus
+                * @static
+                * @param {String} cmd The command executed: insertandfocus
+                * @param {String} html The html to insert
+                * @return {Node} Node instance of the item touched by this command.
+                */
+                insertandfocus: function(cmd, html) {
+                    var inst = this.getInstance(), out, sel;
+                    html += inst.Selection.CURSOR;
+                    out = this.command('inserthtml', html);
+                    sel = new inst.Selection();
+                    sel.focusCursor();
+                    return out;
+                },
+                /**
                 * Inserts an image at the cursor position
                 * @method COMMANDS.insertimage
                 * @static
@@ -1410,30 +1461,14 @@ YUI.add('exec-command', function(Y) {
                     var inst = this.getInstance();
                     return (new inst.Selection()).getSelected().removeClass(cls);
                 },
-                bidi: function() {
-                    var inst = this.getInstance(),
-                        sel = new inst.Selection(),
-                        blockItem, dir,
-                        blocks = 'p,div,li,body'; //More??
-
-                    if (sel.anchorNode) {
-                        blockItem = sel.anchorNode;
-                        if (!sel.anchorNode.test(blocks)) {
-                            blockItem = sel.anchorNode.ancestor(blocks);
-                        }
-                        dir = blockItem.getAttribute('dir');
-                        if (dir === '') {
-                            dir = inst.one('html').getAttribute('dir');
-                        }
-                        if (dir === 'rtl') {
-                            dir = 'ltr';
-                        } else {
-                            dir = 'rtl';
-                        }
-                        blockItem.setAttribute('dir', dir);
-                    }
-                    return blockItem;
-                },
+                /**
+                * Adds a background color to the current selection, or creates a new element and applies it
+                * @method COMMANDS.backcolor
+                * @static
+                * @param {String} cmd The command executed: backcolor
+                * @param {String} val The color value to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
@@ -1456,28 +1491,52 @@ YUI.add('exec-command', function(Y) {
                         this._command('styleWithCSS', false);
                     }
                 },
+                /**
+                * Sugar method, calles backcolor
+                * @method COMMANDS.hilitecolor
+                * @static
+                * @param {String} cmd The command executed: backcolor
+                * @param {String} val The color value to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 hilitecolor: function() {
-                    ExecCommand.COMMANDS.backcolor.apply(this, arguments);
+                    return ExecCommand.COMMANDS.backcolor.apply(this, arguments);
                 },
+                /**
+                * Adds a font name to the current selection, or creates a new element and applies it
+                * @method COMMANDS.fontname
+                * @static
+                * @param {String} cmd The command executed: fontname
+                * @param {String} val The font name to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 fontname: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
 
                     if (sel.isCollapsed) {
                         n = this.command('inserthtml', '<span style="font-family: ' + val + '">&nbsp;</span>');
-                        sel.selectNode(n.get('firstChild'));
+                        sel.selectNode(n.get('firstChild'), true);
                         return n;
                     } else {
                         return this._command('fontname', val);
                     }
                 },
+                /**
+                * Adds a fontsize to the current selection, or creates a new element and applies it
+                * @method COMMANDS.fontsize
+                * @static
+                * @param {String} cmd The command executed: fontsize
+                * @param {String} val The font size to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 fontsize: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
 
                     if (sel.isCollapsed) {
                         n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
-                        sel.selectNode(n.get('firstChild'));
+                        sel.selectNode(n.get('firstChild'), true);
                         return n;
                     } else {
                         return this._command('fontsize', val);
@@ -1702,19 +1761,6 @@ YUI.add('editor-base', function(Y) {
             to.setStyles(newStyles);
         },
         /**
-        * Utility method to create an empty paragraph when the document is empty.
-        * @private
-        * @method _fixFirstPara
-        */
-        _fixFirstPara: function() {
-            var inst = this.getInstance(), sel;
-            inst.one('body').setContent('<p>&nbsp;</p>');
-            sel = new inst.Selection();
-            try {
-                sel.selectNode(inst.one('body > p').get('firstChild'));
-            } catch (er) {}
-        },
-        /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
         * @param {Event} e The event
@@ -1731,25 +1777,14 @@ YUI.add('editor-base', function(Y) {
             */
             
             switch (e.changedType) {
-                case 'keydown':
-                    var cont = inst.config.doc.body.innerHTML;
-                    if (cont && cont.toLowerCase() == '<br>') {
-                        this._fixFirstPara();
-                    }
-                    break;
-                case 'backspace-up':
-                case 'delete-up':
-                    var ps = inst.all('body > p'), br, p, sel, item;
-                    if (ps.size() < 2) {
-                        item = inst.one('body');
-                        if (ps.item(0)) {
-                            item = ps.item(0);
-                        }
-                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                            this._fixFirstPara();
-                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                            e.changedEvent.halt();
-                        }
+                case 'tab':
+                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
+                        var sel = new inst.Selection();
+                        sel.setCursor();
+                        var cur = sel.getCursor();
+                        cur.insert(EditorBase.TABKEY, 'before');
+                        sel.focusCursor();
+                        e.changedEvent.preventDefault();
                     }
                     break;
                 case 'enter-up':
@@ -1773,15 +1808,6 @@ YUI.add('editor-base', function(Y) {
                                 this.copyStyles(lc, e.changedNode);
                             }
                         }
-                    }
-                    //TODO
-                    //inst.Selection.filterBlocks();
-                    break;
-                case 'tab':
-                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        this.execCommand('inserthtml', EditorBase.TABKEY + inst.Selection.CURSOR);
-                        var sel = new inst.Selection().focusCursor();
-                        e.changedEvent.halt();
                     }
                     break;
             }
@@ -1907,6 +1933,7 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('keydown', Y.bind(this._onFrameKeyDown, this));
             this.frame.on('keypress', Y.bind(this._onFrameKeyPress, this));
             inst.Selection.filter();
+            this.fire('ready');
         },
         /**
         * Fires nodeChange event
@@ -2228,6 +2255,13 @@ YUI.add('editor-base', function(Y) {
     * @type {Event.Custom}
     */
 
+    /**
+    * @event ready
+    * @description Fired after the frame is ready.
+    * @param {Event.Facade} event An Event Facade object.
+    * @type {Event.Custom}
+    */
+
 
 
 
@@ -2391,6 +2425,338 @@ YUI.add('editor-lists', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+YUI.add('editor-bidi', function(Y) {
+
+
+
+    /**
+     * Plugin for Editor to support BiDirectional (bidi) text operations.
+     * @module editor
+     * @submodule editor-bidi
+     */     
+    /**
+     * Plugin for Editor to support BiDirectional (bidi) text operations.
+     * @class Plugin.EditorBidi
+     * @extends Base
+     * @constructor
+     */
+
+
+    var EditorBidi = function() {
+        EditorBidi.superclass.constructor.apply(this, arguments);
+    }, HOST = 'host', DIR = 'dir', BODY = 'BODY', NODE_CHANGE = 'nodeChange',
+    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p';
+
+    Y.extend(EditorBidi, Y.Base, {
+        /**
+        * Place holder for the last direction when checking for a switch
+        * @private
+        * @property lastDirection
+        */
+        lastDirection: null,
+        /**
+        * Tells us that an initial bidi check has already been performed
+        * @private
+        * @property firstEvent
+        */
+        firstEvent: null,
+
+        /**
+        * Method checks to see if the direction of the text has changed based on a nodeChange event.
+        * @private
+        * @method _checkForChange
+        */
+        _checkForChange: function() {
+            var host = this.get(HOST),
+                inst = host.getInstance(),
+                sel = new inst.Selection(),
+                node, direction;
+
+            if (sel.isCollapsed) {
+                node = EditorBidi.blockParent(sel.focusNode);
+                direction = node.getStyle('direction');
+                if (direction !== this.lastDirection) {
+                    host.fire(B_C_CHANGE, { changedTo: direction });
+                    this.lastDirection = direction;
+                }
+            } else {
+                host.fire(B_C_CHANGE, { changedTo: 'select' });
+                this.lastDirection = null;
+            }
+        },
+
+        /**
+        * Checked for a change after a specific nodeChange event has been fired.
+        * @private
+        * @method _afterNodeChange
+        */
+        _afterNodeChange: function(e) { 
+            // If this is the first event ever, or an event that can result in a context change
+            if (this.firstEvent || EditorBidi.EVENTS[e.changedType]) {
+                this._checkForChange();
+                this.firstEvent = false;
+            }
+        },
+
+        /**
+        * Checks for a direction change after a mouseup occurs.
+        * @private
+        * @method _afterMouseUp
+        */
+        _afterMouseUp: function(e) {
+            this._checkForChange();
+            this.firstEvent = false;
+        },
+        /**
+        * Utility method to create an empty paragraph when the document is empty.
+        * @private
+        * @method _fixFirstPara
+        */
+        _fixFirstPara: function() {
+            var host = this.get(HOST), inst = host.getInstance(), sel;
+            inst.one('body').setContent('<p>&nbsp;</p>');
+            sel = new inst.Selection();
+            try {
+                sel.selectNode(inst.one(FIRST_P).get('firstChild'));
+            } catch (er) {}
+        },
+        /**
+        * nodeChange handler to handle fixing an empty document.
+        * @private
+        * @method _onNodeChange
+        */
+        _onNodeChange: function(e) {
+            var host = this.get(HOST), inst = host.getInstance();
+
+            switch (e.changedType) {
+                case 'keydown':
+                    var cont = inst.config.doc.body.innerHTML;
+                    if (cont && cont.toLowerCase() == '<br>') {
+                        this._fixFirstPara();
+                    }
+                    break;
+                case 'backspace-up':
+                case 'delete-up':
+                    var ps = inst.all(FIRST_P), br, p, sel, item;
+                    if (ps.size() < 2) {
+                        item = inst.one(BODY);
+                        if (ps.item(0)) {
+                            item = ps.item(0);
+                        }
+                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
+                            this._fixFirstPara();
+                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
+                            e.changedEvent.halt();
+                        }
+                    }
+                    break;
+            }
+            
+        },
+        /**
+        * Performs a block element filter when the Editor is first ready
+        * @private
+        * @method _afterEditorReady
+        */
+        _afterEditorReady: function() {
+            var host = this.get(HOST), inst = host.getInstance();
+            if (inst) {
+                inst.Selection.filterBlocks();
+            }
+        },
+
+        initializer: function() {
+            var host = this.get(HOST);
+
+            this.firstEvent = true;
+
+            host.after(NODE_CHANGE, Y.bind(this._afterNodeChange, this));
+            host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
+            host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
+            host.after('ready', Y.bind(this._afterEditorReady, this));
+            
+        }    
+    }, {
+        /**
+        * The events to check for a direction change on
+        * @property EVENTS
+        * @static
+        */
+        EVENTS: {
+            'backspace-up': true,
+            'pageup-up': true,
+            'pagedown-down': true,
+            'end-up': true,
+            'home-up': true,
+            'left-up': true,
+            'up-up': true,
+            'right-up': true,
+            'down-up': true,
+            'delete-up': true
+        },
+
+        /**
+        * More elements may be needed. BODY *must* be in the list to take care of the special case.
+        * 
+        * blockParent could be changed to use inst.Selection.BLOCKS
+        * instead, but that would make Y.Plugin.EditorBidi.blockParent
+        * unusable in non-RTE contexts (it being usable is a nice
+        * side-effect).
+        * @property BLOCKS
+        * @static
+        */
+        BLOCKS: Y.Selection.BLOCKS+',LI,HR,' + BODY,
+        /**
+        * Template for creating a block element
+        * @static
+        * @property DIV_WRAPPER
+        */
+        DIV_WRAPPER: '<DIV></DIV>',
+        /**
+        * Returns a block parent for a given element
+        * @static
+        * @method blockParent
+        */
+        blockParent: function(node, wrap) {
+            var parent = node, divNode, firstChild;
+            
+            if (!parent.test(EditorBidi.BLOCKS)) {
+                parent = parent.ancestor(EditorBidi.BLOCKS);
+            }
+            if (wrap && parent.test(BODY)) {
+                // This shouldn't happen if the RTE handles everything
+                // according to spec: we should get to a P before BODY. But
+                // we don't want to set the direction of BODY even if that
+                // happens, so we wrap everything in a DIV.
+                
+                // The code is based on YUI3's Y.Selection._wrapBlock function.
+                divNode = Y.Node.create(EditorBidi.DIV_WRAPPER);
+                parent.get('children').each(function(node, index) {
+                    if (index === 0) {
+                        firstChild = node;
+                    } else {
+                        divNode.append(node);
+                    }
+                });
+                firstChild.replace(divNode);
+                divNode.prepend(firstChild);
+                parent = divNode;
+            }
+            return parent;
+        },
+        /**
+        * The data key to store on the node.
+        * @static
+        * @property _NODE_SELECTED
+        */
+        _NODE_SELECTED: 'bidiSelected',
+        /**
+        * Generates a list of all the block parents of the current NodeList
+        * @static
+        * @method addParents
+        */
+        addParents: function(nodeArray) {
+            var i, parent, addParent;
+
+            for (i = 0; i < nodeArray.length; i += 1) {
+                nodeArray[i].setData(EditorBidi._NODE_SELECTED, true);
+            }
+
+            // This works automagically, since new parents added get processed
+            // later themselves. So if there's a node early in the process that
+            // we haven't discovered some of its siblings yet, thus resulting in
+            // its parent not added, the parent will be added later, since those
+            // siblings will be added to the array and then get processed.
+            for (i = 0; i < nodeArray.length; i += 1) {
+                parent = nodeArray[i].get('parentNode');
+
+                // Don't add the parent if the parent is the BODY element.
+                // We don't want to change the direction of BODY. Also don't
+                // do it if the parent is already in the list.
+                if (!parent.test(BODY) && !parent.getData(EditorBidi._NODE_SELECTED)) {
+                    addParent = true;
+                    parent.get('children').some(function(sibling) {
+                        if (!sibling.getData(EditorBidi._NODE_SELECTED)) {
+                            addParent = false;
+                            return true; // stop more processing
+                        }
+                    });
+                    if (addParent) {
+                        nodeArray.push(parent);
+                        parent.setData(EditorBidi._NODE_SELECTED, true);
+                    }
+                }
+            }   
+
+            for (i = 0; i < nodeArray.length; i += 1) {
+                nodeArray[i].clearData(EditorBidi._NODE_SELECTED);
+            }
+
+            return nodeArray;
+        },
+
+
+        /**
+        * editorBidi
+        * @static
+        * @property NAME
+        */
+        NAME: 'editorBidi',
+        /**
+        * editorBidi
+        * @static
+        * @property NS
+        */
+        NS: 'editorBidi',
+        ATTRS: {
+            host: {
+                value: false
+            }
+        }
+    });
+    
+    Y.namespace('Plugin');
+    
+    Y.Plugin.EditorBidi = EditorBidi;
+
+    /**
+     * bidi execCommand override for setting the text direction of a node.
+     * @for Plugin.ExecCommand
+     * @property COMMANDS.bidi
+     */
+
+    Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
+        var inst = this.getInstance(),
+            sel = new inst.Selection(),
+            returnValue, block,
+            selected, selectedBlocks;
+
+        inst.Selection.filterBlocks();
+        if (sel.isCollapsed) { // No selection
+            block = EditorBidi.blockParent(sel.anchorNode);
+            block.setAttribute(DIR, direction);
+            returnValue = block;
+        } else { // some text is selected
+            selected = sel.getSelected();
+            selectedBlocks = [];
+            selected.each(function(node) {
+                if (!node.test(BODY)) { // workaround for a YUI bug
+                   selectedBlocks.push(EditorBidi.blockParent(node));
+                }
+            });
+            selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
+            selectedBlocks.setAttribute(DIR, direction);
+            returnValue = selectedBlocks;
+        }
+
+        this.get(HOST).get(HOST).editorBidi.checkForChange();
+        return returnValue;
+    };
+
+
+
+
+}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});
