@@ -558,6 +558,12 @@
                     "exec-command"
                 ]
             }, 
+            "editor-bidi": {
+                "requires": [
+                    "editor-base", 
+                    "selection"
+                ]
+            }, 
             "editor-lists": {
                 "requires": [
                     "editor-base"

@@ -612,6 +612,12 @@
                     <span class="s2">&quot;exec-command&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
+            <span class="s2">&quot;editor-bidi&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;editor-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;selection&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;editor-lists&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;editor-base&quot;</span>
@@ -1187,19 +1193,22 @@
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;widget-child&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base-build&quot;</span>
+                    <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;widget-parent&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;arraylist&quot;</span>
+                    <span class="s2">&quot;arraylist&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;widget-position&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;node-screen&quot;</span>
+                    <span class="s2">&quot;node-screen&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;widget-position-align&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1214,13 +1223,15 @@
             <span class="p">},</span> 
             <span class="s2">&quot;widget-stack&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base-build&quot;</span>
+                    <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">},</span> 
             <span class="s2">&quot;widget-stdmod&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base-build&quot;</span>
+                    <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">},</span> 
@@ -1248,7 +1259,8 @@
     <span class="s2">&quot;widget-anim&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;anim-base&quot;</span>
+            <span class="s2">&quot;anim-base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;widget&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;widget-locale&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1273,7 +1285,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;efecfddda552584cfd3489b8a8c4f1c5&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;b255ff371461675263aae41767a7df7f&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>

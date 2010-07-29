@@ -27,12 +27,10 @@ var DOMMap   = Y.Env.evt.dom_map,
  *              on(..) or delegate(..)
  * @param emitFacade {Boolean} take steps to ensure the first arg received by
  *              the subscription callback is an event facade
- * @param delegate {Boolean} was this subscription from a call to delegate(..)?
  */
-function Notifier(handle, emitFacade, delegate) {
-    this.handle     = handle;
-    this.emitFacade = emitFacade;
-    this.delegate   = delegate;
+function Notifier(handle, emitFacade) {
+    this.handle         = handle;
+    this.emitFacade     = emitFacade;
 }
 
 /**
@@ -60,12 +58,13 @@ function Notifier(handle, emitFacade, delegate) {
  */
 Notifier.prototype.fire = function (e) {
     // first arg to delegate notifier should be an object with currentTarget
-    var args    = toArray(arguments, 0, true),
-        handle  = this.handle,
-        ce      = handle.evt,
-        sub     = handle.sub,
-        thisObj = sub.context,
-        event   = e || {};
+    var args     = toArray(arguments, 0, true),
+        handle   = this.handle,
+        ce       = handle.evt,
+        sub      = handle.sub,
+        thisObj  = sub.context,
+        delegate = sub.filter,
+        event    = e || {};
 
     if (this.emitFacade) {
         if (!e || !e.preventDefault) {
@@ -82,10 +81,10 @@ Notifier.prototype.fire = function (e) {
         event.type    = ce.type;
         event.details = args.slice();
 
-        if (this.delegate) {
+        if (delegate) {
             event.container = ce.host;
         }
-    } else if (this.delegate && isObject(e) && e.currentTarget) {
+    } else if (delegate && isObject(e) && e.currentTarget) {
         args.shift();
     }
 
@@ -411,7 +410,7 @@ Y.mix(SyntheticEvent, {
         _getNotifier: function (node, args, extra, filter) {
             var dispatcher = new Y.CustomEvent(this.type, this.publishConfig),
                 handle     = dispatcher.on.apply(dispatcher, args),
-                notifier   = new Notifier(handle, this.emitFacade, filter),
+                notifier   = new Notifier(handle, this.emitFacade),
                 registry   = SyntheticEvent.getRegistry(node, this.type, true),
                 sub        = handle.sub;
 

@@ -66,7 +66,10 @@
             <span class="nx">params</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="p">}</span>
         <span class="nx">params</span><span class="p">.</span><span class="nx">q</span> <span class="o">=</span> <span class="nx">sql</span><span class="p">;</span>
-        <span class="nx">params</span><span class="p">.</span><span class="nx">format</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="p">;</span>
+        <span class="c1">//Allow format override.. JSON-P-X</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">params</span><span class="p">.</span><span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">params</span><span class="p">.</span><span class="nx">format</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">FORMAT</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">params</span><span class="p">.</span><span class="nx">env</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">params</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">ENV</span><span class="p">;</span>
         <span class="p">}</span>
@@ -116,6 +119,12 @@
         <span class="p">}</span>
     <span class="p">};</span>
 
+    <span class="cm">/**</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @property FORMAT</span>
+<span class="cm">    * @description Default format to use: json</span>
+<span class="cm">    */</span>
+    <span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">FORMAT</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="p">;</span>
     <span class="cm">/**</span>
 <span class="cm">    * @static</span>
 <span class="cm">    * @property PROTO</span>
@@ -260,7 +269,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "YQLRequest", "name": "BASE_URL", "url": "YQLRequest.html#property_BASE_URL", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_callback", "url": "YQLRequest.html#property__callback", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "ENV", "url": "YQLRequest.html#property_ENV", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_opts", "url": "YQLRequest.html#property__opts", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_params", "url": "YQLRequest.html#property__params", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "PROTO", "url": "YQLRequest.html#property_PROTO", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "send", "url": "YQLRequest.html#method_send", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "YQLRequest", "name": "BASE_URL", "url": "YQLRequest.html#property_BASE_URL", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_callback", "url": "YQLRequest.html#property__callback", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "ENV", "url": "YQLRequest.html#property_ENV", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "FORMAT", "url": "YQLRequest.html#property_FORMAT", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_opts", "url": "YQLRequest.html#property__opts", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_params", "url": "YQLRequest.html#property__params", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "PROTO", "url": "YQLRequest.html#property_PROTO", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "send", "url": "YQLRequest.html#method_send", "type": "method"}];
 </script>
 </body>
 </html>
