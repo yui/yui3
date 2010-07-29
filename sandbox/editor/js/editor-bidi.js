@@ -86,11 +86,9 @@ YUI.add('editor-bidi', function(Y) {
         */
         _fixFirstPara: function() {
             var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').setContent('<p>&nbsp;</p>');
+            inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
             sel = new inst.Selection();
-            try {
-                sel.selectNode(inst.one(FIRST_P).get('firstChild'));
-            } catch (er) {}
+            sel.focusCursor(true, false);
         },
         /**
         * nodeChange handler to handle fixing an empty document.
