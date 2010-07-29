@@ -455,7 +455,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	*/
 	_preventScroll: function (event) {
 
-		if (scrollKeys[event.keyCode]) {
+		if (scrollKeys[event.keyCode] && this._isDescendant(event.target)) {
 			event.preventDefault();
 		}
 
@@ -463,7 +463,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 
 	/**
-	* @method _preventScroll
+	* @method _fireClick
 	* @description Fires the click event if the enter key is pressed while
 	* focused on an HTML element that is not natively clickable.
 	* @protected
