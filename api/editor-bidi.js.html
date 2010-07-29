@@ -132,11 +132,9 @@
 <span class="cm">        */</span>
         <span class="nx">_fixFirstPara</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span> <span class="nx">inst</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span> <span class="nx">sel</span><span class="p">;</span>
-            <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">setContent</span><span class="p">(</span><span class="s1">&#39;&lt;p&gt;&amp;nbsp;&lt;/p&gt;&#39;</span><span class="p">);</span>
+            <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">setContent</span><span class="p">(</span><span class="s1">&#39;&lt;p&gt;&#39;</span> <span class="o">+</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">+</span> <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="p">);</span>
             <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
-            <span class="k">try</span> <span class="p">{</span>
-                <span class="nx">sel</span><span class="p">.</span><span class="nx">selectNode</span><span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">FIRST_P</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
-            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">er</span><span class="p">)</span> <span class="p">{}</span>
+            <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * nodeChange handler to handle fixing an empty document.</span>
