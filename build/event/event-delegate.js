@@ -84,7 +84,7 @@ function delegate(type, fn, el, filter) {
 
             handle = Y.on.apply(Y, args);
             handle.sub.getCurrentTarget = filter;
-            handle.sub._notify = Y.delegate.notifySub;
+            handle.sub._notify = delegate.notifySub;
         }
     }
 
