@@ -644,6 +644,12 @@ YUI.add('selection', function(Y) {
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
         },
+        /**
+        * Remove the cursor placeholder from the DOM.
+        * @method removeCursor
+        * @param {Boolean} keep Setting this to true will keep the node, but remove the unique parts that make it the cursor.
+        * @return {Node}
+        */
         removeCursor: function(keep) {
             var cur = this.getCursor();
             if (cur) {
@@ -661,10 +667,16 @@ YUI.add('selection', function(Y) {
         * @method focusCursor
         * @return {Node}
         */
-        focusCursor: function() {
+        focusCursor: function(collapse, end) {
+            if (collapse !== false) {
+                collapse = true;
+            }
+            if (end !== false) {
+                end = true;
+            }
             var cur = this.removeCursor(true);
             if (cur) {
-                this.selectNode(cur, true, true);
+                this.selectNode(cur, collapse, end);
             }
         },
         /**

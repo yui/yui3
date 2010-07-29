@@ -1251,6 +1251,12 @@ YUI.add('selection', function(Y) {
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
         },
+        /**
+        * Remove the cursor placeholder from the DOM.
+        * @method removeCursor
+        * @param {Boolean} keep Setting this to true will keep the node, but remove the unique parts that make it the cursor.
+        * @return {Node}
+        */
         removeCursor: function(keep) {
             var cur = this.getCursor();
             if (cur) {
@@ -1268,10 +1274,16 @@ YUI.add('selection', function(Y) {
         * @method focusCursor
         * @return {Node}
         */
-        focusCursor: function() {
+        focusCursor: function(collapse, end) {
+            if (collapse !== false) {
+                collapse = true;
+            }
+            if (end !== false) {
+                end = true;
+            }
             var cur = this.removeCursor(true);
             if (cur) {
-                this.selectNode(cur, true, true);
+                this.selectNode(cur, collapse, end);
             }
         },
         /**
@@ -1423,8 +1435,24 @@ YUI.add('exec-command', function(Y) {
                     html += inst.Selection.CURSOR;
                     out = this.command('inserthtml', html);
                     sel = new inst.Selection();
-                    sel.focusCursor();
+                    sel.focusCursor(true, true);
                     return out;
+                },
+                /**
+                * Inserts a BR at the current cursor position
+                * @method COMMANDS.insertbr
+                * @static
+                * @param {String} cmd The command executed: insertbr
+                */
+                insertbr: function(cmd) {
+                    var inst = this.getInstance(), cur,
+                        sel = new inst.Selection();
+
+                    sel.setCursor();
+                    cur = sel.getCursor();
+                    cur.insert('<br>', 'before');
+                    sel.focusCursor(true, false);
+                    return cur.previous();
                 },
                 /**
                 * Inserts an image at the cursor position
@@ -1777,6 +1805,15 @@ YUI.add('editor-base', function(Y) {
             */
             
             switch (e.changedType) {
+                case 'enter':
+                    if (Y.UA.webkit) {
+                        //Webkit doesn't support shift+enter as a BR, this fixes that.
+                        if (e.changedEvent.shiftKey) {
+                            this.execCommand('insertbr');
+                            e.changedEvent.preventDefault();
+                        }
+                    }
+                    break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
                         var sel = new inst.Selection();

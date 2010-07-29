@@ -137,8 +137,24 @@ YUI.add('exec-command', function(Y) {
                     html += inst.Selection.CURSOR;
                     out = this.command('inserthtml', html);
                     sel = new inst.Selection();
-                    sel.focusCursor();
+                    sel.focusCursor(true, true);
                     return out;
+                },
+                /**
+                * Inserts a BR at the current cursor position
+                * @method COMMANDS.insertbr
+                * @static
+                * @param {String} cmd The command executed: insertbr
+                */
+                insertbr: function(cmd) {
+                    var inst = this.getInstance(), cur,
+                        sel = new inst.Selection();
+
+                    sel.setCursor();
+                    cur = sel.getCursor();
+                    cur.insert('<br>', 'before');
+                    sel.focusCursor(true, false);
+                    return cur.previous();
                 },
                 /**
                 * Inserts an image at the cursor position

@@ -270,9 +270,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     s_cont.delegate('click', function(e) {
         var img = e.currentTarget, inst = editor.getInstance();
         editor.focus();
-        editor.execCommand('inserthtml', '<span><span>&nbsp;<img src="' + img.get('src') + '">&nbsp;</span>' + inst.Selection.CURSOR + '</span>');
-        var sel = new inst.Selection();
-        sel.focusCursor();
+        editor.execCommand('insertandfocus', '<span>:)</span>');
     }, 'img');
     
     var buttons = Y.all('#test1 button');
@@ -369,13 +367,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     editor.on('frame:keydown', function(e) {
         if (e.keyCode === 13) {
             if (e.ctrlKey) {
-                //console.log('Control Pressed');
-                //editor.execCommand('insertandfocus', '<br>');
+                console.log('Control Pressed');
+                editor.execCommand('insertbr');
+                e.frameEvent.halt();
             } else {
                 //console.log('Not Pressed');
             }
             //console.log(e);
-            //e.frameEvent.halt();
         }
     });
     editor.on('frame:ready', function() {
