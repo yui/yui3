@@ -184,6 +184,7 @@ This is some <strong>other</strong> loose test.
 <script type="text/javascript" src="js/lists.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -204,7 +205,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
@@ -238,9 +239,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     }, '#test1 > div', 'button');
 
     Y.delegate('change', function(e) {
-        //console.log(e);
         var cmd = e.currentTarget.get('id'),
             val = e.currentTarget.get('value');
+        
         editor.frame.focus();
         var ex_return = editor.execCommand(cmd, val);
     }, '#test1 > div', 'select');
@@ -269,9 +270,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     s_cont.delegate('click', function(e) {
         var img = e.currentTarget, inst = editor.getInstance();
         editor.focus();
-        editor.execCommand('inserthtml', '<span><span>&nbsp;<img src="' + img.get('src') + '">&nbsp;</span>' + inst.Selection.CURSOR + '</span>');
-        var sel = new inst.Selection();
-        sel.focusCursor();
+        editor.execCommand('insertandfocus', '<span>:)</span>');
     }, 'img');
     
     var buttons = Y.all('#test1 button');
@@ -336,7 +335,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
-        extracss: 'body { color: red; }'
+        extracss: 'body { color: red; } p { border: 1px solid green; padding: .25em; margin: 1em; }'
     });
     editor.after('nodeChange', function(e) {
         //if (e.changedType !== 'execcommand') {
@@ -362,7 +361,21 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     });
     //Disabled for IE testing..
     //editor.plug(Y.Plugin.EditorLists);
-    editor.plug(Y.Plugin.EditorTab);
+    //editor.plug(Y.Plugin.EditorTab);
+    editor.plug(Y.Plugin.EditorBidi);
+
+    editor.on('frame:keydown', function(e) {
+        if (e.keyCode === 13) {
+            if (e.ctrlKey) {
+                console.log('Control Pressed');
+                editor.execCommand('insertbr');
+                e.frameEvent.halt();
+            } else {
+                //console.log('Not Pressed');
+            }
+            //console.log(e);
+        }
+    });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
 

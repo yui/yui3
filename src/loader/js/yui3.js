@@ -563,6 +563,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "exec-command"
                 ]
             }, 
+            "editor-bidi": {
+                "requires": [
+                    "editor-base", 
+                    "selection"
+                ]
+            }, 
             "editor-lists": {
                 "requires": [
                     "editor-base"
@@ -1230,4 +1236,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'f055b47d2aed0a39b1fc54398e236ba5';
+YUI.Env[Y.version].md5 = 'b255ff371461675263aae41767a7df7f';

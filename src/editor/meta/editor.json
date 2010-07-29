@@ -37,6 +37,12 @@
                     "editor-base"
                 ]
             },
+            "editor-bidi": {
+                "requires": [
+                    "editor-base",
+                    "selection"
+                ]
+            },
             "createlink-base": {
                 "requires": [
                     "editor-base"

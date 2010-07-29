@@ -14,7 +14,7 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.07-19-52',
+            GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.28-20-07',
             GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
             TNT_VERSION     = CONFIG[TNT] || '3',
@@ -30,10 +30,12 @@ if (!YUI.Env[Y.version]) {
                                            path:        'skin.css',
                                            after:       [ 'cssreset', 
                                                           'cssfonts', 
+                                                          'cssgrids', 
+                                                          'cssbase', 
                                                           'cssreset-context', 
                                                           'cssfonts-context' ] },
                               groups:    {},
-                              // modules:   { /* METAGEN */ },
+                              // modules:   { / METAGEN / },
                               patterns:  {}                                     },
             groups =          META.groups;
 
@@ -188,7 +190,7 @@ var NOT_FOUND       = {},
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
     win             = Y.config.win,
-    localStorage    = win && win.localStorage,
+    localStorage    = win && win.JSON && win.localStorage,
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -1533,7 +1535,10 @@ Y.Loader.prototype = {
 
         this.skipped = {};
 
-        Y.mix(this.loaded, this.inserted);
+        // Y.mix(this.loaded, this.inserted);
+        YObject.each(this.inserted, function(v, k) {
+            Y.mix(this.loaded, this.getProvides(k));
+        }, this);
 
         fn = this.onSuccess;
         if (fn) {
