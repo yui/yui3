@@ -429,6 +429,7 @@ YUI.add('anim-base', function(Y) {
         /**
          * Stops the animation and resets its time.
          * @method stop
+         * @param {Boolean} finish If true, the animation will move to the last frame
          * @chainable
          */    
         stop: function(finish) {
