@@ -76,12 +76,10 @@
 <span class="cm"> *              on(..) or delegate(..)</span>
 <span class="cm"> * @param emitFacade {Boolean} take steps to ensure the first arg received by</span>
 <span class="cm"> *              the subscription callback is an event facade</span>
-<span class="cm"> * @param delegate {Boolean} was this subscription from a call to delegate(..)?</span>
 <span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">handle</span>     <span class="o">=</span> <span class="nx">handle</span><span class="p">;</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="nx">emitFacade</span><span class="p">;</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span>   <span class="o">=</span> <span class="nx">delegate</span><span class="p">;</span>
+<span class="kd">function</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">handle</span>         <span class="o">=</span> <span class="nx">handle</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span>     <span class="o">=</span> <span class="nx">emitFacade</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="cm">/**</span>
@@ -109,12 +107,13 @@
 <span class="cm"> */</span>
 <span class="nx">Notifier</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fire</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// first arg to delegate notifier should be an object with currentTarget</span>
-    <span class="kd">var</span> <span class="nx">args</span>    <span class="o">=</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
-        <span class="nx">handle</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handle</span><span class="p">,</span>
-        <span class="nx">ce</span>      <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
-        <span class="nx">sub</span>     <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span>
-        <span class="nx">thisObj</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span>
-        <span class="nx">event</span>   <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="kd">var</span> <span class="nx">args</span>     <span class="o">=</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+        <span class="nx">handle</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handle</span><span class="p">,</span>
+        <span class="nx">ce</span>       <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
+        <span class="nx">sub</span>      <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span>
+        <span class="nx">thisObj</span>  <span class="o">=</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span>
+        <span class="nx">delegate</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span>
+        <span class="nx">event</span>    <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="p">{};</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span> <span class="o">||</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
@@ -131,10 +130,10 @@
         <span class="nx">event</span><span class="p">.</span><span class="nx">type</span>    <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
         <span class="nx">event</span><span class="p">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">event</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">&amp;&amp;</span> <span class="nx">isObject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span> <span class="o">&amp;&amp;</span> <span class="nx">isObject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
     <span class="p">}</span>
 
@@ -460,7 +459,7 @@
         <span class="nx">_getNotifier</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">extra</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">),</span>
                 <span class="nx">handle</span>     <span class="o">=</span> <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">dispatcher</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span>
-                <span class="nx">notifier</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">,</span> <span class="nx">filter</span><span class="p">),</span>
+                <span class="nx">notifier</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">),</span>
                 <span class="nx">registry</span>   <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">getRegistry</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
                 <span class="nx">sub</span>        <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">;</span>
 
