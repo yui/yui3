@@ -49,8 +49,8 @@
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * Adds lower level support for &quot;gesturemovestart&quot;, &quot;gesturemove&quot; and &quot;gesturemoveend&quot; events, which can be used to create drag/drop</span>
-<span class="cm"> * interactions which work across touch and mouse input devices. They correspond to &quot;touchstart&quot;, &quot;touchmove&quot; and &quot;touchend&quot; on touch input</span>
-<span class="cm"> * device, and &quot;mousedown&quot;, &quot;mousemove&quot;, &quot;mouseup&quot; on mouse based input devices.</span>
+<span class="cm"> * interactions which work across touch and mouse input devices. They correspond to &quot;touchstart&quot;, &quot;touchmove&quot; and &quot;touchend&quot; on a touch input</span>
+<span class="cm"> * device, and &quot;mousedown&quot;, &quot;mousemove&quot;, &quot;mouseup&quot; on a mouse based input device.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module event-gestures</span>
 <span class="cm"> * @submodule event-move</span>
@@ -83,13 +83,20 @@
 
     <span class="nx">MIN_TIME</span> <span class="o">=</span> <span class="s2">&quot;minTime&quot;</span><span class="p">,</span>
     <span class="nx">MIN_DISTANCE</span> <span class="o">=</span> <span class="s2">&quot;minDistance&quot;</span><span class="p">,</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">=</span> <span class="s2">&quot;preventDefault&quot;</span><span class="p">,</span>
     <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="p">,</span>
 
     <span class="nx">NODE_TYPE</span> <span class="o">=</span> <span class="s2">&quot;nodeType&quot;</span><span class="p">,</span>
 
-    <span class="nx">_defArgsProcessor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iConfig</span> <span class="o">=</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="o">?</span> <span class="mi">4</span> <span class="o">:</span> <span class="mi">3</span><span class="p">;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">iConfig</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">iConfig</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">:</span> <span class="p">{};</span>
+    <span class="nx">_defArgsProcessor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">se</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">iConfig</span> <span class="o">=</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="o">?</span> <span class="mi">4</span> <span class="o">:</span> <span class="mi">3</span><span class="p">,</span> 
+            <span class="nx">config</span> <span class="o">=</span> <span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">iConfig</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">iConfig</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">:</span> <span class="p">{};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">PREVENT_DEFAULT</span> <span class="k">in</span> <span class="nx">config</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">config</span><span class="p">[</span><span class="nx">PREVENT_DEFAULT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">se</span><span class="p">.</span><span class="nx">PREVENT_DEFAULT</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">config</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="nx">_getRoot</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">)</span> <span class="p">{</span>
@@ -122,6 +129,7 @@
 <span class="cm"> * @param type {string} &quot;gesturemovestart&quot;</span>
 <span class="cm"> * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousedown or touchstart.touches[0]) which contains position co-ordinates.</span>
 <span class="cm"> * @param cfg {Object} Optional. An object which specifies:</span>
+<span class="cm"> *</span>
 <span class="cm"> * &lt;dl&gt;</span>
 <span class="cm"> * &lt;dt&gt;minDistance (defaults to 0)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;The minimum distance threshold which should be crossed before the gesturemovestart is fired&lt;/dd&gt;</span>
@@ -129,6 +137,9 @@
 <span class="cm"> * &lt;dd&gt;The minimum time threshold for which the finger/mouse should be help down before the gesturemovestart is fired&lt;/dd&gt;</span>
 <span class="cm"> * &lt;dt&gt;button (no default)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;In the case of a mouse input device, if the event should only be fired for a specific mouse button.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;preventDefault (defaults to false)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;Can be set to true/false to prevent default behavior as soon as the touchstart or mousedown is received (that is before minTime or minDistance thresholds are crossed, and so before the gesturemovestart listener is notified) so that things like text selection and context popups (on touch devices) can be </span>
+<span class="cm"> * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it (for example, DragDrop can determine if the target is a valid handle or not before preventing default).&lt;/dd&gt;</span>
 <span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @return {EventHandle} the detach handle</span>
@@ -144,7 +155,6 @@
             <span class="nx">node</span><span class="p">,</span>
             <span class="nx">subscriber</span><span class="p">,</span>
             <span class="nx">ce</span><span class="p">);</span>
-
     <span class="p">},</span>
 
     <span class="nx">delegate</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
@@ -177,7 +187,7 @@
     <span class="p">},</span>
 
     <span class="nx">processArgs</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="nx">_defArgsProcessor</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="nx">_defArgsProcessor</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">MIN_TIME</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_TIME</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">MIN_TIME</span><span class="p">;</span>
@@ -201,13 +211,14 @@
             <span class="nx">minTime</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minTime</span><span class="p">,</span>
             <span class="nx">minDistance</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minDistance</span><span class="p">,</span>
             <span class="nx">button</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">button</span><span class="p">,</span>
+            <span class="nx">preventDefault</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">,</span>
             <span class="nx">root</span> <span class="o">=</span> <span class="nx">_getRoot</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">),</span>
             <span class="nx">startXY</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">_normTouchFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">params</span><span class="p">);</span>                    
+                    <span class="nx">_normTouchFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">params</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">fireStart</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="p">}</span>
@@ -220,9 +231,17 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">fireStart</span><span class="p">)</span> <span class="p">{</span>
 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// preventDefault is a boolean or a function</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">preventDefault</span><span class="p">.</span><span class="nx">call</span> <span class="o">||</span> <span class="nx">preventDefault</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">minTime</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">minDistance</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;gesturemovestart: No minTime or minDistance. Firing immediately&quot;</span><span class="p">,</span> <span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_start</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 
                 <span class="nx">startXY</span> <span class="o">=</span> <span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span><span class="p">];</span>
@@ -285,7 +304,8 @@
     <span class="p">},</span>
 
     <span class="nx">MIN_TIME</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="nx">MIN_DISTANCE</span> <span class="o">:</span> <span class="mi">0</span>
+    <span class="nx">MIN_DISTANCE</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">false</span>
 <span class="p">});</span>
 
 <span class="cm">/**</span>
@@ -311,6 +331,8 @@
 <span class="cm"> * &lt;dd&gt;true, if the subscriber should be notified even if a &quot;gesturemovestart&quot; has not occured on the same node.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;dt&gt;root (defaults to document)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;The node to which the internal DOM listeners should be attached.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;preventDefault (defaults to false)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;Can be set to true/false to prevent default behavior as soon as the touchmove or mousemove is received. As with gesturemovestart, can also be set to function which returns true/false based on the event facade passed to it.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @return {EventHandle} the detach handle</span>
@@ -361,7 +383,9 @@
 
     <span class="p">},</span>
 
-    <span class="nx">processArgs</span> <span class="o">:</span> <span class="nx">_defArgsProcessor</span><span class="p">,</span>
+    <span class="nx">processArgs</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">_defArgsProcessor</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">);</span>
+    <span class="p">},</span>
 
     <span class="nx">_onMove</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
 
@@ -369,7 +393,8 @@
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">fireMove</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">standAlone</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">_MOVE_START</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">fireMove</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">standAlone</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">_MOVE_START</span><span class="p">),</span>
+            <span class="nx">preventDefault</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">;</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onMove initial fireMove check:&quot;</span> <span class="o">+</span> <span class="nx">fireMove</span><span class="p">,</span><span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
 
@@ -384,13 +409,23 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">fireMove</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// preventDefault is a boolean or function</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">preventDefault</span><span class="p">.</span><span class="nx">call</span> <span class="o">||</span> <span class="nx">preventDefault</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onMove second fireMove check:&quot;</span> <span class="o">+</span> <span class="nx">fireMove</span><span class="p">,</span><span class="s2">&quot;event-gestures&quot;</span><span class="p">);</span>
 
                 <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;gesturemove&quot;</span><span class="p">;</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">false</span>
 <span class="p">});</span>
 
 <span class="cm">/**</span>
@@ -400,7 +435,7 @@
 <span class="cm"> * &lt;p&gt;By default this event is only fired when the same node</span>
 <span class="cm"> * has received a &quot;gesturemove&quot; or &quot;gesturemovestart&quot; event. The subscriber can set standAlone to true, in the configuration properties,</span>
 <span class="cm"> * if they want to listen for this event without a preceding &quot;gesturemovestart&quot; or &quot;gesturemove&quot;.&lt;/p&gt;</span>
-<span class="cm"> * </span>
+<span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;By default this event sets up it&#39;s internal &quot;touchend&quot; and &quot;mouseup&quot; DOM listeners on the document element. The subscriber</span>
 <span class="cm"> * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.&lt;/p&gt; </span>
 <span class="cm"> *</span>
@@ -416,6 +451,8 @@
 <span class="cm"> * &lt;dd&gt;true, if the subscriber should be notified even if a &quot;gesturemovestart&quot; or &quot;gesturemove&quot; has not occured on the same node.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;dt&gt;root (defaults to document)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;The node to which the internal DOM listeners should be attached.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;preventDefault (defaults to false)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;Can be set to true/false to prevent default behavior as soon as the touchend or mouseup is received. As with gesturemovestart, can also be set to function which returns true/false based on the event facade passed to it.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @return {EventHandle} the detach handle</span>
@@ -466,7 +503,9 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
-    <span class="nx">processArgs</span> <span class="o">:</span> <span class="nx">_defArgsProcessor</span><span class="p">,</span>
+    <span class="nx">processArgs</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">_defArgsProcessor</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">);</span>
+    <span class="p">},</span>
 
     <span class="nx">_onEnd</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
 
@@ -474,7 +513,8 @@
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">fireMoveEnd</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">standAlone</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">_MOVE</span><span class="p">)</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">_MOVE_START</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">fireMoveEnd</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">standAlone</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">_MOVE</span><span class="p">)</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">_MOVE_START</span><span class="p">),</span>
+            <span class="nx">preventDefault</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">fireMoveEnd</span><span class="p">)</span> <span class="p">{</span>
 
@@ -487,6 +527,14 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">fireMoveEnd</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// preventDefault is a boolean or function</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">preventDefault</span><span class="p">.</span><span class="nx">call</span> <span class="o">||</span> <span class="nx">preventDefault</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
                 <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;gesturemoveend&quot;</span><span class="p">;</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
 
@@ -494,7 +542,9 @@
                 <span class="nx">node</span><span class="p">.</span><span class="nx">clearData</span><span class="p">(</span><span class="nx">_MOVE</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">false</span>
 <span class="p">});</span>
 </pre></div>
 
