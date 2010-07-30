@@ -45,28 +45,19 @@
                 };
 
                 var moveStartHandler = function(e) {
-
-                    e.preventDefault();
-
-                    Y.log("MoveStart: " + e.target + ", " + e.currentTarget);
+                    //Y.log("MoveStart: " + e.target + ", " + e.currentTarget);
 
                     e.target.set("innerHTML", "");
                     e.target.append("<div>gesturemovestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveHandler = function(e) {
-                    
-                    e.preventDefault();
-
                     Y.log("Move: " + e.target + ", " + e.currentTarget);
 
                     e.target.append("<div>gesturemove, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveEndHandler = function(e) {
-
-                    e.preventDefault();
-
                     Y.log("MoveEnd: " + e.target + ", " + e.currentTarget);
 
                     e.target.append("<div>gesturemoveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
@@ -80,13 +71,22 @@
                 var moveStartCfg = {
                     minDistance: 10,
                     minTime: 5000,
-                    button:1
+                    button:1,
+                    preventDefault:true
                 };
 
                 var moveStartCfg2 = {
                     minDistance: 10,
                     minTime: -1, // must move at least 10 pixels
-                    button:2
+                    button:2,
+                    preventDefault: function(e) {
+                        var prevent = false;
+                        if (e.target === div2) {
+                            prevent = true;
+                        }
+                        Y.log("prevent:" + prevent);
+                        return prevent;
+                    }
                 };
 
                 div.on("flick", flickHandler, flickCfg);
