@@ -687,6 +687,18 @@
         ]
     }, 
     "history": {
+        "plugins": {
+            "history-hash-ie": {
+                "condition": {
+                    "trigger": "history-hash", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "history-base": {
                 "after": [
@@ -704,13 +716,6 @@
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
-                ]
-            }, 
-            "history-hash-ie": {
-                "requires": [
-                    "history-base", 
-                    "history-hash", 
-                    "node-base"
                 ]
             }, 
             "history-html5": {
