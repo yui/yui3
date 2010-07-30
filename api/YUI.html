@@ -2323,10 +2323,18 @@ covered is used.
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">cfg</span>
-                                                                &lt;<span property="yui:type">Object} Optional. An object which specifies the minimum distance and/or velocity  (in px/ms)
-of the flick gesture for which the event is to be fired and an axis of interest. e.g. { minDistance:10, minVelocity:0.5, axis:"x" </span>&gt;
+                                                                &lt;<span property="yui:type">Object</span>&gt;
                                                             </code>
-                                                            <span property="yui:description"> .</span>
+                                                            <span property="yui:description">  Optional. An object which specifies any of the following:
+<dl>
+<dt>minDistance (in pixels, defaults to 10)</dt>
+<dd>The minimum distance between start and end points, which would qualify the gesture as a flick.</dd>
+<dt>minVelocity (in pixels/ms, defaults to 0)</dt>
+<dd>The minimum velocity which would qualify the gesture as a flick.</dd>
+<dt>preventDefault (defaults to true)</dt>
+<dd>Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be 
+prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.</dd>
+</dl></span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -2405,6 +2413,8 @@ can set the root configuration property, to specify which node to attach DOM lis
 <dd>true, if the subscriber should be notified even if a "gesturemovestart" has not occured on the same node.</dd>
 <dt>root (defaults to document)</dt>
 <dd>The node to which the internal DOM listeners should be attached.</dd>
+<dt>preventDefault (defaults to false)</dt>
+<dd>Can be set to true/false to prevent default behavior as soon as the touchmove or mousemove is received. As with gesturemovestart, can also be set to function which returns true/false based on the event facade passed to it.</dd>
 </dl></span>
                                                         </dd>
                                                         
@@ -2484,6 +2494,8 @@ can set the root configuration property, to specify which node to attach DOM lis
 <dd>true, if the subscriber should be notified even if a "gesturemovestart" or "gesturemove" has not occured on the same node.</dd>
 <dt>root (defaults to document)</dt>
 <dd>The node to which the internal DOM listeners should be attached.</dd>
+<dt>preventDefault (defaults to false)</dt>
+<dd>Can be set to true/false to prevent default behavior as soon as the touchend or mouseup is received. As with gesturemovestart, can also be set to function which returns true/false based on the event facade passed to it.</dd>
 </dl></span>
                                                         </dd>
                                                         
@@ -2561,6 +2573,9 @@ which button should initiate a "gesturemovestart". This event can also be listen
 <dd>The minimum time threshold for which the finger/mouse should be help down before the gesturemovestart is fired</dd>
 <dt>button (no default)</dt>
 <dd>In the case of a mouse input device, if the event should only be fired for a specific mouse button.</dd>
+<dt>preventDefault (defaults to false)</dt>
+<dd>Can be set to true/false to prevent default behavior as soon as the touchstart or mousedown is received (that is before minTime or minDistance thresholds are crossed, and so before the gesturemovestart listener is notified) so that things like text selection and context popups (on touch devices) can be 
+prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it (for example, DragDrop can determine if the target is a valid handle or not before preventing default).</dd>
 </dl></span>
                                                         </dd>
                                                         
