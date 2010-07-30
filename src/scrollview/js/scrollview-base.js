@@ -112,7 +112,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             flick = this.get(FLICK); 
 
         this.get(BOUNDING_BOX).on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
-        cb.on('transitionend', Y.bind(this._transitionEnded, this), false);
+        cb.on('transition:end', Y.bind(this._transitionEnded, this), false);
 
         // TODO: Fires way to often when using non-native transitions
         if (NATIVE_TRANSITIONS) {
