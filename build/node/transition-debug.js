@@ -19,7 +19,9 @@ YUI.add('transition', function(Y) {
  * @constructor
  */
 
-var END = 'transitionend',
+var START = 'transition:start',
+    END = 'transition:end',
+    PROPERTY_END = 'transition:propertyEnd',
     Transition = Y.Transition;
 
 Y.mix(Transition.prototype, {
@@ -32,9 +34,18 @@ Y.mix(Transition.prototype, {
     },
 
     _runTimer: function() {
-        this._initAttrs();
-        Transition._running[Y.stamp(this)] = this;
-        this._startTime = new Date();
+        var anim = this;
+        anim._initAttrs();
+
+        if (anim._totalDuration) { // only fire when duration > 0 (per spec)
+            anim._node.fire(START, {
+                type: START,
+                config: anim._config 
+            });
+        }
+
+        Transition._running[Y.stamp(anim)] = anim;
+        anim._startTime = new Date();
         Transition._startTimer();
     },
 
@@ -61,9 +72,10 @@ Y.mix(Transition.prototype, {
     },
 
     _runAttrs: function(time) {
-        var attr = this._runtimeAttr,
+        var anim = this,
+            attr = anim._runtimeAttr,
             customAttr = Transition.behaviors,
-            node = this._node,
+            node = anim._node,
             done = false,
             allDone = false,
             attribute,
@@ -92,26 +104,30 @@ Y.mix(Transition.prototype, {
                     t = d; 
                 }
 
-                if (!this._skip[i]) {
-                    setter(this, i, attribute.from, attribute.to, t, d,
+                if (!anim._skip[i]) {
+                    setter(anim, i, attribute.from, attribute.to, t, d,
                         attribute.easing, attribute.unit); 
 
                     if (done) {
-                        this._skip[i] = true;
-                        this._count--;
+                        anim._skip[i] = true;
+                        anim._count--;
 
                         if (actualDuration > 0) { // match native behavior which doesnt fire for zero duration
-                            node.fire(END, {
+                            node.fire(PROPERTY_END, {
+                                type: PROPERTY_END,
                                 elapsedTime: elapsed,
-                                propertyName: i
+                                propertyName: i,
+                                config: anim._config
                             });
-                        }
 
-                        if (!allDone && this._count <= 0) {
-                            allDone = true;
-                            node.fire('transitionsend', {
-                                elapsedTime: elapsed 
-                            });
+                            if (!allDone && anim._count <= 0) {
+                                allDone = true;
+                                node.fire(END, {
+                                    type: END,
+                                    elapsedTime: elapsed,
+                                    config: anim._config
+                                });
+                            }
                         }
 
                     }
@@ -127,15 +143,15 @@ Y.mix(Transition.prototype, {
             easing = this._easing,
             attr = {},
             customAttr = Transition.behaviors,
-            config = this._config,
+            attrs = this._attrs,
             duration,
             val,
             name,
             unit, begin, end;
 
-        for (name in config) {
-            val = config[name];
-            if (!Transition._reKeywords.test(name)) {
+        for (name in attrs) {
+            if (attrs.hasOwnProperty(name)) {
+                val = attrs[name];
                 duration = this._duration * 1000;
                 if (typeof val.value !== 'undefined') {
                     duration = (('duration' in val) ? val.duration : this._duration) * 1000;

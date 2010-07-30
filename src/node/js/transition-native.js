@@ -19,8 +19,9 @@
  * @extends Base
  */
 
-var START = 'transitionstart',
-    END = 'transitionend',
+var START = 'transition:start',
+    END = 'transition:end',
+    PROPERTY_END = 'transition:propertyEnd',
 
     TRANSITION = '-webkit-transition',
     TRANSITION_CAMEL = 'WebkitTransition',
@@ -53,15 +54,36 @@ Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
         this._node = node;
-        node._transition = this; // cache for reuse
         this._config = config;
+        node._transition = this; // cache for reuse
+
+        this.initAttrs(config);
+
         this._duration = ('duration' in config) ?
             config.duration: this.constructor.DEFAULT_DURATION;
+
         this._easing = config.easing || this.constructor.DEFAULT_EASING;
         this._count = 0; // track number of animated properties
         this._totalDuration = 0;
         this._running = false;
         return this;
+    },
+
+    initAttrs: function(config) {
+        var attrs = {},
+            attr;
+        for (attr in config) {
+            if (!Transition._reKeywords.test(attr)) {
+                attrs[attr] = config[attr];
+            }
+        }
+
+        if (attrs.transform && !attrs['-webkit-transform']) {
+            attrs['-webkit-transform'] = attrs.transform;
+            delete attrs.transform;
+        }
+
+        this._attrs = attrs;
     },
 
     /**
@@ -70,12 +92,16 @@ Transition.prototype = {
      * @chainable
      */    
     run: function() {
-        if (!this._running) {
-            this._running = true;
-            this._node.fire(START);
-            this._start();
+        var anim = this,
+            attrs = anim._attrs,
+            attr;
+
+        if (!anim._running) {
+            anim._running = true;
+
+            anim._start();
         }
-        return this;
+        return anim;
     },
 
     _start: function() {
@@ -96,7 +122,7 @@ Transition.prototype = {
         var transitions = {}, 
             anim = this,
             style = anim._node._node.style,
-            config = anim._config,
+            attrs = anim._attrs,
             cssText = '',
             transitionText = TRANSITION_PROPERTY + ': ',
             transition,
@@ -107,14 +133,9 @@ Transition.prototype = {
             dur,
             attr;
 
-        if (config.transform && !config['-webkit-transform']) {
-            config['-webkit-transform'] = config.transform;
-            delete config.transform;
-        }
-
-        for (attr in config) {
-            if (!Transition._reKeywords.test(attr)) {
-                transitions[attr] = config[attr];
+        for (attr in attrs) {
+            if (attrs.hasOwnProperty(attr)) {
+                transitions[attr] = attrs[attr];
                 transition = transitions[attr];
                 val = transition;
                 anim._count++;
@@ -146,6 +167,13 @@ Transition.prototype = {
             node.on(TRANSITION_END, this._onNativeEnd, this);
         }
 
+        if (anim._totalDuration) { // only fire when duration > 0 (per spec)
+            anim._node.fire(START, {
+                type: START,
+                config: anim._config 
+            });
+        }
+
         setTimeout(function() { // allow any style init to occur (setStyle, etc)
             style.cssText += transitionText + duration + easing + cssText;
         }, 0);
@@ -159,14 +187,21 @@ Transition.prototype = {
 
         anim._hasEndEvent = true;
 
-        node.fire(END, {
-            elapsedTime: event.elapsedTime, propertyName: event.propertyName});
+        node.fire(PROPERTY_END, {
+            type: PROPERTY_END,
+            elapsedTime: event.elapsedTime,
+            propertyName: event.propertyName,
+            config: anim._config
+        });
 
         anim._count--;
         if (event.elapsedTime >= anim._totalDuration && anim._count <= 0)  {
             node._node.style[TRANSITION_CAMEL] = '';
-            node.fire('transitionsend', {
-                elapsedTime: event.elapsedTime
+
+            node.fire(END, {
+                type: END,
+                elapsedTime: event.elapsedTime,
+                config: anim._config
             });
 
             anim._running = false;
@@ -189,8 +224,9 @@ Y.TransitionNative = Transition; // TODO: remove
             duration: 1, // seconds
             easing: 'ease-out',
             height: '10px',
-            width: {
-                value: '10px',
+            width: '10px',
+            opacity: { // per property duration and/or easing
+                value: 0,
                 duration: 2,
                 easing: 'ease-in'
             }
