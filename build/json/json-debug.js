@@ -469,6 +469,7 @@ Y.mix(Y.namespace('JSON'),{
      * @method dateToString
      * @param d {Date} The Date to serialize
      * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
+     * @deprecated Use a replacer function
      * @static
      */
     dateToString : function (d) {
