@@ -17,9 +17,9 @@
  * @constructor
  */
 
-var START = 'transitionstart',
-    END = 'transitionsend',
-    PROPERTY_END = 'transitionend',
+var START = 'transition:start',
+    END = 'transition:end',
+    PROPERTY_END = 'transition:propertyEnd',
     Transition = Y.Transition;
 
 Y.mix(Transition.prototype, {

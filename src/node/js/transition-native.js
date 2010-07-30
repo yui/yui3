@@ -19,9 +19,9 @@
  * @extends Base
  */
 
-var START = 'transitionstart',
-    END = 'transitionsend',
-    PROPERTY_END = 'transitionend',
+var START = 'transition:start',
+    END = 'transition:end',
+    PROPERTY_END = 'transition:propertyEnd',
 
     TRANSITION = '-webkit-transition',
     TRANSITION_CAMEL = 'WebkitTransition',
