@@ -1101,6 +1101,19 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node = Y.DOM.byId('_funky:id{$400}');
             Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).one(h2)");
+
+            node = Y.one(1);
+            Assert.isNull(node, "Y.one(1)");
+
+            node = Y.one(true);
+            Assert.isNull(node, "Y.one(true)");
+
+            node = Y.one(false);
+            Assert.isNull(node, "Y.one(false)");
+
+            node = Y.one(0);
+            Assert.isNull(node, "Y.one(0)");
+
         },
         test_all: function() {
             var node = Y.DOM.byId('test:colon');

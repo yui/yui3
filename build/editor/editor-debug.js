@@ -812,12 +812,9 @@ YUI.add('selection', function(Y) {
                 br.item(0).remove();
                 var html = single.item(0).get('innerHTML');
                 if (html == '' || html == ' ') {
-                    single.set('innerHTML', '<span>&nbsp;</span>');
+                    single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
-                    try {
-                        sel.selectNode(single.item(0).get('firstChild'), true);
-                    } catch (er) {}
-                    
+                    sel.focusCursor(true, false);
                 }
             }
         }
@@ -2591,11 +2588,9 @@ YUI.add('editor-bidi', function(Y) {
         */
         _fixFirstPara: function() {
             var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').setContent('<p>&nbsp;</p>');
+            inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
             sel = new inst.Selection();
-            try {
-                sel.selectNode(inst.one(FIRST_P).get('firstChild'));
-            } catch (er) {}
+            sel.focusCursor(true, false);
         },
         /**
         * nodeChange handler to handle fixing an empty document.

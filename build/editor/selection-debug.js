@@ -178,12 +178,9 @@ YUI.add('selection', function(Y) {
                 br.item(0).remove();
                 var html = single.item(0).get('innerHTML');
                 if (html == '' || html == ' ') {
-                    single.set('innerHTML', '<span>&nbsp;</span>');
+                    single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
-                    try {
-                        sel.selectNode(single.item(0).get('firstChild'), true);
-                    } catch (er) {}
-                    
+                    sel.focusCursor(true, false);
                 }
             }
         }

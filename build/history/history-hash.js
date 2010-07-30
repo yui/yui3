@@ -37,16 +37,20 @@ function HistoryHash() {
 Y.extend(HistoryHash, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
-        // Use the bookmarked state as the initialState if no initialState was
-        // specified.
+        var bookmarkedState = HistoryHash.parseHash();
+
+        // If an initialState was provided, merge the bookmarked state into it
+        // (the bookmarked state wins).
         config = config || {};
-        config.initialState = config.initialState || HistoryHash.parseHash();
+
+        this._initialState = config.initialState ?
+                Y.merge(config.initialState, bookmarkedState) : bookmarkedState;
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
 
-        HistoryHash.superclass._init.call(this, config);
+        HistoryHash.superclass._init.apply(this, arguments);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -388,7 +392,9 @@ if (HistoryBase.nativeHashChange) {
         var newHash = HistoryHash.getHash(),
             newUrl  = HistoryHash.getUrl();
 
-        YArray.each(hashNotifiers, function (notifier) {
+        // Iterate over a copy of the hashNotifiers array since a subscriber
+        // could detach during iteration and cause the array to be re-indexed.
+        YArray.each(hashNotifiers.concat(), function (notifier) {
             notifier.fire({
                 _event : e,
                 oldHash: oldHash,
