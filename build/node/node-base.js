@@ -285,7 +285,7 @@ Y_Node.one = function(node) {
             return node; // NOTE: return
         }
 
-        if (node.nodeType || Y.DOM.isWindow(node)) {
+        if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
             uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
             instance = Y_Node._instances[uid]; // reuse exising instances
             cachedNode = instance ? instance._node : null;
