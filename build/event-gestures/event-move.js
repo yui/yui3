@@ -41,12 +41,25 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     NODE_TYPE = "nodeType",
 
     _defArgsProcessor = function(args, delegate) {
-        var iExtra = (delegate) ? 4 : 3;
-        return (args[iExtra] !== undefined) ? Y.merge(args.splice(iExtra,1)[0]) : {};
+        var iConfig = (delegate) ? 4 : 3;
+        return (args.length > iConfig) ? Y.merge(args.splice(iConfig,1)[0]) : {};
     },
 
     _getRoot = function(node, subscriber) {
         return subscriber._extra.root || (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
+    },
+
+    _normTouchFacade = function(touchFacade, touch, params) {
+        touchFacade.pageX = touch.pageX;
+        touchFacade.pageY = touch.pageY;
+        touchFacade.screenX = touch.screenX;
+        touchFacade.screenY = touch.screenY;
+        touchFacade.clientX = touch.clientX;
+        touchFacade.clientY = touch.clientY;
+        touchFacade.target = touch.target || touchFacade.target;
+        touchFacade.currentTarget = touch.currentTarget || touchFacade.currentTarget;
+
+        touchFacade.button = (params && params.button) || 1; // default to left (left as per vendors, not W3C which is 0)
     },
 
     define = Y.Event.define;
@@ -64,9 +77,9 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * @param cfg {Object} Optional. An object which specifies:
  * <dl>
  * <dt>minDistance (defaults to 0)</dt>
- * <dd>The minimum distance theshold which should be crossed before the gesturemovestart is fired</dd>
+ * <dd>The minimum distance threshold which should be crossed before the gesturemovestart is fired</dd>
  * <dt>minTime (defaults to 0)</dt>
- * <dd>The minimum time theshold for which the finger/mouse should be help down before the gesturemovestart is fired</dd>
+ * <dd>The minimum time threshold for which the finger/mouse should be help down before the gesturemovestart is fired</dd>
  * <dt>button (no default)</dt>
  * <dd>In the case of a mouse input device, if the event should only be fired for a specific mouse button.</dd>
  * </dl>
@@ -90,7 +103,7 @@ define('gesturemovestart', {
     delegate : function(node, subscriber, ce, filter) {
 
         var se = this;
-        
+
         subscriber[_DEL_MOVE_START_HANDLE] = node.delegate(EVENT[START],
             function(e) {
                 se._onStart(e, node, subscriber, ce, true);
@@ -105,7 +118,6 @@ define('gesturemovestart', {
             handle.detach();
             subscriber[_DEL_MOVE_START_HANDLE] = null;
         }
-
     },
 
     detach: function (node, subscriber, ce) {
@@ -133,15 +145,12 @@ define('gesturemovestart', {
 
     _onStart : function(e, node, subscriber, ce, delegate) {
 
-        // e.preventDefault();
-
         if (delegate) {
             node = e.currentTarget;
         }
 
-        var origE = e,
-            params = subscriber._extra,
-            start = true,
+        var params = subscriber._extra,
+            fireStart = true,
             minTime = params.minTime,
             minDistance = params.minDistance,
             button = params.button,
@@ -149,21 +158,19 @@ define('gesturemovestart', {
             startXY;
 
         if (e.touches) {
-            start = (e.touches.length === 1);
-            e = e.touches[0];
-
-            e.target = e.target || origE.target;
-            e.currentTarget = e.currentTarget || origE.currentTarget;
+            if (e.touches) {
+                if (e.touches.length === 1) {
+                    _normTouchFacade(e, e.touches[0], params);                    
+                } else {
+                    fireStart = false;
+                }
+            }
         } else {
-            start = (button === undefined) || (button = e.button);
+            fireStart = (button === undefined) || (button === e.button);
         }
 
 
-        if (start) {
-
-            if (e !== origE) {
-                e._orig = origE;
-            }
+        if (fireStart) {
 
             if (minTime === 0 || minDistance === 0) {
                 this._start(e, node, ce, params);
@@ -173,7 +180,7 @@ define('gesturemovestart', {
 
                 if (minTime > 0) {
 
-            
+
                     params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
 
                     params._hme = root.on(EVENT[END], Y.bind(function() {
@@ -307,28 +314,21 @@ define('gesturemove', {
             node = e.currentTarget;
         }
 
-        var move = subscriber._extra.standAlone || node.getData(_MOVE_START),
-            origE = e;
+        var fireMove = subscriber._extra.standAlone || node.getData(_MOVE_START);
 
 
-        if (move) {
+        if (fireMove) {
 
             if (e.touches) {
-                move = (e.touches.length === 1);
-                e = e.touches[0];
-
-                e.target = e.target || origE.target;
-                e.currentTarget = e.currentTarget || origE.currentTarget;
+                if (e.touches.length === 1) {
+                    _normTouchFacade(e, e.touches[0]);                    
+                } else {
+                    fireMove = false;
+                }
             }
 
-            if (move) {
+            if (fireMove) {
 
-                if (e !== origE) {
-                    e._orig = origE;
-                }
-                
-
-                // origE.preventDefault();
                 e.type = "gesturemove";
                 ce.fire(e);
             }
@@ -417,30 +417,19 @@ define('gesturemoveend', {
             node = e.currentTarget;
         }
 
-        var moveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
-            origE = e;
+        var fireMoveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START);
 
-        if (moveEnd) {
+        if (fireMoveEnd) {
 
             if (e.changedTouches) {
                 if (e.changedTouches.length === 1) {
-                    e = e.changedTouches[0];
-
-                    e.target = e.target || origE.target;
-                    e.currentTarget = e.currentTarget || origE.currentTarget;
-                    
+                    _normTouchFacade(e, e.changedTouches[0]);                    
                 } else {
-                    moveEnd = false;
+                    fireMoveEnd = false;
                 }
             }
 
-            if (moveEnd) {
-                //origE.preventDefault();
-
-                if (e !== origE) {
-                    e._orig = origE;
-                }
-
+            if (fireMoveEnd) {
                 e.type = "gesturemoveend";
                 ce.fire(e);
 

@@ -741,6 +741,18 @@
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;history&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;history-hash-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;history-hash&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-hash&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;history-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -758,13 +770,6 @@
                     <span class="s2">&quot;event-synthetic&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;yui-later&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;history-hash-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;history-hash&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;node-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;history-html5&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1142,11 +1147,17 @@
     <span class="s2">&quot;swfdetect&quot;</span><span class="o">:</span> <span class="p">{},</span> 
     <span class="s2">&quot;tabview&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;tabview-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;classnamemanager&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;skin-sam-tabview&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;tabview-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;tabview-base&quot;</span>
-                <span class="p">],</span> 
-                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+                <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">},</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -1155,16 +1166,7 @@
             <span class="s2">&quot;widget-child&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;tabview-base&quot;</span>
         <span class="p">],</span> 
-        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> 
-        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;tabview-base&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;node-focusmanager&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;classnamemanager&quot;</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
     <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -1285,7 +1287,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;b255ff371461675263aae41767a7df7f&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;9102af0fa0930a570c7686a435b193af&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
