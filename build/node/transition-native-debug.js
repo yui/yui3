@@ -22,7 +22,8 @@ YUI.add('transition-native', function(Y) {
  */
 
 var START = 'transitionstart',
-    END = 'transitionend',
+    END = 'transitionsend',
+    PROPERTY_END = 'transitionend',
 
     TRANSITION = '-webkit-transition',
     TRANSITION_CAMEL = 'WebkitTransition',
@@ -55,10 +56,14 @@ Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
         this._node = node;
+        this._config = config;
         node._transition = this; // cache for reuse
+
         this.initAttrs(config);
+
         this._duration = ('duration' in config) ?
             config.duration: this.constructor.DEFAULT_DURATION;
+
         this._easing = config.easing || this.constructor.DEFAULT_EASING;
         this._count = 0; // track number of animated properties
         this._totalDuration = 0;
@@ -89,12 +94,16 @@ Transition.prototype = {
      * @chainable
      */    
     run: function() {
-        if (!this._running) {
-            this._running = true;
-            this._node.fire(START);
-            this._start();
+        var anim = this,
+            attrs = anim._attrs,
+            attr;
+
+        if (!anim._running) {
+            anim._running = true;
+
+            anim._start();
         }
-        return this;
+        return anim;
     },
 
     _start: function() {
@@ -160,6 +169,13 @@ Transition.prototype = {
             node.on(TRANSITION_END, this._onNativeEnd, this);
         }
 
+        if (anim._totalDuration) { // only fire when duration > 0 (per spec)
+            anim._node.fire(START, {
+                type: START,
+                config: anim._config 
+            });
+        }
+
         setTimeout(function() { // allow any style init to occur (setStyle, etc)
             style.cssText += transitionText + duration + easing + cssText;
         }, 0);
@@ -173,14 +189,21 @@ Transition.prototype = {
 
         anim._hasEndEvent = true;
 
-        node.fire(END, {
-            elapsedTime: event.elapsedTime, propertyName: event.propertyName});
+        node.fire(PROPERTY_END, {
+            type: PROPERTY_END,
+            elapsedTime: event.elapsedTime,
+            propertyName: event.propertyName,
+            config: anim._config
+        });
 
         anim._count--;
         if (event.elapsedTime >= anim._totalDuration && anim._count <= 0)  {
             node._node.style[TRANSITION_CAMEL] = '';
-            node.fire('transitionsend', {
-                elapsedTime: event.elapsedTime
+
+            node.fire(END, {
+                type: END,
+                elapsedTime: event.elapsedTime,
+                config: anim._config
             });
 
             anim._running = false;
