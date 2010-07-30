@@ -386,7 +386,9 @@ if (HistoryBase.nativeHashChange) {
         var newHash = HistoryHash.getHash(),
             newUrl  = HistoryHash.getUrl();
 
-        YArray.each(hashNotifiers, function (notifier) {
+        // Iterate over a copy of the hashNotifiers array since a subscriber
+        // could detach during iteration and cause the array to be re-indexed.
+        YArray.each(hashNotifiers.concat(), function (notifier) {
             notifier.fire({
                 _event : e,
                 oldHash: oldHash,
