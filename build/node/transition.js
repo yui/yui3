@@ -127,15 +127,15 @@ Y.mix(Transition.prototype, {
             easing = this._easing,
             attr = {},
             customAttr = Transition.behaviors,
-            config = this._config,
+            attrs = this._attrs,
             duration,
             val,
             name,
             unit, begin, end;
 
-        for (name in config) {
-            val = config[name];
-            if (!Transition._reKeywords.test(name)) {
+        for (name in attrs) {
+            if (attrs.hasOwnProperty(name)) {
+                val = attrs[name];
                 duration = this._duration * 1000;
                 if (typeof val.value !== 'undefined') {
                     duration = (('duration' in val) ? val.duration : this._duration) * 1000;
