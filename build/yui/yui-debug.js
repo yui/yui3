@@ -110,6 +110,7 @@ if (typeof YUI === 'undefined') {
                 loader.data             = null;
                 loader.required         = [];
                 loader.loadType         = null;
+                // loader._inspectPage();
             } else {
                 loader = new Y.Loader(Y.config);
                 Y.Env._loader = loader;
@@ -392,11 +393,23 @@ proto = {
                 fn: fn,
                 version: version,
                 details: details
-            };
+            },
+            loader,
+            i = 0,
+            l = instances.length;
 
         env.mods[name] = mod;
         env.versions[version] = env.versions[version] || {};
         env.versions[version][name] = mod;
+
+        for (; i<l; i++) {
+            loader = instances[i].Env._loader;
+            if (loader) {
+                if (!loader.moduleInfo[name]) {
+                    loader.addModule(details, name);
+                }
+            }
+        }
 
         return this;
     },

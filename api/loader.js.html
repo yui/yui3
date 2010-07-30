@@ -510,11 +510,7 @@
         <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_renderedMods</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">ON_PAGE</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="s1">&#39;details&#39;</span> <span class="k">in</span> <span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">self</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">_inspectPage</span><span class="p">();</span>
 
     <span class="nx">self</span><span class="p">.</span><span class="nx">_internal</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
@@ -609,6 +605,21 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
+    <span class="nx">_inspectPage</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">ON_PAGE</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span>
+                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">.</span><span class="nx">requires</span><span class="p">,</span>
+                    <span class="nx">mr</span> <span class="o">=</span> <span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">m</span><span class="p">.</span><span class="nx">_inspected</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">mr</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">delete</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
+                    <span class="nx">m</span><span class="p">.</span><span class="nx">_inspected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
 
 <span class="c1">// returns true if b is not loaded, and is required</span>
 <span class="c1">// directly or by means of modules it supersedes.</span>

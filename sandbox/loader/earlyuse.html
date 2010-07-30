@@ -19,7 +19,7 @@ Y = new YUI({
   loadOptional: true
 });
 
-Y.use('event', 'slider', 'somelib', function(Y) {
+Y.use('event', 'dump', 'somelib', function(Y) {
   // Y.log("somelib: " + typeof(Y.somelib));
 });
 
@@ -29,7 +29,23 @@ Y.use('event', 'somelib', function(Y) {
 
 Y.use('event', 'somelib', function(Y) {
   // Y.log("somelib: " + typeof(Y.somelib));
+
+  YUI.add('anotherlib', function(Y) {
+      Y.Another = function() {
+          console.log('another');
+      }
+  }, '12345', {
+      requires: ['widget']
+  });
+
+    Y.use('anotherlib', function(Y) {
+        console.log(Y.Widget);
+    });
+
 });
+
+
+
 </script>
 </body>
 </html>

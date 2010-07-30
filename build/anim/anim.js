@@ -519,9 +519,14 @@ YUI.add('anim-base', function(Y) {
                 customAttr = Y.Anim.behaviors,
                 easing = attr.easing,
                 lastFrame = d,
+                done = false,
                 attribute,
                 setter,
                 i;
+
+            if (t >= d) {
+                done = true;
+            }
 
             if (reverse) {
                 t = d - t;
@@ -534,7 +539,7 @@ YUI.add('anim-base', function(Y) {
                     setter = (i in customAttr && 'set' in customAttr[i]) ?
                             customAttr[i].set : Y.Anim.DEFAULT_SETTER;
 
-                    if (t < d) {
+                    if (!done) {
                         setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
                     } else {
                         setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
