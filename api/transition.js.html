@@ -66,7 +66,9 @@
 <span class="cm"> * @constructor</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">END</span> <span class="o">=</span> <span class="s1">&#39;transitionend&#39;</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">START</span> <span class="o">=</span> <span class="s1">&#39;transition:start&#39;</span><span class="p">,</span>
+    <span class="nx">END</span> <span class="o">=</span> <span class="s1">&#39;transition:end&#39;</span><span class="p">,</span>
+    <span class="nx">PROPERTY_END</span> <span class="o">=</span> <span class="s1">&#39;transition:propertyEnd&#39;</span><span class="p">,</span>
     <span class="nx">Transition</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">;</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
@@ -79,9 +81,18 @@
     <span class="p">},</span>
 
     <span class="nx">_runTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_initAttrs</span><span class="p">();</span>
-        <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">_initAttrs</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_totalDuration</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only fire when duration &gt; 0 (per spec)</span>
+            <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">START</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">type</span><span class="o">:</span> <span class="nx">START</span><span class="p">,</span>
+                <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span> 
+            <span class="p">});</span>
+        <span class="p">}</span>
+
+        <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">anim</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">;</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
         <span class="nx">Transition</span><span class="p">.</span><span class="nx">_startTimer</span><span class="p">();</span>
     <span class="p">},</span>
 
@@ -108,9 +119,10 @@
     <span class="p">},</span>
 
     <span class="nx">_runAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_runtimeAttr</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_runtimeAttr</span><span class="p">,</span>
             <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
-            <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
             <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">attribute</span><span class="p">,</span>
@@ -139,26 +151,30 @@
                     <span class="nx">t</span> <span class="o">=</span> <span class="nx">d</span><span class="p">;</span> 
                 <span class="p">}</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_skip</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="nx">setter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_skip</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">setter</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span>
                         <span class="nx">attribute</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">_skip</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span>
+                        <span class="nx">anim</span><span class="p">.</span><span class="nx">_skip</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span>
 
                         <span class="k">if</span> <span class="p">(</span><span class="nx">actualDuration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// match native behavior which doesnt fire for zero duration</span>
-                            <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">END</span><span class="p">,</span> <span class="p">{</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">PROPERTY_END</span><span class="p">,</span> <span class="p">{</span>
+                                <span class="nx">type</span><span class="o">:</span> <span class="nx">PROPERTY_END</span><span class="p">,</span>
                                 <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">elapsed</span><span class="p">,</span>
-                                <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">i</span>
+                                <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">i</span><span class="p">,</span>
+                                <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span>
                             <span class="p">});</span>
-                        <span class="p">}</span>
 
-                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">allDone</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                            <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;transitionsend&#39;</span><span class="p">,</span> <span class="p">{</span>
-                                <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">elapsed</span> 
-                            <span class="p">});</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">allDone</span> <span class="o">&amp;&amp;</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">END</span><span class="p">,</span> <span class="p">{</span>
+                                    <span class="nx">type</span><span class="o">:</span> <span class="nx">END</span><span class="p">,</span>
+                                    <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">elapsed</span><span class="p">,</span>
+                                    <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span>
+                                <span class="p">});</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
 
                     <span class="p">}</span>
@@ -174,15 +190,15 @@
             <span class="nx">easing</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_easing</span><span class="p">,</span>
             <span class="nx">attr</span> <span class="o">=</span> <span class="p">{},</span>
             <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
-            <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
+            <span class="nx">attrs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attrs</span><span class="p">,</span>
             <span class="nx">duration</span><span class="p">,</span>
             <span class="nx">val</span><span class="p">,</span>
             <span class="nx">name</span><span class="p">,</span>
             <span class="nx">unit</span><span class="p">,</span> <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_reKeywords</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">attrs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">attrs</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
                 <span class="nx">duration</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_duration</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span><span class="p">.</span><span class="nx">value</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">duration</span> <span class="o">=</span> <span class="p">((</span><span class="s1">&#39;duration&#39;</span> <span class="k">in</span> <span class="nx">val</span><span class="p">)</span> <span class="o">?</span> <span class="nx">val</span><span class="p">.</span><span class="nx">duration</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_duration</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>

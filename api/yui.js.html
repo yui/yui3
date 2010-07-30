@@ -159,6 +159,7 @@
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">data</span>             <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">required</span>         <span class="o">=</span> <span class="p">[];</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">loadType</span>         <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="c1">// loader._inspectPage();</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">);</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">;</span>
@@ -441,11 +442,23 @@
                 <span class="nx">fn</span><span class="o">:</span> <span class="nx">fn</span><span class="p">,</span>
                 <span class="nx">version</span><span class="o">:</span> <span class="nx">version</span><span class="p">,</span>
                 <span class="nx">details</span><span class="o">:</span> <span class="nx">details</span>
-            <span class="p">};</span>
+            <span class="p">},</span>
+            <span class="nx">loader</span><span class="p">,</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">l</span> <span class="o">=</span> <span class="nx">instances</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
         <span class="nx">env</span><span class="p">.</span><span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
         <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">loader</span> <span class="o">=</span> <span class="nx">instances</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">loader</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loader</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">loader</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">details</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>

@@ -538,11 +538,7 @@ Y.Loader = function(o) {
         GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
     }
 
-    YObject.each(ON_PAGE, function(v, k) {
-        if ((!(k in self.moduleInfo)) && ('details' in v)) {
-            self.addModule(v.details, k);
-        }
-    });
+    self._inspectPage();
 
     self._internal = false;
 
@@ -637,6 +633,21 @@ Y.Loader.prototype = {
         }
     },
 
+    _inspectPage: function() {
+        YObject.each(ON_PAGE, function(v, k) {
+            if (v.details) {
+                var m = this.moduleInfo[k],
+                    req = v.details.requires,
+                    mr = m && m.requires;
+                if (m && !m._inspected && req && mr.length != req.length) {
+                    delete m.expanded;
+                    m._inspected = true;
+                } else {
+                    this.addModule(v.details, k);
+                }
+            }
+        }, this);
+    },
 
 // returns true if b is not loaded, and is required
 // directly or by means of modules it supersedes.
