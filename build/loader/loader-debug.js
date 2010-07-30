@@ -3272,11 +3272,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "swfdetect": {}, 
     "tabview": {
         "plugins": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager", 
+                    "skin-sam-tabview"
+                ]
+            }, 
             "tabview-plugin": {
                 "requires": [
                     "tabview-base"
-                ], 
-                "skinnable": true
+                ]
             }
         }, 
         "requires": [
@@ -3285,16 +3291,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-child", 
             "tabview-base"
         ], 
-        "skinnable": true, 
-        "submodules": {
-            "tabview-base": {
-                "requires": [
-                    "node-event-delegate", 
-                    "node-focusmanager", 
-                    "classnamemanager"
-                ]
-            }
-        }
+        "skinnable": true
     }, 
     "test": {
         "requires": [
@@ -3415,7 +3412,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b255ff371461675263aae41767a7df7f';
+YUI.Env[Y.version].md5 = '82c5a37bd3665d9ae7e55d192da8270f';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
