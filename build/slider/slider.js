@@ -309,7 +309,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * Signals the end of a thumb drag operation.  Payload includes
          * the thumb's drag:end event.
          *
-         * @event slideStart
+         * @event slideEnd
          * @param event {Event} The event object for the slideEnd with the
          *                      following extra properties:
          *  <dl>

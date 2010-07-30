@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>TabView input/textarea/select test</title>
+</head>
+<body class="yui3-skin-sam">
+
+<h1>TabView input/textarea/select test</h1>
+
+<p>
+Switch between tabs and then use the arrow keys to move the cursor or selection
+in the form elements. See <a href="http://yuilibrary.com/projects/yui3/ticket/2529041">bug #2529041</a>
+for details.
+</p>
+
+<div id="demo">
+    <ul>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
+    </ul>
+
+    <div>
+        <div id="foo">
+            <p>Foo form:</p>
+            <form>
+                <input value="lorem ipsum dolor sit amet">
+
+                <br>
+                <label>
+                    <input type="radio" name="radio1"> Aardvark
+                </label>
+                <label>
+                    <input type="radio" name="radio1"> Bumblebee
+                </label>
+                <label>
+                    <input type="radio" name="radio1"> Cheetah
+                </label>
+
+                <br>
+                <select>
+                    <option>foo</option>
+                    <option>bar</option>
+                    <option>baz</option>
+                </select>
+
+                <br>
+                <textarea cols="30" rows="10">Four score and seven years ago our fathers brought forth on this continent a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Narwhals are awesome.</textarea>
+            </form>
+        </div>
+        <div id="bar">
+            <p>Bar form:</p>
+            <form>
+                <input type="text" value="lorem ipsum dolor sit amet">
+
+                <br>
+                <label>
+                    <input type="radio" name="radio2"> Aardvark
+                </label>
+                <label>
+                    <input type="radio" name="radio2"> Bumblebee
+                </label>
+                <label>
+                    <input type="radio" name="radio2"> Cheetah
+                </label>
+
+                <br>
+                <select>
+                    <option>foo</option>
+                    <option>bar</option>
+                    <option>baz</option>
+                </select>
+
+                <br>
+                <textarea cols="30" rows="10">Four score and seven years ago our fathers brought forth on this continent a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Narwhals are awesome.</textarea>
+            </form>
+        </div>
+        <div id="baz">baz content</div>
+    </div>
+</div>
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI().use('tabview', function (Y) {
+    new Y.TabView({srcNode: '#demo', render: true});
+});
+</script>
+
+</body>
+</html>

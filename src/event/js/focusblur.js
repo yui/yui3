@@ -103,8 +103,6 @@ function define(type, proxy, directEvent) {
             }
         },
 
-        allowDups: true,
-
         on: function (node, sub, notifier) {
             sub.onHandle = this._attach(node._node, notifier);
         },
