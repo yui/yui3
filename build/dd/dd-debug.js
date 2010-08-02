@@ -161,11 +161,12 @@ YUI.add('dd-ddm-base', function(Y) {
         _setupListeners: function() {
             this._createPG();
             this._active = true;
-            //var doc = Y.one(Y.config.doc);
-            //doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            //doc.on('mouseup', Y.bind(this._end, this));
-            //doc.on('move', Y.bind(this._move, this));
-            //doc.on('moveend', Y.bind(this._end, this));
+
+            var doc = Y.one(Y.config.doc);
+            doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            doc.on('mouseup', Y.bind(this._end, this));
+            doc.on('move', Y.bind(this._move, this));
+            doc.on('moveend', Y.bind(this._end, this));
         },
         /**
         * @private
@@ -334,6 +335,11 @@ YUI.add('dd-ddm-base', function(Y) {
 
     Y.namespace('DD');
     Y.DD.DDM = new DDMBase();
+
+    Y.DD.DDM.gestureTest = function(Y) {
+        console.log('gestureTest: ', arguments);
+        return ('ontouchstart' in Y.config.win && !Y.UA.chrome);  
+    };
 
     /**
     * @event ddm:start
@@ -905,10 +911,6 @@ YUI.add('dd-drag', function(Y) {
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
-        GESTURE_MOVE = 'gesturemove',
-        MOUSE_UP = GESTURE_MOVE + 'end',
-        MOUSE_DOWN = GESTURE_MOVE + 'start',
-        DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
@@ -1620,18 +1622,17 @@ YUI.add('dd-drag', function(Y) {
         * @param {Event.Facade}
         */
         _defMouseDownFn: function(e) {
-            var ev = e.ev,
-                preventable = ev._orig || ev;
+            var ev = e.ev;
 
             this._dragThreshMet = false;
             this._ev_md = ev;
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                //return false;
+                return false;
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
-                preventable.halt();
+                ev.preventDefault();
                 
                 this._setStartPosition([ev.pageX, ev.pageY]);
 
@@ -1844,17 +1845,11 @@ YUI.add('dd-drag', function(Y) {
             this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
-                minDistance: 0,
-                minTime: 0
-            });
-            node.setData('dd', true);
-            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this), { standAlone: true });
-            node.on(DRAG_START, Y.bind(this._fixDragStart, this));
-            node.on(GESTURE_MOVE, Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), { standAlone: true });
-            //Should not need this, _handleMouseUp calls this..
-            //node.on('moveend', Y.bind(DDM._end, DDM));
-            
+
+            node.addClass(DDM.CSS_PREFIX + '-draggable');
+            node.on('mousedown', Y.bind(this._handleMouseDownEvent, this));
+            node.on('mouseup', Y.bind(this._handleMouseUp, this));
+            node.on('dragstart', Y.bind(this._fixDragStart, this));
         },
         /**
         * @private
@@ -2091,7 +2086,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base','event-synthetic', 'event-gestures'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
 
 
@@ -4185,7 +4180,38 @@ YUI.add('dd-delegate', function(Y) {
 
 
 }, '@VERSION@' ,{optional:['dd-drop-plugin'], requires:['dd-drag', 'event-mouseenter'], skinnable:false});
+YUI.add('dd-gestures', function(Y) {
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-scroll', 'dd-delegate'], skinnable:false});
+    Y.log('Drag gesture support loaded', 'info', 'drag-gestures');
+    
+    Y.DD.Drag.prototype._prep = function() {
+        Y.log('Using DD override prep to attach gesture events', 'info', 'drag-gestures');
+        this._dragThreshMet = false;
+        var node = this.get('node'), DDM = Y.DD.DDM;
+
+        node.addClass(DDM.CSS_PREFIX + '-draggable');
+
+        node.on('gesturemovestart', Y.bind(this._handleMouseDownEvent, this), {
+            minDistance: 0,
+            minTime: 0
+        });
+        node.setData('dd', true);
+        node.on('gesturemoveend', Y.bind(this._handleMouseUp, this), { standAlone: true });
+        node.on('dragstart', Y.bind(this._fixDragStart, this));
+        node.on('gesturemove', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), { standAlone: true });
+
+    };
+
+    Y.DD.DDM._setupListeners = function() {
+        this._createPG();
+        this._active = true;
+    };
+
+
+
+}, '@VERSION@' ,{requires:['dd-drag', 'event-synthetic', 'event-gestures'], skinnable:false});
+
+
+YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-scroll', 'dd-delegate', 'dd-gestures'], skinnable:false});
 
