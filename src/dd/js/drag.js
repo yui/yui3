@@ -18,10 +18,6 @@
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
-        GESTURE_MOVE = 'gesturemove',
-        MOUSE_UP = GESTURE_MOVE + 'end',
-        MOUSE_DOWN = GESTURE_MOVE + 'start',
-        DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
@@ -733,18 +729,17 @@
         * @param {Event.Facade}
         */
         _defMouseDownFn: function(e) {
-            var ev = e.ev,
-                preventable = ev._orig || ev;
+            var ev = e.ev;
 
             this._dragThreshMet = false;
             this._ev_md = ev;
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                //return false;
+                return false;
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
-                preventable.halt();
+                ev.preventDefault();
                 
                 this._setStartPosition([ev.pageX, ev.pageY]);
 
@@ -957,17 +952,11 @@
             this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
-                minDistance: 0,
-                minTime: 0
-            });
-            node.setData('dd', true);
-            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this), { standAlone: true });
-            node.on(DRAG_START, Y.bind(this._fixDragStart, this));
-            node.on(GESTURE_MOVE, Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), { standAlone: true });
-            //Should not need this, _handleMouseUp calls this..
-            //node.on('moveend', Y.bind(DDM._end, DDM));
-            
+
+            node.addClass(DDM.CSS_PREFIX + '-draggable');
+            node.on('mousedown', Y.bind(this._handleMouseDownEvent, this));
+            node.on('mouseup', Y.bind(this._handleMouseUp, this));
+            node.on('dragstart', Y.bind(this._fixDragStart, this));
         },
         /**
         * @private

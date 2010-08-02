@@ -14,6 +14,7 @@
             position: absolute;
             top: 100px;
             left: 100px;
+            display: none;
         }
         #test iframe {
             border: 1px solid blue;
@@ -112,6 +113,7 @@
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
+<button id="showEditor">Show Editor</button>
 
 <div id="stub">
 </div>
@@ -404,7 +406,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
     });
     */
-    editor.render('#test');
+    //editor.render('#test');
     
 
     Y.on('click', function(e) {
@@ -419,6 +421,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     Y.on('click', function(e) {
         editor.focus(true);
     }, '#focusEditor');
+
+    Y.on('click', function(e) {
+        Y.one('#test1').setStyle('display', 'block');
+        editor.render('#test');
+    }, '#showEditor');
 
 });
 
