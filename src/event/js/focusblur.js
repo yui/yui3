@@ -28,17 +28,18 @@ function define(type, proxy, directEvent) {
         },
 
         _proxy: function (e, notifier, delegate) {
-            var node      = e.target,
-                notifiers = node.getData(nodeDataKey),
-                yuid      = Y.stamp(e.currentTarget._node),
-                defer     = (useActivate || e.target !== e.currentTarget),
-                filter    = notifier.handle.sub.filter,
+            var node       = e.target,
+                notifiers  = node.getData(nodeDataKey),
+                yuid       = Y.stamp(e.currentTarget._node),
+                defer      = (useActivate || e.target !== e.currentTarget),
+                sub        = notifier.handle.sub,
+                filterArgs = [node, e].concat(sub.args || []),
                 directSub;
                 
             notifier.currentTarget = (delegate) ? node : e.currentTarget;
             notifier.container     = (delegate) ? e.currentTarget : null;
 
-            if (!filter || filter(e)) {
+            if (!sub.filter || sub.filter.apply(node, filterArgs)) {
                 // Maintain a list to handle subscriptions from nested
                 // containers div#a>div#b>input #a.on(focus..) #b.on(focus..),
                 // use one focus or blur subscription that fires notifiers from
