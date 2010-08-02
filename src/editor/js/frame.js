@@ -144,9 +144,14 @@
             
             Y.each(Y.Node.DOM_EVENTS, function(v, k) {
                 if (v === 1) {
-                    inst.on(k, fn, inst.config.doc);
+                    if (k !== 'focus' && k !== 'blur') {
+                        inst.on(k, fn, inst.config.doc);
+                    }
                 }
             });
+            //Adding focus/blur to the window object
+            inst.on('focus', fn, inst.config.win);
+            inst.on('blur', fn, inst.config.win);
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 

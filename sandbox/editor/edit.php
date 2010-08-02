@@ -14,7 +14,6 @@
             position: absolute;
             top: 100px;
             left: 100px;
-            display: none;
         }
         #test iframe {
             border: 1px solid blue;
@@ -113,7 +112,7 @@
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
-<button id="showEditor">Show Editor</button>
+<!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
 </div>
@@ -390,6 +389,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             }
         });
     });
+    editor.on('frame:focus', function() {console.log("Focus called");});
+    editor.on('frame:blur', function() {console.log("Blur called");});
+    
     /*
     editor.on('frame:keyup', function(e) {
         var inst = this.getInstance(),
@@ -406,7 +408,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
     });
     */
-    //editor.render('#test');
+    editor.render('#test');
     
 
     Y.on('click', function(e) {
