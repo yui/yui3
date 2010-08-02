@@ -190,7 +190,7 @@ var NOT_FOUND       = {},
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
     win             = Y.config.win,
-    localStorage    = win && win.JSON && win.localStorage,
+    // localStorage    = win && win.JSON && win.localStorage,
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -515,27 +515,31 @@ Y.Loader = function(o) {
 
     if (cache) {
         self.moduleInfo = Y.merge(cache);
-    } else if (localStorage) {
-        cache = localStorage.getItem(modulekey);
-        if (cache) {
-            self.moduleInfo = JSON.parse(cache);
-        }
-        // console.log('cached rendered module info');
+        self.conditions = Y.merge(GLOBAL_ENV._conditions);
     } 
+
+    // else if (localStorage) {
+    //     cache = localStorage.getItem(modulekey);
+    //     if (cache) {
+    //         self.moduleInfo = JSON.parse(cache);
+    //     }
+    //     // console.log('cached rendered module info');
+    // } 
 
     if (!cache) {
         YObject.each(defaults, function(v, k) {
             self.addModule(v, k);
         });
-        if (localStorage) {
-            try {
-                localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
-            } catch(e) { }
-        }
+        // if (localStorage) {
+        //     try {
+        //         localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
+        //     } catch(e) { }
+        // }
     }
 
     if (!GLOBAL_ENV._renderedMods) {
         GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        GLOBAL_ENV._conditions = Y.merge(self.conditions);
     }
 
     self._inspectPage();

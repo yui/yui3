@@ -664,7 +664,9 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
                 <span class="p">}</span>
-                <span class="nx">range</span><span class="p">.</span><span class="nx">moveToElementText</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="nx">range</span><span class="p">.</span><span class="nx">moveToElementText</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">collapse</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">range</span><span class="p">.</span><span class="nx">collapse</span><span class="p">(((</span><span class="nx">end</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">));</span>
                 <span class="p">}</span>

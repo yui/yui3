@@ -616,7 +616,9 @@ YUI.add('selection', function(Y) {
                 if (node.nodeType === 3) {
                     node = node.parentNode;
                 }
-                range.moveToElementText(node);
+                try {
+                    range.moveToElementText(node);
+                } catch(e) {}
                 if (collapse) {
                     range.collapse(((end) ? false : true));
                 }
