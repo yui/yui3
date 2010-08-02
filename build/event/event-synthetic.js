@@ -234,17 +234,17 @@ Y.mix(SyntheticEvent, {
         /**
          * <p>Implementers may override this property.</p>
          *
-         * <p>Whether to allow multiple subscriptions to this event that are
+         * <p>Whether to prevent multiple subscriptions to this event that are
          * classified as being the same.  By default, this means the subscribed
          * callback is the same function.  See the <code>subMatch</code>
-         * method.  Setting this to true will help performance for high volume
+         * method.  Setting this to true will impact performance for high volume
          * events.</p>
          *
-         * @property allowDups
+         * @property preventDups
          * @type {Boolean}
          * @default false
          */
-        //allowDups  : false,
+        //preventDups  : false,
 
         /**
          * <p>Implementers should provide this method definition.</p>
@@ -377,7 +377,7 @@ Y.mix(SyntheticEvent, {
                     // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
                     subArgs.splice(0, 4, subArgs[1], subArgs[3]);
 
-                    if (this.allowDups || !this.getSubs(node, args,null,true)) {
+                    if (!this.preventDups || !this.getSubs(node, args,null,true)) {
                         handle = this._getNotifier(node, subArgs, extra,filter);
 
                         this[method](node, handle.sub, handle.notifier, filter);

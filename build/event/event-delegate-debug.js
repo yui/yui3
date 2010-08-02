@@ -16,21 +16,24 @@ var toArray          = Y.Array,
 /**
  * <p>Sets up event delegation on a container element.  The delegated event
  * will use a supplied selector or filtering function to test if the event
- * references at least one node that should trigger the subscription callback.
- * Selector string filters will trigger the callback if the event originated
- * from a node that matches it or is contained in a node that matches it.
- * Function filters accept the unfiltered event object and should return null
- * if it does not qualify for firing the callbacks, a Node if the callback
- * should be executed for one Node, or an array of Nodes if there were multiple
- * nodes in touched by the event that meet the filtering criteria.</p>
+ * references at least one node that should trigger the subscription
+ * callback.</p>
  *
- * <p>The callback function will be executed only for those cases where the
- * filter returns at least one match.  For each matching Node, the callback
- * will be executed with its 'this' object set to the Node matched by the
- * filter (unless a specific context was provided during subscription), and the
- * provided event's <code>currentTarget</code> will also be set to the matching
- * Node.  The containing Node from which the subscription was originally made
- * can be referenced as <code>e.container</code>.
+ * <p>Selector string filters will trigger the callback if the event originated
+ * from a node that matches it or is contained in a node that matches it.
+ * Function filters are called for each Node up the parent axis to the
+ * subscribing container node, and receive at each level the Node and the event
+ * object.  The function should return true (or a truthy value) if that Node
+ * should trigger the subscription callback.  Note, it is possible for filters
+ * to match multiple Nodes for a single event.  In this case, the delegate
+ * callback will be executed for each matching Node.</p>
+ *
+ * <p>For each matching Node, the callback will be executed with its 'this'
+ * object set to the Node matched by the filter (unless a specific context was
+ * provided during subscription), and the provided event's
+ * <code>currentTarget</code> will also be set to the matching Node.  The
+ * containing Node from which the subscription was originally made can be
+ * referenced as <code>e.container</code>.
  *
  * @method delegate
  * @param type {String} the event type to delegate
@@ -38,7 +41,7 @@ var toArray          = Y.Array,
  *              will be provided the event object for the delegated event.
  * @param el {String|node} the element that is the delegation container
  * @param spec {string|Function} a selector that must match the target of the
- *              event.
+ *              event or a function to test target and its parents for a match
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  *              These arguments will be added after the event object.
@@ -84,7 +87,7 @@ function delegate(type, fn, el, filter) {
             }
 
             handle = Y.on.apply(Y, args);
-            handle.sub.getCurrentTarget = filter;
+            handle.sub.filter  = filter;
             handle.sub._notify = delegate.notifySub;
         }
     }
@@ -119,9 +122,9 @@ delegate.notifySub = function (thisObj, args, ce) {
     }
 
     // Only notify subs if the event occurred on a targeted element
-    var currentTarget = this.getCurrentTarget.apply(this, args),
-        originalEvent = args[0],
-        container     = originalEvent.currentTarget,
+    var e             = args[0],
+        currentTarget = delegate._applyFilter(this.filter, args),
+        container     = e.currentTarget,
         i, ret, target;
 
     if (currentTarget) {
@@ -132,7 +135,7 @@ delegate.notifySub = function (thisObj, args, ce) {
             target = currentTarget[i];
 
             // New facade to avoid corrupting facade sent to direct subs
-            args[0] = new Y.DOMEventFacade(originalEvent, target, ce);
+            args[0] = new Y.DOMEventFacade(e, target, ce);
 
             args[0].container = container;
         
@@ -150,11 +153,15 @@ delegate.notifySub = function (thisObj, args, ce) {
 };
 
 /**
- * <p>Compiles a selector string into a filter function that returns an array of Nodes matching that selector starging from the event's target up the parent axis to the Node from which the subscription occurred.  If only one Node matches, it is returned (absent the array), and if none, undefined is returned.</p>
+ * <p>Compiles a selector string into a filter function to identify whether
+ * Nodes along the parent axis of an event's target should trigger event
+ * notification.</p>
  *
- * <p>Previously compiled filter functions are returned if the same selector string is provided.</p>
+ * <p>This function is memoized, so previously compiled filter functions are
+ * returned if the same selector string is provided.</p>
  *
- * <p>This function may be useful when defining synthetic events for delegate handling.</p>
+ * <p>This function may be useful when defining synthetic events for delegate
+ * handling.</p>
  *
  * @method delegate.compileFilter
  * @param selector {String} the selector string to base the filtration on
@@ -163,25 +170,51 @@ delegate.notifySub = function (thisObj, args, ce) {
  * @static
  */
 delegate.compileFilter = Y.cached(function (selector) {
-    return function (e) {
-        var container = e.currentTarget._node,
-            target    = e.target._node,
-            match     = [];
-
-        while (target !== container) {
-            if (selectorTest(target, selector, container)) {
-                match.push(Y.one(target));
-            }
-            target = target.parentNode;
-        }
-
-        if (match.length <= 1) {
-            match = match[0]; // single match or undefined
-        }
-
-        return match;
+    return function (target, e) {
+        return selectorTest(target._node, selector, e.currentTarget._node);
     };
 });
+
+/**
+ * Walks up the parent axis of an event's target, and tests each element
+ * against a supplied filter function.  If any Nodes satisfy the filter, the
+ * delegated callback will be triggered for each.
+ *
+ * @method delegate._applyFilter
+ * @param filter {Function} boolean function to test for inclusion in event
+ *                  notification
+ * @param args {Array} the arguments that would be passed to subscribers
+ * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter
+ * @protected
+ */
+delegate._applyFilter = function (filter, args) {
+    var e         = args[0],
+        container = e.currentTarget,
+        target    = e.target,
+        match     = [];
+
+    // passing target as the first arg rather than leaving well enough alone
+    // making 'this' in the filter function refer to the target.  This is to
+    // support bound filter functions.
+    args.unshift(target);
+
+    while (target && target !== container) {
+        // filter(target, e, extra args...) - this === target
+        if (filter.apply(target, args)) {
+            match.push(target);
+        }
+        args[0] = target = target.get('parentNode');
+    }
+
+    if (match.length <= 1) {
+        match = match[0]; // single match or undefined
+    }
+
+    // remove the target
+    args.shift();
+
+    return match;
+};
 
 /**
  * Sets up event delegation on a container element.  The delegated event

@@ -47,6 +47,16 @@
             </div>
         </div>        
 
+        <div id="a">
+            <p>Div A</p>
+            <div id="b" class="remove">
+                <p>Div B</p>
+                <div id="c" class="remove">
+                    <p>Div C</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 	<!-- YUI3 Core //-->
 	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
@@ -326,6 +336,19 @@
                     Y.Assert.areSame('div-1-2', ids[0], "First delegate callback should be from the highest div in the subtree");
                     Y.Assert.areSame('div-1-2-1', ids[1]);
                     Y.Assert.areSame('div-1-2-1-1', ids[2]);
+                },
+
+                test_removing_parent_in_subscriber: function () {
+                    var count = 0;
+
+                    Y.one('#a').delegate('click', function (e) {
+                        this.get('parentNode').remove();
+                        count++;
+                    }, '.remove');
+
+					Y.Event.simulate(Y.one('#c')._node, 'click');
+
+                    Y.Assert.areSame(2, count);
                 },
 
 				test_successful_purge: function () {
