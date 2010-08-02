@@ -393,18 +393,19 @@ proto = {
                 details: details
             },
             loader,
-            i = 0,
-            l = instances.length;
+            i;
 
         env.mods[name] = mod;
         env.versions[version] = env.versions[version] || {};
         env.versions[version][name] = mod;
 
-        for (; i<l; i++) {
-            loader = instances[i].Env._loader;
-            if (loader) {
-                if (!loader.moduleInfo[name]) {
-                    loader.addModule(details, name);
+        for (i in instances) {
+            if (instances.hasOwnProperty(i)) {
+                loader = instances[i].Env._loader;
+                if (loader) {
+                    if (!loader.moduleInfo[name]) {
+                        loader.addModule(details, name);
+                    }
                 }
             }
         }
