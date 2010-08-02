@@ -42,9 +42,7 @@
             "dd-gestures": {
                 "condition": {
                     "trigger": "dd-drag",
-                    "test": function(Y) {
-                        return ('ontouchstart' in Y.config.win && !Y.UA.chrome);                        
-                    }
+                    "test": "dd-gestures-test.js"
                 },
                 "requires": [
                     "dd-drag",
