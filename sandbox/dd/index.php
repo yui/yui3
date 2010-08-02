@@ -225,6 +225,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <script type="text/javascript" src="js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag-gestures.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -233,10 +234,10 @@ var yConfig = {
     //base: 'http://yeshouseborn-lx.corp.yahoo.com/yui-clean/yui3/build/',
     allowRollup: false,
     logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
+        'yui': true,
+        event: true,
+        base: true,
+        attribute: true,
         augment: true
     },
     throwFail: true,
@@ -248,10 +249,10 @@ var yConfig2 = {
     filter: 'DEBUG',
     allowRollup: false,
     logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
+        'yui': true,
+        event: true,
+        base: true,
+        attribute: true,
         augment: true
     },
     throwFail: true,
@@ -375,7 +376,7 @@ YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-dd
 
 });
 
-YUI(yConfig2).use('classnamemanager', 'dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle', function(Y) {
+YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle','drag-gestures', function(Y) {
     
     //alert(navigator.userAgent);
 //var Y = new YUI().use('dd-ddm', 'dd-drag');

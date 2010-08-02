@@ -453,9 +453,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base", 
-                    "event-synthetic", 
-                    "event-gestures"
+                    "dd-ddm-base"
                 ]
             }, 
             "dd-drop": {
@@ -466,6 +464,19 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drop-plugin": {
                 "requires": [
                     "dd-drop"
+                ]
+            }, 
+            "dd-gestures": {
+                "condition": {
+                    "test": function(Y) {
+    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);                        
+}, 
+                    "trigger": "dd-drag"
+                }, 
+                "requires": [
+                    "dd-drag", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-plugin": {
@@ -561,6 +572,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "frame", 
                     "node", 
                     "exec-command"
+                ]
+            }, 
+            "editor-bidi": {
+                "requires": [
+                    "editor-base", 
+                    "selection"
                 ]
             }, 
             "editor-lists": {
@@ -686,6 +703,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "history": {
+        "plugins": {
+            "history-hash-ie": {
+                "condition": {
+                    "test": function (Y) {
+    var docMode = Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+                    "trigger": "history-hash"
+                }, 
+                "requires": [
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "history-base": {
                 "after": [
@@ -703,13 +737,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
-                ]
-            }, 
-            "history-hash-ie": {
-                "requires": [
-                    "history-base", 
-                    "history-hash", 
-                    "node-base"
                 ]
             }, 
             "history-html5": {
@@ -1087,11 +1114,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "swfdetect": {}, 
     "tabview": {
         "plugins": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager", 
+                    "skin-sam-tabview"
+                ]
+            }, 
             "tabview-plugin": {
                 "requires": [
                     "tabview-base"
-                ], 
-                "skinnable": true
+                ]
             }
         }, 
         "requires": [
@@ -1100,16 +1133,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-child", 
             "tabview-base"
         ], 
-        "skinnable": true, 
-        "submodules": {
-            "tabview-base": {
-                "requires": [
-                    "node-event-delegate", 
-                    "node-focusmanager", 
-                    "classnamemanager"
-                ]
-            }
-        }
+        "skinnable": true
     }, 
     "test": {
         "requires": [
@@ -1230,4 +1254,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'f055b47d2aed0a39b1fc54398e236ba5';
+YUI.Env[Y.version].md5 = '3dd64d2201d126f43699db6d8265413e';

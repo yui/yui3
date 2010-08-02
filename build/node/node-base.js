@@ -183,7 +183,7 @@ Y_Node.getDOMNode = function(node) {
  */
 Y_Node.scrubVal = function(val, node) {
     if (node && val) { // only truthy values are risky
-        if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
+         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y_DOM.isWindow(val)) {// node || window
                 val = Y.one(val);
             } else if ((val.item && !val._nodes) || // dom collection or Node instance
@@ -193,6 +193,8 @@ Y_Node.scrubVal = function(val, node) {
         }
     } else if (val === undefined) {
         val = node; // for chaining
+    } else if (val === null) {
+        val = null; // IE: DOM null not the same as null
     }
 
     return val;
@@ -283,11 +285,13 @@ Y_Node.one = function(node) {
             return node; // NOTE: return
         }
 
-        uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
-        instance = Y_Node._instances[uid]; // reuse exising instances
-        cachedNode = instance ? instance._node : null;
-        if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
-            instance = new Y_Node(node);
+        if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
+            uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
+            instance = Y_Node._instances[uid]; // reuse exising instances
+            cachedNode = instance ? instance._node : null;
+            if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
+                instance = new Y_Node(node);
+            }
         }
     }
     return instance;
@@ -504,6 +508,8 @@ Y.mix(Y_Node.prototype, {
 
         if (val) {
             val = Y_Node.scrubVal(val, this);
+        } else if (val === null) {
+            val = null; // IE: DOM null is not true null (even though they ===)
         }
         return val;
     },
@@ -614,6 +620,7 @@ Y.mix(Y_Node.prototype, {
      */
     compareTo: function(refNode) {
         var node = this._node;
+
         if (refNode instanceof Y_Node) { 
             refNode = refNode._node;
         }

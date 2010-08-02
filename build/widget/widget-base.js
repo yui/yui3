@@ -460,7 +460,7 @@ Y.extend(Widget, Y.Base, {
                 //  There are no more Widget instances using this delegated 
                 //  event listener, so detach it.
 
-                if (Y.Object.size(info.instances) === 0) {
+                if (Y.Object.isEmpty(info.instances)) {
                     info.handle.detach();
 
                     if (_delegates[key]) {

@@ -80,6 +80,7 @@
     <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="p">,</span>
     <span class="nx">MIN_VELOCITY</span> <span class="o">=</span> <span class="s2">&quot;minVelocity&quot;</span><span class="p">,</span>
     <span class="nx">MIN_DISTANCE</span> <span class="o">=</span> <span class="s2">&quot;minDistance&quot;</span><span class="p">,</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">=</span> <span class="s2">&quot;preventDefault&quot;</span><span class="p">,</span>
 
     <span class="nx">_FLICK_START</span> <span class="o">=</span> <span class="s2">&quot;_fs&quot;</span><span class="p">,</span>
     <span class="nx">_FLICK_START_HANDLE</span> <span class="o">=</span> <span class="s2">&quot;_fsh&quot;</span><span class="p">,</span>
@@ -98,9 +99,16 @@
 <span class="cm"> * @for YUI</span>
 <span class="cm"> * @param type {string} &quot;flick&quot;</span>
 <span class="cm"> * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.</span>
-<span class="cm"> * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity  (in px/ms)</span>
-<span class="cm"> * of the flick gesture for which the event is to be fired and an axis of interest. e.g. { minDistance:10, minVelocity:0.5, axis:&quot;x&quot; }.</span>
-<span class="cm"> *</span>
+<span class="cm"> * @param cfg {Object} Optional. An object which specifies any of the following:</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> * &lt;dt&gt;minDistance (in pixels, defaults to 10)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;The minimum distance between start and end points, which would qualify the gesture as a flick.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;minVelocity (in pixels/ms, defaults to 0)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;The minimum velocity which would qualify the gesture as a flick.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;preventDefault (defaults to true)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be </span>
+<span class="cm"> * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> * @return {EventHandle} the detach handle</span>
 <span class="cm"> */</span>
 
@@ -135,17 +143,21 @@
     <span class="p">},</span>
 
     <span class="nx">processArgs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">:</span> <span class="p">{};</span>
+        <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">:</span> <span class="p">{};</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">MIN_VELOCITY</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">params</span><span class="p">.</span><span class="nx">minVelocity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">MIN_VELOCITY</span><span class="p">;</span>
+            <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_VELOCITY</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">MIN_VELOCITY</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">MIN_DISTANCE</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">params</span><span class="p">.</span><span class="nx">minDistance</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">MIN_DISTANCE</span><span class="p">;</span>
+            <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_DISTANCE</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">MIN_DISTANCE</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;flick, processArgs : minDistance =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minDistance</span> <span class="o">+</span> <span class="s2">&quot;, minVelocity =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minVelocity</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">PREVENT_DEFAULT</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">params</span><span class="p">[</span><span class="nx">PREVENT_DEFAULT</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">PREVENT_DEFAULT</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;flick, processArgs : minDistance =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minDistance</span> <span class="o">+</span> <span class="s2">&quot;, minVelocity =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minVelocity</span> <span class="o">+</span> <span class="s2">&quot;, preventDefault = &quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
     <span class="p">},</span>
@@ -155,6 +167,7 @@
         <span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// always true for mouse</span>
             <span class="nx">endHandle</span><span class="p">,</span>
             <span class="nx">doc</span><span class="p">,</span>
+            <span class="nx">preventDefault</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">,</span>
             <span class="nx">origE</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span> 
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
@@ -163,7 +176,13 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">origE</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// preventDefault is a boolean or function</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">preventDefault</span><span class="p">.</span><span class="nx">call</span> <span class="o">||</span> <span class="nx">preventDefault</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">origE</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
             <span class="nx">e</span><span class="p">.</span><span class="nx">flick</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">time</span> <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span>
@@ -190,6 +209,7 @@
             <span class="nx">endEvent</span> <span class="o">=</span> <span class="nx">e</span><span class="p">,</span>
             <span class="nx">startTime</span><span class="p">,</span>
             <span class="nx">time</span><span class="p">,</span>
+            <span class="nx">preventDefault</span><span class="p">,</span>
             <span class="nx">params</span><span class="p">,</span>
             <span class="nx">xyDistance</span><span class="p">,</span> 
             <span class="nx">distance</span><span class="p">,</span>
@@ -208,13 +228,20 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">valid</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="nx">endEvent</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="nx">params</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">;</span>
+                <span class="nx">preventDefault</span> <span class="o">=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">PREVENT_DEFAULT</span><span class="p">];</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// preventDefault is a boolean or function</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">preventDefault</span><span class="p">.</span><span class="nx">call</span> <span class="o">||</span> <span class="nx">preventDefault</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">endEvent</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
 
                 <span class="nx">startTime</span> <span class="o">=</span> <span class="nx">start</span><span class="p">.</span><span class="nx">flick</span><span class="p">.</span><span class="nx">time</span><span class="p">;</span>
                 <span class="nx">endTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">();</span>
                 <span class="nx">time</span> <span class="o">=</span> <span class="nx">endTime</span> <span class="o">-</span> <span class="nx">startTime</span><span class="p">;</span>
 
-                <span class="nx">params</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">;</span>
 
                 <span class="nx">xyDistance</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="nx">endEvent</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">start</span><span class="p">.</span><span class="nx">pageX</span><span class="p">,</span>
@@ -225,7 +252,7 @@
                 <span class="nx">distance</span> <span class="o">=</span> <span class="nx">xyDistance</span><span class="p">[(</span><span class="nx">axis</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">];</span>
                 <span class="nx">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="nx">time</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">distance</span><span class="o">/</span><span class="nx">time</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nb">isFinite</span><span class="p">(</span><span class="nx">velocity</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minDistance</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">velocity</span><span class="p">)</span>  <span class="o">&gt;=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minVelocity</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isFinite</span><span class="p">(</span><span class="nx">velocity</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_DISTANCE</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">velocity</span><span class="p">)</span>  <span class="o">&gt;=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_VELOCITY</span><span class="p">]))</span> <span class="p">{</span>
 
                     <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;flick&quot;</span><span class="p">;</span>
                     <span class="nx">e</span><span class="p">.</span><span class="nx">flick</span> <span class="o">=</span> <span class="p">{</span>
@@ -246,7 +273,8 @@
     <span class="p">},</span>
 
     <span class="nx">MIN_VELOCITY</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="nx">MIN_DISTANCE</span> <span class="o">:</span> <span class="mi">0</span>
+    <span class="nx">MIN_DISTANCE</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">true</span>
 <span class="p">});</span>
 </pre></div>
 

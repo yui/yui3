@@ -33,6 +33,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     OWNER_DOCUMENT = "ownerDocument",
     MIN_VELOCITY = "minVelocity",
     MIN_DISTANCE = "minDistance",
+    PREVENT_DEFAULT = "preventDefault",
 
     _FLICK_START = "_fs",
     _FLICK_START_HANDLE = "_fsh",
@@ -51,9 +52,16 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * @for YUI
  * @param type {string} "flick"
  * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.
- * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity  (in px/ms)
- * of the flick gesture for which the event is to be fired and an axis of interest. e.g. { minDistance:10, minVelocity:0.5, axis:"x" }.
- *
+ * @param cfg {Object} Optional. An object which specifies any of the following:
+ * <dl>
+ * <dt>minDistance (in pixels, defaults to 10)</dt>
+ * <dd>The minimum distance between start and end points, which would qualify the gesture as a flick.</dd>
+ * <dt>minVelocity (in pixels/ms, defaults to 0)</dt>
+ * <dd>The minimum velocity which would qualify the gesture as a flick.</dd>
+ * <dt>preventDefault (defaults to true)</dt>
+ * <dd>Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be 
+ * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.</dd>
+ * </dl>
  * @return {EventHandle} the detach handle
  */
 
@@ -88,17 +96,21 @@ Y.Event.define('flick', {
     },
 
     processArgs: function(args) {
-        var params = (args[3] !== undefined) ? Y.merge(args.splice(3, 1)[0]) : {};
+        var params = (args.length > 3) ? Y.merge(args.splice(3, 1)[0]) : {};
 
         if (!(MIN_VELOCITY in params)) {
-            params.minVelocity = this.MIN_VELOCITY;
+            params[MIN_VELOCITY] = this.MIN_VELOCITY;
         }
 
         if (!(MIN_DISTANCE in params)) {
-            params.minDistance = this.MIN_DISTANCE;
+            params[MIN_DISTANCE] = this.MIN_DISTANCE;
         }
 
-        Y.log("flick, processArgs : minDistance =" + params.minDistance + ", minVelocity =" + params.minVelocity);
+        if (!(PREVENT_DEFAULT in params)) {
+            params[PREVENT_DEFAULT] = this.PREVENT_DEFAULT;
+        }
+
+        Y.log("flick, processArgs : minDistance =" + params.minDistance + ", minVelocity =" + params.minVelocity + ", preventDefault = " + params.preventDefault);
 
         return params;
     },
@@ -108,6 +120,7 @@ Y.Event.define('flick', {
         var start = true, // always true for mouse
             endHandle,
             doc,
+            preventDefault = subscriber._extra.preventDefault,
             origE = e; 
 
         if (e.touches) {
@@ -116,7 +129,13 @@ Y.Event.define('flick', {
         }
 
         if (start) {
-            origE.preventDefault();
+
+            if (preventDefault) {
+                // preventDefault is a boolean or function
+                if (!preventDefault.call || preventDefault(e)) {
+                    origE.preventDefault();
+                }
+            }
 
             e.flick = {
                 time : new Date().getTime()
@@ -143,6 +162,7 @@ Y.Event.define('flick', {
             endEvent = e,
             startTime,
             time,
+            preventDefault,
             params,
             xyDistance, 
             distance,
@@ -161,13 +181,20 @@ Y.Event.define('flick', {
 
             if (valid) {
 
-                endEvent.preventDefault();
+                params = subscriber._extra;
+                preventDefault = params[PREVENT_DEFAULT];
+
+                if (preventDefault) {
+                    // preventDefault is a boolean or function
+                    if (!preventDefault.call || preventDefault(e)) {
+                        endEvent.preventDefault();
+                    }
+                }
 
                 startTime = start.flick.time;
                 endTime = new Date().getTime();
                 time = endTime - startTime;
 
-                params = subscriber._extra;
 
                 xyDistance = [
                     endEvent.pageX - start.pageX,
@@ -178,7 +205,7 @@ Y.Event.define('flick', {
                 distance = xyDistance[(axis === 'x') ? 0 : 1];
                 velocity = (time !== 0) ? distance/time : 0;
 
-                if (isFinite(velocity) && (Math.abs(distance) >= params.minDistance) && (Math.abs(velocity)  >= params.minVelocity)) {
+                if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) && (Math.abs(velocity)  >= params[MIN_VELOCITY])) {
 
                     e.type = "flick";
                     e.flick = {
@@ -199,7 +226,8 @@ Y.Event.define('flick', {
     },
 
     MIN_VELOCITY : 0,
-    MIN_DISTANCE : 0
+    MIN_DISTANCE : 0,
+    PREVENT_DEFAULT : true
 });
 
 

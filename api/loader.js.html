@@ -162,7 +162,7 @@
     <span class="nx">ON_PAGE</span>         <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
     <span class="nx">modulekey</span><span class="p">,</span>
     <span class="nx">win</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-    <span class="nx">localStorage</span>    <span class="o">=</span> <span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">win</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">,</span>
+    <span class="c1">// localStorage    = win &amp;&amp; win.JSON &amp;&amp; win.localStorage,</span>
     <span class="nx">cache</span><span class="p">,</span>
 
     <span class="nx">_path</span>           <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
@@ -487,34 +487,34 @@
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">cache</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">cache</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">localStorage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">cache</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">modulekey</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cache</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">cache</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="c1">// console.log(&#39;cached rendered module info&#39;);</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">conditions</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_conditions</span><span class="p">);</span>
     <span class="p">}</span> 
+
+    <span class="c1">// else if (localStorage) {</span>
+    <span class="c1">//     cache = localStorage.getItem(modulekey);</span>
+    <span class="c1">//     if (cache) {</span>
+    <span class="c1">//         self.moduleInfo = JSON.parse(cache);</span>
+    <span class="c1">//     }</span>
+    <span class="c1">//     // console.log(&#39;cached rendered module info&#39;);</span>
+    <span class="c1">// } </span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cache</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">defaults</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">self</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
         <span class="p">});</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">localStorage</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">try</span> <span class="p">{</span>
-                <span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="nx">modulekey</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">));</span>
-            <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
-        <span class="p">}</span>
+        <span class="c1">// if (localStorage) {</span>
+        <span class="c1">//     try {</span>
+        <span class="c1">//         localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));</span>
+        <span class="c1">//     } catch(e) { }</span>
+        <span class="c1">// }</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_renderedMods</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_renderedMods</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">);</span>
+        <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_conditions</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">conditions</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">ON_PAGE</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="s1">&#39;details&#39;</span> <span class="k">in</span> <span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">self</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">_inspectPage</span><span class="p">();</span>
 
     <span class="nx">self</span><span class="p">.</span><span class="nx">_internal</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
@@ -609,6 +609,21 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
+    <span class="nx">_inspectPage</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">ON_PAGE</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span>
+                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">.</span><span class="nx">requires</span><span class="p">,</span>
+                    <span class="nx">mr</span> <span class="o">=</span> <span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">m</span><span class="p">.</span><span class="nx">_inspected</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">mr</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">delete</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
+                    <span class="nx">m</span><span class="p">.</span><span class="nx">_inspected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">details</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
 
 <span class="c1">// returns true if b is not loaded, and is required</span>
 <span class="c1">// directly or by means of modules it supersedes.</span>
@@ -1522,7 +1537,10 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">skipped</span> <span class="o">=</span> <span class="p">{};</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">inserted</span><span class="p">);</span>
+        <span class="c1">// Y.mix(this.loaded, this.inserted);</span>
+        <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inserted</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProvides</span><span class="p">(</span><span class="nx">k</span><span class="p">));</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
         <span class="nx">fn</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">onSuccess</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>

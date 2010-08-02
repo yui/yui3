@@ -14,7 +14,7 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.07-19-52',
+            GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.07.28-20-07',
             GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
             TNT_VERSION     = CONFIG[TNT] || '3',
@@ -30,10 +30,12 @@ if (!YUI.Env[Y.version]) {
                                            path:        'skin.css',
                                            after:       [ 'cssreset', 
                                                           'cssfonts', 
+                                                          'cssgrids', 
+                                                          'cssbase', 
                                                           'cssreset-context', 
                                                           'cssfonts-context' ] },
                               groups:    {},
-                              // modules:   { /* METAGEN */ },
+                              // modules:   { / METAGEN / },
                               patterns:  {}                                     },
             groups =          META.groups;
 
@@ -188,7 +190,7 @@ var NOT_FOUND       = {},
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
     win             = Y.config.win,
-    localStorage    = win && win.localStorage,
+    // localStorage    = win && win.JSON && win.localStorage,
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -513,34 +515,34 @@ Y.Loader = function(o) {
 
     if (cache) {
         self.moduleInfo = Y.merge(cache);
-    } else if (localStorage) {
-        cache = localStorage.getItem(modulekey);
-        if (cache) {
-            self.moduleInfo = JSON.parse(cache);
-        }
-        // console.log('cached rendered module info');
+        self.conditions = Y.merge(GLOBAL_ENV._conditions);
     } 
+
+    // else if (localStorage) {
+    //     cache = localStorage.getItem(modulekey);
+    //     if (cache) {
+    //         self.moduleInfo = JSON.parse(cache);
+    //     }
+    //     // console.log('cached rendered module info');
+    // } 
 
     if (!cache) {
         YObject.each(defaults, function(v, k) {
             self.addModule(v, k);
         });
-        if (localStorage) {
-            try {
-                localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
-            } catch(e) { }
-        }
+        // if (localStorage) {
+        //     try {
+        //         localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
+        //     } catch(e) { }
+        // }
     }
 
     if (!GLOBAL_ENV._renderedMods) {
         GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        GLOBAL_ENV._conditions = Y.merge(self.conditions);
     }
 
-    YObject.each(ON_PAGE, function(v, k) {
-        if ((!(k in self.moduleInfo)) && ('details' in v)) {
-            self.addModule(v.details, k);
-        }
-    });
+    self._inspectPage();
 
     self._internal = false;
 
@@ -635,6 +637,21 @@ Y.Loader.prototype = {
         }
     },
 
+    _inspectPage: function() {
+        YObject.each(ON_PAGE, function(v, k) {
+            if (v.details) {
+                var m = this.moduleInfo[k],
+                    req = v.details.requires,
+                    mr = m && m.requires;
+                if (m && !m._inspected && req && mr.length != req.length) {
+                    delete m.expanded;
+                    m._inspected = true;
+                } else {
+                    this.addModule(v.details, k);
+                }
+            }
+        }, this);
+    },
 
 // returns true if b is not loaded, and is required
 // directly or by means of modules it supersedes.
@@ -1548,7 +1565,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
         this.skipped = {};
 
-        Y.mix(this.loaded, this.inserted);
+        // Y.mix(this.loaded, this.inserted);
+        YObject.each(this.inserted, function(v, k) {
+            Y.mix(this.loaded, this.getProvides(k));
+        }, this);
 
         fn = this.onSuccess;
         if (fn) {
@@ -2627,9 +2647,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base", 
-                    "event-synthetic", 
-                    "event-gestures"
+                    "dd-ddm-base"
                 ]
             }, 
             "dd-drop": {
@@ -2640,6 +2658,19 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drop-plugin": {
                 "requires": [
                     "dd-drop"
+                ]
+            }, 
+            "dd-gestures": {
+                "condition": {
+                    "test": function(Y) {
+    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);                        
+}, 
+                    "trigger": "dd-drag"
+                }, 
+                "requires": [
+                    "dd-drag", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-plugin": {
@@ -2735,6 +2766,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "frame", 
                     "node", 
                     "exec-command"
+                ]
+            }, 
+            "editor-bidi": {
+                "requires": [
+                    "editor-base", 
+                    "selection"
                 ]
             }, 
             "editor-lists": {
@@ -2860,6 +2897,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "history": {
+        "plugins": {
+            "history-hash-ie": {
+                "condition": {
+                    "test": function (Y) {
+    var docMode = Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+                    "trigger": "history-hash"
+                }, 
+                "requires": [
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "history-base": {
                 "after": [
@@ -2877,13 +2931,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
-                ]
-            }, 
-            "history-hash-ie": {
-                "requires": [
-                    "history-base", 
-                    "history-hash", 
-                    "node-base"
                 ]
             }, 
             "history-html5": {
@@ -3261,11 +3308,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "swfdetect": {}, 
     "tabview": {
         "plugins": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager", 
+                    "skin-sam-tabview"
+                ]
+            }, 
             "tabview-plugin": {
                 "requires": [
                     "tabview-base"
-                ], 
-                "skinnable": true
+                ]
             }
         }, 
         "requires": [
@@ -3274,16 +3327,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-child", 
             "tabview-base"
         ], 
-        "skinnable": true, 
-        "submodules": {
-            "tabview-base": {
-                "requires": [
-                    "node-event-delegate", 
-                    "node-focusmanager", 
-                    "classnamemanager"
-                ]
-            }
-        }
+        "skinnable": true
     }, 
     "test": {
         "requires": [
@@ -3404,7 +3448,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'f055b47d2aed0a39b1fc54398e236ba5';
+YUI.Env[Y.version].md5 = '3dd64d2201d126f43699db6d8265413e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

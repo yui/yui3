@@ -448,9 +448,7 @@
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base", 
-                    "event-synthetic", 
-                    "event-gestures"
+                    "dd-ddm-base"
                 ]
             }, 
             "dd-drop": {
@@ -461,6 +459,17 @@
             "dd-drop-plugin": {
                 "requires": [
                     "dd-drop"
+                ]
+            }, 
+            "dd-gestures": {
+                "condition": {
+                    "test": "dd-gestures-test.js", 
+                    "trigger": "dd-drag"
+                }, 
+                "requires": [
+                    "dd-drag", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-plugin": {
@@ -556,6 +565,12 @@
                     "frame", 
                     "node", 
                     "exec-command"
+                ]
+            }, 
+            "editor-bidi": {
+                "requires": [
+                    "editor-base", 
+                    "selection"
                 ]
             }, 
             "editor-lists": {
@@ -681,6 +696,18 @@
         ]
     }, 
     "history": {
+        "plugins": {
+            "history-hash-ie": {
+                "condition": {
+                    "test": "history-hash-ie-test.js", 
+                    "trigger": "history-hash"
+                }, 
+                "requires": [
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "history-base": {
                 "after": [
@@ -698,13 +725,6 @@
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
-                ]
-            }, 
-            "history-hash-ie": {
-                "requires": [
-                    "history-base", 
-                    "history-hash", 
-                    "node-base"
                 ]
             }, 
             "history-html5": {
@@ -1082,11 +1102,17 @@
     "swfdetect": {}, 
     "tabview": {
         "plugins": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager", 
+                    "skin-sam-tabview"
+                ]
+            }, 
             "tabview-plugin": {
                 "requires": [
                     "tabview-base"
-                ], 
-                "skinnable": true
+                ]
             }
         }, 
         "requires": [
@@ -1095,16 +1121,7 @@
             "widget-child", 
             "tabview-base"
         ], 
-        "skinnable": true, 
-        "submodules": {
-            "tabview-base": {
-                "requires": [
-                    "node-event-delegate", 
-                    "node-focusmanager", 
-                    "classnamemanager"
-                ]
-            }
-        }
+        "skinnable": true
     }, 
     "test": {
         "requires": [

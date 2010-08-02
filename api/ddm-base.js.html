@@ -207,11 +207,12 @@
         <span class="nx">_setupListeners</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_createPG</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_active</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="c1">//var doc = Y.one(Y.config.doc);</span>
-            <span class="c1">//doc.on(&#39;mousemove&#39;, Y.throttle(Y.bind(this._move, this), this.get(&#39;throttleTime&#39;)));</span>
-            <span class="c1">//doc.on(&#39;mouseup&#39;, Y.bind(this._end, this));</span>
-            <span class="c1">//doc.on(&#39;move&#39;, Y.bind(this._move, this));</span>
-            <span class="c1">//doc.on(&#39;moveend&#39;, Y.bind(this._end, this));</span>
+
+            <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">);</span>
+            <span class="nx">doc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mousemove&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_move</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;throttleTime&#39;</span><span class="p">)));</span>
+            <span class="nx">doc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mouseup&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_end</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">doc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;move&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_move</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">doc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;moveend&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_end</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
@@ -381,6 +382,11 @@
     <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;DD&#39;</span><span class="p">);</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DDMBase</span><span class="p">();</span>
 
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">gestureTest</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;gestureTest: &#39;</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;ontouchstart&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">chrome</span><span class="p">);</span>  
+    <span class="p">};</span>
+
     <span class="cm">/**</span>
 <span class="cm">    * @event ddm:start</span>
 <span class="cm">    * @description Fires from the DDM before all drag events fire.</span>
@@ -501,6 +507,7 @@
                                 <li class=""><a href="ddm-drop.js.html" title="ddm-drop.js">ddm-drop.js</a></li>
                                 <li class=""><a href="ddm.js.html" title="ddm.js">ddm.js</a></li>
                                 <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
+                                <li class=""><a href="drag-gestures.js.html" title="drag-gestures.js">drag-gestures.js</a></li>
                                 <li class=""><a href="drag.js.html" title="drag.js">drag.js</a></li>
                                 <li class=""><a href="drop.js.html" title="drop.js">drop.js</a></li>
                                 <li class=""><a href="proxy.js.html" title="proxy.js">proxy.js</a></li>

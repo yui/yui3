@@ -36,6 +36,7 @@ YUI.add('history-base', function(Y) {
 var Lang      = Y.Lang,
     Obj       = Y.Object,
     GlobalEnv = YUI.namespace('Env.History'),
+    YArray    = Y.Array,
 
     docMode   = Y.config.doc.documentMode,
     win       = Y.config.win,
@@ -118,7 +119,7 @@ HistoryBase.SRC_REPLACE = SRC_REPLACE;
 
 // All HTML5-capable browsers except Gecko 2+ (Firefox 4+) correctly return
 // true for 'onpopstate' in win. In order to support Gecko 2, we fall back to a
-// UA sniff for now. (current as of Firefox 4.0b1)
+// UA sniff for now. (current as of Firefox 4.0b2)
 HistoryBase.html5 = !!(win.history && win.history.pushState &&
         win.history.replaceState && ('onpopstate' in win || Y.UA.gecko >= 2));
 
@@ -153,7 +154,33 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _init: function (config) {
+        var initialState;
+
+        /**
+         * Configuration object provided by the user on instantiation, or an
+         * empty object if one wasn't provided.
+         *
+         * @property _config
+         * @type Object
+         * @default {}
+         * @protected
+         */
         config = this._config = config || {};
+
+        /**
+         * Resolved initial state: a merge of the user-supplied initial state
+         * (if any) and any initial state provided by a subclass. This may
+         * differ from <code>_config.initialState</code>. If neither the config
+         * nor a subclass supplies an initial state, this property will be
+         * <code>null</code>.
+         *
+         * @property _initialState
+         * @type Object|null
+         * @default {}
+         * @protected
+         */
+        initialState = this._initialState = this._initialState ||
+                config.initialState || null;
 
         /**
          * Fired when the state changes. To be notified of all state changes
@@ -208,8 +235,8 @@ Y.mix(HistoryBase.prototype, {
         });
 
         // If initialState was provided, merge it into the current state.
-        if (config.initialState) {
-            this.add(config.initialState);
+        if (initialState) {
+            this.add(initialState);
         }
     },
 
@@ -244,7 +271,7 @@ Y.mix(HistoryBase.prototype, {
      * @chainable
      */
     add: function () {
-        var args = Y.Array(arguments, 0, true);
+        var args = YArray(arguments, 0, true);
         args.unshift(SRC_ADD);
         return this._change.apply(this, args);
     },
@@ -302,7 +329,7 @@ Y.mix(HistoryBase.prototype, {
      * @chainable
      */
     replace: function () {
-        var args = Y.Array(arguments, 0, true);
+        var args = YArray(arguments, 0, true);
         args.unshift(SRC_REPLACE);
         return this._change.apply(this, args);
     },
@@ -633,16 +660,20 @@ function HistoryHash() {
 Y.extend(HistoryHash, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
-        // Use the bookmarked state as the initialState if no initialState was
-        // specified.
+        var bookmarkedState = HistoryHash.parseHash();
+
+        // If an initialState was provided, merge the bookmarked state into it
+        // (the bookmarked state wins).
         config = config || {};
-        config.initialState = config.initialState || HistoryHash.parseHash();
+
+        this._initialState = config.initialState ?
+                Y.merge(config.initialState, bookmarkedState) : bookmarkedState;
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
 
-        HistoryHash.superclass._init.call(this, config);
+        HistoryHash.superclass._init.apply(this, arguments);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -984,7 +1015,9 @@ if (HistoryBase.nativeHashChange) {
         var newHash = HistoryHash.getHash(),
             newUrl  = HistoryHash.getUrl();
 
-        YArray.each(hashNotifiers, function (notifier) {
+        // Iterate over a copy of the hashNotifiers array since a subscriber
+        // could detach during iteration and cause the array to be re-indexed.
+        YArray.each(hashNotifiers.concat(), function (notifier) {
             notifier.fire({
                 _event : e,
                 oldHash: oldHash,
@@ -1175,7 +1208,7 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
 }
 
 
-}, '@VERSION@' ,{requires:['history-base', 'history-hash', 'node-base']});
+}, '@VERSION@' ,{requires:['history-hash', 'node-base']});
 YUI.add('history-html5', function(Y) {
 
 /**
@@ -1264,6 +1297,8 @@ Y.extend(HistoryHTML5, HistoryBase, {
     _init: function (config) {
         Y.on('popstate', this._onPopState, win, this);
 
+        HistoryHTML5.superclass._init.apply(this, arguments);
+
         // If window.onload has already fired and the sessionStorage fallback is
         // enabled, try to restore the last state from sessionStorage. This
         // works around a shortcoming of the HTML5 history API: it's impossible
@@ -1273,8 +1308,6 @@ Y.extend(HistoryHTML5, HistoryBase, {
         if (config && config[ENABLE_FALLBACK] && YUI.Env.windowLoaded) {
             this._loadSessionState();
         }
-
-        HistoryHTML5.superclass._init.apply(this, arguments);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -1416,7 +1449,7 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});
+}, '@VERSION@' ,{optional:['json'], requires:['event-base', 'history-base', 'node-base']});
 
 
 YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie', 'history-html5']});

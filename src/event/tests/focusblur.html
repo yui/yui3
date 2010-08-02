@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>YUI Event Delegate Tests</title>
+	<title>YUI focus/blur synth Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
@@ -17,27 +17,27 @@
 	<script type="text/javascript">
 		YUI({
             filter: 'raw',
-	        logExclude: { Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+            filters: { 'event': 'debug' }
 		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
 			
 			var Assert = Y.Assert;
 			
 		    // creating the console...
-			new Y.Console({ useBrowserConsole: true }).render();
+			new Y.Console({ /*useBrowserConsole: true*/ }).render();
 			
 			// starting the testing process
 			
 			// add the test cases and suites 
 			Y.Test.Runner.add(new Y.Test.Case({
-                _should: {
-                    fail: {
-                        test_purge_focus: true,
-                        test_purge_blur: true
-                    }
-                },
-				
 				name: "Event Focus And Blur Test",
 				
+                _should: {
+                    fail: {
+                        test_purge_focus: true, // until bug #2528244 is fixed
+                        test_purge_blur: true   // until bug #2528244 is fixed
+                    }
+                },
+
                 tearDown: function () {
                     Y.one('#container').purge(true);
                 },
@@ -151,7 +151,7 @@
                     doc.on('focus', onFocus);
                     body.on('focus', onFocus);
 
-                    Y.one('#button-1').focus();
+                    Y.one('#anchor-1').focus();
 
                     Y.ArrayAssert.itemsAreSame([container, body, doc], from);//,
                         //"Incorrect bubble order");

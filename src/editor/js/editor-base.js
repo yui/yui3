@@ -66,26 +66,13 @@
             to.setStyles(newStyles);
         },
         /**
-        * Utility method to create an empty paragraph when the document is empty.
-        * @private
-        * @method _fixFirstPara
-        */
-        _fixFirstPara: function() {
-            var inst = this.getInstance(), sel;
-            inst.one('body').setContent('<p>&nbsp;</p>');
-            sel = new inst.Selection();
-            try {
-                sel.selectNode(inst.one('body > p').get('firstChild'));
-            } catch (er) {}
-        },
-        /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
         * @param {Event} e The event
         * @private
         */
         _defNodeChangeFn: function(e) {
-            Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
+            //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
             var inst = this.getInstance();
 
             /*
@@ -96,25 +83,24 @@
             */
             
             switch (e.changedType) {
-                case 'keydown':
-                    var cont = inst.config.doc.body.innerHTML;
-                    if (cont && cont.toLowerCase() == '<br>') {
-                        this._fixFirstPara();
+                case 'enter':
+                    if (Y.UA.webkit) {
+                        //Webkit doesn't support shift+enter as a BR, this fixes that.
+                        if (e.changedEvent.shiftKey) {
+                            this.execCommand('insertbr');
+                            e.changedEvent.preventDefault();
+                        }
                     }
                     break;
-                case 'backspace-up':
-                case 'delete-up':
-                    var ps = inst.all('body > p'), br, p, sel, item;
-                    if (ps.size() < 2) {
-                        item = inst.one('body');
-                        if (ps.item(0)) {
-                            item = ps.item(0);
-                        }
-                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                            this._fixFirstPara();
-                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                            e.changedEvent.halt();
-                        }
+                case 'tab':
+                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
+                        Y.log('Overriding TAB key to insert HTML', 'info', 'editor');
+                        var sel = new inst.Selection();
+                        sel.setCursor();
+                        var cur = sel.getCursor();
+                        cur.insert(EditorBase.TABKEY, 'before');
+                        sel.focusCursor();
+                        e.changedEvent.preventDefault();
                     }
                     break;
                 case 'enter-up':
@@ -138,16 +124,6 @@
                                 this.copyStyles(lc, e.changedNode);
                             }
                         }
-                    }
-                    //TODO
-                    //inst.Selection.filterBlocks();
-                    break;
-                case 'tab':
-                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        Y.log('Overriding TAB key to insert HTML', 'info', 'editor');
-                        this.execCommand('inserthtml', EditorBase.TABKEY + inst.Selection.CURSOR);
-                        var sel = new inst.Selection().focusCursor();
-                        e.changedEvent.halt();
                     }
                     break;
             }
@@ -273,6 +249,7 @@
             this.frame.on('keydown', Y.bind(this._onFrameKeyDown, this));
             this.frame.on('keypress', Y.bind(this._onFrameKeyPress, this));
             inst.Selection.filter();
+            this.fire('ready');
         },
         /**
         * Fires nodeChange event
@@ -592,6 +569,13 @@
     *   <dt>fontFamily</dt><dd>The cascaded fontFamily of the changedNode</dd>
     *   <dt>fontSize</dt><dd>The cascaded fontSize of the changedNode</dd>
     * </dl>
+    * @type {Event.Custom}
+    */
+
+    /**
+    * @event ready
+    * @description Fired after the frame is ready.
+    * @param {Event.Facade} event An Event Facade object.
     * @type {Event.Custom}
     */
 

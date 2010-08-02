@@ -430,6 +430,7 @@ YUI.add('anim-base', function(Y) {
         /**
          * Stops the animation and resets its time.
          * @method stop
+         * @param {Boolean} finish If true, the animation will move to the last frame
          * @chainable
          */    
         stop: function(finish) {
@@ -519,9 +520,14 @@ YUI.add('anim-base', function(Y) {
                 customAttr = Y.Anim.behaviors,
                 easing = attr.easing,
                 lastFrame = d,
+                done = false,
                 attribute,
                 setter,
                 i;
+
+            if (t >= d) {
+                done = true;
+            }
 
             if (reverse) {
                 t = d - t;
@@ -534,7 +540,7 @@ YUI.add('anim-base', function(Y) {
                     setter = (i in customAttr && 'set' in customAttr[i]) ?
                             customAttr[i].set : Y.Anim.DEFAULT_SETTER;
 
-                    if (t < d) {
+                    if (!done) {
                         setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
                     } else {
                         setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
@@ -1205,5 +1211,5 @@ Y.Anim.behaviors.xy = {
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
+YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
 

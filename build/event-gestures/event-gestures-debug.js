@@ -33,6 +33,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     OWNER_DOCUMENT = "ownerDocument",
     MIN_VELOCITY = "minVelocity",
     MIN_DISTANCE = "minDistance",
+    PREVENT_DEFAULT = "preventDefault",
 
     _FLICK_START = "_fs",
     _FLICK_START_HANDLE = "_fsh",
@@ -51,9 +52,16 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * @for YUI
  * @param type {string} "flick"
  * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.
- * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity  (in px/ms)
- * of the flick gesture for which the event is to be fired and an axis of interest. e.g. { minDistance:10, minVelocity:0.5, axis:"x" }.
- *
+ * @param cfg {Object} Optional. An object which specifies any of the following:
+ * <dl>
+ * <dt>minDistance (in pixels, defaults to 10)</dt>
+ * <dd>The minimum distance between start and end points, which would qualify the gesture as a flick.</dd>
+ * <dt>minVelocity (in pixels/ms, defaults to 0)</dt>
+ * <dd>The minimum velocity which would qualify the gesture as a flick.</dd>
+ * <dt>preventDefault (defaults to true)</dt>
+ * <dd>Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be 
+ * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.</dd>
+ * </dl>
  * @return {EventHandle} the detach handle
  */
 
@@ -88,17 +96,21 @@ Y.Event.define('flick', {
     },
 
     processArgs: function(args) {
-        var params = (args[3] !== undefined) ? Y.merge(args.splice(3, 1)[0]) : {};
+        var params = (args.length > 3) ? Y.merge(args.splice(3, 1)[0]) : {};
 
         if (!(MIN_VELOCITY in params)) {
-            params.minVelocity = this.MIN_VELOCITY;
+            params[MIN_VELOCITY] = this.MIN_VELOCITY;
         }
 
         if (!(MIN_DISTANCE in params)) {
-            params.minDistance = this.MIN_DISTANCE;
+            params[MIN_DISTANCE] = this.MIN_DISTANCE;
         }
 
-        Y.log("flick, processArgs : minDistance =" + params.minDistance + ", minVelocity =" + params.minVelocity);
+        if (!(PREVENT_DEFAULT in params)) {
+            params[PREVENT_DEFAULT] = this.PREVENT_DEFAULT;
+        }
+
+        Y.log("flick, processArgs : minDistance =" + params.minDistance + ", minVelocity =" + params.minVelocity + ", preventDefault = " + params.preventDefault);
 
         return params;
     },
@@ -108,6 +120,7 @@ Y.Event.define('flick', {
         var start = true, // always true for mouse
             endHandle,
             doc,
+            preventDefault = subscriber._extra.preventDefault,
             origE = e; 
 
         if (e.touches) {
@@ -116,7 +129,13 @@ Y.Event.define('flick', {
         }
 
         if (start) {
-            origE.preventDefault();
+
+            if (preventDefault) {
+                // preventDefault is a boolean or function
+                if (!preventDefault.call || preventDefault(e)) {
+                    origE.preventDefault();
+                }
+            }
 
             e.flick = {
                 time : new Date().getTime()
@@ -143,6 +162,7 @@ Y.Event.define('flick', {
             endEvent = e,
             startTime,
             time,
+            preventDefault,
             params,
             xyDistance, 
             distance,
@@ -161,13 +181,20 @@ Y.Event.define('flick', {
 
             if (valid) {
 
-                endEvent.preventDefault();
+                params = subscriber._extra;
+                preventDefault = params[PREVENT_DEFAULT];
+
+                if (preventDefault) {
+                    // preventDefault is a boolean or function
+                    if (!preventDefault.call || preventDefault(e)) {
+                        endEvent.preventDefault();
+                    }
+                }
 
                 startTime = start.flick.time;
                 endTime = new Date().getTime();
                 time = endTime - startTime;
 
-                params = subscriber._extra;
 
                 xyDistance = [
                     endEvent.pageX - start.pageX,
@@ -178,7 +205,7 @@ Y.Event.define('flick', {
                 distance = xyDistance[(axis === 'x') ? 0 : 1];
                 velocity = (time !== 0) ? distance/time : 0;
 
-                if (isFinite(velocity) && (Math.abs(distance) >= params.minDistance) && (Math.abs(velocity)  >= params.minVelocity)) {
+                if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) && (Math.abs(velocity)  >= params[MIN_VELOCITY])) {
 
                     e.type = "flick";
                     e.flick = {
@@ -199,7 +226,8 @@ Y.Event.define('flick', {
     },
 
     MIN_VELOCITY : 0,
-    MIN_DISTANCE : 0
+    MIN_DISTANCE : 0,
+    PREVENT_DEFAULT : true
 });
 
 
@@ -208,8 +236,8 @@ YUI.add('event-move', function(Y) {
 
 /**
  * Adds lower level support for "gesturemovestart", "gesturemove" and "gesturemoveend" events, which can be used to create drag/drop
- * interactions which work across touch and mouse input devices. They correspond to "touchstart", "touchmove" and "touchend" on touch input
- * device, and "mousedown", "mousemove", "mouseup" on mouse based input devices.
+ * interactions which work across touch and mouse input devices. They correspond to "touchstart", "touchmove" and "touchend" on a touch input
+ * device, and "mousedown", "mousemove", "mouseup" on a mouse based input device.
  *
  * @module event-gestures
  * @submodule event-move
@@ -242,17 +270,37 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
 
     MIN_TIME = "minTime",
     MIN_DISTANCE = "minDistance",
+    PREVENT_DEFAULT = "preventDefault",
     OWNER_DOCUMENT = "ownerDocument",
 
     NODE_TYPE = "nodeType",
 
-    _defArgsProcessor = function(args, delegate) {
-        var iExtra = (delegate) ? 4 : 3;
-        return (args[iExtra] !== undefined) ? Y.merge(args.splice(iExtra,1)[0]) : {};
+    _defArgsProcessor = function(se, args, delegate) {
+        var iConfig = (delegate) ? 4 : 3, 
+            config = (args.length > iConfig) ? Y.merge(args.splice(iConfig,1)[0]) : {};
+
+        if (!(PREVENT_DEFAULT in config)) {
+            config[PREVENT_DEFAULT] = se.PREVENT_DEFAULT;
+        }
+
+        return config;
     },
 
     _getRoot = function(node, subscriber) {
         return subscriber._extra.root || (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
+    },
+
+    _normTouchFacade = function(touchFacade, touch, params) {
+        touchFacade.pageX = touch.pageX;
+        touchFacade.pageY = touch.pageY;
+        touchFacade.screenX = touch.screenX;
+        touchFacade.screenY = touch.screenY;
+        touchFacade.clientX = touch.clientX;
+        touchFacade.clientY = touch.clientY;
+        touchFacade.target = touch.target || touchFacade.target;
+        touchFacade.currentTarget = touch.currentTarget || touchFacade.currentTarget;
+
+        touchFacade.button = (params && params.button) || 1; // default to left (left as per vendors, not W3C which is 0)
     },
 
     define = Y.Event.define;
@@ -268,13 +316,17 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * @param type {string} "gesturemovestart"
  * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event (mousedown or touchstart.touches[0]) which contains position co-ordinates.
  * @param cfg {Object} Optional. An object which specifies:
+ *
  * <dl>
  * <dt>minDistance (defaults to 0)</dt>
- * <dd>The minimum distance theshold which should be crossed before the gesturemovestart is fired</dd>
+ * <dd>The minimum distance threshold which should be crossed before the gesturemovestart is fired</dd>
  * <dt>minTime (defaults to 0)</dt>
- * <dd>The minimum time theshold for which the finger/mouse should be help down before the gesturemovestart is fired</dd>
+ * <dd>The minimum time threshold for which the finger/mouse should be help down before the gesturemovestart is fired</dd>
  * <dt>button (no default)</dt>
  * <dd>In the case of a mouse input device, if the event should only be fired for a specific mouse button.</dd>
+ * <dt>preventDefault (defaults to false)</dt>
+ * <dd>Can be set to true/false to prevent default behavior as soon as the touchstart or mousedown is received (that is before minTime or minDistance thresholds are crossed, and so before the gesturemovestart listener is notified) so that things like text selection and context popups (on touch devices) can be 
+ * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it (for example, DragDrop can determine if the target is a valid handle or not before preventing default).</dd>
  * </dl>
  *
  * @return {EventHandle} the detach handle
@@ -290,13 +342,12 @@ define('gesturemovestart', {
             node,
             subscriber,
             ce);
-
     },
 
     delegate : function(node, subscriber, ce, filter) {
 
         var se = this;
-        
+
         subscriber[_DEL_MOVE_START_HANDLE] = node.delegate(EVENT[START],
             function(e) {
                 se._onStart(e, node, subscriber, ce, true);
@@ -311,7 +362,6 @@ define('gesturemovestart', {
             handle.detach();
             subscriber[_DEL_MOVE_START_HANDLE] = null;
         }
-
     },
 
     detach: function (node, subscriber, ce) {
@@ -324,7 +374,7 @@ define('gesturemovestart', {
     },
 
     processArgs : function(args, delegate) {
-        var params = _defArgsProcessor(args, delegate);
+        var params = _defArgsProcessor(this, args, delegate);
 
         if (!(MIN_TIME in params)) {
             params[MIN_TIME] = this.MIN_TIME;
@@ -339,42 +389,46 @@ define('gesturemovestart', {
 
     _onStart : function(e, node, subscriber, ce, delegate) {
 
-        // e.preventDefault();
-
         if (delegate) {
             node = e.currentTarget;
         }
 
-        var origE = e,
-            params = subscriber._extra,
-            start = true,
+        var params = subscriber._extra,
+            fireStart = true,
             minTime = params.minTime,
             minDistance = params.minDistance,
             button = params.button,
+            preventDefault = params.preventDefault,
             root = _getRoot(node, subscriber),
             startXY;
 
         if (e.touches) {
-            start = (e.touches.length === 1);
-            e = e.touches[0];
-
-            e.target = e.target || origE.target;
-            e.currentTarget = e.currentTarget || origE.currentTarget;
+            if (e.touches) {
+                if (e.touches.length === 1) {
+                    _normTouchFacade(e, e.touches[0], params);
+                } else {
+                    fireStart = false;
+                }
+            }
         } else {
-            start = (button === undefined) || (button = e.button);
+            fireStart = (button === undefined) || (button === e.button);
         }
 
         Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance, "event-gestures");
 
-        if (start) {
+        if (fireStart) {
 
-            if (e !== origE) {
-                e._orig = origE;
+            if (preventDefault) {
+                // preventDefault is a boolean or a function
+                if (!preventDefault.call || preventDefault(e)) {
+                    e.preventDefault();
+                }
             }
 
             if (minTime === 0 || minDistance === 0) {
-                Y.log("gesturemovestart: No minTime or minDistance.", "event-gestures");
+                Y.log("gesturemovestart: No minTime or minDistance. Firing immediately", "event-gestures");
                 this._start(e, node, ce, params);
+
             } else {
 
                 startXY = [e.pageX, e.pageY];
@@ -383,7 +437,7 @@ define('gesturemovestart', {
 
                     Y.log("gesturemovestart: minTime specified. Setup timer.", "event-gestures");
                     Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
-            
+
                     params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
 
                     params._hme = root.on(EVENT[END], Y.bind(function() {
@@ -437,7 +491,8 @@ define('gesturemovestart', {
     },
 
     MIN_TIME : 0,
-    MIN_DISTANCE : 0
+    MIN_DISTANCE : 0,
+    PREVENT_DEFAULT : false
 });
 
 /**
@@ -463,6 +518,8 @@ define('gesturemovestart', {
  * <dd>true, if the subscriber should be notified even if a "gesturemovestart" has not occured on the same node.</dd>
  * <dt>root (defaults to document)</dt>
  * <dd>The node to which the internal DOM listeners should be attached.</dd>
+ * <dt>preventDefault (defaults to false)</dt>
+ * <dd>Can be set to true/false to prevent default behavior as soon as the touchmove or mousemove is received. As with gesturemovestart, can also be set to function which returns true/false based on the event facade passed to it.</dd>
  * </dl>
  *
  * @return {EventHandle} the detach handle
@@ -513,7 +570,9 @@ define('gesturemove', {
 
     },
 
-    processArgs : _defArgsProcessor,
+    processArgs : function(args, delegate) {
+        return _defArgsProcessor(this, args, delegate);
+    },
 
     _onMove : function(e, node, subscriber, ce, delegate) {
 
@@ -521,35 +580,39 @@ define('gesturemove', {
             node = e.currentTarget;
         }
 
-        var move = subscriber._extra.standAlone || node.getData(_MOVE_START),
-            origE = e;
+        var fireMove = subscriber._extra.standAlone || node.getData(_MOVE_START),
+            preventDefault = subscriber._extra.preventDefault;
 
-        Y.log("onMove:" + move,"event-gestures");
+        Y.log("onMove initial fireMove check:" + fireMove,"event-gestures");
 
-        if (move) {
+        if (fireMove) {
 
             if (e.touches) {
-                move = (e.touches.length === 1);
-                e = e.touches[0];
-
-                e.target = e.target || origE.target;
-                e.currentTarget = e.currentTarget || origE.currentTarget;
+                if (e.touches.length === 1) {
+                    _normTouchFacade(e, e.touches[0]);                    
+                } else {
+                    fireMove = false;
+                }
             }
 
-            if (move) {
+            if (fireMove) {
 
-                if (e !== origE) {
-                    e._orig = origE;
+                if (preventDefault) {
+                    // preventDefault is a boolean or function
+                    if (!preventDefault.call || preventDefault(e)) {
+                        e.preventDefault();
+                    }
                 }
-                
-                Y.log("onMove2:" + move,"event-gestures");
 
-                // origE.preventDefault();
+                Y.log("onMove second fireMove check:" + fireMove,"event-gestures");
+
                 e.type = "gesturemove";
                 ce.fire(e);
             }
         }
-    }
+    },
+    
+    PREVENT_DEFAULT : false
 });
 
 /**
@@ -559,7 +622,7 @@ define('gesturemove', {
  * <p>By default this event is only fired when the same node
  * has received a "gesturemove" or "gesturemovestart" event. The subscriber can set standAlone to true, in the configuration properties,
  * if they want to listen for this event without a preceding "gesturemovestart" or "gesturemove".</p>
- * 
+ *
  * <p>By default this event sets up it's internal "touchend" and "mouseup" DOM listeners on the document element. The subscriber
  * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p> 
  *
@@ -575,6 +638,8 @@ define('gesturemove', {
  * <dd>true, if the subscriber should be notified even if a "gesturemovestart" or "gesturemove" has not occured on the same node.</dd>
  * <dt>root (defaults to document)</dt>
  * <dd>The node to which the internal DOM listeners should be attached.</dd>
+ * <dt>preventDefault (defaults to false)</dt>
+ * <dd>Can be set to true/false to prevent default behavior as soon as the touchend or mouseup is received. As with gesturemovestart, can also be set to function which returns true/false based on the event facade passed to it.</dd>
  * </dl>
  *
  * @return {EventHandle} the detach handle
@@ -625,7 +690,9 @@ define('gesturemoveend', {
         }
     },
 
-    processArgs : _defArgsProcessor,
+    processArgs : function(args, delegate) {
+        return _defArgsProcessor(this, args, delegate);
+    },
 
     _onEnd : function(e, node, subscriber, ce, delegate) {
 
@@ -633,28 +700,26 @@ define('gesturemoveend', {
             node = e.currentTarget;
         }
 
-        var moveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
-            origE = e;
+        var fireMoveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
+            preventDefault = subscriber._extra.preventDefault;
 
-        if (moveEnd) {
+        if (fireMoveEnd) {
 
             if (e.changedTouches) {
                 if (e.changedTouches.length === 1) {
-                    e = e.changedTouches[0];
-
-                    e.target = e.target || origE.target;
-                    e.currentTarget = e.currentTarget || origE.currentTarget;
-                    
+                    _normTouchFacade(e, e.changedTouches[0]);                    
                 } else {
-                    moveEnd = false;
+                    fireMoveEnd = false;
                 }
             }
 
-            if (moveEnd) {
-                //origE.preventDefault();
+            if (fireMoveEnd) {
 
-                if (e !== origE) {
-                    e._orig = origE;
+                if (preventDefault) {
+                    // preventDefault is a boolean or function
+                    if (!preventDefault.call || preventDefault(e)) {
+                        e.preventDefault();
+                    }
                 }
 
                 e.type = "gesturemoveend";
@@ -664,7 +729,9 @@ define('gesturemoveend', {
                 node.clearData(_MOVE);
             }
         }
-    }
+    },
+
+    PREVENT_DEFAULT : false
 });
 
 

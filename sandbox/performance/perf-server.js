@@ -20,16 +20,17 @@ var fs          = require('fs'),
 
 // Combo URLs.
 server.get('/combo/([^/]+)/?', function (root) {
-    var expires,
+    var body = '',
+        expires,
         fullPath,
         i,
+        ifModifiedSince = this.request.headers['if-modified-since'],
         lastModified,
         len,
         mimeType,
         mtime,
         query = this.request.parsedURL.search.substr(1).split('&'),
         relativePath,
-        response = '',
         rootPath,
         stat;
 
@@ -67,7 +68,7 @@ server.get('/combo/([^/]+)/?', function (root) {
         mimeType = mime.getType(path.extname(relativePath));
 
         try {
-            response += fs.readFileSync(fullPath, 'utf8') + "\n";
+            body += fs.readFileSync(fullPath, 'utf8') + "\n";
             mtime = new Date(fs.statSync(fullPath).mtime);
         } catch (ex) {
             this.response.send404();
@@ -80,21 +81,25 @@ server.get('/combo/([^/]+)/?', function (root) {
         }
     }
 
-    expires = new Date();
-    expires.setUTCFullYear(expires.getUTCFullYear() + 10);
+    // Respond with a 304 if we can.
+    if (ifModifiedSince &&
+            (new Date(ifModifiedSince)).getTime() === lastModified.getTime()) {
+        this.response.send304();
+        this.end();
+        return;
+    }
 
     // TODO: Currently, the last file extension is what determines the
     // Content-Type. Need to look into what the real ComboHandler does when
     // multiple file types are requested in a single request.
     this.response.setHeader('Content-Type', mimeType + ';charset=utf-8');
-    // this.response.setHeader('Cache-Control', 'public;max-age=315569260');
-    // this.response.setHeader('Expires', expires.toUTCString());
+    this.response.setHeader('Cache-Control', 'private;must-revalidate');
 
     if (lastModified) {
         this.response.setHeader('Last-Modified', lastModified.toUTCString());
     }
 
-    this.end(response + "\n");
+    this.end(body + "\n");
 });
 
 // Cross-domain request proxy. Currently this doesn't handle redirects of any

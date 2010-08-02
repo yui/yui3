@@ -1406,21 +1406,24 @@ var toArray          = Y.Array,
 /**
  * <p>Sets up event delegation on a container element.  The delegated event
  * will use a supplied selector or filtering function to test if the event
- * references at least one node that should trigger the subscription callback.
- * Selector string filters will trigger the callback if the event originated
- * from a node that matches it or is contained in a node that matches it.
- * Function filters accept the unfiltered event object and should return null
- * if it does not qualify for firing the callbacks, a Node if the callback
- * should be executed for one Node, or an array of Nodes if there were multiple
- * nodes in touched by the event that meet the filtering criteria.</p>
+ * references at least one node that should trigger the subscription
+ * callback.</p>
  *
- * <p>The callback function will be executed only for those cases where the
- * filter returns at least one match.  For each matching Node, the callback
- * will be executed with its 'this' object set to the Node matched by the
- * filter (unless a specific context was provided during subscription), and the
- * provided event's <code>currentTarget</code> will also be set to the matching
- * Node.  The containing Node from which the subscription was originally made
- * can be referenced as <code>e.container</code>.
+ * <p>Selector string filters will trigger the callback if the event originated
+ * from a node that matches it or is contained in a node that matches it.
+ * Function filters are called for each Node up the parent axis to the
+ * subscribing container node, and receive at each level the Node and the event
+ * object.  The function should return true (or a truthy value) if that Node
+ * should trigger the subscription callback.  Note, it is possible for filters
+ * to match multiple Nodes for a single event.  In this case, the delegate
+ * callback will be executed for each matching Node.</p>
+ *
+ * <p>For each matching Node, the callback will be executed with its 'this'
+ * object set to the Node matched by the filter (unless a specific context was
+ * provided during subscription), and the provided event's
+ * <code>currentTarget</code> will also be set to the matching Node.  The
+ * containing Node from which the subscription was originally made can be
+ * referenced as <code>e.container</code>.
  *
  * @method delegate
  * @param type {String} the event type to delegate
@@ -1428,7 +1431,7 @@ var toArray          = Y.Array,
  *              will be provided the event object for the delegated event.
  * @param el {String|node} the element that is the delegation container
  * @param spec {string|Function} a selector that must match the target of the
- *              event.
+ *              event or a function to test target and its parents for a match
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  *              These arguments will be added after the event object.
@@ -1473,8 +1476,8 @@ function delegate(type, fn, el, filter) {
             }
 
             handle = Y.on.apply(Y, args);
-            handle.sub.getCurrentTarget = filter;
-            handle.sub._notify = Y.delegate.notifySub;
+            handle.sub.filter  = filter;
+            handle.sub._notify = delegate.notifySub;
         }
     }
 
@@ -1508,9 +1511,9 @@ delegate.notifySub = function (thisObj, args, ce) {
     }
 
     // Only notify subs if the event occurred on a targeted element
-    var currentTarget = this.getCurrentTarget.apply(this, args),
-        originalEvent = args[0],
-        container     = originalEvent.currentTarget,
+    var e             = args[0],
+        currentTarget = delegate._applyFilter(this.filter, args),
+        container     = e.currentTarget,
         i, ret, target;
 
     if (currentTarget) {
@@ -1521,7 +1524,7 @@ delegate.notifySub = function (thisObj, args, ce) {
             target = currentTarget[i];
 
             // New facade to avoid corrupting facade sent to direct subs
-            args[0] = new Y.DOMEventFacade(originalEvent, target, ce);
+            args[0] = new Y.DOMEventFacade(e, target, ce);
 
             args[0].container = container;
         
@@ -1539,11 +1542,15 @@ delegate.notifySub = function (thisObj, args, ce) {
 };
 
 /**
- * <p>Compiles a selector string into a filter function that returns an array of Nodes matching that selector starging from the event's target up the parent axis to the Node from which the subscription occurred.  If only one Node matches, it is returned (absent the array), and if none, undefined is returned.</p>
+ * <p>Compiles a selector string into a filter function to identify whether
+ * Nodes along the parent axis of an event's target should trigger event
+ * notification.</p>
  *
- * <p>Previously compiled filter functions are returned if the same selector string is provided.</p>
+ * <p>This function is memoized, so previously compiled filter functions are
+ * returned if the same selector string is provided.</p>
  *
- * <p>This function may be useful when defining synthetic events for delegate handling.</p>
+ * <p>This function may be useful when defining synthetic events for delegate
+ * handling.</p>
  *
  * @method delegate.compileFilter
  * @param selector {String} the selector string to base the filtration on
@@ -1552,25 +1559,51 @@ delegate.notifySub = function (thisObj, args, ce) {
  * @static
  */
 delegate.compileFilter = Y.cached(function (selector) {
-    return function (e) {
-        var container = e.currentTarget._node,
-            target    = e.target._node,
-            match     = [];
-
-        while (target !== container) {
-            if (selectorTest(target, selector, container)) {
-                match.push(Y.one(target));
-            }
-            target = target.parentNode;
-        }
-
-        if (match.length <= 1) {
-            match = match[0]; // single match or undefined
-        }
-
-        return match;
+    return function (target, e) {
+        return selectorTest(target._node, selector, e.currentTarget._node);
     };
 });
+
+/**
+ * Walks up the parent axis of an event's target, and tests each element
+ * against a supplied filter function.  If any Nodes satisfy the filter, the
+ * delegated callback will be triggered for each.
+ *
+ * @method delegate._applyFilter
+ * @param filter {Function} boolean function to test for inclusion in event
+ *                  notification
+ * @param args {Array} the arguments that would be passed to subscribers
+ * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter
+ * @protected
+ */
+delegate._applyFilter = function (filter, args) {
+    var e         = args[0],
+        container = e.currentTarget,
+        target    = e.target,
+        match     = [];
+
+    // passing target as the first arg rather than leaving well enough alone
+    // making 'this' in the filter function refer to the target.  This is to
+    // support bound filter functions.
+    args.unshift(target);
+
+    while (target && target !== container) {
+        // filter(target, e, extra args...) - this === target
+        if (filter.apply(target, args)) {
+            match.push(target);
+        }
+        args[0] = target = target.get('parentNode');
+    }
+
+    if (match.length <= 1) {
+        match = match[0]; // single match or undefined
+    }
+
+    // remove the target
+    args.shift();
+
+    return match;
+};
 
 /**
  * Sets up event delegation on a container element.  The delegated event
@@ -1639,12 +1672,10 @@ var DOMMap   = Y.Env.evt.dom_map,
  *              on(..) or delegate(..)
  * @param emitFacade {Boolean} take steps to ensure the first arg received by
  *              the subscription callback is an event facade
- * @param delegate {Boolean} was this subscription from a call to delegate(..)?
  */
-function Notifier(handle, emitFacade, delegate) {
-    this.handle     = handle;
-    this.emitFacade = emitFacade;
-    this.delegate   = delegate;
+function Notifier(handle, emitFacade) {
+    this.handle         = handle;
+    this.emitFacade     = emitFacade;
 }
 
 /**
@@ -1672,12 +1703,13 @@ function Notifier(handle, emitFacade, delegate) {
  */
 Notifier.prototype.fire = function (e) {
     // first arg to delegate notifier should be an object with currentTarget
-    var args    = toArray(arguments, 0, true),
-        handle  = this.handle,
-        ce      = handle.evt,
-        sub     = handle.sub,
-        thisObj = sub.context,
-        event   = e || {};
+    var args     = toArray(arguments, 0, true),
+        handle   = this.handle,
+        ce       = handle.evt,
+        sub      = handle.sub,
+        thisObj  = sub.context,
+        delegate = sub.filter,
+        event    = e || {};
 
     if (this.emitFacade) {
         if (!e || !e.preventDefault) {
@@ -1694,10 +1726,10 @@ Notifier.prototype.fire = function (e) {
         event.type    = ce.type;
         event.details = args.slice();
 
-        if (this.delegate) {
+        if (delegate) {
             event.container = ce.host;
         }
-    } else if (this.delegate && isObject(e) && e.currentTarget) {
+    } else if (delegate && isObject(e) && e.currentTarget) {
         args.shift();
     }
 
@@ -1845,17 +1877,17 @@ Y.mix(SyntheticEvent, {
         /**
          * <p>Implementers may override this property.</p>
          *
-         * <p>Whether to allow multiple subscriptions to this event that are
+         * <p>Whether to prevent multiple subscriptions to this event that are
          * classified as being the same.  By default, this means the subscribed
          * callback is the same function.  See the <code>subMatch</code>
-         * method.  Setting this to true will help performance for high volume
+         * method.  Setting this to true will impact performance for high volume
          * events.</p>
          *
-         * @property allowDups
+         * @property preventDups
          * @type {Boolean}
          * @default false
          */
-        //allowDups  : false,
+        //preventDups  : false,
 
         /**
          * <p>Implementers should provide this method definition.</p>
@@ -1988,7 +2020,7 @@ Y.mix(SyntheticEvent, {
                     // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
                     subArgs.splice(0, 4, subArgs[1], subArgs[3]);
 
-                    if (this.allowDups || !this.getSubs(node, args,null,true)) {
+                    if (!this.preventDups || !this.getSubs(node, args,null,true)) {
                         handle = this._getNotifier(node, subArgs, extra,filter);
 
                         this[method](node, handle.sub, handle.notifier, filter);
@@ -2023,7 +2055,7 @@ Y.mix(SyntheticEvent, {
         _getNotifier: function (node, args, extra, filter) {
             var dispatcher = new Y.CustomEvent(this.type, this.publishConfig),
                 handle     = dispatcher.on.apply(dispatcher, args),
-                notifier   = new Notifier(handle, this.emitFacade, filter),
+                notifier   = new Notifier(handle, this.emitFacade),
                 registry   = SyntheticEvent.getRegistry(node, this.type, true),
                 sub        = handle.sub;
 
@@ -2536,72 +2568,103 @@ YUI.add('event-focus', function(Y) {
  * @submodule event-focus
  */
 var Event    = Y.Event,
-    isString = Y.Lang.isString;
+    YLang    = Y.Lang,
+    isString = YLang.isString,
+    useActivate = YLang.isFunction(
+        Y.DOM.create('<p onbeforeactivate=";">').onbeforeactivate);
 
-function define(type, proxy) {
+function define(type, proxy, directEvent) {
     var nodeDataKey = '_' + type + 'Notifiers';
 
     Y.Event.define(type, {
-        _attach: function (el, notifier, delegate) {
-            return Event._attach(
-                [this._proxyEvent, this._proxy, el, this, notifier, delegate],
-                { capture: true });
-        },
 
-        _proxyEvent: proxy,
+        _attach: function (el, notifier, delegate) {
+            if (Y.DOM.isWindow(el)) {
+                return Event._attach([type, function (e) {
+                    notifier.fire(e);
+                }, el]);
+            } else {
+                return Event._attach(
+                    [proxy, this._proxy, el, this, notifier, delegate],
+                    { capture: true });
+            }
+        },
 
         _proxy: function (e, notifier, delegate) {
-            var node      = e.target,
-                el        = node._node,
-                notifiers = node.getData(nodeDataKey),
-                yuid      = Y.stamp(e.currentTarget),
-                handle;
-
+            var node       = e.target,
+                notifiers  = node.getData(nodeDataKey),
+                yuid       = Y.stamp(e.currentTarget._node),
+                defer      = (useActivate || e.target !== e.currentTarget),
+                sub        = notifier.handle.sub,
+                filterArgs = [node, e].concat(sub.args || []),
+                directSub;
+                
             notifier.currentTarget = (delegate) ? node : e.currentTarget;
+            notifier.container     = (delegate) ? e.currentTarget : null;
 
-            // Maintain a list to handle subscriptions from nested containers
-            // div#a>div#b>input #a.on(focus..) #b.on(focus..), use one focus
-            // or blur subscription that fires notifiers from #b then #a to
-            // emulate bubble sequence.
-            if (!notifiers) {
-                notifiers = {};
-                node.setData(nodeDataKey, notifiers);
+            if (!sub.filter || sub.filter.apply(node, filterArgs)) {
+                // Maintain a list to handle subscriptions from nested
+                // containers div#a>div#b>input #a.on(focus..) #b.on(focus..),
+                // use one focus or blur subscription that fires notifiers from
+                // #b then #a to emulate bubble sequence.
+                if (!notifiers) {
+                    notifiers = {};
+                    node.setData(nodeDataKey, notifiers);
 
-                handle = Event._attach([type, this._notify, el]);
-                // remove element level subscription after execution
-                handle.sub.once = true;
+                    // only subscribe to the element's focus if the target is
+                    // not the current target (
+                    if (defer) {
+                        directSub = Event._attach(
+                            [directEvent, this._notify, node._node]).sub;
+                        directSub.once = true;
+                    }
+                }
+
+                if (!notifiers[yuid]) {
+                    notifiers[yuid] = [];
+                }
+
+                notifiers[yuid].push(notifier);
+
+                if (!defer) {
+                    this._notify(e);
+                }
             }
-
-            if (!notifiers[yuid]) {
-                notifiers[yuid] = [];
-            }
-            notifiers[yuid].push(notifier);
         },
 
-        _notify: function (e) {
-            var node      = e.currentTarget,
-                notifiers = node.getData(nodeDataKey),
-                            // document.get('ownerDocument') returns null
-                doc       = node.get('ownerDocument') || node,
-                target    = node,
-                nots      = [],
-                i, len;
+        _notify: function (e, container) {
+            var node        = e.currentTarget,
+                notifiers   = node.getData(nodeDataKey),
+                              // document.get('ownerDocument') returns null
+                doc         = node.get('ownerDocument') || node,
+                target      = node,
+                nots        = [],
+                notifier, i, len;
 
-            // Walk up the parent axis until the origin node, 
-            while (target && target !== doc) {
-                nots.push.apply(nots, notifiers[Y.stamp(target)] || []);
-                target = target.get('parentNode');
+            if (notifiers) {
+                // Walk up the parent axis until the origin node, 
+                while (target && target !== doc) {
+                    nots.push.apply(nots, notifiers[Y.stamp(target)] || []);
+                    target = target.get('parentNode');
+                }
+                nots.push.apply(nots, notifiers[Y.stamp(doc)] || []);
+
+                for (i = 0, len = nots.length; i < len; ++i) {
+                    notifier = nots[i];
+                    e.currentTarget = nots[i].currentTarget;
+
+                    if (notifier.container) {
+                        e.container = notifier.container;
+                    } else {
+                        delete e.container;
+                    }
+
+                    notifier.fire(e);
+                }
+
+                // clear the notifications list (mainly for delegation)
+                node.clearData(nodeDataKey);
             }
-            nots.push.apply(nots, notifiers[Y.stamp(doc)] || []);
-
-            for (i = 0, len = nots.length; i < len; ++i) {
-                e.currentTarget = nots[i].currentTarget;
-
-                nots[i].fire(e);
-            }
-
-            // leaving the element pristine, as if nothing ever happened...
-            node.clearData(nodeDataKey);
         },
 
         on: function (node, sub, notifier) {
@@ -2614,14 +2677,10 @@ function define(type, proxy) {
 
         delegate: function (node, sub, notifier, filter) {
             if (isString(filter)) {
-                filter = Y.delegate.compileFilter(filter);
+                sub.filter = Y.delegate.compileFilter(filter);
             }
 
-            var handle = this._attach(node._node, notifier, true);
-            handle.sub.getCurrentTarget = filter;
-            handle.sub._notify = Y.delegate.notifySub;
-
-            sub.delegateHandle = handle;
+            sub.delegateHandle = this._attach(node._node, notifier, true);
         },
 
         detachDelegate: function (node, sub) {
@@ -2630,8 +2689,21 @@ function define(type, proxy) {
     }, true);
 }
 
-define('focus', ('onfocusin'  in Y.config.doc) ? "beforeactivate"   : "focus");
-define('blur',  ('onfocusout' in Y.config.doc) ? "beforedeactivate" : "blur");
+// For IE, we need to defer to focusin rather than focus because
+// `el.focus(); doSomething();` executes el.onbeforeactivate, el.onactivate,
+// el.onfocusin, doSomething, then el.onfocus.  All others support capture
+// phase focus, which executes before doSomething.  To guarantee consistent
+// behavior for this use case, IE's direct subscriptions are made against
+// focusin so subscribers will be notified before js following el.focus() is
+// executed.
+if (useActivate) {
+    //     name     capture phase       direct subscription
+    define("focus", "beforeactivate",   "focusin");
+    define("blur",  "beforedeactivate", "focusout");
+} else {
+    define("focus", "focus", "focus");
+    define("blur",  "blur",  "blur");
+}
 
 
 }, '@VERSION@' ,{requires:['event-synthetic']});

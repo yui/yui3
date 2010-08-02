@@ -59,8 +59,8 @@
   
 
                     <div class="summary description" property="yui:description">
-                        The NodeFocusManager class is a plugin for a Node instance.  The class is used 
-via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
+                        The NodeFocusManager class is a plugin for a Node instance.  The class is used
+via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node
 and should not be instantiated directly.
                     </div>
 
@@ -93,7 +93,7 @@ and should not be instantiated directly.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            afterChange event handler for the 
+                                            afterChange event handler for the
 "activeDescendant" attribute.
                                         </div>
 
@@ -210,6 +210,37 @@ attribute.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__fireClick">
+                                    <h4>
+                                        <a name="method__fireClick">_fireClick</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_fireClick</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires the click event if the enter key is pressed while
+focused on an HTML element that is not natively clickable.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__focusNext">
                                     <h4>
                                         <a name="method__focusNext">_focusNext</a></h4>
@@ -234,7 +265,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Keydown event handler that moves focus to the next 
+                                            Keydown event handler that moves focus to the next
 enabled descendant.
                                         </div>
 
@@ -252,7 +283,7 @@ enabled descendant.
                                                         <code><span property="yui:name">activeDescendant</span>
                                                         &lt;<span property="yui:type">Number</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Number representing the index of the 
+                                                        <span property="yui:description">  Number representing the index of the
 next descendant to be focused</span>
                                                         </dd>
                                                 </dl>
@@ -290,7 +321,7 @@ next descendant to be focused</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Keydown event handler that moves focus to the previous 
+                                            Keydown event handler that moves focus to the previous
 enabled descendant.
                                         </div>
 
@@ -308,7 +339,7 @@ enabled descendant.
                                                         <code><span property="yui:name">activeDescendant</span>
                                                         &lt;<span property="yui:type">Number</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Number representing the index of the 
+                                                        <span property="yui:description">  Number representing the index of the
 next descendant to be focused.</span>
                                                         </dd>
                                                 </dl>
@@ -337,8 +368,8 @@ next descendant to be focused.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets the <code>tabIndex</code> attribute of all of the 
-descendants to -1, except the active descendant, whose 
+                                            Sets the <code>tabIndex</code> attribute of all of the
+descendants to -1, except the active descendant, whose
 <code>tabIndex</code> attribute is set to 0.
                                         </div>
 
@@ -395,7 +426,7 @@ managed by the Focus Manager.
                                                     <code property="yui:return">
                                                             Boolean
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Boolean indicating if the specified Node instance is a 
+                                                    <dd property="yui:returnInfo">Boolean indicating if the specified Node instance is a
 descendant managed by the Focus Manager.</dd>
                                                 </dl>
 
@@ -427,7 +458,7 @@ descendant managed by the Focus Manager.</dd>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            "focus" event handler for the owner document of the 
+                                            "focus" event handler for the owner document of the
 Focus Manager's Node.
                                         </div>
 
@@ -472,7 +503,7 @@ Focus Manager's Node.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            "mousedown" event handler for the owner document of the 
+                                            "mousedown" event handler for the owner document of the
 Focus Manager's Node.
                                         </div>
 
@@ -512,7 +543,7 @@ Focus Manager's Node.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Prevents the viewport from scolling when the user presses 
+                                            Prevents the viewport from scolling when the user presses
 the up, down, left, or right key.
                                         </div>
 
@@ -543,8 +574,8 @@ the up, down, left, or right key.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Removes the class name representing focus (as specified by 
-the "focusClass" attribute) from the Node instance to which it is 
+                                            Removes the class name representing focus (as specified by
+the "focusClass" attribute) from the Node instance to which it is
 currently applied.
                                         </div>
 
@@ -575,7 +606,7 @@ currently applied.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Blurs the current active descendant and sets the 
+                                            Blurs the current active descendant and sets the
 <code>focused</code> attribute to false.
                                         </div>
 
@@ -613,7 +644,7 @@ currently applied.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Focuses the active descendant and sets the  
+                                            Focuses the active descendant and sets the
 <code>focused</code> attribute to true.
                                         </div>
 
@@ -625,14 +656,14 @@ currently applied.
                                                         <code><span property="yui:name">index</span>
                                                         &lt;<span property="yui:type">Number</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Optional. Number representing the index of the 
+                                                        <span property="yui:description">  Optional. Number representing the index of the
 descendant to be set as the active descendant.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">index</span>
                                                         &lt;<span property="yui:type">Node</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Optional. Node instance representing the 
+                                                        <span property="yui:description">  Optional. Node instance representing the
 descendant to be set as the active descendant.</span>
                                                         </dd>
                                                 </dl>
@@ -661,7 +692,7 @@ descendant to be set as the active descendant.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Refreshes the Focus Manager's descendants by re-executing the 
+                                            Refreshes the Focus Manager's descendants by re-executing the
 CSS selector query specified by the <code>descendants</code> attribute.
                                         </div>
 
@@ -1026,17 +1057,17 @@ CSS selector query specified by the <code>descendants</code> attribute.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            <p>Node, or index of the Node, representing the descendant that is either 
-focused or is focusable (<code>tabIndex</code> attribute is set to 0).  
+                                            <p>Node, or index of the Node, representing the descendant that is either
+focused or is focusable (<code>tabIndex</code> attribute is set to 0).
 The value cannot represent a disabled descendant Node.  Use a value of -1
 to remove all descendant Nodes from the default tab flow.
-If no value is specified, the active descendant will be inferred using 
+If no value is specified, the active descendant will be inferred using
 the following criteria:</p>
 <ol>
-<li>Examining the <code>tabIndex</code> attribute of each descendant and 
-using the first descendant whose <code>tabIndex</code> attribute is set 
+<li>Examining the <code>tabIndex</code> attribute of each descendant and
+using the first descendant whose <code>tabIndex</code> attribute is set
 to 0</li>
-<li>If no default can be inferred then the value is set to either 0 or 
+<li>If no default can be inferred then the value is set to either 0 or
 the index of the first enabled descendant.</li>
 </ol>
                                         </div>
@@ -1052,7 +1083,7 @@ the index of the first enabled descendant.</li>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Boolean indicating if focus should be set to the first/last descendant 
+                                            Boolean indicating if focus should be set to the first/last descendant
 when the end or beginning of the descendants has been reached.
                                         </div>
                                     </div>
@@ -1067,7 +1098,7 @@ when the end or beginning of the descendants has been reached.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            String representing the CSS selector used to define the descendant Nodes 
+                                            String representing the CSS selector used to define the descendant Nodes
 whose focus should be managed.
                                         </div>
                                     </div>
@@ -1082,11 +1113,11 @@ whose focus should be managed.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            String representing the name of class applied to the focused active  
-descendant Node.  Can also be an object literal used to define both the 
-class name, and the Node to which the class should be applied.  If using 
+                                            String representing the name of class applied to the focused active
+descendant Node.  Can also be an object literal used to define both the
+class name, and the Node to which the class should be applied.  If using
 an object literal, the format is:
-<code>{ className: "focus", fn: myFunction }</code>.  The function 
+<code>{ className: "focus", fn: myFunction }</code>.  The function
 referenced by the <code>fn</code> property in the object literal will be
 passed a reference to the currently focused active descendant Node.
                                         </div>
@@ -1119,12 +1150,12 @@ passed a reference to the currently focused active descendant Node.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Object literal representing the keys to be used to navigate between the 
-next/previous descendant.  The format for the attribute's value is 
-<code>{ next: "down:40", previous: "down:38" }</code>.  The value for the 
-"next" and "previous" properties are used to attach 
-<a href="event/#keylistener"><code>key</code></a> event listeners. See 
-the <a href="event/#keylistener">Using the key Event</a> section of 
+                                            Object literal representing the keys to be used to navigate between the
+next/previous descendant.  The format for the attribute's value is
+<code>{ next: "down:40", previous: "down:38" }</code>.  The value for the
+"next" and "previous" properties are used to attach
+<a href="event/#keylistener"><code>key</code></a> event listeners. See
+the <a href="event/#keylistener">Using the key Event</a> section of
 the Event documentation for more information on "key" event listeners.
                                         </div>
                                     </div>
@@ -1241,6 +1272,7 @@ the Event documentation for more information on "key" event listeners.
                                 <li class="protected"><a href="#method__attachKeyHandler" title="_attachKeyHandler">_attachKeyHandler</a></li>
                                 <li class="protected"><a href="#method__detachEventHandlers" title="_detachEventHandlers">_detachEventHandlers</a></li>
                                 <li class="protected"><a href="#method__detachKeyHandler" title="_detachKeyHandler">_detachKeyHandler</a></li>
+                                <li class="protected"><a href="#method__fireClick" title="_fireClick">_fireClick</a></li>
                                 <li class="protected"><a href="#method__focusNext" title="_focusNext">_focusNext</a></li>
                                 <li class="protected"><a href="#method__focusPrevious" title="_focusPrevious">_focusPrevious</a></li>
                                 <li class="protected"><a href="#method__initDescendants" title="_initDescendants">_initDescendants</a></li>
@@ -1291,7 +1323,7 @@ the Event documentation for more information on "key" event listeners.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendant", "url": "plugin.NodeFocusManager.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendantChange", "url": "plugin.NodeFocusManager.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_afterActiveDescendantChange", "url": "plugin.NodeFocusManager.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_attachKeyHandler", "url": "plugin.NodeFocusManager.html#method__attachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "blur", "url": "plugin.NodeFocusManager.html#method_blur", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circular", "url": "plugin.NodeFocusManager.html#config_circular", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circularChange", "url": "plugin.NodeFocusManager.html#event_circularChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendants", "url": "plugin.NodeFocusManager.html#config_descendants", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendantsChange", "url": "plugin.NodeFocusManager.html#event_descendantsChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachEventHandlers", "url": "plugin.NodeFocusManager.html#method__detachEventHandlers", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachKeyHandler", "url": "plugin.NodeFocusManager.html#method__detachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focus", "url": "plugin.NodeFocusManager.html#method_focus", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClass", "url": "plugin.NodeFocusManager.html#config_focusClass", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClassChange", "url": "plugin.NodeFocusManager.html#event_focusClassChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focused", "url": "plugin.NodeFocusManager.html#config_focused", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusedChange", "url": "plugin.NodeFocusManager.html#event_focusedChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusNext", "url": "plugin.NodeFocusManager.html#method__focusNext", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusPrevious", "url": "plugin.NodeFocusManager.html#method__focusPrevious", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_initDescendants", "url": "plugin.NodeFocusManager.html#method__initDescendants", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_isDescendant", "url": "plugin.NodeFocusManager.html#method__isDescendant", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keys", "url": "plugin.NodeFocusManager.html#config_keys", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keysChange", "url": "plugin.NodeFocusManager.html#event_keysChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocFocus", "url": "plugin.NodeFocusManager.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocMouseDown", "url": "plugin.NodeFocusManager.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_preventScroll", "url": "plugin.NodeFocusManager.html#method__preventScroll", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "refresh", "url": "plugin.NodeFocusManager.html#method_refresh", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_removeFocusClass", "url": "plugin.NodeFocusManager.html#method__removeFocusClass", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "start", "url": "plugin.NodeFocusManager.html#method_start", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "stop", "url": "plugin.NodeFocusManager.html#method_stop", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendant", "url": "plugin.NodeFocusManager.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendantChange", "url": "plugin.NodeFocusManager.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_afterActiveDescendantChange", "url": "plugin.NodeFocusManager.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_attachKeyHandler", "url": "plugin.NodeFocusManager.html#method__attachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "blur", "url": "plugin.NodeFocusManager.html#method_blur", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circular", "url": "plugin.NodeFocusManager.html#config_circular", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circularChange", "url": "plugin.NodeFocusManager.html#event_circularChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendants", "url": "plugin.NodeFocusManager.html#config_descendants", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendantsChange", "url": "plugin.NodeFocusManager.html#event_descendantsChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachEventHandlers", "url": "plugin.NodeFocusManager.html#method__detachEventHandlers", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachKeyHandler", "url": "plugin.NodeFocusManager.html#method__detachKeyHandler", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_fireClick", "url": "plugin.NodeFocusManager.html#method__fireClick", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focus", "url": "plugin.NodeFocusManager.html#method_focus", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClass", "url": "plugin.NodeFocusManager.html#config_focusClass", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClassChange", "url": "plugin.NodeFocusManager.html#event_focusClassChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focused", "url": "plugin.NodeFocusManager.html#config_focused", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusedChange", "url": "plugin.NodeFocusManager.html#event_focusedChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusNext", "url": "plugin.NodeFocusManager.html#method__focusNext", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusPrevious", "url": "plugin.NodeFocusManager.html#method__focusPrevious", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_initDescendants", "url": "plugin.NodeFocusManager.html#method__initDescendants", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_isDescendant", "url": "plugin.NodeFocusManager.html#method__isDescendant", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keys", "url": "plugin.NodeFocusManager.html#config_keys", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keysChange", "url": "plugin.NodeFocusManager.html#event_keysChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocFocus", "url": "plugin.NodeFocusManager.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocMouseDown", "url": "plugin.NodeFocusManager.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_preventScroll", "url": "plugin.NodeFocusManager.html#method__preventScroll", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "refresh", "url": "plugin.NodeFocusManager.html#method_refresh", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_removeFocusClass", "url": "plugin.NodeFocusManager.html#method__removeFocusClass", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "start", "url": "plugin.NodeFocusManager.html#method_start", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "stop", "url": "plugin.NodeFocusManager.html#method_stop", "type": "method"}];
 </script>
 </body>
 </html>

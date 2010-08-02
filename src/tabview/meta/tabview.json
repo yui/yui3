@@ -4,19 +4,16 @@
             "tabview-plugin": {
                 "requires": [
                     "tabview-base"
-                ], 
-                "skinnable": true
-            }
-        }, 
-        "submodules": {
+                ]
+            },
             "tabview-base": {
                 "requires": [
                     "node-event-delegate",
-                    "node-focusmanager",
-                    "classnamemanager"
+                    "classnamemanager",
+                    "skin-sam-tabview"
                 ]
             } 
-        },
+        }, 
         "requires": [
             "widget", 
             "widget-parent",

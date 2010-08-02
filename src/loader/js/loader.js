@@ -113,7 +113,7 @@ var NOT_FOUND       = {},
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
     win             = Y.config.win,
-    localStorage    = win && win.localStorage,
+    // localStorage    = win && win.JSON && win.localStorage,
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -438,34 +438,34 @@ Y.Loader = function(o) {
 
     if (cache) {
         self.moduleInfo = Y.merge(cache);
-    } else if (localStorage) {
-        cache = localStorage.getItem(modulekey);
-        if (cache) {
-            self.moduleInfo = JSON.parse(cache);
-        }
-        // console.log('cached rendered module info');
+        self.conditions = Y.merge(GLOBAL_ENV._conditions);
     } 
+
+    // else if (localStorage) {
+    //     cache = localStorage.getItem(modulekey);
+    //     if (cache) {
+    //         self.moduleInfo = JSON.parse(cache);
+    //     }
+    //     // console.log('cached rendered module info');
+    // } 
 
     if (!cache) {
         YObject.each(defaults, function(v, k) {
             self.addModule(v, k);
         });
-        if (localStorage) {
-            try {
-                localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
-            } catch(e) { }
-        }
+        // if (localStorage) {
+        //     try {
+        //         localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
+        //     } catch(e) { }
+        // }
     }
 
     if (!GLOBAL_ENV._renderedMods) {
         GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        GLOBAL_ENV._conditions = Y.merge(self.conditions);
     }
 
-    YObject.each(ON_PAGE, function(v, k) {
-        if ((!(k in self.moduleInfo)) && ('details' in v)) {
-            self.addModule(v.details, k);
-        }
-    });
+    self._inspectPage();
 
     self._internal = false;
 
@@ -560,6 +560,21 @@ Y.Loader.prototype = {
         }
     },
 
+    _inspectPage: function() {
+        YObject.each(ON_PAGE, function(v, k) {
+            if (v.details) {
+                var m = this.moduleInfo[k],
+                    req = v.details.requires,
+                    mr = m && m.requires;
+                if (m && !m._inspected && req && mr.length != req.length) {
+                    delete m.expanded;
+                    m._inspected = true;
+                } else {
+                    this.addModule(v.details, k);
+                }
+            }
+        }, this);
+    },
 
 // returns true if b is not loaded, and is required
 // directly or by means of modules it supersedes.
@@ -1473,7 +1488,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
         this.skipped = {};
 
-        Y.mix(this.loaded, this.inserted);
+        // Y.mix(this.loaded, this.inserted);
+        YObject.each(this.inserted, function(v, k) {
+            Y.mix(this.loaded, this.getProvides(k));
+        }, this);
 
         fn = this.onSuccess;
         if (fn) {

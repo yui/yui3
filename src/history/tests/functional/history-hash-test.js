@@ -60,7 +60,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.once('hashchange', function () {
             changed = true;
-            Y.Assert.areSame('a=c', Y.HistoryHash.getHash());
+            Y.Assert.areSame('a=b', Y.HistoryHash.getHash());
         }, win);
 
         Y.HistoryHash.setHash('#a=b');
@@ -101,7 +101,6 @@ Y.Test.Runner.add(new Y.Test.Case({
 
             Y.once('hashchange', function () {
                 changed = true;
-                Y.Assert.fail();
             }, win);
 
             Y.HistoryHash.setHash('#foo=baR');
@@ -196,6 +195,21 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.HistoryHash.replaceHash('withprefix');
         Y.Assert.areSame('#!withprefix', location.hash);
+    },
+
+    // -- Constructor ----------------------------------------------------------
+    'bookmarked state should be merged into initialState': function () {
+        Y.HistoryHash.setHash('a=aardvark&b=bumblebee');
+
+        this.wait(function () {
+            var h     = new Y.HistoryHash({initialState: {b: 'blowfish', c: 'cheetah'}}),
+                state = h.get();
+
+            Y.Assert.areSame(3, Obj.size(state));
+            Y.Assert.areSame('aardvark', state.a);
+            Y.Assert.areSame('bumblebee', state.b);
+            Y.Assert.areSame('cheetah', state.c);
+        }, 50);
     },
 
     // -- Instance Methods -----------------------------------------------------
