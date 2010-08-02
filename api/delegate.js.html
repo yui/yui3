@@ -63,21 +63,24 @@
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Sets up event delegation on a container element.  The delegated event</span>
 <span class="cm"> * will use a supplied selector or filtering function to test if the event</span>
-<span class="cm"> * references at least one node that should trigger the subscription callback.</span>
-<span class="cm"> * Selector string filters will trigger the callback if the event originated</span>
-<span class="cm"> * from a node that matches it or is contained in a node that matches it.</span>
-<span class="cm"> * Function filters accept the unfiltered event object and should return null</span>
-<span class="cm"> * if it does not qualify for firing the callbacks, a Node if the callback</span>
-<span class="cm"> * should be executed for one Node, or an array of Nodes if there were multiple</span>
-<span class="cm"> * nodes in touched by the event that meet the filtering criteria.&lt;/p&gt;</span>
+<span class="cm"> * references at least one node that should trigger the subscription</span>
+<span class="cm"> * callback.&lt;/p&gt;</span>
 <span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;The callback function will be executed only for those cases where the</span>
-<span class="cm"> * filter returns at least one match.  For each matching Node, the callback</span>
-<span class="cm"> * will be executed with its &#39;this&#39; object set to the Node matched by the</span>
-<span class="cm"> * filter (unless a specific context was provided during subscription), and the</span>
-<span class="cm"> * provided event&#39;s &lt;code&gt;currentTarget&lt;/code&gt; will also be set to the matching</span>
-<span class="cm"> * Node.  The containing Node from which the subscription was originally made</span>
-<span class="cm"> * can be referenced as &lt;code&gt;e.container&lt;/code&gt;.</span>
+<span class="cm"> * &lt;p&gt;Selector string filters will trigger the callback if the event originated</span>
+<span class="cm"> * from a node that matches it or is contained in a node that matches it.</span>
+<span class="cm"> * Function filters are called for each Node up the parent axis to the</span>
+<span class="cm"> * subscribing container node, and receive at each level the Node and the event</span>
+<span class="cm"> * object.  The function should return true (or a truthy value) if that Node</span>
+<span class="cm"> * should trigger the subscription callback.  Note, it is possible for filters</span>
+<span class="cm"> * to match multiple Nodes for a single event.  In this case, the delegate</span>
+<span class="cm"> * callback will be executed for each matching Node.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;For each matching Node, the callback will be executed with its &#39;this&#39;</span>
+<span class="cm"> * object set to the Node matched by the filter (unless a specific context was</span>
+<span class="cm"> * provided during subscription), and the provided event&#39;s</span>
+<span class="cm"> * &lt;code&gt;currentTarget&lt;/code&gt; will also be set to the matching Node.  The</span>
+<span class="cm"> * containing Node from which the subscription was originally made can be</span>
+<span class="cm"> * referenced as &lt;code&gt;e.container&lt;/code&gt;.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method delegate</span>
 <span class="cm"> * @param type {String} the event type to delegate</span>
@@ -85,7 +88,7 @@
 <span class="cm"> *              will be provided the event object for the delegated event.</span>
 <span class="cm"> * @param el {String|node} the element that is the delegation container</span>
 <span class="cm"> * @param spec {string|Function} a selector that must match the target of the</span>
-<span class="cm"> *              event.</span>
+<span class="cm"> *              event or a function to test target and its parents for a match</span>
 <span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
 <span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
 <span class="cm"> *              These arguments will be added after the event object.</span>
@@ -131,7 +134,7 @@
             <span class="p">}</span>
 
             <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-            <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">getCurrentTarget</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
+            <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span>  <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
             <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">_notify</span> <span class="o">=</span> <span class="nx">delegate</span><span class="p">.</span><span class="nx">notifySub</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -166,9 +169,9 @@
     <span class="p">}</span>
 
     <span class="c1">// Only notify subs if the event occurred on a targeted element</span>
-    <span class="kd">var</span> <span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentTarget</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span>
-        <span class="nx">originalEvent</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="nx">container</span>     <span class="o">=</span> <span class="nx">originalEvent</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">e</span>             <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">delegate</span><span class="p">.</span><span class="nx">_applyFilter</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span>
+        <span class="nx">container</span>     <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
         <span class="nx">i</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">target</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">currentTarget</span><span class="p">)</span> <span class="p">{</span>
@@ -179,7 +182,7 @@
             <span class="nx">target</span> <span class="o">=</span> <span class="nx">currentTarget</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
 
             <span class="c1">// New facade to avoid corrupting facade sent to direct subs</span>
-            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">originalEvent</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
 
             <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">container</span><span class="p">;</span>
         
@@ -197,11 +200,15 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * &lt;p&gt;Compiles a selector string into a filter function that returns an array of Nodes matching that selector starging from the event&#39;s target up the parent axis to the Node from which the subscription occurred.  If only one Node matches, it is returned (absent the array), and if none, undefined is returned.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;Compiles a selector string into a filter function to identify whether</span>
+<span class="cm"> * Nodes along the parent axis of an event&#39;s target should trigger event</span>
+<span class="cm"> * notification.&lt;/p&gt;</span>
 <span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;Previously compiled filter functions are returned if the same selector string is provided.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;This function is memoized, so previously compiled filter functions are</span>
+<span class="cm"> * returned if the same selector string is provided.&lt;/p&gt;</span>
 <span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;This function may be useful when defining synthetic events for delegate handling.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;This function may be useful when defining synthetic events for delegate</span>
+<span class="cm"> * handling.&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method delegate.compileFilter</span>
 <span class="cm"> * @param selector {String} the selector string to base the filtration on</span>
@@ -210,25 +217,51 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">delegate</span><span class="p">.</span><span class="nx">compileFilter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">selector</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="nx">target</span>    <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="nx">match</span>     <span class="o">=</span> <span class="p">[];</span>
-
-        <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">!==</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">selectorTest</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">container</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">match</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">target</span><span class="p">));</span>
-            <span class="p">}</span>
-            <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">match</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">match</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">// single match or undefined</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="nx">match</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">selectorTest</span><span class="p">(</span><span class="nx">target</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">.</span><span class="nx">_node</span><span class="p">);</span>
     <span class="p">};</span>
 <span class="p">});</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Walks up the parent axis of an event&#39;s target, and tests each element</span>
+<span class="cm"> * against a supplied filter function.  If any Nodes satisfy the filter, the</span>
+<span class="cm"> * delegated callback will be triggered for each.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method delegate._applyFilter</span>
+<span class="cm"> * @param filter {Function} boolean function to test for inclusion in event</span>
+<span class="cm"> *                  notification</span>
+<span class="cm"> * @param args {Array} the arguments that would be passed to subscribers</span>
+<span class="cm"> * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter</span>
+<span class="cm"> * @protected</span>
+<span class="cm"> */</span>
+<span class="nx">delegate</span><span class="p">.</span><span class="nx">_applyFilter</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">e</span>         <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nx">container</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
+        <span class="nx">target</span>    <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+        <span class="nx">match</span>     <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="c1">// passing target as the first arg rather than leaving well enough alone</span>
+    <span class="c1">// making &#39;this&#39; in the filter function refer to the target.  This is to</span>
+    <span class="c1">// support bound filter functions.</span>
+    <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// filter(target, e, extra args...) - this === target</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">args</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">match</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">match</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">match</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">// single match or undefined</span>
+    <span class="p">}</span>
+
+    <span class="c1">// remove the target</span>
+    <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="nx">match</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Sets up event delegation on a container element.  The delegated event</span>
