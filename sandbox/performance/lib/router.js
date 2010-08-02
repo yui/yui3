@@ -95,6 +95,11 @@ exports.Response = function Response(res) {
         return false;
     };
 
+    res.send304 = function send304() {
+        res.statusCode = 304;
+        res.sendResponse();
+    };
+
     res.send404 = function send404() {
         res.sendError(404, 'The requested resource was not found.');
     };
