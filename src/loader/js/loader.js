@@ -438,7 +438,9 @@ Y.Loader = function(o) {
 
     if (cache) {
         self.moduleInfo = Y.merge(cache);
+        self.conditions = Y.merge(GLOBAL_ENV._conditions);
     } 
+
     // else if (localStorage) {
     //     cache = localStorage.getItem(modulekey);
     //     if (cache) {
@@ -460,6 +462,7 @@ Y.Loader = function(o) {
 
     if (!GLOBAL_ENV._renderedMods) {
         GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        GLOBAL_ENV._conditions = Y.merge(self.conditions);
     }
 
     self._inspectPage();
