@@ -708,8 +708,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "plugins": {
             "history-hash-ie": {
                 "condition": {
-                    "trigger": "history-hash", 
-                    "ua": "ie"
+                    "test": function (Y) {
+    var docMode = Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+                    "trigger": "history-hash"
                 }, 
                 "requires": [
                     "history-hash", 
@@ -1251,7 +1256,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'd4d6c8e3eee41820efd26911936bcf44';
+YUI.Env[Y.version].md5 = '3dd64d2201d126f43699db6d8265413e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
