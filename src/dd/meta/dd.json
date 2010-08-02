@@ -36,11 +36,22 @@
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base",
+                    "dd-ddm-base"
+                ]
+            },
+            "dd-gestures": {
+                "condition": {
+                    "trigger": "dd-drag",
+                    "test": function(Y) {
+                        return ('ontouchstart' in Y.config.win && !Y.UA.chrome);                        
+                    }
+                },
+                "requires": [
+                    "dd-drag",
                     "event-synthetic",
                     "event-gestures"
                 ]
-            }, 
+            },
             "dd-drop": {
                 "requires": [
                     "dd-ddm-drop"

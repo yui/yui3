@@ -215,18 +215,6 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
-
-<script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/drag.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/drag-gestures.js?bust=<?php echo(mktime()); ?>"></script>
-
 <script type="text/javascript">
 var yConfig = {
     base: '../../build/',
@@ -259,7 +247,7 @@ var yConfig2 = {
     debug: false
 };
 
-YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'yui-throttle', function(Y1) {
+YUI(yConfig).use('dd', function(Y1) {
     Y1.DD.DDM._debugShim = true;
     //dd4 = Y1.Base.create(Y1.DD.Proxy, [Y1.DD.DragConstrained], {
     /*
@@ -376,7 +364,7 @@ YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-dd
 
 });
 
-YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle','drag-gestures', function(Y) {
+YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function(Y) {
     
     //alert(navigator.userAgent);
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
