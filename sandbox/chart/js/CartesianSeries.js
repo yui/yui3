@@ -2,11 +2,10 @@ function CartesianSeries(config)
 {
     CartesianSeries.superclass.constructor.apply(this, arguments);
 }
-
+ 
 CartesianSeries.NAME = "cartesianSeries";
 
 CartesianSeries.ATTRS = {
-
 	type: {		
   	    value: "cartesian"
     },
@@ -80,6 +79,13 @@ CartesianSeries.ATTRS = {
 			return value !== this.get("yKey");
 		}
 	},
+    
+    markers: {
+        getter: function()
+        {
+            return this._markers;
+        }
+    },
 
     direction: {
         value: "horizontal"
@@ -150,6 +156,18 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		}
 	},
 
+    /**
+     * @private
+     * Collection of markers to be used in the series.
+     */
+    _markers: null,
+
+    /**
+     * @private
+     * Collection of markers to be re-used on a series redraw.
+     */
+    _markerCache: null,
+
 	/**
 	 * @private
 	 */
@@ -186,7 +204,10 @@ Y.extend(CartesianSeries, Y.Renderer, {
         {
             yData = yData.reverse();
         }
-        this.get("graphic").setSize(w, h);
+        if(this.get("graphic"))
+        {
+            this.get("graphic").setSize(w, h);
+        }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (; i < dataLength; ++i) 
@@ -413,6 +434,70 @@ Y.extend(CartesianSeries, Y.Renderer, {
             }
         }
         return allCoords;
+    },
+
+    /**
+     * @private
+     * @description Creates a marker based on its style properties.
+     */
+    getMarker: function(styles)
+    {
+        var marker,
+            cache = this._markerCache;
+        if(cache.length > 0)
+        {
+            marker = cache.shift();
+            if(marker.get("styles") !== styles)
+            {
+                marker.set("styles", styles);
+            }
+        }
+        else
+        {
+            marker = new Y.Marker({styles:styles});
+            marker.render(this.get("node"));
+            marker.after("mouseover", Y.bind(this._markerEventHandler, this));
+            marker.after("mousedown", Y.bind(this._markerEventHandler, this));
+            marker.after("mouseup", Y.bind(this._markerEventHandler, this));
+            marker.after("mouseout", Y.bind(this._markerEventHandler, this));
+        }
+        this._markers.push(marker);
+        return marker;
+    },   
+    
+    /**
+     * @private
+     * Creates a cache of markers for reuse.
+     */
+    _createMarkerCache: function()
+    {
+        if(this._markers)
+        {
+            this._markerCache = this._markers.concat();
+        }
+        else
+        {
+            this._markerCache = [];
+        }
+        this._markers = [];
+    },
+    
+    /**
+     * @private
+     * Removes unused markers from the marker cache
+     */
+    _clearMarkerCache: function()
+    {
+        var len = this._markerCache.length,
+            i = 0,
+            marker,
+            markerCache;
+        for(; i < len; ++i)
+        {
+            marker = markerCache[i];
+            marker.parentNode.removeChild(marker);
+        }
+        this._markerCache = [];
     },
 
     /**

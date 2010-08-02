@@ -112,7 +112,7 @@ Graphic.prototype = {
         if (caps === 'butt') {
             caps = 'none';
         }
-
+        
         if (context.lineCap) { // FF errors when trying to set
             //context.lineCap = caps;
         }
@@ -187,12 +187,6 @@ Graphic.prototype = {
      * Draws a circle
      */
 	drawCircle: function(x, y, radius) {
-        if(this._stroke && this._context.lineWidth > 0)
-        {
-            x += this._context.lineWidth;
-            y += this._context.lineWidth;
-            radius += this._context.lineWidth;
-        }
         var context = this._context,
             startAngle = 0,
             endAngle = 2 * Math.PI;
@@ -223,8 +217,10 @@ Graphic.prototype = {
         };
         if(this._stroke && this._context.lineWidth > 0)
         {
-            this._shape.w += this._context.lineWidth * 2;
-            this._shape.h += this._context.lineWidth * 2;
+            w -= this._context.lineWidth * 2;
+            h -= this._context.lineWidth * 2;
+            x += this._context.lineWidth;
+            y += this._context.lineWidth;
         }
         var context = this._context,
             l = 8,
@@ -774,6 +770,81 @@ Graphic.prototype = {
         {
             this._shape.h = Math.max(h, this._shape.h);
         }
+    },
+
+    getShape: function(config)
+    {
+        var shape,
+            node,
+            type = config.shape || config.type,
+            fill = config.fill,
+            border = config.border,
+            w = config.width,
+            h = config.height;  
+        this.clear();
+        this.setPosition(0, 0);
+        this.setSize(w, h);
+        if(border && border.weight && border.weight > 0)
+        {
+            border.color = border.color || "#000";
+            border.alpha = border.alpha || 1;
+            this.lineStyle(border.weight, border.color, border.alpha);
+        }
+        if(fill.type === "radial" || fill.type === "linear")
+        {
+            this.beginGradientFill(fill);
+        }
+        else if(fill.type === "bitmap")
+        {
+            this.beginBitmapFill(fill);
+        }   
+        else
+        {
+            this.beginFill(fill.color, fill.alpha);
+        }
+        switch(type)
+        {
+            case "circle" :
+                this.drawEllipse(0, 0, w, h);
+            break;
+            case "rect" :
+                this.drawRect(0, 0, w, h);
+            break;
+        }
+        shape = {
+            type:type,
+            width:w,
+            height:h,
+            fill:fill,
+            node:this._node,
+            border:border
+        };
+        return shape;
+    },
+
+    updateShape: function(shape, config)
+    {
+        if(config.fill)
+        {
+            shape.fill = Y.merge(shape.fill, config.fill);
+        }
+        if(config.border)
+        {
+            shape.border = Y.merge(shape.border, config.border);
+        }
+        if(config.width)
+        {
+            shape.width = config.width;
+        }
+        if(config.height)
+        {
+            shape.height = config.height;
+        }
+        if(config.shape !== shape.type)
+        {
+            shape.type = config.shape;
+        }
+        return this.getShape(shape);
     }
 };
 

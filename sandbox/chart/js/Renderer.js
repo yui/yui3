@@ -44,12 +44,12 @@ Renderer.ATTRS = {
 };
 
 Y.extend(Renderer, Y.Widget, {
-
     /**
      * @private
      */
     renderUI: function()
     {
+        this._setNode();
         if(!this.get("graphic"))
         {
             this._setCanvas();
@@ -83,11 +83,7 @@ Y.extend(Renderer, Y.Widget, {
         }
     },
 
-    /**
-     * @private
-     * Creates a <code>Graphic</code> instance.
-     */
-    _setCanvas: function()
+    _setNode: function()
     {
         var cb = this.get("contentBox"),
             n = document.createElement("div"),
@@ -100,6 +96,14 @@ Y.extend(Renderer, Y.Widget, {
         style.width = "100%";
         style.height = "100%";
         this.set("node", n);
+    },
+
+    /**
+     * @private
+     * Creates a <code>Graphic</code> instance.
+     */
+    _setCanvas: function()
+    {
         this.set("graphic", new Y.Graphic());
         this.get("graphic").render(this.get("node"));
     },
@@ -169,3 +173,4 @@ Y.extend(Renderer, Y.Widget, {
 });
 
 Y.Renderer = Renderer;
+

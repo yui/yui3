@@ -2,6 +2,7 @@ function Marker(config)
 {
 	Marker.superclass.constructor.apply(this, arguments);
 }
+
 Marker.NAME = "marker";
 
 Marker.ATTRS = {
@@ -23,49 +24,52 @@ Marker.ATTRS = {
 };
 
 Y.extend(Marker, Y.Renderer, {
-	bindUI: function()
+    bindUI: function()
     {
         this.after("stylesChange", Y.bind(this._updateHandler, this));
         this.after("stateChange", Y.bind(this._updateHandler, this));
-        this.on("mouseover", Y.bind(this._handleMouseOver, this));
-        this.on("mousedown", Y.bind(this._handleMouseDown, this));
-        this.on("mouseout", Y.bind(this._handleMouseOut, this));
-        this.on("mouseup", Y.bind(this._handleMouseOver, this));
     },
 
-    _handleMouseOver: function(e)
+    /**
+     * @private
+     */
+    _updateHandler: function(e)
     {
+        if(this.get("rendered"))
+        {
+            this._update();
+        }
+    },
+    
+    /**
+	 * @private
+	 */
+    _handleMouseOver: function(e)
+    { 
         this.set("state", "over");
     },
 
+    /**
+	 * @private
+	 */
     _handleMouseDown: function(e)
     {
         this.set("state", "down");
     },
 
+    /**
+	 * @private
+	 */
     _handleMouseOut: function(e)
     {
         this.set("state", "off");
     },
 
-    /**
-	 * @private (override)
-	 */
-	draw: function()
+    _getStateStyles: function()
     {
-        var graphic = this.get("graphic"),
-            styles = this._mergeStyles(this.get("styles"), {}),
+        var styles = this._mergeStyles(this.get("styles"), {}),
             state = this.get("state"),
-            node = this.get("node"),
             stateStyles,
-            border,
-            fill,
-            borderWidth,
-            borderColor,
-            borderAlpha,
-            fillColor,
-            fillAlpha,
-            shape,
             w,
             h,
             x = 0,
@@ -81,54 +85,51 @@ Y.extend(Marker, Y.Renderer, {
         {
             stateStyles = this._mergeStyles(styles[state], stateStyles);
         }
-        graphic.clear();
         w = stateStyles.width;
         h = stateStyles.height;
-        if(stateStyles.border && stateStyles.border.weight && stateStyles.border.weight > 0)
-        {
-            w += stateStyles.border.weight * 2;
-            h += stateStyles.border.weight * 2;
-            x += stateStyles.border.weight;
-            y += stateStyles.border.weight;
-        }
+        stateStyles.x = x;
+        stateStyles.y = y;
+        stateStyles.width = w;
+        stateStyles.height = h;
         this.set("width", w);
         this.set("height", h);
+        return stateStyles;
+    },
+
+    /**
+	 * @private (override)
+	 */
+	draw: function()
+    {
+        var stateStyles = this._getStateStyles(),
+            w = stateStyles.width,
+            h = stateStyles.height,
+            node = this.get("node"),
+            graphic = this.get("graphic");
         node.style.width = w + "px";
         node.style.height = h + "px";
         node.style.position = "absolute";
-        node.style.overflow = "visible"; 
-        graphic.setPosition(0, 0);
-        graphic.setSize(w, h);
-        if(stateStyles.border)
-        {
-            border = stateStyles.border;
-            borderWidth = border.weight || 0;
-            borderColor = border.color || "#000";
-            borderAlpha = border.alpha || 1;
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-        }
-		if(stateStyles.fill)
-        {
-            fill = stateStyles.fill;
-            fillColor = fill.color || "#000";
-            fillAlpha = fill.alpha || 1;
-            graphic.beginFill(fillColor, fillAlpha);
-        }
-        this[stateStyles.shape](x, y, stateStyles);
-        graphic.end();
+        this._shape = graphic.getShape(stateStyles);
 	},
 
-    circle: function(x, y, config)
+    /**
+     * @private
+     * @description Reference to the graphic object.
+     */
+    _shape: null,
+
+    /**
+     * @private
+     * @description Updates the properties of an existing state.
+     */
+    _update: function()
     {
-        var graphic = this.get("graphic"),
-            w = config.width,
-            h = config.height;
-        graphic.drawEllipse(x, y, w, h);
+        this.get("graphic").updateShape(this._shape, this._getStateStyles());
     },
 
+    /**
+	 * @private
+	 */
     _getDefaultStyles: function()
     {
         return {

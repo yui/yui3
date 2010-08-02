@@ -17,6 +17,13 @@ MarkerSeries.ATTRS = {
 Y.extend(MarkerSeries, Y.CartesianSeries, {
     /**
      * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
+    /**
+     * @private
      * @description Draws the markers for the graph
      */
 	drawSeries: function()
@@ -25,8 +32,7 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles"),
+        var style = this.get("styles"),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -35,39 +41,53 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
             len = xcoords.length,
             top = ycoords[0],
             left,
-            markers = [],
             marker,
-            mnode;
+            mnode,
+            offsetWidth = w/2,
+            offsetHeight = h/2;
+            this._createMarkerCache();
         for(; i < len; ++i)
         {
-            top = ycoords[i];
-            left = xcoords[i];
-            marker = new Y.Marker({styles:this.get("styles")});
-            marker.render(this.get("node"));
-            mnode = marker.get("node");
-            mnode.style.top = (top - marker.get("height")/2) + "px";
-            mnode.style.left = (left - marker.get("width")/2) + "px";
-            marker.on("mouseover", Y.bind(this._markerEventHandler, this));
-            marker.on("mousedown", Y.bind(this._markerEventHandler, this));
-            marker.on("mouseup", Y.bind(this._markerEventHandler, this));
-            marker.on("mouseout", Y.bind(this._markerEventHandler, this));
-            markers.push(marker);
+            top = (ycoords[i] - offsetWidth) + "px";
+            left = (xcoords[i] - offsetHeight) + "px";
+            marker = this.getMarker(style);
+            mnode = marker.get("boundingBox");
+            mnode.setStyle("position", "absolute"); 
+            mnode.setStyle("top", top);
+            mnode.setStyle("left", left);
         }
-        this._markers = markers;
+        this._clearMarkerCache();
  	},
 
     _markerEventHandler: function(e)
     {
         var type = e.type,
             marker = e.currentTarget,
-            mnode = marker.get("node"),
-            w = marker.get("width"),
-            h = marker.get("height"),
+            mnode = marker.get("boundingBox"),
+            w,
+            h,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
             i = Y.Array.indexOf(this._markers, marker);
-            mnode.style.left = (xcoords[i] - w/2) + "px";
-            mnode.style.top = (ycoords[i] - h/2) + "px";    
+            switch(type)
+            {
+                case "marker:mouseout" :
+                    marker.set("state", "off");
+                break;
+                case "marker:mouseover" :
+                    marker.set("state", "over");
+                break;
+                case "marker:mouseup" :
+                    marker.set("state", "over");
+                break;
+                case "marker:mousedown" :
+                    marker.set("state", "down");
+                break;
+            }
+            w = marker.get("width");
+            h = marker.get("height");
+            mnode.setStyle("left", (xcoords[i] - w/2) + "px");
+            mnode.setStyle("top", (ycoords[i] - h/2) + "px");    
     },
 
 	_getDefaultStyles: function()
