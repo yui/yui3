@@ -274,7 +274,11 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     MIN_TIME = "minTime",
     MIN_DISTANCE = "minDistance",
     PREVENT_DEFAULT = "preventDefault",
+    BUTTON = "button",
     OWNER_DOCUMENT = "ownerDocument",
+
+    CURRENT_TARGET = "currentTarget",
+    TARGET = "target",
 
     NODE_TYPE = "nodeType",
 
@@ -300,10 +304,19 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         touchFacade.screenY = touch.screenY;
         touchFacade.clientX = touch.clientX;
         touchFacade.clientY = touch.clientY;
-        touchFacade.target = touch.target || touchFacade.target;
-        touchFacade.currentTarget = touch.currentTarget || touchFacade.currentTarget;
+        touchFacade[TARGET] = touch[TARGET] || touchFacade[TARGET];
+        touchFacade[CURRENT_TARGET] = touch[CURRENT_TARGET] || touchFacade[CURRENT_TARGET];
 
-        touchFacade.button = (params && params.button) || 1; // default to left (left as per vendors, not W3C which is 0)
+        touchFacade[BUTTON] = (params && params[BUTTON]) || 1; // default to left (left as per vendors, not W3C which is 0)
+    },
+
+    _prevent = function(e, preventDefault) {
+        if (preventDefault) {
+            // preventDefault is a boolean or a function
+            if (!preventDefault.call || preventDefault(e)) {
+                e.preventDefault();
+            }
+        }
     },
 
     define = Y.Event.define;
@@ -393,7 +406,7 @@ define(GESTURE_MOVE_START, {
     _onStart : function(e, node, subscriber, ce, delegate) {
 
         if (delegate) {
-            node = e.currentTarget;
+            node = e[CURRENT_TARGET];
         }
 
         var params = subscriber._extra,
@@ -418,12 +431,7 @@ define(GESTURE_MOVE_START, {
 
         if (fireStart) {
 
-            if (preventDefault) {
-                // preventDefault is a boolean or a function
-                if (!preventDefault.call || preventDefault(e)) {
-                    e.preventDefault();
-                }
-            }
+            _prevent(e, preventDefault);
 
             if (minTime === 0 || minDistance === 0) {
                 this._start(e, node, ce, params);
@@ -570,7 +578,7 @@ define(GESTURE_MOVE, {
     _onMove : function(e, node, subscriber, ce, delegate) {
 
         if (delegate) {
-            node = e.currentTarget;
+            node = e[CURRENT_TARGET];
         }
 
         var fireMove = subscriber._extra.standAlone || node.getData(_MOVE_START),
@@ -589,12 +597,7 @@ define(GESTURE_MOVE, {
 
             if (fireMove) {
 
-                if (preventDefault) {
-                    // preventDefault is a boolean or function
-                    if (!preventDefault.call || preventDefault(e)) {
-                        e.preventDefault();
-                    }
-                }
+                _prevent(e, preventDefault);
 
 
                 e.type = GESTURE_MOVE;
@@ -688,7 +691,7 @@ define(GESTURE_MOVE_END, {
     _onEnd : function(e, node, subscriber, ce, delegate) {
 
         if (delegate) {
-            node = e.currentTarget;
+            node = e[CURRENT_TARGET];
         }
 
         var fireMoveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
@@ -706,12 +709,7 @@ define(GESTURE_MOVE_END, {
 
             if (fireMoveEnd) {
 
-                if (preventDefault) {
-                    // preventDefault is a boolean or function
-                    if (!preventDefault.call || preventDefault(e)) {
-                        e.preventDefault();
-                    }
-                }
+                _prevent(e, preventDefault);
 
                 e.type = GESTURE_MOVE_END;
                 ce.fire(e);
