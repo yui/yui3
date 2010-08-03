@@ -54,18 +54,44 @@ table, tr, td
 
 					var expensegraphstyles = {
 						color:"#5577AF",
-						marker:{fillColor:"#5577AF", fillAlpha:0.2, width:6, height:6},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#5577AF", 
+                            alpha:0.2
+                        },
+                        over: {
+                            fill: {
+                                alpha:1
+                            },
+                            height:10
+                        },
+                        width:6, 
+                        height:6,
+                        border: {
+						    weight:"1",
+                            color:"#ff0000"
+                        },
                         padding:{top:50, bottom:50}
 					};
 
 					// Add revenue graph styles
 					var revenuegraphstyles = {
 						color:"#FF0000",
-						marker:{fillcolor:"#ff0000", fillAlpha:0.2},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#ff0000", 
+                            alpha:0.2
+                        },
+                        height:11,
+                        over: {
+                            fill:
+                            {
+                                alpha:1
+                            },
+                            height:8
+                        },
+                        border: {
+						    weight:"1",
+                            color:"#0000ff"
+                        },
                         padding:{top:50, bottom:50}
 					};
 
@@ -148,7 +174,18 @@ table, tr, td
                                                         xKey:"taxes",
                                                         styles:taxgraphstyles});
 
-                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
+                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[
+                                                                                        {
+                                                                                            type:"area",
+                                                                                            direction:"vertical",
+                                                                                            yAxis:timeaxis,
+                                                                                            xAxis:numericaxis,
+                                                                                            yKey:"day",
+                                                                                            xKey:"taxes",
+                                                                                            styles:taxareastyles
+                                                                                        },
+                                                                                        lineSeries,
+                                                                                        {
                                                                                             type:"bar", 
                                                                                             yAxis:timeaxis, 
                                                                                             xAxis:numericaxis, 
@@ -164,17 +201,7 @@ table, tr, td
                                                                                             xKey:"expenses",
                                                                                             styles:expensegraphstyles
                                                                                         
-                                                                                        },
-                                                                                        {
-                                                                                            type:"area",
-                                                                                            direction:"vertical",
-                                                                                            yAxis:timeaxis,
-                                                                                            xAxis:numericaxis,
-                                                                                            yKey:"day",
-                                                                                            xKey:"taxes",
-                                                                                            styles:taxareastyles
-                                                                                        },
-                                                                                        lineSeries
+                                                                                        }
                                                                                      ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:numericaxis, position:"bottom", styles:bottomaxisstyles});

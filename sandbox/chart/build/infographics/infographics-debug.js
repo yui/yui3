@@ -3065,6 +3065,13 @@ BarSeries.ATTRS = {
 };
 
 Y.extend(BarSeries, Y.CartesianSeries, {
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
 	/**
 	 * @private
 	 */
@@ -3074,23 +3081,11 @@ Y.extend(BarSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
+        var style = this._mergeStyles(this.get("styles"), {}),
             w = style.width,
             h = style.height,
-            fillColor = style.fillColor,
-            alpha = style.fillAlpha,
-            fillType = style.fillType || "solid",
-            borderWidth = style.borderWidth,
-            borderColor = style.borderColor,
-            borderAlpha = style.borderAlpha || 1,
-            colors = style.colors,
-            alphas = style.alpha || [],
-            ratios = style.ratios || [],
-            rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -3105,11 +3100,14 @@ Y.extend(BarSeries, Y.CartesianSeries, {
             renderer,
             order = this.get("order"),
             node = Y.Node.one(this._parentNode).get("parentNode"),
-            left;
+            left,
+            marker,
+            bb;
+            this._createMarkerCache();
         for(; i < seriesLen; ++i)
         {
             renderer = seriesCollection[i];
-            seriesHeight += renderer.get("styles").marker.height;
+            seriesHeight += renderer.get("styles").height;
             if(order > i) 
             {
                 offset = seriesHeight;
@@ -3130,22 +3128,70 @@ Y.extend(BarSeries, Y.CartesianSeries, {
             top = ycoords[i] + offset;
             left = xcoords[i];
             w = left - this._leftOrigin;
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, alpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            style.width = w;
+            style.height = h;
+            marker = this.getMarker.apply(this, [style]);
+            bb = marker.get("boundingBox");
+            bb.setStyle("position", "absolute");
+            bb.setStyle("left", 0 + "px");
+            bb.setStyle("top", top + "px");
         }
+        this._clearMarkerCache();
  	},
+
+    /**
+     * @private
+     * Resizes and positions markers based on a mouse interaction.
+     */
+    _markerEventHandler: function(e)
+    {
+        var type = e.type,
+            marker = e.currentTarget,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            i = Y.Array.indexOf(this._markers, marker),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[this.get("type")],
+            seriesLen = seriesCollection.length,
+            seriesHeight = 0,
+            offset = 0,
+            renderer,
+            n = 0,
+            ys = [],
+            order = this.get("order");
+        switch(type)
+        {
+            case "marker:mouseout" :
+                marker.set("state", "off");
+            break;
+            case "marker:mouseover" :
+                marker.set("state", "over");
+            break;
+            case "marker:mouseup" :
+                marker.set("state", "over");
+            break;
+            case "marker:mousedown" :
+                marker.set("state", "down");
+            break;
+        }
+        marker.set("styles", {over:{width:(xcoords[i] - this._leftOrigin)}});
+        for(; n < seriesLen; ++n)
+        {
+            renderer = seriesCollection[n].get("markers")[i];
+            ys[n] = ycoords[i] + seriesHeight;
+            seriesHeight += parseInt(renderer.get("boundingBox").getStyle("height"), 10);
+            if(order > n)
+            {
+                offset = seriesHeight;
+            }
+            offset -= seriesHeight/2;
+        }
+        for(n = 0; n < seriesLen; ++n)
+        {
+            renderer = seriesCollection[n].get("markers")[i];
+            renderer.get("boundingBox").setStyle("top", (ys[n] - seriesHeight/2) + "px");
+        }
+    },
 
 	/**
 	 * @private
@@ -3158,22 +3204,20 @@ Y.extend(BarSeries, Y.CartesianSeries, {
 	/**
 	 * @private
 	 */
-	_getDefaultStyles: function()
+    _getDefaultStyles: function()
     {
         return {
-            marker: {
-                fillColor: "#000000",
-                fillAlpha: 1,
-                borderColor:"#ff0000",
-                borderWidth:0,
-                borderAlpha:1,
-                colors:[],
-                alpha:[],
-                ratios:[],
-                rotation:0,
-                width:6,
-                height:6
+            fill: {
+                color: "#000000",
+                alpha: "1",
+                colors: [],
+                alphas: [],
+                ratios: [],
+                rotation: 0
             },
+            width: 6,
+            height: 6,
+            shape: "rect",
             padding:{
                 top: 0,
                 left: 0,
@@ -4059,29 +4103,25 @@ StackedBarSeries.ATTRS = {
 };
 
 Y.extend(StackedBarSeries, Y.CartesianSeries, {
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
+    
     drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
+        var style = this._mergeStyles(this.get("styles"), {}),
             w = style.width,
             h = style.height,
-            fillColor = style.fillColor,
-            alpha = style.fillAlpha,
-            fillType = style.fillType || "solid",
-            borderWidth = style.borderWidth,
-            borderColor = style.borderColor,
-            borderAlpha = style.borderAlpha || 1,
-            colors = style.colors,
-            alphas = style.alpha || [],
-            ratios = style.ratios || [],
-            rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -4096,8 +4136,11 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
             positiveBaseValues,
             useOrigin = order === 0,
             node = Y.Node.one(this._parentNode).get("parentNode"),
-            left;
+            left,
+            marker,
+            bb;
         totalHeight = len * h;
+        this._createMarkerCache();
         if(totalHeight > node.offsetHeight)
         {
             ratio = this.height/totalHeight;
@@ -4159,44 +4202,63 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
                 }
             }
             top -= h/2;        
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, alpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            style.width = w;
+            style.height = h;
+            marker = this.getMarker.apply(this, [style]);
+            bb = marker.get("boundingBox");
+            bb.setStyle("position", "absolute");
+            bb.setStyle("left", left + "px");
+            bb.setStyle("top", top + "px");
         }
+        this._clearMarkerCache();
  	},
     
-    drawMarker: function(graphic, func, left, top, w, h)
+    /**
+     * @private
+     * Resizes and positions markers based on a mouse interaction.
+     */
+    _markerEventHandler: function(e)
     {
-        graphic.drawRect(left, top, w, h);
+        var type = e.type,
+            marker = e.currentTarget,
+            ycoords = this.get("ycoords"),
+            h = marker.get("height"),
+            i = Y.Array.indexOf(this._markers, marker);
+        switch(type)
+        {
+            case "marker:mouseout" :
+                marker.set("state", "off");
+            break;
+            case "marker:mouseover" :
+                marker.set("state", "over");
+            break;
+            case "marker:mouseup" :
+                marker.set("state", "over");
+            break;
+            case "marker:mousedown" :
+                marker.set("state", "down");
+            break;
+        }
+        marker.get("boundingBox").setStyle("top", (ycoords[i] - h/2) + "px");    
     },
 	
-	_getDefaultStyles: function()
+	/**
+	 * @private
+	 */
+    _getDefaultStyles: function()
     {
         return {
-            marker: {
-                fillColor: "#000000",
-                fillAlpha: 1,
-                borderColor:"#ff0000",
-                borderWidth:0,
-                borderAlpha:1,
-                colors:[],
-                alpha:[],
-                ratios:[],
-                rotation:0,
-                width:6,
-                height:6
+            fill: {
+                color: "#000000",
+                alpha: "1",
+                colors: [],
+                alphas: [],
+                ratios: [],
+                rotation: 0
             },
+            width: 6,
+            height: 6,
+            shape: "rect",
             padding:{
                 top: 0,
                 left: 0,
