@@ -466,6 +466,35 @@
         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;datatype/datatype-date-format-min.js&quot;</span>
     <span class="p">},</span> 
     <span class="s2">&quot;dd&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;dd-drop-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drop&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-gestures&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;ontouchstart&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">chrome</span><span class="p">);</span>
+<span class="p">},</span> 
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;dd-drag&quot;</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drag&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-synthetic&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-move&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-constrain&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-proxy&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drag&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;dd-constrain&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -492,11 +521,9 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;dd-delegate&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;dd-drop-plugin&quot;</span>
-                <span class="p">],</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;dd-drag&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-drop-plugin&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;event-mouseenter&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
@@ -508,33 +535,6 @@
             <span class="s2">&quot;dd-drop&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;dd-ddm-drop&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;dd-drop-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;dd-drop&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;dd-gestures&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;ontouchstart&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">chrome</span><span class="p">);</span>                        
-<span class="p">},</span> 
-                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;dd-drag&quot;</span>
-                <span class="p">},</span> 
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;dd-drag&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;event-synthetic&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;event-gestures&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;dd-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;dd-constrain&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;dd-proxy&quot;</span>
-                <span class="p">],</span> 
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;dd-drag&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;dd-proxy&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1303,7 +1303,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;3dd64d2201d126f43699db6d8265413e&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;3afb17752ba8c3c27c825aea01036c01&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
