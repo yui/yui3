@@ -186,8 +186,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (NATIVE_TRANSITIONS) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
-            transition.left = xMove + "px";
-            transition.top = yMove + "px";
+            if (xSet) { transition.left = xMove + "px"; }
+            if (ySet) { transition.top = yMove + "px"; }
         }
 
         cb.transition(transition);
@@ -332,7 +332,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._uiScrollY(e.newVal, e.duration, e.easing);
         }
     },
-    
+
     /**
      * Update the UI when the scrollY attr changes
      *
@@ -513,7 +513,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                     this.set(SCROLL_X, maxX);
                 }
             }
-            
+
             return;
         }
 
@@ -535,9 +535,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this.set(SCROLL_X, newX);
         }
 
-        this._flickTimer = Y.later(step, this, '_flickFrame');
+        if (!this._flickTimer) {
+            this._flickTimer = Y.later(step, this, '_flickFrame', null, true);
+        }
     },
-    
+
     /**
      * Stop the animation timer
      *
@@ -548,6 +550,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _killTimer: function(fireEvent) {
         if(this._flickTimer) {
             this._flickTimer.cancel();
+            this._flickTimer = null;
         }
 
         if(fireEvent) {
