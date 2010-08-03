@@ -503,28 +503,34 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_flickFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">newY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">),</span>
-            <span class="nx">maxY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">,</span>
-            <span class="nx">minY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">,</span>
-            <span class="nx">newX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">),</span>
-            <span class="nx">maxX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollX</span><span class="p">,</span>
-            <span class="nx">minX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollX</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">newY</span><span class="p">,</span>
+            <span class="nx">maxY</span><span class="p">,</span>
+            <span class="nx">minY</span><span class="p">,</span>
+            <span class="nx">newX</span><span class="p">,</span>
+            <span class="nx">maxX</span><span class="p">,</span>
+            <span class="nx">minX</span><span class="p">,</span>
+            <span class="nx">scrollsVertical</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">,</span>
+            <span class="nx">scrollsHorizontal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">,</span>
             <span class="nx">step</span> <span class="o">=</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">FRAME_STEP</span><span class="p">;</span>
         
-        <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span><span class="o">*</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;deceleration&#39;</span><span class="p">));</span>
-
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">maxY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">;</span>
+            <span class="nx">minY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">;</span>
             <span class="nx">newY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*</span> <span class="nx">step</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">maxX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollX</span><span class="p">;</span>
+            <span class="nx">minX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollX</span><span class="p">;</span>
             <span class="nx">newX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*</span> <span class="nx">step</span><span class="p">);</span>
         <span class="p">}</span>
         
+        <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span><span class="o">*</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;deceleration&#39;</span><span class="p">));</span>
+
         <span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.015</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_exceededYBoundary</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_exceededXBoundary</span><span class="p">));</span>
 
-            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span><span class="p">(</span><span class="nx">newY</span> <span class="o">&lt;</span> <span class="nx">minY</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">minY</span><span class="p">);</span>
@@ -534,7 +540,7 @@
                 <span class="p">}</span>
             <span class="p">}</span>
             
-            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span><span class="p">(</span><span class="nx">newX</span> <span class="o">&lt;</span> <span class="nx">minX</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">minX</span><span class="p">);</span>
@@ -547,25 +553,25 @@
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
         
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">newY</span> <span class="o">&lt;</span> <span class="nx">minY</span> <span class="o">||</span> <span class="nx">newY</span> <span class="o">&gt;</span> <span class="nx">maxY</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_exceededYBoundary</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNCE</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">newY</span> <span class="o">&lt;</span> <span class="nx">minY</span> <span class="o">||</span> <span class="nx">newY</span> <span class="o">&gt;</span> <span class="nx">maxY</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_exceededYBoundary</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNCE</span><span class="p">);</span>
+            <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">newX</span> <span class="o">&lt;</span> <span class="nx">minX</span> <span class="o">||</span> <span class="nx">newX</span> <span class="o">&gt;</span> <span class="nx">maxX</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_exceededXBoundary</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNCE</span><span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">newY</span><span class="p">);</span>
         <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="nx">scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">newX</span> <span class="o">&lt;</span> <span class="nx">minX</span> <span class="o">||</span> <span class="nx">newX</span> <span class="o">&gt;</span> <span class="nx">maxX</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_exceededXBoundary</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNCE</span><span class="p">);</span>
+            <span class="p">}</span>
+
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">newX</span><span class="p">);</span>
         <span class="p">}</span>
         
-        <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">FRAME_STEP</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;_flickFrame&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;_flickFrame&#39;</span><span class="p">);</span>
     <span class="p">},</span>
     
     <span class="cm">/**</span>
@@ -688,10 +694,10 @@
 <span class="cm">         * value is, the less friction during scrolling.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @attribute deceleration</span>
-<span class="cm">         * @default 0.98</span>
+<span class="cm">         * @default 0.93</span>
 <span class="cm">         */</span>
         <span class="nx">deceleration</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="mf">0.98</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="mf">0.93</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
@@ -701,10 +707,10 @@
 <span class="cm">         *</span>
 <span class="cm">         * @attribute bounce</span>
 <span class="cm">         * @type Number</span>
-<span class="cm">         * @default 0.7</span>
+<span class="cm">         * @default 0.1</span>
 <span class="cm">         */</span>
         <span class="nx">bounce</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="mf">0.7</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="mf">0.1</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
@@ -712,12 +718,12 @@
 <span class="cm">         *</span>
 <span class="cm">         * @attribute flick</span>
 <span class="cm">         * @type Object</span>
-<span class="cm">         * @default Object with properties minDistance = 10, minVelocity = 0.</span>
+<span class="cm">         * @default Object with properties minDistance = 10, minVelocity = 0.3.</span>
 <span class="cm">         */</span>
         <span class="nx">flick</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="p">{</span>
                 <span class="nx">minDistance</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
-                <span class="nx">minVelocity</span><span class="o">:</span> <span class="mi">0</span>
+                <span class="nx">minVelocity</span><span class="o">:</span> <span class="mf">0.3</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -757,9 +763,9 @@
 <span class="cm">     * @property ScrollView.FRAME_STEP</span>
 <span class="cm">     * @type Number</span>
 <span class="cm">     * @static</span>
-<span class="cm">     * @default 10</span>
+<span class="cm">     * @default 30</span>
 <span class="cm">     */</span>
-    <span class="nx">FRAME_STEP</span> <span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nx">FRAME_STEP</span> <span class="o">:</span> <span class="mi">30</span><span class="p">,</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * The default easing used when animating the flick</span>
