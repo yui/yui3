@@ -54,32 +54,78 @@ table, tr, td
 
 					var expensegraphstyles = {
 						color:"#5577AF",
-						marker:{fillColor:"#5577AF", fillAlpha:0.2, width:6, height:6},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#5577AF", 
+                            alpha:0.2, 
+                        },
+                        width:6, 
+                        height:6,
+                        border: {
+						    weight:"2",
+                            color:"#339966",
+                            alpha:0.8
+                        },
+                        over: {
+                            fill:{
+                                color:"#ff0000"
+                            }
+                        },
                         padding:{top:50, bottom:50}
 					};
 
 					// Add revenue graph styles
 					var revenuegraphstyles = {
 						color:"#FF0000",
-						marker:{fillcolor:"#ff0000", fillAlpha:0.2},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#ff0000", 
+                            alpha:0.2
+                        },
+                        border: {
+						    weight:"2",
+                            color: "#0000ff"
+                        },
+                        over: {
+                            fill: {
+                                color:"#eeeeee"
+                            }
+                        },
                         padding:{top:50, bottom:50}
 					};
 
                     var taxgraphstyles = {
 						color:"#ff0000",
-						marker:{fillColor:"#ff0000", width:6, height:6},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#ffaabb"
+                        },
+                        width:6, 
+                        height:6,
+                        border: {
+						    weight:"2",
+                            color:"#ffcc00"
+                        },
+                        over: {
+                            fill:{
+                                alpha:0.2
+                            }
+                        },
                         padding:{top:50, bottom:50}
                     };
 					
                     var taxareastyles = {
-                        color: "#0000ff",
-                        alpha: 0.5,
+						fill: {
+                            color:"#ffaabb"
+                        },
+                        width:6, 
+                        height:6,
+                        border: {
+						    weight:"2",
+                            color:"#000000"
+                        },
+                        over: {
+                            fill:{
+                                alpha:0.2
+                            }
+                        },
                         padding:{top:50, bottom:50}
                     };
 

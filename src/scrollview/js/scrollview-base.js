@@ -112,9 +112,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             flick = this.get(FLICK); 
 
         this.get(BOUNDING_BOX).on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
+
         cb.on('transition:end', Y.bind(this._transitionEnded, this), false);
 
-        // TODO: Fires way to often when using non-native transitions
+        // TODO: Fires way to often when using non-native transitions, due to property change
         if (NATIVE_TRANSITIONS) {
             cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
         }
@@ -152,19 +153,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param easing {String} An easing equation if duration is set
      */
     scrollTo: function(x, y, duration, easing) {
+
         var cb = this.get(CONTENT_BOX),
-            xMove = x * -1,
-            yMove = y * -1,
+            xSet = (x !== null),
+            ySet = (y !== null),
+            xMove = (xSet) ? x * -1 : 0,
+            yMove = (ySet) ? y * -1 : 0,
             transition;
 
         duration = duration || 0;
         easing = easing || ScrollView.EASING;
 
-        if(x !== this.get(SCROLL_X)) {
+        if (xSet) {
             this.set(SCROLL_X, x, { src: UI });
         }
 
-        if(y !== this.get(SCROLL_Y)) {
+        if (ySet) {
             this.set(SCROLL_Y, y, { src: UI });
         }
 
@@ -194,8 +198,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMoveStart: function(e) {
 
-        var preventable = e._orig || e;
-        preventable.preventDefault();
+        e.preventDefault();
 
         this._killTimer();
 
@@ -224,9 +227,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMove: function(e) {
 
-        var preventable = e._orig || e;
-        preventable.preventDefault();
-        
+        e.preventDefault();
+
         this._isDragging = true;
         this._moveEndClientY = e.clientY;
         this._moveEndClientX = e.clientX;
@@ -235,7 +237,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if(this._scrollsVertical) {
             this.set(SCROLL_Y, -(e.clientY - this._moveStartY));
         }
-        
+
         if(this._scrollsHorizontal) {
             this.set(SCROLL_X, -(e.clientX - this._moveStartX));
         }
@@ -249,9 +251,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveEnd: function(e) {
-        
-        var preventable = e._orig || e;
-        preventable.preventDefault();
+
+        e.preventDefault();
         
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
@@ -272,6 +273,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._scrolledHalfway = true;
             this._scrolledForward = distance > 0;
         }
+
         if(this._scrollsVertical && Math.abs(distance) > (this.get('height')/2)) {
             this._scrolledHalfway = true;
             this._scrolledForward = distance > 0;
@@ -340,9 +342,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         duration = duration || this._snapToEdge ? 400 : 0;
         easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
-        this.scrollTo(this.get(SCROLL_X), val, duration, easing);
+        this.scrollTo(null, val, duration, easing);
     },
-    
+
     /**
      * after listener for changes to the scrollX attr
      *
@@ -369,7 +371,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         duration = duration || this._snapToEdge ? 400 : 0;
         easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
-        this.scrollTo(val, this.get(SCROLL_Y), duration, easing);
+        this.scrollTo(val, null, duration, easing);
     },
     
     /**
