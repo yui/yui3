@@ -995,7 +995,8 @@ Y.Loader.prototype = {
         }
 
         var i, m, j, add, packName, lang,
-            adddef = ON_PAGE[mod.name] && ON_PAGE[mod.name].details,
+            name = mod.name,
+            adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d      = [], 
             r      = mod.requires, 
             o      = mod.optional, 
@@ -1015,22 +1016,22 @@ Y.Loader.prototype = {
                 mod.optional = (mod.optional) ? mod.optional.concat(adddef.optional) : adddef.optional;
             }
             // skins?
-            // console.log('temp mod: ' + mod.name + ', ' + mod.requires);
+            // console.log('temp mod: ' + name + ', ' + mod.requires);
             // console.log(adddef);
         }
 
         // if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
-            // Y.log('already expanded ' + mod.name);
+            // Y.log('already expanded ' + name);
             return mod.expanded;
         }
 
-        // Y.log("getRequires: " + mod.name + " (dirty:" + this.dirty + ", expanded:" + mod.expanded + ")");
+        // Y.log("getRequires: " + name + " (dirty:" + this.dirty + ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
 
         for (i=0; i<r.length; i++) {
-            // Y.log(mod.name + ' requiring ' + r[i]);
+            // Y.log(name + ' requiring ' + r[i]);
             if (!hash[r[i]]) {
                 d.push(r[i]);
                 hash[r[i]] = true;
@@ -1050,7 +1051,15 @@ Y.Loader.prototype = {
         if (r) {
             for (i=0; i<r.length; i++) {
                 if (!hash[r[i]]) {
-                    d.push(r[i]); // should not need the submodule as a dep
+
+                    // if this module has submodules, the requirements list is
+                    // expanded to include the submodules.  This is so we can
+                    // prevent dups when a submodule is already loaded and the
+                    // parent is requested.
+                    if (mod.submodules) {
+                        d.push(r[i]); 
+                    }
+
                     hash[r[i]] = true;
                     m = this.getModule(r[i]);
 
@@ -1088,7 +1097,7 @@ Y.Loader.prototype = {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
 // Y.log('Best lang: ' + lang + ', this.lang: ' + this.lang + ', mod.lang: ' + mod.lang);
                 mod.langCache = this.lang;
-                packName = this.getLangPackName(lang, mod.name);
+                packName = this.getLangPackName(lang, name);
                 if (packName) {
                     d.unshift(packName);
                 }
@@ -1098,6 +1107,7 @@ Y.Loader.prototype = {
         }
 
         mod.expanded_map = YArray.hash(d);
+
         mod.expanded = YObject.keys(mod.expanded_map);
 
         return mod.expanded;
@@ -1336,6 +1346,16 @@ Y.Loader.prototype = {
 
                     reqs = this.getRequires(m);
                     Y.mix(r, YArray.hash(reqs));
+
+                    // remove the definition for a rollup with
+                    // submodules -- getRequires() includes the
+                    // submodules.  Removing the parent makes
+                    // it possible to prevent submodule duplication
+                    // if the parent is requested after a submodule
+                    // has been loaded.
+                    if (m.submodules) {
+                        delete r[name];
+                    }
                 }
             }
         }, this);
@@ -1347,6 +1367,8 @@ Y.Loader.prototype = {
         var cond, m, reqs, go,
             conditions = this.conditions,
             r          = this.required;
+
+        // Y.log('conditions: ' + YObject.keys(r));
 
         YObject.each(r, function(moddef, name) {
             if (!(name in this.loaded)) {
