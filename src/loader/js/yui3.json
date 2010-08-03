@@ -412,6 +412,33 @@
         "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
+        "plugins": {
+            "dd-drop-plugin": {
+                "requires": [
+                    "dd-drop"
+                ]
+            }, 
+            "dd-gestures": {
+                "condition": {
+                    "test": "dd-gestures-test.js", 
+                    "trigger": "dd-drag"
+                }, 
+                "requires": [
+                    "dd-drag", 
+                    "event-synthetic", 
+                    "event-move"
+                ]
+            }, 
+            "dd-plugin": {
+                "optional": [
+                    "dd-constrain", 
+                    "dd-proxy"
+                ], 
+                "requires": [
+                    "dd-drag"
+                ]
+            }
+        }, 
         "submodules": {
             "dd-constrain": {
                 "requires": [
@@ -438,11 +465,9 @@
                 ]
             }, 
             "dd-delegate": {
-                "optional": [
-                    "dd-drop-plugin"
-                ], 
                 "requires": [
                     "dd-drag", 
+                    "dd-drop-plugin", 
                     "event-mouseenter"
                 ]
             }, 
@@ -454,31 +479,6 @@
             "dd-drop": {
                 "requires": [
                     "dd-ddm-drop"
-                ]
-            }, 
-            "dd-drop-plugin": {
-                "requires": [
-                    "dd-drop"
-                ]
-            }, 
-            "dd-gestures": {
-                "condition": {
-                    "test": "dd-gestures-test.js", 
-                    "trigger": "dd-drag"
-                }, 
-                "requires": [
-                    "dd-drag", 
-                    "event-synthetic", 
-                    "event-gestures"
-                ]
-            }, 
-            "dd-plugin": {
-                "optional": [
-                    "dd-constrain", 
-                    "dd-proxy"
-                ], 
-                "requires": [
-                    "dd-drag"
                 ]
             }, 
             "dd-proxy": {

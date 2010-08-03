@@ -179,7 +179,7 @@
 <span class="cm">     */</span>    
     <span class="nx">_hostDimensionsChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
-            <span class="nx">boundingBox</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">),</span>
+            <span class="nx">boundingBox</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
 
             <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;verticalNode&#39;</span><span class="p">),</span>
             <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;horizontalNode&#39;</span><span class="p">),</span>
@@ -223,7 +223,7 @@
     <span class="nx">_update</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">currentPos</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
             <span class="nx">basic</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">,</span>
-            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
             <span class="nx">scrollSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">scrollPos</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">transform</span><span class="p">,</span>

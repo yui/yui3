@@ -1,3 +1,5 @@
+YUI.add('dd-gestures', function(Y) {
+
     /**
     * This module is the conditional loaded DD file to support gesture events.
     * In the event that DD is loaded onto a device that support touch based events
@@ -33,3 +35,6 @@
         Y.one(Y.config.doc).on('gesturemove', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), { standAlone: true });
     };
 
+
+
+}, '@VERSION@' ,{requires:['dd-drag', 'event-synthetic', 'event-gestures'], skinnable:false});
