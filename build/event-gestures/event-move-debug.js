@@ -23,6 +23,10 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     MOVE = "move",
     END = "end",
 
+    GESTURE_MOVE = "gesture" + MOVE,
+    GESTURE_MOVE_END = GESTURE_MOVE + END,
+    GESTURE_MOVE_START = GESTURE_MOVE + START,
+
     _MOVE_START_HANDLE = "_msh",
     _MOVE_HANDLE = "_mh",
     _MOVE_END_HANDLE = "_meh",
@@ -37,7 +41,11 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     MIN_TIME = "minTime",
     MIN_DISTANCE = "minDistance",
     PREVENT_DEFAULT = "preventDefault",
+    BUTTON = "button",
     OWNER_DOCUMENT = "ownerDocument",
+
+    CURRENT_TARGET = "currentTarget",
+    TARGET = "target",
 
     NODE_TYPE = "nodeType",
 
@@ -63,10 +71,19 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         touchFacade.screenY = touch.screenY;
         touchFacade.clientX = touch.clientX;
         touchFacade.clientY = touch.clientY;
-        touchFacade.target = touch.target || touchFacade.target;
-        touchFacade.currentTarget = touch.currentTarget || touchFacade.currentTarget;
+        touchFacade[TARGET] = touch[TARGET] || touchFacade[TARGET];
+        touchFacade[CURRENT_TARGET] = touch[CURRENT_TARGET] || touchFacade[CURRENT_TARGET];
 
-        touchFacade.button = (params && params.button) || 1; // default to left (left as per vendors, not W3C which is 0)
+        touchFacade[BUTTON] = (params && params[BUTTON]) || 1; // default to left (left as per vendors, not W3C which is 0)
+    },
+
+    _prevent = function(e, preventDefault) {
+        if (preventDefault) {
+            // preventDefault is a boolean or a function
+            if (!preventDefault.call || preventDefault(e)) {
+                e.preventDefault();
+            }
+        }
     },
 
     define = Y.Event.define;
@@ -98,7 +115,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * @return {EventHandle} the detach handle
  */
 
-define('gesturemovestart', {
+define(GESTURE_MOVE_START, {
 
     on: function (node, subscriber, ce) {
 
@@ -156,25 +173,23 @@ define('gesturemovestart', {
     _onStart : function(e, node, subscriber, ce, delegate) {
 
         if (delegate) {
-            node = e.currentTarget;
+            node = e[CURRENT_TARGET];
         }
 
         var params = subscriber._extra,
             fireStart = true,
-            minTime = params.minTime,
-            minDistance = params.minDistance,
+            minTime = params[MIN_TIME],
+            minDistance = params[MIN_DISTANCE],
             button = params.button,
-            preventDefault = params.preventDefault,
+            preventDefault = params[PREVENT_DEFAULT],
             root = _getRoot(node, subscriber),
             startXY;
 
         if (e.touches) {
-            if (e.touches) {
-                if (e.touches.length === 1) {
-                    _normTouchFacade(e, e.touches[0], params);
-                } else {
-                    fireStart = false;
-                }
+            if (e.touches.length === 1) {
+                _normTouchFacade(e, e.touches[0], params);
+            } else {
+                fireStart = false;
             }
         } else {
             fireStart = (button === undefined) || (button === e.button);
@@ -184,12 +199,7 @@ define('gesturemovestart', {
 
         if (fireStart) {
 
-            if (preventDefault) {
-                // preventDefault is a boolean or a function
-                if (!preventDefault.call || preventDefault(e)) {
-                    e.preventDefault();
-                }
-            }
+            _prevent(e, preventDefault);
 
             if (minTime === 0 || minDistance === 0) {
                 Y.log("gesturemovestart: No minTime or minDistance. Firing immediately", "event-gestures");
@@ -248,7 +258,7 @@ define('gesturemovestart', {
             this._cancel(params);
         }
 
-        e.type = "gesturemovestart";
+        e.type = GESTURE_MOVE_START;
 
         Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
 
@@ -290,7 +300,7 @@ define('gesturemovestart', {
  *
  * @return {EventHandle} the detach handle
  */
-define('gesturemove', {
+define(GESTURE_MOVE, {
 
     on : function (node, subscriber, ce) {
 
@@ -343,7 +353,7 @@ define('gesturemove', {
     _onMove : function(e, node, subscriber, ce, delegate) {
 
         if (delegate) {
-            node = e.currentTarget;
+            node = e[CURRENT_TARGET];
         }
 
         var fireMove = subscriber._extra.standAlone || node.getData(_MOVE_START),
@@ -363,16 +373,11 @@ define('gesturemove', {
 
             if (fireMove) {
 
-                if (preventDefault) {
-                    // preventDefault is a boolean or function
-                    if (!preventDefault.call || preventDefault(e)) {
-                        e.preventDefault();
-                    }
-                }
+                _prevent(e, preventDefault);
 
                 Y.log("onMove second fireMove check:" + fireMove,"event-gestures");
 
-                e.type = "gesturemove";
+                e.type = GESTURE_MOVE;
                 ce.fire(e);
             }
         }
@@ -410,7 +415,7 @@ define('gesturemove', {
  *
  * @return {EventHandle} the detach handle
  */
-define('gesturemoveend', {
+define(GESTURE_MOVE_END, {
 
     on : function (node, subscriber, ce) {
 
@@ -463,7 +468,7 @@ define('gesturemoveend', {
     _onEnd : function(e, node, subscriber, ce, delegate) {
 
         if (delegate) {
-            node = e.currentTarget;
+            node = e[CURRENT_TARGET];
         }
 
         var fireMoveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
@@ -481,14 +486,9 @@ define('gesturemoveend', {
 
             if (fireMoveEnd) {
 
-                if (preventDefault) {
-                    // preventDefault is a boolean or function
-                    if (!preventDefault.call || preventDefault(e)) {
-                        e.preventDefault();
-                    }
-                }
+                _prevent(e, preventDefault);
 
-                e.type = "gesturemoveend";
+                e.type = GESTURE_MOVE_END;
                 ce.fire(e);
 
                 node.clearData(_MOVE_START);
