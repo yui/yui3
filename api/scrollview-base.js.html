@@ -81,7 +81,7 @@
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">.</span><span class="nx">DOMSubtreeModified</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * ScrollView provides a srollable widget, supporting flick gestures, across both touch and mouse based devices. </span>
+<span class="cm"> * ScrollView provides a scrollable widget, supporting flick gestures, across both touch and mouse based devices. </span>
 <span class="cm"> *</span>
 <span class="cm"> * @class ScrollView</span>
 <span class="cm"> * @namespace </span>
@@ -235,8 +235,8 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span> <span class="nx">xMove</span> <span class="o">+</span><span class="s1">&#39;px,&#39;</span><span class="o">+</span> <span class="nx">yMove</span> <span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">xMove</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span>
-            <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">yMove</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">xMove</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">yMove</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span> <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
@@ -381,7 +381,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_uiScrollY</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">easing</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * Update the UI when the scrollY attr changes</span>
 <span class="cm">     *</span>
@@ -562,7 +562,7 @@
                     <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">maxX</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-            
+
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -584,9 +584,11 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">newX</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;_flickFrame&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;_flickFrame&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * Stop the animation timer</span>
 <span class="cm">     *</span>
@@ -597,6 +599,7 @@
     <span class="nx">_killTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fireEvent</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span><span class="p">(</span><span class="nx">fireEvent</span><span class="p">)</span> <span class="p">{</span>
