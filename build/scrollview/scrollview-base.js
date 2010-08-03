@@ -445,6 +445,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         
         this._currentVelocity = flick.velocity;
         this._flicking = true;
+
+        this._decelCached = this.get('deceleration');
+        this._bounceCached = this.get('bounce');
+
         this._flickFrame();
 
         this.fire(EV_SCROLL_FLICK);
@@ -465,20 +469,23 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             minX,
             scrollsVertical  = this._scrollsVertical,
             scrollsHorizontal = this._scrollsHorizontal,
+            deceleration = this._decelCached,
+            bounce = this._bounceCached,
             step = ScrollView.FRAME_STEP;
-        
+
         if(scrollsVertical) {
             maxY = this._maxScrollY;
             minY = this._minScrollY;
             newY = this.get(SCROLL_Y) - (this._currentVelocity * step);
         }
+
         if(scrollsHorizontal) {
             maxX = this._maxScrollX;
             minX = this._minScrollX;
             newX = this.get(SCROLL_X) - (this._currentVelocity * step);
         }
         
-        this._currentVelocity = (this._currentVelocity*this.get('deceleration'));
+        this._currentVelocity = (this._currentVelocity * deceleration);
 
         if(Math.abs(this._currentVelocity).toFixed(4) <= 0.015) {
             this._flicking = false;
@@ -506,25 +513,25 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             
             return;
         }
-        
-        if(scrollsVertical) {
+
+        if (scrollsVertical) {
             if (newY < minY || newY > maxY) {
                 this._exceededYBoundary = true;
-                this._currentVelocity *= this.get(BOUNCE);
+                this._currentVelocity *= bounce;
             }
 
             this.set(SCROLL_Y, newY);
         }
 
-        if(scrollsHorizontal) {
+        if (scrollsHorizontal) {
             if (newX < minX || newX > maxX) {
                 this._exceededXBoundary = true;
-                this._currentVelocity *= this.get(BOUNCE);
+                this._currentVelocity *= bounce;
             }
 
             this.set(SCROLL_X, newX);
         }
-        
+
         this._flickTimer = Y.later(step, this, '_flickFrame');
     },
     
@@ -539,7 +546,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if(this._flickTimer) {
             this._flickTimer.cancel();
         }
-        
+
         if(fireEvent) {
             this.fire(EV_SCROLL_END);
         }
@@ -552,8 +559,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param {String} dim
      */
     _setScroll : function(val, dim) {
-        var bouncing = this.get(BOUNCE),
+        var bouncing = this._cachedBounce || this.get(BOUNCE),
             range = ScrollView.BOUNCE_RANGE,
+
             maxScroll = (dim == DIM_X) ? this._maxScrollX : this._maxScrollY,
 
             min = bouncing ? -range : 0,
