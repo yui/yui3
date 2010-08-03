@@ -55,6 +55,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     initializer: function() {
         this._createEvents();
+
+        // Cache - they're write once, and not going to change
+        this._cb = this.get(CONTENT_BOX);
+        this._bb = this.get(BOUNDING_BOX);
     },
 
     /** 
@@ -108,10 +112,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     bindUI: function() {
 
-        var cb = this.get(CONTENT_BOX),
+        var cb = this._cb,
             flick = this.get(FLICK); 
 
-        this.get(BOUNDING_BOX).on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
+        this._bb.on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
 
         cb.on('transition:end', Y.bind(this._transitionEnded, this), false);
 
@@ -154,7 +158,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     scrollTo: function(x, y, duration, easing) {
 
-        var cb = this.get(CONTENT_BOX),
+        var cb = this._cb,
             xSet = (x !== null),
             ySet = (y !== null),
             xMove = (xSet) ? x * -1 : 0,
@@ -202,7 +206,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         this._killTimer();
 
-        var bb = this.get(BOUNDING_BOX);
+        var bb = this._bb;
 
         this._moveEvt = bb.on('gesturemove', Y.bind(this._onGestureMove, this));
         this._moveEndEvt = bb.on('gesturemoveend', Y.bind(this._onGestureMoveEnd, this));
@@ -404,7 +408,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _uiDimensionsChange: function() {
-        var bb = this.get(BOUNDING_BOX),
+        var bb = this._bb,
 
             height = this.get('height'),
             width = this.get('width'),

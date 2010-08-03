@@ -130,7 +130,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */    
     _hostDimensionsChange: function() {
         var host = this._host,
-            boundingBox = host.get('boundingBox'),
+            boundingBox = host._bb,
 
             verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
@@ -174,7 +174,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     _update: function(currentPos, duration, easing) {
         var host = this._host,
             basic = this._basic,
-            cb = host.get('contentBox'),
+            cb = host._cb,
             scrollSize = 0,
             scrollPos = 1,
             transform,
