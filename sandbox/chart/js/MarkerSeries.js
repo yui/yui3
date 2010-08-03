@@ -17,6 +17,13 @@ MarkerSeries.ATTRS = {
 Y.extend(MarkerSeries, Y.CartesianSeries, {
     /**
      * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
+    /**
+     * @private
      * @description Draws the markers for the graph
      */
 	drawSeries: function()
@@ -25,64 +32,62 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles"),
+        var style = this.get("styles"),
             w = style.width,
             h = style.height,
-            fillColor = style.fill.color,
-            fillAlpha = style.fill.alpha,
-            fillType = style.fill.type || "solid",
-            borderWeight = style.border.weight,
-            borderColor = style.border.color,
-            borderAlpha = style.border.alpha || 1,
-            colors = style.fill.colors,
-            alphas = style.fill.alphas || [],
-            ratios = style.fill.ratios || [],
-            rotation = style.fill.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawCircle",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
-            left;
+            left,
+            marker,
+            mnode,
+            offsetWidth = w/2,
+            offsetHeight = h/2;
+            this._createMarkerCache();
         for(; i < len; ++i)
         {
-            top = ycoords[i];
-            left = xcoords[i];
-            if(borderWeight > 0)
-            {
-                graphic.lineStyle(borderWeight, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, fillAlpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            top = (ycoords[i] - offsetWidth) + "px";
+            left = (xcoords[i] - offsetHeight) + "px";
+            marker = this.getMarker(style);
+            mnode = marker.get("boundingBox");
+            mnode.setStyle("position", "absolute"); 
+            mnode.setStyle("top", top);
+            mnode.setStyle("left", left);
         }
+        this._clearMarkerCache();
  	},
 
-    /**
-     * @private
-     * @description Draws a marker
-     */
-    drawMarker: function(graphic, func, left, top, w, h)
+    _markerEventHandler: function(e)
     {
-        if(func === "drawCircle")
-        {
-            graphic.drawCircle(left, top, w/2);
-        }
-        else
-        {
-            left -= w/2;
-            top -= h/2;
-            graphic[func].call(graphic, left, top, w, h);
-        }
+        var type = e.type,
+            marker = e.currentTarget,
+            mnode = marker.get("boundingBox"),
+            w,
+            h,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            i = Y.Array.indexOf(this._markers, marker);
+            switch(type)
+            {
+                case "marker:mouseout" :
+                    marker.set("state", "off");
+                break;
+                case "marker:mouseover" :
+                    marker.set("state", "over");
+                break;
+                case "marker:mouseup" :
+                    marker.set("state", "over");
+                break;
+                case "marker:mousedown" :
+                    marker.set("state", "down");
+                break;
+            }
+            w = marker.get("width");
+            h = marker.get("height");
+            mnode.setStyle("left", (xcoords[i] - w/2) + "px");
+            mnode.setStyle("top", (ycoords[i] - h/2) + "px");    
     },
 
 	_getDefaultStyles: function()
@@ -116,8 +121,3 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
 });
 
 Y.MarkerSeries = MarkerSeries;
-
-
-		
-
-		
