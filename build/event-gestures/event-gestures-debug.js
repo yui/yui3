@@ -257,6 +257,10 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     MOVE = "move",
     END = "end",
 
+    GESTURE_MOVE = "gesture" + MOVE,
+    GESTURE_MOVE_END = GESTURE_MOVE + END,
+    GESTURE_MOVE_START = GESTURE_MOVE + START,
+
     _MOVE_START_HANDLE = "_msh",
     _MOVE_HANDLE = "_mh",
     _MOVE_END_HANDLE = "_meh",
@@ -332,7 +336,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * @return {EventHandle} the detach handle
  */
 
-define('gesturemovestart', {
+define(GESTURE_MOVE_START, {
 
     on: function (node, subscriber, ce) {
 
@@ -395,20 +399,18 @@ define('gesturemovestart', {
 
         var params = subscriber._extra,
             fireStart = true,
-            minTime = params.minTime,
-            minDistance = params.minDistance,
+            minTime = params[MIN_TIME],
+            minDistance = params[MIN_DISTANCE],
             button = params.button,
-            preventDefault = params.preventDefault,
+            preventDefault = params[PREVENT_DEFAULT],
             root = _getRoot(node, subscriber),
             startXY;
 
         if (e.touches) {
-            if (e.touches) {
-                if (e.touches.length === 1) {
-                    _normTouchFacade(e, e.touches[0], params);
-                } else {
-                    fireStart = false;
-                }
+            if (e.touches.length === 1) {
+                _normTouchFacade(e, e.touches[0], params);
+            } else {
+                fireStart = false;
             }
         } else {
             fireStart = (button === undefined) || (button === e.button);
@@ -482,7 +484,7 @@ define('gesturemovestart', {
             this._cancel(params);
         }
 
-        e.type = "gesturemovestart";
+        e.type = GESTURE_MOVE_START;
 
         Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
 
@@ -524,7 +526,7 @@ define('gesturemovestart', {
  *
  * @return {EventHandle} the detach handle
  */
-define('gesturemove', {
+define(GESTURE_MOVE, {
 
     on : function (node, subscriber, ce) {
 
@@ -606,7 +608,7 @@ define('gesturemove', {
 
                 Y.log("onMove second fireMove check:" + fireMove,"event-gestures");
 
-                e.type = "gesturemove";
+                e.type = GESTURE_MOVE;
                 ce.fire(e);
             }
         }
@@ -644,7 +646,7 @@ define('gesturemove', {
  *
  * @return {EventHandle} the detach handle
  */
-define('gesturemoveend', {
+define(GESTURE_MOVE_END, {
 
     on : function (node, subscriber, ce) {
 
@@ -722,7 +724,7 @@ define('gesturemoveend', {
                     }
                 }
 
-                e.type = "gesturemoveend";
+                e.type = GESTURE_MOVE_END;
                 ce.fire(e);
 
                 node.clearData(_MOVE_START);
