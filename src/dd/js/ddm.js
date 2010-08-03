@@ -104,9 +104,8 @@
             pg.addClass(Y.DD.DDM.CSS_PREFIX + '-shim');
             bd.prepend(pg);
             this._pg = pg;
-            //this._pg.on(GESTURE_MOVE, Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            this._pg.on('gesturemoveend', Y.bind(this._end, this));
+            this._pg.on('mouseup', Y.bind(this._end, this));
             
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));

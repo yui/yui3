@@ -194,6 +194,13 @@
     };
 
     Drag.NAME = 'drag';
+    
+    /**
+    * This property defaults to "mousedown", but when drag-gestures is loaded, it is changed to "gesturemovestart"
+    * @static
+    * @property START_EVENT
+    */
+    Drag.START_EVENT = 'mousedown';
 
     Drag.ATTRS = {
         /**
@@ -954,7 +961,7 @@
             node.addClass(DDM.CSS_PREFIX + '-draggable');
 
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on('mousedown', Y.bind(this._handleMouseDownEvent, this));
+            node.on(Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this));
             node.on('mouseup', Y.bind(this._handleMouseUp, this));
             node.on('dragstart', Y.bind(this._fixDragStart, this));
         },
