@@ -699,8 +699,8 @@
         "plugins": {
             "history-hash-ie": {
                 "condition": {
-                    "trigger": "history-hash", 
-                    "ua": "ie"
+                    "test": "history-hash-ie-test.js", 
+                    "trigger": "history-hash"
                 }, 
                 "requires": [
                     "history-hash", 

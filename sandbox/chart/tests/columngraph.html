@@ -36,9 +36,10 @@ table, tr, td
 <tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px"></div></td><td></td></tr>
 </table>
 </div>
+<div id="logdiv"></div>
 <script>
 
-			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
+			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', 'graphics', 'infographics', function (Y)
 				{
 					// Create data 
 					var mydata = {
@@ -51,26 +52,60 @@ table, tr, td
 
 					var expensegraphstyles = {
 						color:"#5577AF",
-						marker:{fillColor:"#5577AF", fillAlpha:0.2, width:6, height:6},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#5577AF", 
+                            alpha:0.2
+                        },
+                        width:8, 
+                        height:6,
+                        border: {
+						    weight:"1",
+                            color: "#ff0000"
+                        },
                         padding:{left:50, right:50}
 					};
 
 					// Add revenue graph styles
 					var revenuegraphstyles = {
 						color:"#FF0000",
-						marker:{fillcolor:"#ff0000", fillAlpha:0.2},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#ff0000", 
+                            alpha:0.2
+                        },
+                        border: {
+						    weight:1,
+                            color:"#0000ff"
+                        },
+                        over: {
+                            fill:{
+                                color:"#0000ff",
+                                alpha: 0.2
+                            },
+                            border:{
+                                color:"#0000ff"
+                            }
+                        },
+                        width:16,
+                        height:10,
                         padding:{left:50, right:50}
 					};
 
                     var taxgraphstyles = {
 						fill:
                         {
-                            color:"#0000ff",
+                            color:"#0000ff"
 						},
+                        over: {
+                            fill: {
+                                color:"#ff0000"
+                            },
+                            border: {
+                                weight:1,
+                                color:"#0000ff"
+                            },
+                            width:10,
+                            height:10
+                        },
                         width:6, 
                         height:6,
 						border:
@@ -155,33 +190,33 @@ table, tr, td
                                                         yKey:"taxes",
                                                         styles:taxgraphstyles});
                    var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
-                                                                                            type:"column", 
-                                                                                            xAxis:timeaxis, 
-                                                                                            yAxis:numericaxis, 
-                                                                                            xKey:"day", 
-                                                                                            yKey:"revenue", 
-                                                                                            styles:revenuegraphstyles
-                                                                                        },
-                                                                                        {
-                                                                                            type:"column",
-                                                                                            xAxis:timeaxis,
-                                                                                            yAxis:numericaxis,
-                                                                                            xKey:"day",
-                                                                                            yKey:"expenses",
-                                                                                            styles:expensegraphstyles
-                                                                                        
-                                                                                        },
-                                                                                        {
-                                                                                            type:"area",
-                                                                                            xAxis:timeaxis,
-                                                                                            yAxis:numericaxis,
-                                                                                            xKey:"day",
-                                                                                            yKey:"taxes",
-                                                                                            styles:taxareastyles
-                                                                                        },
-                                                                                        lineSeries,
-                                                                                        markerSeries
-                                                                                        ]});
+                                                                                        type:"area",
+                                                                                        xAxis:timeaxis,
+                                                                                        yAxis:numericaxis,
+                                                                                        xKey:"day",
+                                                                                        yKey:"taxes",
+                                                                                        styles:taxareastyles
+                                                                                    },
+                                                                                    lineSeries,
+                                                                                    {
+                                                                                        type:"column", 
+                                                                                        xAxis:timeaxis, 
+                                                                                        yAxis:numericaxis, 
+                                                                                        xKey:"day", 
+                                                                                        yKey:"revenue", 
+                                                                                        styles:revenuegraphstyles
+                                                                                    },
+                                                                                    {
+                                                                                        type:"column",
+                                                                                        xAxis:timeaxis,
+                                                                                        yAxis:numericaxis,
+                                                                                        xKey:"day",
+                                                                                        yKey:"expenses",
+                                                                                        styles:expensegraphstyles
+                                                                                    
+                                                                                    },
+                                                                                    markerSeries
+                                                                                    ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
                     axisrenderer.render("#axis");

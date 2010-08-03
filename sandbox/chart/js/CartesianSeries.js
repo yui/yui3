@@ -1,4 +1,98 @@
-Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
+function CartesianSeries(config)
+{
+    CartesianSeries.superclass.constructor.apply(this, arguments);
+}
+ 
+CartesianSeries.NAME = "cartesianSeries";
+
+CartesianSeries.ATTRS = {
+	type: {		
+  	    value: "cartesian"
+    },
+	/**
+	 * Order of this ISeries instance of this <code>type</code>.
+	 */
+	order: {
+	    value:NaN
+    },
+	/**
+	 * x coordinates for the series.
+	 */
+	xcoords: {
+        value: null
+	},
+	/**
+	 * y coordinates for the series
+	 */
+	ycoords: {
+        value: null
+	},
+	graph: {
+        value: null
+	},
+	/**
+	 * Reference to the <code>Axis</code> instance used for assigning 
+	 * x-values to the graph.
+	 */
+	xAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("xAxis");
+		},
+		
+        lazyAdd: false
+	},
+	
+	yAxis: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("yAxis");
+		},
+		
+        lazyAdd: false
+	},
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the x-axis <code>Axis</code> instance.
+	 */
+	xKey: {
+        value: null,
+
+		validator: function(value)
+		{
+			return value !== this.get("xKey");
+		}
+	},
+	/**
+	 * Indicates which array to from the hash of value arrays in 
+	 * the y-axis <code>Axis</code> instance.
+	 */
+	yKey: {
+		value: null,
+
+        validator: function(value)
+		{
+			return value !== this.get("yKey");
+		}
+	},
+    
+    markers: {
+        getter: function()
+        {
+            return this._markers;
+        }
+    },
+
+    direction: {
+        value: "horizontal"
+    }
+};
+
+Y.extend(CartesianSeries, Y.Renderer, {
     /**
      * @private
      */
@@ -9,14 +103,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
      */
     _bottomOrigin: null,
 
-    /**
-     * @private
-     */
-    renderUI: function()
-    {
-        this._setCanvas();
-    },
-    
     /**
      * @private
      */
@@ -37,25 +123,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this.after("xAxisChange", Y.bind(this.xAxisChangeHandler, this));
         this.after("yAxisChange", Y.bind(this.yAxisChangeHandler, this));
         this.after("stylesChange", Y.bind(this._updateHandler, this));
-    },
-   
-    /**
-     * @private
-     */
-    syncUI: function()
-    {
-        this.draw();
-    },
-
-    /**
-     * @private
-     */
-    _updateHandler: function(e)
-    {
-        if(this.get("rendered"))
-        {
-            this.draw();
-        }
     },
 
 	/**
@@ -88,6 +155,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 			this.draw();
 		}
 	},
+
+    /**
+     * @private
+     * Collection of markers to be used in the series.
+     */
+    _markers: null,
+
+    /**
+     * @private
+     * Collection of markers to be re-used on a series redraw.
+     */
+    _markerCache: null,
 
 	/**
 	 * @private
@@ -125,7 +204,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         {
             yData = yData.reverse();
         }
-        this.get("graphic").setSize(w, h);
+        if(this.get("graphic"))
+        {
+            this.get("graphic").setSize(w, h);
+        }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (; i < dataLength; ++i) 
@@ -151,6 +233,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 		{
             this.setAreaData();
             this.drawSeries();
+            this.fire("drawingComplete");
 		}
 	},
     
@@ -355,6 +438,70 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
+     * @description Creates a marker based on its style properties.
+     */
+    getMarker: function(styles)
+    {
+        var marker,
+            cache = this._markerCache;
+        if(cache.length > 0)
+        {
+            marker = cache.shift();
+            if(marker.get("styles") !== styles)
+            {
+                marker.set("styles", styles);
+            }
+        }
+        else
+        {
+            marker = new Y.Marker({styles:styles});
+            marker.render(this.get("node"));
+            marker.after("mouseover", Y.bind(this._markerEventHandler, this));
+            marker.after("mousedown", Y.bind(this._markerEventHandler, this));
+            marker.after("mouseup", Y.bind(this._markerEventHandler, this));
+            marker.after("mouseout", Y.bind(this._markerEventHandler, this));
+        }
+        this._markers.push(marker);
+        return marker;
+    },   
+    
+    /**
+     * @private
+     * Creates a cache of markers for reuse.
+     */
+    _createMarkerCache: function()
+    {
+        if(this._markers)
+        {
+            this._markerCache = this._markers.concat();
+        }
+        else
+        {
+            this._markerCache = [];
+        }
+        this._markers = [];
+    },
+    
+    /**
+     * @private
+     * Removes unused markers from the marker cache
+     */
+    _clearMarkerCache: function()
+    {
+        var len = this._markerCache.length,
+            i = 0,
+            marker,
+            markerCache;
+        for(; i < len; ++i)
+        {
+            marker = markerCache[i];
+            marker.parentNode.removeChild(marker);
+        }
+        this._markerCache = [];
+    },
+
+    /**
+     * @private
      * @return Default styles for the widget
      */
     _getDefaultStyles: function()
@@ -366,86 +513,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
                 bottom: 0
             }};
     }
-}, {
-ATTRS: {
-
-	type: {		
-  	    value: "cartesian"
-    },
-	/**
-	 * Order of this ISeries instance of this <code>type</code>.
-	 */
-	order: {
-	    value:NaN
-    },
-	/**
-	 * x coordinates for the series.
-	 */
-	xcoords: {
-        value: null
-	},
-	/**
-	 * y coordinates for the series
-	 */
-	ycoords: {
-        value: null
-	},
-	graph: {
-        value: null
-	},
-	/**
-	 * Reference to the <code>Axis</code> instance used for assigning 
-	 * x-values to the graph.
-	 */
-	xAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("xAxis");
-		},
-		
-        lazyAdd: false
-	},
-	
-	yAxis: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("yAxis");
-		},
-		
-        lazyAdd: false
-	},
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the x-axis <code>Axis</code> instance.
-	 */
-	xKey: {
-        value: null,
-
-		validator: function(value)
-		{
-			return value !== this.get("xKey");
-		}
-	},
-	/**
-	 * Indicates which array to from the hash of value arrays in 
-	 * the y-axis <code>Axis</code> instance.
-	 */
-	yKey: {
-		value: null,
-
-        validator: function(value)
-		{
-			return value !== this.get("yKey");
-		}
-	},
-
-    direction: {
-        value: "horizontal"
-    }
-}
 });
 
+Y.CartesianSeries = CartesianSeries;

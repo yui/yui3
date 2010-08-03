@@ -10,7 +10,6 @@ Graphic.prototype = {
         this._initProps();
     },
 
-
     /** 
      *Specifies a bitmap fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
@@ -113,7 +112,7 @@ Graphic.prototype = {
         if (caps === 'butt') {
             caps = 'none';
         }
-
+        
         if (context.lineCap) { // FF errors when trying to set
             //context.lineCap = caps;
         }
@@ -189,8 +188,8 @@ Graphic.prototype = {
      */
 	drawCircle: function(x, y, radius) {
         var context = this._context,
-            startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180;
+            startAngle = 0,
+            endAngle = 2 * Math.PI;
         this._shape = {
             x:x - radius,
             y:y - radius,
@@ -216,6 +215,13 @@ Graphic.prototype = {
             w:w,
             h:h
         };
+        if(this._stroke && this._context.lineWidth > 0)
+        {
+            w -= this._context.lineWidth * 2;
+            h -= this._context.lineWidth * 2;
+            x += this._context.lineWidth;
+            y += this._context.lineWidth;
+        }
         var context = this._context,
             l = 8,
             theta = -(45/180) * Math.PI,
@@ -230,6 +236,7 @@ Graphic.prototype = {
         this._drawingComplete = false;
         this._trackPos(x, y);
         this._trackSize(x + w, y + h);
+
         context.beginPath();
         ax = centerX + Math.cos(0) * radius;
         ay = centerY + Math.sin(0) * yRadius;
@@ -411,6 +418,11 @@ Graphic.prototype = {
         this._canvas.height = h;
     },
 
+    getWidth: function()
+    {
+        return this._canvas.offsetWidth;
+    },
+
     setPosition: function(x, y)
     {
         this._node.style.left = x + "px";
@@ -433,6 +445,8 @@ Graphic.prototype = {
         this._node.appendChild(this._canvas);
         this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
         this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
+        this._canvas.style.position = "absolute";
+    
         return this;
     },
 
@@ -452,7 +466,7 @@ Graphic.prototype = {
 
         this._width = 0;
         this._height = 0;
-        this._shape = null;
+        //this._shape = null;
         this._x = 0;
         this._y = 0;
         this._fillType = null;
@@ -617,7 +631,7 @@ Graphic.prototype = {
             context.strokeStyle = this._strokeStyle;
             context.stroke();
         }
-        this._shape = null;
+        //this._shape = null;
         this._drawingComplete = true;
     },
 
@@ -670,7 +684,6 @@ Graphic.prototype = {
      */
     _createGraphic: function(config) {
         var graphic = Y.config.doc.createElement('canvas');
-
         // no size until drawn on
         graphic.width = 600;
         graphic.height = 600;
@@ -757,6 +770,81 @@ Graphic.prototype = {
         {
             this._shape.h = Math.max(h, this._shape.h);
         }
+    },
+
+    getShape: function(config)
+    {
+        var shape,
+            node,
+            type = config.shape || config.type,
+            fill = config.fill,
+            border = config.border,
+            w = config.width,
+            h = config.height;  
+        this.clear();
+        this.setPosition(0, 0);
+        this.setSize(w, h);
+        if(border && border.weight && border.weight > 0)
+        {
+            border.color = border.color || "#000";
+            border.alpha = border.alpha || 1;
+            this.lineStyle(border.weight, border.color, border.alpha);
+        }
+        if(fill.type === "radial" || fill.type === "linear")
+        {
+            this.beginGradientFill(fill);
+        }
+        else if(fill.type === "bitmap")
+        {
+            this.beginBitmapFill(fill);
+        }   
+        else
+        {
+            this.beginFill(fill.color, fill.alpha);
+        }
+        switch(type)
+        {
+            case "circle" :
+                this.drawEllipse(0, 0, w, h);
+            break;
+            case "rect" :
+                this.drawRect(0, 0, w, h);
+            break;
+        }
+        shape = {
+            type:type,
+            width:w,
+            height:h,
+            fill:fill,
+            node:this._node,
+            border:border
+        };
+        return shape;
+    },
+
+    updateShape: function(shape, config)
+    {
+        if(config.fill)
+        {
+            shape.fill = Y.merge(shape.fill, config.fill);
+        }
+        if(config.border)
+        {
+            shape.border = Y.merge(shape.border, config.border);
+        }
+        if(config.width)
+        {
+            shape.width = config.width;
+        }
+        if(config.height)
+        {
+            shape.height = config.height;
+        }
+        if(config.shape !== shape.type)
+        {
+            shape.type = config.shape;
+        }
+        return this.getShape(shape);
     }
 };
 

@@ -1,5 +1,6 @@
 function Renderer(config)
 {
+    Renderer.superclass.constructor.apply(this, arguments);
 }
 
 Renderer.NAME = "renderer";
@@ -42,13 +43,47 @@ Renderer.ATTRS = {
 	}
 };
 
-Renderer.prototype = {
+Y.extend(Renderer, Y.Widget, {
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+        if(!this.get("graphic"))
+        {
+            this._setCanvas();
+        }
+    },
+    
+    /**
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("stylesChange", Y.bind(this._updateHandler, this));
+    },
+   
+    /**
+     * @private
+     */
+    syncUI: function()
+    {
+        this.draw();
+    },
 
     /**
      * @private
-     * Creates a <code>Graphic</code> instance.
      */
-    _setCanvas: function()
+    _updateHandler: function(e)
+    {
+        if(this.get("rendered"))
+        {
+            this.draw();
+        }
+    },
+
+    _setNode: function()
     {
         var cb = this.get("contentBox"),
             n = document.createElement("div"),
@@ -61,11 +96,18 @@ Renderer.prototype = {
         style.width = "100%";
         style.height = "100%";
         this.set("node", n);
+    },
+
+    /**
+     * @private
+     * Creates a <code>Graphic</code> instance.
+     */
+    _setCanvas: function()
+    {
         this.set("graphic", new Y.Graphic());
         this.get("graphic").render(this.get("node"));
-   },
+    },
 	
-
     /**
      * @private
      * @description Hash of newly set styles.
@@ -101,7 +143,11 @@ Renderer.prototype = {
 	_mergeStyles: function(a, b)
 	{
         this._newStyles = {};
-		Y.Object.each(a, function(value, key, a)
+		if(!b)
+        {
+            b = {};
+        }
+        Y.Object.each(a, function(value, key, a)
 		{
 			if(b.hasOwnProperty(key) && Y.Lang.isObject(value) && !Y.Lang.isArray(value))
 			{
@@ -115,7 +161,7 @@ Renderer.prototype = {
 		}, this);
 		return b;
 	},
-	
+
     /**
      * @private
      * @description Default style values.
@@ -124,6 +170,7 @@ Renderer.prototype = {
     {
         return {};
     }
-};
+});
 
 Y.Renderer = Renderer;
+

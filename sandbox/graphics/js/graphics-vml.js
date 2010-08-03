@@ -139,6 +139,24 @@ VMLGraphics.prototype = {
      */
     clear: function() {
         this._path = '';
+        this._removeChildren(this._vml);
+    },
+
+    /**
+     * @private
+     */
+    _removeChildren: function(node)
+    {
+        if(node.hasChildNodes())
+        {
+            var child;
+            while(node.firstChild)
+            {
+                child = node.firstChild;
+                this._removeChildren(child);
+                node.removeChild(child);
+            }
+        }
     },
 
     /**
@@ -502,34 +520,124 @@ VMLGraphics.prototype = {
      * Returns a shape.
      */
     getShape: function(config) {
-        var node,
-            shape,
-            fill = config.fill;
-        this._width = config.w;
-        this._height = config.h;
-        this._x = 0;
-        this._y = 0;
-        shape = config.shape || "shape";
-        node = this._createGraphicNode(shape);
-        node.style.width = config.w + "px";
-        node.style.height = config.h + "px";
-        node.strokecolor = config.border.color;
-        node.strokeweight = config.border.width;
+        var shape,
+            node,
+            type,
+            fill = config.fill,
+            border = config.border,
+            fillnode,
+            w = config.width,
+            h = config.height; 
+        if(config.node)
+        {
+            node = config.node;
+        }
+        else
+        {
+            this.clear();
+            type = config.shape || "shape";
+            if(type === "circle" || type === "ellipse") 
+            {
+                type = "oval";
+            }
+            node = this._createGraphicNode(type);
+        }
+        this.setPosition(0, 0);
+        if(border && border.weight && border.weight > 0)
+        {
+            node.strokecolor = border.color || "#000000";
+            node.strokeweight = border.weight || 1;
+            node.stroked = true;
+            w -= border.weight;
+            h -= border.weight;
+        }
+        else
+        {
+            node.stroked = false;
+        }
+        this.setSize(w, h);
+        node.style.width = w + "px";
+        node.style.height = h + "px";
+        node.filled = true;
         if(fill.type === "linear" || fill.type === "radial")
         {
             this.beginGradientFill(fill);
+            node.appendChild(this._getFill());
         }
         else if(fill.type === "bitmap")
         {
             this.beginBitmapFill(fill);
+            node.appendChild(this._getFill());
         }
         else
         {
-            this.beginFill(fill.color, fill.alpha); 
+            if(!fill.color)
+            {
+                node.filled = false;
+            }
+            else
+            {
+                if(config.fillnode)
+                {
+                    this._removeChildren(config.fillnode);
+                }
+                fillnode = this._createGraphicNode("fill");
+                fillnode.setAttribute("type", "solid");
+                fill.alpha = fill.alpha || 1;                
+                fillnode.setAttribute("color", fill.color);
+                fillnode.setAttribute("opacity", fill.alpha);
+                node.appendChild(fillnode);
+            }
         }
-        node.filled = true;
-        node.appendChild(this._getFill());
-       return node; 
+        node.style.display = "block";
+        node.style.position = "absolute";
+        if(!config.node)
+        {
+            this._vml.appendChild(node);
+        }
+        shape = {
+            width:w,
+            height:h,
+            fill:fill,
+            node:node,
+            fillnode:fillnode,
+            border:border
+        };
+        return shape; 
+    },
+   
+    /**
+     * @description Updates an existing shape with new properties.
+     */
+    updateShape: function(shape, config)
+    {
+        if(config.fill)
+        {
+            shape.fill = Y.merge(shape.fill, config.fill);
+        }
+        if(config.border)
+        {
+            shape.border = Y.merge(shape.border, config.border);
+        }
+        if(config.width)
+        {
+            shape.width = config.width;
+        }
+        if(config.height)
+        {
+            shape.height = config.height;
+        }
+        if(config.shape !== shape.type)
+        {
+            config.node = null;
+            config.fillnode = null;
+        }
+        return this.getShape(shape);
+    },
+
+    addChild: function(child)
+    {
+        this._vml.appendChild(child);
     }
 };
 

@@ -4,7 +4,7 @@
             "history-hash-ie": {
                 "condition": {
                     "trigger": "history-hash",
-                    "ua": "ie"
+                    "test": "history-hash-ie-test.js"
                 },
 
                 "requires": [
