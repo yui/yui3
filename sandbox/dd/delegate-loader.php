@@ -66,30 +66,6 @@ foreach (range(1, $count) as $k) {
 <div id="drop">Drop Here..</div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/yui/yui-throttle.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/loader/loader.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
-
-
-<script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/drag.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-
-<script type="text/javascript" src="js/delegate.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/drag-gestures.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -107,7 +83,7 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', 'yui-throttle', 'drag-gestures', function(Y) {
+YUI(yConfig).use('dd-delegate', function(Y) {
     //console.log(Y);
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM._useShim = false;
