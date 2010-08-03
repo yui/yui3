@@ -155,18 +155,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     scrollTo: function(x, y, duration, easing) {
 
         var cb = this.get(CONTENT_BOX),
-            xMove = x * -1,
-            yMove = y * -1,
+            xSet = (x !== null),
+            ySet = (y !== null),
+            xMove = (xSet) ? x * -1 : 0,
+            yMove = (ySet) ? y * -1 : 0,
             transition;
 
         duration = duration || 0;
         easing = easing || ScrollView.EASING;
 
-        if(x !== this.get(SCROLL_X)) {
+        if (xSet) {
             this.set(SCROLL_X, x, { src: UI });
         }
 
-        if(y !== this.get(SCROLL_Y)) {
+        if (ySet) {
             this.set(SCROLL_Y, y, { src: UI });
         }
 
@@ -235,7 +237,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if(this._scrollsVertical) {
             this.set(SCROLL_Y, -(e.clientY - this._moveStartY));
         }
-        
+
         if(this._scrollsHorizontal) {
             this.set(SCROLL_X, -(e.clientX - this._moveStartX));
         }
@@ -271,6 +273,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._scrolledHalfway = true;
             this._scrolledForward = distance > 0;
         }
+
         if(this._scrollsVertical && Math.abs(distance) > (this.get('height')/2)) {
             this._scrolledHalfway = true;
             this._scrolledForward = distance > 0;
@@ -339,9 +342,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         duration = duration || this._snapToEdge ? 400 : 0;
         easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
-        this.scrollTo(this.get(SCROLL_X), val, duration, easing);
+        this.scrollTo(null, val, duration, easing);
     },
-    
+
     /**
      * after listener for changes to the scrollX attr
      *
@@ -368,7 +371,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         duration = duration || this._snapToEdge ? 400 : 0;
         easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
-        this.scrollTo(val, this.get(SCROLL_Y), duration, easing);
+        this.scrollTo(val, null, duration, easing);
     },
     
     /**
