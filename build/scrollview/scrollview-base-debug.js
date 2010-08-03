@@ -264,8 +264,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxY = this._maxScrollY,
             minX = this._minScrollX,
             maxX = this._maxScrollX,
-            x,
-            y,
             startPoint = this._scrollsVertical ? this._moveStartClientY : this._moveStartClientX,
             endPoint = this._scrollsVertical ? this._moveEndClientY : this._moveEndClientX,
             distance = startPoint - endPoint;
@@ -287,44 +285,28 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._scrolledForward = distance > 0;
         }
 
-        // Check for minY/maxY
-        if (this._scrollsVertical) {
-            y = this.get(SCROLL_Y);
-
-            if(y < minY) {
-                y = minY;
-                this._snapToEdge = true;
-                
-            }
-
-            if (y > maxY) {
-                y = maxY;
-                this._snapToEdge = true;
-            }
-
-            if (this._snapToEdge) {
-                this.set(SCROLL_Y, y);
-            }
+        // Check for minY
+        if(this._scrollsVertical && this.get(SCROLL_Y) < minY) {
+            this._snapToEdge = true;
+            this.set(SCROLL_Y, minY);
         }
-
-        // Check for minX/maxX
-        if (this._scrollsHorizontal) {
-            x = this.get(SCROLL_X);
-
-            if(x < minX) {
-                x = minX;
-                this._snapToEdge = true;
-                
-            }
-
-            if (x > maxX) {
-                x = maxX;
-                this._snapToEdge = true;
-            }
-
-            if (this._snapToEdge) {
-                this.set(SCROLL_X, x);
-            }
+        
+        // Check for minX
+        if(this._scrollsHorizontal && this.get(SCROLL_X) < minX) {
+            this._snapToEdge = true;
+            this.set(SCROLL_X, minX);
+        }
+        
+        // Check for maxY
+        if(this.get(SCROLL_Y) > maxY) {
+            this._snapToEdge = true;
+            this.set(SCROLL_Y, maxY);
+        }
+        
+        // Check for maxX
+        if(this.get(SCROLL_X) > maxX) {
+            this._snapToEdge = true;
+            this.set(SCROLL_X, maxX);
         }
         
         if(this._snapToEdge) {
