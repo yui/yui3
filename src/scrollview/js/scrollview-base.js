@@ -112,9 +112,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             flick = this.get(FLICK); 
 
         this.get(BOUNDING_BOX).on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
+
         cb.on('transition:end', Y.bind(this._transitionEnded, this), false);
 
-        // TODO: Fires way to often when using non-native transitions
+        // TODO: Fires way to often when using non-native transitions, due to property change
         if (NATIVE_TRANSITIONS) {
             cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
         }
@@ -152,6 +153,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param easing {String} An easing equation if duration is set
      */
     scrollTo: function(x, y, duration, easing) {
+
         var cb = this.get(CONTENT_BOX),
             xMove = x * -1,
             yMove = y * -1,
@@ -194,8 +196,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMoveStart: function(e) {
 
-        var preventable = e._orig || e;
-        preventable.preventDefault();
+        e.preventDefault();
 
         this._killTimer();
 
@@ -224,9 +225,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMove: function(e) {
 
-        var preventable = e._orig || e;
-        preventable.preventDefault();
-        
+        e.preventDefault();
+
         this._isDragging = true;
         this._moveEndClientY = e.clientY;
         this._moveEndClientX = e.clientX;
@@ -249,9 +249,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveEnd: function(e) {
-        
-        var preventable = e._orig || e;
-        preventable.preventDefault();
+
+        e.preventDefault();
         
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
