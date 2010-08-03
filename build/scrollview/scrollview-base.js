@@ -455,28 +455,34 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _flickFrame: function() {
-        var newY = this.get(SCROLL_Y),
-            maxY = this._maxScrollY,
-            minY = this._minScrollY,
-            newX = this.get(SCROLL_X),
-            maxX = this._maxScrollX,
-            minX = this._minScrollX,
+        var newY,
+            maxY,
+            minY,
+            newX,
+            maxX,
+            minX,
+            scrollsVertical  = this._scrollsVertical,
+            scrollsHorizontal = this._scrollsHorizontal,
             step = ScrollView.FRAME_STEP;
         
-        this._currentVelocity = (this._currentVelocity*this.get('deceleration'));
-
-        if(this._scrollsVertical) {
+        if(scrollsVertical) {
+            maxY = this._maxScrollY;
+            minY = this._minScrollY;
             newY = this.get(SCROLL_Y) - (this._currentVelocity * step);
         }
-        if(this._scrollsHorizontal) {
+        if(scrollsHorizontal) {
+            maxX = this._maxScrollX;
+            minX = this._minScrollX;
             newX = this.get(SCROLL_X) - (this._currentVelocity * step);
         }
         
+        this._currentVelocity = (this._currentVelocity*this.get('deceleration'));
+
         if(Math.abs(this._currentVelocity).toFixed(4) <= 0.015) {
             this._flicking = false;
             this._killTimer(!(this._exceededYBoundary || this._exceededXBoundary));
 
-            if(this._scrollsVertical) {
+            if(scrollsVertical) {
                 if(newY < minY) {
                     this._snapToEdge = true;
                     this.set(SCROLL_Y, minY);
@@ -486,7 +492,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 }
             }
             
-            if(this._scrollsHorizontal) {
+            if(scrollsHorizontal) {
                 if(newX < minX) {
                     this._snapToEdge = true;
                     this.set(SCROLL_X, minX);
@@ -499,25 +505,25 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             return;
         }
         
-        if(this._scrollsVertical && (newY < minY || newY > maxY)) {
-            this._exceededYBoundary = true;
-            this._currentVelocity *= this.get(BOUNCE);
-        }
+        if(scrollsVertical) {
+            if (newY < minY || newY > maxY) {
+                this._exceededYBoundary = true;
+                this._currentVelocity *= this.get(BOUNCE);
+            }
 
-        if(this._scrollsHorizontal && (newX < minX || newX > maxX)) {
-            this._exceededXBoundary = true;
-            this._currentVelocity *= this.get(BOUNCE);
-        }
-        
-        if(this._scrollsVertical) {
             this.set(SCROLL_Y, newY);
         }
-        
-        if(this._scrollsHorizontal) {
+
+        if(scrollsHorizontal) {
+            if (newX < minX || newX > maxX) {
+                this._exceededXBoundary = true;
+                this._currentVelocity *= this.get(BOUNCE);
+            }
+
             this.set(SCROLL_X, newX);
         }
         
-        this._flickTimer = Y.later(ScrollView.FRAME_STEP, this, '_flickFrame');
+        this._flickTimer = Y.later(step, this, '_flickFrame');
     },
     
     /**
@@ -640,10 +646,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * value is, the less friction during scrolling.
          *
          * @attribute deceleration
-         * @default 0.98
+         * @default 0.93
          */
         deceleration: {
-            value: 0.98
+            value: 0.93
         },
 
         /**
@@ -653,10 +659,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          *
          * @attribute bounce
          * @type Number
-         * @default 0.7
+         * @default 0.1
          */
         bounce: {
-            value: 0.7
+            value: 0.1
         },
 
         /**
@@ -664,12 +670,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          *
          * @attribute flick
          * @type Object
-         * @default Object with properties minDistance = 10, minVelocity = 0.
+         * @default Object with properties minDistance = 10, minVelocity = 0.3.
          */
         flick: {
             value: {
                 minDistance: 10,
-                minVelocity: 0
+                minVelocity: 0.3
             }
         }
     },
@@ -709,9 +715,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @property ScrollView.FRAME_STEP
      * @type Number
      * @static
-     * @default 10
+     * @default 30
      */
-    FRAME_STEP : 10,
+    FRAME_STEP : 30,
 
     /**
      * The default easing used when animating the flick

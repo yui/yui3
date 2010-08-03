@@ -244,8 +244,13 @@
                         sel = new inst.Selection(), n;
 
                     if (sel.isCollapsed) {
-                        n = this.command('inserthtml', '<span style="font-family: ' + val + '">&nbsp;</span>');
-                        sel.selectNode(n.get('firstChild'), true);
+                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                            sel.anchorNode.setStyle('fontFamily', val);
+                            n = sel.anchorNode;
+                        } else {
+                            n = this.command('inserthtml', '<span style="font-family: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                            sel.focusCursor(true, true);
+                        }
                         return n;
                     } else {
                         return this._command('fontname', val);
@@ -261,11 +266,15 @@
                 */
                 fontsize: function(cmd, val) {
                     var inst = this.getInstance(),
-                        sel = new inst.Selection(), n;
+                        sel = new inst.Selection(), n, prev;
 
                     if (sel.isCollapsed) {
                         n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
-                        sel.selectNode(n.get('firstChild'), true);
+                        prev = n.get('previousSibling');
+                        if (prev.get('nodeType') === 3) {
+                            prev.remove();
+                        }
+                        sel.selectNode(n.get('firstChild'), true, false);
                         return n;
                     } else {
                         return this._command('fontsize', val);
