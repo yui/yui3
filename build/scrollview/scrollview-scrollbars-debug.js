@@ -131,6 +131,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */    
     _hostDimensionsChange: function() {
+
         var host = this._host,
             boundingBox = host._bb,
 
@@ -140,7 +141,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             verticalNodeInDoc = verticalNode.inDoc(),
             horizontalNodeInDoc = horizontalNode.inDoc();
 
-        if(host._scrollsVertical && !verticalNodeInDoc) {
+        if (host._scrollsVertical && !verticalNodeInDoc) {
             boundingBox.append(verticalNode);
             if (this._basic) {
                 verticalNode.addClass(_classNames.scrollbarVB);
@@ -150,7 +151,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         // Horizontal
-        if(host._scrollsHorizontal && !horizontalNodeInDoc) {
+        if (host._scrollsHorizontal && !horizontalNodeInDoc) {
             boundingBox.append(horizontalNode);
             if (this._basic) {
                 horizontalNode.addClass(_classNames.scrollbarHB);
@@ -160,64 +161,69 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         this._update();
-        
+
         Y.later(500, this, 'flash', true);
     },
 
-    _updateV : function(scrollbar, currentY, duration) {
+    _updateDim : function(vert, scrollbar, current, duration) {
 
         var host = this._host,
             basic = this._basic,
             cb = host._cb,
             scrollSize = 0,
             scrollPos = 1,
-            transformXY,
-            transformY,
             transition,
             size,
-            height = host.get('height'),
-            scrollHeight = host._scrollHeight || cb.get('scrollHeight');
+            transitionTransform,
+            transitionProp,
 
-        scrollSize = Math.floor(height * (height/scrollHeight));
-        scrollPos = Math.floor((currentY/(scrollHeight - height) ) * (height-scrollSize)) * -1;
+            dim = (vert) ? "Height" : "Width",
+            dimLower = (vert) ? "height" : "width",
+            offset = (vert) ? "top" : "left",
 
-        if(scrollSize > height) {
+            hostDim = host.get(dimLower),
+
+            scrollDim = host["_scroll" + dim] || cb.get('scroll' + dim);
+
+        scrollSize = Math.floor(hostDim * (hostDim/scrollDim));
+        scrollPos = Math.floor((current/(scrollDim - hostDim) ) * (hostDim - scrollSize)) * -1;
+
+        if (scrollSize > hostDim) {
             scrollSize = 1;
         }
 
         if (NATIVE_TRANSITIONS) {
-            transformXY = 'translate(0, ' + scrollPos + 'px)';
+            transitionTransform = (vert) ? 'translate(0, ' + scrollPos + 'px)' : 'translate('+scrollPos+'px, 0)';
         } else {
-            transformY = scrollPos;
+            transitionProp = scrollPos;
         }
 
-        if(scrollPos > (height - scrollSize)) {
-            scrollSize = scrollSize - (scrollPos - (height - scrollSize));
+        if (scrollPos > (hostDim - scrollSize)) {
+            scrollSize = scrollSize - (scrollPos - (hostDim - scrollSize));
         }
 
-        if(scrollPos < 0) {
+        if (scrollPos < 0) {
             if (NATIVE_TRANSITIONS) {
-                transformXY = 'translate(0,0)';
+                transitionTransform = 'translate(0,0)';
             } else {
-                transformY = 0;
+                transitionProp = 0;
             }
-
             scrollSize = scrollSize + scrollPos;
         }
 
-        size = (scrollSize-8);
+        size = (vert) ? (scrollSize-8) : (scrollSize-16);
 
-        if(this.verticalScrollSize !== size) {
-            this.verticalScrollSize = size;
+        if (this["_sbSize" + vert] !== size) {
+            this["_sbSize" + vert] = size;
 
             transition = {
                 duration : duration/1000                                
             };
 
             if(NATIVE_TRANSITIONS) {
-                transition.transform = 'scaleY('+(size)+')';
+                transition.transform = (vert) ? 'scaleY('+ size +')' : 'scaleX('+ size +')';
             } else {
-                transition.height = size;
+                transition[dimLower] = size;
             }
 
             scrollbar.get('children').item(1).transition(transition);
@@ -228,9 +234,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         };
 
         if (NATIVE_TRANSITIONS) {
-            transition.transform = transformXY;
+            transition.transform = transitionTransform;
         } else {
-            transition.top = transformY;
+            transition[offset] = transitionProp;
         }
 
         scrollbar.transition(transition);
@@ -240,99 +246,17 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         };
 
         if (NATIVE_TRANSITIONS) {
-            transition.transform = 'translate(0,'+(scrollSize-10)+'px)'; 
+            transition.transform = (vert) ? 'translate(0,'+(scrollSize-10)+'px)' : 'translate('+(scrollSize-12)+'px,0)'; 
         } else {
-            if (!basic) { 
+            if (vert) { 
                 transition.top = scrollSize-4; 
-            }
-        }
-
-        scrollbar.get('children').item(2).transition(transition);
-
-    },
-
-    _updateH : function(scrollbar, currentX, duration) {
-
-        var host = this._host,
-            basic = this._basic,
-            cb = host._cb,
-            scrollSize = 0,
-            scrollPos = 1,
-            transformXY,
-            transformX,
-            transition,
-            size,
-            width = host.get('width'),
-            scrollWidth = host._scrollWidth || cb.get('scrollWidth');
-
-        scrollSize = Math.floor(width * (width/scrollWidth));
-        scrollPos = Math.floor((currentX/(scrollWidth - width) ) * (width-scrollSize)) * -1;
-
-        if(scrollSize > width) {
-            scrollSize = 1;
-        }
-
-        if (NATIVE_TRANSITIONS) {
-            transformXY = 'translate('+scrollPos+'px, 0)';
-        } else {
-            transformX = scrollPos;
-        }
-
-        if(scrollPos > (width - scrollSize)) {
-            scrollSize = scrollSize - (scrollPos - (width - scrollSize));
-        }
-
-        if(scrollPos < 0) {
-            if (NATIVE_TRANSITIONS) {
-                transformXY = 'translate(0,0)';
             } else {
-                transformX = 0;
+                transition.left = scrollSize-12;
             }
-            scrollSize = scrollSize + scrollPos;
         }
 
-        size = (scrollSize-16);
-
-        if(this.horizontalScrollSize !== size) {
-            this.horizontalScrollSize = size;
-
-            transition = {
-                duration : duration/1000                                
-            };
-
-            if(NATIVE_TRANSITIONS) {
-                transition.transform = 'scaleX('+ size +')';
-            } else {
-                transition.width = (size);
-            }
-
-            scrollbar.get('children').item(1).transition(transition);
-        }
-
-        transition = {
-            duration : duration/1000
-        };
-
-        if (NATIVE_TRANSITIONS) {
-            transition.transform = transformXY;
-        } else {
-            transition.left = transformX;
-        }
-
-        scrollbar.transition(transition);
-
-        transition = {
-            duration : duration/1000
-        };
-
-        if (NATIVE_TRANSITIONS) {
-            transition.transform = 'translate('+(scrollSize-12)+'px,0)'; 
-        } else {
-            transition.left = scrollSize-12;
-        }
-
-        if (!basic) { 
-            scrollbar.get('children').item(2).transition(transition); 
+        if (vert || !basic) {
+            scrollbar.get('children').item(2).transition(transition);
         }
     },
 
@@ -356,11 +280,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         if (vNode) {
-            this._updateV(vNode, currentPos * -1, duration);
+            this._updateDim(true, vNode, currentPos * -1, duration);
         }
 
         if (hNode) {
-            this._updateH(hNode, currentPos * -1, duration);
+            this._updateDim(false, hNode, currentPos * -1, duration);
         }
     },
 
