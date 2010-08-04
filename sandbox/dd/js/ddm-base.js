@@ -164,8 +164,6 @@ YUI.add('dd-ddm-base', function(Y) {
             var doc = Y.one(Y.config.doc);
             doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             doc.on('mouseup', Y.bind(this._end, this));
-            doc.on('move', Y.bind(this._move, this));
-            doc.on('moveend', Y.bind(this._end, this));
         },
         /**
         * @private
