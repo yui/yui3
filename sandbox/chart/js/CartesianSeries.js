@@ -456,12 +456,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
         {
             marker = new Y.Marker({styles:styles});
             marker.render(this.get("node"));
-            marker.after("mouseover", Y.bind(this._markerEventHandler, this));
-            marker.after("mousedown", Y.bind(this._markerEventHandler, this));
-            marker.after("mouseup", Y.bind(this._markerEventHandler, this));
-            marker.after("mouseout", Y.bind(this._markerEventHandler, this));
         }
         this._markers.push(marker);
+        this._markerNodes.push(Y.one(marker.get("node")));
         return marker;
     },   
     
@@ -480,6 +477,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
             this._markerCache = [];
         }
         this._markers = [];
+        this._markerNodes = [];
     },
     
     /**

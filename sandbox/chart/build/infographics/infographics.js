@@ -1159,6 +1159,7 @@ Y.extend(Renderer, Y.Widget, {
             n = document.createElement("div"),
             style = n.style;
         cb.appendChild(n);
+        n.className = "yui3-seriesmarker";
         style.position = "absolute";
         style.display = "block";
         style.top = "0px"; 
@@ -2136,12 +2137,15 @@ Y.extend(CartesianSeries, Y.Renderer, {
         {
             marker = new Y.Marker({styles:styles});
             marker.render(this.get("node"));
+         /*
             marker.after("mouseover", Y.bind(this._markerEventHandler, this));
             marker.after("mousedown", Y.bind(this._markerEventHandler, this));
             marker.after("mouseup", Y.bind(this._markerEventHandler, this));
             marker.after("mouseout", Y.bind(this._markerEventHandler, this));
+            */
         }
         this._markers.push(marker);
+        this._markerNodes.push(Y.one(marker.get("node")));
         return marker;
     },   
     
@@ -2160,6 +2164,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
             this._markerCache = [];
         }
         this._markers = [];
+        this._markerNodes = [];
     },
     
     /**
@@ -2220,6 +2225,15 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
     {
         this._setNode();
     },
+    
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+    
     /**
      * @private
      * @description Draws the markers for the graph
@@ -2260,32 +2274,33 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
-            mnode = marker.get("boundingBox"),
+            markerNode = e.currentTarget,
             w,
             h,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markers, marker);
+            i = Y.Array.indexOf(this._markerNodes, markerNode),
+            marker = this.get("markers")[i],
+            bb = marker.get("boundingBox");
             switch(type)
             {
-                case "marker:mouseout" :
+                case "mouseout" :
                     marker.set("state", "off");
                 break;
-                case "marker:mouseover" :
+                case "mouseover" :
                     marker.set("state", "over");
                 break;
-                case "marker:mouseup" :
+                case "mouseup" :
                     marker.set("state", "over");
                 break;
-                case "marker:mousedown" :
+                case "mousedown" :
                     marker.set("state", "down");
                 break;
             }
             w = marker.get("width");
             h = marker.get("height");
-            mnode.setStyle("left", (xcoords[i] - w/2) + "px");
-            mnode.setStyle("top", (ycoords[i] - h/2) + "px");    
+            bb.setStyle("left", (xcoords[i] - w/2) + "px");
+            bb.setStyle("top", (ycoords[i] - h/2) + "px");    
     },
 
 	_getDefaultStyles: function()
@@ -2902,7 +2917,16 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     {
         this._setNode();
     },
-	/**
+
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+
+    /**
 	 * @private
 	 */
 	drawSeries: function()
@@ -2976,10 +3000,12 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
+            markerNode = e.currentTarget,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markers, marker),
+            i = Y.Array.indexOf(this._markerNodes, markerNode),
+            markers = this.get("markers"),
+            marker = markers[i],
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[this.get("type")],
             seriesLen = seriesCollection.length,
@@ -2991,16 +3017,16 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             order = this.get("order");
         switch(type)
         {
-            case "marker:mouseout" :
+            case "mouseout" :
                 marker.set("state", "off");
             break;
-            case "marker:mouseover" :
+            case "mouseover" :
                 marker.set("state", "over");
             break;
-            case "marker:mouseup" :
+            case "mouseup" :
                 marker.set("state", "over");
             break;
-            case "marker:mousedown" :
+            case "mousedown" :
                 marker.set("state", "down");
             break;
         }
@@ -3065,6 +3091,14 @@ BarSeries.ATTRS = {
 };
 
 Y.extend(BarSeries, Y.CartesianSeries, {
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+
     /**
      * @private
      */
@@ -3146,10 +3180,11 @@ Y.extend(BarSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
+            markerNode = e.currentTarget,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markers, marker),
+            i = Y.Array.indexOf(this._markerNodes, markerNode),
+            marker = this._markers[i],
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[this.get("type")],
             seriesLen = seriesCollection.length,
@@ -3161,16 +3196,16 @@ Y.extend(BarSeries, Y.CartesianSeries, {
             order = this.get("order");
         switch(type)
         {
-            case "marker:mouseout" :
+            case "mouseout" :
                 marker.set("state", "off");
             break;
-            case "marker:mouseover" :
+            case "mouseover" :
                 marker.set("state", "over");
             break;
-            case "marker:mouseup" :
+            case "mouseup" :
                 marker.set("state", "over");
             break;
-            case "marker:mousedown" :
+            case "mousedown" :
                 marker.set("state", "down");
             break;
         }
@@ -3939,7 +3974,15 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
         this._setNode();
     },
     
-	/**
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+	
+    /**
 	 * @private
 	 */
 	drawSeries: function()
@@ -4047,22 +4090,23 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
+            markerNode = e.currentTarget,
             xcoords = this.get("xcoords"),
             offset,
-            i = Y.Array.indexOf(this._markers, marker);
+            i = Y.Array.indexOf(this._markerNodes, markerNode),
+            marker = this.get("markers")[i];
         switch(type)
         {
-            case "marker:mouseout" :
+            case "mouseout" :
                 marker.set("state", "off");
             break;
-            case "marker:mouseover" :
+            case "mouseover" :
                 marker.set("state", "over");
             break;
-            case "marker:mouseup" :
+            case "mouseup" :
                 marker.set("state", "over");
             break;
-            case "marker:mousedown" :
+            case "mousedown" :
                 marker.set("state", "down");
             break;
         }
@@ -4132,6 +4176,14 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
     renderUI: function()
     {
         this._setNode();
+    },
+    
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
     },
     
     drawSeries: function()
@@ -4243,22 +4295,23 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
+            markerNode = e.currentTarget,
             ycoords = this.get("ycoords"),
-            h = marker.get("height"),
-            i = Y.Array.indexOf(this._markers, marker);
+            i = Y.Array.indexOf(this._markerNodes, markerNode),
+            marker = this.get("markers")[i],
+            h = marker.get("height");
         switch(type)
         {
-            case "marker:mouseout" :
+            case "mouseout" :
                 marker.set("state", "off");
             break;
-            case "marker:mouseover" :
+            case "mouseover" :
                 marker.set("state", "over");
             break;
-            case "marker:mouseup" :
+            case "mouseup" :
                 marker.set("state", "over");
             break;
-            case "marker:mousedown" :
+            case "mousedown" :
                 marker.set("state", "down");
             break;
         }
