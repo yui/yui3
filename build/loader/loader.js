@@ -151,7 +151,8 @@ if (!YUI.Env[Y.version]) {
  *  <li>jsAttributes: object literal containing attributes to add to script nodes</li>
  *  <li>cssAttributes: object literal containing attributes to add to link nodes</li>
  *  <li>timeout:
- *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+ *  The number of milliseconds before a timeout occurs when dynamically loading nodes.  If
+ *  not set, there is no timeout</li>
  *  <li>context:
  *  execution context for all callbacks</li>
  *  <li>onSuccess:
@@ -169,6 +170,12 @@ if (!YUI.Env[Y.version]) {
  *  <li>groups:
  *  A list of group definitions.  Each group can contain specific definitions for base, comboBase,
  *  combine, and accepts a list of modules.  See above for the description of these properties.</li>
+ *  <li>2in3: the version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules
+ *  in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers
+ *  change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox.</li>
+ *  <li>yui2: when using the 2in3 project, you can select the version of YUI 2 to use.  Valid values
+ *  are 2.2.2, 2.3.1, 2.4.1, 2.5.2, 2.6.0, 2.7.0, 2.8.0, and 2.8.1 [default] -- plus all versions
+ *  of YUI 2 going forward.</li>
  * </ul>
  */
 
@@ -518,23 +525,10 @@ Y.Loader = function(o) {
         self.conditions = Y.merge(GLOBAL_ENV._conditions);
     } 
 
-    // else if (localStorage) {
-    //     cache = localStorage.getItem(modulekey);
-    //     if (cache) {
-    //         self.moduleInfo = JSON.parse(cache);
-    //     }
-    //     // console.log('cached rendered module info');
-    // } 
-
     if (!cache) {
         YObject.each(defaults, function(v, k) {
             self.addModule(v, k);
         });
-        // if (localStorage) {
-        //     try {
-        //         localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
-        //     } catch(e) { }
-        // }
     }
 
     if (!GLOBAL_ENV._renderedMods) {
@@ -900,22 +894,6 @@ Y.Loader.prototype = {
             conditions = this.conditions, condmod;
             // , existing = this.moduleInfo[name], newr;
 
-        // Adding a module again merges requirements to pick up new
-        // requirements when the module arrives.  We allow this only
-        // once to prevent redundant checks when an application calls
-        // use() many times.
-        // if (existing && !existing.reparsed) {
-        //     for (i=0; i<o.requires.length; i++) {
-        //         newr = o.requires[i];
-        //         if (YArray.indexOf(existing.requires, newr) == -1) {
-        //             existing.requires.push(newr);
-        //             delete existing.expanded;
-        //         }
-        //     }
-        //     existing.reparsed = true;
-        //     return existing;
-        // }
-
         this.moduleInfo[name] = o;
 
         if (!o.langPack && o.lang) {
@@ -1211,10 +1189,6 @@ Y.Loader.prototype = {
             o[name] = true;
             m.provides = o;
 
-            // YObject.each(o, function(v, k) {
-            //     supmap[k] = supmap[k] || {};
-            //     supmap[k][name] = true;
-            // }, this);
         }
 
         return m.provides;
@@ -1239,37 +1213,13 @@ Y.Loader.prototype = {
                 this._setup();
             }
 
-            // var key = YObject.keys(this.required) + YObject.keys(this.loaded) + '-' + this.ignoreRegistered + type + VERSION,
-            //     sorted = this.results[key];
-            // this.key = key;
-
-            // console.log('calc key: ' + key);
-            // console.log(this);
-
-            // if (!sorted && localStorage) {
-            //     sorted = localStorage.getItem(key);
-            //     if (sorted) {
-            //         sorted = JSON.parse(sorted);
-            //     }
-            // }
-            
-            // if (sorted) {
-            //     this.sorted = YObject.keys(this._reduce(YArray.hash(sorted)));
-            //     // this.sorted = sorted;
-            //     //
-            //         console.log('cached sort result: ' + key);
-            //         // console.log(this.loaded);
-            //         console.log(sorted);
-            //         console.log(this.sorted);
-            // } else {
-                this._explode();
-                this._conditions();
-                if (this.allowRollup) {
-                    this._rollup();
-                }
-                this._reduce();
-                this._sort();
-            // }
+            this._explode();
+            this._conditions();
+            if (this.allowRollup) {
+                this._rollup();
+            }
+            this._reduce();
+            this._sort();
         }
     },
 
@@ -1423,9 +1373,9 @@ Y.Loader.prototype = {
                     // it possible to prevent submodule duplication
                     // if the parent is requested after a submodule
                     // has been loaded.
-                    if (m.submodules) {
-                        delete r[name];
-                    }
+                    // if (m.submodules) {
+                    //     delete r[name];
+                    // }
                 }
             }
         }, this);
