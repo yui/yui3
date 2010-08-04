@@ -259,7 +259,7 @@ var yConfig2 = {
     debug: false
 };
 
-YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'yui-throttle', function(Y1) {
+YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'yui-throttle', 'drag-gestures', function(Y1) {
     Y1.DD.DDM._debugShim = true;
     //dd4 = Y1.Base.create(Y1.DD.Proxy, [Y1.DD.DragConstrained], {
     /*
@@ -657,7 +657,8 @@ YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-d
         
     }
         
-  
+    
+    localStorage.clear();
 });
 </script>
 </body>

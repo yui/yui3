@@ -67,6 +67,8 @@
 	        logExclude: { Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
 		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
 			
+            var suite = new Y.Test.Suite("Delegate");
+
 		    // creating the console...
 			(new Y.Console()).render();
 			
@@ -77,7 +79,7 @@
 			// starting the testing process
 			
 			// add the test cases and suites 
-			Y.Test.Runner.add(new Y.Test.Case({
+			suite.add(new Y.Test.Case({
 				
 				name: "Event Delegate Tests",
 				
@@ -539,11 +541,34 @@
 				
 			})); 
 			
+            suite.add(new Y.Test.Case({
+                name: "Bugs",
+
+                // Existing unfixed bugs
+                _should: {
+                    fail: {
+                    }
+                },
+
+                // http://yuilibrary.com/projects/yui3/ticket/2529142
+                test_filter_function_for_focus_from_body: function () {
+                    var count = 0,
+                        handle;
+
+                    handle = Y.one('body').delegate('focus', function (e) {
+                        e.preventDefault();
+                        count++;
+                    }, '#firstlink');
+
+                    Y.one('#firstlink').focus();
+
+                    Y.Assert.areSame(1, count);
+                }
+            }));
+
 			//run all tests 
+            Y.Test.Runner.add(suite);
 			Y.Test.Runner.run();
-			
-			/* finishing the testing process */
-			
 		});
 	</script>
 </body>

@@ -247,6 +247,7 @@ var yConfig2 = {
     debug: false
 };
 
+//YUI(yConfig).use('dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
 YUI(yConfig).use('dd', function(Y1) {
     Y1.DD.DDM._debugShim = true;
     //dd4 = Y1.Base.create(Y1.DD.Proxy, [Y1.DD.DragConstrained], {
@@ -364,7 +365,8 @@ YUI(yConfig).use('dd', function(Y1) {
 
 });
 
-YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+//YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+YUI(yConfig2).use('dd', 'dd-plugin', function(Y) {
     
     //alert(navigator.userAgent);
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
@@ -645,7 +647,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         
     }
         
-  
+  localStorage.clear();
 });
 </script>
 </body>

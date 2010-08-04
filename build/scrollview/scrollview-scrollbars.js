@@ -132,7 +132,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */    
     _hostDimensionsChange: function() {
         var host = this._host,
-            boundingBox = host.get('boundingBox'),
+            boundingBox = host._bb,
 
             verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
@@ -163,7 +163,179 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         
         Y.later(500, this, 'flash', true);
     },
-    
+
+    _updateV : function(scrollbar, currentY, duration) {
+
+        var host = this._host,
+            basic = this._basic,
+            cb = host._cb,
+            scrollSize = 0,
+            scrollPos = 1,
+            transformXY,
+            transformY,
+            transition,
+            size,
+            height = host.get('height'),
+            scrollHeight = host._scrollHeight || cb.get('scrollHeight');
+
+        scrollSize = Math.floor(height * (height/scrollHeight));
+        scrollPos = Math.floor((currentY/(scrollHeight - height) ) * (height-scrollSize)) * -1;
+
+        if(scrollSize > height) {
+            scrollSize = 1;
+        }
+
+        if (NATIVE_TRANSITIONS) {
+            transformXY = 'translate(0, ' + scrollPos + 'px)';
+        } else {
+            transformY = scrollPos;
+        }
+
+        if(scrollPos > (height - scrollSize)) {
+            scrollSize = scrollSize - (scrollPos - (height - scrollSize));
+        }
+
+        if(scrollPos < 0) {
+            if (NATIVE_TRANSITIONS) {
+                transformXY = 'translate(0,0)';
+            } else {
+                transformY = 0;
+            }
+
+            scrollSize = scrollSize + scrollPos;
+        }
+
+        size = (scrollSize-8);
+
+        if(this.verticalScrollSize !== size) {
+            this.verticalScrollSize = size;
+
+            transition = {
+                duration : duration/1000                                
+            };
+
+            if(NATIVE_TRANSITIONS) {
+                transition.transform = 'scaleY('+(size)+')';
+            } else {
+                transition.height = size;
+            }
+
+            scrollbar.get('children').item(1).transition(transition);
+        }
+
+        transition = {
+            duration : duration/1000
+        };
+
+        if (NATIVE_TRANSITIONS) {
+            transition.transform = transformXY;
+        } else {
+            transition.top = transformY;
+        }
+
+        scrollbar.transition(transition);
+
+        transition = {
+            duration : duration/1000
+        };
+
+        if (NATIVE_TRANSITIONS) {
+            transition.transform = 'translate(0,'+(scrollSize-10)+'px)'; 
+        } else {
+            if (!basic) { 
+                transition.top = scrollSize-4; 
+            }
+        }
+
+        scrollbar.get('children').item(2).transition(transition);
+
+    },
+
+    _updateH : function(scrollbar, currentX, duration) {
+
+        var host = this._host,
+            basic = this._basic,
+            cb = host._cb,
+            scrollSize = 0,
+            scrollPos = 1,
+            transformXY,
+            transformX,
+            transition,
+            size,
+            width = host.get('width'),
+            scrollWidth = host._scrollWidth || cb.get('scrollWidth');
+
+        scrollSize = Math.floor(width * (width/scrollWidth));
+        scrollPos = Math.floor((currentX/(scrollWidth - width) ) * (width-scrollSize)) * -1;
+
+        if(scrollSize > width) {
+            scrollSize = 1;
+        }
+
+        if (NATIVE_TRANSITIONS) {
+            transformXY = 'translate('+scrollPos+'px, 0)';
+        } else {
+            transformX = scrollPos;
+        }
+
+        if(scrollPos > (width - scrollSize)) {
+            scrollSize = scrollSize - (scrollPos - (width - scrollSize));
+        }
+
+        if(scrollPos < 0) {
+            if (NATIVE_TRANSITIONS) {
+                transformXY = 'translate(0,0)';
+            } else {
+                transformX = 0;
+            }
+            scrollSize = scrollSize + scrollPos;
+        }
+
+        size = (scrollSize-16);
+
+        if(this.horizontalScrollSize !== size) {
+            this.horizontalScrollSize = size;
+
+            transition = {
+                duration : duration/1000                                
+            };
+
+            if(NATIVE_TRANSITIONS) {
+                transition.transform = 'scaleX('+ size +')';
+            } else {
+                transition.width = (size);
+            }
+
+            scrollbar.get('children').item(1).transition(transition);
+        }
+
+        transition = {
+            duration : duration/1000
+        };
+
+        if (NATIVE_TRANSITIONS) {
+            transition.transform = transformXY;
+        } else {
+            transition.left = transformX;
+        }
+
+        scrollbar.transition(transition);
+
+        transition = {
+            duration : duration/1000
+        };
+
+        if (NATIVE_TRANSITIONS) {
+            transition.transform = 'translate('+(scrollSize-12)+'px,0)'; 
+        } else {
+            transition.left = scrollSize-12;
+        }
+
+        if (!basic) { 
+            scrollbar.get('children').item(2).transition(transition); 
+        }
+    },
+
     /**
      * Position and resize the scroll bars according to the content size
      *
@@ -174,207 +346,24 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _update: function(currentPos, duration, easing) {
-        var host = this._host,
-            basic = this._basic,
-            cb = host.get('contentBox'),
-            scrollSize = 0,
-            scrollPos = 1,
-            transform,
-            transformX,
-            transformY,
-            transition,
-            size,
-            height = host.get('height'),
-            width = host.get('width'),
-            scrollHeight = host._scrollHeight || cb.get('scrollHeight'),
-            scrollWidth = host._scrollWidth || cb.get('scrollWidth'),
-            verticalNode = this.get('verticalNode'),
-            horizontalNode = this.get('horizontalNode'),
-            currentX = host.get('scrollX') * -1,
-            currentY = host.get('scrollY') * -1,
-            node;
+        var vNode = this.get('verticalNode'),
+            hNode = this.get('horizontalNode');
 
-        // TODO: Remove 4px cross dependency on CSS
+        duration = duration || 0;
 
-        if(!this._showingScrollBars) {
+        if (!this._showingScrollBars) {
             this.show();
         }
 
-        if(horizontalNode && scrollHeight <= height) {
-            this.hide();
-            return;
+        if (vNode) {
+            this._updateV(vNode, currentPos * -1, duration);
         }
 
-        if(verticalNode) {
-            scrollSize = Math.floor(height * (height/scrollHeight));
-            scrollPos = Math.floor((currentY/(scrollHeight - height) ) * (height-scrollSize)) * -1;
-
-            if(scrollSize > height) {
-                scrollSize = 1;
-            }
-
-            if (NATIVE_TRANSITIONS) {
-                transform = 'translate(0, '+scrollPos+'px)';
-            } else {
-                transformX = 0;
-                transformY = scrollPos;
-            }
-
-            if(scrollPos > (height - scrollSize)) {
-                scrollSize = scrollSize - (scrollPos - (height - scrollSize));
-            }
-
-            if(scrollPos < 0) {
-                if (NATIVE_TRANSITIONS) {
-                    transform = 'translate(0,0)';
-                } else {
-                    transformX = 0;
-                    transformY = 0;
-                }
-
-                scrollSize = scrollSize + scrollPos;
-            }
-
-            duration = duration || 0;
-
-            size = (scrollSize-8);
-
-            if(this.verticalScrollSize != (size)) {
-                this.verticalScrollSize = (size);
-
-                node = verticalNode.get('children').item(1);
-
-                transition = {
-                    duration : duration/1000                                
-                };
-
-                if(NATIVE_TRANSITIONS) {
-                    transition.transform = 'translate(0,0) scaleY('+(size)+')';
-                } else {
-                    if (!basic) {
-                        transition.top = 4;
-                    }
-                    transition.height = size;
-                }
-
-                node.transition(transition);
-            }
-
-            transition = {
-                duration : duration/1000
-            };
-
-            if (NATIVE_TRANSITIONS) {
-                transition.transform = transform;
-            } else {
-                transition.top = transformY;
-            }
-
-            verticalNode.transition(transition);
-
-            transition = {
-                duration : duration/1000
-            };
-
-            if (NATIVE_TRANSITIONS) {
-                transition.transform = 'translate(0,'+(scrollSize-10)+'px)'; 
-            } else {
-                if (!basic) { 
-                    transition.top = scrollSize-4; 
-                }
-            }
-
-            verticalNode.get('children').item(2).transition(transition);
-
+        if (hNode) {
+            this._updateH(hNode, currentPos * -1, duration);
         }
-
-        if(horizontalNode) {
-
-            scrollSize = Math.floor(width * (width/scrollWidth));
-            scrollPos = Math.floor((currentX/(scrollWidth - width) ) * (width-scrollSize)) * -1;
-
-            if(scrollSize > width) {
-                scrollSize = 1;
-            }
-
-            if (NATIVE_TRANSITIONS) {
-                transform = 'translate('+scrollPos+'px, 0)';
-            } else {
-                transformX = scrollPos;
-                transformY = 0;
-            }
-
-            if(scrollPos > (width - scrollSize))
-            {
-                scrollSize = scrollSize - (scrollPos - (width - scrollSize));
-            }
-
-            if(scrollPos < 0)
-            {
-                if (NATIVE_TRANSITIONS) {
-                    transform = 'translate(0,0)';
-                } else {
-                    transformX = 0;
-                    transformY = 0;
-                }
-
-                scrollSize = scrollSize + scrollPos;
-            }
-
-            duration = duration || 0;
-
-            size = (scrollSize-16);
-
-            if(this.horizontalScrollSize != (size)) {
-                this.horizontalScrollSize = size;
-
-                node = horizontalNode.get('children').item(1);
-
-                transition = {
-                    duration : duration/1000                                
-                };
-
-                if(NATIVE_TRANSITIONS) {
-                    transition.transform = 'translate(0,0) scaleX('+(size)+')';
-                } else {
-                    //transition.bottom = 0;
-                    if (!basic) {
-                        transition.left = 4;
-                    }
-                    transition.width = (size);
-                }
-
-                node.transition(transition);
-            }
-
-            transition = {
-                duration : duration/1000
-            };
-
-            if (NATIVE_TRANSITIONS) {
-                transition.transform = transform;
-            } else {
-                //transition.bottom = transformY;
-                transition.left = transformX;
-            }
-
-            horizontalNode.transition(transition);
-
-            transition = {
-                duration : duration/1000
-            };
-
-            if (NATIVE_TRANSITIONS) {
-                transition.transform = 'translate('+(scrollSize-12)+'px,0)'; 
-            } else {
-                //transition.bottom = 0;
-                transition.left = scrollSize-12;
-            }
-
-            if (!basic) { horizontalNode.get('children').item(2).transition(transition); }
-        }                
     },
-    
+
     /**
      * Show the scroll bar indicators
      *
