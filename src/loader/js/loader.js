@@ -119,8 +119,6 @@ var NOT_FOUND       = {},
     L               = Y.Lang,
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
-    win             = Y.config.win,
-    // localStorage    = win && win.JSON && win.localStorage,
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -1276,26 +1274,40 @@ Y.Loader.prototype = {
      * @private
      */
     _explode: function() {
-        var r = this.required, m, reqs, done = {};
+        var r = this.required, m, reqs, done = {},
+            self = this;
 
         // the setup phase is over, all modules have been created
-        this.dirty = false;
+        self.dirty = false;
 
         YObject.each(r, function(v, name) {
             if (!done[name]) {
                 done[name] = true;
-                m = this.getModule(name);
+                m = self.getModule(name);
                 if (m) {
                     var expound = m.expound;
 
                     if (expound) {
-                        r[expound] = this.getModule(expound);
-                        reqs = this.getRequires(r[expound]);
+                        r[expound] = self.getModule(expound);
+                        reqs = self.getRequires(r[expound]);
                         Y.mix(r, YArray.hash(reqs));
                     }
 
-                    reqs = this.getRequires(m);
+                    reqs = self.getRequires(m);
                     Y.mix(r, YArray.hash(reqs));
+
+                    // sups = m.supersedes;
+
+                    // if (sups) {
+                    //     YArray.each(sups, function(sup) {
+                    //         if (sup in self.loaded) {
+                    //             delete r[name];
+                    //         }
+                    //         // if (sup in self.conditions) {
+                    //         r[sup] = true;
+                    //         //}
+                    //     });
+                    // }
 
                     // remove the definition for a rollup with
                     // submodules -- getRequires() includes the
@@ -1308,7 +1320,7 @@ Y.Loader.prototype = {
                     // }
                 }
             }
-        }, this);
+        });
 
         // Y.log('After explode: ' + YObject.keys(r));
     },
@@ -1576,11 +1588,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
         this.sorted = s;
 
-        // this.results[this.key] = s;
-
-        // if (localStorage) {
-        //     localStorage.setItem(this.key, JSON.stringify(s));
-        // }
     },
 
     _insert: function(source, o, type) {
