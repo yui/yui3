@@ -78,31 +78,37 @@
 <span class="cm">     */</span>
     <span class="nx">later</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">when</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">periodic</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">when</span> <span class="o">=</span> <span class="nx">when</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span> 
-        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="kd">var</span> <span class="nx">m</span><span class="o">=</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">d</span><span class="o">=</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">r</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">fn</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">m</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">fn</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">d</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">fn</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">m</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">fn</span><span class="p">];</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">f</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">m</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">m</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;method undefined&quot;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">f</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="nx">m</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span>
-        <span class="p">};</span>
-
-        <span class="nx">r</span> <span class="o">=</span> <span class="p">(</span><span class="nx">periodic</span><span class="p">)</span> <span class="o">?</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">when</span><span class="p">)</span> <span class="o">:</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">when</span><span class="p">);</span>
+        <span class="nx">id</span> <span class="o">=</span> <span class="p">(</span><span class="nx">periodic</span><span class="p">)</span> <span class="o">?</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">when</span><span class="p">)</span> <span class="o">:</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">when</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="nx">id</span><span class="o">:</span> <span class="nx">r</span><span class="p">,</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
             <span class="nx">interval</span><span class="o">:</span> <span class="nx">periodic</span><span class="p">,</span>
             <span class="nx">cancel</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">interval</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+                    <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+                    <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">};</span>
