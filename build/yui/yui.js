@@ -3496,16 +3496,20 @@ YUI.add('yui-later', function(Y) {
     later = function(when, o, fn, data, periodic) {
         when = when || 0; 
 
-        var m = fn, f = m, id;
+        var m = fn, f = m, id, d;
 
         if (o) {
             if (L.isString(fn)) {
                 m = o[fn];
             }
 
+            if(!Y.Lang.isUndefined(data)) {
+                d = Y.Array(data);
+            }
+
             f = function() {
-                if (!Y.Lang.isUndefined(data)) {
-                    m.apply(o, Y.Array(data)) ;
+                if (d) {
+                    m.apply(o, d) ;
                 } else {
                     m.call(o);
                 }
