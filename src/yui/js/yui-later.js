@@ -29,31 +29,33 @@
      */
     later = function(when, o, fn, data, periodic) {
         when = when || 0; 
-        o = o || {};
-        var m=fn, d=Y.Array(data), f, r;
 
-        if (L.isString(fn)) {
-            m = o[fn];
+        var m = fn, f = m, id;
+
+        if (o) {
+            if (L.isString(fn)) {
+                m = o[fn];
+            }
+
+            f = function() {
+                if (!Y.Lang.isUndefined(data)) {
+                    m.apply(o, Y.Array(data)) ;
+                } else {
+                    m.call(o);
+                }
+            };
         }
 
-        if (!m) {
-            Y.log("method undefined");
-        }
-
-        f = function() {
-            m.apply(o, d);
-        };
-
-        r = (periodic) ? setInterval(f, when) : setTimeout(f, when);
+        id = (periodic) ? setInterval(f, when) : setTimeout(f, when);
 
         return {
-            id: r,
+            id: id,
             interval: periodic,
             cancel: function() {
                 if (this.interval) {
-                    clearInterval(r);
+                    clearInterval(id);
                 } else {
-                    clearTimeout(r);
+                    clearTimeout(id);
                 }
             }
         };
