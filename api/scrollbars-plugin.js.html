@@ -226,7 +226,7 @@
             <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
             <span class="nx">scrollSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">scrollPos</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="nx">transform</span><span class="p">,</span>
+            <span class="nx">transformXY</span><span class="p">,</span>
             <span class="nx">transformX</span><span class="p">,</span>
             <span class="nx">transformY</span><span class="p">,</span>
             <span class="nx">transition</span><span class="p">,</span>
@@ -243,16 +243,17 @@
 
         <span class="c1">// TODO: Remove 4px cross dependency on CSS</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_showingScrollBars</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_showingScrollBars</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">horizontalNode</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollHeight</span> <span class="o">&lt;=</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollHeight</span> <span class="o">&lt;=</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
+
             <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">height</span> <span class="o">*</span> <span class="p">(</span><span class="nx">height</span><span class="o">/</span><span class="nx">scrollHeight</span><span class="p">));</span>
             <span class="nx">scrollPos</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">currentY</span><span class="o">/</span><span class="p">(</span><span class="nx">scrollHeight</span> <span class="o">-</span> <span class="nx">height</span><span class="p">)</span> <span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">height</span><span class="o">-</span><span class="nx">scrollSize</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 
@@ -261,7 +262,7 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0, &#39;</span><span class="o">+</span><span class="nx">scrollPos</span><span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
+                <span class="nx">transformXY</span> <span class="o">=</span> <span class="s1">&#39;translate(0, &#39;</span><span class="o">+</span><span class="nx">scrollPos</span><span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">transformX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
                 <span class="nx">transformY</span> <span class="o">=</span> <span class="nx">scrollPos</span><span class="p">;</span>
@@ -273,7 +274,7 @@
 
             <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0)&#39;</span><span class="p">;</span>
+                    <span class="nx">transformXY</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0)&#39;</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">transformX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
                     <span class="nx">transformY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -296,11 +297,8 @@
                 <span class="p">};</span>
 
                 <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0) scaleY(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">;</span>
+                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;scaleY(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-                    <span class="p">}</span>
                     <span class="nx">transition</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">size</span><span class="p">;</span>
                 <span class="p">}</span>
 
@@ -312,7 +310,7 @@
             <span class="p">};</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">transform</span><span class="p">;</span>
+                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">transformXY</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">transformY</span><span class="p">;</span>
             <span class="p">}</span>
@@ -345,21 +343,19 @@
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span><span class="nx">scrollPos</span><span class="o">+</span><span class="s1">&#39;px, 0)&#39;</span><span class="p">;</span>
+                <span class="nx">transformXY</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span><span class="nx">scrollPos</span><span class="o">+</span><span class="s1">&#39;px, 0)&#39;</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">transformX</span> <span class="o">=</span> <span class="nx">scrollPos</span><span class="p">;</span>
                 <span class="nx">transformY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">width</span> <span class="o">-</span> <span class="nx">scrollSize</span><span class="p">))</span>
-            <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">width</span> <span class="o">-</span> <span class="nx">scrollSize</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nx">scrollSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">scrollPos</span> <span class="o">-</span> <span class="p">(</span><span class="nx">width</span> <span class="o">-</span> <span class="nx">scrollSize</span><span class="p">));</span>
             <span class="p">}</span>
 
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0)&#39;</span><span class="p">;</span>
+                    <span class="nx">transformXY</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0)&#39;</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">transformX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
                     <span class="nx">transformY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -373,6 +369,7 @@
             <span class="nx">size</span> <span class="o">=</span> <span class="p">(</span><span class="nx">scrollSize</span><span class="o">-</span><span class="mi">16</span><span class="p">);</span>
 
             <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">horizontalScrollSize</span> <span class="o">!=</span> <span class="p">(</span><span class="nx">size</span><span class="p">))</span> <span class="p">{</span>
+
                 <span class="k">this</span><span class="p">.</span><span class="nx">horizontalScrollSize</span> <span class="o">=</span> <span class="nx">size</span><span class="p">;</span>
 
                 <span class="nx">node</span> <span class="o">=</span> <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
@@ -382,12 +379,8 @@
                 <span class="p">};</span>
 
                 <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0) scaleX(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">;</span>
+                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;scaleX(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="c1">//transition.bottom = 0;</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-                    <span class="p">}</span>
                     <span class="nx">transition</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="p">(</span><span class="nx">size</span><span class="p">);</span>
                 <span class="p">}</span>
 
@@ -399,9 +392,8 @@
             <span class="p">};</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">transform</span><span class="p">;</span>
+                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">transformXY</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="c1">//transition.bottom = transformY;</span>
                 <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">transformX</span><span class="p">;</span>
             <span class="p">}</span>
 
@@ -414,7 +406,6 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">scrollSize</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;px,0)&#39;</span><span class="p">;</span> 
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="c1">//transition.bottom = 0;</span>
                 <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">scrollSize</span><span class="o">-</span><span class="mi">12</span><span class="p">;</span>
             <span class="p">}</span>
 
