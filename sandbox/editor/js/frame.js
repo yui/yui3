@@ -159,6 +159,8 @@ YUI.add('frame', function(Y) {
             this._iframe.setStyles({
                 visibility: 'inherit'
             });
+            console.log(inst);
+            console.log(inst.one('body'));
             inst.one('body').setStyle('display', 'block');
         },
         /**
@@ -185,6 +187,7 @@ YUI.add('frame', function(Y) {
                     this.fire('ready');
                 }, this));
                 Y.log('Calling use on internal instance: ', 'info', 'frame');
+                console.log(args);
                 inst.use.apply(inst, args);
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
@@ -582,7 +585,7 @@ YUI.add('frame', function(Y) {
             */
             use: {
                 writeOnce: true,
-                value: ['substitute', 'node', 'selector-css3']
+                value: ['substitute', 'node', 'node-style', 'selector-css3']
             },
             /**
             * @attribute container

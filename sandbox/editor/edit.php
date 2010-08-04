@@ -207,8 +207,8 @@ var yConfig = {
 };
 
 YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', function(Y) {
-    //console.log(Y, Y.id);
-
+    console.log(Y, Y.id);
+    
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
         var cmd = e.target.get('innerHTML').toLowerCase(),

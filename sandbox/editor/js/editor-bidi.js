@@ -190,6 +190,10 @@ YUI.add('editor-bidi', function(Y) {
         blockParent: function(node, wrap) {
             var parent = node, divNode, firstChild;
             
+            if (!parent) {
+                parent = Y.one(BODY);
+            }
+            
             if (!parent.test(EditorBidi.BLOCKS)) {
                 parent = parent.ancestor(EditorBidi.BLOCKS);
             }
