@@ -121,30 +121,28 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 
     // find panel by ID mapping from label href
     _defPanelNodeValueFn: function() {
-        var id,
-            href = this.get('contentBox').get('href') || '',
+        var href = this.get('contentBox').get('href') || '',
             parent = this.get('parent'),
             hashIndex = href.indexOf('#'),
             panel;
 
         href = href.substr(hashIndex);
 
-        if (href.charAt(0) === '#') {
-            id = href.substr(1);
-            panel = Y.one(href).addClass(_classNames.tabPanel);
-        } else {
-            id = Y.guid();
+        if (href.charAt(0) === '#') { // in-page nav, find by ID
+            panel = Y.one(href);
+            if (panel) {
+                panel.addClass(_classNames.tabPanel);
+            }
         }
 
         // use the one found by id, or else try matching indices
-        if (parent) {
-            panel = panel ||
-                parent.get('panelNode').get('children').item(this.get('index'));
+        if (!panel && parent) {
+            panel = parent.get('panelNode')
+                    .get('children').item(this.get('index'));
         }
 
-        if (!panel) {
+        if (!panel) { // create if none found
             panel = Y.Node.create(this.PANEL_TEMPLATE);
-            panel.set('id', id);
         }
         return panel;
     }
