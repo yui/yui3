@@ -183,7 +183,38 @@ YUI.add('selection', function(Y) {
                     sel.focusCursor(true, false);
                 }
             }
+        } else {
+            single.each(function(p) {
+                var html = p.get('innerHTML');
+                if (html === '') {
+                    Y.log('Empty Paragraph Tag Found, Removing It', 'info', 'selection');
+                    p.remove();
+                }
+            });
         }
+        var divs = Y.all('div, p');
+        divs.each(function(d) {
+            var html = d.get('innerHTML');
+            if (html === '') {
+                Y.log('Empty Div Tag Found, Removing It', 'info', 'selection');
+                d.remove();
+            } else {
+                Y.log('DIVS Count: ' + d.get('childNodes').size());
+                if (d.get('childNodes').size() == 1) {
+                    Y.log('This Div only has one Child Node', 'info', 'selection');
+                    if (d.ancestor('p')) {
+                        Y.log('This Div is a child of a paragraph, remove it..', 'info', 'selection');
+                        d.replace(d.get('firstChild'));
+                    }
+                }
+            }
+        });
+
+        var spans = Y.all('.Apple-style-span, .apple-style-span');
+        Y.log('Apple Spans found: ' + spans.size(), '', 'info', 'selection');
+        spans.each(function(s) {
+            s.setAttribute('style', '');
+        });
     };
 
     Y.Selection._wrapBlock = function(wrapped) {

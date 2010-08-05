@@ -181,7 +181,32 @@ YUI.add('selection', function(Y) {
                     sel.focusCursor(true, false);
                 }
             }
+        } else {
+            single.each(function(p) {
+                var html = p.get('innerHTML');
+                if (html === '') {
+                    p.remove();
+                }
+            });
         }
+        var divs = Y.all('div, p');
+        divs.each(function(d) {
+            var html = d.get('innerHTML');
+            if (html === '') {
+                d.remove();
+            } else {
+                if (d.get('childNodes').size() == 1) {
+                    if (d.ancestor('p')) {
+                        d.replace(d.get('firstChild'));
+                    }
+                }
+            }
+        });
+
+        var spans = Y.all('.Apple-style-span, .apple-style-span');
+        spans.each(function(s) {
+            s.setAttribute('style', '');
+        });
     };
 
     Y.Selection._wrapBlock = function(wrapped) {
