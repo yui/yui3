@@ -2844,6 +2844,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-base"
         ]
     }, 
+    "event-valuechange": {
+        "requires": [
+            "event-focus", 
+            "event-synthetic"
+        ]
+    }, 
     "history": {
         "plugins": {
             "history-hash-ie": {
@@ -3294,12 +3300,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "swf"
         ]
     }, 
-    "value-change": {
-        "requires": [
-            "event-focus", 
-            "event-synthetic"
-        ]
-    }, 
     "widget": {
         "plugins": {
             "widget-child": {
@@ -3396,7 +3396,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3afb17752ba8c3c27c825aea01036c01';
+YUI.Env[Y.version].md5 = '9831ad3a8846e9881333334843874af1';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
