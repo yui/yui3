@@ -153,43 +153,37 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */    
     _hostDimensionsChange: function() {
+        var host = this._host;
 
-        var host = this._host,
-            boundingBox = host._bb,
-
-            verticalNode = this.get(VERTICAL_NODE),
-            horizontalNode = this.get(HORIZONTAL_NODE),
-
-            verticalNodeInDoc = verticalNode.inDoc(),
-            horizontalNodeInDoc = horizontalNode.inDoc();
-
-        if (host._scrollsVertical && !verticalNodeInDoc) {
-            boundingBox.append(verticalNode);
-            if (this._basic) {
-                verticalNode.addClass(_classNames.scrollbarVB);
-            }
-            this._setChildCache(verticalNode);
-        } else if(!host._scrollsVertical && verticalNodeInDoc) {
-            verticalNode.remove();
-            this._clearChildCache(verticalNode);
-        }
-
-        // Horizontal
-        if (host._scrollsHorizontal && !horizontalNodeInDoc) {
-            boundingBox.append(horizontalNode);
-            if (this._basic) {
-                horizontalNode.addClass(_classNames.scrollbarHB);
-            }
-            this._setChildCache(horizontalNode);
-
-        } else if(!host._scrollsHorizontal && horizontalNodeInDoc) {
-            horizontalNode.remove();
-            this._clearChildCache(horizontalNode);
-        }
+        this._renderBar(this.get(VERTICAL_NODE), host._scrollsVertical);
+        this._renderBar(this.get(HORIZONTAL_NODE), host._scrollsHorizontal);
 
         this._update();
 
         Y.later(500, this, 'flash', true);
+    },
+
+    /**
+     * Adds or removes a scrollbar node from the document.
+     * 
+     * @method _renderBar
+     * @private
+     * @param {Node} bar The scrollbar node
+     * @param {boolean} add true, to add the node, false to remove it
+     */
+    _renderBar: function(bar, add) {
+        var inDoc = bar.inDoc(),
+            bb = this._host._bb,
+            className = bar.getData("isHoriz") ? _classNames.scrollbarHB : _classNames.scrollbarVB;
+
+        if (add && !inDoc) {
+            bb.append(bar);
+            bar.toggleClass(className, this._basic);
+            this._setChildCache(bar);
+        } else if(!add && inDoc) {
+            bar.remove();
+            this._clearChildCache(bar);
+        }
     },
 
     /**
@@ -317,34 +311,37 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         if (this[dimCache] !== middleChildSize) {
             this[dimCache] = middleChildSize;
 
-            transition = {
-                duration : duration             
-            };
-
-            if(NATIVE_TRANSITIONS) {
-                transition.transform = scale + middleChildSize + CLOSE;
-            } else {
-                transition[dim] = middleChildSize;
-            }
-
-            middleChild.transition(transition);
-
-            // Position Last Child
-            if (!horiz || !basic) {
+            if (middleChildSize > 0) {
 
                 transition = {
-                    duration : duration
+                    duration : duration             
                 };
-        
-                lastChildPosition = scrollbarSize - lastChildSize;
-        
-                if (NATIVE_TRANSITIONS) {
-                    transition.transform = translate + lastChildPosition + PX_CLOSE; 
+    
+                if(NATIVE_TRANSITIONS) {
+                    transition.transform = scale + middleChildSize + CLOSE;
                 } else {
-                    transition[dimOffset] = lastChildPosition; 
+                    transition[dim] = middleChildSize;
                 }
     
-                lastChild.transition(transition);
+                middleChild.transition(transition);
+    
+                // Position Last Child
+                if (!horiz || !basic) {
+    
+                    transition = {
+                        duration : duration
+                    };
+            
+                    lastChildPosition = scrollbarSize - lastChildSize;
+            
+                    if (NATIVE_TRANSITIONS) {
+                        transition.transform = translate + lastChildPosition + PX_CLOSE; 
+                    } else {
+                        transition[dimOffset] = lastChildPosition; 
+                    }
+        
+                    lastChild.transition(transition);
+                }
             }
         }
     },
@@ -411,7 +408,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         var verticalNode = this.get(VERTICAL_NODE),
             horizontalNode = this.get(HORIZONTAL_NODE),
-            
+
             transition = {
                 duration : (animated) ? 0.6 : 0,
                 opacity : (show) ? 1 : 0
