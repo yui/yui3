@@ -31,7 +31,7 @@
 }
 
 .yui3-scrollview-scrollbar .yui3-scrollview-last { 
-    bottom: 0;
+    top: 0;
 }
 
 .yui3-scrollview-scrollbar .yui3-scrollview-middle {
