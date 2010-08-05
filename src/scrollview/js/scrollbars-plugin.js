@@ -5,10 +5,34 @@
  */
 
 var getClassName = Y.ClassNameManager.getClassName,
-    NATIVE_TRANSITIONS = Y.Transition.useNative,
     _classNames,
+    
+    NATIVE_TRANSITIONS = Y.Transition.useNative,    
     SCROLLBAR = 'scrollbar',
-    SCROLLVIEW = 'scrollview';
+    SCROLLVIEW = 'scrollview',
+
+    VERTICAL_NODE = "verticalNode",
+    HORIZONTAL_NODE = "horizontalNode",
+
+    CHILD_CACHE = "childCache",
+
+    TOP = "top",
+    LEFT = "left",
+    WIDTH = "width",
+    HEIGHT = "height",
+    SCROLL_WIDTH = "scrollWidth",
+    SCROLL_HEIGHT = "scrollHeight",
+
+    HORIZ_CACHE = "_sbh",
+    VERT_CACHE = "_sbv",
+
+    TRANSLATE_X = "translateX(",
+    TRANSLATE_Y = "translateY(",
+    SCALE_X = "scaleX(",
+    SCALE_Y = "scaleY(",
+
+    CLOSE = ")",
+    PX_CLOSE = "px" + CLOSE;
 
 /**
  * ScrollView plugin that adds scroll indicators to ScrollView instances
@@ -117,7 +141,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         this.afterHostMethod('_uiScrollY', this._update);
         this.afterHostMethod('_uiScrollX', this._update);
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
-        this.doAfter('scrollEnd', this.flash);
+        this.afterHostEvent('scrollEnd', this.flash);
     },
 
     /**
@@ -133,8 +157,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var host = this._host,
             boundingBox = host._bb,
 
-            verticalNode = this.get('verticalNode'),
-            horizontalNode = this.get('horizontalNode'),
+            verticalNode = this.get(VERTICAL_NODE),
+            horizontalNode = this.get(HORIZONTAL_NODE),
 
             verticalNodeInDoc = verticalNode.inDoc(),
             horizontalNodeInDoc = horizontalNode.inDoc();
@@ -169,6 +193,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
+     * Caches scrollbar child element information,
+     * to optimize _update implementation 
+     * 
      * @method _setChildCache
      * @private
      * @param {Node} node
@@ -179,9 +206,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             fc = c.item(0),
             mc = c.item(1),
             lc = c.item(2),
-            size = node.getData("isHorizontal") ? "offsetWidth" : "offsetHeight";
+            size = node.getData("isHoriz") ? "offsetWidth" : "offsetHeight";
 
-        node.setData("childCache", {
+        node.setData(CHILD_CACHE, {
             fc : fc,
             lc : lc,
             mc : mc,
@@ -191,12 +218,14 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
+     * Clears child cache
+     * 
      * @method _clearChildCache
      * @private
      * @param {Node} node
      */
     _clearChildCache : function(node) {
-        node.clearData("childCache");
+        node.clearData(CHILD_CACHE);
     },
 
     /**
@@ -215,55 +244,74 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var host = this._host,
             basic = this._basic,
             cb = host._cb,
+            
             scrollbarSize = 0,
             scrollbarPos = 1,
-            transition,
-            middleChildSize,
-            lastChildPosition,
-            transitionTransform,
-            transitionProp,
 
-            dim = (horiz) ? "width" : "height",
-            dimOffset = (horiz) ? "left": "top",
-            dimCache = (horiz) ? "_sbh": "_sbv",
-
-            childCache = scrollbar.getData("childCache"),
+            childCache = scrollbar.getData(CHILD_CACHE),
             lastChild = childCache.lc,
             middleChild = childCache.mc,
             firstChildSize = childCache.fcSize,
             lastChildSize = childCache.lcSize,
+            middleChildSize,
+            lastChildPosition,
 
-            widgetSize = host.get(dim),
-            contentSize = (horiz) ? host._scrollWidth || cb.get('scrollWidth') : host._scrollHeight || cb.get('scrollHeight');
+            transition,
+            translate,
+            scale,
 
-        duration = duration/1000;
+            dim,
+            dimOffset,
+            dimCache,
+            widgetSize,
+            contentSize;             
+
+        if (horiz) {
+            dim = WIDTH;
+            dimOffset = LEFT;
+            dimCache = HORIZ_CACHE;
+            widgetSize = host.get(dim);
+            contentSize = host._scrollWidth || cb.get(SCROLL_WIDTH);
+            translate = TRANSLATE_X;
+            scale = SCALE_X;
+        } else {
+            dim = HEIGHT;
+            dimOffset = TOP;
+            dimCache = VERT_CACHE;
+            widgetSize = host.get(dim);
+            contentSize = host._scrollHeight || cb.get(SCROLL_HEIGHT);
+            translate = TRANSLATE_Y;
+            scale = SCALE_Y;
+        }
 
         scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
-        scrollbarPos = Math.floor((current/(contentSize - widgetSize)) * (widgetSize - scrollbarSize)) * -1;
+        scrollbarPos = Math.floor((current/(contentSize - widgetSize)) * (widgetSize - scrollbarSize));
 
         if (scrollbarSize > widgetSize) {
             scrollbarSize = 1;
         }
 
-        if (NATIVE_TRANSITIONS) {
-            transitionTransform = (horiz) ? 'translateX('+scrollbarPos+'px)' : 'translateY('+scrollbarPos+'px)';
-        } else {
-            transitionProp = scrollbarPos;
-        }
-
         if (scrollbarPos > (widgetSize - scrollbarSize)) {
             scrollbarSize = scrollbarSize - (scrollbarPos - (widgetSize - scrollbarSize));
-        }
-
-        if (scrollbarPos < 0) {
-            if (NATIVE_TRANSITIONS) {
-                transitionTransform = (horiz) ? 'translateX(0)' : 'translateY(0)';
-            } else {
-                transitionProp = 0;
-            }
+        } else if (scrollbarPos < 0) {
             scrollbarSize = scrollbarPos + scrollbarSize;
+            scrollbarPos = 0;
         }
 
+        // Position Scrollbar
+        transition = {
+            duration : duration
+        };
+
+        if (NATIVE_TRANSITIONS) {
+            transition.transform = translate + scrollbarPos + PX_CLOSE;
+        } else {
+            transition[dimOffset] = scrollbarPos;
+        }
+
+        scrollbar.transition(transition);
+
+        // Resize Scrollbar Middle Child
         middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
 
         if (this[dimCache] !== middleChildSize) {
@@ -274,41 +322,30 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             };
 
             if(NATIVE_TRANSITIONS) {
-                transition.transform = (horiz) ? 'scaleX('+ middleChildSize +')' : 'scaleY('+ middleChildSize +')';
+                transition.transform = scale + middleChildSize + CLOSE;
             } else {
                 transition[dim] = middleChildSize;
             }
 
             middleChild.transition(transition);
-        }
 
-        transition = {
-            duration : duration
-        };
+            // Position Last Child
+            if (!horiz || !basic) {
 
-        if (NATIVE_TRANSITIONS) {
-            transition.transform = transitionTransform;
-        } else {
-            transition[dimOffset] = transitionProp;
-        }
-
-        scrollbar.transition(transition);
-
-        if (!horiz || !basic) {
-
-            transition = {
-                duration : duration
-            };
+                transition = {
+                    duration : duration
+                };
+        
+                lastChildPosition = scrollbarSize - lastChildSize;
+        
+                if (NATIVE_TRANSITIONS) {
+                    transition.transform = translate + lastChildPosition + PX_CLOSE; 
+                } else {
+                    transition[dimOffset] = lastChildPosition; 
+                }
     
-            lastChildPosition = scrollbarSize - firstChildSize;
-    
-            if (NATIVE_TRANSITIONS) {
-                transition.transform = (horiz) ? 'translateX('+ lastChildPosition +'px)' : 'translateY('+ lastChildPosition +'px)'; 
-            } else {
-                transition[dimOffset] = lastChildPosition; 
+                lastChild.transition(transition);
             }
-
-            lastChild.transition(transition);
         }
     },
 
@@ -322,22 +359,23 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _update: function(currentPos, duration, easing) {
-        var vNode = this.get('verticalNode'),
-            hNode = this.get('horizontalNode'),
+        
+        var vNode = this.get(VERTICAL_NODE),
+            hNode = this.get(HORIZONTAL_NODE),
             host = this._host;
 
-        duration = duration || 0;
+        duration = (duration || 0)/1000;
 
-        if (!this._showingScrollBars) {
+        if (!this._showing) {
             this.show();
         }
 
         if (host._scrollsVertical && vNode) {
-            this._updateBar(vNode, currentPos * -1, duration, false);
+            this._updateBar(vNode, currentPos, duration, false);
         }
 
         if (host._scrollsHorizontal && hNode) {
-            this._updateBar(hNode, currentPos * -1, duration, true);
+            this._updateBar(hNode, currentPos, duration, true);
         }
     },
 
@@ -371,24 +409,25 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */
     _show : function(show, animated) {
 
-        var verticalNode = this.get('verticalNode'),
-            horizontalNode = this.get('horizontalNode'),
+        var verticalNode = this.get(VERTICAL_NODE),
+            horizontalNode = this.get(HORIZONTAL_NODE),
+            
             transition = {
                 duration : (animated) ? 0.6 : 0,
                 opacity : (show) ? 1 : 0
             };
 
-        this._showingScrollBars = show;
+        this._showing = show;
 
-        if(this._flashTimer) {
+        if (this._flashTimer) {
             this._flashTimer.cancel();
         }
 
-        if(verticalNode) {
+        if (verticalNode) {
             verticalNode.transition(transition);
         }
 
-        if(horizontalNode) {
+        if (horizontalNode) {
             horizontalNode.transition(transition);
         }
     },
@@ -402,15 +441,15 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var shouldFlash = false,
             host = this._host;
 
-        if(host._scrollsVertical && (host._scrollHeight > host.get('height'))) {
+        if (host._scrollsVertical && (host._scrollHeight > host.get(HEIGHT))) {
             shouldFlash = true;
         }
 
-        if(host._scrollsHorizontal && (host._scrollWidth > this.get('host').get('width'))) {
+        if (host._scrollsHorizontal && (host._scrollWidth > host.get(WIDTH))) {
             shouldFlash = true;
         }
-        
-        if(shouldFlash) {
+
+        if (shouldFlash) {
             this.show(true);
             this._flashTimer = Y.later(800, this, 'hide', true);
         }
@@ -427,14 +466,14 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _setNode: function(node, name) {
-        var horiz = (name == "horizontalNode");
-        
+        var horiz = (name == HORIZONTAL_NODE);
+
         node = Y.one(node);
 
         if (node) {
             node.addClass(_classNames.scrollbar);
             node.addClass( (horiz) ? _classNames.scrollbarH : _classNames.scrollbarV );
-            node.setData("isHorizontal", horiz);
+            node.setData("isHoriz", horiz);
         }
 
         return node;
