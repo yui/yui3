@@ -562,10 +562,13 @@ var localStorage = Y.config.win.localStorage,
     _defAddFn: function(e) {
         var entry = e.entry,
             request = entry.request,
+            cached = entry.cached,
             expires = this.get("expires");
             
-        entry.expires = isDate(expires) ? expires :
-            (expires ? new Date(new Date().getTime() + this.get("expires")) : null);
+        // Convert Dates to msecs on the way into localStorage
+        entry.cached = cached.getTime();
+        entry.expires = isDate(expires) ? expires.getTime() :
+            (expires ? new Date().getTime() + this.get("expires") : null);
 
         try {
             localStorage.setItem(this.get("sandbox")+JSON.stringify({"request":request}), JSON.stringify(entry));
@@ -634,6 +637,7 @@ var localStorage = Y.config.win.localStorage,
         }
 
         if(entry) {
+            // Convert msecs to Dates on the way out of localStorage
             entry.cached = new Date(entry.cached);
             expires = entry.expires;
             expires = !expires ? null : new Date(expires);
