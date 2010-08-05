@@ -287,7 +287,7 @@
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
             <span class="nx">basic</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">,</span>
             <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
-            
+
             <span class="nx">scrollbarSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 
@@ -307,7 +307,7 @@
             <span class="nx">dimOffset</span><span class="p">,</span>
             <span class="nx">dimCache</span><span class="p">,</span>
             <span class="nx">widgetSize</span><span class="p">,</span>
-            <span class="nx">contentSize</span><span class="p">;</span>             
+            <span class="nx">contentSize</span><span class="p">;</span>     
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">horiz</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">dim</span> <span class="o">=</span> <span class="nx">WIDTH</span><span class="p">;</span>
@@ -341,6 +341,16 @@
             <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="p">}</span>
 
+        <span class="nx">middleChildSize</span> <span class="o">=</span> <span class="p">(</span><span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">firstChildSize</span> <span class="o">+</span> <span class="nx">lastChildSize</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">middleChildSize</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">middleChildSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">middleChildSize</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollbarPos</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="nx">widgetSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">firstChildSize</span> <span class="o">+</span> <span class="nx">lastChildSize</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
         <span class="c1">// Position Scrollbar</span>
         <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
             <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
@@ -355,8 +365,6 @@
         <span class="nx">scrollbar</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
 
         <span class="c1">// Resize Scrollbar Middle Child</span>
-        <span class="nx">middleChildSize</span> <span class="o">=</span> <span class="p">(</span><span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">firstChildSize</span> <span class="o">+</span> <span class="nx">lastChildSize</span><span class="p">));</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">dimCache</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">middleChildSize</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">[</span><span class="nx">dimCache</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span><span class="p">;</span>
 

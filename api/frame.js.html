@@ -182,6 +182,48 @@
             <span class="nx">inst</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
         <span class="p">},</span>
+        <span class="nx">_DOMPaste</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">win</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">originalTarget</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">originalTarget</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">clipboardData</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">clipboardData</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="s1">&#39;Text&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="nx">win</span><span class="p">.</span><span class="nx">clipboardData</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">clipboardData</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="s1">&#39;Text&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">data</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Could be empty, or failed</span>
+                    <span class="c1">// Verify failure</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">win</span><span class="p">.</span><span class="nx">clipboardData</span><span class="p">.</span><span class="nx">setData</span><span class="p">(</span><span class="s1">&#39;Text&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">data</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            
+
+            <span class="nx">e</span><span class="p">.</span><span class="nx">frameTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">frameCurrentTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">frameEvent</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">clipboardData</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span><span class="p">,</span>
+                    <span class="nx">getData</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Failed to collect clipboard data&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">clipboardData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="nx">inst</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;paste&#39;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
 <span class="cm">        * @method _defReadyFn</span>
@@ -190,14 +232,20 @@
         <span class="nx">_defReadyFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
                 <span class="nx">fn</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDomEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-            
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                
+            <span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">.</span><span class="nx">paste</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">v</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;focus&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;blur&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;focus&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;blur&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;paste&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding DOM event to frame: &#39;</span> <span class="o">+</span> <span class="nx">k</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                         <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">});</span>
+            
+            <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;paste&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_DOMPaste</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">));</span>
+
             <span class="c1">//Adding focus/blur to the window object</span>
             <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;focus&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">);</span>
             <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;blur&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">);</span>
