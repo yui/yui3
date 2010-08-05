@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <title>value-change tests</title>
+    <meta charset="utf-8">
+    <title>event-valuechange manual tests</title>
 </head>
 <body>
 
-<h1>value-change tests</h1>
+<h1>event-valuechange manual tests</h1>
 
-<h2>value-change</h2>
+<h2>valueChange</h2>
 <form>
     <input type="text" class="valuechange">
     <textarea class="valuechange"></textarea>
@@ -33,23 +33,14 @@
 </form>
 
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../../../build/value-change/value-change.js"></script>
+<script src="../../../../build/event-valuechange/event-valuechange.js"></script>
 <script>
-// YUI({
-//     gallery: 'gallery-2010.01.20-19'
-// }).use('gallery-value-change', function(Y) {
-//   Y.one("#testInput").on("valueChange", function (e) {
-//     Y.log("the value has changed from " + e.oldValue + " to " + e.value);
-//   });
-// });
-
-var Y = YUI().use('value-change', function(Y) {
-    Y.Node.DOM_EVENTS['input'] = true;
-
+var Y = YUI().use('event-valuechange', function(Y) {
     Y.all('.valuechange').on('valueChange', function (e) {
         Y.log("valueChange: from " + e.prevVal + " to " + e.newVal);
     });
 
+    Y.Node.DOM_EVENTS['input'] = true;
     Y.all('.input').on('input', function (e) {
         Y.log("input: from ? to " + e.currentTarget.get('value'));
     });
