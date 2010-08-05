@@ -134,6 +134,18 @@ YUI.add('editor-bidi', function(Y) {
                 inst.Selection.filterBlocks();
             }
         },
+        /**
+        * Performs a block element filter when the Editor after an content change
+        * @private
+        * @method _afterContentChange
+        */
+
+        _afterContentChange: function() {
+            var host = this.get(HOST), inst = host.getInstance();
+            if (inst) {
+                inst.Selection.filterBlocks();
+            }
+        },
 
         initializer: function() {
             var host = this.get(HOST);
@@ -144,6 +156,7 @@ YUI.add('editor-bidi', function(Y) {
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
+            host.after('contentChange', Y.bind(this._afterContentChange, this));
             
         }    
     }, {
