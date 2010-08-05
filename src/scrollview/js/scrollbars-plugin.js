@@ -238,7 +238,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var host = this._host,
             basic = this._basic,
             cb = host._cb,
-            
+
             scrollbarSize = 0,
             scrollbarPos = 1,
 
@@ -258,7 +258,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dimOffset,
             dimCache,
             widgetSize,
-            contentSize;             
+            contentSize;     
 
         if (horiz) {
             dim = WIDTH;
@@ -292,6 +292,16 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             scrollbarPos = 0;
         }
 
+        middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
+
+        if (middleChildSize < 0) {
+            middleChildSize = 0;
+        }
+
+        if (middleChildSize === 0 && scrollbarPos !== 0) {
+            scrollbarPos = widgetSize - (firstChildSize + lastChildSize) - 1;
+        }
+
         // Position Scrollbar
         transition = {
             duration : duration
@@ -306,8 +316,6 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         scrollbar.transition(transition);
 
         // Resize Scrollbar Middle Child
-        middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
-
         if (this[dimCache] !== middleChildSize) {
             this[dimCache] = middleChildSize;
 
