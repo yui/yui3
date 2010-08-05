@@ -90,7 +90,7 @@ ScrollbarsPlugin.ATTRS = {
      * @type Y.Node
      */
     verticalNode: {
-		setter: '_setVerticalNode',
+		setter: '_setNode',
         value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
     },
 
@@ -101,7 +101,7 @@ ScrollbarsPlugin.ATTRS = {
      * @type Y.Node
      */
     horizontalNode: {
-		setter: '_setHorizontalNode',
+		setter: '_setNode',
         value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
     }
 };
@@ -123,7 +123,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * Set up the DOM nodes for the scrollbars. This method is invoked whenver the
+     * Set up the DOM nodes for the scrollbars. This method is invoked whenever the
      * host's _uiDimensionsChange fires, giving us the opportunity to remove un-needed
      * scrollbars, as well as add one if necessary.
      *
@@ -146,8 +146,10 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if (this._basic) {
                 verticalNode.addClass(_classNames.scrollbarVB);
             }
+            this._setChildCache(verticalNode);
         } else if(!host._scrollsVertical && verticalNodeInDoc) {
             verticalNode.remove();
+            this._clearChildCache(verticalNode);
         }
 
         // Horizontal
@@ -156,8 +158,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if (this._basic) {
                 horizontalNode.addClass(_classNames.scrollbarHB);
             }
+            this._setChildCache(horizontalNode);
+
         } else if(!host._scrollsHorizontal && horizontalNodeInDoc) {
             horizontalNode.remove();
+            this._clearChildCache(horizontalNode);
         }
 
         this._update();
@@ -166,17 +171,48 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
+     * @method _setChildCache
+     * @private
+     * @param {Node} node
+     */
+    _setChildCache : function(node) {
+
+        var c = node.get("children"),
+            fc = c.item(0),
+            mc = c.item(1),
+            lc = c.item(2),
+            size = node.getData("isHorizontal") ? "offsetWidth" : "offsetHeight";
+
+        node.setData("childCache", {
+            fc : fc,
+            lc : lc,
+            mc : mc,
+            fcSize : fc && fc.get(size),
+            lcSize : lc && lc.get(size)
+        });
+    },
+
+    /**
+     * @method _clearChildCache
+     * @private
+     * @param {Node} node
+     */
+    _clearChildCache : function(node) {
+        node.clearData("childCache");
+    },
+
+    /**
      * Utility method, to move/resize either vertical or horizontal scrollbars
      *
-     * @method _updateDim
+     * @method _updateBar
      * @private
-     * 
-     * @param {boolean} vert true if vertical, false if horizontal.
+     *
      * @param {Node} scrollbar The scrollbar node.
      * @param {Number} current The current scroll position.
      * @param {Number} duration The transition duration.
+     * @param {boolean} horiz true if horizontal, false if vertical.
      */
-    _updateDim : function(vert, scrollbar, current, duration) {
+    _updateBar : function(scrollbar, current, duration, horiz) {
 
         var host = this._host,
             basic = this._basic,
@@ -184,16 +220,25 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             scrollbarSize = 0,
             scrollbarPos = 1,
             transition,
-            size,
+            middleChildSize,
+            lastChildPosition,
             transitionTransform,
             transitionProp,
 
-            dim = (vert) ? "height" : "width",
-            dimOffset = (vert) ? "top" : "left",
-            dimCache = (vert) ? "_sbv" : "_sbh",
+            dim = (horiz) ? "width" : "height",
+            dimOffset = (horiz) ? "left": "top",
+            dimCache = (horiz) ? "_sbh": "_sbv",
+
+            childCache = scrollbar.getData("childCache"),
+            lastChild = childCache.lc,
+            middleChild = childCache.mc,
+            firstChildSize = childCache.fcSize,
+            lastChildSize = childCache.lcSize,
 
             widgetSize = host.get(dim),
-            contentSize = (vert) ? host._scrollHeight || cb.get('scrollHeight') : host._scrollWidth || cb.get('scrollWidth');
+            contentSize = (horiz) ? host._scrollWidth || cb.get('scrollWidth') : host._scrollHeight || cb.get('scrollHeight');
+
+        duration = duration/1000;
 
         scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
         scrollbarPos = Math.floor((current/(contentSize - widgetSize)) * (widgetSize - scrollbarSize)) * -1;
@@ -203,7 +248,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         if (NATIVE_TRANSITIONS) {
-            transitionTransform = (vert) ? 'translateY(' + scrollbarPos + 'px)' : 'translateX('+scrollbarPos+'px)';
+            transitionTransform = (horiz) ? 'translateX('+scrollbarPos+'px)' : 'translateY('+scrollbarPos+'px)';
         } else {
             transitionProp = scrollbarPos;
         }
@@ -214,33 +259,33 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         if (scrollbarPos < 0) {
             if (NATIVE_TRANSITIONS) {
-                transitionTransform = 'translate(0,0)';
+                transitionTransform = (horiz) ? 'translateX(0)' : 'translateY(0)';
             } else {
                 transitionProp = 0;
             }
-            scrollbarSize = scrollbarSize + scrollbarPos;
+            scrollbarSize = scrollbarPos + scrollbarSize;
         }
 
-        size = (vert) ? (scrollbarSize-8) : (scrollbarSize-16);
+        middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
 
-        if (this[dimCache] !== size) {
-            this[dimCache] = size;
+        if (this[dimCache] !== middleChildSize) {
+            this[dimCache] = middleChildSize;
 
             transition = {
-                duration : duration/1000                                
+                duration : duration             
             };
 
             if(NATIVE_TRANSITIONS) {
-                transition.transform = (vert) ? 'scaleY('+ size +')' : 'scaleX('+ size +')';
+                transition.transform = (horiz) ? 'scaleX('+ middleChildSize +')' : 'scaleY('+ middleChildSize +')';
             } else {
-                transition[dim] = size;
+                transition[dim] = middleChildSize;
             }
 
-            scrollbar.get('children').item(1).transition(transition);
+            middleChild.transition(transition);
         }
 
         transition = {
-            duration : duration/1000
+            duration : duration
         };
 
         if (NATIVE_TRANSITIONS) {
@@ -251,22 +296,21 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         scrollbar.transition(transition);
 
-        transition = {
-            duration : duration/1000
-        };
+        if (!horiz || !basic) {
 
-        if (NATIVE_TRANSITIONS) {
-            transition.transform = (vert) ? 'translateY('+(scrollbarSize-10)+'px)' : 'translateX('+(scrollbarSize-12)+'px)'; 
-        } else {
-            if (vert) { 
-                transition.top = scrollbarSize-4; 
+            transition = {
+                duration : duration
+            };
+    
+            lastChildPosition = scrollbarSize - firstChildSize;
+    
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = (horiz) ? 'translateX('+ lastChildPosition +'px)' : 'translateY('+ lastChildPosition +'px)'; 
             } else {
-                transition.left = scrollbarSize-12;
+                transition[dimOffset] = lastChildPosition; 
             }
-        }
 
-        if (vert || !basic) {
-            scrollbar.get('children').item(2).transition(transition);
+            lastChild.transition(transition);
         }
     },
 
@@ -281,7 +325,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */
     _update: function(currentPos, duration, easing) {
         var vNode = this.get('verticalNode'),
-            hNode = this.get('horizontalNode');
+            hNode = this.get('horizontalNode'),
+            host = this._host;
 
         duration = duration || 0;
 
@@ -289,12 +334,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this.show();
         }
 
-        if (vNode) {
-            this._updateDim(true, vNode, currentPos * -1, duration);
+        if (host._scrollsVertical && vNode) {
+            this._updateBar(vNode, currentPos * -1, duration, false);
         }
 
-        if (hNode) {
-            this._updateDim(false, hNode, currentPos * -1, duration);
+        if (host._scrollsHorizontal && hNode) {
+            this._updateBar(hNode, currentPos * -1, duration, true);
         }
     },
 
@@ -327,6 +372,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _show : function(show, animated) {
+
         var verticalNode = this.get('verticalNode'),
             horizontalNode = this.get('horizontalNode'),
             transition = {
@@ -373,34 +419,26 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * Setter for the verticalNode attribute
+     * Setter for the verticalNode and horizontalNode attributes
      *
-     * @method _setVerticalNode
-     * @param node {Y.Node} The Y.Node instance for the scrollbar
+     * @method _setNode
+     * @param node {Node} The Y.Node instance for the scrollbar
+     * @param name {String} The attribute name
+     * @return {Node} The Y.Node instance for the scrollbar
+     * 
      * @protected
      */
-    _setVerticalNode: function(node) {
+    _setNode: function(node, name) {
+        var horiz = (name == "horizontalNode");
+        
         node = Y.one(node);
-        if(node) {
-            node.addClass(_classNames.scrollbar);
-            node.addClass(_classNames.scrollbarV);
-        }
-        return node;
-    },
 
-    /**
-     * Setter for the horizontalNode attribute
-     *
-     * @method _setHorizontalNode
-     * @param node {Y.Node} The Y.Node instance for the scrollbar
-     * @protected
-     */
-    _setHorizontalNode: function(node) {
-        node = Y.one(node);
-        if(node) {
+        if (node) {
             node.addClass(_classNames.scrollbar);
-            node.addClass(_classNames.scrollbarH);
+            node.addClass( (horiz) ? _classNames.scrollbarH : _classNames.scrollbarV );
+            node.setData("isHorizontal", horiz);
         }
+
         return node;
     },
 
