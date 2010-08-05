@@ -165,56 +165,66 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         Y.later(500, this, 'flash', true);
     },
 
+    /**
+     * Utility method, to move/resize either vertical or horizontal scrollbars
+     *
+     * @method _updateDim
+     * @private
+     * 
+     * @param {boolean} vert true if vertical, false if horizontal.
+     * @param {Node} scrollbar The scrollbar node.
+     * @param {Number} current The current scroll position.
+     * @param {Number} duration The transition duration.
+     */
     _updateDim : function(vert, scrollbar, current, duration) {
 
         var host = this._host,
             basic = this._basic,
             cb = host._cb,
-            scrollSize = 0,
-            scrollPos = 1,
+            scrollbarSize = 0,
+            scrollbarPos = 1,
             transition,
             size,
             transitionTransform,
             transitionProp,
 
-            dim = (vert) ? "Height" : "Width",
-            dimLower = (vert) ? "height" : "width",
-            offset = (vert) ? "top" : "left",
+            dim = (vert) ? "height" : "width",
+            dimOffset = (vert) ? "top" : "left",
+            dimCache = (vert) ? "_sbv" : "_sbh",
 
-            hostDim = host.get(dimLower),
+            widgetSize = host.get(dim),
+            contentSize = (vert) ? host._scrollHeight || cb.get('scrollHeight') : host._scrollWidth || cb.get('scrollWidth');
 
-            scrollDim = host["_scroll" + dim] || cb.get('scroll' + dim);
+        scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
+        scrollbarPos = Math.floor((current/(contentSize - widgetSize)) * (widgetSize - scrollbarSize)) * -1;
 
-        scrollSize = Math.floor(hostDim * (hostDim/scrollDim));
-        scrollPos = Math.floor((current/(scrollDim - hostDim) ) * (hostDim - scrollSize)) * -1;
-
-        if (scrollSize > hostDim) {
-            scrollSize = 1;
+        if (scrollbarSize > widgetSize) {
+            scrollbarSize = 1;
         }
 
         if (NATIVE_TRANSITIONS) {
-            transitionTransform = (vert) ? 'translate(0, ' + scrollPos + 'px)' : 'translate('+scrollPos+'px, 0)';
+            transitionTransform = (vert) ? 'translateY(' + scrollbarPos + 'px)' : 'translateX('+scrollbarPos+'px)';
         } else {
-            transitionProp = scrollPos;
+            transitionProp = scrollbarPos;
         }
 
-        if (scrollPos > (hostDim - scrollSize)) {
-            scrollSize = scrollSize - (scrollPos - (hostDim - scrollSize));
+        if (scrollbarPos > (widgetSize - scrollbarSize)) {
+            scrollbarSize = scrollbarSize - (scrollbarPos - (widgetSize - scrollbarSize));
         }
 
-        if (scrollPos < 0) {
+        if (scrollbarPos < 0) {
             if (NATIVE_TRANSITIONS) {
                 transitionTransform = 'translate(0,0)';
             } else {
                 transitionProp = 0;
             }
-            scrollSize = scrollSize + scrollPos;
+            scrollbarSize = scrollbarSize + scrollbarPos;
         }
 
-        size = (vert) ? (scrollSize-8) : (scrollSize-16);
+        size = (vert) ? (scrollbarSize-8) : (scrollbarSize-16);
 
-        if (this["_sbSize" + vert] !== size) {
-            this["_sbSize" + vert] = size;
+        if (this[dimCache] !== size) {
+            this[dimCache] = size;
 
             transition = {
                 duration : duration/1000                                
@@ -223,7 +233,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             if(NATIVE_TRANSITIONS) {
                 transition.transform = (vert) ? 'scaleY('+ size +')' : 'scaleX('+ size +')';
             } else {
-                transition[dimLower] = size;
+                transition[dim] = size;
             }
 
             scrollbar.get('children').item(1).transition(transition);
@@ -236,7 +246,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         if (NATIVE_TRANSITIONS) {
             transition.transform = transitionTransform;
         } else {
-            transition[offset] = transitionProp;
+            transition[dimOffset] = transitionProp;
         }
 
         scrollbar.transition(transition);
@@ -246,12 +256,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         };
 
         if (NATIVE_TRANSITIONS) {
-            transition.transform = (vert) ? 'translate(0,'+(scrollSize-10)+'px)' : 'translate('+(scrollSize-12)+'px,0)'; 
+            transition.transform = (vert) ? 'translateY('+(scrollbarSize-10)+'px)' : 'translateX('+(scrollbarSize-12)+'px)'; 
         } else {
             if (vert) { 
-                transition.top = scrollSize-4; 
+                transition.top = scrollbarSize-4; 
             } else {
-                transition.left = scrollSize-12;
+                transition.left = scrollbarSize-12;
             }
         }
 
