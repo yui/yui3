@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: value-change   value-change.js  (YUI Library)</title>
+	<title>API: event-valuechange   event-valuechange.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,11 +16,11 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>value-change&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
+        <h3>event-valuechange&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_value-change.html" title="value-change">value-change</a>
+            &gt; <a href="./module_event-valuechange.html" title="event-valuechange">event-valuechange</a>
                 
-                 &gt; value-change.js (source view) 
+                 &gt; event-valuechange.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -52,7 +52,7 @@
 <span class="cm"> * &lt;code&gt;value&lt;/code&gt; property of an input field or textarea changes as a result</span>
 <span class="cm"> * of a keystroke, mouse operation, or input method editor (IME) input event.</span>
 <span class="cm"> *</span>
-<span class="cm"> * @module value-change</span>
+<span class="cm"> * @module event-valuechange</span>
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
@@ -86,7 +86,7 @@
             <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">newVal</span><span class="p">;</span>
 
             <span class="nx">VC</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">stamp</span><span class="p">].</span><span class="nx">fire</span><span class="p">({</span>
-                <span class="c1">// _event : e, // TODO: is this correct?</span>
+                <span class="nx">_event</span> <span class="o">:</span> <span class="nx">e</span><span class="p">,</span>
                 <span class="nx">newVal</span> <span class="o">:</span> <span class="nx">newVal</span><span class="p">,</span>
                 <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">prevVal</span>
             <span class="p">});</span>
@@ -216,7 +216,6 @@
 <span class="cm"> * @for YUI</span>
 <span class="cm"> */</span>
 
-<span class="c1">// FIXME: synthetic events don&#39;t seem to respect the context param of on()</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onUnsubscribe</span><span class="p">,</span>
     <span class="nx">on</span>    <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onSubscribe</span><span class="p">,</span>
@@ -262,6 +261,7 @@
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class="selected"><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -295,7 +295,6 @@
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
-                                <li class="selected"><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -321,7 +320,7 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="value-change.js.html" title="value-change.js">value-change.js</a></li>
+                                <li class="selected"><a href="event-valuechange.js.html" title="event-valuechange.js">event-valuechange.js</a></li>
                         </ul>
                     </div>
 
