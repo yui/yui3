@@ -431,6 +431,80 @@ scrollbars, as well as add one if necessary.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="private" rel="yui:method" resource="#method__updateDim">
+                                    <h4>
+                                        <a name="method__updateDim">_updateDim</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_updateDim</strong>
+                                           (
+                                                
+                                                        
+                                                         vert
+                                                    
+                                                
+                                                        , 
+                                                         scrollbar
+                                                    
+                                                
+                                                        , 
+                                                         current
+                                                    
+                                                
+                                                        , 
+                                                         duration
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method, to move/resize either vertical or horizontal scrollbars
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">vert</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> true if vertical, false if horizontal.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">scrollbar</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The scrollbar node.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">current</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The current scroll position.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">duration</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The transition duration.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_flash">
                                     <h4>
                                         <a name="method_flash">flash</a></h4>
@@ -1151,6 +1225,7 @@ scrollbars, as well as add one if necessary.
                                 <li class="protected"><a href="#method__setVerticalNode" title="_setVerticalNode">_setVerticalNode</a></li>
                                 <li class="protected"><a href="#method__show" title="_show">_show</a></li>
                                 <li class="protected"><a href="#method__update" title="_update">_update</a></li>
+                                <li class="private"><a href="#method__updateDim" title="_updateDim">_updateDim</a></li>
                                 <li class=""><a href="#method_flash" title="flash">flash</a></li>
                                 <li class=""><a href="#method_hide" title="hide">hide</a></li>
                                 <li class=""><a href="#method_initializer" title="initializer">initializer</a></li>
@@ -1184,7 +1259,7 @@ scrollbars, as well as add one if necessary.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "flash", "url": "Plugin.ScrollViewScrollbars.html#method_flash", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "hide", "url": "Plugin.ScrollViewScrollbars.html#method_hide", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNode", "url": "Plugin.ScrollViewScrollbars.html#config_horizontalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_horizontalNodeChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_hostDimensionsChange", "url": "Plugin.ScrollViewScrollbars.html#method__hostDimensionsChange", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "initializer", "url": "Plugin.ScrollViewScrollbars.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.ATTRS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NAME", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_setHorizontalNode", "url": "Plugin.ScrollViewScrollbars.html#method__setHorizontalNode", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_setVerticalNode", "url": "Plugin.ScrollViewScrollbars.html#method__setVerticalNode", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_show", "url": "Plugin.ScrollViewScrollbars.html#method__show", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "show", "url": "Plugin.ScrollViewScrollbars.html#method_show", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_update", "url": "Plugin.ScrollViewScrollbars.html#method__update", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNode", "url": "Plugin.ScrollViewScrollbars.html#config_verticalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_verticalNodeChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "flash", "url": "Plugin.ScrollViewScrollbars.html#method_flash", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "hide", "url": "Plugin.ScrollViewScrollbars.html#method_hide", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNode", "url": "Plugin.ScrollViewScrollbars.html#config_horizontalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_horizontalNodeChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_hostDimensionsChange", "url": "Plugin.ScrollViewScrollbars.html#method__hostDimensionsChange", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "initializer", "url": "Plugin.ScrollViewScrollbars.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.ATTRS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NAME", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_setHorizontalNode", "url": "Plugin.ScrollViewScrollbars.html#method__setHorizontalNode", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_setVerticalNode", "url": "Plugin.ScrollViewScrollbars.html#method__setVerticalNode", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_show", "url": "Plugin.ScrollViewScrollbars.html#method__show", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "show", "url": "Plugin.ScrollViewScrollbars.html#method_show", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_update", "url": "Plugin.ScrollViewScrollbars.html#method__update", "type": "method"}, {"access": "private", "host": "Plugin.ScrollViewScrollbars", "name": "_updateDim", "url": "Plugin.ScrollViewScrollbars.html#method__updateDim", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNode", "url": "Plugin.ScrollViewScrollbars.html#config_verticalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_verticalNodeChange", "type": "event"}];
 </script>
 </body>
 </html>
