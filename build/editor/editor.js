@@ -563,7 +563,7 @@ YUI.add('frame', function(Y) {
             */
             use: {
                 writeOnce: true,
-                value: ['substitute', 'node', 'selector-css3']
+                value: ['substitute', 'node', 'node-style', 'selector-css3']
             },
             /**
             * @attribute container
@@ -1512,9 +1512,19 @@ YUI.add('exec-command', function(Y) {
                         this._command('styleWithCSS', 'true');
                     }
                     if (sel.isCollapsed) {
+                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                            sel.anchorNode.setStyle('backgroundColor', val);
+                            n = sel.anchorNode;
+                            n.set('innerHTML', '<br>');
+                        } else {
+                            n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                            sel.focusCursor(true, true);
+                        }
+                        /*
                         n = this.command('inserthtml', '<span style="background-color: ' + val + '"><span>&nbsp;</span>&nbsp;</span>');
                         inst.Selection.filterBlocks();
                         sel.selectNode(n.get('firstChild'));
+                        */
                         return n;
                     } else {
                         return this._command(cmd, val);
@@ -2219,7 +2229,7 @@ YUI.add('editor-base', function(Y) {
         * @property USE
         * @type Array
         */
-        USE: ['substitute', 'node','selector-css3', 'selection', 'stylesheet'],
+        USE: ['substitute', 'node', 'selector-css3', 'selection', 'stylesheet'],
         /**
         * The Class Name: editorBase
         * @static
@@ -2612,6 +2622,18 @@ YUI.add('editor-bidi', function(Y) {
                 inst.Selection.filterBlocks();
             }
         },
+        /**
+        * Performs a block element filter when the Editor after an content change
+        * @private
+        * @method _afterContentChange
+        */
+
+        _afterContentChange: function() {
+            var host = this.get(HOST), inst = host.getInstance();
+            if (inst) {
+                inst.Selection.filterBlocks();
+            }
+        },
 
         initializer: function() {
             var host = this.get(HOST);
@@ -2622,6 +2644,7 @@ YUI.add('editor-bidi', function(Y) {
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
+            host.after('contentChange', Y.bind(this._afterContentChange, this));
             
         }    
     }, {
@@ -2667,6 +2690,10 @@ YUI.add('editor-bidi', function(Y) {
         */
         blockParent: function(node, wrap) {
             var parent = node, divNode, firstChild;
+            
+            if (!parent) {
+                parent = Y.one(BODY);
+            }
             
             if (!parent.test(EditorBidi.BLOCKS)) {
                 parent = parent.ancestor(EditorBidi.BLOCKS);
