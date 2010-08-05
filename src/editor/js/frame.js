@@ -170,8 +170,6 @@
                 Y.log('Failed to collect clipboard data', 'warn', 'frame');
                 e.clipboardData = null;
             }
-            
-            Y.later(50, inst, inst.Selection.filterBlocks);
 
             this.fire('paste', e);
         },

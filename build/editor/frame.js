@@ -170,8 +170,6 @@ YUI.add('frame', function(Y) {
             } else {
                 e.clipboardData = null;
             }
-            
-            Y.later(50, inst, inst.Selection.filterBlocks);
 
             this.fire('paste', e);
         },

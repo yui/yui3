@@ -172,8 +172,6 @@ YUI.add('frame', function(Y) {
                 Y.log('Failed to collect clipboard data', 'warn', 'frame');
                 e.clipboardData = null;
             }
-            
-            Y.later(50, inst, inst.Selection.filterBlocks);
 
             this.fire('paste', e);
         },
@@ -2746,14 +2744,29 @@ YUI.add('editor-bidi', function(Y) {
         * @private
         * @method _afterContentChange
         */
-
         _afterContentChange: function() {
             var host = this.get(HOST), inst = host.getInstance();
             if (inst) {
                 inst.Selection.filterBlocks();
             }
         },
+        /**
+        * Performs block/paste filtering after paste.
+        * @private
+        * @method _afterPaste
+        */
+        _afterPaste: function() {
+            var host = this.get(HOST), inst = host.getInstance(),
+                sel = new inst.Selection();
 
+            sel.setCursor();
+            
+            Y.later(50, host, function() {
+                inst.Selection.filterBlocks();
+                sel.focusCursor(true, true);
+            });
+            
+        },
         initializer: function() {
             var host = this.get(HOST);
 
@@ -2764,8 +2777,8 @@ YUI.add('editor-bidi', function(Y) {
             host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
             host.after('contentChange', Y.bind(this._afterContentChange, this));
-            
-        }    
+            host.after('frame:paste', Y.bind(this._afterPaste, this));
+        }
     }, {
         /**
         * The events to check for a direction change on
