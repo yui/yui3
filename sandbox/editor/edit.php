@@ -207,7 +207,7 @@ var yConfig = {
 };
 
 YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', function(Y) {
-    console.log(Y, Y.id);
+    //console.log(Y, Y.id);
     
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
@@ -364,6 +364,27 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     //editor.plug(Y.Plugin.EditorLists);
     //editor.plug(Y.Plugin.EditorTab);
     editor.plug(Y.Plugin.EditorBidi);
+
+    editor.after('frame:paste', function(e) {
+        /*
+        var inst = editor.getInstance();
+        Y.later(100, null, function() {
+            var div = inst.one('p > div');
+            if (div) {
+                div.setAttribute('style', '');
+            }
+        });
+        */
+        /*
+        console.log(e);
+        e.frameEvent.preventDefault();
+        if (e.clipboardData.data) {
+            console.log(e.clipboardData.data);
+            editor.execCommand('paste');
+            //editor.execCommand('insertandfocus', e.clipboardData.data);
+        }
+        */
+    });
 
     editor.on('frame:keydown', function(e) {
         if (e.keyCode === 13) {

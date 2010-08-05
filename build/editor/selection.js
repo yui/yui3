@@ -145,7 +145,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br;
+            sel, single, br, divs, spans;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
@@ -181,7 +181,32 @@ YUI.add('selection', function(Y) {
                     sel.focusCursor(true, false);
                 }
             }
+        } else {
+            single.each(function(p) {
+                var html = p.get('innerHTML');
+                if (html === '') {
+                    p.remove();
+                }
+            });
         }
+        divs = Y.all('div, p');
+        divs.each(function(d) {
+            var html = d.get('innerHTML');
+            if (html === '') {
+                d.remove();
+            } else {
+                if (d.get('childNodes').size() == 1) {
+                    if (d.ancestor('p')) {
+                        d.replace(d.get('firstChild'));
+                    }
+                }
+            }
+        });
+
+        spans = Y.all('.Apple-style-span, .apple-style-span');
+        spans.each(function(s) {
+            s.setAttribute('style', '');
+        });
     };
 
     Y.Selection._wrapBlock = function(wrapped) {
@@ -602,7 +627,7 @@ YUI.add('selection', function(Y) {
                 if (collapse) {
                     try {
                         this._selection.collapse(node, end);
-                    } catch (e) {
+                    } catch (err) {
                         this._selection.collapse(node, 0);
                     }
                 }
