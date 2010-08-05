@@ -202,43 +202,37 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>    
     <span class="nx">_hostDimensionsChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
-            <span class="nx">boundingBox</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
-
-            <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VERTICAL_NODE</span><span class="p">),</span>
-            <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HORIZONTAL_NODE</span><span class="p">),</span>
-
-            <span class="nx">verticalNodeInDoc</span> <span class="o">=</span> <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(),</span>
-            <span class="nx">horizontalNodeInDoc</span> <span class="o">=</span> <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">();</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">verticalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">verticalNode</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarVB</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_setChildCache</span><span class="p">(</span><span class="nx">verticalNode</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="nx">verticalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_clearChildCache</span><span class="p">(</span><span class="nx">verticalNode</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="c1">// Horizontal</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">horizontalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">horizontalNode</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarHB</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_setChildCache</span><span class="p">(</span><span class="nx">horizontalNode</span><span class="p">);</span>
-
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="nx">horizontalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_clearChildCache</span><span class="p">(</span><span class="nx">horizontalNode</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderBar</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VERTICAL_NODE</span><span class="p">),</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderBar</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HORIZONTAL_NODE</span><span class="p">),</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">();</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;flash&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Adds or removes a scrollbar node from the document.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method _renderBar</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {Node} bar The scrollbar node</span>
+<span class="cm">     * @param {boolean} add true, to add the node, false to remove it</span>
+<span class="cm">     */</span>
+    <span class="nx">_renderBar</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">bar</span><span class="p">,</span> <span class="nx">add</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">inDoc</span> <span class="o">=</span> <span class="nx">bar</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(),</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
+            <span class="nx">className</span> <span class="o">=</span> <span class="nx">bar</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="s2">&quot;isHoriz&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarHB</span> <span class="o">:</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarVB</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">add</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">inDoc</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bb</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+            <span class="nx">bar</span><span class="p">.</span><span class="nx">toggleClass</span><span class="p">(</span><span class="nx">className</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_setChildCache</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">add</span> <span class="o">&amp;&amp;</span> <span class="nx">inDoc</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bar</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_clearChildCache</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -366,34 +360,37 @@
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">dimCache</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">middleChildSize</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">[</span><span class="nx">dimCache</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span><span class="p">;</span>
 
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>             
-            <span class="p">};</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">scale</span> <span class="o">+</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="nx">middleChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-
-            <span class="c1">// Position Last Child</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">horiz</span> <span class="o">||</span> <span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">middleChildSize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 
                 <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
+                    <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>             
                 <span class="p">};</span>
-        
-                <span class="nx">lastChildPosition</span> <span class="o">=</span> <span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="nx">lastChildSize</span><span class="p">;</span>
-        
-                <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">lastChildPosition</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span> 
+    
+                <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">scale</span> <span class="o">+</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lastChildPosition</span><span class="p">;</span> 
+                    <span class="nx">transition</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span><span class="p">;</span>
                 <span class="p">}</span>
     
-                <span class="nx">lastChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+                <span class="nx">middleChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+    
+                <span class="c1">// Position Last Child</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">horiz</span> <span class="o">||</span> <span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
+    
+                    <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
+                    <span class="p">};</span>
+            
+                    <span class="nx">lastChildPosition</span> <span class="o">=</span> <span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="nx">lastChildSize</span><span class="p">;</span>
+            
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">lastChildPosition</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span> 
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lastChildPosition</span><span class="p">;</span> 
+                    <span class="p">}</span>
+        
+                    <span class="nx">lastChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -460,7 +457,7 @@
 
         <span class="kd">var</span> <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VERTICAL_NODE</span><span class="p">),</span>
             <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HORIZONTAL_NODE</span><span class="p">),</span>
-            
+
             <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">duration</span> <span class="o">:</span> <span class="p">(</span><span class="nx">animated</span><span class="p">)</span> <span class="o">?</span> <span class="mf">0.6</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="nx">opacity</span> <span class="o">:</span> <span class="p">(</span><span class="nx">show</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span>
