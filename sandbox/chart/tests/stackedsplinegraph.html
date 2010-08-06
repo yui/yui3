@@ -14,11 +14,38 @@ table, tr, td
     border-spacing: 0px;
     vertical-align:top;
 }
+.yui3-tooltip {
+    position:absolute;
+}
+
+.yui3-tooltip-content {
+    color: #000;
+    padding: 2px 5px;
+    border-color: #aeae9e;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #edeeee;
+}
+
+.yui3-tooltip-hidden {
+    visibility:hidden;
+}
+
+.yui3-tooltip-content {
+    font-size: 9px;
+    font-weight:bold;
+}
+
+.yui3-tooltip-content strong {
+    font-size:9px;
+    font-weight:bold;
+}
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
     <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
 	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
     <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip.js"></script>
     <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 		
 </head>		
@@ -35,7 +62,7 @@ table, tr, td
 </div>
 <script>
 
-			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
+			YUI().use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', function (Y)
 				{
 					// Create data 
 					var mydata = {
@@ -227,6 +254,32 @@ table, tr, td
                     Y.on("click", updateAxisLabelRotation, "#rotationbutton");
                     var vaxis = new Y.AxisRenderer({position:"left", axis:numericaxis, styles:leftaxisstyles});
                     vaxis.render("#vertaxis");
+                    
+                    var tt = new Y.Tooltip({
+                        triggerNodes:".yui3-seriesmarker",
+                        delegate: "#chart",
+                        shim:false,
+                        zIndex:2
+                    });
+                    
+                    tt.render();
+                    
+                    tt.on("triggerEnter", function(e) {
+                        var node = e.node,
+                        marker = Y.Widget.getByNode(node),
+                        index = marker.get("index"),
+                        series = marker.get("series"),
+                        xKey = series.get("xKey"),
+                        yKey = series.get("yKey"),
+                        msg = series.get("xDisplayName") + 
+                        ": " + series.get("xAxis").getKeyValueAt(xKey, index) + 
+                        "<br/>" + series.get("yDisplayName") + 
+                        ": " + series.get("yAxis").getKeyValueAt(yKey, index);
+                        if (node) {
+                            
+                            this.setTriggerContent(msg);
+                        }
+                    });
                 });
 </script>
 <!-- END EXAMPLE CODE -->

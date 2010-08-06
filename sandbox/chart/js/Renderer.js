@@ -89,7 +89,6 @@ Y.extend(Renderer, Y.Widget, {
             n = document.createElement("div"),
             style = n.style;
         cb.appendChild(n);
-        n.className = "yui3-seriesmarker";
         style.position = "absolute";
         style.display = "block";
         style.top = "0px"; 

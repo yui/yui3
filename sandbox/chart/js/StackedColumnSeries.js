@@ -56,7 +56,6 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
             type = this.get("type"),
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[type],
-            totalWidth = 0,
             ratio,
             order = this.get("order"),
             lastCollection,
@@ -66,7 +65,7 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
             node = Y.Node.one(this._parentNode).get("parentNode"),
             left,
             marker,
-            bb;
+            bb,
             totalWidth = len * w;
         this._createMarkerCache();
         if(totalWidth > node.offsetWidth)
@@ -128,7 +127,7 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
             left = xcoords[i] - w/2;
             style.width = w;
             style.height = h;
-            marker = this.getMarker.apply(this, [style]);
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
             bb = marker.get("boundingBox");
             bb.setStyle("position", "absolute");
             bb.setStyle("left", left + "px");
@@ -144,11 +143,10 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            markerNode = e.currentTarget,
+            marker = Y.Widget.getByNode(e.currentTarget),
             xcoords = this.get("xcoords"),
             offset,
-            i = Y.Array.indexOf(this._markerNodes, markerNode),
-            marker = this.get("markers")[i];
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker);
         switch(type)
         {
             case "mouseout" :

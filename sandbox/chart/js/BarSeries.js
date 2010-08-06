@@ -88,7 +88,7 @@ Y.extend(BarSeries, Y.CartesianSeries, {
             w = left - this._leftOrigin;
             style.width = w;
             style.height = h;
-            marker = this.getMarker.apply(this, [style]);
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
             bb = marker.get("boundingBox");
             bb.setStyle("position", "absolute");
             bb.setStyle("left", 0 + "px");
@@ -104,11 +104,10 @@ Y.extend(BarSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            markerNode = e.currentTarget,
+            marker = Y.Widget.getByNode(e.currentTarget),
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markerNodes, markerNode),
-            marker = this._markers[i],
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[this.get("type")],
             seriesLen = seriesCollection.length,
