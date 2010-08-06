@@ -106,13 +106,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host.set('bounce', BOUNCE_DECELERATION_CONST);
         }
     },
-    
+
     /**
      * Destructor removes anything added by the plugin
      *
-     * @method destroy
+     * @method destructor
      */
-    destroy: function() {
+    destructor: function() {
         var host = this._host;
 
         if(host.get('bounce') !== 0) {

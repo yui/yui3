@@ -132,7 +132,7 @@
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
 
             //Attach the delegate to the container
-            this._handles.push(Y.delegate('gesturemovestart', Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
+            this._handles.push(Y.delegate(Y.DD.Drag.START_EVENT, Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
 
             this._handles.push(Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont));
 

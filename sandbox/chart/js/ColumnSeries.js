@@ -19,7 +19,16 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     {
         this._setNode();
     },
-	/**
+
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+
+    /**
 	 * @private
 	 */
 	drawSeries: function()
@@ -77,7 +86,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             left = xcoords[i] + offset;
             style.width = w;
             style.height = h;
-            marker = this.getMarker.apply(this, [style]);
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
             bb = marker.get("boundingBox");
             bb.setStyle("position", "absolute");
             bb.setStyle("left", left + "px");
@@ -93,10 +102,10 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
+            marker = Y.Widget.getByNode(e.currentTarget),
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markers, marker),
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[this.get("type")],
             seriesLen = seriesCollection.length,
@@ -108,16 +117,16 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             order = this.get("order");
         switch(type)
         {
-            case "marker:mouseout" :
+            case "mouseout" :
                 marker.set("state", "off");
             break;
-            case "marker:mouseover" :
+            case "mouseover" :
                 marker.set("state", "over");
             break;
-            case "marker:mouseup" :
+            case "mouseup" :
                 marker.set("state", "over");
             break;
-            case "marker:mousedown" :
+            case "mousedown" :
                 marker.set("state", "down");
             break;
         }

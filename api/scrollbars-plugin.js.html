@@ -54,10 +54,34 @@
 <span class="cm"> */</span>
 
 <span class="kd">var</span> <span class="nx">getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">,</span>
-    <span class="nx">NATIVE_TRANSITIONS</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">,</span>
     <span class="nx">_classNames</span><span class="p">,</span>
+    
+    <span class="nx">NATIVE_TRANSITIONS</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">,</span>    
     <span class="nx">SCROLLBAR</span> <span class="o">=</span> <span class="s1">&#39;scrollbar&#39;</span><span class="p">,</span>
-    <span class="nx">SCROLLVIEW</span> <span class="o">=</span> <span class="s1">&#39;scrollview&#39;</span><span class="p">;</span>
+    <span class="nx">SCROLLVIEW</span> <span class="o">=</span> <span class="s1">&#39;scrollview&#39;</span><span class="p">,</span>
+
+    <span class="nx">VERTICAL_NODE</span> <span class="o">=</span> <span class="s2">&quot;verticalNode&quot;</span><span class="p">,</span>
+    <span class="nx">HORIZONTAL_NODE</span> <span class="o">=</span> <span class="s2">&quot;horizontalNode&quot;</span><span class="p">,</span>
+
+    <span class="nx">CHILD_CACHE</span> <span class="o">=</span> <span class="s2">&quot;childCache&quot;</span><span class="p">,</span>
+
+    <span class="nx">TOP</span> <span class="o">=</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span>
+    <span class="nx">LEFT</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span><span class="p">,</span>
+    <span class="nx">WIDTH</span> <span class="o">=</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span>
+    <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span>
+    <span class="nx">SCROLL_WIDTH</span> <span class="o">=</span> <span class="s2">&quot;scrollWidth&quot;</span><span class="p">,</span>
+    <span class="nx">SCROLL_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;scrollHeight&quot;</span><span class="p">,</span>
+
+    <span class="nx">HORIZ_CACHE</span> <span class="o">=</span> <span class="s2">&quot;_sbh&quot;</span><span class="p">,</span>
+    <span class="nx">VERT_CACHE</span> <span class="o">=</span> <span class="s2">&quot;_sbv&quot;</span><span class="p">,</span>
+
+    <span class="nx">TRANSLATE_X</span> <span class="o">=</span> <span class="s2">&quot;translateX(&quot;</span><span class="p">,</span>
+    <span class="nx">TRANSLATE_Y</span> <span class="o">=</span> <span class="s2">&quot;translateY(&quot;</span><span class="p">,</span>
+    <span class="nx">SCALE_X</span> <span class="o">=</span> <span class="s2">&quot;scaleX(&quot;</span><span class="p">,</span>
+    <span class="nx">SCALE_Y</span> <span class="o">=</span> <span class="s2">&quot;scaleY(&quot;</span><span class="p">,</span>
+
+    <span class="nx">CLOSE</span> <span class="o">=</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
+    <span class="nx">PX_CLOSE</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * ScrollView plugin that adds scroll indicators to ScrollView instances</span>
@@ -137,7 +161,7 @@
 <span class="cm">     * @type Y.Node</span>
 <span class="cm">     */</span>
     <span class="nx">verticalNode</span><span class="o">:</span> <span class="p">{</span>
-		<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setVerticalNode&#39;</span><span class="p">,</span>
+		<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setNode&#39;</span><span class="p">,</span>
         <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">ScrollbarsPlugin</span><span class="p">.</span><span class="nx">SCROLLBAR_TEMPLATE</span><span class="p">)</span>
     <span class="p">},</span>
 
@@ -148,7 +172,7 @@
 <span class="cm">     * @type Y.Node</span>
 <span class="cm">     */</span>
     <span class="nx">horizontalNode</span><span class="o">:</span> <span class="p">{</span>
-		<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setHorizontalNode&#39;</span><span class="p">,</span>
+		<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setNode&#39;</span><span class="p">,</span>
         <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">ScrollbarsPlugin</span><span class="p">.</span><span class="nx">SCROLLBAR_TEMPLATE</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">};</span>
@@ -166,11 +190,11 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiScrollY&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiScrollX&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hostDimensionsChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">doAfter</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Set up the DOM nodes for the scrollbars. This method is invoked whenver the</span>
+<span class="cm">     * Set up the DOM nodes for the scrollbars. This method is invoked whenever the</span>
 <span class="cm">     * host&#39;s _uiDimensionsChange fires, giving us the opportunity to remove un-needed</span>
 <span class="cm">     * scrollbars, as well as add one if necessary.</span>
 <span class="cm">     *</span>
@@ -178,39 +202,207 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>    
     <span class="nx">_hostDimensionsChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
-            <span class="nx">boundingBox</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">),</span>
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
 
-            <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;verticalNode&#39;</span><span class="p">),</span>
-            <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;horizontalNode&#39;</span><span class="p">),</span>
-
-            <span class="nx">verticalNodeInDoc</span> <span class="o">=</span> <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(),</span>
-            <span class="nx">horizontalNodeInDoc</span> <span class="o">=</span> <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">();</span>
-
-        <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">verticalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">verticalNode</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarVB</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="nx">verticalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-        <span class="p">}</span>
-
-        <span class="c1">// Horizontal</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">horizontalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">horizontalNode</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarHB</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="nx">horizontalNodeInDoc</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderBar</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VERTICAL_NODE</span><span class="p">),</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderBar</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HORIZONTAL_NODE</span><span class="p">),</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">();</span>
-        
+
         <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;flash&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Adds or removes a scrollbar node from the document.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method _renderBar</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {Node} bar The scrollbar node</span>
+<span class="cm">     * @param {boolean} add true, to add the node, false to remove it</span>
+<span class="cm">     */</span>
+    <span class="nx">_renderBar</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">bar</span><span class="p">,</span> <span class="nx">add</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">inDoc</span> <span class="o">=</span> <span class="nx">bar</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(),</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
+            <span class="nx">className</span> <span class="o">=</span> <span class="nx">bar</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="s2">&quot;isHoriz&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarHB</span> <span class="o">:</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarVB</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">add</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">inDoc</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bb</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+            <span class="nx">bar</span><span class="p">.</span><span class="nx">toggleClass</span><span class="p">(</span><span class="nx">className</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_setChildCache</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">add</span> <span class="o">&amp;&amp;</span> <span class="nx">inDoc</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bar</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_clearChildCache</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Caches scrollbar child element information,</span>
+<span class="cm">     * to optimize _update implementation </span>
+<span class="cm">     * </span>
+<span class="cm">     * @method _setChildCache</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {Node} node</span>
+<span class="cm">     */</span>
+    <span class="nx">_setChildCache</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">),</span>
+            <span class="nx">fc</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="nx">mc</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+            <span class="nx">lc</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+            <span class="nx">size</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="s2">&quot;isHoriz&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;offsetWidth&quot;</span> <span class="o">:</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="p">;</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">setData</span><span class="p">(</span><span class="nx">CHILD_CACHE</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">fc</span> <span class="o">:</span> <span class="nx">fc</span><span class="p">,</span>
+            <span class="nx">lc</span> <span class="o">:</span> <span class="nx">lc</span><span class="p">,</span>
+            <span class="nx">mc</span> <span class="o">:</span> <span class="nx">mc</span><span class="p">,</span>
+            <span class="nx">fcSize</span> <span class="o">:</span> <span class="nx">fc</span> <span class="o">&amp;&amp;</span> <span class="nx">fc</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">size</span><span class="p">),</span>
+            <span class="nx">lcSize</span> <span class="o">:</span> <span class="nx">lc</span> <span class="o">&amp;&amp;</span> <span class="nx">lc</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+        <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Clears child cache</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method _clearChildCache</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {Node} node</span>
+<span class="cm">     */</span>
+    <span class="nx">_clearChildCache</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">clearData</span><span class="p">(</span><span class="nx">CHILD_CACHE</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Utility method, to move/resize either vertical or horizontal scrollbars</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _updateBar</span>
+<span class="cm">     * @private</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {Node} scrollbar The scrollbar node.</span>
+<span class="cm">     * @param {Number} current The current scroll position.</span>
+<span class="cm">     * @param {Number} duration The transition duration.</span>
+<span class="cm">     * @param {boolean} horiz true if horizontal, false if vertical.</span>
+<span class="cm">     */</span>
+    <span class="nx">_updateBar</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scrollbar</span><span class="p">,</span> <span class="nx">current</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">horiz</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
+            <span class="nx">basic</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">,</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
+
+            <span class="nx">scrollbarSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+
+            <span class="nx">childCache</span> <span class="o">=</span> <span class="nx">scrollbar</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">CHILD_CACHE</span><span class="p">),</span>
+            <span class="nx">lastChild</span> <span class="o">=</span> <span class="nx">childCache</span><span class="p">.</span><span class="nx">lc</span><span class="p">,</span>
+            <span class="nx">middleChild</span> <span class="o">=</span> <span class="nx">childCache</span><span class="p">.</span><span class="nx">mc</span><span class="p">,</span>
+            <span class="nx">firstChildSize</span> <span class="o">=</span> <span class="nx">childCache</span><span class="p">.</span><span class="nx">fcSize</span><span class="p">,</span>
+            <span class="nx">lastChildSize</span> <span class="o">=</span> <span class="nx">childCache</span><span class="p">.</span><span class="nx">lcSize</span><span class="p">,</span>
+            <span class="nx">middleChildSize</span><span class="p">,</span>
+            <span class="nx">lastChildPosition</span><span class="p">,</span>
+
+            <span class="nx">transition</span><span class="p">,</span>
+            <span class="nx">translate</span><span class="p">,</span>
+            <span class="nx">scale</span><span class="p">,</span>
+
+            <span class="nx">dim</span><span class="p">,</span>
+            <span class="nx">dimOffset</span><span class="p">,</span>
+            <span class="nx">dimCache</span><span class="p">,</span>
+            <span class="nx">widgetSize</span><span class="p">,</span>
+            <span class="nx">contentSize</span><span class="p">;</span>     
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">horiz</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">dim</span> <span class="o">=</span> <span class="nx">WIDTH</span><span class="p">;</span>
+            <span class="nx">dimOffset</span> <span class="o">=</span> <span class="nx">LEFT</span><span class="p">;</span>
+            <span class="nx">dimCache</span> <span class="o">=</span> <span class="nx">HORIZ_CACHE</span><span class="p">;</span>
+            <span class="nx">widgetSize</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">dim</span><span class="p">);</span>
+            <span class="nx">contentSize</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">||</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_WIDTH</span><span class="p">);</span>
+            <span class="nx">translate</span> <span class="o">=</span> <span class="nx">TRANSLATE_X</span><span class="p">;</span>
+            <span class="nx">scale</span> <span class="o">=</span> <span class="nx">SCALE_X</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">dim</span> <span class="o">=</span> <span class="nx">HEIGHT</span><span class="p">;</span>
+            <span class="nx">dimOffset</span> <span class="o">=</span> <span class="nx">TOP</span><span class="p">;</span>
+            <span class="nx">dimCache</span> <span class="o">=</span> <span class="nx">VERT_CACHE</span><span class="p">;</span>
+            <span class="nx">widgetSize</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">dim</span><span class="p">);</span>
+            <span class="nx">contentSize</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollHeight</span> <span class="o">||</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_HEIGHT</span><span class="p">);</span>
+            <span class="nx">translate</span> <span class="o">=</span> <span class="nx">TRANSLATE_Y</span><span class="p">;</span>
+            <span class="nx">scale</span> <span class="o">=</span> <span class="nx">SCALE_Y</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">scrollbarSize</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">widgetSize</span> <span class="o">*</span> <span class="p">(</span><span class="nx">widgetSize</span><span class="o">/</span><span class="nx">contentSize</span><span class="p">));</span>
+        <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">current</span><span class="o">/</span><span class="p">(</span><span class="nx">contentSize</span> <span class="o">-</span> <span class="nx">widgetSize</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="nx">widgetSize</span> <span class="o">-</span> <span class="nx">scrollbarSize</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">scrollbarSize</span> <span class="o">&gt;</span> <span class="nx">widgetSize</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">scrollbarSize</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">scrollbarPos</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">widgetSize</span> <span class="o">-</span> <span class="nx">scrollbarSize</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">scrollbarSize</span> <span class="o">=</span> <span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">scrollbarPos</span> <span class="o">-</span> <span class="p">(</span><span class="nx">widgetSize</span> <span class="o">-</span> <span class="nx">scrollbarSize</span><span class="p">));</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">scrollbarPos</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">scrollbarSize</span> <span class="o">=</span> <span class="nx">scrollbarPos</span> <span class="o">+</span> <span class="nx">scrollbarSize</span><span class="p">;</span>
+            <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">middleChildSize</span> <span class="o">=</span> <span class="p">(</span><span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">firstChildSize</span> <span class="o">+</span> <span class="nx">lastChildSize</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">middleChildSize</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">middleChildSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">middleChildSize</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollbarPos</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="nx">widgetSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">firstChildSize</span> <span class="o">+</span> <span class="nx">lastChildSize</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Position Scrollbar</span>
+        <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
+        <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">scrollbarPos</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">scrollbarPos</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">scrollbar</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+
+        <span class="c1">// Resize Scrollbar Middle Child</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">dimCache</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">middleChildSize</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">[</span><span class="nx">dimCache</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">middleChildSize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>             
+                <span class="p">};</span>
     
+                <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">scale</span> <span class="o">+</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">transition</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span><span class="p">;</span>
+                <span class="p">}</span>
+    
+                <span class="nx">middleChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+    
+                <span class="c1">// Position Last Child</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">horiz</span> <span class="o">||</span> <span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
+    
+                    <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
+                    <span class="p">};</span>
+            
+                    <span class="nx">lastChildPosition</span> <span class="o">=</span> <span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="nx">lastChildSize</span><span class="p">;</span>
+            
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">lastChildPosition</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span> 
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lastChildPosition</span><span class="p">;</span> 
+                    <span class="p">}</span>
+        
+                    <span class="nx">lastChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Position and resize the scroll bars according to the content size</span>
 <span class="cm">     *</span>
@@ -221,207 +413,26 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_update</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">currentPos</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
-            <span class="nx">basic</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_basic</span><span class="p">,</span>
-            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
-            <span class="nx">scrollSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">scrollPos</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="nx">transform</span><span class="p">,</span>
-            <span class="nx">transformX</span><span class="p">,</span>
-            <span class="nx">transformY</span><span class="p">,</span>
-            <span class="nx">transition</span><span class="p">,</span>
-            <span class="nx">size</span><span class="p">,</span>
-            <span class="nx">height</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">),</span>
-            <span class="nx">width</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">),</span>
-            <span class="nx">scrollHeight</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollHeight</span> <span class="o">||</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollHeight&#39;</span><span class="p">),</span>
-            <span class="nx">scrollWidth</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">||</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollWidth&#39;</span><span class="p">),</span>
-            <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;verticalNode&#39;</span><span class="p">),</span>
-            <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;horizontalNode&#39;</span><span class="p">),</span>
-            <span class="nx">currentX</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollX&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="nx">currentY</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollY&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="nx">node</span><span class="p">;</span>
+        
+        <span class="kd">var</span> <span class="nx">vNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VERTICAL_NODE</span><span class="p">),</span>
+            <span class="nx">hNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HORIZONTAL_NODE</span><span class="p">),</span>
+            <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
 
-        <span class="c1">// TODO: Remove 4px cross dependency on CSS</span>
+        <span class="nx">duration</span> <span class="o">=</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">||</span> <span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span><span class="p">;</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_showingScrollBars</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_showing</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">horizontalNode</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollHeight</span> <span class="o">&lt;=</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
-            <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="nx">vNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_updateBar</span><span class="p">(</span><span class="nx">vNode</span><span class="p">,</span> <span class="nx">currentPos</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">height</span> <span class="o">*</span> <span class="p">(</span><span class="nx">height</span><span class="o">/</span><span class="nx">scrollHeight</span><span class="p">));</span>
-            <span class="nx">scrollPos</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">currentY</span><span class="o">/</span><span class="p">(</span><span class="nx">scrollHeight</span> <span class="o">-</span> <span class="nx">height</span><span class="p">)</span> <span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">height</span><span class="o">-</span><span class="nx">scrollSize</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollSize</span> <span class="o">&gt;</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">scrollSize</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0, &#39;</span><span class="o">+</span><span class="nx">scrollPos</span><span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">transformX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                <span class="nx">transformY</span> <span class="o">=</span> <span class="nx">scrollPos</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">height</span> <span class="o">-</span> <span class="nx">scrollSize</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nx">scrollSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">scrollPos</span> <span class="o">-</span> <span class="p">(</span><span class="nx">height</span> <span class="o">-</span> <span class="nx">scrollSize</span><span class="p">));</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0)&#39;</span><span class="p">;</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">transformX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                    <span class="nx">transformY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                <span class="p">}</span>
-
-                <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nx">scrollSize</span> <span class="o">+</span> <span class="nx">scrollPos</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-
-            <span class="nx">size</span> <span class="o">=</span> <span class="p">(</span><span class="nx">scrollSize</span><span class="o">-</span><span class="mi">8</span><span class="p">);</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verticalScrollSize</span> <span class="o">!=</span> <span class="p">(</span><span class="nx">size</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">verticalScrollSize</span> <span class="o">=</span> <span class="p">(</span><span class="nx">size</span><span class="p">);</span>
-
-                <span class="nx">node</span> <span class="o">=</span> <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-
-                <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>                                
-                <span class="p">};</span>
-
-                <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0) scaleY(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">;</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-                    <span class="p">}</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">size</span><span class="p">;</span>
-                <span class="p">}</span>
-
-                <span class="nx">node</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
-            <span class="p">};</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">transform</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">transformY</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
-            <span class="p">};</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">scrollSize</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span> 
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span> 
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">scrollSize</span><span class="o">-</span><span class="mi">4</span><span class="p">;</span> 
-                <span class="p">}</span>
-            <span class="p">}</span>
-
-            <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-
+        <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="nx">hNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_updateBar</span><span class="p">(</span><span class="nx">hNode</span><span class="p">,</span> <span class="nx">currentPos</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
-
-        <span class="k">if</span><span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
-
-            <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">width</span> <span class="o">*</span> <span class="p">(</span><span class="nx">width</span><span class="o">/</span><span class="nx">scrollWidth</span><span class="p">));</span>
-            <span class="nx">scrollPos</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">currentX</span><span class="o">/</span><span class="p">(</span><span class="nx">scrollWidth</span> <span class="o">-</span> <span class="nx">width</span><span class="p">)</span> <span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">width</span><span class="o">-</span><span class="nx">scrollSize</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollSize</span> <span class="o">&gt;</span> <span class="nx">width</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">scrollSize</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span><span class="nx">scrollPos</span><span class="o">+</span><span class="s1">&#39;px, 0)&#39;</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">transformX</span> <span class="o">=</span> <span class="nx">scrollPos</span><span class="p">;</span>
-                <span class="nx">transformY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">width</span> <span class="o">-</span> <span class="nx">scrollSize</span><span class="p">))</span>
-            <span class="p">{</span>
-                <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nx">scrollSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">scrollPos</span> <span class="o">-</span> <span class="p">(</span><span class="nx">width</span> <span class="o">-</span> <span class="nx">scrollSize</span><span class="p">));</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="nx">scrollPos</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0)&#39;</span><span class="p">;</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">transformX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                    <span class="nx">transformY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                <span class="p">}</span>
-
-                <span class="nx">scrollSize</span> <span class="o">=</span> <span class="nx">scrollSize</span> <span class="o">+</span> <span class="nx">scrollPos</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-
-            <span class="nx">size</span> <span class="o">=</span> <span class="p">(</span><span class="nx">scrollSize</span><span class="o">-</span><span class="mi">16</span><span class="p">);</span>
-
-            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">horizontalScrollSize</span> <span class="o">!=</span> <span class="p">(</span><span class="nx">size</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">horizontalScrollSize</span> <span class="o">=</span> <span class="nx">size</span><span class="p">;</span>
-
-                <span class="nx">node</span> <span class="o">=</span> <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-
-                <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>                                
-                <span class="p">};</span>
-
-                <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(0,0) scaleX(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">;</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="c1">//transition.bottom = 0;</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-                    <span class="p">}</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="p">(</span><span class="nx">size</span><span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="nx">node</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
-            <span class="p">};</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">transform</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="c1">//transition.bottom = transformY;</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">transformX</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
-            <span class="p">};</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">scrollSize</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;px,0)&#39;</span><span class="p">;</span> 
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="c1">//transition.bottom = 0;</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">scrollSize</span><span class="o">-</span><span class="mi">12</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span> <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span> <span class="p">}</span>
-        <span class="p">}</span>                
     <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * Show the scroll bar indicators</span>
 <span class="cm">     *</span>
@@ -451,24 +462,26 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_show</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">show</span><span class="p">,</span> <span class="nx">animated</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;verticalNode&#39;</span><span class="p">),</span>
-            <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;horizontalNode&#39;</span><span class="p">),</span>
+
+        <span class="kd">var</span> <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VERTICAL_NODE</span><span class="p">),</span>
+            <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HORIZONTAL_NODE</span><span class="p">),</span>
+
             <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">duration</span> <span class="o">:</span> <span class="p">(</span><span class="nx">animated</span><span class="p">)</span> <span class="o">?</span> <span class="mf">0.6</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="nx">opacity</span> <span class="o">:</span> <span class="p">(</span><span class="nx">show</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span>
             <span class="p">};</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_showingScrollBars</span> <span class="o">=</span> <span class="nx">show</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_showing</span> <span class="o">=</span> <span class="nx">show</span><span class="p">;</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -482,49 +495,41 @@
         <span class="kd">var</span> <span class="nx">shouldFlash</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollHeight</span> <span class="o">&gt;</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollHeight</span> <span class="o">&gt;</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">)))</span> <span class="p">{</span>
             <span class="nx">shouldFlash</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">&gt;</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WIDTH</span><span class="p">)))</span> <span class="p">{</span>
             <span class="nx">shouldFlash</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
-        
-        <span class="k">if</span><span class="p">(</span><span class="nx">shouldFlash</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">shouldFlash</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hide&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Setter for the verticalNode attribute</span>
+<span class="cm">     * Setter for the verticalNode and horizontalNode attributes</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _setVerticalNode</span>
-<span class="cm">     * @param node {Y.Node} The Y.Node instance for the scrollbar</span>
+<span class="cm">     * @method _setNode</span>
+<span class="cm">     * @param node {Node} The Y.Node instance for the scrollbar</span>
+<span class="cm">     * @param name {String} The attribute name</span>
+<span class="cm">     * @return {Node} The Y.Node instance for the scrollbar</span>
+<span class="cm">     * </span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_setVerticalNode</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbar</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarV</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
-    <span class="p">},</span>
+    <span class="nx">_setNode</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">horiz</span> <span class="o">=</span> <span class="p">(</span><span class="nx">name</span> <span class="o">==</span> <span class="nx">HORIZONTAL_NODE</span><span class="p">);</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Setter for the horizontalNode attribute</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _setHorizontalNode</span>
-<span class="cm">     * @param node {Y.Node} The Y.Node instance for the scrollbar</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_setHorizontalNode</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbar</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarH</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span> <span class="p">(</span><span class="nx">horiz</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarH</span> <span class="o">:</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">scrollbarV</span> <span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">setData</span><span class="p">(</span><span class="s2">&quot;isHoriz&quot;</span><span class="p">,</span> <span class="nx">horiz</span><span class="p">);</span>
         <span class="p">}</span>
+
         <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
     <span class="p">},</span>
 
@@ -565,6 +570,7 @@
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -598,7 +604,6 @@
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -643,7 +648,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterFlick", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterFlick", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destroy", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterFlick", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterFlick", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destructor", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

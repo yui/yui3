@@ -65,7 +65,7 @@
 var HistoryBase     = Y.HistoryBase,
     doc             = Y.config.doc,
     win             = Y.config.win,
-    sessionStorage  = win.sessionStorage,
+    sessionStorage,
     useHistoryHTML5 = Y.config.useHistoryHTML5,
 
     JSON = Y.JSON || win.JSON, // prefer YUI JSON, but fall back to native
@@ -93,6 +93,15 @@ Y.extend(HistoryHTML5, HistoryBase, {
         // subscribed to it. Since popstate fires immediately after onload,
         // the last state may be lost if you return to a page from another page.
         if (config && config[ENABLE_FALLBACK] && YUI.Env.windowLoaded) {
+            // Gecko will throw an error if you attempt to reference
+            // sessionStorage on a page served from a file:// URL, so we have to
+            // be careful here.
+            //
+            // See http://yuilibrary.com/projects/yui3/ticket/2529165
+            try {
+                sessionStorage = win.sessionStorage;
+            } catch (ex) {}
+
             this._loadSessionState();
         }
     },

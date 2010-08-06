@@ -38,7 +38,8 @@ var Lang      = Y.Lang,
     GlobalEnv = YUI.namespace('Env.History'),
     YArray    = Y.Array,
 
-    docMode   = Y.config.doc.documentMode,
+    doc       = Y.config.doc,
+    docMode   = doc.documentMode,
     win       = Y.config.win,
 
     DEFAULT_OPTIONS = {merge: true},
@@ -135,11 +136,14 @@ HistoryBase.html5 = !!(win.history && win.history.pushState &&
  * @static
  */
 
+// Most browsers that support hashchange expose it on the window. Opera 10.6+
+// exposes it on the document (but you can still attach to it on the window).
+//
 // IE8 supports the hashchange event, but only in IE8 Standards
 // Mode. However, IE8 in IE7 compatibility mode still defines the
 // event but never fires it, so we can't just detect the event. We also can't
 // just UA sniff for IE8, since other browsers support this event as well.
-HistoryBase.nativeHashChange = 'onhashchange' in win &&
+HistoryBase.nativeHashChange = ('onhashchange' in win || 'onhashchange' in doc) &&
         (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {
@@ -1278,7 +1282,7 @@ YUI.add('history-html5', function(Y) {
 var HistoryBase     = Y.HistoryBase,
     doc             = Y.config.doc,
     win             = Y.config.win,
-    sessionStorage  = win.sessionStorage,
+    sessionStorage,
     useHistoryHTML5 = Y.config.useHistoryHTML5,
 
     JSON = Y.JSON || win.JSON, // prefer YUI JSON, but fall back to native
@@ -1306,6 +1310,15 @@ Y.extend(HistoryHTML5, HistoryBase, {
         // subscribed to it. Since popstate fires immediately after onload,
         // the last state may be lost if you return to a page from another page.
         if (config && config[ENABLE_FALLBACK] && YUI.Env.windowLoaded) {
+            // Gecko will throw an error if you attempt to reference
+            // sessionStorage on a page served from a file:// URL, so we have to
+            // be careful here.
+            //
+            // See http://yuilibrary.com/projects/yui3/ticket/2529165
+            try {
+                sessionStorage = win.sessionStorage;
+            } catch (ex) {}
+
             this._loadSessionState();
         }
     },

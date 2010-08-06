@@ -89,6 +89,7 @@ foreach (range(1, $count) as $k) {
 <script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript" src="js/delegate.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag-gestures.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -106,7 +107,7 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', 'yui-throttle', function(Y) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', 'yui-throttle', 'drag-gestures', function(Y) {
     //console.log(Y);
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM._useShim = false;
@@ -168,6 +169,8 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     drop.on('drop:hit', function(e) {
         console.log(e);
     });
+
+    localStorage.clear();
 });
 
 </script>

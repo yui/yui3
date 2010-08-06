@@ -419,7 +419,7 @@ Y.extend(BaseAxis, Y.Base,
 	getKeyValueAt: function(key, index)
 	{
 		var value = NaN,
-			keys = this.keys;
+			keys = this._keys;
 		if(keys[key] && keys[key][index]) 
 		{
 			value = keys[key][index];
@@ -998,6 +998,11 @@ CategoryAxis.NAME = "categoryAxis";
 
 Y.extend(CategoryAxis, Y.BaseAxis,
 {
+    /**
+     * @private
+     */
+    _indices: null,
+
 	/**
 	 * Constant used to generate unique id.
 	 */
@@ -1008,20 +1013,6 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 	 */
 	_dataType: "category",
 		
-	/**
-	 * @private (override)
-	 * Returns a numeric value based of a key value and an index.
-	 */
-	_getKeyValueAt: function(key, index)
-	{
-		var value = NaN;
-		if(this.keys[key])
-		{
-			value = index;
-		}
-		return value;
-	},
-
 	/**
 	 * @private
 	 */
@@ -1042,16 +1033,33 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 			labels = [], 
 			dv = this._dataClone.concat(), 
 			len = dv.length;
-		for(i = 0; i < len; ++i)
+	    if(!this._indices)
+        {
+            this._indices = {};
+        }
+        for(i = 0; i < len; ++i)
 		{
 			obj = dv[i];
 			arr[i] = i;
 			labels[i] = obj[key];
 		}
-		this._keys[key] = arr;
+        this._indices[key] = arr;
+		this._keys[key] = labels.concat();
 		this._data = this._data.concat(labels);
 	},
 
+	/**
+	 * Returns an array of values based on an identifier key.
+	 */
+	getDataByKey: function (value)
+	{
+		var keys = this._indices;
+		if(keys[value])
+		{
+			return keys[value];
+		}
+		return null;
+	},
     getTotalMajorUnits: function(majorUnit, len)
     {
         return this._data.length;
@@ -1252,6 +1260,10 @@ function Marker(config)
 Marker.NAME = "marker";
 
 Marker.ATTRS = {
+    series: {
+        value: null
+    },
+
     drawMethod: {
         getter: function()
         {
@@ -1264,6 +1276,10 @@ Marker.ATTRS = {
         }
     },
 
+    index: {
+        value: null
+    },
+
     state: {
         value:"off"
     }
@@ -1274,6 +1290,7 @@ Y.extend(Marker, Y.Renderer, {
     {
         this.after("stylesChange", Y.bind(this._updateHandler, this));
         this.after("stateChange", Y.bind(this._updateHandler, this));
+        Y.one(this.get("node")).addClass("yui3-seriesmarker");
     },
 
     /**
@@ -1686,7 +1703,33 @@ function CartesianSeries(config)
 CartesianSeries.NAME = "cartesianSeries";
 
 CartesianSeries.ATTRS = {
-	type: {		
+	xDisplayName: {
+        getter: function()
+        {
+            return this._xDisplayName || this.get("xKey");
+        },
+
+        setter: function(val)
+        {
+            this._xDisplayName = val;
+            return val;
+        }
+    },
+
+    yDisplayName: {
+        getter: function()
+        {
+            return this._yDisplayName || this.get("yKey");
+        },
+
+        setter: function(val)
+        {
+            this._yDisplayName = val;
+            return val;
+        }
+    },
+
+    type: {		
   	    value: "cartesian"
     },
 	/**
@@ -1759,6 +1802,20 @@ CartesianSeries.ATTRS = {
 			return value !== this.get("yKey");
 		}
 	},
+
+    /**
+     * Array of x values for the series.
+     */
+    xData: {
+        value: null
+    },
+
+    /**
+     * Array of y values for the series.
+     */
+    yData: {
+        value: null
+    },
     
     markers: {
         getter: function()
@@ -1773,6 +1830,16 @@ CartesianSeries.ATTRS = {
 };
 
 Y.extend(CartesianSeries, Y.Renderer, {
+    /**
+     * @private
+     */
+    _xDisplayName: null,
+
+    /**
+     * @private
+     */
+    _yDisplayName: null,
+    
     /**
      * @private
      */
@@ -1817,7 +1884,8 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	_xAxisChangeHandler: function(event)
 	{
-        if(this.get("rendered") && this.get("xKey") && this.get("yKey"))
+        var axesReady = this._updateAxisData();
+        if(this.get("rendered") && axesReady)
 		{
 			this.draw();
 		}
@@ -1830,11 +1898,43 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	_yAxisChangeHandler: function(event)
 	{
-        if(this.get("rendered") && this.get("xKey") && this.get("yKey"))
+        var axesReady = this._updateAxisData();
+        if(this.get("rendered") && axesReady)
 		{
 			this.draw();
 		}
 	},
+
+    /**
+     * @private 
+     */
+    _updateAxisData: function()
+    {
+        var xAxis = this.get("xAxis"),
+            yAxis = this.get("yAxis"),
+            xKey = this.get("xKey"),
+            yKey = this.get("yKey");
+        if(!xAxis || !yAxis || !xKey || !yKey)
+        {
+            return false;
+        }
+        
+        this.set("xData", xAxis.getDataByKey(xKey));
+        this.set("yData", yAxis.getDataByKey(yKey));
+        return true;
+    },
+
+    syncUI: function()
+    {
+        if(this.get("xData") && this.get("yData"))
+        {
+            this.draw();
+        }
+        else if(this._updateAxisData())
+        {
+            this.draw();
+        }
+    },
 
     /**
      * @private
@@ -1870,15 +1970,14 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
-			xKey = this.get("xKey"),
-			yKey = this.get("yKey"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-			xData = xAxis.getDataByKey(xKey).concat(),
-			yData = yAxis.getDataByKey(yKey).concat(),
-			dataLength = xData.length, 	
+            xData = this.get("xData").concat(),
+            yData = this.get("yData").concat(),
+            dataLength,
             direction = this.get("direction"),
             i = 0;
+            dataLength = xData.length; 	
         //Assuming a vertical graph has a range/category for its vertical axis.    
         if(direction === "vertical")
         {
@@ -2120,13 +2219,17 @@ Y.extend(CartesianSeries, Y.Renderer, {
      * @private
      * @description Creates a marker based on its style properties.
      */
-    getMarker: function(styles)
+    getMarker: function(config)
     {
         var marker,
-            cache = this._markerCache;
+            cache = this._markerCache,
+            styles = config.styles,
+            index = config.index;
         if(cache.length > 0)
         {
             marker = cache.shift();
+            marker.set("index", index);
+            marker.set("series", this);
             if(marker.get("styles") !== styles)
             {
                 marker.set("styles", styles);
@@ -2134,14 +2237,12 @@ Y.extend(CartesianSeries, Y.Renderer, {
         }
         else
         {
-            marker = new Y.Marker({styles:styles});
+            config.series = this;
+            marker = new Y.Marker(config);
             marker.render(this.get("node"));
-            marker.after("mouseover", Y.bind(this._markerEventHandler, this));
-            marker.after("mousedown", Y.bind(this._markerEventHandler, this));
-            marker.after("mouseup", Y.bind(this._markerEventHandler, this));
-            marker.after("mouseout", Y.bind(this._markerEventHandler, this));
         }
         this._markers.push(marker);
+        this._markerNodes.push(Y.one(marker.get("node")));
         return marker;
     },   
     
@@ -2160,6 +2261,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
             this._markerCache = [];
         }
         this._markers = [];
+        this._markerNodes = [];
     },
     
     /**
@@ -2220,6 +2322,15 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
     {
         this._setNode();
     },
+    
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+    
     /**
      * @private
      * @description Draws the markers for the graph
@@ -2248,7 +2359,7 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
         {
             top = (ycoords[i] - offsetWidth) + "px";
             left = (xcoords[i] - offsetHeight) + "px";
-            marker = this.getMarker(style);
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
             mnode = marker.get("boundingBox");
             mnode.setStyle("position", "absolute"); 
             mnode.setStyle("top", top);
@@ -2260,32 +2371,32 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
-            mnode = marker.get("boundingBox"),
+            marker = Y.Widget.getByNode(e.currentTarget),
             w,
             h,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markers, marker);
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
+            bb = marker.get("boundingBox");
             switch(type)
             {
-                case "marker:mouseout" :
+                case "mouseout" :
                     marker.set("state", "off");
                 break;
-                case "marker:mouseover" :
+                case "mouseover" :
                     marker.set("state", "over");
                 break;
-                case "marker:mouseup" :
+                case "mouseup" :
                     marker.set("state", "over");
                 break;
-                case "marker:mousedown" :
+                case "mousedown" :
                     marker.set("state", "down");
                 break;
             }
             w = marker.get("width");
             h = marker.get("height");
-            mnode.setStyle("left", (xcoords[i] - w/2) + "px");
-            mnode.setStyle("top", (ycoords[i] - h/2) + "px");    
+            bb.setStyle("left", (xcoords[i] - w/2) + "px");
+            bb.setStyle("top", (ycoords[i] - h/2) + "px");    
     },
 
 	_getDefaultStyles: function()
@@ -2902,7 +3013,16 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     {
         this._setNode();
     },
-	/**
+
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+
+    /**
 	 * @private
 	 */
 	drawSeries: function()
@@ -2960,7 +3080,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             left = xcoords[i] + offset;
             style.width = w;
             style.height = h;
-            marker = this.getMarker.apply(this, [style]);
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
             bb = marker.get("boundingBox");
             bb.setStyle("position", "absolute");
             bb.setStyle("left", left + "px");
@@ -2976,10 +3096,10 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            marker = e.currentTarget,
+            marker = Y.Widget.getByNode(e.currentTarget),
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markers, marker),
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[this.get("type")],
             seriesLen = seriesCollection.length,
@@ -2991,16 +3111,16 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             order = this.get("order");
         switch(type)
         {
-            case "marker:mouseout" :
+            case "mouseout" :
                 marker.set("state", "off");
             break;
-            case "marker:mouseover" :
+            case "mouseover" :
                 marker.set("state", "over");
             break;
-            case "marker:mouseup" :
+            case "mouseup" :
                 marker.set("state", "over");
             break;
-            case "marker:mousedown" :
+            case "mousedown" :
                 marker.set("state", "down");
             break;
         }
@@ -3065,6 +3185,21 @@ BarSeries.ATTRS = {
 };
 
 Y.extend(BarSeries, Y.CartesianSeries, {
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
 	/**
 	 * @private
 	 */
@@ -3074,23 +3209,11 @@ Y.extend(BarSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
+        var style = this._mergeStyles(this.get("styles"), {}),
             w = style.width,
             h = style.height,
-            fillColor = style.fillColor,
-            alpha = style.fillAlpha,
-            fillType = style.fillType || "solid",
-            borderWidth = style.borderWidth,
-            borderColor = style.borderColor,
-            borderAlpha = style.borderAlpha || 1,
-            colors = style.colors,
-            alphas = style.alpha || [],
-            ratios = style.ratios || [],
-            rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -3105,11 +3228,14 @@ Y.extend(BarSeries, Y.CartesianSeries, {
             renderer,
             order = this.get("order"),
             node = Y.Node.one(this._parentNode).get("parentNode"),
-            left;
+            left,
+            marker,
+            bb;
+            this._createMarkerCache();
         for(; i < seriesLen; ++i)
         {
             renderer = seriesCollection[i];
-            seriesHeight += renderer.get("styles").marker.height;
+            seriesHeight += renderer.get("styles").height;
             if(order > i) 
             {
                 offset = seriesHeight;
@@ -3130,22 +3256,70 @@ Y.extend(BarSeries, Y.CartesianSeries, {
             top = ycoords[i] + offset;
             left = xcoords[i];
             w = left - this._leftOrigin;
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, alpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            style.width = w;
+            style.height = h;
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
+            bb = marker.get("boundingBox");
+            bb.setStyle("position", "absolute");
+            bb.setStyle("left", 0 + "px");
+            bb.setStyle("top", top + "px");
         }
+        this._clearMarkerCache();
  	},
+
+    /**
+     * @private
+     * Resizes and positions markers based on a mouse interaction.
+     */
+    _markerEventHandler: function(e)
+    {
+        var type = e.type,
+            marker = Y.Widget.getByNode(e.currentTarget),
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[this.get("type")],
+            seriesLen = seriesCollection.length,
+            seriesHeight = 0,
+            offset = 0,
+            renderer,
+            n = 0,
+            ys = [],
+            order = this.get("order");
+        switch(type)
+        {
+            case "mouseout" :
+                marker.set("state", "off");
+            break;
+            case "mouseover" :
+                marker.set("state", "over");
+            break;
+            case "mouseup" :
+                marker.set("state", "over");
+            break;
+            case "mousedown" :
+                marker.set("state", "down");
+            break;
+        }
+        marker.set("styles", {over:{width:(xcoords[i] - this._leftOrigin)}});
+        for(; n < seriesLen; ++n)
+        {
+            renderer = seriesCollection[n].get("markers")[i];
+            ys[n] = ycoords[i] + seriesHeight;
+            seriesHeight += parseInt(renderer.get("boundingBox").getStyle("height"), 10);
+            if(order > n)
+            {
+                offset = seriesHeight;
+            }
+            offset -= seriesHeight/2;
+        }
+        for(n = 0; n < seriesLen; ++n)
+        {
+            renderer = seriesCollection[n].get("markers")[i];
+            renderer.get("boundingBox").setStyle("top", (ys[n] - seriesHeight/2) + "px");
+        }
+    },
 
 	/**
 	 * @private
@@ -3158,22 +3332,20 @@ Y.extend(BarSeries, Y.CartesianSeries, {
 	/**
 	 * @private
 	 */
-	_getDefaultStyles: function()
+    _getDefaultStyles: function()
     {
         return {
-            marker: {
-                fillColor: "#000000",
-                fillAlpha: 1,
-                borderColor:"#ff0000",
-                borderWidth:0,
-                borderAlpha:1,
-                colors:[],
-                alpha:[],
-                ratios:[],
-                rotation:0,
-                width:6,
-                height:6
+            fill: {
+                color: "#000000",
+                alpha: "1",
+                colors: [],
+                alphas: [],
+                ratios: [],
+                rotation: 0
             },
+            width: 6,
+            height: 6,
+            shape: "rect",
             padding:{
                 top: 0,
                 left: 0,
@@ -3887,7 +4059,23 @@ StackedColumnSeries.ATTRS = {
 };
 
 Y.extend(StackedColumnSeries, Y.CartesianSeries, {
-	/**
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
+    
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+	
+    /**
 	 * @private
 	 */
 	drawSeries: function()
@@ -3896,38 +4084,29 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
+        var style = this._mergeStyles(this.get("styles"), {}),
             w = style.width,
             h = style.height,
-            fillColor = style.fillColor,
-            alpha = style.fillAlpha,
-            fillType = style.fillType || "solid",
-            borderWidth = style.borderWidth,
-            borderColor = style.borderColor,
-            borderAlpha = style.borderAlpha || 1,
-            colors = style.colors,
-            alphas = style.alpha || [],
-            ratios = style.ratios || [],
-            rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
             type = this.get("type"),
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[type],
-            lastCollection,
+            ratio,
             order = this.get("order"),
-            node = Y.Node.one(this._parentNode).get("parentNode"),
+            lastCollection,
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
+            node = Y.Node.one(this._parentNode).get("parentNode"),
             left,
-            ratio,
+            marker,
+            bb,
             totalWidth = len * w;
+        this._createMarkerCache();
         if(totalWidth > node.offsetWidth)
         {
             ratio = this.width/totalWidth;
@@ -3985,44 +4164,67 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
                 }
             }
             left = xcoords[i] - w/2;
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, alpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            style.width = w;
+            style.height = h;
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
+            bb = marker.get("boundingBox");
+            bb.setStyle("position", "absolute");
+            bb.setStyle("left", left + "px");
+            bb.setStyle("top", top + "px");
         }
+        this._clearMarkerCache();
  	},
 
-    drawMarker: function(graphic, func, left, top, w, h)
+    /**
+     * @private
+     * Resizes and positions markers based on a mouse interaction.
+     */
+    _markerEventHandler: function(e)
     {
-        graphic.drawRect(left, top, w, h);
+        var type = e.type,
+            marker = Y.Widget.getByNode(e.currentTarget),
+            xcoords = this.get("xcoords"),
+            offset,
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker);
+        switch(type)
+        {
+            case "mouseout" :
+                marker.set("state", "off");
+            break;
+            case "mouseover" :
+                marker.set("state", "over");
+            break;
+            case "mouseup" :
+                marker.set("state", "over");
+            break;
+            case "mousedown" :
+                marker.set("state", "down");
+            break;
+        }
+        offset = marker.get("width") * 0.5;
+        marker.get("boundingBox").setStyle("left", (xcoords[i] - offset) + "px");    
     },
 	
-	_getDefaultStyles: function()
+	/**
+	 * @private
+	 */
+    _getDefaultStyles: function()
     {
         return {
-            marker: {
-                fillColor: "#000000",
-                fillAlpha: 1,
-                borderColor:"#ff0000",
-                borderWidth:0,
-                borderAlpha:1,
-                colors:[],
-                alpha:[],
-                ratios:[],
-                rotation:0,
-                width:6,
-                height:6
+            fill: {
+                color: "#000000",
+                alpha: "1",
+                colors: [],
+                alphas: [],
+                ratios: [],
+                rotation: 0
             },
+            border: {
+                weight:0
+            },
+            width: 6,
+            height: 6,
+            shape: "rect",
             padding:{
                 top: 0,
                 left: 0,
@@ -4059,29 +4261,33 @@ StackedBarSeries.ATTRS = {
 };
 
 Y.extend(StackedBarSeries, Y.CartesianSeries, {
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
+    
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+    },
+    
     drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
+        var style = this._mergeStyles(this.get("styles"), {}),
             w = style.width,
             h = style.height,
-            fillColor = style.fillColor,
-            alpha = style.fillAlpha,
-            fillType = style.fillType || "solid",
-            borderWidth = style.borderWidth,
-            borderColor = style.borderColor,
-            borderAlpha = style.borderAlpha || 1,
-            colors = style.colors,
-            alphas = style.alpha || [],
-            ratios = style.ratios || [],
-            rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -4096,8 +4302,11 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
             positiveBaseValues,
             useOrigin = order === 0,
             node = Y.Node.one(this._parentNode).get("parentNode"),
-            left;
+            left,
+            marker,
+            bb;
         totalHeight = len * h;
+        this._createMarkerCache();
         if(totalHeight > node.offsetHeight)
         {
             ratio = this.height/totalHeight;
@@ -4159,44 +4368,63 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
                 }
             }
             top -= h/2;        
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, alpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            style.width = w;
+            style.height = h;
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
+            bb = marker.get("boundingBox");
+            bb.setStyle("position", "absolute");
+            bb.setStyle("left", left + "px");
+            bb.setStyle("top", top + "px");
         }
+        this._clearMarkerCache();
  	},
     
-    drawMarker: function(graphic, func, left, top, w, h)
+    /**
+     * @private
+     * Resizes and positions markers based on a mouse interaction.
+     */
+    _markerEventHandler: function(e)
     {
-        graphic.drawRect(left, top, w, h);
+        var type = e.type,
+            marker = Y.Widget.getByNode(e.currentTarget),
+            ycoords = this.get("ycoords"),
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
+            h = marker.get("height");
+        switch(type)
+        {
+            case "mouseout" :
+                marker.set("state", "off");
+            break;
+            case "mouseover" :
+                marker.set("state", "over");
+            break;
+            case "mouseup" :
+                marker.set("state", "over");
+            break;
+            case "mousedown" :
+                marker.set("state", "down");
+            break;
+        }
+        marker.get("boundingBox").setStyle("top", (ycoords[i] - h/2) + "px");    
     },
 	
-	_getDefaultStyles: function()
+	/**
+	 * @private
+	 */
+    _getDefaultStyles: function()
     {
         return {
-            marker: {
-                fillColor: "#000000",
-                fillAlpha: 1,
-                borderColor:"#ff0000",
-                borderWidth:0,
-                borderAlpha:1,
-                colors:[],
-                alpha:[],
-                ratios:[],
-                rotation:0,
-                width:6,
-                height:6
+            fill: {
+                color: "#000000",
+                alpha: "1",
+                colors: [],
+                alphas: [],
+                ratios: [],
+                rotation: 0
             },
+            width: 6,
+            height: 6,
+            shape: "rect",
             padding:{
                 top: 0,
                 left: 0,

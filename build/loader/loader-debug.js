@@ -151,7 +151,8 @@ if (!YUI.Env[Y.version]) {
  *  <li>jsAttributes: object literal containing attributes to add to script nodes</li>
  *  <li>cssAttributes: object literal containing attributes to add to link nodes</li>
  *  <li>timeout:
- *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+ *  The number of milliseconds before a timeout occurs when dynamically loading nodes.  If
+ *  not set, there is no timeout</li>
  *  <li>context:
  *  execution context for all callbacks</li>
  *  <li>onSuccess:
@@ -169,6 +170,12 @@ if (!YUI.Env[Y.version]) {
  *  <li>groups:
  *  A list of group definitions.  Each group can contain specific definitions for base, comboBase,
  *  combine, and accepts a list of modules.  See above for the description of these properties.</li>
+ *  <li>2in3: the version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules
+ *  in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers
+ *  change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox.</li>
+ *  <li>yui2: when using the 2in3 project, you can select the version of YUI 2 to use.  Valid values
+ *  are 2.2.2, 2.3.1, 2.4.1, 2.5.2, 2.6.0, 2.7.0, 2.8.0, and 2.8.1 [default] -- plus all versions
+ *  of YUI 2 going forward.</li>
  * </ul>
  */
 
@@ -189,8 +196,6 @@ var NOT_FOUND       = {},
     L               = Y.Lang,
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
-    win             = Y.config.win,
-    // localStorage    = win && win.JSON && win.localStorage,
     cache,
 
     _path           = function(dir, file, type, nomin) {
@@ -518,23 +523,10 @@ Y.Loader = function(o) {
         self.conditions = Y.merge(GLOBAL_ENV._conditions);
     } 
 
-    // else if (localStorage) {
-    //     cache = localStorage.getItem(modulekey);
-    //     if (cache) {
-    //         self.moduleInfo = JSON.parse(cache);
-    //     }
-    //     // console.log('cached rendered module info');
-    // } 
-
     if (!cache) {
         YObject.each(defaults, function(v, k) {
             self.addModule(v, k);
         });
-        // if (localStorage) {
-        //     try {
-        //         localStorage.setItem(modulekey, JSON.stringify(self.moduleInfo));
-        //     } catch(e) { }
-        // }
     }
 
     if (!GLOBAL_ENV._renderedMods) {
@@ -902,22 +894,6 @@ Y.Loader.prototype = {
             conditions = this.conditions, condmod;
             // , existing = this.moduleInfo[name], newr;
 
-        // Adding a module again merges requirements to pick up new
-        // requirements when the module arrives.  We allow this only
-        // once to prevent redundant checks when an application calls
-        // use() many times.
-        // if (existing && !existing.reparsed) {
-        //     for (i=0; i<o.requires.length; i++) {
-        //         newr = o.requires[i];
-        //         if (YArray.indexOf(existing.requires, newr) == -1) {
-        //             existing.requires.push(newr);
-        //             delete existing.expanded;
-        //         }
-        //     }
-        //     existing.reparsed = true;
-        //     return existing;
-        // }
-
         this.moduleInfo[name] = o;
 
         if (!o.langPack && o.lang) {
@@ -1072,7 +1048,8 @@ Y.Loader.prototype = {
         }
 
         var i, m, j, add, packName, lang,
-            adddef = ON_PAGE[mod.name] && ON_PAGE[mod.name].details,
+            name = mod.name,
+            adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d      = [], 
             r      = mod.requires, 
             o      = mod.optional, 
@@ -1092,22 +1069,22 @@ Y.Loader.prototype = {
                 mod.optional = (mod.optional) ? mod.optional.concat(adddef.optional) : adddef.optional;
             }
             // skins?
-            // console.log('temp mod: ' + mod.name + ', ' + mod.requires);
+            // console.log('temp mod: ' + name + ', ' + mod.requires);
             // console.log(adddef);
         }
 
         // if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
-            // Y.log('already expanded ' + mod.name);
+            // Y.log('already expanded ' + name);
             return mod.expanded;
         }
 
-        // Y.log("getRequires: " + mod.name + " (dirty:" + this.dirty + ", expanded:" + mod.expanded + ")");
+        // Y.log("getRequires: " + name + " (dirty:" + this.dirty + ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
 
         for (i=0; i<r.length; i++) {
-            // Y.log(mod.name + ' requiring ' + r[i]);
+            // Y.log(name + ' requiring ' + r[i]);
             if (!hash[r[i]]) {
                 d.push(r[i]);
                 hash[r[i]] = true;
@@ -1127,7 +1104,15 @@ Y.Loader.prototype = {
         if (r) {
             for (i=0; i<r.length; i++) {
                 if (!hash[r[i]]) {
-                    d.push(r[i]); // should not need the submodule as a dep
+
+                    // if this module has submodules, the requirements list is
+                    // expanded to include the submodules.  This is so we can
+                    // prevent dups when a submodule is already loaded and the
+                    // parent is requested.
+                    if (mod.submodules) {
+                        d.push(r[i]); 
+                    }
+
                     hash[r[i]] = true;
                     m = this.getModule(r[i]);
 
@@ -1165,7 +1150,7 @@ Y.Loader.prototype = {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
 // Y.log('Best lang: ' + lang + ', this.lang: ' + this.lang + ', mod.lang: ' + mod.lang);
                 mod.langCache = this.lang;
-                packName = this.getLangPackName(lang, mod.name);
+                packName = this.getLangPackName(lang, name);
                 if (packName) {
                     d.unshift(packName);
                 }
@@ -1175,6 +1160,7 @@ Y.Loader.prototype = {
         }
 
         mod.expanded_map = YArray.hash(d);
+
         mod.expanded = YObject.keys(mod.expanded_map);
 
         return mod.expanded;
@@ -1208,10 +1194,6 @@ Y.Loader.prototype = {
             o[name] = true;
             m.provides = o;
 
-            // YObject.each(o, function(v, k) {
-            //     supmap[k] = supmap[k] || {};
-            //     supmap[k][name] = true;
-            // }, this);
         }
 
         return m.provides;
@@ -1236,37 +1218,13 @@ Y.Loader.prototype = {
                 this._setup();
             }
 
-            // var key = YObject.keys(this.required) + YObject.keys(this.loaded) + '-' + this.ignoreRegistered + type + VERSION,
-            //     sorted = this.results[key];
-            // this.key = key;
-
-            // console.log('calc key: ' + key);
-            // console.log(this);
-
-            // if (!sorted && localStorage) {
-            //     sorted = localStorage.getItem(key);
-            //     if (sorted) {
-            //         sorted = JSON.parse(sorted);
-            //     }
-            // }
-            
-            // if (sorted) {
-            //     this.sorted = YObject.keys(this._reduce(YArray.hash(sorted)));
-            //     // this.sorted = sorted;
-            //     //
-            //         console.log('cached sort result: ' + key);
-            //         // console.log(this.loaded);
-            //         console.log(sorted);
-            //         console.log(this.sorted);
-            // } else {
-                this._explode();
-                this._conditions();
-                if (this.allowRollup) {
-                    this._rollup();
-                }
-                this._reduce();
-                this._sort();
-            // }
+            this._explode();
+            this._conditions();
+            if (this.allowRollup) {
+                this._rollup();
+            }
+            this._reduce();
+            this._sort();
         }
     },
 
@@ -1393,29 +1351,53 @@ Y.Loader.prototype = {
      * @private
      */
     _explode: function() {
-        var r = this.required, m, reqs, done = {};
+        var r = this.required, m, reqs, done = {},
+            self = this;
 
         // the setup phase is over, all modules have been created
-        this.dirty = false;
+        self.dirty = false;
 
         YObject.each(r, function(v, name) {
             if (!done[name]) {
                 done[name] = true;
-                m = this.getModule(name);
+                m = self.getModule(name);
                 if (m) {
                     var expound = m.expound;
 
                     if (expound) {
-                        r[expound] = this.getModule(expound);
-                        reqs = this.getRequires(r[expound]);
+                        r[expound] = self.getModule(expound);
+                        reqs = self.getRequires(r[expound]);
                         Y.mix(r, YArray.hash(reqs));
                     }
 
-                    reqs = this.getRequires(m);
+                    reqs = self.getRequires(m);
                     Y.mix(r, YArray.hash(reqs));
+
+                    // sups = m.supersedes;
+
+                    // if (sups) {
+                    //     YArray.each(sups, function(sup) {
+                    //         if (sup in self.loaded) {
+                    //             delete r[name];
+                    //         }
+                    //         // if (sup in self.conditions) {
+                    //         r[sup] = true;
+                    //         //}
+                    //     });
+                    // }
+
+                    // remove the definition for a rollup with
+                    // submodules -- getRequires() includes the
+                    // submodules.  Removing the parent makes
+                    // it possible to prevent submodule duplication
+                    // if the parent is requested after a submodule
+                    // has been loaded.
+                    // if (m.submodules) {
+                    //     delete r[name];
+                    // }
                 }
             }
-        }, this);
+        });
 
         // Y.log('After explode: ' + YObject.keys(r));
     },
@@ -1424,6 +1406,8 @@ Y.Loader.prototype = {
         var cond, m, reqs, go,
             conditions = this.conditions,
             r          = this.required;
+
+        // Y.log('conditions: ' + YObject.keys(r));
 
         YObject.each(r, function(moddef, name) {
             if (!(name in this.loaded)) {
@@ -1681,11 +1665,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
         this.sorted = s;
 
-        // this.results[this.key] = s;
-
-        // if (localStorage) {
-        //     localStorage.setItem(this.key, JSON.stringify(s));
-        // }
     },
 
     _insert: function(source, o, type) {
@@ -2611,6 +2590,35 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
+        "plugins": {
+            "dd-drop-plugin": {
+                "requires": [
+                    "dd-drop"
+                ]
+            }, 
+            "dd-gestures": {
+                "condition": {
+                    "test": function(Y) {
+    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);
+}, 
+                    "trigger": "dd-drag"
+                }, 
+                "requires": [
+                    "dd-drag", 
+                    "event-synthetic", 
+                    "event-move"
+                ]
+            }, 
+            "dd-plugin": {
+                "optional": [
+                    "dd-constrain", 
+                    "dd-proxy"
+                ], 
+                "requires": [
+                    "dd-drag"
+                ]
+            }
+        }, 
         "submodules": {
             "dd-constrain": {
                 "requires": [
@@ -2637,11 +2645,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "dd-delegate": {
-                "optional": [
-                    "dd-drop-plugin"
-                ], 
                 "requires": [
                     "dd-drag", 
+                    "dd-drop-plugin", 
                     "event-mouseenter"
                 ]
             }, 
@@ -2653,33 +2659,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drop": {
                 "requires": [
                     "dd-ddm-drop"
-                ]
-            }, 
-            "dd-drop-plugin": {
-                "requires": [
-                    "dd-drop"
-                ]
-            }, 
-            "dd-gestures": {
-                "condition": {
-                    "test": function(Y) {
-    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);                        
-}, 
-                    "trigger": "dd-drag"
-                }, 
-                "requires": [
-                    "dd-drag", 
-                    "event-synthetic", 
-                    "event-gestures"
-                ]
-            }, 
-            "dd-plugin": {
-                "optional": [
-                    "dd-constrain", 
-                    "dd-proxy"
-                ], 
-                "requires": [
-                    "dd-drag"
                 ]
             }, 
             "dd-proxy": {
@@ -2894,6 +2873,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "event-simulate": {
         "requires": [
             "event-base"
+        ]
+    }, 
+    "event-valuechange": {
+        "requires": [
+            "event-focus", 
+            "event-synthetic"
         ]
     }, 
     "history": {
@@ -3346,12 +3331,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "swf"
         ]
     }, 
-    "value-change": {
-        "requires": [
-            "event-focus", 
-            "event-synthetic"
-        ]
-    }, 
     "widget": {
         "plugins": {
             "widget-child": {
@@ -3448,7 +3427,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3dd64d2201d126f43699db6d8265413e';
+YUI.Env[Y.version].md5 = '9831ad3a8846e9881333334843874af1';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

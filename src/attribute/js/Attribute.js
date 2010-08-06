@@ -151,8 +151,9 @@
          *    <dd>
          *    <p>A function, which will return the initial value to set on the attribute. This is useful
          *    for cases where the attribute configuration is defined statically, but needs to 
-         *    reference the host instance ("this") to obtain an initial value.
-         *    If defined, valueFn has precedence over the value property.</p>
+         *    reference the host instance ("this") to obtain an initial value. If both the value and valueFn properties are defined, 
+         *    the value returned by the valueFn has precedence over the value property, unless it returns undefined, in which 
+         *    case the value property is used.</p>
          *
          *    <p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
          *    </dd>

@@ -144,7 +144,7 @@
     */
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br;
+            sel, single, br, divs, spans;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
@@ -181,7 +181,38 @@
                     sel.focusCursor(true, false);
                 }
             }
+        } else {
+            single.each(function(p) {
+                var html = p.get('innerHTML');
+                if (html === '') {
+                    Y.log('Empty Paragraph Tag Found, Removing It', 'info', 'selection');
+                    p.remove();
+                }
+            });
         }
+        divs = Y.all('div, p');
+        divs.each(function(d) {
+            var html = d.get('innerHTML');
+            if (html === '') {
+                Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                d.remove();
+            } else {
+                Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                if (d.get('childNodes').size() == 1) {
+                    Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                    if (d.ancestor('p')) {
+                        Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                        d.replace(d.get('firstChild'));
+                    }
+                }
+            }
+        });
+
+        spans = Y.all('.Apple-style-span, .apple-style-span');
+        Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
+        spans.each(function(s) {
+            s.setAttribute('style', '');
+        });
     };
 
     Y.Selection._wrapBlock = function(wrapped) {
@@ -416,7 +447,9 @@
                     if (n.getAttribute('style') === '') {
                         n.removeAttribute('style');
                     }
-                    items.push(Y.Node.getDOMNode(nodes.item(k)));
+                    if (!n.test('body')) {
+                        items.push(Y.Node.getDOMNode(nodes.item(k)));
+                    }
                 }
             });
             return Y.all(items);
@@ -443,11 +476,11 @@
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
-                if (node && node.test('body')) {
-                    b = Y.Node.create('<span></span>');
-                    node.append(b);
-                    node = b;
-                }
+            if (node && node.test('body')) {
+                b = Y.Node.create('<span></span>');
+                node.append(b);
+                node = b;
+            }
 
             
             if (range.pasteHTML) {
@@ -470,12 +503,19 @@
                 //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
                 if (offset > 0) {
                     inHTML = node.get(textContent);
+
                     txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
                     txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
                     
                     node.replace(txt, node);
                     newNode = Y.Node.create(html);
+                    if (newNode.get('nodeType') === 11) {
+                        b = Y.Node.create('<span></span>');
+                        b.append(newNode);
+                        newNode = b;
+                    }
                     txt.insert(newNode, 'after');
+
                     if (txt2 && txt2.get('length')) {
                         newNode.insert(cur, 'after');
                         cur.insert(txt2, 'after');
@@ -607,7 +647,7 @@
                 if (collapse) {
                     try {
                         this._selection.collapse(node, end);
-                    } catch (e) {
+                    } catch (err) {
                         this._selection.collapse(node, 0);
                     }
                 }

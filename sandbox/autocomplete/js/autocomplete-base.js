@@ -618,5 +618,5 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 });
 
 }, '@VERSION@', {
-    requires: ['base-base', 'node-base', 'value-change']
+    requires: ['base-base', 'event-valuechange', 'node-base']
 });

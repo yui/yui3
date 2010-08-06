@@ -48,6 +48,10 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * they are interested in - "x" or "y". If no axis is specified, the axis along which there was most distance
  * covered is used.
  *
+ * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
+ * however if you want to pass the context and arguments as additional signature arguments to "on", 
+ * you need to provide a null value for the configuration object, e.g: <code>node.on("flick", fn, null, context, arg1, arg2, arg3)</code></p>
+ *
  * @event flick
  * @for YUI
  * @param type {string} "flick"
