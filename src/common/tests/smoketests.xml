@@ -4,6 +4,7 @@
         <url>attribute/tests/attribute.html</url>
         <url>async-queue/tests/async-queue.html</url>
         <url>cache/tests/cache.html</url>
+        <url>cache/tests/cacheoffline.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/collection.html</url>
