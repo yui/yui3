@@ -1,9 +1,11 @@
+YUI.add('event-valuechange', function(Y) {
+
 /**
  * Adds a synthetic <code>valueChange</code> event that fires when the
  * <code>value</code> property of an input field or textarea changes as a result
  * of a keystroke, mouse operation, or input method editor (IME) input event.
  *
- * @module value-change
+ * @module event-valuechange
  */
 
 /**
@@ -37,7 +39,7 @@ VC = {
             VC._history[stamp] = newVal;
 
             VC._events[stamp].fire({
-                // _event : e, // TODO: is this correct?
+                _event : e,
                 newVal : newVal,
                 prevVal: prevVal
             });
@@ -167,7 +169,6 @@ VC = {
  * @for YUI
  */
 
-// FIXME: synthetic events don't seem to respect the context param of on()
 Y.Event.define(VALUE_CHANGE, {
     detach: VC._onUnsubscribe,
     on    : VC._onSubscribe,
@@ -179,3 +180,6 @@ Y.Event.define(VALUE_CHANGE, {
 });
 
 Y.ValueChange = VC;
+
+
+}, '@VERSION@' ,{requires:['event-focus', 'event-synthetic']});

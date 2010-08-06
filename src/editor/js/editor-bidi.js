@@ -133,7 +133,34 @@
                 inst.Selection.filterBlocks();
             }
         },
+        /**
+        * Performs a block element filter when the Editor after an content change
+        * @private
+        * @method _afterContentChange
+        */
+        _afterContentChange: function() {
+            var host = this.get(HOST), inst = host.getInstance();
+            if (inst) {
+                inst.Selection.filterBlocks();
+            }
+        },
+        /**
+        * Performs block/paste filtering after paste.
+        * @private
+        * @method _afterPaste
+        */
+        _afterPaste: function() {
+            var host = this.get(HOST), inst = host.getInstance(),
+                sel = new inst.Selection();
 
+            sel.setCursor();
+            
+            Y.later(50, host, function() {
+                inst.Selection.filterBlocks();
+                sel.focusCursor(true, true);
+            });
+            
+        },
         initializer: function() {
             var host = this.get(HOST);
 
@@ -143,8 +170,9 @@
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
-            
-        }    
+            host.after('contentChange', Y.bind(this._afterContentChange, this));
+            host.after('frame:paste', Y.bind(this._afterPaste, this));
+        }
     }, {
         /**
         * The events to check for a direction change on
@@ -188,6 +216,10 @@
         */
         blockParent: function(node, wrap) {
             var parent = node, divNode, firstChild;
+            
+            if (!parent) {
+                parent = Y.one(BODY);
+            }
             
             if (!parent.test(EditorBidi.BLOCKS)) {
                 parent = parent.ancestor(EditorBidi.BLOCKS);

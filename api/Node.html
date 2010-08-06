@@ -984,7 +984,7 @@ Called with instance context (this === the Node instance)
                                         
                                         
                                         
-                                        Event.Handle
+                                        EventHandle
                                             <strong property="yui:name">delegate</strong>
                                            (
                                                 
@@ -997,14 +997,39 @@ Called with instance context (this === the Node instance)
                                                     
                                                 
                                                         , 
-                                                         selector
+                                                         spec
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Functionality to make the node a delegated event container
+                                            <p>Sets up a delegation listener for an event occurring inside the Node.
+The delegated event will be verified against a supplied selector or
+filtering function to test if the event references at least one node that
+should trigger the subscription callback.</p>
+<p>Selector string filters will trigger the callback if the event originated
+from a node that matches it or is contained in a node that matches it.
+Function filters are called for each Node up the parent axis to the
+subscribing container node, and receive at each level the Node and the event
+object.  The function should return true (or a truthy value) if that Node
+should trigger the subscription callback.  Note, it is possible for filters
+to match multiple Nodes for a single event.  In this case, the delegate
+callback will be executed for each matching Node.</p>
+<p>For each matching Node, the callback will be executed with its 'this'
+object set to the Node matched by the filter (unless a specific context was
+provided during subscription), and the provided event's
+<code>currentTarget</code> will also be set to the matching Node.  The
+containing Node from which the subscription was originally made can be
+referenced as <code>e.container</code>.
                                         </div>
 
                                         <div class="description">
@@ -1021,20 +1046,35 @@ Called with instance context (this === the Node instance)
                                                         <code><span property="yui:name">fn</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute</span>
+                                                        <span property="yui:description">  the callback function to execute.  This function
+will be provided the event object for the delegated event.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">selector</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        <code><span property="yui:name">spec</span>
+                                                        &lt;<span property="yui:type">String|Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  a selector that must match the target of the event.</span>
+                                                        <span property="yui:description">  a selector that must match the target of the
+event or a function to test target and its parents for a match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  optional argument that specifies what 'this' refers to.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  0..n additional arguments to pass on to the callback function.
+These arguments will be added after the event object.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                            Event.Handle
+                                                            EventHandle
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the detach handle</dd>
                                                 </dl>
@@ -4450,6 +4490,7 @@ Formatting is preserved and special characters are treated literally.
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -4483,7 +4524,6 @@ Formatting is preserved and special characters are treated literally.
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>

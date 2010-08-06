@@ -134,6 +134,45 @@ YUI.add('frame', function(Y) {
             inst = null;
             this._iframe.remove();
         },
+        _DOMPaste: function(e) {
+            var inst = this.getInstance(),
+                data = '', win = inst.config.win;
+
+            if (e._event.originalTarget) {
+                data = e._event.originalTarget;
+            }
+            if (e._event.clipboardData) {
+                data = e._event.clipboardData.getData('Text');
+            }
+            
+            if (win.clipboardData) {
+                data = win.clipboardData.getData('Text');
+                if (data == '') { // Could be empty, or failed
+                    // Verify failure
+                    if (!win.clipboardData.setData('Text', data)) {
+                        data = null;
+                    }
+                }
+            }
+            
+
+            e.frameTarget = e.target;
+            e.frameCurrentTarget = e.currentTarget;
+            e.frameEvent = e;
+            
+            if (data) {
+                e.clipboardData = {
+                    data: data,
+                    getData: function() {
+                        return data;
+                    }
+                };
+            } else {
+                e.clipboardData = null;
+            }
+
+            this.fire('paste', e);
+        },
         /**
         * @private
         * @method _defReadyFn
@@ -142,14 +181,19 @@ YUI.add('frame', function(Y) {
         _defReadyFn: function() {
             var inst = this.getInstance(),
                 fn = Y.bind(this._onDomEvent, this);
-            
-            Y.each(Y.Node.DOM_EVENTS, function(v, k) {
+                
+            inst.Node.DOM_EVENTS.paste = 1;
+
+            Y.each(inst.Node.DOM_EVENTS, function(v, k) {
                 if (v === 1) {
-                    if (k !== 'focus' && k !== 'blur') {
+                    if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         inst.on(k, fn, inst.config.doc);
                     }
                 }
             });
+            
+            inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
+
             //Adding focus/blur to the window object
             inst.on('focus', fn, inst.config.win);
             inst.on('blur', fn, inst.config.win);
@@ -563,7 +607,7 @@ YUI.add('frame', function(Y) {
             */
             use: {
                 writeOnce: true,
-                value: ['substitute', 'node', 'selector-css3']
+                value: ['substitute', 'node', 'node-style', 'selector-css3']
             },
             /**
             * @attribute container
@@ -764,7 +808,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br;
+            sel, single, br, divs, spans;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
@@ -800,7 +844,32 @@ YUI.add('selection', function(Y) {
                     sel.focusCursor(true, false);
                 }
             }
+        } else {
+            single.each(function(p) {
+                var html = p.get('innerHTML');
+                if (html === '') {
+                    p.remove();
+                }
+            });
         }
+        divs = Y.all('div, p');
+        divs.each(function(d) {
+            var html = d.get('innerHTML');
+            if (html === '') {
+                d.remove();
+            } else {
+                if (d.get('childNodes').size() == 1) {
+                    if (d.ancestor('p')) {
+                        d.replace(d.get('firstChild'));
+                    }
+                }
+            }
+        });
+
+        spans = Y.all('.Apple-style-span, .apple-style-span');
+        spans.each(function(s) {
+            s.setAttribute('style', '');
+        });
     };
 
     Y.Selection._wrapBlock = function(wrapped) {
@@ -1221,7 +1290,7 @@ YUI.add('selection', function(Y) {
                 if (collapse) {
                     try {
                         this._selection.collapse(node, end);
-                    } catch (e) {
+                    } catch (err) {
                         this._selection.collapse(node, 0);
                     }
                 }
@@ -1512,9 +1581,19 @@ YUI.add('exec-command', function(Y) {
                         this._command('styleWithCSS', 'true');
                     }
                     if (sel.isCollapsed) {
+                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                            sel.anchorNode.setStyle('backgroundColor', val);
+                            n = sel.anchorNode;
+                            n.set('innerHTML', '<br>');
+                        } else {
+                            n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                            sel.focusCursor(true, true);
+                        }
+                        /*
                         n = this.command('inserthtml', '<span style="background-color: ' + val + '"><span>&nbsp;</span>&nbsp;</span>');
                         inst.Selection.filterBlocks();
                         sel.selectNode(n.get('firstChild'));
+                        */
                         return n;
                     } else {
                         return this._command(cmd, val);
@@ -2219,7 +2298,7 @@ YUI.add('editor-base', function(Y) {
         * @property USE
         * @type Array
         */
-        USE: ['substitute', 'node','selector-css3', 'selection', 'stylesheet'],
+        USE: ['substitute', 'node', 'selector-css3', 'selection', 'stylesheet'],
         /**
         * The Class Name: editorBase
         * @static
@@ -2612,7 +2691,34 @@ YUI.add('editor-bidi', function(Y) {
                 inst.Selection.filterBlocks();
             }
         },
+        /**
+        * Performs a block element filter when the Editor after an content change
+        * @private
+        * @method _afterContentChange
+        */
+        _afterContentChange: function() {
+            var host = this.get(HOST), inst = host.getInstance();
+            if (inst) {
+                inst.Selection.filterBlocks();
+            }
+        },
+        /**
+        * Performs block/paste filtering after paste.
+        * @private
+        * @method _afterPaste
+        */
+        _afterPaste: function() {
+            var host = this.get(HOST), inst = host.getInstance(),
+                sel = new inst.Selection();
 
+            sel.setCursor();
+            
+            Y.later(50, host, function() {
+                inst.Selection.filterBlocks();
+                sel.focusCursor(true, true);
+            });
+            
+        },
         initializer: function() {
             var host = this.get(HOST);
 
@@ -2622,8 +2728,9 @@ YUI.add('editor-bidi', function(Y) {
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
-            
-        }    
+            host.after('contentChange', Y.bind(this._afterContentChange, this));
+            host.after('frame:paste', Y.bind(this._afterPaste, this));
+        }
     }, {
         /**
         * The events to check for a direction change on
@@ -2667,6 +2774,10 @@ YUI.add('editor-bidi', function(Y) {
         */
         blockParent: function(node, wrap) {
             var parent = node, divNode, firstChild;
+            
+            if (!parent) {
+                parent = Y.one(BODY);
+            }
             
             if (!parent.test(EditorBidi.BLOCKS)) {
                 parent = parent.ancestor(EditorBidi.BLOCKS);

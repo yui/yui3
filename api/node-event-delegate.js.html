@@ -54,12 +54,37 @@
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Functionality to make the node a delegated event container</span>
+<span class="cm"> * &lt;p&gt;Sets up a delegation listener for an event occurring inside the Node.</span>
+<span class="cm"> * The delegated event will be verified against a supplied selector or</span>
+<span class="cm"> * filtering function to test if the event references at least one node that</span>
+<span class="cm"> * should trigger the subscription callback.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Selector string filters will trigger the callback if the event originated</span>
+<span class="cm"> * from a node that matches it or is contained in a node that matches it.</span>
+<span class="cm"> * Function filters are called for each Node up the parent axis to the</span>
+<span class="cm"> * subscribing container node, and receive at each level the Node and the event</span>
+<span class="cm"> * object.  The function should return true (or a truthy value) if that Node</span>
+<span class="cm"> * should trigger the subscription callback.  Note, it is possible for filters</span>
+<span class="cm"> * to match multiple Nodes for a single event.  In this case, the delegate</span>
+<span class="cm"> * callback will be executed for each matching Node.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;For each matching Node, the callback will be executed with its &#39;this&#39;</span>
+<span class="cm"> * object set to the Node matched by the filter (unless a specific context was</span>
+<span class="cm"> * provided during subscription), and the provided event&#39;s</span>
+<span class="cm"> * &lt;code&gt;currentTarget&lt;/code&gt; will also be set to the matching Node.  The</span>
+<span class="cm"> * containing Node from which the subscription was originally made can be</span>
+<span class="cm"> * referenced as &lt;code&gt;e.container&lt;/code&gt;.</span>
+<span class="cm"> *</span>
 <span class="cm"> * @method delegate</span>
 <span class="cm"> * @param type {String} the event type to delegate</span>
-<span class="cm"> * @param fn {Function} the function to execute</span>
-<span class="cm"> * @param selector {String} a selector that must match the target of the event.</span>
-<span class="cm"> * @return {Event.Handle} the detach handle</span>
+<span class="cm"> * @param fn {Function} the callback function to execute.  This function</span>
+<span class="cm"> *              will be provided the event object for the delegated event.</span>
+<span class="cm"> * @param spec {String|Function} a selector that must match the target of the</span>
+<span class="cm"> *              event or a function to test target and its parents for a match</span>
+<span class="cm"> * @param context {Object} optional argument that specifies what &#39;this&#39; refers to.</span>
+<span class="cm"> * @param args* {any} 0..n additional arguments to pass on to the callback function.</span>
+<span class="cm"> *              These arguments will be added after the event object.</span>
+<span class="cm"> * @return {EventHandle} the detach handle</span>
 <span class="cm"> * @for Node</span>
 <span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">selector</span><span class="p">)</span> <span class="p">{</span>
@@ -104,6 +129,7 @@
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -137,7 +163,6 @@
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>

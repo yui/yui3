@@ -208,9 +208,19 @@ YUI.add('exec-command', function(Y) {
                         this._command('styleWithCSS', 'true');
                     }
                     if (sel.isCollapsed) {
+                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                            sel.anchorNode.setStyle('backgroundColor', val);
+                            n = sel.anchorNode;
+                            n.set('innerHTML', '<br>');
+                        } else {
+                            n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                            sel.focusCursor(true, true);
+                        }
+                        /*
                         n = this.command('inserthtml', '<span style="background-color: ' + val + '"><span>&nbsp;</span>&nbsp;</span>');
                         inst.Selection.filterBlocks();
                         sel.selectNode(n.get('firstChild'));
+                        */
                         return n;
                     } else {
                         return this._command(cmd, val);

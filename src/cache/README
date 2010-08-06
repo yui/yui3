@@ -1,6 +1,11 @@
 3.2.0
-   * Add cache-offline submodule. The cache submodule is renamed to cache-base
+   * Added cache-offline submodule. The cache submodule is renamed to cache-base
    and the cache module is now a rollup.
+   * The Cache class no longer extends Plugin.Base. Cache now extends Base, and
+   CacheOffline extends Cache. Implementers who wish to use Cache as a plugin
+   should use Plugin.Cache in the cache-plugin submodule.
+   * Added "expires" Attribute to Cache. Cached entries now include "expires"
+   and "cached" values.
 
 3.1.1
     * No changes.

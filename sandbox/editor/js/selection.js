@@ -145,7 +145,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br;
+            sel, single, br, divs, spans;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
@@ -182,7 +182,38 @@ YUI.add('selection', function(Y) {
                     sel.focusCursor(true, false);
                 }
             }
+        } else {
+            single.each(function(p) {
+                var html = p.get('innerHTML');
+                if (html === '') {
+                    Y.log('Empty Paragraph Tag Found, Removing It', 'info', 'selection');
+                    p.remove();
+                }
+            });
         }
+        divs = Y.all('div, p');
+        divs.each(function(d) {
+            var html = d.get('innerHTML');
+            if (html === '') {
+                Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                d.remove();
+            } else {
+                Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                if (d.get('childNodes').size() == 1) {
+                    Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                    if (d.ancestor('p')) {
+                        Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                        d.replace(d.get('firstChild'));
+                    }
+                }
+            }
+        });
+
+        spans = Y.all('.Apple-style-span, .apple-style-span');
+        Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
+        spans.each(function(s) {
+            s.setAttribute('style', '');
+        });
     };
 
     Y.Selection._wrapBlock = function(wrapped) {
@@ -608,7 +639,7 @@ YUI.add('selection', function(Y) {
                 if (collapse) {
                     try {
                         this._selection.collapse(node, end);
-                    } catch (e) {
+                    } catch (err) {
                         this._selection.collapse(node, 0);
                     }
                 }

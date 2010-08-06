@@ -36,6 +36,7 @@ table, tr, td
 <tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px"></div></td><td></td></tr>
 </table>
 </div>
+<div id="logdiv"></div>
 <script>
 
 			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
@@ -54,26 +55,63 @@ table, tr, td
 
 					var expensegraphstyles = {
 						color:"#5577AF",
-						marker:{fillColor:"#5577AF", fillAlpha:0.2, width:6, height:6},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#5577AF", 
+                            alpha:0.2
+                        },
+                        width:8, 
+                        height:8,
+                        border: {
+                            color: "#000000",
+						    weight:1
+                        },
+                        over: {
+                            fill: {
+                                alpha: 1
+                            }
+                        },
                         padding:{left:50, right:50}
 					};
 
 					// Add revenue graph styles
 					var revenuegraphstyles = {
 						color:"#FF0000",
-						marker:{fillcolor:"#ff0000", fillAlpha:0.2},
-						weight:"2",
-						showMarkers:true,
+						fill: {
+                            color:"#ff0000", 
+                            alpha:0.2
+                        },
+                        border: {
+						    weight:1,
+                            color: "#00000f",
+                            alpha: 0.4
+                        },
+                        over: {
+                            fill: {
+                                color:"#ffcc00",
+                                alpha: 0.4
+                            }
+                        },
                         padding:{left:50, right:50}
 					};
 
                     var taxgraphstyles = {
 						color:"#ff0000",
-						marker:{fillColor:"#ff0000", width:6, height:6},
-						weight:"2",
-						showMarkers:false,
+						fill: {
+                            color:"#ff0000",
+                        },
+                        width:8, 
+                        height:8,
+                        border: {
+                            weight: 1,
+                            color:"#000000"
+                        },
+                        over: {
+                            fill: {
+                                color: "#fff000",
+                                alpha: 0.4
+                            },
+                            width:12
+                        },
                         padding:{left:50, right:50}
                     };
 				
@@ -169,7 +207,7 @@ table, tr, td
                                                                                             yAxis:numericaxis,
                                                                                             xKey:"day",
                                                                                             yKey:"taxes",
-                                                                                            styles:taxareastyles
+                                                                                            styles:taxgraphstyles
                                                                                         }
                                                                                      ]});
 

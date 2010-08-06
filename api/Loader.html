@@ -136,7 +136,8 @@ charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)</li>
 <li>jsAttributes: object literal containing attributes to add to script nodes</li>
 <li>cssAttributes: object literal containing attributes to add to link nodes</li>
 <li>timeout:
-number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+The number of milliseconds before a timeout occurs when dynamically loading nodes.  If
+not set, there is no timeout</li>
 <li>context:
 execution context for all callbacks</li>
 <li>onSuccess:
@@ -154,6 +155,12 @@ A list of module definitions.  See Loader.addModule for the supported module met
 <li>groups:
 A list of group definitions.  Each group can contain specific definitions for base, comboBase,
 combine, and accepts a list of modules.  See above for the description of these properties.</li>
+<li>2in3: the version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules
+in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers
+change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox.</li>
+<li>yui2: when using the 2in3 project, you can select the version of YUI 2 to use.  Valid values
+are 2.2.2, 2.3.1, 2.4.1, 2.5.2, 2.6.0, 2.7.0, 2.8.0, and 2.8.1 [default] -- plus all versions
+of YUI 2 going forward.</li>
 </ul></span>
                                                 </dd>
                                         </dl>
@@ -1868,6 +1875,7 @@ with an insert
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -1901,7 +1909,6 @@ with an insert
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>

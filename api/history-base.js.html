@@ -85,7 +85,8 @@
     <span class="nx">GlobalEnv</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.History&#39;</span><span class="p">),</span>
     <span class="nx">YArray</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
 
-    <span class="nx">docMode</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span><span class="p">,</span>
+    <span class="nx">doc</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+    <span class="nx">docMode</span>   <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span><span class="p">,</span>
     <span class="nx">win</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
 
     <span class="nx">DEFAULT_OPTIONS</span> <span class="o">=</span> <span class="p">{</span><span class="nx">merge</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span>
@@ -182,11 +183,14 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 
+<span class="c1">// Most browsers that support hashchange expose it on the window. Opera 10.6+</span>
+<span class="c1">// exposes it on the document (but you can still attach to it on the window).</span>
+<span class="c1">//</span>
 <span class="c1">// IE8 supports the hashchange event, but only in IE8 Standards</span>
 <span class="c1">// Mode. However, IE8 in IE7 compatibility mode still defines the</span>
 <span class="c1">// event but never fires it, so we can&#39;t just detect the event. We also can&#39;t</span>
 <span class="c1">// just UA sniff for IE8, since other browsers support this event as well.</span>
-<span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">nativeHashChange</span> <span class="o">=</span> <span class="s1">&#39;onhashchange&#39;</span> <span class="k">in</span> <span class="nx">win</span> <span class="o">&amp;&amp;</span>
+<span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">nativeHashChange</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;onhashchange&#39;</span> <span class="k">in</span> <span class="nx">win</span> <span class="o">||</span> <span class="s1">&#39;onhashchange&#39;</span> <span class="k">in</span> <span class="nx">doc</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
         <span class="p">(</span><span class="o">!</span><span class="nx">docMode</span> <span class="o">||</span> <span class="nx">docMode</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">);</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
@@ -699,6 +703,7 @@
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class="selected"><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -732,7 +737,6 @@
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>

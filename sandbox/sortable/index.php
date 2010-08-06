@@ -110,7 +110,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     //Y.DD.DDM._debugShim = true;
 
     var sel = new Y.Sortable({
-        container: '#one',
+        container: Y.one('#one'),
         nodes: '.item',
         opacity: '.5',
         moveType: 'move',

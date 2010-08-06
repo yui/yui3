@@ -193,6 +193,50 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__clearChildCache">
+                                    <h4>
+                                        <a name="method__clearChildCache">_clearChildCache</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_clearChildCache</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Clears child cache
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__hostDimensionsChange">
                                     <h4>
                                         <a name="method__hostDimensionsChange">_hostDimensionsChange</a></h4>
@@ -208,7 +252,7 @@
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Set up the DOM nodes for the scrollbars. This method is invoked whenver the
+                                            Set up the DOM nodes for the scrollbars. This method is invoked whenever the
 host's _uiDimensionsChange fires, giving us the opportunity to remove un-needed
 scrollbars, as well as add one if necessary.
                                         </div>
@@ -225,27 +269,31 @@ scrollbars, as well as add one if necessary.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__setHorizontalNode">
+                                    <div class="private" rel="yui:method" resource="#method__renderBar">
                                     <h4>
-                                        <a name="method__setHorizontalNode">_setHorizontalNode</a></h4>
+                                        <a name="method__renderBar">_renderBar</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         protected 
+                                         private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_setHorizontalNode</strong>
+                                            <strong property="yui:name">_renderBar</strong>
                                            (
                                                 
                                                         
-                                                         node
+                                                         bar
+                                                    
+                                                
+                                                        , 
+                                                         add
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Setter for the horizontalNode attribute
+                                            Adds or removes a scrollbar node from the document.
                                         </div>
 
                                         <div class="description">
@@ -253,10 +301,16 @@ scrollbars, as well as add one if necessary.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">Y.Node</span>&gt;
+                                                        <code><span property="yui:name">bar</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The Y.Node instance for the scrollbar</span>
+                                                        <span property="yui:description"> The scrollbar node</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">add</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> true, to add the node, false to remove it</span>
                                                         </dd>
                                                 </dl>
 
@@ -269,16 +323,16 @@ scrollbars, as well as add one if necessary.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__setVerticalNode">
+                                    <div class="private" rel="yui:method" resource="#method__setChildCache">
                                     <h4>
-                                        <a name="method__setVerticalNode">_setVerticalNode</a></h4>
+                                        <a name="method__setChildCache">_setChildCache</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         protected 
+                                         private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_setVerticalNode</strong>
+                                            <strong property="yui:name">_setChildCache</strong>
                                            (
                                                 
                                                         
@@ -289,7 +343,8 @@ scrollbars, as well as add one if necessary.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Setter for the verticalNode attribute
+                                            Caches scrollbar child element information,
+to optimize _update implementation
                                         </div>
 
                                         <div class="description">
@@ -298,12 +353,73 @@ scrollbars, as well as add one if necessary.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">Y.Node</span>&gt;
+                                                        &lt;<span property="yui:type">Node</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The Y.Node instance for the scrollbar</span>
+                                                        <span property="yui:description"></span>
                                                         </dd>
                                                 </dl>
 
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setNode">
+                                    <h4>
+                                        <a name="method__setNode">_setNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_setNode</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Setter for the verticalNode and horizontalNode attributes
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Y.Node instance for the scrollbar</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The attribute name</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The Y.Node instance for the scrollbar</dd>
+                                                </dl>
 
 
              
@@ -419,6 +535,80 @@ scrollbars, as well as add one if necessary.
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  Optional easing equation to use during the animation, if duration is set</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__updateBar">
+                                    <h4>
+                                        <a name="method__updateBar">_updateBar</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_updateBar</strong>
+                                           (
+                                                
+                                                        
+                                                         scrollbar
+                                                    
+                                                
+                                                        , 
+                                                         current
+                                                    
+                                                
+                                                        , 
+                                                         duration
+                                                    
+                                                
+                                                        , 
+                                                         horiz
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method, to move/resize either vertical or horizontal scrollbars
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">scrollbar</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The scrollbar node.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">current</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The current scroll position.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">duration</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The transition duration.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">horiz</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> true if horizontal, false if vertical.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1070,6 +1260,7 @@ scrollbars, as well as add one if necessary.
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -1103,7 +1294,6 @@ scrollbars, as well as add one if necessary.
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -1146,11 +1336,14 @@ scrollbars, as well as add one if necessary.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class="private"><a href="#method__clearChildCache" title="_clearChildCache">_clearChildCache</a></li>
                                 <li class="protected"><a href="#method__hostDimensionsChange" title="_hostDimensionsChange">_hostDimensionsChange</a></li>
-                                <li class="protected"><a href="#method__setHorizontalNode" title="_setHorizontalNode">_setHorizontalNode</a></li>
-                                <li class="protected"><a href="#method__setVerticalNode" title="_setVerticalNode">_setVerticalNode</a></li>
+                                <li class="private"><a href="#method__renderBar" title="_renderBar">_renderBar</a></li>
+                                <li class="private"><a href="#method__setChildCache" title="_setChildCache">_setChildCache</a></li>
+                                <li class="protected"><a href="#method__setNode" title="_setNode">_setNode</a></li>
                                 <li class="protected"><a href="#method__show" title="_show">_show</a></li>
                                 <li class="protected"><a href="#method__update" title="_update">_update</a></li>
+                                <li class="private"><a href="#method__updateBar" title="_updateBar">_updateBar</a></li>
                                 <li class=""><a href="#method_flash" title="flash">flash</a></li>
                                 <li class=""><a href="#method_hide" title="hide">hide</a></li>
                                 <li class=""><a href="#method_initializer" title="initializer">initializer</a></li>
@@ -1184,7 +1377,7 @@ scrollbars, as well as add one if necessary.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "flash", "url": "Plugin.ScrollViewScrollbars.html#method_flash", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "hide", "url": "Plugin.ScrollViewScrollbars.html#method_hide", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNode", "url": "Plugin.ScrollViewScrollbars.html#config_horizontalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_horizontalNodeChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_hostDimensionsChange", "url": "Plugin.ScrollViewScrollbars.html#method__hostDimensionsChange", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "initializer", "url": "Plugin.ScrollViewScrollbars.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.ATTRS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NAME", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_setHorizontalNode", "url": "Plugin.ScrollViewScrollbars.html#method__setHorizontalNode", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_setVerticalNode", "url": "Plugin.ScrollViewScrollbars.html#method__setVerticalNode", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_show", "url": "Plugin.ScrollViewScrollbars.html#method__show", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "show", "url": "Plugin.ScrollViewScrollbars.html#method_show", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_update", "url": "Plugin.ScrollViewScrollbars.html#method__update", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNode", "url": "Plugin.ScrollViewScrollbars.html#config_verticalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_verticalNodeChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Plugin.ScrollViewScrollbars", "name": "_clearChildCache", "url": "Plugin.ScrollViewScrollbars.html#method__clearChildCache", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "flash", "url": "Plugin.ScrollViewScrollbars.html#method_flash", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "hide", "url": "Plugin.ScrollViewScrollbars.html#method_hide", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNode", "url": "Plugin.ScrollViewScrollbars.html#config_horizontalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "horizontalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_horizontalNodeChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_hostDimensionsChange", "url": "Plugin.ScrollViewScrollbars.html#method__hostDimensionsChange", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "initializer", "url": "Plugin.ScrollViewScrollbars.html#method_initializer", "type": "method"}, {"access": "private", "host": "Plugin.ScrollViewScrollbars", "name": "_renderBar", "url": "Plugin.ScrollViewScrollbars.html#method__renderBar", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.ATTRS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NAME", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.NS", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "url": "Plugin.ScrollViewScrollbars.html#property_ScrollViewScrollbars.SCROLLBAR_TEMPLATE", "type": "property"}, {"access": "private", "host": "Plugin.ScrollViewScrollbars", "name": "_setChildCache", "url": "Plugin.ScrollViewScrollbars.html#method__setChildCache", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_setNode", "url": "Plugin.ScrollViewScrollbars.html#method__setNode", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_show", "url": "Plugin.ScrollViewScrollbars.html#method__show", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "show", "url": "Plugin.ScrollViewScrollbars.html#method_show", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewScrollbars", "name": "_update", "url": "Plugin.ScrollViewScrollbars.html#method__update", "type": "method"}, {"access": "private", "host": "Plugin.ScrollViewScrollbars", "name": "_updateBar", "url": "Plugin.ScrollViewScrollbars.html#method__updateBar", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNode", "url": "Plugin.ScrollViewScrollbars.html#config_verticalNode", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewScrollbars", "name": "verticalNodeChange", "url": "Plugin.ScrollViewScrollbars.html#event_verticalNodeChange", "type": "event"}];
 </script>
 </body>
 </html>
