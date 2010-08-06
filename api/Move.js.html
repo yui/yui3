@@ -139,7 +139,11 @@
 <span class="cm"> * Sets up a &quot;gesturemovestart&quot; event, that is fired on touch devices in response to a single finger &quot;touchstart&quot;,</span>
 <span class="cm"> * and on mouse based devices in response to a &quot;mousedown&quot;. The subscriber can specify the minimum time</span>
 <span class="cm"> * and distance thresholds which should be crossed before the &quot;gesturemovestart&quot; is fired and for the mouse,</span>
-<span class="cm"> * which button should initiate a &quot;gesturemovestart&quot;. This event can also be listened for using node.delegate(). </span>
+<span class="cm"> * which button should initiate a &quot;gesturemovestart&quot;. This event can also be listened for using node.delegate().</span>
+<span class="cm"> * </span>
+<span class="cm"> * &lt;p&gt;It is recommended that you use Y.bind to set up context and additional arguments for your event handler,</span>
+<span class="cm"> * however if you want to pass the context and arguments as additional signature arguments to on/delegate, </span>
+<span class="cm"> * you need to provide a null value for the configuration object, e.g: &lt;code&gt;node.on(&quot;gesturemovestart&quot;, fn, null, context, arg1, arg2, arg3)&lt;/code&gt;&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @event gesturemovestart</span>
 <span class="cm"> * @for YUI</span>
@@ -331,6 +335,10 @@
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;This event can also be listened for using node.delegate().&lt;/p&gt;</span>
 <span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;It is recommended that you use Y.bind to set up context and additional arguments for your event handler,</span>
+<span class="cm"> * however if you want to pass the context and arguments as additional signature arguments to on/delegate, </span>
+<span class="cm"> * you need to provide a null value for the configuration object, e.g: &lt;code&gt;node.on(&quot;gesturemove&quot;, fn, null, context, arg1, arg2, arg3)&lt;/code&gt;&lt;/p&gt;</span>
+<span class="cm"> *</span>
 <span class="cm"> * @event gesturemove</span>
 <span class="cm"> * @for YUI</span>
 <span class="cm"> * @param type {string} &quot;gesturemove&quot;</span>
@@ -445,6 +453,11 @@
 <span class="cm"> * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.&lt;/p&gt; </span>
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;This event can also be listened for using node.delegate().&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;It is recommended that you use Y.bind to set up context and additional arguments for your event handler,</span>
+<span class="cm"> * however if you want to pass the context and arguments as additional signature arguments to on/delegate, </span>
+<span class="cm"> * you need to provide a null value for the configuration object, e.g: &lt;code&gt;node.on(&quot;gesturemoveend&quot;, fn, null, context, arg1, arg2, arg3)&lt;/code&gt;&lt;/p&gt;</span>
+<span class="cm"> *</span>
 <span class="cm"> *</span>
 <span class="cm"> * @event gesturemoveend</span>
 <span class="cm"> * @for YUI</span>

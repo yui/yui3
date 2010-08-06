@@ -114,7 +114,7 @@
 <span class="kd">var</span> <span class="nx">HistoryBase</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
     <span class="nx">doc</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
     <span class="nx">win</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-    <span class="nx">sessionStorage</span>  <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">sessionStorage</span><span class="p">,</span>
+    <span class="nx">sessionStorage</span><span class="p">,</span>
     <span class="nx">useHistoryHTML5</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useHistoryHTML5</span><span class="p">,</span>
 
     <span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span> <span class="o">||</span> <span class="nx">win</span><span class="p">.</span><span class="nx">JSON</span><span class="p">,</span> <span class="c1">// prefer YUI JSON, but fall back to native</span>
@@ -142,6 +142,15 @@
         <span class="c1">// subscribed to it. Since popstate fires immediately after onload,</span>
         <span class="c1">// the last state may be lost if you return to a page from another page.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">[</span><span class="nx">ENABLE_FALLBACK</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Gecko will throw an error if you attempt to reference</span>
+            <span class="c1">// sessionStorage on a page served from a file:// URL, so we have to</span>
+            <span class="c1">// be careful here.</span>
+            <span class="c1">//</span>
+            <span class="c1">// See http://yuilibrary.com/projects/yui3/ticket/2529165</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="nx">sessionStorage</span> <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">sessionStorage</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{}</span>
+
             <span class="k">this</span><span class="p">.</span><span class="nx">_loadSessionState</span><span class="p">();</span>
         <span class="p">}</span>
     <span class="p">},</span>

@@ -200,8 +200,9 @@
 <span class="cm">         *    &lt;dd&gt;</span>
 <span class="cm">         *    &lt;p&gt;A function, which will return the initial value to set on the attribute. This is useful</span>
 <span class="cm">         *    for cases where the attribute configuration is defined statically, but needs to </span>
-<span class="cm">         *    reference the host instance (&quot;this&quot;) to obtain an initial value.</span>
-<span class="cm">         *    If defined, valueFn has precedence over the value property.&lt;/p&gt;</span>
+<span class="cm">         *    reference the host instance (&quot;this&quot;) to obtain an initial value. If both the value and valueFn properties are defined, </span>
+<span class="cm">         *    the value returned by the valueFn has precedence over the value property, unless it returns undefined, in which </span>
+<span class="cm">         *    case the value property is used.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         *    &lt;p&gt;valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.&lt;/p&gt;</span>
 <span class="cm">         *    &lt;/dd&gt;</span>
