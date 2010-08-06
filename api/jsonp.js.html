@@ -210,7 +210,9 @@
     <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="nx">c</span><span class="p">).</span><span class="nx">send</span><span class="p">();</span>
 <span class="p">};</span>
 
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">JSONP</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">JSONP</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">JSONP</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="p">}</span>
 </pre></div>
 
                     </div>
