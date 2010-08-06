@@ -6,7 +6,33 @@ function CartesianSeries(config)
 CartesianSeries.NAME = "cartesianSeries";
 
 CartesianSeries.ATTRS = {
-	type: {		
+	xDisplayName: {
+        getter: function()
+        {
+            return this._xDisplayName || this.get("xKey");
+        },
+
+        setter: function(val)
+        {
+            this._xDisplayName = val;
+            return val;
+        }
+    },
+
+    yDisplayName: {
+        getter: function()
+        {
+            return this._yDisplayName || this.get("yKey");
+        },
+
+        setter: function(val)
+        {
+            this._yDisplayName = val;
+            return val;
+        }
+    },
+
+    type: {		
   	    value: "cartesian"
     },
 	/**
@@ -79,6 +105,20 @@ CartesianSeries.ATTRS = {
 			return value !== this.get("yKey");
 		}
 	},
+
+    /**
+     * Array of x values for the series.
+     */
+    xData: {
+        value: null
+    },
+
+    /**
+     * Array of y values for the series.
+     */
+    yData: {
+        value: null
+    },
     
     markers: {
         getter: function()
@@ -93,6 +133,16 @@ CartesianSeries.ATTRS = {
 };
 
 Y.extend(CartesianSeries, Y.Renderer, {
+    /**
+     * @private
+     */
+    _xDisplayName: null,
+
+    /**
+     * @private
+     */
+    _yDisplayName: null,
+    
     /**
      * @private
      */
@@ -137,7 +187,8 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	_xAxisChangeHandler: function(event)
 	{
-        if(this.get("rendered") && this.get("xKey") && this.get("yKey"))
+        var axesReady = this._updateAxisData();
+        if(this.get("rendered") && axesReady)
 		{
 			this.draw();
 		}
@@ -150,11 +201,43 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	_yAxisChangeHandler: function(event)
 	{
-        if(this.get("rendered") && this.get("xKey") && this.get("yKey"))
+        var axesReady = this._updateAxisData();
+        if(this.get("rendered") && axesReady)
 		{
 			this.draw();
 		}
 	},
+
+    /**
+     * @private 
+     */
+    _updateAxisData: function()
+    {
+        var xAxis = this.get("xAxis"),
+            yAxis = this.get("yAxis"),
+            xKey = this.get("xKey"),
+            yKey = this.get("yKey");
+        if(!xAxis || !yAxis || !xKey || !yKey)
+        {
+            return false;
+        }
+        
+        this.set("xData", xAxis.getDataByKey(xKey));
+        this.set("yData", yAxis.getDataByKey(yKey));
+        return true;
+    },
+
+    syncUI: function()
+    {
+        if(this.get("xData") && this.get("yData"))
+        {
+            this.draw();
+        }
+        else if(this._updateAxisData())
+        {
+            this.draw();
+        }
+    },
 
     /**
      * @private
@@ -190,15 +273,14 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
-			xKey = this.get("xKey"),
-			yKey = this.get("yKey"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-			xData = xAxis.getDataByKey(xKey).concat(),
-			yData = yAxis.getDataByKey(yKey).concat(),
-			dataLength = xData.length, 	
+            xData = this.get("xData").concat(),
+            yData = this.get("yData").concat(),
+            dataLength,
             direction = this.get("direction"),
             i = 0;
+            dataLength = xData.length; 	
         //Assuming a vertical graph has a range/category for its vertical axis.    
         if(direction === "vertical")
         {
@@ -440,13 +522,17 @@ Y.extend(CartesianSeries, Y.Renderer, {
      * @private
      * @description Creates a marker based on its style properties.
      */
-    getMarker: function(styles)
+    getMarker: function(config)
     {
         var marker,
-            cache = this._markerCache;
+            cache = this._markerCache,
+            styles = config.styles,
+            index = config.index;
         if(cache.length > 0)
         {
             marker = cache.shift();
+            marker.set("index", index);
+            marker.set("series", this);
             if(marker.get("styles") !== styles)
             {
                 marker.set("styles", styles);
@@ -454,7 +540,8 @@ Y.extend(CartesianSeries, Y.Renderer, {
         }
         else
         {
-            marker = new Y.Marker({styles:styles});
+            config.series = this;
+            marker = new Y.Marker(config);
             marker.render(this.get("node"));
         }
         this._markers.push(marker);

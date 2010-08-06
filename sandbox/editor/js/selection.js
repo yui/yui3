@@ -448,7 +448,9 @@ YUI.add('selection', function(Y) {
                     if (n.getAttribute('style') === '') {
                         n.removeAttribute('style');
                     }
-                    items.push(Y.Node.getDOMNode(nodes.item(k)));
+                    if (!n.test('body')) {
+                        items.push(Y.Node.getDOMNode(nodes.item(k)));
+                    }
                 }
             });
             return Y.all(items);
@@ -475,11 +477,11 @@ YUI.add('selection', function(Y) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
-                if (node && node.test('body')) {
-                    b = Y.Node.create('<span></span>');
-                    node.append(b);
-                    node = b;
-                }
+            if (node && node.test('body')) {
+                b = Y.Node.create('<span></span>');
+                node.append(b);
+                node = b;
+            }
 
             
             if (range.pasteHTML) {
@@ -502,12 +504,19 @@ YUI.add('selection', function(Y) {
                 //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
                 if (offset > 0) {
                     inHTML = node.get(textContent);
+
                     txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
                     txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
                     
                     node.replace(txt, node);
                     newNode = Y.Node.create(html);
+                    if (newNode.get('nodeType') === 11) {
+                        b = Y.Node.create('<span></span>');
+                        b.append(newNode);
+                        newNode = b;
+                    }
                     txt.insert(newNode, 'after');
+
                     if (txt2 && txt2.get('length')) {
                         newNode.insert(cur, 'after');
                         cur.insert(txt2, 'after');

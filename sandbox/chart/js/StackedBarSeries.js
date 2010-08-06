@@ -132,7 +132,7 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
             top -= h/2;        
             style.width = w;
             style.height = h;
-            marker = this.getMarker.apply(this, [style]);
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
             bb = marker.get("boundingBox");
             bb.setStyle("position", "absolute");
             bb.setStyle("left", left + "px");
@@ -148,10 +148,9 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
     _markerEventHandler: function(e)
     {
         var type = e.type,
-            markerNode = e.currentTarget,
+            marker = Y.Widget.getByNode(e.currentTarget),
             ycoords = this.get("ycoords"),
-            i = Y.Array.indexOf(this._markerNodes, markerNode),
-            marker = this.get("markers")[i],
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
             h = marker.get("height");
         switch(type)
         {

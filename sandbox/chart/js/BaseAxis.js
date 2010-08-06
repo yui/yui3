@@ -417,7 +417,7 @@ Y.extend(BaseAxis, Y.Base,
 	getKeyValueAt: function(key, index)
 	{
 		var value = NaN,
-			keys = this.keys;
+			keys = this._keys;
 		if(keys[key] && keys[key][index]) 
 		{
 			value = keys[key][index];

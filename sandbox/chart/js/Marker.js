@@ -6,6 +6,10 @@ function Marker(config)
 Marker.NAME = "marker";
 
 Marker.ATTRS = {
+    series: {
+        value: null
+    },
+
     drawMethod: {
         getter: function()
         {
@@ -18,6 +22,10 @@ Marker.ATTRS = {
         }
     },
 
+    index: {
+        value: null
+    },
+
     state: {
         value:"off"
     }
@@ -28,6 +36,7 @@ Y.extend(Marker, Y.Renderer, {
     {
         this.after("stylesChange", Y.bind(this._updateHandler, this));
         this.after("stateChange", Y.bind(this._updateHandler, this));
+        Y.one(this.get("node")).addClass("yui3-seriesmarker");
     },
 
     /**
