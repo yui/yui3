@@ -36,7 +36,8 @@ var Lang      = Y.Lang,
     GlobalEnv = YUI.namespace('Env.History'),
     YArray    = Y.Array,
 
-    docMode   = Y.config.doc.documentMode,
+    doc       = Y.config.doc,
+    docMode   = doc.documentMode,
     win       = Y.config.win,
 
     DEFAULT_OPTIONS = {merge: true},
@@ -133,11 +134,14 @@ HistoryBase.html5 = !!(win.history && win.history.pushState &&
  * @static
  */
 
+// Most browsers that support hashchange expose it on the window. Opera 10.6+
+// exposes it on the document (but you can still attach to it on the window).
+//
 // IE8 supports the hashchange event, but only in IE8 Standards
 // Mode. However, IE8 in IE7 compatibility mode still defines the
 // event but never fires it, so we can't just detect the event. We also can't
 // just UA sniff for IE8, since other browsers support this event as well.
-HistoryBase.nativeHashChange = 'onhashchange' in win &&
+HistoryBase.nativeHashChange = ('onhashchange' in win || 'onhashchange' in doc) &&
         (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {

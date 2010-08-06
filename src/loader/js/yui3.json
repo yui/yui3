@@ -695,6 +695,12 @@
             "event-base"
         ]
     }, 
+    "event-valuechange": {
+        "requires": [
+            "event-focus", 
+            "event-synthetic"
+        ]
+    }, 
     "history": {
         "plugins": {
             "history-hash-ie": {
@@ -1138,12 +1144,6 @@
             "node", 
             "base", 
             "swf"
-        ]
-    }, 
-    "value-change": {
-        "requires": [
-            "event-focus", 
-            "event-synthetic"
         ]
     }, 
     "widget": {

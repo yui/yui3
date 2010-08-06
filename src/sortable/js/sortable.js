@@ -127,7 +127,7 @@
                 case 'insert':
                     dir = ((this._up) ? 'before' : 'after');
                     dropNode = e.drop.get(NODE);
-                    if (dropNode.test(this.get(CONT))) {
+                    if (Y.Sortable._test(dropNode, this.get(CONT))) {
                         dropNode.append(e.drag.get(NODE));
                     } else {
                         dropNode.insert(e.drag.get(NODE), dir);
@@ -309,7 +309,7 @@
                 };
             }
 
-            this.get(CONT).all(this.get(NODES)).each(function(node) {
+            Y.one(this.get(CONT)).all(this.get(NODES)).each(function(node) {
                 ordering.push(callback(node));
             });
             return ordering;
@@ -392,6 +392,20 @@
         _sortables: [],
         /**
         * @static
+        * @method _test
+        * @param {Node} node The node instance to test.
+        * @param {String|Node} test The node instance or selector string to test against.
+        * @description Test a Node or a selector for the container
+        */
+        _test: function(node, test) {
+            if (test instanceof Y.Node) {
+                return (test === node);
+            } else {
+                return node.test(test);
+            }
+        },
+        /**
+        * @static
         * @method getSortable
         * @param {String|Node} node The node instance or selector string to use to find a Sortable instance.
         * @description Get a sortable instance back from a node reference or a selector string.
@@ -400,7 +414,7 @@
             var s = null;
             node = Y.one(node);
             Y.each(Y.Sortable._sortables, function(v) {
-                if (node.test(v.get(CONT))) {
+                if (Y.Sortable._test(node, v.get(CONT))) {
                     s = v;
                 }
             });
