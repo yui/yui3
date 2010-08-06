@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>[Bug #2529165] Firefox: Operation Not Supported</title>
+</head>
+<body>
+
+<h1>
+  <a href="http://yuilibrary.com/projects/yui3/ticket/2529165">[Bug #2529165]</a>
+  Firefox: Operation Not Supported
+</h1>
+
+<p>
+You should see an alert saying "it works", whether this page is loaded over HTTP
+or from a file:// URL.
+</p>
+
+<p>
+If you don't see the alert, or if you see an "Operation is not supported" error
+in the console, this test has failed.
+</p>
+
+<script src="../../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+  filter: 'RAW',
+  combine: false
+}).use('history', function (Y) {
+  alert('it works');
+});
+</script>
+
+</body>
+</html>
