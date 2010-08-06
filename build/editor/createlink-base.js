@@ -49,6 +49,7 @@ YUI.add('createlink-base', function(Y) {
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);
 
             if (url) {
+
                 this.get('host')._execCommand(cmd, url);
                 sel = new inst.Selection();
                 out = sel.getSelected();
