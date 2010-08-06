@@ -55,7 +55,9 @@
                 if (!sel.isCollapsed && out.size()) {
                     //We have a selection
                     a = out.item(0).one('a');
-                    out.item(0).replace(a);
+                    if (a) {
+                        out.item(0).replace(a);
+                    }
                 } else {
                     //No selection, insert a new node..
                     this.get('host').execCommand('inserthtml', '<a href="' + url + '">' + url + '</a>');
