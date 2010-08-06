@@ -144,12 +144,12 @@
                 ASSERT.isInstanceOf(Date, cachedentry.expires, "Expected cached Date.");
 
                 this.cache.set("expires", 1);
-                this.cache.add(1, "a");
+                this.cache.add(2, "b");
 
                 this.wait(function(){
-                    cachedentry = this.cache.retrieve(1);
+                    cachedentry = this.cache.retrieve(2);
                     ASSERT.isNull(cachedentry, "Expected expired data.");
-                }, 2000);
+                }, 50);
             },
 
             testExpiresDate: function() {
