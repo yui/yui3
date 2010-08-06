@@ -97,13 +97,16 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding link: &#39;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;createLinkBase&#39;</span><span class="p">);</span>
+
                 <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">).</span><span class="nx">_execCommand</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
                 <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
                 <span class="nx">out</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">getSelected</span><span class="p">();</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span> <span class="o">&amp;&amp;</span> <span class="nx">out</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="p">{</span>
                     <span class="c1">//We have a selection</span>
                     <span class="nx">a</span> <span class="o">=</span> <span class="nx">out</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
-                    <span class="nx">out</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">out</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="c1">//No selection, insert a new node..</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">).</span><span class="nx">execCommand</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;a href=&quot;&#39;</span> <span class="o">+</span> <span class="nx">url</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">url</span> <span class="o">+</span> <span class="s1">&#39;&lt;/a&gt;&#39;</span><span class="p">);</span>
