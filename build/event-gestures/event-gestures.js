@@ -48,6 +48,10 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * they are interested in - "x" or "y". If no axis is specified, the axis along which there was most distance
  * covered is used.
  *
+ * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
+ * however if you want to pass the context and arguments as additional signature arguments to "on", 
+ * you need to provide a null value for the configuration object, e.g: <code>node.on("flick", fn, null, context, arg1, arg2, arg3)</code></p>
+ *
  * @event flick
  * @for YUI
  * @param type {string} "flick"
@@ -325,7 +329,11 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * Sets up a "gesturemovestart" event, that is fired on touch devices in response to a single finger "touchstart",
  * and on mouse based devices in response to a "mousedown". The subscriber can specify the minimum time
  * and distance thresholds which should be crossed before the "gesturemovestart" is fired and for the mouse,
- * which button should initiate a "gesturemovestart". This event can also be listened for using node.delegate(). 
+ * which button should initiate a "gesturemovestart". This event can also be listened for using node.delegate().
+ * 
+ * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
+ * however if you want to pass the context and arguments as additional signature arguments to on/delegate, 
+ * you need to provide a null value for the configuration object, e.g: <code>node.on("gesturemovestart", fn, null, context, arg1, arg2, arg3)</code></p>
  *
  * @event gesturemovestart
  * @for YUI
@@ -509,6 +517,10 @@ define(GESTURE_MOVE_START, {
  *
  * <p>This event can also be listened for using node.delegate().</p>
  *
+ * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
+ * however if you want to pass the context and arguments as additional signature arguments to on/delegate, 
+ * you need to provide a null value for the configuration object, e.g: <code>node.on("gesturemove", fn, null, context, arg1, arg2, arg3)</code></p>
+ *
  * @event gesturemove
  * @for YUI
  * @param type {string} "gesturemove"
@@ -621,6 +633,11 @@ define(GESTURE_MOVE, {
  * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p> 
  *
  * <p>This event can also be listened for using node.delegate().</p>
+ *
+ * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
+ * however if you want to pass the context and arguments as additional signature arguments to on/delegate, 
+ * you need to provide a null value for the configuration object, e.g: <code>node.on("gesturemoveend", fn, null, context, arg1, arg2, arg3)</code></p>
+ *
  *
  * @event gesturemoveend
  * @for YUI
