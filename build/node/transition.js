@@ -207,34 +207,6 @@ Y.mix(Transition.prototype, {
         this._runtimeAttr = attr;
     },
 
-    _getOffset: function(attr) {
-        var node = this._node,
-            domNode = node._node,
-            val = node.getComputedStyle(attr),
-            position,
-            offsetParent,
-            parentOffset,
-            offset;
-
-        if (val === 'auto') {
-            position = node.getStyle('position');
-            if (position === 'static' || position === 'relative') {
-                val = 0;    
-            } else if (domNode.getBoundingClientRect) {
-                offsetParent = domNode.offsetParent;
-                parentOffset = offsetParent.getBoundingClientRect()[attr];
-                offset = domNode.getBoundingClientRect()[attr];
-                if (attr === 'left' || attr === 'top') {
-                    val = offset - parentOffset;
-                } else {
-                    val = parentOffset - domNode.getBoundingClientRect()[attr];
-                }
-            }
-        }
-
-        return val;
-    },
-
     destroy: function() {
         this.detachAll();
         this._node = null;
@@ -276,7 +248,7 @@ Y.mix(Y.Transition, {
     behaviors: {
         left: {
             get: function(anim, attr) {
-                return anim._getOffset(attr);
+                return Y.DOM._getAttrOffset(anim._node._node, attr);
             }
         }
     },

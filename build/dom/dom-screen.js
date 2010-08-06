@@ -229,36 +229,6 @@ Y.mix(Y_DOM, {
         }
     }(),// NOTE: Executing for loadtime branching
 
-    _getOffset: function(node) {
-        var pos,
-            xy = null;
-
-        if (node) {
-            pos = Y_DOM.getStyle(node, POSITION);
-            xy = [
-                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, LEFT), 10),
-                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, TOP), 10)
-            ];
-
-            if ( isNaN(xy[0]) ) { // in case of 'auto'
-                xy[0] = parseInt(Y_DOM.getStyle(node, LEFT), 10); // try inline
-                if ( isNaN(xy[0]) ) { // default to offset value
-                    xy[0] = (pos === RELATIVE) ? 0 : node.offsetLeft || 0;
-                }
-            } 
-
-            if ( isNaN(xy[1]) ) { // in case of 'auto'
-                xy[1] = parseInt(Y_DOM.getStyle(node, TOP), 10); // try inline
-                if ( isNaN(xy[1]) ) { // default to offset value
-                    xy[1] = (pos === RELATIVE) ? 0 : node.offsetTop || 0;
-                }
-            } 
-        }
-
-        return xy;
-
-    },
-
     /**
      * Gets the current X position of an element based on page coordinates. 
      * Element must be part of the DOM tree to have page coordinates

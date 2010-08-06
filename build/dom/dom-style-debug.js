@@ -17,6 +17,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     STYLE_FLOAT = 'styleFloat',
     TRANSPARENT = 'transparent',
     GET_COMPUTED_STYLE = 'getComputedStyle',
+    GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
 
     DOCUMENT = Y.config.doc,
     UNDEFINED = undefined,
@@ -174,15 +175,59 @@ if (Y.UA.webkit) {
 
 }
 
-Y_DOM._multiplyMatrix = function(a, b) {
-    var c = [
-        a[0][0] * b[0][0] + a[0][1] * b[1][0],
-        a[0][0] * a[0][1] + a[0][1] * b[1][1],
-        a[1][0] * b[0][0] + a[1][1] * b[1][0],
-        a[1][0] * b[0][1] + b[1][1] * b[1][1]
-    ];
+Y.DOM._getAttrOffset = function(node, attr) {
+    var val = Y.DOM[GET_COMPUTED_STYLE](node, attr),
+        offsetParent = node.offsetParent,
+        position,
+        parentOffset,
+        offset;
 
-    return c;
+    if (val === 'auto') {
+        position = Y.DOM.getStyle(node, 'position');
+        if (position === 'static' || position === 'relative') {
+            val = 0;    
+        } else if (offsetParent && offsetParent[GET_BOUNDING_CLIENT_RECT]) {
+            parentOffset = offsetParent[GET_BOUNDING_CLIENT_RECT]()[attr];
+            offset = node[GET_BOUNDING_CLIENT_RECT]()[attr];
+            if (attr === 'left' || attr === 'top') {
+                val = offset - parentOffset;
+            } else {
+                val = parentOffset - node[GET_BOUNDING_CLIENT_RECT]()[attr];
+            }
+        }
+    }
+
+    return val;
+};
+
+Y.DOM._getOffset = function(node) {
+    var pos,
+        xy = null;
+
+    if (node) {
+        pos = Y_DOM.getStyle(node, 'position');
+        xy = [
+            parseInt(Y_DOM[GET_COMPUTED_STYLE](node, 'left'), 10),
+            parseInt(Y_DOM[GET_COMPUTED_STYLE](node, 'top'), 10)
+        ];
+
+        if ( isNaN(xy[0]) ) { // in case of 'auto'
+            xy[0] = parseInt(Y_DOM.getStyle(node, 'left'), 10); // try inline
+            if ( isNaN(xy[0]) ) { // default to offset value
+                xy[0] = (pos === 'relative') ? 0 : node.offsetLeft || 0;
+            }
+        } 
+
+        if ( isNaN(xy[1]) ) { // in case of 'auto'
+            xy[1] = parseInt(Y_DOM.getStyle(node, 'top'), 10); // try inline
+            if ( isNaN(xy[1]) ) { // default to offset value
+                xy[1] = (pos === 'relative') ? 0 : node.offsetTop || 0;
+            }
+        } 
+    }
+
+    return xy;
+
 };
 
 Y_DOM.CUSTOM_STYLES.transform = {
@@ -191,7 +236,7 @@ Y_DOM.CUSTOM_STYLES.transform = {
     },
 
     get: function(node, style) {
-        return Y_DOM.getComputedStyle(node, TRANSFORM);
+        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
     }
 };
 })(Y);
