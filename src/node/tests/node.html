@@ -1340,6 +1340,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Assert.areEqual(width, node.get('offsetWidth'),
                 "node.get('offsetWidth')");
 
+        },
+
+        test_select: function() {
+            var select = Y.Node.create('<select>');
+            Assert.areEqual('', select.get('value'));
         }
 
     })); 
