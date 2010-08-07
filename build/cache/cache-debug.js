@@ -303,7 +303,7 @@ Y.extend(Cache, Y.Base, {
 
     /**
      * Adds a new entry to the cache of the format
-     * {request:request, response:response}.
+     * {request:request, response:response, cached:cached, expires:expires}.
      * If cache is full, evicts the stalest entry before adding the new one.
      *
      * @method add
@@ -638,7 +638,7 @@ var localStorage = Y.config.win.localStorage,
     /////////////////////////////////////////////////////////////////////////////
     /**
      * Adds a new entry to the cache of the format
-     * {request:request, response:response, expires: expires}.
+     * {request:request, response:response, cached:cached, expires: expires}.
      *
      * @method add
      * @param request {Object} Request value must be a String or JSON.

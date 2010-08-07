@@ -299,7 +299,7 @@ Y.extend(Cache, Y.Base, {
 
     /**
      * Adds a new entry to the cache of the format
-     * {request:request, response:response}.
+     * {request:request, response:response, cached:cached, expires:expires}.
      * If cache is full, evicts the stalest entry before adding the new one.
      *
      * @method add

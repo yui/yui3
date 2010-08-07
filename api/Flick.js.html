@@ -95,6 +95,10 @@
 <span class="cm"> * they are interested in - &quot;x&quot; or &quot;y&quot;. If no axis is specified, the axis along which there was most distance</span>
 <span class="cm"> * covered is used.</span>
 <span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;It is recommended that you use Y.bind to set up context and additional arguments for your event handler,</span>
+<span class="cm"> * however if you want to pass the context and arguments as additional signature arguments to &quot;on&quot;, </span>
+<span class="cm"> * you need to provide a null value for the configuration object, e.g: &lt;code&gt;node.on(&quot;flick&quot;, fn, null, context, arg1, arg2, arg3)&lt;/code&gt;&lt;/p&gt;</span>
+<span class="cm"> *</span>
 <span class="cm"> * @event flick</span>
 <span class="cm"> * @for YUI</span>
 <span class="cm"> * @param type {string} &quot;flick&quot;</span>
