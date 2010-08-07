@@ -103,7 +103,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _transitionEnded: function() {
-        this.fire(EV_SCROLL_END);
+        if (!this._transitionsHack) {
+            this._transitionsHack = true;
+            this.fire(EV_SCROLL_END);
+        }
     },
 
     /**
@@ -183,8 +186,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             duration : duration/1000
         };
 
-        Y.log("Transition: duration, easing:" + transition.duration, transition.easing, "scrollview");        
-
         if (NATIVE_TRANSITIONS) {
             transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
         } else {
@@ -192,6 +193,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             if (ySet) { transition.top = yMove + "px"; }
         }
 
+        Y.log("Transition: duration, easing:" + [transition.duration, transition.easing], "scrollview");        
+
+        this._transitionsHack = false;
         cb.transition(transition);
     },
 
@@ -308,18 +312,18 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._snapToEdge = true;
             this.set(SCROLL_X, maxX);
         }
-        
+
+        Y.log("half:" + this._scrolledHalfway + ", fwd:"  + this._scrolledForward, "scrollview");
+
         if(this._snapToEdge) {
             return;
         }
 
-        // Check for staleness
-        if(+(new Date()) - this._moveStartTime > 100) {
-            this.fire(EV_SCROLL_END, {
-                staleScroll: true
-            });
-            return;
-        }
+        this.fire(EV_SCROLL_END, {
+            onGestureMoveEnd: true
+        });
+
+        return;
     },
 
     /**
