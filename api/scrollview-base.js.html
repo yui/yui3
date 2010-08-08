@@ -150,7 +150,10 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_transitionEnded</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionsHack</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_transitionsHack</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -230,8 +233,6 @@
             <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
         <span class="p">};</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transition: duration, easing:&quot;</span> <span class="o">+</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>        
-
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span> <span class="nx">xMove</span> <span class="o">+</span><span class="s1">&#39;px,&#39;</span><span class="o">+</span> <span class="nx">yMove</span> <span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -239,6 +240,9 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">yMove</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span> <span class="p">}</span>
         <span class="p">}</span>
 
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transition: duration, easing:&quot;</span> <span class="o">+</span> <span class="p">[</span><span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span><span class="p">],</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>        
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_transitionsHack</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
     <span class="p">},</span>
 
@@ -355,18 +359,18 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">maxX</span><span class="p">);</span>
         <span class="p">}</span>
-        
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;half:&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">+</span> <span class="s2">&quot;, fwd:&quot;</span>  <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledForward</span><span class="p">,</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>
+
         <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="c1">// Check for staleness</span>
-        <span class="k">if</span><span class="p">(</span><span class="o">+</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">())</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartTime</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">staleScroll</span><span class="o">:</span> <span class="kc">true</span>
-            <span class="p">});</span>
-            <span class="k">return</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">onGestureMoveEnd</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
