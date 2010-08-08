@@ -234,12 +234,12 @@
             <span class="nx">pageCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">velocity</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Handling Page Flick - increment:&quot;</span> <span class="o">+</span> <span class="nx">inc</span><span class="p">,</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Handling flick - increment: &quot;</span> <span class="o">+</span> <span class="nx">inc</span> <span class="o">+</span> <span class="s2">&quot;, pageIndex: &quot;</span> <span class="o">+</span> <span class="nx">pageIndex</span><span class="p">,</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -258,11 +258,9 @@
              <span class="nx">pageIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">),</span>
              <span class="nx">pageCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">);</span>
 
-         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;scrollEnded&quot;</span><span class="p">);</span>
+         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;_scrollEnded - onGME: &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">onGestureMoveEnd</span> <span class="o">+</span> <span class="s2">&quot;, flicking: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">+</span> <span class="s2">&quot;, halfway: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">+</span> <span class="s2">&quot;, forward: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledForward</span><span class="p">,</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
 
-         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;scrollEnded - onGME: &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">onGestureMoveEnd</span> <span class="o">+</span> <span class="s2">&quot;, halfway: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">+</span> <span class="s2">&quot;, forward: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledForward</span><span class="p">,</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
-
-         <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">onGestureMoveEnd</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">onGestureMoveEnd</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">host</span><span class="p">.</span><span class="nx">_flicking</span><span class="p">)</span> <span class="p">{</span>
              <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledHalfway</span><span class="p">)</span> <span class="p">{</span>
                  <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledForward</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
@@ -275,6 +273,8 @@
                  <span class="k">this</span><span class="p">.</span><span class="nx">snapToCurrent</span><span class="p">();</span>
              <span class="p">}</span>
          <span class="p">}</span>
+
+         <span class="nx">host</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
      <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -362,7 +362,9 @@
             <span class="nx">duration</span><span class="o">:</span> <span class="mi">300</span><span class="p">,</span>
             <span class="nx">easing</span><span class="o">:</span> <span class="s1">&#39;ease-out&#39;</span>
         <span class="p">});</span>
-    <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="nx">_prevent</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">Prevent</span><span class="p">()</span>
     
 <span class="p">});</span>
 
