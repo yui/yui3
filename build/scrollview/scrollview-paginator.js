@@ -189,9 +189,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if (velocity) {
 
             if (inc && pageIndex < pageCount-1) {
-                this.set('index', pageIndex+1, { src: UI });
+                this.set('index', pageIndex+1);
             } else if (!inc && pageIndex > 0) {
-                this.set('index', pageIndex-1, { src: UI });
+                this.set('index', pageIndex-1);
             }
         }
 
@@ -211,8 +211,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              pageCount = this.get('total');
 
 
-
-         if(e.onGestureMoveEnd) {
+         if(e.onGestureMoveEnd && !host._flicking) {
              if(host._scrolledHalfway) {
                  if(host._scrolledForward && pageIndex < pageCount-1) {
                      this.set('index', pageIndex+1);
@@ -225,6 +224,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                  this.snapToCurrent();
              }
          }
+
+         host._flicking = false;
      },
 
     /**
@@ -311,7 +312,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             duration: 300,
             easing: 'ease-out'
         });
-    }
+    },
+    
+    _prevent: new Y.Do.Prevent()
     
 });
 

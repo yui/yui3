@@ -185,12 +185,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageCount = this.get('total');
 
         if (velocity) {
-            Y.log("Handling Page Flick - increment:" + inc, "scrollview-paginator");
+            Y.log("Handling flick - increment: " + inc + ", pageIndex: " + pageIndex, "scrollview-paginator");
 
             if (inc && pageIndex < pageCount-1) {
-                this.set('index', pageIndex+1, { src: UI });
+                this.set('index', pageIndex+1);
             } else if (!inc && pageIndex > 0) {
-                this.set('index', pageIndex-1, { src: UI });
+                this.set('index', pageIndex-1);
             }
         }
 
@@ -209,11 +209,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              pageIndex = this.get('index'),
              pageCount = this.get('total');
 
-         Y.log("scrollEnded");
+         Y.log("_scrollEnded - onGME: " + e.onGestureMoveEnd + ", flicking: " + host._flicking + ", halfway: " + host._scrolledHalfway + ", forward: " + host._scrolledForward, "scrollview-paginator");
 
-         Y.log("scrollEnded - onGME: " + e.onGestureMoveEnd + ", halfway: " + host._scrolledHalfway + ", forward: " + host._scrolledForward, "scrollview-paginator");
-
-         if(e.onGestureMoveEnd) {
+         if(e.onGestureMoveEnd && !host._flicking) {
              if(host._scrolledHalfway) {
                  if(host._scrolledForward && pageIndex < pageCount-1) {
                      this.set('index', pageIndex+1);
@@ -226,6 +224,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                  this.snapToCurrent();
              }
          }
+
+         host._flicking = false;
      },
 
     /**
@@ -313,7 +313,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             duration: 300,
             easing: 'ease-out'
         });
-    }
+    },
+    
+    _prevent: new Y.Do.Prevent()
     
 });
 
