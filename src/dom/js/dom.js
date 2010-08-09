@@ -213,17 +213,28 @@ Y.DOM = {
         doc = doc || element[OWNER_DOCUMENT];
         var nodes = [],
             ret = false,
+            id,
             i,
             node,
             query;
                 
-        element.id = element.id || Y.guid(); 
+        // avoid collision with form.id === input.name
+        if (element.attributes) {
+            if (element.attributes.id) {
+                id = element.attributes.id.value;
+            }
 
-        nodes = Y.DOM.allById(element.id, doc);
-        for (i = 0; node = nodes[i++];) { // check for a match
-            if (node === element) {
-                ret = true;
-                break;
+            if (!id) {
+                id = Y.guid();
+                element.setAttribute('id', id);
+            }
+
+            nodes = Y.DOM.allById(id, doc);
+            for (i = 0; node = nodes[i++];) { // check for a match
+                if (node === element) {
+                    ret = true;
+                    break;
+                }
             }
         }
 
@@ -248,7 +259,8 @@ Y.DOM = {
 
             if (nodes && nodes.length) {
                 for (i = 0; node = nodes[i++];) { // check for a match
-                    if (node.id === id) { // avoid false positive for node.name
+                    if (node.attributes && node.attributes.id
+                            && node.attributes.id.value === id) { // avoid false positive for node.name
                         ret.push(node);
                     }
                 }
