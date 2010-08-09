@@ -184,7 +184,7 @@ var HAS_LAYOUT = 'hasLayout',
     IEComputed = {};
 
 // use alpha filter for IE opacity
-if (Y.UA.ie) {
+if (Y.UA.ie && Y.UA.ie < 9) {
     Y.DOM.CUSTOM_STYLES[OPACITY] = {
         get: function(node) {
             var val = 100;

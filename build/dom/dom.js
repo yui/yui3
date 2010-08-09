@@ -212,20 +212,31 @@ Y.DOM = {
      */
     inDoc: function(element, doc) {
         // there may be multiple elements with the same ID
-        doc = doc || element[OWNER_DOCUMENT];
         var nodes = [],
             ret = false,
+            id,
             i,
             node,
             query;
                 
-        element.id = element.id || Y.guid(); 
+        // avoid collision with form.id === input.name
+        if (element && element.attributes) {
+            doc = doc || element[OWNER_DOCUMENT];
+            if (element.attributes.id) {
+                id = element.attributes.id.value;
+            }
 
-        nodes = Y.DOM.allById(element.id, doc);
-        for (i = 0; node = nodes[i++];) { // check for a match
-            if (node === element) {
-                ret = true;
-                break;
+            if (!id) {
+                id = Y.guid();
+                element.setAttribute('id', id);
+            }
+
+            nodes = Y.DOM.allById(id, doc);
+            for (i = 0; node = nodes[i++];) { // check for a match
+                if (node === element) {
+                    ret = true;
+                    break;
+                }
             }
         }
 
@@ -250,7 +261,8 @@ Y.DOM = {
 
             if (nodes && nodes.length) {
                 for (i = 0; node = nodes[i++];) { // check for a match
-                    if (node.id === id) { // avoid false positive for node.name
+                    if (node.attributes && node.attributes.id
+                            && node.attributes.id.value === id) { // avoid false positive for node.name
                         ret.push(node);
                     }
                 }
@@ -894,6 +906,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     STYLE_FLOAT = 'styleFloat',
     TRANSPARENT = 'transparent',
     GET_COMPUTED_STYLE = 'getComputedStyle',
+    GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
 
     DOCUMENT = Y.config.doc,
     UNDEFINED = undefined,
@@ -1051,15 +1064,59 @@ if (Y.UA.webkit) {
 
 }
 
-Y_DOM._multiplyMatrix = function(a, b) {
-    var c = [
-        a[0][0] * b[0][0] + a[0][1] * b[1][0],
-        a[0][0] * a[0][1] + a[0][1] * b[1][1],
-        a[1][0] * b[0][0] + a[1][1] * b[1][0],
-        a[1][0] * b[0][1] + b[1][1] * b[1][1]
-    ];
+Y.DOM._getAttrOffset = function(node, attr) {
+    var val = Y.DOM[GET_COMPUTED_STYLE](node, attr),
+        offsetParent = node.offsetParent,
+        position,
+        parentOffset,
+        offset;
 
-    return c;
+    if (val === 'auto') {
+        position = Y.DOM.getStyle(node, 'position');
+        if (position === 'static' || position === 'relative') {
+            val = 0;    
+        } else if (offsetParent && offsetParent[GET_BOUNDING_CLIENT_RECT]) {
+            parentOffset = offsetParent[GET_BOUNDING_CLIENT_RECT]()[attr];
+            offset = node[GET_BOUNDING_CLIENT_RECT]()[attr];
+            if (attr === 'left' || attr === 'top') {
+                val = offset - parentOffset;
+            } else {
+                val = parentOffset - node[GET_BOUNDING_CLIENT_RECT]()[attr];
+            }
+        }
+    }
+
+    return val;
+};
+
+Y.DOM._getOffset = function(node) {
+    var pos,
+        xy = null;
+
+    if (node) {
+        pos = Y_DOM.getStyle(node, 'position');
+        xy = [
+            parseInt(Y_DOM[GET_COMPUTED_STYLE](node, 'left'), 10),
+            parseInt(Y_DOM[GET_COMPUTED_STYLE](node, 'top'), 10)
+        ];
+
+        if ( isNaN(xy[0]) ) { // in case of 'auto'
+            xy[0] = parseInt(Y_DOM.getStyle(node, 'left'), 10); // try inline
+            if ( isNaN(xy[0]) ) { // default to offset value
+                xy[0] = (pos === 'relative') ? 0 : node.offsetLeft || 0;
+            }
+        } 
+
+        if ( isNaN(xy[1]) ) { // in case of 'auto'
+            xy[1] = parseInt(Y_DOM.getStyle(node, 'top'), 10); // try inline
+            if ( isNaN(xy[1]) ) { // default to offset value
+                xy[1] = (pos === 'relative') ? 0 : node.offsetTop || 0;
+            }
+        } 
+    }
+
+    return xy;
+
 };
 
 Y_DOM.CUSTOM_STYLES.transform = {
@@ -1068,7 +1125,7 @@ Y_DOM.CUSTOM_STYLES.transform = {
     },
 
     get: function(node, style) {
-        return Y_DOM.getComputedStyle(node, TRANSFORM);
+        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
     }
 };
 })(Y);
@@ -1335,7 +1392,7 @@ var HAS_LAYOUT = 'hasLayout',
     IEComputed = {};
 
 // use alpha filter for IE opacity
-if (Y.UA.ie) {
+if (Y.UA.ie && Y.UA.ie < 9) {
     Y.DOM.CUSTOM_STYLES[OPACITY] = {
         get: function(node) {
             var val = 100;
@@ -1655,36 +1712,6 @@ Y.mix(Y_DOM, {
             };
         }
     }(),// NOTE: Executing for loadtime branching
-
-    _getOffset: function(node) {
-        var pos,
-            xy = null;
-
-        if (node) {
-            pos = Y_DOM.getStyle(node, POSITION);
-            xy = [
-                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, LEFT), 10),
-                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, TOP), 10)
-            ];
-
-            if ( isNaN(xy[0]) ) { // in case of 'auto'
-                xy[0] = parseInt(Y_DOM.getStyle(node, LEFT), 10); // try inline
-                if ( isNaN(xy[0]) ) { // default to offset value
-                    xy[0] = (pos === RELATIVE) ? 0 : node.offsetLeft || 0;
-                }
-            } 
-
-            if ( isNaN(xy[1]) ) { // in case of 'auto'
-                xy[1] = parseInt(Y_DOM.getStyle(node, TOP), 10); // try inline
-                if ( isNaN(xy[1]) ) { // default to offset value
-                    xy[1] = (pos === RELATIVE) ? 0 : node.offsetTop || 0;
-                }
-            } 
-        }
-
-        return xy;
-
-    },
 
     /**
      * Gets the current X position of an element based on page coordinates. 
