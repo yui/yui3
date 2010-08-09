@@ -210,7 +210,6 @@ Y.DOM = {
      */
     inDoc: function(element, doc) {
         // there may be multiple elements with the same ID
-        doc = doc || element[OWNER_DOCUMENT];
         var nodes = [],
             ret = false,
             id,
@@ -219,7 +218,8 @@ Y.DOM = {
             query;
                 
         // avoid collision with form.id === input.name
-        if (element.attributes) {
+        if (element && element.attributes) {
+            doc = doc || element[OWNER_DOCUMENT];
             if (element.attributes.id) {
                 id = element.attributes.id.value;
             }
