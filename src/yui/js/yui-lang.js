@@ -40,7 +40,8 @@ TYPES     = {
 },
 
 TRIMREGEX = /^\s+|\s+$/g,
-EMPTYSTRING = '';
+EMPTYSTRING = '',
+SUBREGEX  = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
 
 /**
  * Determines whether or not the provided item is an array.
@@ -210,6 +211,19 @@ L.isValue = function(o) {
  */
 L.type = function (o) {
     return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
+};
+
+/**
+ * Lightweight version of @see Y.substitute... it uses the same template
+ * structure as Y.substitute, but doesn't support recursion, auto-object
+ * coersion, or formats
+ * @method sub
+ * @since 3.2.0
+ */
+L.sub = function (s, o) {
+    return ((s.replace) ? s.replace(SUBREGEX, function (match, key) {
+        return (!L.isUndefined(o[key])) ? o[key] : match;
+    }) : s);
 };
 
 // })();

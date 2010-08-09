@@ -5,8 +5,9 @@
  * @submodule yui-base
  */
 
-
-if (typeof YUI === 'undefined') {
+if (typeof YUI != 'undefined') {
+    var _YUI = YUI;
+}
 
 /**
  * The YUI global namespace object.  If YUI is already defined, the
@@ -57,7 +58,6 @@ if (typeof YUI === 'undefined') {
 
         return Y;
     };
-}
 
 (function() {
     var proto, prop,
@@ -117,6 +117,14 @@ if (typeof YUI === 'undefined') {
             }
 
             return loader;
+        },
+        
+        clobber = function(r, s) {
+            for (var i in s) {
+                if (s.hasOwnProperty(i)) {
+                    r[i] = s[i];
+                }
+            }
         };
 
 //  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
@@ -130,7 +138,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.0.0'; // dev time hack for cdn test
+    VERSION = '3.2.0pr1'; // dev time hack for cdn test
 }
         
 proto = {
@@ -149,29 +157,22 @@ proto = {
         
         var attr,
             name, 
-            detail,
+            // detail,
             config = this.config, 
             mods   = config.modules,
             groups = config.groups,
+            rls    = config.rls,
             loader = this.Env._loader;
-
-        // config._sig += this.stamp(o);
 
         for (name in o) {
             if (o.hasOwnProperty(name)) {
                 attr = o[name];
                 if (mods && name == 'modules') {
-                    for (detail in attr) {
-                        if (attr.hasOwnProperty(detail)) {
-                            mods[detail] = attr[detail];
-                        }
-                    }
+                    clobber(mods, attr);
                 } else if (groups && name == 'groups') {
-                    for (detail in attr) {
-                        if (attr.hasOwnProperty(detail)) {
-                            groups[detail] = attr[detail];
-                        }
-                    }
+                    clobber(groups, attr);
+                } else if (rls && name == 'rls') {
+                    clobber(rls, attr);
                 } else if (name == 'win') {
                     config[name] = attr.contentWindow || attr;
                     config.doc = config[name].document;
@@ -200,7 +201,8 @@ proto = {
         var filter,
             Y       = this, 
             G_ENV   = YUI.Env,
-            Env     = Y.Env;
+            Env     = Y.Env,
+            prop, config;
 
         Y.version = VERSION;
 
@@ -225,12 +227,6 @@ proto = {
                     for (i=0; i<nodes.length; i=i+1) {
                         src = nodes[i].src;
                         if (src) {
-                            //src = "http://yui.yahooapis.com/combo?2.8.0r4/b
-                            //uild/yuiloader-dom-event/yuiloader-dom-event.js
-                            //&3.0.0/build/yui/yui-min.js"; // debug url
-                            //Y.log('src) ' + src);
-
-                            // src = 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/attribute/attribute-min.js';
 
                             match = src.match(srcPattern);
                             b = match && match[1];
@@ -272,6 +268,17 @@ proto = {
                 Env._yidx  = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' + 
                              Env._yidx + '_' + time).replace(/\./g, '_');
+            } else if (typeof _YUI != 'undefined') {
+
+                G_ENV = _YUI.Env;
+                Env._yidx += G_ENV._yidx;
+                Env._uidx += G_ENV._uidx;
+                
+                for (prop in G_ENV) {
+                    if (!(prop in Env)) {
+                        Env[prop] = G_ENV[prop];
+                    }
+                }
             }
 
             Y.id = Y.stamp(Y);
@@ -293,15 +300,18 @@ proto = {
             fetchCSS:          true
         };
 
-        Y.config.base = YUI.config.base || 
+        config = Y.config;
+
+
+        config.base = YUI.config.base || 
             Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/, 
                           /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
 
-        Y.config.loaderPath = YUI.config.loaderPath || 
+        config.loaderPath = YUI.config.loaderPath || 
             'loader/loader' + (filter || '-min.') + 'js';
 
     },
-    
+
     /**
      * Finishes the instance setup. Attaches whatever modules were defined
      * when the yui modules was registered.
@@ -312,7 +322,7 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || ['get', 'rls', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
 
         for (i=0; i<extras.length; i++) {
             if (mods[extras[i]]) {
@@ -439,7 +449,6 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    // if (!Y._attach(Y.Array(req))) {
                     if (!Y._attach(req)) {
                         return false;
                     }
@@ -457,7 +466,6 @@ proto = {
                 }
 
                 if (use && use.length) {
-                    // if (!Y._attach(Y.Array(use))) {
                     if (!Y._attach(use)) {
                         return false;
                     }
@@ -690,7 +698,7 @@ proto = {
         // the module metadata specifies
         process(args);
 
-        Y.log('requested, requires: ' + args + ', ' + r, 'info', 'yui');
+        Y.log('requires: ' + args + ', ' + r, 'info', 'yui');
         // console.log(args);
         len = missing.length;
 
@@ -699,6 +707,8 @@ proto = {
             len = missing.length;
             Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         }
+
+            // console.log(Y._rls(args));
 
         // dynamic load
         if (boot && len && Y.Loader) {
@@ -713,6 +723,18 @@ proto = {
             loader.data = args;
             loader.require((fetchCSS) ? missing : args);
             loader.insert(null, (fetchCSS) ? null : 'js');
+        } else if (len && Y.config.use_rls) {
+
+            // server side loader service
+            // console.log(Y._rls(args));
+
+            Y.Get.script(Y._rls(args), {
+                onEnd: function(o) {
+                    handleLoader(o.data);
+                }, 
+                data: args
+            });
+            
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
             Y._loading = true;
@@ -1332,6 +1354,58 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * @property errorFn
  * @type Function
  */
+
+/**
+ * The parameter defaults for the remote loader service.
+ * Requires the rls submodule.  The properties that are
+ * supported:
+ * <pre>
+ * m: comma separated list of module requirements.  This 
+ *    must be the param name even for custom implemetations.
+ * v: the version of YUI to load.  Defaults to the version
+ *    of YUI that is being used.
+ * gv: the version of the gallery to load (@see the gallery config)
+ * env: comma separated list of modules already on the page.
+ *      this must be the param name even for custom implemetations.
+ * lang: the languages supported on the page (@see the lang config)
+ * '2in3v':  the version of the 2in3 wrapper to use (@see the 2in3 config).
+ * '2v': the version of yui2 to use in the yui 2in3 wrappers (@see the yui2 config)
+ * filt: a filter def to apply to the urls (@see the filter config).
+ * filts: a list of custom filters to apply per module (@see the filters config).
+ * caps: ''
+ *</pre>
+ *
+ * @since 3.2.0
+ * @property rls
+ */
+
+/**
+ * The base path to the remote loader service
+ *
+ * @since 3.2.0
+ * @property rls_base
+ */
+
+/**
+ * The template to use for building the querystring portion
+ * of the remote loader service url.  The default is determined
+ * by the rls config -- each property that has a value will be
+ * represented.
+ *
+ * ex: m={m}&v={v}&env={env}&lang={lang}&filt={filt}
+ *
+ *
+ * @since 3.2.0
+ * @property rls_tmpl
+ */
+
+/**
+ * Configure the instance to use a remote loader service instead of
+ * the client loader.
+ *
+ * @since 3.2.0
+ * @property use_rls
+ */
 YUI.add('yui-base', function(Y) {
 
 /*
@@ -1381,7 +1455,8 @@ TYPES     = {
 },
 
 TRIMREGEX = /^\s+|\s+$/g,
-EMPTYSTRING = '';
+EMPTYSTRING = '',
+SUBREGEX  = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
 
 /**
  * Determines whether or not the provided item is an array.
@@ -1551,6 +1626,19 @@ L.isValue = function(o) {
  */
 L.type = function (o) {
     return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
+};
+
+/**
+ * Lightweight version of @see Y.substitute... it uses the same template
+ * structure as Y.substitute, but doesn't support recursion, auto-object
+ * coersion, or formats
+ * @method sub
+ * @since 3.2.0
+ */
+L.sub = function (s, o) {
+    return ((s.replace) ? s.replace(SUBREGEX, function (match, key) {
+        return (!L.isUndefined(o[key])) ? o[key] : match;
+    }) : s);
 };
 
 // })();
