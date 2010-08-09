@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: yui   queue-base.js  (YUI Library)</title>
+	<title>API: yui   rls.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
                 
-                 &gt; queue-base.js (source view) 
+                 &gt; rls.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -48,90 +48,57 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * The YUI module contains the components required for building the YUI seed file.</span>
-<span class="cm"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
-<span class="cm"> * @module yui</span>
-<span class="cm"> * @submodule yui-base</span>
+<span class="cm"> * Implentation for building the remote loader service url.</span>
+<span class="cm"> * @method _rls</span>
+<span class="cm"> * @param what {Array} the requested modules</span>
+<span class="cm"> * @since 3.2.0</span>
 <span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">_rls</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">what</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and</span>
-<span class="cm"> * removed using next().</span>
-<span class="cm"> *</span>
-<span class="cm"> * @class Queue</span>
-<span class="cm"> * @param item* {MIXED} 0..n items to seed the queue</span>
-<span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">Queue</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-<span class="p">}</span>
+        <span class="c1">// the configuration</span>
+        <span class="nx">rls</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">rls</span> <span class="o">||</span> <span class="p">{</span>
+            <span class="nx">m</span><span class="o">:</span>    <span class="mi">1</span><span class="p">,</span> <span class="c1">// must have</span>
+            <span class="nx">v</span><span class="o">:</span>    <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
+            <span class="nx">gv</span><span class="o">:</span>   <span class="nx">config</span><span class="p">.</span><span class="nx">gallery</span><span class="p">,</span>
+            <span class="nx">env</span><span class="o">:</span>  <span class="mi">1</span><span class="p">,</span> <span class="c1">// must have</span>
+            <span class="nx">lang</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">lang</span><span class="p">,</span>
+            <span class="s1">&#39;2in3v&#39;</span><span class="o">:</span>  <span class="nx">config</span><span class="p">[</span><span class="s1">&#39;2in3&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;2v&#39;</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">yui2</span><span class="p">,</span>
+            <span class="nx">filt</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span>
+            <span class="nx">filts</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">filters</span><span class="p">,</span>
+            <span class="nx">caps</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">},</span>
 
-<span class="nx">Queue</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="cm">/**</span>
-<span class="cm">     * Initialize the queue</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _init</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="cm">/**</span>
-<span class="cm">         * The collection of enqueued items</span>
-<span class="cm">         *</span>
-<span class="cm">         * @property _q</span>
-<span class="cm">         * @type {Array}</span>
-<span class="cm">         * @protected</span>
-<span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_q</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="p">},</span>
+        <span class="c1">// The rls base path</span>
+        <span class="nx">rls_base</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">rls_base</span> <span class="o">||</span> <span class="s1">&#39;load?&#39;</span><span class="p">,</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Get the next item in the queue. FIFO support</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method next</span>
-<span class="cm">     * @return {MIXED} the next item in the queue</span>
-<span class="cm">     */</span>
-    <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-    <span class="p">},</span>
+        <span class="c1">// the template</span>
+        <span class="nx">rls_tmpl</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">rls_tmpl</span> <span class="o">||</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">param</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">param</span> <span class="k">in</span> <span class="nx">rls</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">param</span> <span class="k">in</span> <span class="nx">rls</span> <span class="o">&amp;&amp;</span> <span class="nx">rls</span><span class="p">[</span><span class="nx">param</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">s</span> <span class="o">+=</span> <span class="nx">param</span> <span class="o">+</span> <span class="s1">&#39;={&#39;</span> <span class="o">+</span> <span class="nx">param</span> <span class="o">+</span> <span class="s1">&#39;}&amp;&#39;</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="c1">// console.log(&#39;rls_tmpl: &#39; + s);</span>
+            <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="p">}(),</span> 
+        
+        <span class="nx">url</span><span class="p">;</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Get the last in the queue. LIFO support</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method last</span>
-<span class="cm">     * @return {MIXED} the last item in the queue</span>
-<span class="cm">     */</span>
-    <span class="nx">last</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
-    <span class="p">},</span>
+    <span class="c1">// update the request</span>
+    <span class="nx">rls</span><span class="p">.</span><span class="nx">m</span> <span class="o">=</span> <span class="nx">what</span><span class="p">;</span>
+    <span class="nx">rls</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">);</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Add 0..n items to the end of the queue</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method add</span>
-<span class="cm">     * @param item* {MIXED} 0..n items</span>
-<span class="cm">     */</span>
-    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">true</span><span class="p">),</span><span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
-        <span class="p">},</span><span class="k">this</span><span class="p">);</span>
+    <span class="nx">url</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">rls_base</span> <span class="o">+</span> <span class="nx">rls_tmpl</span><span class="p">,</span> <span class="nx">rls</span><span class="p">);</span>
 
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">rls</span> <span class="o">=</span> <span class="nx">rls</span><span class="p">;</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">rls_tmpl</span> <span class="o">=</span> <span class="nx">rls_tmpl</span><span class="p">;</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Returns the current number of queued items</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method size</span>
-<span class="cm">     * @return {Number}</span>
-<span class="cm">     */</span>
-    <span class="nx">size</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class="c1">// console.log(url);</span>
+    <span class="k">return</span> <span class="nx">url</span><span class="p">;</span>
 <span class="p">};</span>
-
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span> <span class="o">=</span> <span class="nx">Queue</span><span class="p">;</span>
-
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loaderQueue</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loaderQueue</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Queue</span><span class="p">();</span>
 </pre></div>
 
                     </div>
@@ -236,8 +203,8 @@
                                 <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
                                 <li class=""><a href="intl-base.js.html" title="intl-base.js">intl-base.js</a></li>
-                                <li class="selected"><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
-                                <li class=""><a href="rls.js.html" title="rls.js">rls.js</a></li>
+                                <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
+                                <li class="selected"><a href="rls.js.html" title="rls.js">rls.js</a></li>
                                 <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
                                 <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
