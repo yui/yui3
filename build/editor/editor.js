@@ -443,17 +443,24 @@ YUI.add('frame', function(Y) {
         /**
         * @method focus
         * @description Set the focus to the iframe
+        * @param {Function} fn Callback function to execute after focus happens        
         * @return {Frame}
         * @chainable        
         */
-        focus: function() {
+        focus: function(fn) {
             if (Y.UA.ie || Y.UA.gecko) {
                 this.getInstance().one('win').focus();
+                if (fn) {
+                    fn();
+                }
             } else {
                 try {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
+                        if (fn) {
+                            fn();
+                        }
                     });
                 } catch (ferr) {
                 }
@@ -1178,6 +1185,9 @@ YUI.add('selection', function(Y) {
                         this.selectNode(cur, collapse);
                     }
                 } else {
+                    if (node.get('nodeType') === 3) {
+                        node = node.get('parentNode');
+                    }
                     newNode = Y.Node.create(html);
                     node.append(newNode);
                 }
@@ -2191,11 +2201,12 @@ YUI.add('editor-base', function(Y) {
         /**
         * Focus the contentWindow of the iframe
         * @method focus
+        * @param {Function} fn Callback function to execute after focus happens
         * @return {EditorBase}
         * @chainable
         */
-        focus: function() {
-            this.frame.focus();
+        focus: function(fn) {
+            this.frame.focus(fn);
             return this;
         },
         /**

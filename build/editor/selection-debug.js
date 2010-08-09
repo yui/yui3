@@ -524,6 +524,9 @@ YUI.add('selection', function(Y) {
                         this.selectNode(cur, collapse);
                     }
                 } else {
+                    if (node.get('nodeType') === 3) {
+                        node = node.get('parentNode');
+                    }
                     newNode = Y.Node.create(html);
                     node.append(newNode);
                 }

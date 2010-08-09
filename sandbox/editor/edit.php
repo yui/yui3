@@ -272,6 +272,12 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         var img = e.currentTarget, inst = editor.getInstance();
         editor.focus();
         editor.execCommand('insertandfocus', '<span>:)</span>');
+        /*
+        editor.focus(function() {
+            editor.execCommand('insertandfocus', '<span>:)</span>');
+        });
+        e.halt();
+        */
     }, 'img');
     
     var buttons = Y.all('#test1 button');
