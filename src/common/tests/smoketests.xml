@@ -34,7 +34,6 @@
         <url>node-focusmanager/tests/focusmanager.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>slider/tests/slider.html</url>
-        <url>stylesheet/tests/stylesheet.html</url>
         <url>widget/tests/widget.html</url>
         <url>yui/tests/config.html</url>
         <url>yui/tests/core.html</url>
@@ -45,8 +44,9 @@
         <url>test/tests/arrayassert.html</url>
         <url>test/tests/mock.html</url>
         <url>test/tests/objectassert.html</url>
-        <url>test/tests/testformat.html</url>
         <!--
+        <url>test/tests/testformat.html</url>
+        <url>stylesheet/tests/stylesheet.html</url>
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>
         <url>substitute/tests/substitute.html</url>
