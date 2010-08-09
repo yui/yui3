@@ -414,11 +414,12 @@
         <span class="cm">/**</span>
 <span class="cm">        * Focus the contentWindow of the iframe</span>
 <span class="cm">        * @method focus</span>
+<span class="cm">        * @param {Function} fn Callback function to execute after focus happens</span>
 <span class="cm">        * @return {EditorBase}</span>
 <span class="cm">        * @chainable</span>
 <span class="cm">        */</span>
-        <span class="nx">focus</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">focus</span><span class="p">();</span>
+        <span class="nx">focus</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
