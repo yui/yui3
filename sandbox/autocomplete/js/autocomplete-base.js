@@ -61,10 +61,10 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
         var input = this.get(INPUT_NODE);
 
         if (!input) {
-            Y.error('No input node specified');
+            Y.error('No input node specified.');
         }
 
-        if (input.get('nodeName') === 'INPUT') {
+        if (input.get('nodeName').toLowerCase() === 'input') {
             input.setAttribute(AC, this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
         }
 
@@ -545,14 +545,14 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
     },
 
     /**
-     * Regular expression that matches an individual non-word character.
+     * Regular expression that matches one or more non-word ASCII characters.
      *
      * @property REGEX_NOT_WORD
      * @type RegExp
      * @static
      * @final
      */
-    REGEX_NOT_WORD: /\W/,
+    REGEX_NOT_WORD: /[^'0-9A-Za-z\x80-\x9A\xA0-\xA5]+/,
 
     // -- Public Static Methods ------------------------------------------------
 
@@ -569,11 +569,11 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
      * @static
      */
     getWords: function (string, preserveCase) {
-        var regex = AutoComplete.REGEX_NOT_WORD,
-            words = YArray.unique((preserveCase ? string : string.toLowerCase()).split(regex));
+        var notWord = AutoComplete.REGEX_NOT_WORD,
+            words = YArray.unique((preserveCase ? string : string.toLowerCase()).split(notWord));
 
         return YArray.reject(words, function (word) {
-            return word === '' || regex.test(word);
+            return word === '' || notWord.test(word);
         });
     },
 
@@ -618,5 +618,5 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 });
 
 }, '@VERSION@', {
-    requires: ['base-base', 'event-valuechange', 'node-base']
+    requires: ['base-base', 'collection', 'event-valuechange', 'node-base']
 });

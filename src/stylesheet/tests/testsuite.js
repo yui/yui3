@@ -5,8 +5,8 @@ YUI.add('stylesheet-test', function(Y) {
 // May need setAttribute?
 //Y.one("link:not([href^=http]),link[href=^http://localhost/]").set('id', 'locallink');
 Y.one("link").set('id', 'locallink');
-if ( ! Y.one("#testbed") ) {
-    Y.one( "body" ).append( '<div id="testbed"></div>' );
+if (!Y.one("#testbed")) {
+    Y.one("body").append('<div id="testbed"></div>');
 }
 
 var d = document,
@@ -19,14 +19,14 @@ var d = document,
     style   = Y.Node.create('<style type="text/css" id="styleblock"></style>'),
     cssText = 'h1 { font: normal 125%/1.4 Arial, sans-serif; }';
 
-if ( ! Y.one( "#styleblock" ) ) {
-    if ( style._node.styleSheet ) {
+if (!Y.one("#styleblock")) {
+    Y.one("head").append(style);
+
+    if (style._node.styleSheet) {
         style._node.styleSheet.cssText = cssText;
     } else {
-        style.append( cssText );
+        style.append(cssText);
     }
-
-    Y.one( "head" ).append( style );
 }
 
 StyleAssert.normalizeColor = function (c) {
@@ -67,8 +67,8 @@ Dom.getSheet = function (yuid) {
         i;
 
     for (i = nodes.length - 1; i >= 0; --i) {
-        if (nodes[i]._yuid === yuid) {
-            return (nodes[i].sheet || nodes[i].stylesheet);
+        if (Y.stamp(nodes[i]) === yuid) {
+            return (nodes[i].sheet || nodes[i].styleSheet);
         }
     }
 };
@@ -200,6 +200,12 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name : "Test set",
 
+    _should: {
+        fail: {
+            test_important: 2528707  // bug
+        }
+    },
+
     setUp : function () {
         this.stylesheet = new StyleSheet('test');
 
@@ -230,8 +236,8 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual('#eef',
                         Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor");
-        StyleAssert.areEqual('1px',
-                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+        StyleAssert.areEqual('#ccc',
+                        Y.DOM.getStyle(this.testNode,'borderLeftColor'),
                         "border");
     },
 
@@ -294,9 +300,11 @@ suite.add(new Y.Test.Case({
             paddingBottom: '10px !important'
         });
 
-        //Assert.areEqual(1,(sheet.cssRules || sheet.rules).length, "!important rule not added to the sheet");
+        Assert.areEqual(1,(sheet.cssRules || sheet.rules).length, "!important rule not added to the sheet");
 
         Assert.areNotEqual(original, target.get('offsetHeight'));
+
+        Assert.fail(); // remove when the bug is fixed
     }
 }));
 
@@ -313,7 +321,7 @@ suite.add(new Y.Test.Case({
         this.before = {
             color           : Y.DOM.getStyle(this.testNode,'color'),
             backgroundColor : Y.DOM.getStyle(this.testNode,'backgroundColor'),
-            borderLeftWidth : Y.DOM.getStyle(this.testNode,'borderLeftWidth')
+            borderLeftColor : Y.DOM.getStyle(this.testNode,'borderLeftColor')
         };
 
     },
@@ -338,8 +346,8 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual('#eef',
                         Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (enabled)");
-        StyleAssert.areEqual('1px',
-                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+        StyleAssert.areEqual('#ccc',
+                        Y.DOM.getStyle(this.testNode,'borderLeftColor'),
                         "border (enabled)");
 
         this.stylesheet.disable();
@@ -350,8 +358,8 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual(this.before.backgroundColor,
                         Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (disabled)");
-        StyleAssert.areEqual(this.before.borderLeftWidth,
-                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+        StyleAssert.areEqual(this.before.borderLeftColor,
+                        Y.DOM.getStyle(this.testNode,'borderLeftColor'),
                         "border (disabled)");
     },
 
@@ -370,8 +378,8 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual(this.before.backgroundColor,
                         Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (disabled)");
-        StyleAssert.areEqual(this.before.borderLeftWidth,
-                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+        StyleAssert.areEqual(this.before.borderLeftColor,
+                        Y.DOM.getStyle(this.testNode,'borderLeftColor'),
                         "border (disabled)");
 
         this.stylesheet.enable();
@@ -382,8 +390,8 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual('#eef',
                         Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (enabled)");
-        StyleAssert.areEqual('1px',
-                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+        StyleAssert.areEqual('#ccc',
+                        Y.DOM.getStyle(this.testNode,'borderLeftColor'),
                         "border (enabled)");
     }
 }));
@@ -402,7 +410,7 @@ suite.add(new Y.Test.Case({
         this.before = {
             color           : Y.DOM.getStyle(this.testNode,'color'),
             backgroundColor : Y.DOM.getStyle(this.testNode,'backgroundColor'),
-            borderLeftWidth : Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+            borderLeftColor : Y.DOM.getStyle(this.testNode,'borderLeftColor'),
             textAlign       : Y.DOM.getStyle(this.testNode,'textAlign')
         };
 
@@ -429,8 +437,8 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual('#eef',
                         Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (before unset)");
-        StyleAssert.areEqual('1px',
-                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+        StyleAssert.areEqual('#ccc',
+                        Y.DOM.getStyle(this.testNode,'borderLeftColor'),
                         "border (before unset)");
 
         this.stylesheet.unset('#target', 'color');
@@ -444,8 +452,8 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual(this.before.backgroundColor,
                         Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (after unset)");
-        StyleAssert.areEqual(this.before.borderLeftWidth,
-                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+        StyleAssert.areEqual(this.before.borderLeftColor,
+                        Y.DOM.getStyle(this.testNode,'borderLeftColor'),
                         "border (after unset)");
     },
 
@@ -548,6 +556,12 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name : "Test getCssText",
 
+    _should: {
+        fail: {
+            test_important: true
+        }
+    },
+
     setUp : function () {
         this.stylesheet = new StyleSheet('test');
 
@@ -592,7 +606,7 @@ suite.add(new Y.Test.Case({
         if (/important/i.test(css)) {
         }
 
-        // No assertions because this is informational only
+        Assert.fail(); // remove when the bug is fixed
     }
 }));
 

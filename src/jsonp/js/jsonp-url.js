@@ -1,8 +1,6 @@
 var JSONPRequest = Y.JSONPRequest,
     getByPath    = Y.Object.getValue,
-    noop         = function () {},
-    DOT = '.',
-    AT  = '@';
+    noop         = function () {};
 
 /**
  * Adds support for parsing complex callback identifiers from the jsonp url.
@@ -53,38 +51,40 @@ Y.mix(JSONPRequest.prototype, {
      */
     _defaultCallback: function (url) {
         var match = url.match(this._pattern),
-            bracketAlias = {},
+            keys  = [],
             i = 0,
-            path, callback;
+            locator, path, callback;
 
         if (match) {
-            // callback=foo[2].bar["baz"]func => ['foo','2','bar','baz','func']
-            // TODO: Doesn't handle escaping or url encoding
-            path = match[1].replace(/\[(?:(['"])([^\]\1]+)\1|(\d+))\]/g,
-                        function (_, quote, name, idx) {
-                            var nextChar = (RegExp.rightContext||'.').charAt(0),
-                                token = AT + (++i);
+            // Strip the ["string keys"] and [1] array indexes
+            locator = match[1]
+                .replace(/\[(['"])(.*?)\1\]/g,
+                    function (x, $1, $2) {
+                        keys[i] = $2;
+                        return '.@' + (i++);
+                    })
+                .replace(/\[(\d+)\]/g,
+                    function (x, $1) {
+                        keys[i] = parseInt($1, 10) | 0;
+                        return '.@' + (i++);
+                    })
+                .replace(/^\./, ''); // remove leading dot
 
-                            bracketAlias[token] = name || idx;
-
-                            if (nextChar !== DOT && nextChar !== '[') {
-                                token += DOT;
-                            }
-                            return DOT + token;
-                        }).split(/\./);
-            
-            // Restore tokens from brack notation
-            Y.each(path, function (bit, i) {
-                if (bit.charAt(0) === '@') {
-                    path[i] = bracketAlias[bit];
+            // Validate against problematic characters.
+            if (!/[^\w\.\$@]/.test(locator)) {
+                path = locator.split('.');
+                for (i = path.length - 1; i >= 0; --i) {
+                    if (path[i].charAt(0) === '@') {
+                        path[i] = keys[parseInt(path[i].substr(1), 10)];
+                    }
                 }
-            });
 
-            // First look for a global function, then the Y, then try the Y
-            // again from the second token (to support "...?callback=Y.handler")
-            callback = getByPath(Y.config.win, path) ||
-                       getByPath(Y, path) ||
-                       getByPath(Y, path.slice(1));
+                // First look for a global function, then the Y, then try the Y
+                // again from the second token (to support "callback=Y.handler")
+                callback = getByPath(Y.config.win, path) ||
+                           getByPath(Y, path) ||
+                           getByPath(Y, path.slice(1));
+            }
         }
 
         return callback || noop;
