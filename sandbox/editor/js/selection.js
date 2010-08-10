@@ -464,7 +464,7 @@ YUI.add('selection', function(Y) {
             Y.config.doc.execCommand('fontname', null, Y.Selection.TMP);
             var nodes = Y.all(Y.Selection.ALL),
                 items = [];
-
+            
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY, Y.Selection.TMP)) {
                     n.setStyle(FONT_FAMILY, '');

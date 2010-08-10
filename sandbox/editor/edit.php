@@ -206,8 +206,8 @@ var yConfig = {
         augment: true,
         get: true,
         loader: true,
-        Selector: true//,
-        //frame: true
+        Selector: true,
+        frame: true
     },
     throwFail: true
 };
