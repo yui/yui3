@@ -110,14 +110,6 @@ Y.Test.Runner.add(new Y.Test.Case({
     },
 
     // -- Static Methods -------------------------------------------------------
-    'getWords() should return an array of unique words in the given string': function () {
-        var words = AutoComplete.getWords('foo bar baz quux foo bar');
-        Y.ArrayAssert.itemsAreSame(['foo', 'bar', 'baz', 'quux'], words);
-    }
-
-    // 'getWords() should not be fooled by punctuation': function () {
-    //     var words = AutoComplete.getWords("a:b,c. d'ef (g) h! \"i\" j;k`l\tm\nn\ro-p $q r [s] {t} u?v/w_x y z%");
-    // }
 }));
 
 }, '@VERSION@', {requires:['autocomplete-base', 'node', 'test']});

@@ -30,7 +30,6 @@ YUI.add('autocomplete-base', function (Y) {
 
 // -- Shorthand & Private Variables --------------------------------------------
 var Lang       = Y.Lang,
-    YArray     = Y.Array,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
 
@@ -544,39 +543,6 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
         }
     },
 
-    /**
-     * Regular expression that matches one or more non-word ASCII characters.
-     *
-     * @property REGEX_NOT_WORD
-     * @type RegExp
-     * @static
-     * @final
-     */
-    REGEX_NOT_WORD: /[^'0-9A-Za-z\x80-\x9A\xA0-\xA5]+/,
-
-    // -- Public Static Methods ------------------------------------------------
-
-    /**
-     * Returns an array of unique words in the specified string. A "word" is any
-     * consecutive part of the string that doesn't match the
-     * <code>REGEX_NOT_WORD</code> regular expression.
-     *
-     * @method getWords
-     * @param {String} string String to parse
-     * @param {Boolean} preserveCase (optional) If <code>true</code>, case will
-     *   be preserved; otherwise all words will be converted to lowercase.
-     * @return {Array} Unique words in the string
-     * @static
-     */
-    getWords: function (string, preserveCase) {
-        var notWord = AutoComplete.REGEX_NOT_WORD,
-            words = YArray.unique((preserveCase ? string : string.toLowerCase()).split(notWord));
-
-        return YArray.reject(words, function (word) {
-            return word === '' || notWord.test(word);
-        });
-    },
-
     // -- Protected Static Methods ---------------------------------------------
 
     /**
@@ -618,5 +584,5 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 });
 
 }, '@VERSION@', {
-    requires: ['base-base', 'collection', 'event-valuechange', 'node-base']
+    requires: ['base-base', 'event-valuechange', 'node-base']
 });

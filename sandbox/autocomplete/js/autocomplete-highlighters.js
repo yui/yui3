@@ -9,8 +9,11 @@ YUI.add('autocomplete-highlighters', function (Y) {
  * All highlighters first escape any special HTML characters in the result
  * string and then highlight the appropriate portions of the string by wrapping
  * them in a
- * <code>&lt;strong class="yui3-autocomplete-highlight"&gt;&lt;/strong&gt;</code>
- * element.
+ * <code>&lt;b class="yui3-highlight"&gt;&lt;/b&gt;</code> element. A
+ * <code>&lt;b&gt;</code> element is used rather than a
+ * <code>&lt;strong&gt;</code> element in accordance with HTML5's definition of
+ * <code>&lt;b&gt;</code> as being purely presentational, which is exactly what
+ * highlighting is.
  * </p>
  *
  * @module autocomplete
@@ -20,14 +23,44 @@ YUI.add('autocomplete-highlighters', function (Y) {
  */
 
 var AutoComplete = Y.AutoComplete,
+    WordBreak    = Y.Unicode.WordBreak,
     YArray       = Y.Array,
     escapeHTML   = AutoComplete._escapeHTML,
     escapeRegExp = AutoComplete._escapeRegExp,
 
-    EMPTY_OBJECT = {}, // to avoid re-creating a new empty object whenever I need one
+    MODE_START = 'startsWith',
+    MODE_WORD  = 'wordMatch',
+
+    DEFAULT_REPLACE = '<b class="yui3-highlight">$1</b>',
+    EMPTY_OBJECT    = {}, // to avoid re-creating a new empty object whenever I need one
 
 Highlighters = {
     // -- Protected Properties -------------------------------------------------
+
+    /**
+     * Regular expression template for highlighting a match that occurs anywhere
+     * in a string. The placeholder <code>%needles</code> will be replaced with
+     * a list of needles to match, joined by <code>|</code> characters.
+     *
+     * @property _REGEX
+     * @type {String}
+     * @protected
+     * @static
+     * @final
+     */
+    _REGEX: '(%needles)',
+
+    /**
+     * Replacement template for matches. Use regex match placeholders to insert
+     * matched values.
+     *
+     * @property _REPLACE
+     * @type {String}
+     * @protected
+     * @static
+     * @final
+     */
+    _REPLACE: DEFAULT_REPLACE,
 
     /**
      * Regular expression template for highlighting start-of-string matches
@@ -53,47 +86,7 @@ Highlighters = {
      * @static
      * @final
      */
-    _START_REPLACE: '<strong class="yui3-autocomplete-highlight">$1</strong>',
-
-    /**
-     * Regular expression template for highlighting subword matches (i.e.,
-     * matches that can occur within a larger word). The placeholder
-     * <code>%needles</code> will be replaced with a list of needles to match,
-     * joined by <code>|</code> characters.
-     *
-     * @property _SUBWORD_REGEX
-     * @type {String}
-     * @protected
-     * @static
-     * @final
-     */
-    _SUBWORD_REGEX: '(%needles)',
-
-    /**
-     * Replacement template for subword matches. Use regex match placeholders to
-     * insert matched values.
-     *
-     * @property _SUBWORD_REPLACE
-     * @type {String}
-     * @protected
-     * @static
-     * @final
-     */
-    _SUBWORD_REPLACE: '<strong class="yui3-autocomplete-highlight">$1</strong>',
-
-    /**
-     * Regular expression template for highlighting word matches (i.e., matches
-     * bounded on both sides by a non-word character or string start/end). The
-     * placeholder <code>%needles</code> will be replaced with a list of needles
-     * to match, joined by <code>|</code> characters.
-     *
-     * @property _WORD_REGEX
-     * @type {String}
-     * @protected
-     * @static
-     * @final
-     */
-    _WORD_REGEX: '(^|\\W)(%needles)(\\W|$)',
+    _START_REPLACE: DEFAULT_REPLACE,
 
     /**
      * Replacement template for word matches. Use regex match placeholders to
@@ -105,7 +98,7 @@ Highlighters = {
      * @static
      * @final
      */
-    _WORD_REPLACE: '$1<strong class="yui3-autocomplete-highlight">$2</strong>$3',
+    _WORD_REPLACE: DEFAULT_REPLACE,
 
     // -- Public Methods -------------------------------------------------------
 
@@ -128,8 +121,7 @@ Highlighters = {
 
         return YArray.map(results, function (result) {
             return Highlighters._highlight(result, queryChars, {
-                caseSensitive: caseSensitive,
-                subWordMatch : true
+                caseSensitive: caseSensitive
             });
         });
     },
@@ -198,7 +190,7 @@ Highlighters = {
         return YArray.map(results, function (result) {
             return Highlighters._highlight(result, [query], {
                 caseSensitive: caseSensitive,
-                startMatch   : true
+                startsWith   : true
             });
         });
     },
@@ -230,10 +222,12 @@ Highlighters = {
         // The caseSensitive parameter is only intended for use by
         // wordMatchCase(). It's intentionally undocumented.
 
-        var queryWords = AutoComplete.getWords(query, true);
+        var queryWords = WordBreak.getUniqueWords(query, {
+            ignoreCase: !caseSensitive
+        });
 
         return YArray.map(results, function (result) {
-            return Highlighters._highlight(result, queryWords, {
+            return Highlighters._highlightWord(result, queryWords, {
                 caseSensitive: caseSensitive
             });
         });
@@ -273,18 +267,11 @@ Highlighters = {
      *     <code>false</code>.
      *   </dd>
      *
-     *   <dt>startMatch (Boolean)</dt>
+     *   <dt>startsWith (Boolean)<dt>
      *   <dd>
-     *     If <code>true</code>, only matches at the start of the haystack will
-     *     be highlighted. Default is <code>false</code>.
-     *   </dd>
-     *
-     *   <dt>subWordMatch (Boolean)</dt>
-     *   <dd>
-     *     If <code>true</code>, subword matches (i.e., matches that aren't
-     *     bordered by word boundaries) will be allowed. Default is
-     *     <code>false</code>, meaning that only entire words or phrases of
-     *     words will be matched.
+     *     By default, needles are highlighted wherever they appear in the
+     *     haystack. If <code>startsWith</code> is <code>true</code>, matches
+     *     must be anchored to the beginning of the string.
      *   </dd>
      * </dl>
      * @return {String} Escaped and highlighted version of <em>haystack</em>.
@@ -312,27 +299,52 @@ Highlighters = {
             needles[i] = escapeRegExp(escapeHTML(needles[i]));
         }
 
-        if (options.subWordMatch) {
-            regex       = Highlighters._SUBWORD_REGEX;
-            replacement = Highlighters._SUBWORD_REPLACE;
-        } else if (options.startMatch) {
+        if (options.startsWith) {
             regex       = Highlighters._START_REGEX;
             replacement = Highlighters._START_REPLACE;
         } else {
-            regex       = Highlighters._WORD_REGEX;
-            replacement = Highlighters._WORD_REPLACE;
+            regex       = Highlighters._REGEX;
+            replacement = Highlighters._REPLACE;
         }
 
         return haystack.replace(
-            new RegExp(regex.replace('%needles', needles.join('|')),
-                    options.caseSensitive ? 'g' : 'gi'),
+            new RegExp(
+                regex.replace('%needles', needles.join('|')),
+                options.caseSensitive ? 'g' : 'gi'
+            ),
             replacement
         );
+    },
+
+    _highlightWord: function (haystack, needles, options) {
+        var replacement = Highlighters._WORD_REPLACE,
+            words;
+
+        if (!options) {
+            options = EMPTY_OBJECT;
+        }
+
+        // Convert the needles array to a hash for faster lookups.
+        needles = YArray.hash(needles);
+
+        // Split the haystack into an array of words, including punctuation and
+        // whitespace so we can rebuild the string later.
+        words = WordBreak.getWords(haystack, {
+            ignoreCase        : !options.caseSensitive,
+            includePunctuation: true,
+            includeWhitespace : true
+        });
+
+        return YArray.map(words, function (word) {
+            return needles.hasOwnProperty(word) ?
+                replacement.replace('$1', escapeHTML(word)) :
+                escapeHTML(word);
+        }).join('');
     }
 };
 
 AutoComplete.Highlighters = Highlighters;
 
 }, '@VERSION@', {
-    requires: ['autocomplete-base', 'collection']
+    requires: ['autocomplete-base', 'collection', 'unicode-wordbreak']
 });
