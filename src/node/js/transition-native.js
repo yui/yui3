@@ -165,6 +165,8 @@ Transition.prototype = {
 
         if (!anim._hasEndEvent) {
             node.on(TRANSITION_END, this._onNativeEnd, this);
+            anim._hasEndEvent = true;
+
         }
 
         if (anim._totalDuration) { // only fire when duration > 0 (per spec)
@@ -184,8 +186,6 @@ Transition.prototype = {
         var event = e._event,
             anim = this,
             node = anim._node;
-
-        anim._hasEndEvent = true;
 
         node.fire(PROPERTY_END, {
             type: PROPERTY_END,
