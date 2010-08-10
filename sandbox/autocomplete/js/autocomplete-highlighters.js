@@ -227,7 +227,7 @@ Highlighters = {
         });
 
         return YArray.map(results, function (result) {
-            return Highlighters._highlightWord(result, queryWords, {
+            return Highlighters._highlightWords(result, queryWords, {
                 caseSensitive: caseSensitive
             });
         });
@@ -274,6 +274,7 @@ Highlighters = {
      *     must be anchored to the beginning of the string.
      *   </dd>
      * </dl>
+     *
      * @return {String} Escaped and highlighted version of <em>haystack</em>.
      * @protected
      * @static
@@ -316,7 +317,31 @@ Highlighters = {
         );
     },
 
-    _highlightWord: function (haystack, needles, options) {
+    /**
+     * Highlights complete words in the <em>haystack</em> string that are also
+     * in the <em>needles</em> array. The returned string will have all HTML
+     * characters escaped except for the highlighting markup.
+     *
+     * @method _highlightWords
+     * @param {String} haystack String to apply highlighting to.
+     * @param {Array} needles Array containing words that should be
+     *   highlighted.
+     * @param {Object} options (optional) Options object, which may contain
+     *   zero or more of the following properties:
+     *
+     * <dl>
+     *   <dt>caseSensitive (Boolean)</dt>
+     *   <dd>
+     *     If <code>true</code>, matching will be case-sensitive. Default is
+     *     <code>false</code>.
+     *   </dd>
+     * </dl>
+     *
+     * @return {String} Escaped and highlighted version of <em>haystack</em>.
+     * @protected
+     * @static
+     */
+    _highlightWords: function (haystack, needles, options) {
         var replacement = Highlighters._WORD_REPLACE,
             words;
 
