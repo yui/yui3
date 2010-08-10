@@ -115,6 +115,12 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+    <ul>
+        <li style="font-family: courier new">Item #1</li>
+        <li>Item #1</li>
+        <li>Item #1</li>
+    </ul>
+    <p>This is a test..</p>
 </div>
     <!---div><br></div>
     <div style="font-family: ; font-size: ;"><br>
@@ -206,7 +212,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
     
     Y.delegate('click', function(e) {
@@ -366,11 +372,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
         
     });
-    //Disabled for IE testing..
-    //editor.plug(Y.Plugin.EditorLists);
-    //editor.plug(Y.Plugin.EditorTab);
+    editor.plug(Y.Plugin.EditorLists);
     editor.plug(Y.Plugin.EditorBidi);
 
+    //Disabled for IE testing..
+    //editor.plug(Y.Plugin.EditorTab);
     editor.after('frame:paste', function(e) {
         /*
         var inst = editor.getInstance();
