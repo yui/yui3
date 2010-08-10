@@ -23,9 +23,10 @@
         */
         _onNodeChange: function(e) {
             var inst = this.get(HOST).getInstance(), sel, li, 
-            newLi, newList, sTab, par, moved = false, tag;
+            newLi, newList, sTab, par, moved = false, tag, focusEnd = false;
 
             if (Y.UA.ie && e.changedType === 'enter') {
+                Y.log('Overriding the Enter Key', 'info', 'editorLists');
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {
                     e.changedEvent.halt();
                     e.preventDefault();
@@ -38,7 +39,7 @@
                     li.insert(newLi, 'after');
                     
                     sel = new inst.Selection();
-                    sel.selectNode(newLi.get('firstChild'));
+                    sel.selectNode(newLi.get('firstChild'), true, false);
                 }
             }
             if (e.changedType === 'tab') {
@@ -65,6 +66,7 @@
                             Y.log('Shifting list up one level', 'info', 'editorLists');
                             li.ancestor(LI).insert(li, 'after');
                             moved = true;
+                            focusEnd = true;
                         }
                     } else {
                         //li.setStyle('border', '1px solid red');
@@ -78,13 +80,16 @@
                     }
                 }
                 if (moved) {
+                    if (!li.test(LI)) {
+                        li = li.ancestor(LI);
+                    }
                     li.all(EditorLists.REMOVE).remove();
                     if (Y.UA.ie) {
                         li = li.append(EditorLists.NON).one(EditorLists.NON_SEL);
                     }
                     //Selection here..
                     Y.log('Selecting the new node', 'info', 'editorLists');
-                    (new inst.Selection()).selectNode(li, true, true);
+                    (new inst.Selection()).selectNode(li, true, focusEnd);
                 }
             }
         },
@@ -136,8 +141,6 @@
         insertunorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
-            out = (new inst.Selection()).getSelected();
-            return out;
         },
         /**
         * Override for the insertorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
@@ -150,8 +153,6 @@
         insertorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
-            out = (new inst.Selection()).getSelected();
-            return out;   
         }
     });
 
