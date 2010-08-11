@@ -33,8 +33,10 @@ var Escape = Y.Escape = {
     },
 
     /**
-     * Returns a copy of the specified string with special RegExp characters
-     * escaped.
+     * Returns a copy of the specified string with special regular expression
+     * characters escaped, allowing the string to be used safely inside a regex.
+     * The following characters, and all whitespace characters, are escaped:
+     * <code>- # $ ^ * ( ) + [ ] { } | \ , . ?</code>
      *
      * @method regex
      * @param {String} string String to escape
@@ -42,7 +44,7 @@ var Escape = Y.Escape = {
      * @static
      */
     regex: function (string) {
-        return string.replace(/([\\\^\$*+\[\]?{}.=!:(|)])/g, '\\$1');
+        return string.replace(/[-#$^*()+[\]{}|\\,.?\s]/g, '\\$&');
     }
 };
 
