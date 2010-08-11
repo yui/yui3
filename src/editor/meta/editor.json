@@ -14,7 +14,8 @@
                     "base",
                     "frame",
                     "node",
-                    "exec-command"
+                    "exec-command",
+                    "selection"
                 ]
             },
             "selection": {
@@ -32,15 +33,9 @@
                     "editor-base"
                 ]
             },
-            "editor-tab": {
-                "requires": [
-                    "editor-base"
-                ]
-            },
             "editor-bidi": {
                 "requires": [
-                    "editor-base",
-                    "selection"
+                    "editor-base"
                 ]
             },
             "createlink-base": {
