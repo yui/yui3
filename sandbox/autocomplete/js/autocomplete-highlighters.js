@@ -1,9 +1,7 @@
 YUI.add('autocomplete-highlighters', function (Y) {
 
 /**
- * <p>
  * Provides pre-built result highlighters for AutoComplete.
- * </p>
  *
  * @module autocomplete
  * @submodule autocomplete-highlighters
@@ -12,10 +10,7 @@ YUI.add('autocomplete-highlighters', function (Y) {
  */
 
 var YArray    = Y.Array,
-    WordBreak = Y.Unicode.WordBreak,
-
-    highlight      = Y.Highlight.highlight,
-    highlightWords = Y.Highlight.highlightWords,
+    Highlight = Y.Highlight,
 
 Highlighters = {
     // -- Public Methods -------------------------------------------------------
@@ -38,7 +33,7 @@ Highlighters = {
                 query.toLowerCase()).split(''));
 
         return YArray.map(results, function (result) {
-            return highlight(result, queryChars, {
+            return Highlight.all(result, queryChars, {
                 caseSensitive: caseSensitive
             });
         });
@@ -72,7 +67,7 @@ Highlighters = {
         // phraseMatchCase(). It's intentionally undocumented.
 
         return YArray.map(results, function (result) {
-            return highlight(result, [query], {
+            return Highlight.all(result, [query], {
                 caseSensitive: caseSensitive
             });
         });
@@ -106,7 +101,7 @@ Highlighters = {
         // startsWithCase(). It's intentionally undocumented.
 
         return YArray.map(results, function (result) {
-            return highlight(result, [query], {
+            return Highlight.all(result, [query], {
                 caseSensitive: caseSensitive,
                 startsWith   : true
             });
@@ -140,12 +135,8 @@ Highlighters = {
         // The caseSensitive parameter is only intended for use by
         // wordMatchCase(). It's intentionally undocumented.
 
-        var queryWords = WordBreak.getUniqueWords(query, {
-            ignoreCase: !caseSensitive
-        });
-
         return YArray.map(results, function (result) {
-            return highlightWords(result, queryWords, {
+            return Highlight.words(result, query, {
                 caseSensitive: caseSensitive
             });
         });
@@ -168,7 +159,5 @@ Highlighters = {
 Y.AutoComplete.Highlighters = Highlighters;
 
 }, '@VERSION@', {
-    requires: [
-        'autocomplete-base', 'collection', 'highlight', 'unicode-wordbreak'
-    ]
+    requires: ['autocomplete-base', 'collection', 'highlight']
 });

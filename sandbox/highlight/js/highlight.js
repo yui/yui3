@@ -97,13 +97,14 @@ Highlight = Y.Highlight = {
     // -- Public Static Methods ------------------------------------------------
 
     /**
-     * Highlights occurrences in the <em>haystack</em> string of the items in
-     * the <em>needles</em> array. The returned string will have all HTML
-     * characters escaped except for the highlighting markup.
+     * Highlights all occurrences in the <em>haystack</em> string of the items
+     * in the <em>needles</em> array, regardless of where they occur. The
+     * returned string will have all HTML characters escaped except for the
+     * highlighting markup.
      *
-     * @method highlight
+     * @method all
      * @param {String} haystack String to apply highlighting to.
-     * @param {Array} needles Array containing strings that should be
+     * @param {String|Array} needles String or array of strings that should be
      *   highlighted.
      * @param {Object} options (optional) Options object, which may contain
      *   zero or more of the following properties:
@@ -126,7 +127,7 @@ Highlight = Y.Highlight = {
      * @return {String} Escaped and highlighted copy of <em>haystack</em>.
      * @static
      */
-    highlight: function (haystack, needles, options) {
+    all: function (haystack, needles, options) {
         var i, len, regex, replacement;
 
         if (!options) {
@@ -138,7 +139,7 @@ Highlight = Y.Highlight = {
 
         // Create a local copy of needles so we can safely modify it in the next
         // step.
-        needles = needles.concat();
+        needles = YArray.test(needles) ? needles.concat() : [needles];
 
         // Escape HTML characters and special regular expression characters in
         // the needles so they can be used in a regex and matched against the
@@ -165,13 +166,30 @@ Highlight = Y.Highlight = {
     },
 
     /**
-     * Highlights complete words in the <em>haystack</em> string that are also
-     * in the <em>needles</em> array. The returned string will have all HTML
-     * characters escaped except for the highlighting markup.
+     * Same as <code>all()</code>, but case-sensitive by default.
      *
-     * @method _highlightWords
+     * @method allCase
      * @param {String} haystack String to apply highlighting to.
-     * @param {Array} needles Array containing words that should be
+     * @param {String|Array} needles String or array of strings that should be
+     *   highlighted.
+     * @param {Object} options (optional) Options object. See <code>all()</code>
+     *   for details.
+     * @return {String} Escaped and highlighted copy of <em>haystack</em>.
+     * @static
+     */
+    allCase: function (haystack, needles, options) {
+        return Highlight.all(haystack, needles,
+                Y.merge(options || EMPTY_OBJECT, {preserveCase: true}));
+    },
+
+    /**
+     * Highlights <em>needles</em> that occur at the start of <em>haystack</em>.
+     * The returned string will have all HTML characters escaped except for the
+     * highlighting markup.
+     *
+     * @method start
+     * @param {String} haystack String to apply highlighting to.
+     * @param {String|Array} needles String or array of strings that should be
      *   highlighted.
      * @param {Object} options (optional) Options object, which may contain
      *   zero or more of the following properties:
@@ -187,7 +205,54 @@ Highlight = Y.Highlight = {
      * @return {String} Escaped and highlighted copy of <em>haystack</em>.
      * @static
      */
-    highlightWords: function (haystack, needles, options) {
+    start: function (haystack, needles, options) {
+        return Highlight.all(haystack, needles,
+                Y.merge(options || EMPTY_OBJECT, {startsWith: true}));
+    },
+
+    /**
+     * Same as <code>start()</code>, but case-sensitive by default.
+     *
+     * @method startCase
+     * @param {String} haystack String to apply highlighting to.
+     * @param {String|Array} needles String or array of strings that should be
+     *   highlighted.
+     * @return {String} Escaped and highlighted copy of <em>haystack</em>.
+     * @static
+     */
+    startCase: function (haystack, needles) {
+        // No options passthru for now, since it would be redundant. If start()
+        // ever supports more options than caseSensitive, then we'll start
+        // passing the options through.
+        return Highlight.start(haystack, needles, {caseSensitive: true});
+    },
+
+    /**
+     * Highlights complete words in the <em>haystack</em> string that are also
+     * in the <em>needles</em> array. The returned string will have all HTML
+     * characters escaped except for the highlighting markup.
+     *
+     * @method words
+     * @param {String} haystack String to apply highlighting to.
+     * @param {String|Array} needles String or array of strings containing words
+     *   that should be highlighted. If a string is passed, it will be split
+     *   into words; if an array is passed, it is assumed to have already been
+     *   split.
+     * @param {Object} options (optional) Options object, which may contain
+     *   zero or more of the following properties:
+     *
+     * <dl>
+     *   <dt>caseSensitive (Boolean)</dt>
+     *   <dd>
+     *     If <code>true</code>, matching will be case-sensitive. Default is
+     *     <code>false</code>.
+     *   </dd>
+     * </dl>
+     *
+     * @return {String} Escaped and highlighted copy of <em>haystack</em>.
+     * @static
+     */
+    words: function (haystack, needles, options) {
         var replacement = Highlight._WORD_REPLACE,
             words;
 
@@ -196,7 +261,11 @@ Highlight = Y.Highlight = {
         }
 
         // Convert the needles array to a hash for faster lookups.
-        needles = YArray.hash(needles);
+        needles = YArray.hash(
+            YArray.test(needles) ? needles : WordBreak.getUniqueWords(needles, {
+                ignoreCase: !options.caseSensitive
+            })
+        );
 
         // Split the haystack into an array of words, including punctuation and
         // whitespace so we can rebuild the string later.
@@ -211,6 +280,25 @@ Highlight = Y.Highlight = {
                 replacement.replace('$1', Escape.html(word)) :
                 Escape.html(word);
         }).join('');
+    },
+
+    /**
+     * Same as <code>words()</code>, but case-sensitive by default.
+     *
+     * @method wordsCase
+     * @param {String} haystack String to apply highlighting to.
+     * @param {String|Array} needles String or array of strings containing words
+     *   that should be highlighted. If a string is passed, it will be split
+     *   into words; if an array is passed, it is assumed to have already been
+     *   split.
+     * @return {String} Escaped and highlighted copy of <em>haystack</em>.
+     * @static
+     */
+    wordsCase: function (haystack, needles) {
+        // No options passthru for now, since it would be redundant. If words()
+        // ever supports more options than caseSensitive, then we'll start
+        // passing the options through.
+        return Highlight.words(haystack, needles, {caseSensitive: true});
     }
 };
 
