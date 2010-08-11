@@ -107,9 +107,7 @@ Y.Test.Runner.add(new Y.Test.Case({
     'requestTemplate function should replace \\{query} with the literal string {query}': function () {
         this.ac.set('requestTemplate', 'foo\\{query}bar');
         Y.Assert.areSame('foo{query}bar', this.ac.get('requestTemplate')('test'));
-    },
-
-    // -- Static Methods -------------------------------------------------------
+    }
 }));
 
 }, '@VERSION@', {requires:['autocomplete-base', 'node', 'test']});
