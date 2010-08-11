@@ -164,6 +164,9 @@
                 if (family2) {
                     family = family2;
                 }
+                if (family) {
+                    family = family.replace(/'/g, '').replace(/"/g, '');
+                }
                 fsize = n.getStyle('fontSize');
 
                 var cls = n.get('className').split(' ');
