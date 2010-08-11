@@ -3011,4 +3011,4 @@ if (typeof YUITest == "undefined" || !YUITest) {
 
 
 
-}, '@VERSION@' ,{requires:['substitute','event-base']});
+}, '@VERSION@' ,{requires:['substitute','event-base','json-stringify']});
