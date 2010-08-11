@@ -359,4 +359,4 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});

@@ -212,6 +212,9 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">family2</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">family</span> <span class="o">=</span> <span class="nx">family2</span><span class="p">;</span>
                 <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">family</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">family</span> <span class="o">=</span> <span class="nx">family</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&#39;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
                 <span class="nx">fsize</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;fontSize&#39;</span><span class="p">);</span>
 
                 <span class="kd">var</span> <span class="nx">cls</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;className&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>

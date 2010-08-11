@@ -62,15 +62,52 @@ Y.Test.Runner.add(new Y.Test.Case({
 
     // -- getWords() -----------------------------------------------------------
     'getWords() should split a string into words': function () {
+        // Also tests default exclusion of whitespace.
         Y.ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], WB.getWords('foo bar baz'));
+    },
+
+    'getWords() should preserve case by default': function () {
+        Y.ArrayAssert.itemsAreSame(['foo', 'BAR', 'baz'], WB.getWords('foo BAR baz'));
+    },
+
+    'getWords() should support an ignoreCase option': function () {
+        Y.ArrayAssert.itemsAreSame(['foo', 'bar'], WB.getWords('Foo Bar', {ignoreCase: true}));
+    },
+
+    'getWords() should exclude punctuation-only words by default': function () {
         Y.ArrayAssert.itemsAreSame(
-            ["hey", ",", "ryan", ",", "be", "careful", "what", "you", "shoot", "at", ".", "most", "things", "in", "here", "don't", "react", "too", "well", "to", "bullets", "."],
-            WB.getWords("Hey, Ryan, be careful what you shoot at. Most things in here don't react too well to bullets.")
+            ['Tut', 'tut', 'it', 'looks', 'like', 'rain'],
+            WB.getWords('Tut-tut, it looks like rain.')
         );
     },
 
-    'getWords() should support a preserveCase option': function () {
-        Y.ArrayAssert.itemsAreSame(['Foo', 'Bar'], WB.getWords('Foo Bar', {preserveCase: true}));
+    'getWords() should support an includePunctuation option': function () {
+        Y.ArrayAssert.itemsAreSame(
+            ['Tut', '-', 'tut', ',', 'it', 'looks', 'like', 'rain', '.'],
+            WB.getWords('Tut-tut, it looks like rain.', {includePunctuation: true})
+        );
+    },
+
+    'getWords() should support an includeWhitespace option': function () {
+        Y.ArrayAssert.itemsAreSame(
+            ['foo', ' ', 'bar', ' ', 'baz'],
+            WB.getWords('foo bar baz', {includeWhitespace: true})
+        );
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo', ' ', ' ', 'bar'],
+            WB.getWords('foo  bar', {includeWhitespace: true})
+        );
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo', '\t', 'bar'],
+            WB.getWords('foo\tbar', {includeWhitespace: true})
+        );
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo', '\n', 'bar'],
+            WB.getWords('foo\nbar', {includeWhitespace: true})
+        );
     },
 
     // -- getUniqueWords() -----------------------------------------------------

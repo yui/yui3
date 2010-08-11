@@ -9,10 +9,9 @@ YUI.add('autocomplete-filters', function (Y) {
  * @static
  */
 
-var YArray  = Y.Array,
-    YObject = Y.Object,
-
-    AutoComplete = Y.AutoComplete,
+var YArray    = Y.Array,
+    YObject   = Y.Object,
+    WordBreak = Y.Unicode.WordBreak,
 
 Filters = {
     // -- Public Methods -------------------------------------------------------
@@ -31,7 +30,8 @@ Filters = {
         // The caseSensitive parameter is only intended for use by
         // charMatchCase(). It's intentionally undocumented.
 
-        var queryChars = YArray.unique((caseSensitive ? query : query.toLowerCase()).split(''));
+        var queryChars = YArray.unique((caseSensitive ? query :
+                query.toLowerCase()).split(''));
 
         return YArray.filter(results, function (result) {
             if (!caseSensitive) {
@@ -131,8 +131,8 @@ Filters = {
 
     /**
      * Returns an array of results that contain all of the words in the query,
-     * in any order. Non-word characters like punctuation are ignored.
-     * Case-insensitive.
+     * in any order. Non-word characters like whitespace and certain punctuation
+     * are ignored. Case-insensitive.
      *
      * @method wordMatch
      * @param {String} query Query to match
@@ -144,11 +144,12 @@ Filters = {
         // The caseSensitive parameter is only intended for use by
         // wordMatchCase(). It's intentionally undocumented.
 
-        var queryWords = AutoComplete.getWords(query, caseSensitive);
+        var options    = {ignoreCase: !caseSensitive},
+            queryWords = WordBreak.getUniqueWords(query, options);
 
         return YArray.filter(results, function (result) {
             // Convert resultWords array to a hash for fast lookup.
-            var resultWords = YArray.hash(AutoComplete.getWords(result, caseSensitive));
+            var resultWords = YArray.hash(WordBreak.getUniqueWords(result, options));
 
             return YArray.every(queryWords, function (word) {
                 return YObject.owns(resultWords, word);
@@ -170,8 +171,8 @@ Filters = {
     }
 };
 
-AutoComplete.Filters = Filters;
+Y.AutoComplete.Filters = Filters;
 
 }, '@VERSION@', {
-    requires: ['autocomplete-base', 'collection']
+    requires: ['autocomplete-base', 'collection', 'unicode-wordbreak']
 });

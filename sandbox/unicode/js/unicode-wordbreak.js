@@ -51,25 +51,31 @@ SETS = [
 ],
 
 EMPTY_STRING = '',
+PUNCTUATION  = new RegExp('^' + WBData.punctuation + '$'),
 WHITESPACE   = /\s/,
 
 WordBreak = Unicode.WordBreak = {
     // -- Public Static Methods ------------------------------------------------
     getWords: function (string, options) {
-        var chr,
-            i     = 0,
+        var i     = 0,
             map   = WordBreak._classify(string),
             len   = map.length,
             word  = [],
-            words = [];
+            words = [],
+            chr,
+            includePunctuation,
+            includeWhitespace;
 
         if (!options) {
             options = {};
         }
 
-        if (!options.preserveCase) {
+        if (options.ignoreCase) {
             string = string.toLowerCase();
         }
+
+        includePunctuation = options.includePunctuation;
+        includeWhitespace  = options.includeWhitespace;
 
         // Loop through each character in the classification map and determine
         // whether it precedes a word boundary, building an array of distinct
@@ -77,17 +83,19 @@ WordBreak = Unicode.WordBreak = {
         for (; i < len; ++i) {
             chr = string.charAt(i);
 
-            // Append this character to the current word unless it's whitespace.
-            if (!WHITESPACE.test(chr)) {
-                word.push(chr);
-            }
+            // Append this character to the current word.
+            word.push(chr);
 
             // If there's a word boundary between the current character and the
             // next character, append the current word to the words array and
             // start building a new word. 
             if (WordBreak._isWordBoundary(map, i)) {
-                if (word.length) {
-                    words.push(word.join(EMPTY_STRING));
+                word = word.join(EMPTY_STRING);
+
+                if (word &&
+                        (includeWhitespace || !WHITESPACE.test(word)) &&
+                        (includePunctuation || !PUNCTUATION.test(word))) {
+                    words.push(word);
                 }
 
                 word = [];

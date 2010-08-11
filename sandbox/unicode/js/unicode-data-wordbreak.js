@@ -23,9 +23,9 @@ Y.namespace('Unicode.Data').WordBreak = {
     // code points.
     numeric: '[0-9]',
 
-    cr: '\u000D',
+    cr: '\r',
 
-    lf: '\u000A',
+    lf: '\n',
 
     newline: '[\u000B\u000C\u0085\u2028\u2029]',
 
@@ -33,10 +33,13 @@ Y.namespace('Unicode.Data').WordBreak = {
     // code points.
     extend: '[\u0300-\u036F\u0483-\u0489\u1DC0-\u1DE6\u1DFE-\u1DFF\u200C\u200D\u20D0-\u20DC\u20DD-\u20F0\u2DE0-\u2DFF]',
 
-    format: '[\u00AD\u0600-\u0603\u06DD\u070F\u17B4\u17B5\u200E\u200F\u202A-\u202E\u2060-\u2064\u206A-\u206F\uFEFF\uFFF9-\uFFFB]'
+    format: '[\u00AD\u0600-\u0603\u06DD\u070F\u17B4\u17B5\u200E\u200F\u202A-\u202E\u2060-\u2064\u206A-\u206F\uFEFF\uFFF9-\uFFFB]',
 
     // For Katakana and ExtendNumLet data, use the
     // unicode-data-wordbreak-complete module.
+
+    // ASCII and Latin only.
+    punctuation: '[!-#%-\\*,-/\\:;\\?@\\[-\\]_\\{\\}¡«·»¿\\‐-―‖-‧‰-※‽-⁆⁊-⁕⁗⸘]'
 };
 
 }, '@VERSION@');
