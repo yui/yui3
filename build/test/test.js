@@ -3011,54 +3011,54 @@ YUI.add('test', function(Y) {
     
     /**
      * Mock argument validator that accepts any value as valid.
-     * @return {void}
      * @namespace Mock.Value
      * @property Any
+     * @type Function
      * @static
      */ 
     Y.Mock.Value.Any        = Y.Mock.Value(function(){});
 
     /**
      * Mock argument validator that accepts only Boolean values as valid.
-     * @return {void}
      * @namespace Mock.Value
      * @property Boolean
+     * @type Function
      * @static
      */ 
     Y.Mock.Value.Boolean    = Y.Mock.Value(Y.Assert.isBoolean);
 
     /**
      * Mock argument validator that accepts only numeric values as valid.
-     * @return {void}
      * @namespace Mock.Value
      * @property Number
+     * @type Function
      * @static
      */ 
     Y.Mock.Value.Number     = Y.Mock.Value(Y.Assert.isNumber);
 
     /**
      * Mock argument validator that accepts only String values as valid.
-     * @return {void}
      * @namespace Mock.Value
      * @property String
+     * @type Function
      * @static
      */ 
     Y.Mock.Value.String     = Y.Mock.Value(Y.Assert.isString);
 
     /**
      * Mock argument validator that accepts only non-null objects values as valid.
-     * @return {void}
      * @namespace Mock.Value
      * @property Object
+     * @type Function
      * @static
      */ 
     Y.Mock.Value.Object     = Y.Mock.Value(Y.Assert.isObject);
     
     /**
      * Mock argument validator that accepts onlyfunctions as valid.
-     * @return {void}
      * @namespace Mock.Value
      * @property Function
+     * @type Function
      * @static
      */ 
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
