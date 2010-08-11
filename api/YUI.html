@@ -347,14 +347,6 @@ config.  The YUI component build tool does this for you.</span>
                                                     
                                                 
                                                         , 
-                                                         target
-                                                    
-                                                
-                                                        , 
-                                                         extra
-                                                    
-                                                
-                                                        , 
                                                          context
                                                     
                                                 
@@ -389,23 +381,6 @@ information.
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> the callback</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">target</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> a descriptor for the target (applies to custom events only).
-For function events, this is the object that contains the function to
-execute.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">extra</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n Extra information a particular event may need.  These
-will be documented with the event.  In the case of function events, this
-is the name of the function to execute on the host.  In the case of
-delegate listeners, this is the event delegation specification.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
@@ -1574,19 +1549,11 @@ This fails because "long" is a future reserved word in ECMAScript
                                            (
                                                 
                                                         
-                                                         type**
+                                                         type
                                                     
                                                 
                                                         , 
                                                          fn
-                                                    
-                                                
-                                                        , 
-                                                         target**
-                                                    
-                                                
-                                                        , 
-                                                         extra**
                                                     
                                                 
                                                         , 
@@ -1662,7 +1629,7 @@ alias for <code>on</code>.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type**</span>
+                                                        <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> event type (this parameter does not apply for function events)</span>
@@ -1672,23 +1639,6 @@ alias for <code>on</code>.
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> the callback</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">target**</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> a descriptor for the target (applies to custom events only).
-For function events, this is the object that contains the function to
-execute.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">extra**</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n Extra information a particular event may need.  These
-will be documented with the event.  In the case of function events, this
-is the name of the function to execute on the host.  In the case of
-delegate listeners, this is the event delegation specification.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
@@ -1732,19 +1682,11 @@ delegate listeners, this is the event delegation specification.</span>
                                            (
                                                 
                                                         
-                                                         type**
+                                                         type
                                                     
                                                 
                                                         , 
                                                          fn
-                                                    
-                                                
-                                                        , 
-                                                         target**
-                                                    
-                                                
-                                                        , 
-                                                         extra**
                                                     
                                                 
                                                         , 
@@ -1768,7 +1710,7 @@ the listener is immediately detached when executed.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type**</span>
+                                                        <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> event type (this parameter does not apply for function events)</span>
@@ -1778,23 +1720,6 @@ the listener is immediately detached when executed.
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> the callback</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">target**</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> a descriptor for the target (applies to custom events only).
-For function events, this is the object that contains the function to
-execute.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">extra**</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n Extra information a particular event may need.  These
-will be documented with the event.  In the case of function events, this
-is the name of the function to execute on the host.  In the case of
-delegate listeners, this is the event delegation specification.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
