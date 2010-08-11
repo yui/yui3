@@ -541,45 +541,6 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
                 return isFunction(value) || value === null;
             }
         }
-    },
-
-    // -- Protected Static Methods ---------------------------------------------
-
-    /**
-     * Returns a copy of the specified string with special HTML characters
-     * escaped. The following characters will be converted to their
-     * corresponding character entities:
-     * <code>&amp; &lt; &gt; &quot; &#x27; &#x2F;</code>
-     *
-     * @method _escapeHTML
-     * @param {String} string string to escape
-     * @return {String} escaped string
-     * @protected
-     * @static
-     */
-    _escapeHTML: function (string) {
-        // Based on the OWASP HTML escaping recommendations at
-        // http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
-        return string.replace(/&/g, '&amp;').
-                      replace(/</g, '&lt;').
-                      replace(/>/g, '&gt;').
-                      replace(/"/g, '&quot;').
-                      replace(/'/g, '&#x27;').
-                      replace(/\//g, '&#x2F;');
-    },
-
-    /**
-     * Returns a copy of the specified string with special RegExp characters
-     * escaped.
-     *
-     * @method _escapeRegExp
-     * @param {String} string string to escape
-     * @return {String} escaped string
-     * @protected
-     * @static
-     */
-    _escapeRegExp: function (string) {
-        return string.replace(/([\\\^\$*+\[\]?{}.=!:(|)])/g, '\\$1');
     }
 });
 
