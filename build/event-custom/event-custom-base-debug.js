@@ -362,6 +362,14 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
+    each: function(f) {
+        f(this);
+        if (Y.Lang.isArray(this.evt)) {
+            Y.Array.each(this.evt, function(h) {
+                h.each(f);
+            });
+        }
+    },
 
     /**
      * Detaches this subscriber
@@ -776,7 +784,9 @@ Y.CustomEvent.prototype = {
             return fn.detach();
         }
 
-        var found = 0, subs = this.subscribers, i, s;
+        var i, s,
+            found = 0, 
+            subs  = Y.merge(this.subscribers, this.afters);
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
@@ -1257,7 +1267,11 @@ ET.prototype = {
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
-        handle.sub.once = true;
+        handle.each(function(hand) {
+            if (hand.sub) {
+                hand.sub.once = true;
+            }
+        });
         return handle;
     },
 
@@ -1292,7 +1306,7 @@ ET.prototype = {
             f = fn; 
             c = context; 
             args = YArray(arguments, 0, true);
-            ret = {};
+            ret = [];
 
             if (L.isArray(type)) {
                 isArr = true;
@@ -1302,7 +1316,6 @@ ET.prototype = {
             delete type._after;
 
             Y.each(type, function(v, k) {
-
 
                 if (L.isObject(v)) {
                     f = v.fn || ((L.isFunction(v)) ? v : f);
@@ -1315,7 +1328,7 @@ ET.prototype = {
                 args[1] = f;
                 args[2] = c;
 
-                ret[k] = this.on.apply(this, args); 
+                ret.push(this.on.apply(this, args));
 
             }, this);
 

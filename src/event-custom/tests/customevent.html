@@ -889,28 +889,30 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 var count = 0;
 
-                Y.once('foo', function(e) {
+                Y.once(['foo', 'bar'], function(e) {
                     count++;
                 });
 
                 Y.fire('foo', 'bar');
+                Y.fire('bar', 'bar');
 
-                Y.Assert.areEqual(1, count);
+                Y.Assert.areEqual(2, count);
 
                 Y.fire('foo', 'bar');
+                Y.fire('bar', 'bar');
 
-                Y.Assert.areEqual(1, count);
+                Y.Assert.areEqual(2, count);
 
             },
 
             test_array_type_param: function() {
                 var result = '';
 
-                Y.after(['foo', 'bar'], function(type) {
+                var handle1 = Y.after(['foo', 'bar'], function(type) {
                     result += 'after' + type;
                 });
 
-                Y.on(['foo', 'bar'], function(type) {
+                var handle2 = Y.on(['foo', 'bar'], function(type) {
                     result += 'on' + type;
                 });
 
@@ -919,6 +921,13 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 
                 Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
 
+                handle1.detach();
+                handle2.detach();
+
+                Y.fire('foo', 'foo');
+                Y.fire('bar', 'bar');
+
+                Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
             },
 
             test_bubble_config: function() {
