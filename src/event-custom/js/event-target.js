@@ -140,7 +140,11 @@ ET.prototype = {
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
-        handle.sub.once = true;
+        handle.each(function(hand) {
+            if (hand.sub) {
+                hand.sub.once = true;
+            }
+        });
         return handle;
     },
 

@@ -360,6 +360,14 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
+    each: function(f) {
+        f(this);
+        if (Y.Lang.isArray(this.evt)) {
+            Y.Array.each(this.evt, function(h) {
+                h.each(f);
+            });
+        }
+    },
 
     /**
      * Detaches this subscriber
@@ -1249,7 +1257,11 @@ ET.prototype = {
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
-        handle.sub.once = true;
+        handle.each(function(hand) {
+            if (hand.sub) {
+                hand.sub.once = true;
+            }
+        });
         return handle;
     },
 
