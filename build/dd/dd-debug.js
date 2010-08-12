@@ -2179,6 +2179,11 @@ YUI.add('dd-proxy', function(Y) {
         borderStyle: {
             value: '1px solid #808080'
         },
+        /**
+        * @attribute cloneNode
+        * @description Should the node be cloned into the proxy for you. Default: false
+        * @type Boolean
+        */
         cloneNode: {
             value: false
         }
@@ -2249,6 +2254,7 @@ YUI.add('dd-proxy', function(Y) {
             var host = this.get(HOST),
                 n = host.get(NODE),
                 c = n.cloneNode(true);
+
             c.set('id', '');
             c.setStyle('position', 'absolute');
             delete c._yuid;
