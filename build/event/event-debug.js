@@ -1252,13 +1252,19 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */           
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
-                results=[] , key = (type) ? 'event:' + ek + type : null;
+                results=[] , key = (type) ? 'event:' + ek + type : null,
+                adapters = _eventenv.plugins;
 
             if (!evts) {
                 return null;
             }
 
             if (key) {
+                // look for synthetic events
+                if (adapters[type] && adapters[type].eventDef) {
+                    key += '_synth';
+                }
+
                 if (evts[key]) {
                     results.push(evts[key]);
                 }
@@ -1785,12 +1791,12 @@ Y.mix(SyntheticEvent, {
     getRegistry: function (node, type, create) {
         var el     = node._node,
             yuid   = Y.stamp(el),
-            key    = 'event:' + yuid + type + '_synth_',
+            key    = 'event:' + yuid + type + '_synth',
             events = DOMMap[yuid] || (DOMMap[yuid] = {});
 
         if (!events[key] && create) {
             events[key] = {
-                type      : '_synth_',
+                type      : '_synth',
                 fn        : noop,
                 capture   : false,
                 el        : el,
