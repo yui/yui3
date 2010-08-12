@@ -3,6 +3,7 @@
 <head>
 <title>use('gallery-')</title>
     <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script src="../../build/loader/loader-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
     <script src="../../build/dump/dump-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
     <script type="text/javascript" charset="utf-8">                                                                                                                 
 
@@ -12,6 +13,7 @@
             filter: 'debug',
             // core: ['get', 'dump', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'],
             combine: true,
+            gallery: 'gallery-2010.08.04-19-46',
             onProgress: function(e) {
                 this.log('LOAD: ' + e.name);
             }

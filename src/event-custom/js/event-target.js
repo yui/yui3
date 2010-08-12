@@ -175,7 +175,7 @@ ET.prototype = {
             f = fn; 
             c = context; 
             args = YArray(arguments, 0, true);
-            ret = {};
+            ret = [];
 
             if (L.isArray(type)) {
                 isArr = true;
@@ -185,7 +185,6 @@ ET.prototype = {
             delete type._after;
 
             Y.each(type, function(v, k) {
-
 
                 if (L.isObject(v)) {
                     f = v.fn || ((L.isFunction(v)) ? v : f);
@@ -198,7 +197,7 @@ ET.prototype = {
                 args[1] = f;
                 args[2] = c;
 
-                ret[k] = this.on.apply(this, args); 
+                ret.push(this.on.apply(this, args));
 
             }, this);
 

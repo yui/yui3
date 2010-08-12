@@ -529,6 +529,7 @@ proto = {
             mods     = G_ENV.mods, 
             Env      = Y.Env,
             used     = Env._used,
+            attached = Y.Env._attached,
             queue    = G_ENV._loaderQueue,
             firstArg = args[0], 
             callback = args[args.length - 1],
@@ -551,13 +552,18 @@ proto = {
 
                 YArray.each(collection, function(name) {
 
-                    // add this module to full list of things to attach
-                    r.push(name);
+                    if (attached[name]) {
+                        return;
+                    }
 
                     // only attach a module once
                     if (used[name]) {
                         return;
                     }
+
+                    // add this module to full list of things to attach
+                    r.push(name);
+
 
                     var m = mods[name], req, use;
 
