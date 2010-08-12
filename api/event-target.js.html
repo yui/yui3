@@ -787,7 +787,6 @@
 
 <span class="p">})();</span>
 
-
 <span class="cm">/**</span>
 <span class="cm"> * &lt;code&gt;YUI&lt;/code&gt;&#39;s &lt;code&gt;on&lt;/code&gt; method is a unified interface for subscribing to</span>
 <span class="cm"> * most events exposed by YUI.  This includes custom events, DOM events, and </span>
@@ -848,15 +847,8 @@
 <span class="cm"> * alias for &lt;code&gt;on&lt;/code&gt;.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method on </span>
-<span class="cm"> * @param type** event type (this parameter does not apply for function events)</span>
+<span class="cm"> * @param type event type (this parameter does not apply for function events)</span>
 <span class="cm"> * @param fn the callback</span>
-<span class="cm"> * @param target** a descriptor for the target (applies to custom events only).</span>
-<span class="cm"> * For function events, this is the object that contains the function to</span>
-<span class="cm"> * execute.</span>
-<span class="cm"> * @param extra** 0..n Extra information a particular event may need.  These</span>
-<span class="cm"> * will be documented with the event.  In the case of function events, this</span>
-<span class="cm"> * is the name of the function to execute on the host.  In the case of</span>
-<span class="cm"> * delegate listeners, this is the event delegation specification.</span>
 <span class="cm"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
 <span class="cm"> * @param args* 0..n additional arguments to pass to the callback.</span>
 <span class="cm"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
@@ -868,15 +860,8 @@
 <span class="cm">  * the listener is immediately detached when executed.</span>
 <span class="cm">  * @see on</span>
 <span class="cm">  * @method once</span>
-<span class="cm">  * @param type** event type (this parameter does not apply for function events)</span>
+<span class="cm">  * @param type event type (this parameter does not apply for function events)</span>
 <span class="cm">  * @param fn the callback</span>
-<span class="cm">  * @param target** a descriptor for the target (applies to custom events only).</span>
-<span class="cm">  * For function events, this is the object that contains the function to</span>
-<span class="cm">  * execute.</span>
-<span class="cm">  * @param extra** 0..n Extra information a particular event may need.  These</span>
-<span class="cm">  * will be documented with the event.  In the case of function events, this</span>
-<span class="cm">  * is the name of the function to execute on the host.  In the case of</span>
-<span class="cm">  * delegate listeners, this is the event delegation specification.</span>
 <span class="cm">  * @param context optionally change the value of &#39;this&#39; in the callback</span>
 <span class="cm">  * @param args* 0..n additional arguments to pass to the callback.</span>
 <span class="cm">  * @return the event target or a detach handle per &#39;chain&#39; config</span>
@@ -893,13 +878,6 @@
 <span class="cm"> * @method after</span>
 <span class="cm"> * @param type event type (this parameter does not apply for function events)</span>
 <span class="cm"> * @param fn the callback</span>
-<span class="cm"> * @param target a descriptor for the target (applies to custom events only).</span>
-<span class="cm"> * For function events, this is the object that contains the function to</span>
-<span class="cm"> * execute.</span>
-<span class="cm"> * @param extra 0..n Extra information a particular event may need.  These</span>
-<span class="cm"> * will be documented with the event.  In the case of function events, this</span>
-<span class="cm"> * is the name of the function to execute on the host.  In the case of</span>
-<span class="cm"> * delegate listeners, this is the event delegation specification.</span>
 <span class="cm"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
 <span class="cm"> * @param args* 0..n additional arguments to pass to the callback.</span>
 <span class="cm"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
