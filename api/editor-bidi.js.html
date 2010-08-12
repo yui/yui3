@@ -187,7 +187,7 @@
 <span class="cm">        */</span>
         <span class="nx">_afterContentChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span> <span class="nx">inst</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">inst</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">inst</span> <span class="o">&amp;&amp;</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">},</span>
