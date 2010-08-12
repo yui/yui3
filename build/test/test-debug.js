@@ -660,12 +660,15 @@ YUI.add('test', function(Y) {
              */
             _handleTestObjectComplete : function (node) {
                 if (Y.Lang.isObject(node.testObject)){
-                    node.parent.results.passed += node.results.passed;
-                    node.parent.results.failed += node.results.failed;
-                    node.parent.results.total += node.results.total;                
-                    node.parent.results.ignored += node.results.ignored;       
-                    //node.parent.results.duration += node.results.duration;
-                    node.parent.results[node.testObject.name] = node.results;
+                
+                    if (node.parent){
+                        node.parent.results.passed += node.results.passed;
+                        node.parent.results.failed += node.results.failed;
+                        node.parent.results.total += node.results.total;                
+                        node.parent.results.ignored += node.results.ignored;       
+                        //node.parent.results.duration += node.results.duration;
+                        node.parent.results[node.testObject.name] = node.results;
+                    }
                 
                     if (node.testObject instanceof Y.Test.Suite){
                         node.testObject.tearDown();
@@ -702,6 +705,8 @@ YUI.add('test', function(Y) {
                         this._handleTestObjectComplete(this._cur);
                         this._cur = this._cur.parent;
                     }
+
+                    this._handleTestObjectComplete(this._cur);               
                     
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
@@ -712,7 +717,6 @@ YUI.add('test', function(Y) {
                         this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
                         this._cur = null;
                     } else {
-                        this._handleTestObjectComplete(this._cur);               
                         this._cur = this._cur.next;                
                     }
                 }
