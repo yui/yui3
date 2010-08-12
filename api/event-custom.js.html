@@ -106,6 +106,14 @@
 <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">each</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">f</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">h</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">f</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Detaches this subscriber</span>
@@ -520,7 +528,9 @@
             <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">subs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
+            <span class="nx">found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
+            <span class="nx">subs</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">);</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
