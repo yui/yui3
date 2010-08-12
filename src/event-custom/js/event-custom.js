@@ -480,7 +480,9 @@ Y.CustomEvent.prototype = {
             return fn.detach();
         }
 
-        var found = 0, subs = this.subscribers, i, s;
+        var i, s,
+            found = 0, 
+            subs  = Y.merge(this.subscribers, this.afters);
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
