@@ -37,12 +37,10 @@ Y.mix(Transition.prototype, {
         var anim = this;
         anim._initAttrs();
 
-        if (anim._totalDuration) { // only fire when duration > 0 (per spec)
-            anim._node.fire(START, {
-                type: START,
-                config: anim._config 
-            });
-        }
+        anim._node.fire(START, {
+            type: START,
+            config: anim._config 
+        });
 
         Transition._running[Y.stamp(anim)] = anim;
         anim._startTime = new Date();
@@ -112,22 +110,20 @@ Y.mix(Transition.prototype, {
                         anim._skip[i] = true;
                         anim._count--;
 
-                        if (actualDuration > 0) { // match native behavior which doesnt fire for zero duration
-                            node.fire(PROPERTY_END, {
-                                type: PROPERTY_END,
+                        node.fire(PROPERTY_END, {
+                            type: PROPERTY_END,
+                            elapsedTime: elapsed,
+                            propertyName: i,
+                            config: anim._config
+                        });
+
+                        if (!allDone && anim._count <= 0) {
+                            allDone = true;
+                            node.fire(END, {
+                                type: END,
                                 elapsedTime: elapsed,
-                                propertyName: i,
                                 config: anim._config
                             });
-
-                            if (!allDone && anim._count <= 0) {
-                                allDone = true;
-                                node.fire(END, {
-                                    type: END,
-                                    elapsedTime: elapsed,
-                                    config: anim._config
-                                });
-                            }
                         }
 
                     }
