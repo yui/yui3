@@ -106,7 +106,7 @@
                     break;
                 case 'backspace-up':
                 case 'delete-up':
-                    var ps = inst.all(FIRST_P), br, p, sel, item;
+                    var ps = inst.all(FIRST_P), br, item;
                     if (ps.size() < 2) {
                         item = inst.one(BODY);
                         if (ps.item(0)) {

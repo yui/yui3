@@ -64,6 +64,10 @@
     <span class="nx">INNER_HTML</span> <span class="o">=</span> <span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span>
     <span class="nx">FONT_FAMILY</span> <span class="o">=</span> <span class="s1">&#39;fontFamily&#39;</span><span class="p">;</span>
 
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;nodeValue&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">sel</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ieNode</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">,</span> <span class="nx">rng</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
@@ -75,7 +79,6 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_selection</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">;</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">pasteHTML</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;nodeValue&#39;</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">isCollapsed</span> <span class="o">=</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">compareEndPoints</span><span class="p">(</span><span class="s1">&#39;StartToEnd&#39;</span><span class="p">,</span> <span class="nx">sel</span><span class="p">))</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
@@ -138,29 +141,56 @@
 <span class="cm">    * @method filter</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">blocks</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">startTime</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Filtering nodes&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
+
         <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">ALL</span><span class="p">),</span>
             <span class="nx">baseNodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;strong,em&#39;</span><span class="p">),</span>
+            <span class="nx">classNames</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">cssString</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="nx">ls</span><span class="p">;</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Filtering nodes&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">startTime1</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
         <span class="nx">nodes</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">FONT_FAMILY</span><span class="p">))</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">sheet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">StyleSheet</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">);</span>
-                <span class="nx">sheet</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">n</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">,</span> <span class="p">{</span>
-                    <span class="nx">fontFamily</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">FONT_FAMILY</span><span class="p">)</span>
-                <span class="p">});</span>
+            <span class="kd">var</span> <span class="nx">raw</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">raw</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">FONT_FAMILY</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">classNames</span><span class="p">[</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">n</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">]</span> <span class="o">=</span> <span class="nx">raw</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">FONT_FAMILY</span><span class="p">];</span>
                 <span class="nx">n</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">);</span>
-                <span class="nx">n</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;face&#39;</span><span class="p">);</span>
-                <span class="nx">n</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">FONT_FAMILY</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">n</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
+                <span class="nx">raw</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">FONT_FAMILY</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+                <span class="nx">raw</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;face&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">raw</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">raw</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="c1">//This is for IE</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;font-family: &#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">n</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">raw</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">raw</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;font-family: &#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">raw</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+            <span class="cm">/*</span>
+<span class="cm">            if (n.getStyle(FONT_FAMILY)) {</span>
+<span class="cm">                classNames[&#39;.&#39; + n._yuid] = n.getStyle(FONT_FAMILY);</span>
+<span class="cm">                n.addClass(n._yuid);</span>
+<span class="cm">                n.removeAttribute(&#39;face&#39;);</span>
+<span class="cm">                n.setStyle(FONT_FAMILY, &#39;&#39;);</span>
+<span class="cm">                if (n.getAttribute(&#39;style&#39;) === &#39;&#39;) {</span>
+<span class="cm">                    n.removeAttribute(&#39;style&#39;);</span>
+<span class="cm">                }</span>
+<span class="cm">                //This is for IE</span>
+<span class="cm">                if (n.getAttribute(&#39;style&#39;).toLowerCase() === &#39;font-family: &#39;) {</span>
+<span class="cm">                    n.removeAttribute(&#39;style&#39;);</span>
+<span class="cm">                }</span>
+<span class="cm">            }</span>
+<span class="cm">            */</span>
         <span class="p">});</span>
+        <span class="kd">var</span> <span class="nx">endTime1</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Node Filter Timer: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">endTime1</span> <span class="o">-</span> <span class="nx">startTime1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;ms&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">classNames</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cssString</span> <span class="o">+=</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39; { font-family: &#39;</span> <span class="o">+</span> <span class="nx">v</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/gi</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;; }&#39;</span><span class="p">;</span>
+        <span class="p">});</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">StyleSheet</span><span class="p">(</span><span class="nx">cssString</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+
         
         <span class="c1">//Not sure about this one?</span>
         <span class="nx">baseNodes</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
@@ -184,6 +214,8 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">blocks</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span><span class="p">();</span>
         <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">endTime</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Filter Timer: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">endTime</span> <span class="o">-</span> <span class="nx">startTime</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;ms&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
@@ -192,6 +224,8 @@
 <span class="cm">    * @method filterBlocks</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">startTime</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;RAW filter blocks&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
         <span class="kd">var</span> <span class="nx">childs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">wrapped</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">doit</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">sel</span><span class="p">,</span> <span class="nx">single</span><span class="p">,</span> <span class="nx">br</span><span class="p">,</span> <span class="nx">divs</span><span class="p">,</span> <span class="nx">spans</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
 
@@ -201,8 +235,8 @@
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">BLOCKS</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">doit</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">childs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">nodeType</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">c</span> <span class="o">=</span> <span class="nx">childs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">REG_CHAR</span><span class="p">);</span>
-                        <span class="nx">s</span> <span class="o">=</span> <span class="nx">childs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">REG_NON</span><span class="p">);</span>
+                        <span class="nx">c</span> <span class="o">=</span> <span class="nx">childs</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">textContent</span><span class="p">].</span><span class="nx">match</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">REG_CHAR</span><span class="p">);</span>
+                        <span class="nx">s</span> <span class="o">=</span> <span class="nx">childs</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">textContent</span><span class="p">].</span><span class="nx">match</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">REG_NON</span><span class="p">);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">c</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">doit</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                             
@@ -220,6 +254,7 @@
             <span class="p">}</span>
             <span class="nx">wrapped</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">_wrapBlock</span><span class="p">(</span><span class="nx">wrapped</span><span class="p">);</span>
         <span class="p">}</span>
+
         <span class="nx">single</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">single</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Only One Paragragh, focus it..&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
@@ -242,29 +277,36 @@
                 <span class="p">}</span>
             <span class="p">});</span>
         <span class="p">}</span>
-        <span class="nx">divs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;div, p&#39;</span><span class="p">);</span>
-        <span class="nx">divs</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Empty DIV/P Tag Found, Removing It&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                <span class="nx">d</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;DIVS/PS Count: &#39;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">(),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;This Div/P only has one Child Node&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;This Div/P is a child of a paragraph, remove it..&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                        <span class="nx">d</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">divs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;div, p&#39;</span><span class="p">);</span>
+            <span class="nx">divs</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">//Y.log(&#39;Empty DIV/P Tag Found, Removing It&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+                    <span class="nx">d</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="c1">//Y.log(&#39;DIVS/PS Count: &#39; + d.get(&#39;childNodes&#39;).size(), &#39;info&#39;, &#39;selection&#39;);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">//Y.log(&#39;This Div/P only has one Child Node&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="c1">//Y.log(&#39;This Div/P is a child of a paragraph, remove it..&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+                            <span class="nx">d</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">});</span>
+            <span class="p">});</span>
 
-        <span class="nx">spans</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;.Apple-style-span, .apple-style-span&#39;</span><span class="p">);</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Apple Spans found: &#39;</span> <span class="o">+</span> <span class="nx">spans</span><span class="p">.</span><span class="nx">size</span><span class="p">(),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-        <span class="nx">spans</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">s</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-        <span class="p">});</span>
+            <span class="nx">spans</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;.Apple-style-span, .apple-style-span&#39;</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Apple Spans found: &#39;</span> <span class="o">+</span> <span class="nx">spans</span><span class="p">.</span><span class="nx">size</span><span class="p">(),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
+            <span class="nx">spans</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+
+
+        <span class="kd">var</span> <span class="nx">endTime</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;FilterBlocks Timer: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">endTime</span> <span class="o">-</span> <span class="nx">startTime</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;ms&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
