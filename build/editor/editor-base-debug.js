@@ -166,6 +166,9 @@ YUI.add('editor-base', function(Y) {
                 if (family2) {
                     family = family2;
                 }
+                if (family) {
+                    family = family.replace(/'/g, '').replace(/"/g, '');
+                }
                 fsize = n.getStyle('fontSize');
 
                 var cls = n.get('className').split(' ');
@@ -368,11 +371,12 @@ YUI.add('editor-base', function(Y) {
         /**
         * Focus the contentWindow of the iframe
         * @method focus
+        * @param {Function} fn Callback function to execute after focus happens
         * @return {EditorBase}
         * @chainable
         */
-        focus: function() {
-            this.frame.focus();
+        focus: function(fn) {
+            this.frame.focus(fn);
             return this;
         },
         /**
@@ -585,4 +589,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});

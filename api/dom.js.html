@@ -259,20 +259,31 @@
 <span class="cm">     */</span>
     <span class="nx">inDoc</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// there may be multiple elements with the same ID</span>
-        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">];</span>
         <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">id</span><span class="p">,</span>
             <span class="nx">i</span><span class="p">,</span>
             <span class="nx">node</span><span class="p">,</span>
             <span class="nx">query</span><span class="p">;</span>
                 
-        <span class="nx">element</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span> 
+        <span class="c1">// avoid collision with form.id === input.name</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">element</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+            <span class="p">}</span>
 
-        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">];)</span> <span class="p">{</span> <span class="c1">// check for a match</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="k">break</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+                <span class="nx">element</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">];)</span> <span class="p">{</span> <span class="c1">// check for a match</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -297,7 +308,8 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">];)</span> <span class="p">{</span> <span class="c1">// check for a match</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// avoid false positive for node.name</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">id</span>
+                            <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">value</span> <span class="o">===</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// avoid false positive for node.name</span>
                         <span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>

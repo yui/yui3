@@ -108,7 +108,7 @@
             <span class="nx">rProto</span>           <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> 
             <span class="nx">target</span>           <span class="o">=</span> <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="p">,</span> 
             <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
-            <span class="nx">sequestered</span><span class="p">,</span> <span class="nx">replacements</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="nx">sequestered</span><span class="p">,</span> <span class="nx">replacements</span><span class="p">;</span>
 
         <span class="c1">// working on a class, so apply constructor infrastructure</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">rProto</span> <span class="o">&amp;&amp;</span> <span class="nx">construct</span><span class="p">)</span> <span class="p">{</span>
@@ -124,7 +124,7 @@
 <span class="c1">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing EventTarget&#39;);</span>
 <span class="c1">// overwrite the prototype with all of the sequestered functions,</span>
 <span class="c1">// but only if it hasn&#39;t been overridden</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">sequestered</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
                             <span class="c1">// Y.log(&#39;... restoring &#39; + k);</span>
                             <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sequestered</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
@@ -181,7 +181,7 @@
 <span class="cm">     * will be overwritten if found on the supplier.</span>
 <span class="cm">     * @param wl {string[]} a whitelist.  If supplied, only properties in </span>
 <span class="cm">     * this list will be applied to the receiver.</span>
-<span class="cm">     * @return {object} the extended object</span>
+<span class="cm">     * @return the extended object</span>
 <span class="cm">     */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
@@ -197,7 +197,7 @@
 <span class="cm">     * @param {Function} s the object to inherit</span>
 <span class="cm">     * @param {Object} px prototype properties to add/override</span>
 <span class="cm">     * @param {Object} sx static properties to add/override</span>
-<span class="cm">     * @return {YUI} the YUI instance</span>
+<span class="cm">     * @return the extended object</span>
 <span class="cm">     */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">s</span><span class="o">||!</span><span class="nx">r</span><span class="p">)</span> <span class="p">{</span>

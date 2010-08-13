@@ -68,7 +68,6 @@
     <span class="nx">SOURCE_DOT</span>   <span class="o">=</span> <span class="s1">&#39;source.&#39;</span><span class="p">,</span>
 
     <span class="nx">HOST</span>     <span class="o">=</span> <span class="s1">&#39;host&#39;</span><span class="p">,</span>
-    <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="p">,</span>
     <span class="nx">CHECKED</span>  <span class="o">=</span> <span class="s1">&#39;checked&#39;</span><span class="p">,</span>
     <span class="nx">DEF_VISIBILITY</span> <span class="o">=</span> <span class="s1">&#39;defaultVisibility&#39;</span><span class="p">,</span>
 
@@ -169,10 +168,10 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_entries</span> <span class="o">=</span> <span class="p">[];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_categories</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_categories</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">).</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_categories</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_categories</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_sources</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_sources</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">).</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_sources</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_sources</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
         <span class="p">}</span>
     <span class="p">},</span>
 

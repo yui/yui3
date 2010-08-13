@@ -18,7 +18,7 @@ function ClickableRail() {
     this._initClickableRail();
 }
 
-Y.ClickableRail = Y.mix( ClickableRail, {
+Y.ClickableRail = Y.mix(ClickableRail, {
 
     // Prototype methods added to host class
     prototype: {
@@ -30,7 +30,7 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @protected
          */
         _initClickableRail: function () {
-            this._evtGuid = this._evtGuid || ( Y.guid() + '|' );
+            this._evtGuid = this._evtGuid || (Y.guid() + '|');
 
             /**
              * Broadcasts when the rail has received a mousedown event and
@@ -42,12 +42,12 @@ Y.ClickableRail = Y.mix( ClickableRail, {
              * @event railMouseDown
              * @preventable _defRailMouseDownFn
              */
-            this.publish( 'railMouseDown', {
+            this.publish('railMouseDown', {
                 defaultFn: this._defRailMouseDownFn
-            } );
+            });
 
-            this.after( 'render', this._bindClickableRail );
-            this.on( 'destroy', this._unbindClickableRail );
+            this.after('render', this._bindClickableRail);
+            this.on('destroy', this._unbindClickableRail);
         },
 
         /** 
@@ -57,11 +57,10 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @protected
          */
         _bindClickableRail: function () {
-            this._dd.addHandle( this.rail );
+            this._dd.addHandle(this.rail);
 
-            this.rail.on( this._evtGuid + 'gesturemovestart',
-                this._onRailMouseDown, {}, this);
-                
+            this.rail.on(this._evtGuid + Y.DD.Drag.START_EVENT,
+                Y.bind(this._onRailMouseDown, this));
         },
 
         /**
@@ -71,11 +70,11 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @protected
          */
         _unbindClickableRail: function () {
-            if ( this.get( 'rendered' ) ) {
-                var contentBox = this.get( 'contentBox' ),
-                    rail = contentBox.one( '.' + this.getClassName( 'rail' ) );
+            if (this.get('rendered')) {
+                var contentBox = this.get('contentBox'),
+                    rail = contentBox.one('.' + this.getClassName('rail'));
 
-                rail.detach( this.evtGuid + '*' );
+                rail.detach(this.evtGuid + '*');
             }
         },
 
@@ -86,9 +85,9 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @param e {DOMEvent} the mousedown event object
          * @protected
          */
-        _onRailMouseDown: function ( e ) {
-            if ( this.get( 'clickableRail' ) && !this.get( 'disabled' ) ) {
-                this.fire( 'railMouseDown', { ev: e } );
+        _onRailMouseDown: function (e) {
+            if (this.get('clickableRail') && !this.get('disabled')) {
+                this.fire('railMouseDown', { ev: e });
             }
         },
 
@@ -101,24 +100,24 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @param e {Event} the EventFacade for the railMouseDown custom event
          * @protected
          */
-        _defRailMouseDownFn: function ( e ) {
+        _defRailMouseDownFn: function (e) {
             e = e.ev;
 
             // Logic that determines which thumb should be used is abstracted
             // to someday support multi-thumb sliders
-            var dd     = this._resolveThumb( e ),
+            var dd     = this._resolveThumb(e),
                 i      = this._key.xyIndex,
-                length = parseFloat( this.get( 'length' ), 10 ),
+                length = parseFloat(this.get('length'), 10),
                 thumb,
                 thumbSize,
                 xy;
                 
-            if ( dd ) {
-                thumb = dd.get( 'dragNode' );
-                thumbSize = parseFloat( thumb.getStyle( this._key.dim ), 10);
+            if (dd) {
+                thumb = dd.get('dragNode');
+                thumbSize = parseFloat(thumb.getStyle(this._key.dim), 10);
 
                 // Step 1. Allow for aligning to thumb center or edge, etc
-                xy = this._getThumbDestination( e, thumb );
+                xy = this._getThumbDestination(e, thumb);
 
                 // Step 2. Remove page offsets to give just top/left style val
                 xy = xy[ i ] - this.rail.getXY()[i];
@@ -126,13 +125,13 @@ Y.ClickableRail = Y.mix( ClickableRail, {
                 // Step 3. Constrain within the rail in case of attempt to
                 // center the thumb when clicking on the end of the rail
                 xy = Math.min(
-                        Math.max( xy, 0 ),
-                        ( length - thumbSize ) );
+                        Math.max(xy, 0),
+                        (length - thumbSize));
 
-                this._uiMoveThumb( xy );
+                this._uiMoveThumb(xy);
 
                 // Delegate to DD's natural behavior
-                dd._handleMouseDownEvent( e );
+                dd._handleMouseDownEvent(e);
             }
         },
 
@@ -146,12 +145,12 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @return {Y.DD.Drag} the Drag instance that should be moved
          * @protected
          */
-        _resolveThumb: function ( e ) {
+        _resolveThumb: function (e) {
             /* Temporary workaround
-            var primaryOnly = this._dd.get( 'primaryButtonOnly' ),
+            var primaryOnly = this._dd.get('primaryButtonOnly'),
                 validClick  = !primaryOnly || e.button <= 1;
 
-            return ( validClick ) ? this._dd : null;
+            return (validClick) ? this._dd : null;
              */
             return this._dd;
         },
@@ -166,14 +165,14 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @return {Array} the [top, left] pixel position of the destination
          * @protected
          */
-        _getThumbDestination: function ( e, node ) {
-            var offsetWidth  = node.get( 'offsetWidth' ),
-                offsetHeight = node.get( 'offsetHeight' );
+        _getThumbDestination: function (e, node) {
+            var offsetWidth  = node.get('offsetWidth'),
+                offsetHeight = node.get('offsetHeight');
 
             // center
             return [
-                ( e.pageX - Math.round( ( offsetWidth  / 2 ) ) ),
-                ( e.pageY - Math.round( ( offsetHeight / 2 ) ) )
+                (e.pageX - Math.round((offsetWidth  / 2))),
+                (e.pageY - Math.round((offsetHeight / 2)))
             ];
         }
 
@@ -194,7 +193,7 @@ Y.ClickableRail = Y.mix( ClickableRail, {
         }
     }
 
-}, true );
+}, true);
 
 
 }, '@VERSION@' ,{requires:['slider-base']});

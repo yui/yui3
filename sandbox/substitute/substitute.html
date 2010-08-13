@@ -14,26 +14,36 @@ YUI({
     base: '../../build/'
 }).use('substitute', 'dump', 'node', function(Y) {
 
+    Y.substitute = Y.Lang.sub;
 
     function log(msg) {
         Y.log(msg);
     }
 
-    var Event=Y.Event, Dom=Y.DOM, l=Y.Lang,
-        test = function() {
+    var Event = Y.Event, 
+        Dom   = Y.DOM, 
+        l     = Y.Lang,
+        test  = function() {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        var param = {domain: 'valvion.com', 
-                     media: 'http://media.{domain}/', /* nested */
-                     contextdomain: { context1: 'context{domain}', context2: 'yahoo.com' },  /* the value is an object, we will use a custom function to extract the correct data */
-                     contextmedia: 'http://contextmedia.{contextdomain context1}/'};
+        var param = {
+            domain: 'valvion.com', 
+            media:  'http://media.{domain}/', /* nested */
+            contextdomain: { 
+                context1: 'context{domain}', 
+                context2: 'yahoo.com' 
+            },  
+            
+            /* the value is an object, we will use a custom function to extract the correct data */
+            contextmedia: 'http://contextmedia.{contextdomain context1}/'
+        };
+
         var url;
 
         // standard replace, nested
         url = l.substitute("{media}logo.gif", param);
         log(url);
-
         
         // If the replacement value is an object, use the meta info as a key to extract the
         // correct data.  Otherwise just return the value.
@@ -119,7 +129,6 @@ YUI({
             1.4,
             function(){}
         ];
-
 
         log(l.substitute("the first level of my object looks like: {testobj 0}", { testobj: obj }));
         log(l.substitute("the first two levels of my object looks like: {testobj 1}", { testobj: obj }));

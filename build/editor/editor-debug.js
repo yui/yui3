@@ -464,17 +464,24 @@ YUI.add('frame', function(Y) {
         /**
         * @method focus
         * @description Set the focus to the iframe
+        * @param {Function} fn Callback function to execute after focus happens        
         * @return {Frame}
         * @chainable        
         */
-        focus: function() {
+        focus: function(fn) {
             if (Y.UA.ie || Y.UA.gecko) {
                 this.getInstance().one('win').focus();
+                if (fn) {
+                    fn();
+                }
             } else {
                 try {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
+                        if (fn) {
+                            fn();
+                        }
                     });
                 } catch (ferr) {
                     Y.log('Frame focus failed', 'warn', 'frame');
@@ -682,7 +689,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
 YUI.add('selection', function(Y) {
 
     /**
@@ -831,7 +838,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br, divs, spans;
+            sel, single, br, divs, spans, c, s;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
@@ -839,8 +846,11 @@ YUI.add('selection', function(Y) {
                 if (!node.test(Y.Selection.BLOCKS)) {
                     doit = true;
                     if (childs[i].nodeType == 3) {
-                        if (childs[i].textContent == '\n') {
+                        c = childs[i].textContent.match(Y.Selection.REG_CHAR);
+                        s = childs[i].textContent.match(Y.Selection.REG_NON);
+                        if (c === null && s) {
                             doit = false;
+                            
                         }
                     }
                     if (doit) {
@@ -902,6 +912,27 @@ YUI.add('selection', function(Y) {
         });
     };
 
+    /**
+    * Regular Expression to determine if a string has a character in it
+    * @static
+    * @property REG_CHAR
+    */   
+    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_]/gi;
+
+    /**
+    * Regular Expression to determine if a string has a non-character in it
+    * @static
+    * @property REG_NON
+    */
+    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+
+
+    /**
+    * Wraps an array of elements in a Block level tag
+    * @static
+    * @private
+    * @method _wrapBlock
+    */
     Y.Selection._wrapBlock = function(wrapped) {
         if (wrapped) {
             var newChild = Y.Node.create('<p></p>'),
@@ -1126,7 +1157,7 @@ YUI.add('selection', function(Y) {
             Y.config.doc.execCommand('fontname', null, Y.Selection.TMP);
             var nodes = Y.all(Y.Selection.ALL),
                 items = [];
-
+            
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY, Y.Selection.TMP)) {
                     n.setStyle(FONT_FAMILY, '');
@@ -1209,6 +1240,9 @@ YUI.add('selection', function(Y) {
                         this.selectNode(cur, collapse);
                     }
                 } else {
+                    if (node.get('nodeType') === 3) {
+                        node = node.get('parentNode');
+                    }
                     newNode = Y.Node.create(html);
                     node.append(newNode);
                 }
@@ -1414,7 +1448,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('exec-command', function(Y) {
 
 
@@ -1717,7 +1751,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -1788,7 +1822,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -1862,7 +1896,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-base', function(Y) {
 
 
@@ -2030,6 +2064,9 @@ YUI.add('editor-base', function(Y) {
                 var family2 = n.getStyle('fontFamily').split(',')[0].toLowerCase();
                 if (family2) {
                     family = family2;
+                }
+                if (family) {
+                    family = family.replace(/'/g, '').replace(/"/g, '');
                 }
                 fsize = n.getStyle('fontSize');
 
@@ -2233,11 +2270,12 @@ YUI.add('editor-base', function(Y) {
         /**
         * Focus the contentWindow of the iframe
         * @method focus
+        * @param {Function} fn Callback function to execute after focus happens
         * @return {EditorBase}
         * @chainable
         */
-        focus: function() {
-            this.frame.focus();
+        focus: function(fn) {
+            this.frame.focus(fn);
             return this;
         },
         /**
@@ -2450,7 +2488,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -2478,9 +2516,10 @@ YUI.add('editor-lists', function(Y) {
         */
         _onNodeChange: function(e) {
             var inst = this.get(HOST).getInstance(), sel, li, 
-            newLi, newList, sTab, par, moved = false, tag;
+            newLi, newList, sTab, par, moved = false, tag, focusEnd = false;
 
             if (Y.UA.ie && e.changedType === 'enter') {
+                Y.log('Overriding the Enter Key', 'info', 'editorLists');
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {
                     e.changedEvent.halt();
                     e.preventDefault();
@@ -2493,7 +2532,7 @@ YUI.add('editor-lists', function(Y) {
                     li.insert(newLi, 'after');
                     
                     sel = new inst.Selection();
-                    sel.selectNode(newLi.get('firstChild'));
+                    sel.selectNode(newLi.get('firstChild'), true, false);
                 }
             }
             if (e.changedType === 'tab') {
@@ -2520,6 +2559,7 @@ YUI.add('editor-lists', function(Y) {
                             Y.log('Shifting list up one level', 'info', 'editorLists');
                             li.ancestor(LI).insert(li, 'after');
                             moved = true;
+                            focusEnd = true;
                         }
                     } else {
                         //li.setStyle('border', '1px solid red');
@@ -2533,13 +2573,16 @@ YUI.add('editor-lists', function(Y) {
                     }
                 }
                 if (moved) {
+                    if (!li.test(LI)) {
+                        li = li.ancestor(LI);
+                    }
                     li.all(EditorLists.REMOVE).remove();
                     if (Y.UA.ie) {
                         li = li.append(EditorLists.NON).one(EditorLists.NON_SEL);
                     }
                     //Selection here..
                     Y.log('Selecting the new node', 'info', 'editorLists');
-                    (new inst.Selection()).selectNode(li, true, true);
+                    (new inst.Selection()).selectNode(li, true, focusEnd);
                 }
             }
         },
@@ -2591,8 +2634,6 @@ YUI.add('editor-lists', function(Y) {
         insertunorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
-            out = (new inst.Selection()).getSelected();
-            return out;
         },
         /**
         * Override for the insertorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
@@ -2605,15 +2646,13 @@ YUI.add('editor-lists', function(Y) {
         insertorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
-            out = (new inst.Selection()).getSelected();
-            return out;   
         }
     });
 
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -2758,7 +2797,7 @@ YUI.add('editor-bidi', function(Y) {
         */
         _afterContentChange: function() {
             var host = this.get(HOST), inst = host.getInstance();
-            if (inst) {
+            if (inst && inst.Selection) {
                 inst.Selection.filterBlocks();
             }
         },
@@ -2975,7 +3014,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});

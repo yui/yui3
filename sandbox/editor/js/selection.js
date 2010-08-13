@@ -145,7 +145,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br, divs, spans;
+            sel, single, br, divs, spans, c, s;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
@@ -153,8 +153,11 @@ YUI.add('selection', function(Y) {
                 if (!node.test(Y.Selection.BLOCKS)) {
                     doit = true;
                     if (childs[i].nodeType == 3) {
-                        if (childs[i].textContent == '\n') {
+                        c = childs[i].textContent.match(Y.Selection.REG_CHAR);
+                        s = childs[i].textContent.match(Y.Selection.REG_NON);
+                        if (c === null && s) {
                             doit = false;
+                            
                         }
                     }
                     if (doit) {
@@ -216,6 +219,27 @@ YUI.add('selection', function(Y) {
         });
     };
 
+    /**
+    * Regular Expression to determine if a string has a character in it
+    * @static
+    * @property REG_CHAR
+    */   
+    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_]/gi;
+
+    /**
+    * Regular Expression to determine if a string has a non-character in it
+    * @static
+    * @property REG_NON
+    */
+    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+
+
+    /**
+    * Wraps an array of elements in a Block level tag
+    * @static
+    * @private
+    * @method _wrapBlock
+    */
     Y.Selection._wrapBlock = function(wrapped) {
         if (wrapped) {
             var newChild = Y.Node.create('<p></p>'),
@@ -440,7 +464,7 @@ YUI.add('selection', function(Y) {
             Y.config.doc.execCommand('fontname', null, Y.Selection.TMP);
             var nodes = Y.all(Y.Selection.ALL),
                 items = [];
-
+            
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY, Y.Selection.TMP)) {
                     n.setStyle(FONT_FAMILY, '');
@@ -523,6 +547,9 @@ YUI.add('selection', function(Y) {
                         this.selectNode(cur, collapse);
                     }
                 } else {
+                    if (node.get('nodeType') === 3) {
+                        node = node.get('parentNode');
+                    }
                     newNode = Y.Node.create(html);
                     node.append(newNode);
                 }

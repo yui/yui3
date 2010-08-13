@@ -19,7 +19,6 @@ var getCN = Y.ClassNameManager.getClassName,
     SOURCE_DOT   = 'source.',
 
     HOST     = 'host',
-    PARENT_NODE = 'parentNode',
     CHECKED  = 'checked',
     DEF_VISIBILITY = 'defaultVisibility',
 
@@ -120,10 +119,10 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
         this._entries = [];
 
         if (this._categories) {
-            this._categories.get(PARENT_NODE).removeChild(this._categories);
+            this._categories.remove();
         }
         if (this._sources) {
-            this._sources.get(PARENT_NODE).removeChild(this._sources);
+            this._sources.remove();
         }
     },
 

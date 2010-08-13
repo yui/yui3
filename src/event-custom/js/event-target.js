@@ -140,7 +140,11 @@ ET.prototype = {
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
-        handle.sub.once = true;
+        handle.each(function(hand) {
+            if (hand.sub) {
+                hand.sub.once = true;
+            }
+        });
         return handle;
     },
 
@@ -175,7 +179,7 @@ ET.prototype = {
             f = fn; 
             c = context; 
             args = YArray(arguments, 0, true);
-            ret = {};
+            ret = [];
 
             if (L.isArray(type)) {
                 isArr = true;
@@ -185,7 +189,6 @@ ET.prototype = {
             delete type._after;
 
             Y.each(type, function(v, k) {
-
 
                 if (L.isObject(v)) {
                     f = v.fn || ((L.isFunction(v)) ? v : f);
@@ -198,7 +201,7 @@ ET.prototype = {
                 args[1] = f;
                 args[2] = c;
 
-                ret[k] = this.on.apply(this, args); 
+                ret.push(this.on.apply(this, args));
 
             }, this);
 
@@ -739,7 +742,6 @@ Y.Global = YUI.Env.globalEvents;
 
 })();
 
-
 /**
  * <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
  * most events exposed by YUI.  This includes custom events, DOM events, and 
@@ -800,15 +802,8 @@ Y.Global = YUI.Env.globalEvents;
  * alias for <code>on</code>.
  *
  * @method on 
- * @param type** event type (this parameter does not apply for function events)
+ * @param type event type (this parameter does not apply for function events)
  * @param fn the callback
- * @param target** a descriptor for the target (applies to custom events only).
- * For function events, this is the object that contains the function to
- * execute.
- * @param extra** 0..n Extra information a particular event may need.  These
- * will be documented with the event.  In the case of function events, this
- * is the name of the function to execute on the host.  In the case of
- * delegate listeners, this is the event delegation specification.
  * @param context optionally change the value of 'this' in the callback
  * @param args* 0..n additional arguments to pass to the callback.
  * @return the event target or a detach handle per 'chain' config
@@ -820,15 +815,8 @@ Y.Global = YUI.Env.globalEvents;
   * the listener is immediately detached when executed.
   * @see on
   * @method once
-  * @param type** event type (this parameter does not apply for function events)
+  * @param type event type (this parameter does not apply for function events)
   * @param fn the callback
-  * @param target** a descriptor for the target (applies to custom events only).
-  * For function events, this is the object that contains the function to
-  * execute.
-  * @param extra** 0..n Extra information a particular event may need.  These
-  * will be documented with the event.  In the case of function events, this
-  * is the name of the function to execute on the host.  In the case of
-  * delegate listeners, this is the event delegation specification.
   * @param context optionally change the value of 'this' in the callback
   * @param args* 0..n additional arguments to pass to the callback.
   * @return the event target or a detach handle per 'chain' config
@@ -845,13 +833,6 @@ Y.Global = YUI.Env.globalEvents;
  * @method after
  * @param type event type (this parameter does not apply for function events)
  * @param fn the callback
- * @param target a descriptor for the target (applies to custom events only).
- * For function events, this is the object that contains the function to
- * execute.
- * @param extra 0..n Extra information a particular event may need.  These
- * will be documented with the event.  In the case of function events, this
- * is the name of the function to execute on the host.  In the case of
- * delegate listeners, this is the event delegation specification.
  * @param context optionally change the value of 'this' in the callback
  * @param args* 0..n additional arguments to pass to the callback.
  * @return the event target or a detach handle per 'chain' config

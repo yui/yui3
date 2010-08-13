@@ -1,5 +1,4 @@
 YUI.add('test-console', function (Y) {
-
     new Y.Console({
         style: 'block',
         width: Y.UA.ie ? '100%' : 'inherit',

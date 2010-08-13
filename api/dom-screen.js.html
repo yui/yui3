@@ -280,36 +280,6 @@
         <span class="p">}</span>
     <span class="p">}(),</span><span class="c1">// NOTE: Executing for loadtime branching</span>
 
-    <span class="nx">_getOffset</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">pos</span><span class="p">,</span>
-            <span class="nx">xy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">pos</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">POSITION</span><span class="p">);</span>
-            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">LEFT</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span>
-                <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">TOP</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
-            <span class="p">];</span>
-
-            <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// in case of &#39;auto&#39;</span>
-                <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">LEFT</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// try inline</span>
-                <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// default to offset value</span>
-                    <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pos</span> <span class="o">===</span> <span class="nx">RELATIVE</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetLeft</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span> 
-
-            <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// in case of &#39;auto&#39;</span>
-                <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">TOP</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// try inline</span>
-                <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// default to offset value</span>
-                    <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pos</span> <span class="o">===</span> <span class="nx">RELATIVE</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetTop</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span> 
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="nx">xy</span><span class="p">;</span>
-
-    <span class="p">},</span>
-
     <span class="cm">/**</span>
 <span class="cm">     * Gets the current X position of an element based on page coordinates. </span>
 <span class="cm">     * Element must be part of the DOM tree to have page coordinates</span>

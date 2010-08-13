@@ -1242,13 +1242,19 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          */           
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
-                results=[] , key = (type) ? 'event:' + ek + type : null;
+                results=[] , key = (type) ? 'event:' + ek + type : null,
+                adapters = _eventenv.plugins;
 
             if (!evts) {
                 return null;
             }
 
             if (key) {
+                // look for synthetic events
+                if (adapters[type] && adapters[type].eventDef) {
+                    key += '_synth';
+                }
+
                 if (evts[key]) {
                     results.push(evts[key]);
                 }

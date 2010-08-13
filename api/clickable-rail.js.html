@@ -65,7 +65,7 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">_initClickableRail</span><span class="p">();</span>
 <span class="p">}</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">ClickableRail</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="nx">ClickableRail</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">ClickableRail</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">ClickableRail</span><span class="p">,</span> <span class="p">{</span>
 
     <span class="c1">// Prototype methods added to host class</span>
     <span class="nx">prototype</span><span class="o">:</span> <span class="p">{</span>
@@ -77,7 +77,7 @@
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
         <span class="nx">_initClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">||</span> <span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">||</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="p">);</span>
 
             <span class="cm">/**</span>
 <span class="cm">             * Broadcasts when the rail has received a mousedown event and</span>
@@ -89,12 +89,12 @@
 <span class="cm">             * @event railMouseDown</span>
 <span class="cm">             * @preventable _defRailMouseDownFn</span>
 <span class="cm">             */</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span> <span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRailMouseDownFn</span>
-            <span class="p">}</span> <span class="p">);</span>
+            <span class="p">});</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="s1">&#39;render&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bindClickableRail</span> <span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_unbindClickableRail</span> <span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;render&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bindClickableRail</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_unbindClickableRail</span><span class="p">);</span>
         <span class="p">},</span>
 
         <span class="cm">/** </span>
@@ -104,11 +104,10 @@
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
         <span class="nx">_bindClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">addHandle</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">rail</span> <span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">addHandle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rail</span><span class="p">);</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">rail</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_onRailMouseDown</span><span class="p">,</span> <span class="p">{},</span> <span class="k">this</span><span class="p">);</span>
-                
+            <span class="k">this</span><span class="p">.</span><span class="nx">rail</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Drag</span><span class="p">.</span><span class="nx">START_EVENT</span><span class="p">,</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onRailMouseDown</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
@@ -118,11 +117,11 @@
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
         <span class="nx">_unbindClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;rendered&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;contentBox&#39;</span> <span class="p">),</span>
-                    <span class="nx">rail</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span> <span class="s1">&#39;rail&#39;</span> <span class="p">)</span> <span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;rendered&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
+                    <span class="nx">rail</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="s1">&#39;rail&#39;</span><span class="p">));</span>
 
-                <span class="nx">rail</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">evtGuid</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="p">);</span>
+                <span class="nx">rail</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evtGuid</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">},</span>
 
@@ -133,9 +132,9 @@
 <span class="cm">         * @param e {DOMEvent} the mousedown event object</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="nx">_onRailMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;clickableRail&#39;</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;disabled&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span> <span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">ev</span><span class="o">:</span> <span class="nx">e</span> <span class="p">}</span> <span class="p">);</span>
+        <span class="nx">_onRailMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;clickableRail&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">ev</span><span class="o">:</span> <span class="nx">e</span> <span class="p">});</span>
             <span class="p">}</span>
         <span class="p">},</span>
 
@@ -148,24 +147,24 @@
 <span class="cm">         * @param e {Event} the EventFacade for the railMouseDown custom event</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="nx">_defRailMouseDownFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">_defRailMouseDownFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ev</span><span class="p">;</span>
 
             <span class="c1">// Logic that determines which thumb should be used is abstracted</span>
             <span class="c1">// to someday support multi-thumb sliders</span>
-            <span class="kd">var</span> <span class="nx">dd</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveThumb</span><span class="p">(</span> <span class="nx">e</span> <span class="p">),</span>
+            <span class="kd">var</span> <span class="nx">dd</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveThumb</span><span class="p">(</span><span class="nx">e</span><span class="p">),</span>
                 <span class="nx">i</span>      <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">xyIndex</span><span class="p">,</span>
-                <span class="nx">length</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;length&#39;</span> <span class="p">),</span> <span class="mi">10</span> <span class="p">),</span>
+                <span class="nx">length</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span>
                 <span class="nx">thumb</span><span class="p">,</span>
                 <span class="nx">thumbSize</span><span class="p">,</span>
                 <span class="nx">xy</span><span class="p">;</span>
                 
-            <span class="k">if</span> <span class="p">(</span> <span class="nx">dd</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="nx">thumb</span> <span class="o">=</span> <span class="nx">dd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;dragNode&#39;</span> <span class="p">);</span>
-                <span class="nx">thumbSize</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span> <span class="nx">thumb</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">dim</span> <span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">dd</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">thumb</span> <span class="o">=</span> <span class="nx">dd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dragNode&#39;</span><span class="p">);</span>
+                <span class="nx">thumbSize</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">thumb</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">dim</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
 
                 <span class="c1">// Step 1. Allow for aligning to thumb center or edge, etc</span>
-                <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getThumbDestination</span><span class="p">(</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">thumb</span> <span class="p">);</span>
+                <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getThumbDestination</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">thumb</span><span class="p">);</span>
 
                 <span class="c1">// Step 2. Remove page offsets to give just top/left style val</span>
                 <span class="nx">xy</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span> <span class="nx">i</span> <span class="p">]</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">rail</span><span class="p">.</span><span class="nx">getXY</span><span class="p">()[</span><span class="nx">i</span><span class="p">];</span>
@@ -173,13 +172,13 @@
                 <span class="c1">// Step 3. Constrain within the rail in case of attempt to</span>
                 <span class="c1">// center the thumb when clicking on the end of the rail</span>
                 <span class="nx">xy</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span>
-                        <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span> <span class="nx">xy</span><span class="p">,</span> <span class="mi">0</span> <span class="p">),</span>
-                        <span class="p">(</span> <span class="nx">length</span> <span class="o">-</span> <span class="nx">thumbSize</span> <span class="p">)</span> <span class="p">);</span>
+                        <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">xy</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                        <span class="p">(</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">thumbSize</span><span class="p">));</span>
 
-                <span class="k">this</span><span class="p">.</span><span class="nx">_uiMoveThumb</span><span class="p">(</span> <span class="nx">xy</span> <span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiMoveThumb</span><span class="p">(</span><span class="nx">xy</span><span class="p">);</span>
 
                 <span class="c1">// Delegate to DD&#39;s natural behavior</span>
-                <span class="nx">dd</span><span class="p">.</span><span class="nx">_handleMouseDownEvent</span><span class="p">(</span> <span class="nx">e</span> <span class="p">);</span>
+                <span class="nx">dd</span><span class="p">.</span><span class="nx">_handleMouseDownEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">},</span>
 
@@ -193,12 +192,12 @@
 <span class="cm">         * @return {Y.DD.Drag} the Drag instance that should be moved</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="nx">_resolveThumb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">_resolveThumb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="cm">/* Temporary workaround</span>
-<span class="cm">            var primaryOnly = this._dd.get( &#39;primaryButtonOnly&#39; ),</span>
+<span class="cm">            var primaryOnly = this._dd.get(&#39;primaryButtonOnly&#39;),</span>
 <span class="cm">                validClick  = !primaryOnly || e.button &lt;= 1;</span>
 
-<span class="cm">            return ( validClick ) ? this._dd : null;</span>
+<span class="cm">            return (validClick) ? this._dd : null;</span>
 <span class="cm">             */</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">;</span>
         <span class="p">},</span>
@@ -213,14 +212,14 @@
 <span class="cm">         * @return {Array} the [top, left] pixel position of the destination</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="nx">_getThumbDestination</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">node</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">offsetWidth</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;offsetWidth&#39;</span> <span class="p">),</span>
-                <span class="nx">offsetHeight</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;offsetHeight&#39;</span> <span class="p">);</span>
+        <span class="nx">_getThumbDestination</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">offsetWidth</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="p">),</span>
+                <span class="nx">offsetHeight</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">);</span>
 
             <span class="c1">// center</span>
             <span class="k">return</span> <span class="p">[</span>
-                <span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span> <span class="p">(</span> <span class="nx">offsetWidth</span>  <span class="o">/</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">)</span> <span class="p">),</span>
-                <span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span> <span class="p">(</span> <span class="nx">offsetHeight</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+                <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="nx">offsetWidth</span>  <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span>
+                <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="nx">offsetHeight</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
             <span class="p">];</span>
         <span class="p">}</span>
 
@@ -241,7 +240,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 
-<span class="p">},</span> <span class="kc">true</span> <span class="p">);</span>
+<span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 </pre></div>
 
                     </div>

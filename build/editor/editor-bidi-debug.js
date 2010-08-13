@@ -142,7 +142,7 @@ YUI.add('editor-bidi', function(Y) {
         */
         _afterContentChange: function() {
             var host = this.get(HOST), inst = host.getInstance();
-            if (inst) {
+            if (inst && inst.Selection) {
                 inst.Selection.filterBlocks();
             }
         },
@@ -359,4 +359,4 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});

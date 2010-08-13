@@ -354,7 +354,7 @@ YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-dd
         node: '#drag6',
         offsetNode: false
     }).plug(Y1.Plugin.DDProxy, {
-        resizeFrame: false,
+        resizeFrame: false
     }).addInvalid('strong.no').on('drag:start', function() {
         this.get('dragNode').setStyles({
             height: '25px',

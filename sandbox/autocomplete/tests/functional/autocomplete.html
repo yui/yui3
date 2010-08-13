@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <title>Test Page</title>
-    <!-- <link rel="stylesheet" href="../assets/test-console.css"> -->
 </head>
 <body class="yui3-skin-sam">
 
@@ -11,8 +10,13 @@
 
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
+<script src="../../../unicode/js/unicode-data-wordbreak.js"></script>
+<script src="../../../unicode/js/unicode-wordbreak.js"></script>
+<script src="../../../escape/js/escape.js"></script>
+<script src="../../../highlight/js/highlight.js"></script>
 <script src="../../js/autocomplete-base.js"></script>
-<!-- <script src="autocomplete-base-test.js"></script> -->
+<script src="../../js/autocomplete-filters.js"></script>
+<script src="../../js/autocomplete-highlighters.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -28,14 +32,13 @@ var Y = YUI({
             type    : 'css'
         },
 
-        'autocomplete-base-test': {
-            fullpath: 'autocomplete-base-test.js',
-            requires: ['autocomplete-base', 'test']
+        'autocomplete-test': {
+            fullpath: 'autocomplete-test.js',
+            requires: ['autocomplete-base', 'autocomplete-filters', 'test']
         }
     },
     useBrowserConsole: false
-}).use('autocomplete-base-test', 'test-console', function (Y) {
-    Y.Test.Runner.setName('autocomplete-base');
+}).use('autocomplete-test', 'test-console', function (Y) {
     Y.Test.Runner.run();
 });
 </script>

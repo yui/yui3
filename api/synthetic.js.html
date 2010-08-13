@@ -178,12 +178,12 @@
     <span class="nx">getRegistry</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">create</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">el</span>     <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
             <span class="nx">yuid</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
-            <span class="nx">key</span>    <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">yuid</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;_synth_&#39;</span><span class="p">,</span>
+            <span class="nx">key</span>    <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">yuid</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;_synth&#39;</span><span class="p">,</span>
             <span class="nx">events</span> <span class="o">=</span> <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{});</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">events</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">create</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">events</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">type</span>      <span class="o">:</span> <span class="s1">&#39;_synth_&#39;</span><span class="p">,</span>
+                <span class="nx">type</span>      <span class="o">:</span> <span class="s1">&#39;_synth&#39;</span><span class="p">,</span>
                 <span class="nx">fn</span>        <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
                 <span class="nx">capture</span>   <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
                 <span class="nx">el</span>        <span class="o">:</span> <span class="nx">el</span><span class="p">,</span>

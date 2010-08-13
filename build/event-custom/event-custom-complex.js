@@ -449,7 +449,7 @@ ETProto.bubble = function(evt, args, target) {
                 ce2 = t.getSibling(type, ce);
 
                 if (ce2 && !ce) {
-                    ce = t.publish(type)                
+                    ce = t.publish(type);
                 }
 
                 oldbubble = t._yuievt.bubbling;
