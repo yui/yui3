@@ -21,7 +21,7 @@ AccentFold = Unicode.AccentFold = {
 
         for (letter in FoldData) {
             if (FoldData.hasOwnProperty(letter) &&
-                    FoldData[letter].test(string)) {
+                    string.search(FoldData[letter]) !== -1) {
                 return true;
             }
         }
