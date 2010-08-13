@@ -7,7 +7,8 @@ YUI.add('unicode-wordbreak', function (Y) {
  * (<a href="http://unicode.org/reports/tr29/#Word_Boundaries">Unicode Standard
  * Annex #29</a>).
  *
- * @module unicode-wordbreak
+ * @module unicode
+ * @submodule unicode-wordbreak
  * @class Unicode.WordBreak
  * @static
  */
