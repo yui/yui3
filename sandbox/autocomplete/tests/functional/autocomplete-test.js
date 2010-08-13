@@ -1,14 +1,19 @@
 YUI.add('autocomplete-test', function (Y) {
 
 var AutoComplete = Y.AutoComplete,
+    Filters      = AutoComplete.Filters,
+
+    suite,
+    baseSuite,
+    filtersSuite;
 
 // -- Global Suite -------------------------------------------------------------
-suite = new Y.Test.Suite('Y.AutoComplete'),
+suite = new Y.Test.Suite('Y.AutoComplete');
 
 // -- Base Suite ---------------------------------------------------------------
 baseSuite = new Y.Test.Suite('Base');
 
-// -- Base Lifecycle -----------------------------------------------------------
+// -- Base: Lifecycle ----------------------------------------------------------
 baseSuite.add(new Y.Test.Case({
     name: 'Lifecycle',
 
@@ -56,7 +61,7 @@ baseSuite.add(new Y.Test.Case({
     }
 }));
 
-// -- Base Attributes ----------------------------------------------------------
+// -- Base: Attributes ---------------------------------------------------------
 baseSuite.add(new Y.Test.Case({
     name: 'Attributes',
 
@@ -131,8 +136,109 @@ baseSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- Filters Suite ------------------------------------------------------------
+filtersSuite = new Y.Test.Suite('Filters');
+
+// -- Filters: API -------------------------------------------------------------
+filtersSuite.add(new Y.Test.Case({
+    name: 'API',
+
+    // -- charMatch() ----------------------------------------------------------
+    'charMatch() should match all characters in the query, in any order': function () {
+        Y.ArrayAssert.isEmpty(Filters.charMatch('abc', ['foo', 'bar', 'baz']));
+
+        Y.ArrayAssert.itemsAreSame(
+            ['cab', 'taxi cab'],
+            Filters.charMatch('abc', ['foo', 'cab', 'bar', 'taxi cab'])
+        );
+    },
+
+    'charMatch() should be case-insensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.charMatch('f', ['Foo', 'foo']));
+    },
+
+    'charMatchCase() should be case-sensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['foo'], Filters.charMatchCase('f', ['Foo', 'foo']));
+    },
+
+    // -- phraseMatch() --------------------------------------------------------
+    'phraseMatch() should match the complete query as a phrase': function () {
+        Y.ArrayAssert.isEmpty(Filters.phraseMatch('foo baz', ['foo', 'bar', 'foo bar']));
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo bar'],
+            Filters.phraseMatch('foo bar', ['foo', 'bar', 'foo bar'])
+        );
+
+        Y.ArrayAssert.itemsAreSame(
+            ['xxfoo barxx'],
+            Filters.phraseMatch('foo bar', ['foo', 'bar', 'xxfoo barxx'])
+        );
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo barxx'],
+            Filters.phraseMatch('foo bar', ['foo', 'bar', 'foo barxx'])
+        );
+
+        Y.ArrayAssert.itemsAreSame(
+            ['xxfoo bar'],
+            Filters.phraseMatch('foo bar', ['foo', 'bar', 'xxfoo bar'])
+        );
+    },
+
+    'phraseMatch() should be case-insensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.phraseMatch('foo', ['Foo', 'foo']));
+    },
+
+    'phraseMatchCase() should be case-sensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['foo'], Filters.phraseMatchCase('foo', ['Foo', 'foo']));
+    },
+
+    // -- startsWith() ---------------------------------------------------------
+    'startsWith() should match the complete query at the start of a result': function () {
+        Y.ArrayAssert.isEmpty(Filters.startsWith('foo', ['xx foo', 'bar', 'xx foo bar']));
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo', 'foo bar'],
+            Filters.startsWith('foo', ['foo', 'bar', 'foo bar'])
+        );
+    },
+
+    'startsWith() should be case-insensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.startsWith('foo', ['Foo', 'foo']));
+    },
+
+    'startsWithCase() should be case-sensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['foo'], Filters.startsWithCase('foo', ['Foo', 'foo']));
+    },
+
+    // -- wordMatch() ----------------------------------------------------------
+    'wordMatch() should match results that contain all words in the query in any order': function () {
+        Y.ArrayAssert.isEmpty(Filters.wordMatch('foo bar baz', ['foo', 'bar', 'baz']));
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo bar baz'],
+            Filters.wordMatch('baz foo bar', ['foo', 'bar', 'foo bar baz', 'foobar baz'])
+        );
+
+        Y.ArrayAssert.itemsAreSame(
+            ['foo', 'foo bar baz'],
+            Filters.wordMatch('foo', ['foo', 'bar', 'foo bar baz', 'foobar baz'])
+        );
+    },
+
+    'wordMatch() should be case-insensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.wordMatch('foo', ['Foo', 'foo']));
+    },
+
+    'wordMatchCase() should be case-sensitive': function () {
+        Y.ArrayAssert.itemsAreSame(['foo'], Filters.wordMatchCase('foo', ['Foo', 'foo']));
+    }
+}));
+
 suite.add(baseSuite);
+suite.add(filtersSuite);
 
 Y.Test.Runner.add(suite);
 
-}, '@VERSION@', {requires:['autocomplete-base', 'node', 'test']});
+}, '@VERSION@', {requires:['autocomplete-base', 'autocomplete-filters', 'node', 'test']});
