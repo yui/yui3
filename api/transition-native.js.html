@@ -200,6 +200,10 @@
                 <span class="nx">dur</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span> <span class="o">:</span>
                         <span class="nx">anim</span><span class="p">.</span><span class="nx">_duration</span><span class="p">;</span>
 
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dur</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// make async and fire events</span>
+                    <span class="nx">dur</span> <span class="o">=</span> <span class="p">.</span><span class="mi">0001</span><span class="p">;</span>
+                <span class="p">}</span>
+
                 <span class="nx">duration</span> <span class="o">+=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_prepDur</span><span class="p">(</span><span class="nx">dur</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
                 <span class="nx">easing</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span> <span class="o">||</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_easing</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
 
@@ -218,12 +222,12 @@
 
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_totalDuration</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only fire when duration &gt; 0 (per spec)</span>
+        <span class="c1">//if (anim._totalDuration) { // only fire when duration &gt; 0 (per spec)</span>
             <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">START</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">type</span><span class="o">:</span> <span class="nx">START</span><span class="p">,</span>
                 <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span> 
             <span class="p">});</span>
-        <span class="p">}</span>
+        <span class="c1">//}</span>
 
         <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// allow any style init to occur (setStyle, etc)</span>
             <span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">+=</span> <span class="nx">transitionText</span> <span class="o">+</span> <span class="nx">duration</span> <span class="o">+</span> <span class="nx">easing</span> <span class="o">+</span> <span class="nx">cssText</span><span class="p">;</span>
