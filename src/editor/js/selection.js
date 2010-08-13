@@ -15,6 +15,10 @@
     INNER_HTML = 'innerHTML',
     FONT_FAMILY = 'fontFamily';
 
+    if (Y.UA.ie) {
+        textContent = 'nodeValue';
+    }
+
     Y.Selection = function() {
         var sel, par, ieNode, nodes, rng, i;
 
@@ -26,7 +30,6 @@
         this._selection = sel;
         
         if (sel.pasteHTML) {
-            textContent = 'nodeValue';
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
@@ -89,17 +92,35 @@
     * @method filter
     */
     Y.Selection.filter = function(blocks) {
+        var startTime = (new Date()).getTime();
+        Y.log('Filtering nodes', 'info', 'selection');
+
         var nodes = Y.all(Y.Selection.ALL),
             baseNodes = Y.all('strong,em'),
+            classNames = {}, cssString = '',
             ls;
 
-        Y.log('Filtering nodes', 'info', 'selection');
+        var startTime1 = (new Date()).getTime();
         nodes.each(function(n) {
+            var raw = Y.Node.getDOMNode(n);
+            if (raw.style[FONT_FAMILY]) {
+                classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
+                n.addClass(n._yuid);
+                raw.style[FONT_FAMILY] = '';
+                raw.removeAttribute('face');
+                if (raw.getAttribute('style') === '') {
+                    raw.removeAttribute('style');
+                }
+                //This is for IE
+                if (raw.getAttribute('style')) {
+                    if (raw.getAttribute('style').toLowerCase() === 'font-family: ') {
+                        raw.removeAttribute('style');
+                    }
+                }
+            }
+            /*
             if (n.getStyle(FONT_FAMILY)) {
-                var sheet = new Y.StyleSheet('editor');
-                sheet.set('.' + n._yuid, {
-                    fontFamily: n.getStyle(FONT_FAMILY)
-                });
+                classNames['.' + n._yuid] = n.getStyle(FONT_FAMILY);
                 n.addClass(n._yuid);
                 n.removeAttribute('face');
                 n.setStyle(FONT_FAMILY, '');
@@ -111,7 +132,16 @@
                     n.removeAttribute('style');
                 }
             }
+            */
         });
+        var endTime1 = (new Date()).getTime();
+        Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'selection');
+
+        Y.each(classNames, function(v, k) {
+            cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';
+        });
+        Y.StyleSheet(cssString, 'editor');
+
         
         //Not sure about this one?
         baseNodes.each(function(n, k) {
@@ -135,6 +165,8 @@
         if (blocks) {
             Y.Selection.filterBlocks();
         }
+        var endTime = (new Date()).getTime();
+        Y.log('Filter Timer: ' + (endTime - startTime) + 'ms', 'info', 'selection');
     };
 
     /**
@@ -143,6 +175,8 @@
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
+        var startTime = (new Date()).getTime();
+        Y.log('RAW filter blocks', 'info', 'selection');
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
             sel, single, br, divs, spans, c, s;
 
@@ -152,8 +186,8 @@
                 if (!node.test(Y.Selection.BLOCKS)) {
                     doit = true;
                     if (childs[i].nodeType == 3) {
-                        c = childs[i].textContent.match(Y.Selection.REG_CHAR);
-                        s = childs[i].textContent.match(Y.Selection.REG_NON);
+                        c = childs[i][textContent].match(Y.Selection.REG_CHAR);
+                        s = childs[i][textContent].match(Y.Selection.REG_NON);
                         if (c === null && s) {
                             doit = false;
                             
@@ -171,6 +205,7 @@
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
         }
+
         single = Y.all('p');
         if (single.size() === 1) {
             Y.log('Only One Paragragh, focus it..', 'info', 'selection');
@@ -193,29 +228,36 @@
                 }
             });
         }
-        divs = Y.all('div, p');
-        divs.each(function(d) {
-            var html = d.get('innerHTML');
-            if (html === '') {
-                Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
-                d.remove();
-            } else {
-                Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
-                if (d.get('childNodes').size() == 1) {
-                    Y.log('This Div/P only has one Child Node', 'info', 'selection');
-                    if (d.ancestor('p')) {
-                        Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
-                        d.replace(d.get('firstChild'));
+        
+        if (!Y.UA.ie) {
+            divs = Y.all('div, p');
+            divs.each(function(d) {
+                var html = d.get('innerHTML');
+                if (html === '') {
+                    //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                    d.remove();
+                } else {
+                    //Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                    if (d.get('childNodes').size() == 1) {
+                        //Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                        if (d.ancestor('p')) {
+                            //Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                            d.replace(d.get('firstChild'));
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        spans = Y.all('.Apple-style-span, .apple-style-span');
-        Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
-        spans.each(function(s) {
-            s.setAttribute('style', '');
-        });
+            spans = Y.all('.Apple-style-span, .apple-style-span');
+            Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
+            spans.each(function(s) {
+                s.setAttribute('style', '');
+            });
+        }
+
+
+        var endTime = (new Date()).getTime();
+        Y.log('FilterBlocks Timer: ' + (endTime - startTime) + 'ms', 'info', 'selection');
     };
 
     /**

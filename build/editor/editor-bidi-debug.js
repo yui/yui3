@@ -108,7 +108,7 @@ YUI.add('editor-bidi', function(Y) {
                     break;
                 case 'backspace-up':
                 case 'delete-up':
-                    var ps = inst.all(FIRST_P), br, p, sel, item;
+                    var ps = inst.all(FIRST_P), br, item;
                     if (ps.size() < 2) {
                         item = inst.one(BODY);
                         if (ps.item(0)) {
@@ -359,4 +359,4 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
