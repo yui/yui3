@@ -12,7 +12,6 @@
 }
 
 #log .yui3-console-controls,
-/*#log .yui3-console-filters-sources,*/
 #log .yui3-console-hd {
     display: none;
 }
@@ -20,7 +19,6 @@
 #log .yui3-console-bd {
     border: 0;
 }
-
 
 #log .yui3-console-ft,
 #log .yui3-console-filters-sources,

@@ -1,15 +1,64 @@
-YUI.add('autocomplete-base-test', function (Y) {
+YUI.add('autocomplete-test', function (Y) {
 
-var AutoComplete = Y.AutoComplete;
+var AutoComplete = Y.AutoComplete,
 
-Y.Test.Runner.add(new Y.Test.Case({
-    name: 'AutoComplete',
+// -- Global Suite -------------------------------------------------------------
+suite = new Y.Test.Suite('Y.AutoComplete'),
+
+// -- Base Suite ---------------------------------------------------------------
+baseSuite = new Y.Test.Suite('Base');
+
+// -- Base Lifecycle -----------------------------------------------------------
+baseSuite.add(new Y.Test.Case({
+    name: 'Lifecycle',
 
     _should: {
         error: {
             'Initializer should require an inputNode': 'No input node specified.'
         }
     },
+
+    setUp: function () {
+        this.inputNode = Y.Node.create('<input id="ac" type="text">');
+        Y.one(Y.config.doc.body).append(this.inputNode);
+    },
+
+    tearDown: function () {
+        this.inputNode.remove().destroy(true);
+        delete this.inputNode;
+    },
+
+    'Initializer should accept an inputNode': function () {
+        var ac = new AutoComplete({inputNode: this.inputNode});
+        Y.Assert.areSame(this.inputNode, ac.get('inputNode'));
+
+        ac = new AutoComplete({inputNode: '#ac'});
+        Y.Assert.areSame(this.inputNode, ac.get('inputNode'));
+    },
+
+    'Initializer should require an inputNode': function () {
+        // Should fail.
+        var ac = new AutoComplete();
+    },
+
+    'Browser autocomplete should be off by default': function () {
+        var ac = new AutoComplete({inputNode: this.inputNode});
+        Y.Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
+    },
+
+    'Browser autocomplete should be turned on when enabled': function () {
+        var ac = new AutoComplete({
+            inputNode: this.inputNode,
+            allowBrowserAutocomplete: true
+        });
+
+        Y.Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
+    }
+}));
+
+// -- Base Attributes ----------------------------------------------------------
+baseSuite.add(new Y.Test.Case({
+    name: 'Attributes',
 
     setUp: function () {
         this.inputNode = Y.Node.create('<input id="ac" type="text">');
@@ -26,41 +75,13 @@ Y.Test.Runner.add(new Y.Test.Case({
         delete this.inputNode;
     },
 
-    // -- Initialization -------------------------------------------------------
-    'Initializer should accept an inputNode': function () {
-        var ac = new AutoComplete({inputNode: this.inputNode});
-        Y.Assert.areSame(this.inputNode, ac.get('inputNode'));
-
-        ac = new AutoComplete({inputNode: '#ac'});
-        Y.Assert.areSame(this.inputNode, ac.get('inputNode'));
-    },
-
-    'Initializer should require an inputNode': function () {
-        // Should fail.
-        new AutoComplete();
-    },
-
-    'Browser autocomplete should be off by default': function () {
-        Y.Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
-    },
-
-    'Browser autocomplete should be turned on when enabled': function () {
-        new AutoComplete({
-            inputNode: this.inputNode,
-            allowBrowserAutocomplete: true
-        });
-
-        Y.Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
-    },
-
-    // -- Attributes -----------------------------------------------------------
     'dataSource should only accept dataSource-like objects and null': function () {
         var ds = {sendRequest: function () {}};
 
-        Y.Assert.isUndefined(this.dataSource);
+        Y.Assert.isUndefined(this.ac.get('dataSource'));
 
         this.ac.set('dataSource', {});
-        Y.Assert.isUndefined(this.dataSource);
+        Y.Assert.isUndefined(this.ac.get('dataSource'));
 
         this.ac.set('dataSource', ds);
         Y.Assert.areSame(ds, this.ac.get('dataSource'));
@@ -109,5 +130,9 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame('foo{query}bar', this.ac.get('requestTemplate')('test'));
     }
 }));
+
+suite.add(baseSuite);
+
+Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {requires:['autocomplete-base', 'node', 'test']});
