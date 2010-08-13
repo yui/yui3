@@ -16,6 +16,42 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.isFalse(AccentFold.canFold('AAA'));
     },
 
+    // -- compare() ------------------------------------------------------------
+    'compare() should return true when folded strings match': function () {
+        Y.Assert.isTrue(AccentFold.compare('aaa', 'aåa'));
+        Y.Assert.isTrue(AccentFold.compare('aaa', 'AÅA'));
+        Y.Assert.isTrue(AccentFold.compare('AAA', 'aåa'));
+    },
+
+    "compare() should return false when folded strings don't match": function () {
+        Y.Assert.isFalse(AccentFold.compare('aaa', 'abc'));
+    },
+
+    'compare() should support a custom comparison function': function () {
+        Y.Assert.isTrue(AccentFold.compare('aåa', 'åaë', function (a, b) {
+            Y.Assert.areSame('aaa', a);
+            Y.Assert.areSame('aae', b);
+            return true;
+        }));
+    },
+
+    // -- filter() -------------------------------------------------------------
+    'filter() should pass accent-folded items to the supplied function': function () {
+        var items = [];
+
+        AccentFold.filter(['aáa', 'eée'], function (item) {
+            items.push(item);
+        });
+
+        Y.ArrayAssert.itemsAreSame(['aaa', 'eee'], items);
+    },
+
+    'filter() should filter the supplied array': function () {
+        Y.ArrayAssert.itemsAreSame(['eée'], AccentFold.filter(['aáa', 'eée'], function (item) {
+            return item === 'eee';
+        }));
+    },
+
     // -- fold() ---------------------------------------------------------------
     'fold() should fold lowercase accented letters to ASCII': function () {
         Y.Assert.areSame('aaaaaaaaaaaaaaaaaaaaaaaaaa', AccentFold.fold('àåāăąǎǟǡǻȁȃȧḁẚạảấầẩẫậắằẳẵặ'));
