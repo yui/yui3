@@ -223,7 +223,7 @@ YUI.add('dd-constrain', function(Y) {
                         this.resetCache();
                     }
                 } else if (Y.Lang.isObject(con)) {
-                    region = con;
+                    region = Y.clone(con);
                 }
             }
             if (!con || !region) {
@@ -315,7 +315,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         align: function() {
             var host = this.get(HOST),
-                _xy = host.actXY,
+                _xy = [host.actXY[0], host.actXY[1]],
                 r = this.getRegion(true);
 
             if (this.get('stickX')) {
