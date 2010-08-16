@@ -272,7 +272,7 @@
                         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">();</span>
                     <span class="p">}</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">con</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">region</span> <span class="o">=</span> <span class="nx">con</span><span class="p">;</span>
+                    <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">con</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">con</span> <span class="o">||</span> <span class="o">!</span><span class="nx">region</span><span class="p">)</span> <span class="p">{</span>
@@ -364,7 +364,7 @@
 <span class="cm">        */</span>
         <span class="nx">align</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
-                <span class="nx">_xy</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">actXY</span><span class="p">,</span>
+                <span class="nx">_xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">host</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">host</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
                 <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRegion</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;stickX&#39;</span><span class="p">))</span> <span class="p">{</span>
