@@ -5,13 +5,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
+<!--
     <script src="../../build/yui/yui-debug.js"></script>
+    -->
+    <script src="http://yui.yahooapis.com/combo?3.2.0pr1/build/yui/yui-debug.js"></script>
 
     <script>
         // YUI({filter:"raw", lang:"en-US"}).use("lang/datatype-date_en-US", "datatype-date", function(Y) {
         YUI({
             lang:"fr-FR, en-US",
-            combine: true,
+            // combine: true,
             groups: {
                 myapp:{
                         base:'/js/',
@@ -23,9 +26,10 @@
                         }                                                                                                                                                               
                 }     
             }
-        }).use("blah", "lang/datatype-date_en-US", 'localized-module', function(Y) {
+        // }).use("blah", "lang/datatype-date_en-US", 'localized-module', function(Y) {
+        }).use('localized-module', function(Y) {
             console.log(Y.Intl.get("datatype-date-format"));
-            Y.use("lang/datatype-date_fr-FR");
+            // Y.use("lang/datatype-date_fr-FR");
         });
     </script>
 </body>

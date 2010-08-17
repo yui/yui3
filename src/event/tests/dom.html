@@ -490,6 +490,32 @@
                     Y.Assert.areEqual(1, b);
                     Y.Assert.areEqual(0, c);
                     Y.Assert.areEqual(1, d);
+                },
+
+                test_categories: function() {
+                    var count = 0;
+
+                    var list = Y.all('.clickers');
+                    list.on('category|click', function(e) {
+                        count++;
+                    });
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    @TODO FIX
+
+                    // Y.all('.foo').detach('category|click');
+                    list.detach('category|click');
+
+
+                    
+                    Y.Assert.areEqual(2, count);
+
+                    // Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    // Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(2, count);
                 }
  
                 

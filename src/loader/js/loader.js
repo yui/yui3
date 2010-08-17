@@ -1344,6 +1344,7 @@ Y.Loader.prototype = {
                             if (test) {
                                 go = (test.ua && Y.UA[test.ua]) || 
                                      (test.test && test.test(Y, r));
+                                     //(test.test && Y.Features.test('load', test.test, [Y, r]));
                             }
 
                             if (go) {
