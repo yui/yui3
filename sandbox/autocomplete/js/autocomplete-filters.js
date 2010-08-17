@@ -9,11 +9,11 @@ YUI.add('autocomplete-filters', function (Y) {
  * @static
  */
 
-var YArray    = Y.Array,
-    YObject   = Y.Object,
-    WordBreak = Y.Unicode.WordBreak,
+var YArray     = Y.Array,
+    YObject    = Y.Object,
+    WordBreak  = Y.Unicode.WordBreak,
 
-Filters = {
+Filters = Y.mix(Y.namespace('AutoComplete.Filters'), {
     // -- Public Methods -------------------------------------------------------
 
     /**
@@ -169,9 +169,7 @@ Filters = {
     wordMatchCase: function (query, results) {
         return Filters.wordMatch(query, results, true);
     }
-};
-
-Y.AutoComplete.Filters = Filters;
+});
 
 }, '@VERSION@', {
     requires: ['autocomplete-base', 'collection', 'unicode-wordbreak']

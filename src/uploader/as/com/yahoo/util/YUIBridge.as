@@ -3,6 +3,7 @@ package com.yahoo.util
 		import flash.display.Stage;
 		import flash.external.ExternalInterface;
 		import flash.utils.getDefinitionByName;
+	    import flash.system.Security;
 		
 		public class YUIBridge extends Object
 		{
@@ -17,8 +18,7 @@ package com.yahoo.util
 	
 			public function YUIBridge(stage:Stage)
 			{
-				_stage = stage;
-
+                _stage = stage;
 				flashvars = _stage.loaderInfo.parameters;
 				
 				if (flashvars["yId"] && flashvars["YUIBridgeCallback"] && flashvars["YUISwfId"] && ExternalInterface.available) {
@@ -26,7 +26,12 @@ package com.yahoo.util
 					_swfID = flashvars["YUISwfId"];
 					_yId = flashvars["yId"];
 				}
-				
+			    
+                if(flashvars.hasOwnProperty("allowedDomain"))
+                {
+                    Security.allowDomain(flashvars.allowedDomain);
+                }
+                
 				ExternalInterface.addCallback("createInstance", createInstance);
 				ExternalInterface.addCallback("exposeMethod", exposeMethod);
 				ExternalInterface.addCallback("getProperty", getProperty);

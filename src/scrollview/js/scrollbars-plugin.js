@@ -141,7 +141,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         this.afterHostMethod('_uiScrollY', this._update);
         this.afterHostMethod('_uiScrollX', this._update);
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
-        this.afterHostEvent('scrollEnd', this.flash);
+        this.afterHostEvent('scrollEnd', this._hostScrollEnd);
     },
 
     /**
@@ -161,6 +161,16 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         this._update();
 
         Y.later(500, this, 'flash', true);
+    },
+
+    /**
+     * Handler for the scrollEnd event fired by the host. Default implementation flashes the scrollbar
+     *
+     * @method _hostScrollEnd
+     * @param {Event.Facade} e The event facade.
+     */
+    _hostScrollEnd : function(e) {
+        this.flash();        
     },
 
     /**

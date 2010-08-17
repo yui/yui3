@@ -100,11 +100,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * TranstionEnd event handler
      *
      * @method _transitionEnded
+     * @param {Event.Facade} e The event facade
      * @private
      */
-    _transitionEnded: function() {
-        if (!this._transitionsHack) {
-            this._transitionsHack = true;
+    _transitionEnded: function(e) {
+        if (e.config.duration !== 0) {
             this.fire(EV_SCROLL_END);
         }
     },
@@ -195,7 +195,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         Y.log("Transition: duration, easing:" + [transition.duration, transition.easing], "scrollview");        
 
-        this._transitionsHack = false;
         cb.transition(transition);
     },
 
@@ -458,6 +457,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._decelCached = this.get('deceleration');
         this._bounceCached = this.get('bounce');
 
+        this._pastYEdge = false;
+        this._pastXEdge = false;
+
         this._flickFrame();
 
         this.fire(EV_SCROLL_FLICK);
@@ -498,7 +500,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if(Math.abs(this._currentVelocity).toFixed(4) <= 0.015) {
             this._flicking = false;
-            this._killTimer(!(this._exceededYBoundary || this._exceededXBoundary));
+            this._killTimer(!(this._pastYEdge || this._pastXEdge));
 
             if(scrollsVertical) {
                 if(newY < minY) {
@@ -525,7 +527,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (scrollsVertical) {
             if (newY < minY || newY > maxY) {
-                this._exceededYBoundary = true;
+                this._pastYEdge = true;
                 this._currentVelocity *= bounce;
             }
 
@@ -534,7 +536,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (scrollsHorizontal) {
             if (newX < minX || newX > maxX) {
-                this._exceededXBoundary = true;
+                this._pastXEdge = true;
                 this._currentVelocity *= bounce;
             }
 

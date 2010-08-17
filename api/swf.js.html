@@ -97,7 +97,6 @@
 				
 <span class="kd">function</span> <span class="nx">SWF</span> <span class="p">(</span><span class="nx">p_oElement</span> <span class="cm">/*:String*/</span><span class="p">,</span> <span class="nx">swfURL</span> <span class="cm">/*:String*/</span><span class="p">,</span> <span class="nx">p_oAttributes</span> <span class="cm">/*:Object*/</span> <span class="p">)</span> <span class="p">{</span>
 	
-	
 	<span class="k">this</span><span class="p">.</span><span class="nx">_id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(</span><span class="s2">&quot;yuiswf&quot;</span><span class="p">);</span>
 	
 	
@@ -112,7 +111,7 @@
 	<span class="kd">var</span> <span class="nx">flashURL</span> <span class="o">=</span> <span class="p">(</span><span class="nx">shouldExpressInstall</span><span class="p">)</span><span class="o">?</span><span class="nx">EXPRESS_INSTALL_URL</span><span class="o">:</span><span class="nx">swfURL</span><span class="p">;</span>
 	<span class="kd">var</span> <span class="nx">objstring</span> <span class="o">=</span> <span class="s1">&#39;&lt;object &#39;</span><span class="p">;</span>
 	<span class="kd">var</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">h</span><span class="p">;</span>
-	<span class="kd">var</span> <span class="nx">flashvarstring</span> <span class="o">=</span> <span class="s2">&quot;yId=&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;&amp;YUISwfId=&quot;</span> <span class="o">+</span> <span class="nx">_id</span> <span class="o">+</span> <span class="s2">&quot;&amp;YUIBridgeCallback=&quot;</span> <span class="o">+</span> <span class="nx">EVENT_HANDLER</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">flashvarstring</span> <span class="o">=</span> <span class="s2">&quot;yId=&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;&amp;YUISwfId=&quot;</span> <span class="o">+</span> <span class="nx">_id</span> <span class="o">+</span> <span class="s2">&quot;&amp;YUIBridgeCallback=&quot;</span> <span class="o">+</span> <span class="nx">EVENT_HANDLER</span> <span class="o">+</span> <span class="s2">&quot;&amp;allowedDomain=&quot;</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hostname</span><span class="p">;</span>
 	
 	<span class="nx">Y</span><span class="p">.</span><span class="nx">SWF</span><span class="p">.</span><span class="nx">_instances</span><span class="p">[</span><span class="nx">_id</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">oElement</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">isFlashVersionRight</span> <span class="o">||</span> <span class="nx">shouldExpressInstall</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">flashURL</span><span class="p">)</span> <span class="p">{</span>
@@ -198,12 +197,12 @@
 	
 	<span class="nx">_eventHandler</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span>
 	<span class="p">{</span>
-		<span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;swfReady&quot;</span><span class="p">)</span> 
+		<span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;swfReady&quot;</span><span class="p">)</span> 
 		<span class="p">{</span>
 			<span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;swfReady&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">fireOnce</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
 	     	<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;swfReady&quot;</span><span class="p">,</span> <span class="nx">event</span><span class="p">);</span>
         <span class="p">}</span>
-		<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">)</span>
+		<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;log&quot;</span><span class="p">)</span>
 		<span class="p">{</span>
 			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">message</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">category</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
 		<span class="p">}</span>

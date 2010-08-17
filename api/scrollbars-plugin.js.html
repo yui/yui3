@@ -190,7 +190,7 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiScrollY&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiScrollX&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hostDimensionsChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hostScrollEnd</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -210,6 +210,16 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">();</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;flash&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handler for the scrollEnd event fired by the host. Default implementation flashes the scrollbar</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _hostScrollEnd</span>
+<span class="cm">     * @param {Event.Facade} e The event facade.</span>
+<span class="cm">     */</span>
+    <span class="nx">_hostScrollEnd</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">();</span>        
     <span class="p">},</span>
 
     <span class="cm">/**</span>
