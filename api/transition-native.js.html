@@ -201,7 +201,7 @@
                         <span class="nx">anim</span><span class="p">.</span><span class="nx">_duration</span><span class="p">;</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dur</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// make async and fire events</span>
-                    <span class="nx">dur</span> <span class="o">=</span> <span class="p">.</span><span class="mi">0001</span><span class="p">;</span>
+                    <span class="nx">dur</span> <span class="o">=</span> <span class="p">.</span><span class="mi">00001</span><span class="p">;</span>
                 <span class="p">}</span>
 
                 <span class="nx">duration</span> <span class="o">+=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_prepDur</span><span class="p">(</span><span class="nx">dur</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
@@ -248,7 +248,7 @@
         <span class="p">});</span>
 
         <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">elapsedTime</span> <span class="o">&gt;=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_totalDuration</span> <span class="o">&amp;&amp;</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">TRANSITION_CAMEL</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 
             <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">END</span><span class="p">,</span> <span class="p">{</span>

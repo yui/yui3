@@ -154,7 +154,7 @@ Transition.prototype = {
                         anim._duration;
 
                 if (!dur) { // make async and fire events
-                    dur = .0001;
+                    dur = .00001;
                 }
 
                 duration += anim._prepDur(dur) + ',';
@@ -201,7 +201,7 @@ Transition.prototype = {
         });
 
         anim._count--;
-        if (event.elapsedTime >= anim._totalDuration && anim._count <= 0)  {
+        if (anim._count <= 0)  {
             node._node.style[TRANSITION_CAMEL] = '';
 
             node.fire(END, {
