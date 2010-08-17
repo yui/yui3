@@ -40,7 +40,7 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
 
     node.once('transition:end', function(e) {
         node.transition({
-            duration: 1,
+            duration: 0,
             easing: 'ease-in',
             //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
             height: 0,
@@ -62,7 +62,7 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
         //alert(node._node.offsetWidth);
         if (!running) {
             node.transition({
-                duration: 1,
+                duration: 0,
                 easing: 'ease-in',
                 //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
                 height: '200px',
