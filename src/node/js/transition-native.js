@@ -53,19 +53,21 @@ Transition.DEFAULT_DURATION = 0.5;
 Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
-        this._node = node;
-        this._config = config;
-        node._transition = this; // cache for reuse
+        if (!this._running) {
+            this._node = node;
+            this._config = config;
+            node._transition = this; // cache for reuse
 
-        this.initAttrs(config);
+            this.initAttrs(config);
 
-        this._duration = ('duration' in config) ?
-            config.duration: this.constructor.DEFAULT_DURATION;
+            this._duration = ('duration' in config) ?
+                config.duration: this.constructor.DEFAULT_DURATION;
 
-        this._easing = config.easing || this.constructor.DEFAULT_EASING;
-        this._count = 0; // track number of animated properties
-        this._totalDuration = 0;
-        this._running = false;
+            this._easing = config.easing || this.constructor.DEFAULT_EASING;
+            this._count = 0; // track number of animated properties
+            this._totalDuration = 0;
+            this._running = false;
+        }
         return this;
     },
 

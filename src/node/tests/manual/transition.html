@@ -35,6 +35,19 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
     node.on('transition:end', function(e) {
         console.log(e.type);
         console.log(e.elapsedTime);
+
+    });
+
+    node.once('transition:end', function(e) {
+        node.transition({
+            duration: 0,
+            easing: 'ease-in',
+            //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
+            height: 0,
+            width: 0
+
+        });
+
     });
     /*
     node.on('webkitTransitionEnd', function(e) {
@@ -44,25 +57,16 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
 
     //node.setStyle('width', '100px');
 
-    //console.log(node.getStyle('transform'));
-    //node.setStyle('transform', 'rotate(45deg)');
-    //console.log(node.getStyle('transform'));
-
     document.onclick = function() {
         var style = node._node.style;
         //alert(node._node.offsetWidth);
         if (!running) {
-            style.width = '20px';
-            style.height = '20px';
-            style.opacity = '1';
-            style.WebkitTransform = ''; // TODO: abstract and move to DOM.setStyle
-
             node.transition({
                 duration: 0,
                 easing: 'ease-in',
                 //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
-                width: '200px',
-                height: '200px'
+                height: '200px',
+                width: '200px'
 
             });
 

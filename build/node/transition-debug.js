@@ -59,14 +59,8 @@ Y.mix(Transition.prototype, {
     },
 
     _runFrame: function() {
-        var t = new Date() - this._startTime,
-            done = (t >= this._totalDuration);
-            
+        var t = new Date() - this._startTime;
         this._runAttrs(t);
-
-        if (done) {
-            this._end();
-        }
     },
 
     _runAttrs: function(time) {
@@ -119,6 +113,7 @@ Y.mix(Transition.prototype, {
 
                         if (!allDone && anim._count <= 0) {
                             allDone = true;
+                            anim._end();
                             node.fire(END, {
                                 type: END,
                                 elapsedTime: elapsed,
