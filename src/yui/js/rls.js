@@ -18,7 +18,7 @@ Y._rls = function(what) {
             '2v': config.yui2,
             filt: config.filter,
             filts: config.filters,
-            caps: ''
+            tests: 1
         },
 
         // The rls base path
@@ -39,8 +39,9 @@ Y._rls = function(what) {
         url;
 
     // update the request
-    rls.m = what;
-    rls.env = Y.Object.keys(YUI.Env.mods);
+    rls.m    = what;
+    rls.env  = Y.Object.keys(YUI.Env.mods);
+    rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);
 
