@@ -65,6 +65,11 @@
     <span class="nx">FLICK</span> <span class="o">=</span> <span class="nx">EV_SCROLL_FLICK</span><span class="p">,</span>
 
     <span class="nx">UI</span> <span class="o">=</span> <span class="s1">&#39;ui&#39;</span><span class="p">,</span>
+    
+    <span class="nx">LEFT</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span><span class="p">,</span>
+    <span class="nx">TOP</span> <span class="o">=</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span>
+    
+    <span class="nx">PX</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span><span class="p">,</span>
 
     <span class="nx">SCROLL_Y</span> <span class="o">=</span> <span class="s2">&quot;scrollY&quot;</span><span class="p">,</span>
     <span class="nx">SCROLL_X</span> <span class="o">=</span> <span class="s2">&quot;scrollX&quot;</span><span class="p">,</span>
@@ -151,9 +156,7 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_transitionEnded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -228,21 +231,32 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
         <span class="p">}</span>
 
-        <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">easing</span> <span class="o">:</span> <span class="nx">easing</span><span class="p">,</span>
-            <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
-        <span class="p">};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            
+            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">easing</span> <span class="o">:</span> <span class="nx">easing</span><span class="p">,</span>
+                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
+            <span class="p">};</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span> <span class="nx">xMove</span> <span class="o">+</span><span class="s1">&#39;px,&#39;</span><span class="o">+</span> <span class="nx">yMove</span> <span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span> <span class="nx">xMove</span> <span class="o">+</span><span class="s1">&#39;px,&#39;</span><span class="o">+</span> <span class="nx">yMove</span> <span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">xMove</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">;</span> <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">yMove</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">;</span> <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transition: duration, easing:&quot;</span> <span class="o">+</span> <span class="p">[</span><span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span><span class="p">],</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>
+
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">xMove</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span> <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">yMove</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;transform&#39;</span><span class="p">,</span> <span class="s1">&#39;translate3D(&#39;</span><span class="o">+</span> <span class="nx">xMove</span> <span class="o">+</span><span class="s1">&#39;px,&#39;</span><span class="o">+</span> <span class="nx">yMove</span> <span class="o">+</span><span class="s1">&#39;px, 0px)&#39;</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">LEFT</span><span class="p">,</span> <span class="nx">xMove</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">);</span> <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TOP</span><span class="p">,</span> <span class="nx">yMove</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">);</span> <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transition: duration, easing:&quot;</span> <span class="o">+</span> <span class="p">[</span><span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span><span class="p">],</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>        
-
-        <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
