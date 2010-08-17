@@ -79,8 +79,8 @@
     <span class="kd">var</span> <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span>     <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
             <span class="nx">Y</span>     <span class="o">=</span> <span class="k">this</span><span class="p">,</span> 
-            <span class="nx">a</span>     <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> 
-            <span class="nx">l</span>     <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> 
+            <span class="nx">args</span>  <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> 
+            <span class="nx">l</span>     <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> 
             <span class="nx">gconf</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
@@ -99,7 +99,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
@@ -1557,8 +1557,10 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
+                                <li class=""><a href="features.js.html" title="features.js">features.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
                                 <li class=""><a href="intl-base.js.html" title="intl-base.js">intl-base.js</a></li>
+                                <li class=""><a href="load-tests.js.html" title="load-tests.js">load-tests.js</a></li>
                                 <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
                                 <li class=""><a href="rls.js.html" title="rls.js">rls.js</a></li>
                                 <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>

@@ -18,6 +18,11 @@ var getClassName = Y.ClassNameManager.getClassName,
     FLICK = EV_SCROLL_FLICK,
 
     UI = 'ui',
+    
+    LEFT = "left",
+    TOP = "top",
+    
+    PX = "px",
 
     SCROLL_Y = "scrollY",
     SCROLL_X = "scrollX",
@@ -104,9 +109,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _transitionEnded: function(e) {
-        if (e.config.duration !== 0) {
-            this.fire(EV_SCROLL_END);
-        }
+        this.fire(EV_SCROLL_END);
     },
 
     /**
@@ -181,21 +184,32 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this.set(SCROLL_Y, y, { src: UI });
         }
 
-        transition = {
-            easing : easing,
-            duration : duration/1000
-        };
+        if (duration !== 0) {
+            
+            transition = {
+                easing : easing,
+                duration : duration/1000
+            };
 
-        if (NATIVE_TRANSITIONS) {
-            transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
+            } else {
+                if (xSet) { transition.left = xMove + PX; }
+                if (ySet) { transition.top = yMove + PX; }
+            }
+
+            Y.log("Transition: duration, easing:" + [transition.duration, transition.easing], "scrollview");
+
+            cb.transition(transition);
+
         } else {
-            if (xSet) { transition.left = xMove + "px"; }
-            if (ySet) { transition.top = yMove + "px"; }
+            if (NATIVE_TRANSITIONS) {
+                cb.setStyle('transform', 'translate3D('+ xMove +'px,'+ yMove +'px, 0px)');
+            } else {
+                if (xSet) { cb.setStyle(LEFT, xMove + PX); }
+                if (ySet) { cb.setStyle(TOP, yMove + PX); }
+            }
         }
-
-        Y.log("Transition: duration, easing:" + [transition.duration, transition.easing], "scrollview");        
-
-        cb.transition(transition);
     },
 
     /**

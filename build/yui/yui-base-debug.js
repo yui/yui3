@@ -30,8 +30,8 @@ if (typeof YUI != 'undefined') {
     var YUI = function() {
         var i     = 0, 
             Y     = this, 
-            a     = arguments, 
-            l     = a.length, 
+            args  = arguments, 
+            l     = args.length, 
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
         if (!(Y instanceof YUI)) {
@@ -50,7 +50,7 @@ if (typeof YUI != 'undefined') {
 
         if (l) {
             for (; i<l; i++) {
-                Y.applyConfig(a[i]);
+                Y.applyConfig(args[i]);
             }
 
             Y._setup();

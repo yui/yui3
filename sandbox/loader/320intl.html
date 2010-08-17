@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>Test</title>
+<!--
+<script src="../../build/yui/yui-debug.js"></script>
+-->
+<script src="http://yui.yahooapis.com/combo?3.2.0pr1/build/yui/yui-debug.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+
+var baseUrl = '/mercadosa';
+var language = 'en';
+
+var YUI_config = {};
+
+YUI_config.filter="debug";
+YUI_config.panelData = {};
+YUI_config.components={};
+YUI_config.loadOptional=false;
+YUI_config.combine=true;
+// YUI_config.debug=false;
+YUI_config.charset='utf-8';
+YUI_config.useBrowserConsole=true;
+YUI_config.lang=language;
+YUI_config.version='1.0';
+
+YUI_config.groups={
+      myapp:{
+         base: baseUrl + '/assets/' + YUI_config.version  + '/js/',
+         modules:{
+            'msa-base':{lang:["en","es","pt","it","ru"]},
+            'msa-cookie':{},
+            'msa-event':{requires:['widget', 'substitute', 'gallery-jsonp','anim']},
+            'msa-account':{requires:['node-base','node-event-delegate','msa-panel','msa-base','intl']}
+         }
+      },
+      mygallery:{
+         base:baseUrl + '/assets/' + YUI_config.version  +  '/js/yui-library/',
+         modules:{
+            'gallery-outside-events':{requires:['event-focus', 'event-synthetic']}
+            ,'gallery-overlay-extras':{requires:['overlay','gallery-outside-events','plugin','event-resize']}
+            ,'gallery-ac-plugin':{requires:['node', 'plugin', 'gallery-value-change', 'event-key']}
+            ,'gallery-ac-widget':{requires:['overlay','gallery-ac-plugin']}
+            ,'gallery-jsonp':{requires:['get','oop']}
+            ,'gallery-ds-regexcache':{requires:['cache','datasource-local']}
+         }
+      }
+   };
+
+YUI().use('msa-base', function(Y) {
+    console.log('asdf');
+});
+
+
+</script>
+</body>
+</html>
+

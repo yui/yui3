@@ -67,7 +67,7 @@
             <span class="s1">&#39;2v&#39;</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">yui2</span><span class="p">,</span>
             <span class="nx">filt</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span>
             <span class="nx">filts</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">filters</span><span class="p">,</span>
-            <span class="nx">caps</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+            <span class="nx">tests</span><span class="o">:</span> <span class="mi">1</span>
         <span class="p">},</span>
 
         <span class="c1">// The rls base path</span>
@@ -88,8 +88,9 @@
         <span class="nx">url</span><span class="p">;</span>
 
     <span class="c1">// update the request</span>
-    <span class="nx">rls</span><span class="p">.</span><span class="nx">m</span> <span class="o">=</span> <span class="nx">what</span><span class="p">;</span>
-    <span class="nx">rls</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">);</span>
+    <span class="nx">rls</span><span class="p">.</span><span class="nx">m</span>    <span class="o">=</span> <span class="nx">what</span><span class="p">;</span>
+    <span class="nx">rls</span><span class="p">.</span><span class="nx">env</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">);</span>
+    <span class="nx">rls</span><span class="p">.</span><span class="nx">tests</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Features</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">Y</span><span class="p">]);</span>
 
     <span class="nx">url</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">rls_base</span> <span class="o">+</span> <span class="nx">rls_tmpl</span><span class="p">,</span> <span class="nx">rls</span><span class="p">);</span>
 
@@ -201,8 +202,10 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
+                                <li class=""><a href="features.js.html" title="features.js">features.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
                                 <li class=""><a href="intl-base.js.html" title="intl-base.js">intl-base.js</a></li>
+                                <li class=""><a href="load-tests.js.html" title="load-tests.js">load-tests.js</a></li>
                                 <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
                                 <li class="selected"><a href="rls.js.html" title="rls.js">rls.js</a></li>
                                 <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
