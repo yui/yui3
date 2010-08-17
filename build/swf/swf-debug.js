@@ -50,7 +50,6 @@ YUI.add('swf', function(Y) {
 				
 function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
 	
-	
 	this._id = Y.guid("yuiswf");
 	
 	
@@ -65,7 +64,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	var flashURL = (shouldExpressInstall)?EXPRESS_INSTALL_URL:swfURL;
 	var objstring = '<object ';
 	var w, h;
-	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id + "&YUIBridgeCallback=" + EVENT_HANDLER;
+	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id + "&YUIBridgeCallback=" + EVENT_HANDLER + "&allowedDomain=" + document.location.hostname;
 	
 	Y.SWF._instances[_id] = this;
     if (oElement && (isFlashVersionRight || shouldExpressInstall) && flashURL) {
@@ -151,12 +150,12 @@ SWF.prototype =
 	
 	_eventHandler: function(event)
 	{
-		if (event.type == "swfReady") 
+		if (event.type === "swfReady") 
 		{
 			this.publish("swfReady", {fireOnce:true});
 	     	this.fire("swfReady", event);
         }
-		else if(event.type == "log")
+		else if(event.type === "log")
 		{
 			Y.log(event.message, event.category, this.toString());
 		}
