@@ -1163,7 +1163,7 @@ Y.extend(Renderer, Y.Widget, {
 
     _setNode: function()
     {
-        var cb = this.get("contentBox"),
+       var cb = this.get("contentBox"),
             n = document.createElement("div"),
             style = n.style;
         cb.appendChild(n);
@@ -1183,7 +1183,7 @@ Y.extend(Renderer, Y.Widget, {
     _setCanvas: function()
     {
         this.set("graphic", new Y.Graphic());
-        this.get("graphic").render(this.get("node"));
+        this.get("graphic").render(this.get("contentBox"));
     },
 	
     /**
@@ -1290,7 +1290,17 @@ Y.extend(Marker, Y.Renderer, {
     {
         this.after("stylesChange", Y.bind(this._updateHandler, this));
         this.after("stateChange", Y.bind(this._updateHandler, this));
-        Y.one(this.get("node")).addClass("yui3-seriesmarker");
+    },
+
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        if(!this.get("graphic"))
+        {
+            this._setCanvas();
+        }
     },
 
     /**
@@ -1342,7 +1352,8 @@ Y.extend(Marker, Y.Renderer, {
                 border: this._mergeStyles(styles.border, {}),
                 shape: styles.shape,
                 width: styles.width,
-                height: styles.height
+                height: styles.height,
+                props: this._mergeStyles(styles.props, {})
         };
         if((state === "over" || state === "down") && styles[state])
         {
@@ -1367,12 +1378,10 @@ Y.extend(Marker, Y.Renderer, {
         var stateStyles = this._getStateStyles(),
             w = stateStyles.width,
             h = stateStyles.height,
-            node = this.get("node"),
             graphic = this.get("graphic");
-        node.style.width = w + "px";
-        node.style.height = h + "px";
-        node.style.position = "absolute";
         this._shape = graphic.getShape(stateStyles);
+        Y.one(this._shape.node).addClass("yui3-seriesmarker");
+
 	},
 
     /**
@@ -1412,7 +1421,6 @@ Y.extend(Marker, Y.Renderer, {
             width: 6,
             height: 6,
             shape: "circle",
-
             padding:{
                 top: 0,
                 left: 0,
@@ -1498,10 +1506,54 @@ PieSeries.ATTRS = {
 		}
 	},
 
+    categoryDisplayName: {
+        setter: function(val)
+        {
+            this._categoryDisplayName = val;
+            return val;
+        },
+
+        getter: function()
+        {
+            return this._categoryDisplayName || this.get("categoryKey");
+        }
+    },
+
+    valueDisplayName: {
+        setter: function(val)
+        {
+            this._valueDisplayName = val;
+            return val;
+        },
+
+        getter: function()
+        {
+            return this._valueDisplayName || this.get("valueKey");
+        }
+    },
+
     slices: null
 };
 
 Y.extend(PieSeries, Y.Renderer, {
+    /**
+     * @private
+     */
+    _categoryDisplayName: null,
+    
+    /**
+     * @private
+     */
+    _valueDisplayName: null,
+
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
+    
     /**
      * @private
      */
@@ -1522,6 +1574,11 @@ Y.extend(PieSeries, Y.Renderer, {
         this.after("categoryAxisChange", Y.bind(this.categoryAxisChangeHandler, this));
         this.after("valueAxisChange", Y.bind(this.valueAxisChangeHandler, this));
         this.after("stylesChange", Y.bind(this._updateHandler, this));
+        
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
     },
    
 	/**
@@ -1571,6 +1628,74 @@ Y.extend(PieSeries, Y.Renderer, {
     
     /**
      * @private
+     * @description Creates a marker based on its style properties.
+     */
+    getMarker: function(config)
+    {
+        var marker,
+            cache = this._markerCache,
+            styles = config.styles,
+            index = config.index;
+        if(cache.length > 0)
+        {
+            marker = cache.shift();
+            marker.set("index", index);
+            marker.set("series", this);
+            if(marker.get("styles") !== styles)
+            {
+                marker.set("styles", styles);
+            }
+        }
+        else
+        {
+            config.series = this;
+            marker = new Y.Marker(config);
+            var cb = Y.one(this.get("node"));
+            marker.render(cb);
+        }
+        this._markers.push(marker);
+        this._markerNodes.push(Y.one(marker.get("node")));
+        return marker;
+    },   
+    
+    /**
+     * @private
+     * Creates a cache of markers for reuse.
+     */
+    _createMarkerCache: function()
+    {
+        if(this._markers)
+        {
+            this._markerCache = this._markers.concat();
+        }
+        else
+        {
+            this._markerCache = [];
+        }
+        this._markers = [];
+        this._markerNodes = [];
+    },
+    
+    /**
+     * @private
+     * Removes unused markers from the marker cache
+     */
+    _clearMarkerCache: function()
+    {
+        var len = this._markerCache.length,
+            i = 0,
+            marker,
+            markerCache;
+        for(; i < len; ++i)
+        {
+            marker = markerCache[i];
+            marker.parentNode.removeChild(marker);
+        }
+        this._markerCache = [];
+    },
+    
+    /**
+     * @private
      */
 	drawSeries: function()
     {
@@ -1600,13 +1725,12 @@ Y.extend(PieSeries, Y.Renderer, {
             i = 0,
             value,
             angle = 0,
-            graphic = this.get("graphic"),
             lc,
             la,
-            lw;
+            lw,
+            wedgeStyle,
+            marker;
 
-        graphic.setSize(w, h);
-        graphic.setPosition(padding.left, padding.top);
         for(; i < itemCount; ++i)
         {
             value = values[i];
@@ -1618,10 +1742,9 @@ Y.extend(PieSeries, Y.Renderer, {
             }
         }
         
-        
-        graphic.clear();
         tfc = fillColors.concat();
         tfa = fillAlphas.concat();
+        this._createMarkerCache();
         for(i = 0; i < itemCount; i++)
         {
             value = values[i];
@@ -1657,17 +1780,54 @@ Y.extend(PieSeries, Y.Renderer, {
             lw = tbw.shift();
             lc = tbc.shift();
             la = tba.shift();
-            if(lw > 0)
-            {
-                graphic.lineStyle(lw, lc, la);
-            }
-            graphic.beginFill(tfc.shift(), tfa.shift());
-            graphic.drawWedge(halfWidth, halfHeight, totalAngle, angle, radius);
+            wedgeStyle = {
+                border: {
+                    color:lc,
+                    weight:lw,
+                    alpha:la
+                },
+                fill: {
+                    color:tfc.shift(),
+                    alpha:tfa.shift()
+                },
+                shape: "wedge",
+                props: {
+                    arc: angle,
+                    radius: radius,
+                    startAngle: totalAngle,
+                    x: halfWidth,
+                    y: halfHeight
+                },
+                width: w,
+                height: h
+            };
+            marker = this.getMarker.apply(this, [{index:i, styles:wedgeStyle}]);
             totalAngle += angle;    
         }
-        graphic.end();
+        this._clearMarkerCache();
     },
 
+    _markerEventHandler: function(e)
+    {
+        var type = e.type,
+            marker = Y.Widget.getByNode(e.currentTarget);
+
+            switch(type)
+            {
+                case "mouseout" :
+                    marker.set("state", "off");
+                break;
+                case "mouseover" :
+                    marker.set("state", "over");
+                break;
+                case "mouseup" :
+                    marker.set("state", "over");
+                break;
+                case "mousedown" :
+                    marker.set("state", "down");
+                break;
+            }
+    },
     /**
      * @private
      * @return Default styles for the widget
@@ -1689,7 +1849,12 @@ Y.extend(PieSeries, Y.Renderer, {
             fillAlphas:["1"],
             borderColors:["#000000"],
             borderWeights:["0"],
-            borderAlphas:["1"]
+            borderAlphas:["1"],
+
+            over: {
+                borderColors:["#000000"],
+                fillAlphas:[1]
+            }
         };
     }
 });
@@ -2325,10 +2490,10 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
     
     bindUI: function()
     {
-        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
     },
     
     /**
@@ -3016,10 +3181,10 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
 
     bindUI: function()
     {
-        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
     },
 
     /**
@@ -3187,10 +3352,10 @@ BarSeries.ATTRS = {
 Y.extend(BarSeries, Y.CartesianSeries, {
     bindUI: function()
     {
-        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
     },
 
     /**
@@ -4069,10 +4234,10 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
     
     bindUI: function()
     {
-        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
     },
 	
     /**
@@ -4271,10 +4436,10 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
     
     bindUI: function()
     {
-        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
-        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), "div.yui3-seriesmarker");
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
     },
     
     drawSeries: function()

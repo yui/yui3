@@ -36,7 +36,17 @@ Y.extend(Marker, Y.Renderer, {
     {
         this.after("stylesChange", Y.bind(this._updateHandler, this));
         this.after("stateChange", Y.bind(this._updateHandler, this));
-        Y.one(this.get("node")).addClass("yui3-seriesmarker");
+    },
+
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        if(!this.get("graphic"))
+        {
+            this._setCanvas();
+        }
     },
 
     /**
@@ -88,7 +98,8 @@ Y.extend(Marker, Y.Renderer, {
                 border: this._mergeStyles(styles.border, {}),
                 shape: styles.shape,
                 width: styles.width,
-                height: styles.height
+                height: styles.height,
+                props: this._mergeStyles(styles.props, {})
         };
         if((state === "over" || state === "down") && styles[state])
         {
@@ -113,12 +124,10 @@ Y.extend(Marker, Y.Renderer, {
         var stateStyles = this._getStateStyles(),
             w = stateStyles.width,
             h = stateStyles.height,
-            node = this.get("node"),
             graphic = this.get("graphic");
-        node.style.width = w + "px";
-        node.style.height = h + "px";
-        node.style.position = "absolute";
         this._shape = graphic.getShape(stateStyles);
+        Y.one(this._shape.node).addClass("yui3-seriesmarker");
+
 	},
 
     /**
@@ -158,7 +167,6 @@ Y.extend(Marker, Y.Renderer, {
             width: 6,
             height: 6,
             shape: "circle",
-
             padding:{
                 top: 0,
                 left: 0,
