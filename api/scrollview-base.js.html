@@ -172,8 +172,6 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMoveStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
 
-        <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;transition:end&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionEnded</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="kc">false</span><span class="p">);</span>
-
         <span class="c1">// TODO: Fires way to often when using non-native transitions, due to property change</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;DOMSubtreeModified&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_uiDimensionsChange</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
@@ -218,7 +216,8 @@
             <span class="nx">ySet</span> <span class="o">=</span> <span class="p">(</span><span class="nx">y</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">),</span>
             <span class="nx">xMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="o">?</span> <span class="nx">x</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">yMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="o">?</span> <span class="nx">y</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">transition</span><span class="p">;</span>
+            <span class="nx">transition</span><span class="p">,</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span><span class="p">;</span>
 
         <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
         <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">EASING</span><span class="p">;</span>
@@ -247,7 +246,11 @@
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transition: duration, easing:&quot;</span> <span class="o">+</span> <span class="p">[</span><span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span><span class="p">],</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>
 
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionEnded</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
