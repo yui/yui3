@@ -45,11 +45,7 @@ Graphic.prototype = {
      */
     beginFill: function(color, alpha) {
         if (color) {
-            if (alpha) {
-               color = this._2RGBA(color, alpha);
-            } else {
-                color = this._2RGB(color);
-            }
+            this._fillAlpha = alpha || 1;
             this._fillColor = color;
             this._fillType = 'solid';
             this._fill = 1;
@@ -312,11 +308,8 @@ Graphic.prototype = {
         this._strokeWeight = thickness;
         if (color) {
             this._strokeColor = color;
-            if (alpha) {
-                this._strokeColor = this._2RGBA(this._strokeColor, alpha);
-            }
         }
-
+        this._strokeAlpha = alpha || 1;
     },
 
     /**
@@ -484,12 +477,14 @@ Graphic.prototype = {
         if(this._strokeColor)
         {
             shape.setAttribute("stroke", this._strokeColor);
+            shape.setAttribute("stroke-opacity", this._strokeAlpha);
         }
         if(!this._fillType || this._fillType === "solid")
         {
             if(this._fillColor)
             {
                shape.setAttribute("fill", this._fillColor);
+               shape.setAttribute("fill-opacity", this._fillAlpha);
             }
             else
             {
@@ -657,28 +652,6 @@ Graphic.prototype = {
             node.setAttribute("pointer-events", v);
         }
         return node;
-    },
-    
-    /**
-     * @private
-     * Regex expression used for converting hex strings to rgb
-     */
-    _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-
-    /**
-     * @private
-     * Parses hex color string and alpha value to rgba
-     */
-    _2RGBA: function(val, alpha) {
-        alpha = (alpha !== undefined) ? alpha : 1;
-        if (this._reHex.exec(val)) {
-            val = 'rgba(' + [
-                parseInt(RegExp.$1, 16),
-                parseInt(RegExp.$2, 16),
-                parseInt(RegExp.$3, 16)
-            ].join(',') + ',' + alpha + ')';
-        }
-        return val;
     },
     
     _getNodeShapeType: function(type)
