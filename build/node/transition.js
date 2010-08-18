@@ -72,8 +72,8 @@ Y.mix(Transition.prototype, {
             allDone = false,
             attribute,
             setter,
-            actualDuration,
             elapsed,
+            eventElapsed,
             delay,
             d,
             t,
@@ -84,7 +84,6 @@ Y.mix(Transition.prototype, {
                 attribute = attr[i];
                 d = attribute.duration;
                 delay = attribute.delay;
-                actualDuration = d;
                 elapsed = time / 1000;
                 t = time;
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
@@ -98,8 +97,8 @@ Y.mix(Transition.prototype, {
                     t = d; 
                 }
 
-                if (!anim._skip[i] && (!delay || delay > elapsed)) {
-                    setter(anim, i, attribute.from, attribute.to, t, d,
+                if (!anim._skip[i] && (!delay || time >= delay)) {
+                    setter(anim, i, attribute.from, attribute.to, t - delay, d,
                         attribute.easing, attribute.unit); 
 
                     if (done) {
@@ -108,7 +107,7 @@ Y.mix(Transition.prototype, {
 
                         node.fire(PROPERTY_END, {
                             type: PROPERTY_END,
-                            elapsedTime: elapsed,
+                            elapsedTime: (time - delay) / 1000,
                             propertyName: i,
                             config: anim._config
                         });
@@ -118,7 +117,7 @@ Y.mix(Transition.prototype, {
                             anim._end();
                             node.fire(END, {
                                 type: END,
-                                elapsedTime: elapsed,
+                                elapsedTime: (time - delay) / 1000,
                                 config: anim._config
                             });
                         }
@@ -138,6 +137,7 @@ Y.mix(Transition.prototype, {
             customAttr = Transition.behaviors,
             attrs = this._attrs,
             duration,
+            delay,
             val,
             name,
             unit, begin, end;
@@ -153,6 +153,8 @@ Y.mix(Transition.prototype, {
                     easing = val.easing || easing;
                     val = val.value;
                 }
+
+                duration += delay;
                 
                 if (typeof val === 'function') {
                     val = val.call(this._node, this._node);
@@ -188,7 +190,7 @@ Y.mix(Transition.prototype, {
                     from: begin,
                     to: end,
                     unit: unit,
-                    duration: duration + delay,
+                    duration: duration,
                     delay: delay,
                     easing: easing
                 };
