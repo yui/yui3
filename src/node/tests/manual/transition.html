@@ -23,8 +23,6 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
     var node = Y.one('#demo'),
         running = false;
 
-    Y.Node.DOM_EVENTS.WebkitTransitionEnd = true;
-
     node.on('transition:propertyStart', function(e) {
         console.log(e.type + ': ' + e.propertyName);
     });
@@ -42,14 +40,6 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
         console.log(e.elapsedTime);
 
     });
-
-    /*
-    node.on('webkitTransitionEnd', function(e) {
-    console.log(arguments);
-    }, null, 'bar');
-    */
-
-    //node.setStyle('width', '100px');
 
     document.onclick = function() {
         node.transition({
@@ -73,11 +63,9 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 delay: 2
             }
         }, function(e) {
-        console.log(e);
             node.transition({
-                duration: 1,
-                easing: 'ease-in',
-                //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
+                duration: 0,
+                delay: 1,
                 height: '200px',
                 width: '200px',
                 top: 0,
@@ -85,7 +73,7 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 opacity: 1
 
             });
-    });
+        });
     };
 
     node.setStyle('border', '5px solid green');
