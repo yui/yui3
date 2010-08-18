@@ -18,6 +18,11 @@ var getClassName = Y.ClassNameManager.getClassName,
     FLICK = EV_SCROLL_FLICK,
 
     UI = 'ui',
+    
+    LEFT = "left",
+    TOP = "top",
+    
+    PX = "px",
 
     SCROLL_Y = "scrollY",
     SCROLL_X = "scrollX",
@@ -100,9 +105,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * TranstionEnd event handler
      *
      * @method _transitionEnded
+     * @param {Event.Facade} e The event facade
      * @private
      */
-    _transitionEnded: function() {
+    _transitionEnded: function(e) {
         this.fire(EV_SCROLL_END);
     },
 
@@ -178,20 +184,31 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this.set(SCROLL_Y, y, { src: UI });
         }
 
-        transition = {
-            easing : easing,
-            duration : duration/1000
-        };
+        if (duration !== 0) {
+            
+            transition = {
+                easing : easing,
+                duration : duration/1000
+            };
+
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
+            } else {
+                if (xSet) { transition.left = xMove + PX; }
+                if (ySet) { transition.top = yMove + PX; }
+            }
 
 
-        if (NATIVE_TRANSITIONS) {
-            transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
+            cb.transition(transition);
+
         } else {
-            if (xSet) { transition.left = xMove + "px"; }
-            if (ySet) { transition.top = yMove + "px"; }
+            if (NATIVE_TRANSITIONS) {
+                cb.setStyle('transform', 'translate3D('+ xMove +'px,'+ yMove +'px, 0px)');
+            } else {
+                if (xSet) { cb.setStyle(LEFT, xMove + PX); }
+                if (ySet) { cb.setStyle(TOP, yMove + PX); }
+            }
         }
-
-        cb.transition(transition);
     },
 
     /**
@@ -220,6 +237,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._moveStartClientX = e.clientX;
 
         this._isDragging = false;
+        this._flicking = false;
         this._snapToEdge = false;
     },    
     
@@ -307,18 +325,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this._snapToEdge = true;
             this.set(SCROLL_X, maxX);
         }
-        
+
+
         if(this._snapToEdge) {
             return;
         }
 
-        // Check for staleness
-        if(+(new Date()) - this._moveStartTime > 100) {
-            this.fire(EV_SCROLL_END, {
-                staleScroll: true
-            });
-            return;
-        }
+        this.fire(EV_SCROLL_END, {
+            onGestureMoveEnd: true
+        });
+
+        return;
     },
 
     /**
@@ -453,6 +470,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._decelCached = this.get('deceleration');
         this._bounceCached = this.get('bounce');
 
+        this._pastYEdge = false;
+        this._pastXEdge = false;
+
         this._flickFrame();
 
         this.fire(EV_SCROLL_FLICK);
@@ -493,7 +513,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if(Math.abs(this._currentVelocity).toFixed(4) <= 0.015) {
             this._flicking = false;
-            this._killTimer(!(this._exceededYBoundary || this._exceededXBoundary));
+            this._killTimer(!(this._pastYEdge || this._pastXEdge));
 
             if(scrollsVertical) {
                 if(newY < minY) {
@@ -520,7 +540,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (scrollsVertical) {
             if (newY < minY || newY > maxY) {
-                this._exceededYBoundary = true;
+                this._pastYEdge = true;
                 this._currentVelocity *= bounce;
             }
 
@@ -529,7 +549,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (scrollsHorizontal) {
             if (newX < minX || newX > maxX) {
-                this._exceededXBoundary = true;
+                this._pastXEdge = true;
                 this._currentVelocity *= bounce;
             }
 

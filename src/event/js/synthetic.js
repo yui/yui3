@@ -129,12 +129,12 @@ Y.mix(SyntheticEvent, {
     getRegistry: function (node, type, create) {
         var el     = node._node,
             yuid   = Y.stamp(el),
-            key    = 'event:' + yuid + type + '_synth_',
+            key    = 'event:' + yuid + type + '_synth',
             events = DOMMap[yuid] || (DOMMap[yuid] = {});
 
         if (!events[key] && create) {
             events[key] = {
-                type      : '_synth_',
+                type      : '_synth',
                 fn        : noop,
                 capture   : false,
                 el        : el,

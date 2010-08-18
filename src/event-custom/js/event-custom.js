@@ -58,6 +58,14 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
+    each: function(f) {
+        f(this);
+        if (Y.Lang.isArray(this.evt)) {
+            Y.Array.each(this.evt, function(h) {
+                h.each(f);
+            });
+        }
+    },
 
     /**
      * Detaches this subscriber
@@ -472,7 +480,9 @@ Y.CustomEvent.prototype = {
             return fn.detach();
         }
 
-        var found = 0, subs = this.subscribers, i, s;
+        var i, s,
+            found = 0, 
+            subs  = Y.merge(this.subscribers, this.afters);
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {

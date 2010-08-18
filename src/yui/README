@@ -24,6 +24,11 @@ The YUI Global
 * Y.error invokations can be monitored with the errorFn configuration
 * Returning true from the errorFn will prevent the script error from halting further script execution.
 * Added UA properties for mobile.  UA is only evaluated once.
+* The YUI global will overwrite itself when included again, attempting to preserve
+  global the global environment of previous instances.
+* Added a remote loader service submodule
+* Added Y.Lang.sub(), which is a very lightweight version of Y.substitute()
+
 
 3.1.1
 * Removed limit on the number of config objects you can supply to the constructor

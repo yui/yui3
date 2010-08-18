@@ -690,6 +690,31 @@
                 rgb = "rgb(97, 11, 56)" ; //610B38
                 hex = Y.Color.toHex(rgb);
                 Assert.areSame(hex, "#610B38", " shoudl be #610B38");
+            },
+
+            test_inDoc: function() {
+                var node = document.createElement('div');
+                Assert.isFalse(Y.DOM.inDoc(node), 'new off doc');
+
+                document.body.appendChild(node);
+                Assert.isTrue(Y.DOM.inDoc(node), 'new in doc');
+
+                document.body.removeChild(node);
+                Assert.isFalse(Y.DOM.inDoc(node), 'removed');
+
+                // test dupe ID
+                node.id = 'doc';
+                document.body.appendChild(node);
+                Assert.isTrue(Y.DOM.inDoc(node), 'dupe id in doc');
+
+                document.body.removeChild(node);
+                Assert.isFalse(Y.DOM.inDoc(node), 'dupe if off doc');
+
+                // test form with input name="id" (IE collision with form.id)
+                Assert.isTrue(Y.DOM.inDoc(Y.DOM.byId('search')), "form.id === 'search'");
+
+                node = null;
+                Assert.isFalse(Y.DOM.inDoc(node), 'null node');
             }
 
         })); 
@@ -773,6 +798,7 @@ form {
                                 <legend>Search</legend>
                                 <label for="search-p" id="search-p-label">Query</label>
                                 <input type="text" name="p" id="search-p">
+                                <input name="id">
                                 <input type="submit" value="search">
                             </fieldset>
                         </form>

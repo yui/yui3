@@ -178,51 +178,6 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__afterFlick">
-                                    <h4>
-                                        <a name="method__afterFlick">_afterFlick</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_afterFlick</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Executed as soon as the flick event occurs. This is needed to
-determine if the next or prev page should be activated.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The flick event facade.</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__afterIndexChange">
                                     <h4>
                                         <a name="method__afterIndexChange">_afterIndexChange</a></h4>
@@ -269,6 +224,37 @@ determine if the next or prev page should be activated.
                                         
                                         <div class="description" property="yui:description">
                                             Pre-calculate the min/max boundary points when the contentBox changes
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__flickFrame">
+                                    <h4>
+                                        <a name="method__flickFrame">_flickFrame</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_flickFrame</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executed to respond to the flick event, by over-riding the default flickFrame animation. 
+This is needed to determine if the next or prev page should be activated.
                                         </div>
 
                                         <div class="description">
@@ -1262,9 +1248,9 @@ will snap to the closest page.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#method__afterFlick" title="_afterFlick">_afterFlick</a></li>
                                 <li class="protected"><a href="#method__afterIndexChange" title="_afterIndexChange">_afterIndexChange</a></li>
                                 <li class="protected"><a href="#method__calculatePageOffsets" title="_calculatePageOffsets">_calculatePageOffsets</a></li>
+                                <li class="protected"><a href="#method__flickFrame" title="_flickFrame">_flickFrame</a></li>
                                 <li class="protected"><a href="#method__scrollEnded" title="_scrollEnded">_scrollEnded</a></li>
                                 <li class=""><a href="#method__setBoundaryPoints" title="_setBoundaryPoints">_setBoundaryPoints</a></li>
                                 <li class="protected"><a href="#method__uiIndex" title="_uiIndex">_uiIndex</a></li>
@@ -1305,7 +1291,7 @@ will snap to the closest page.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterFlick", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterFlick", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destructor", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destructor", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

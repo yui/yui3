@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head> 
+<style> 
+#demo {
+    background:#ccc;
+    width:200px;
+    height:200px;
+    margin-top:200px;
+    overflow: hidden;
+    position:relative;
+    XX-webkit-transition: width .0001s ease-out;
+}
+</style> 
+<script src="../../../../build/yui/yui.js"></script> 
+
+</head><body> 
+<div id="demo">this is a demo</div> 
+
+<script type="text/javascript"> 
+ 
+YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(Y) {
+    var node = Y.one('#demo'),
+        running = false;
+
+    node.on('transition:propertyStart', function(e) {
+        console.log(e.type + ': ' + e.propertyName);
+    });
+
+    node.on('transition:start', function(e) {
+        console.log(e.type);
+    });
+    node.on('transition:propertyEnd', function(e) {
+        console.log(e.type + ': ' + e.propertyName);
+        console.log(e.elapsedTime);
+    });
+
+    node.on('transition:end', function(e) {
+        console.log(e.type);
+        console.log(e.elapsedTime);
+
+    });
+
+    document.onclick = function() {
+        node.transition({
+            duration: 1,
+            easing: 'ease-in',
+            //height: 0,
+            left: {
+                value: '100px',
+                //delay: 1
+            },
+
+            //top: '100px',
+            width: {
+                value: 0,
+                //delay: 1
+            },
+
+            width: 0,
+
+/*
+            'borderWidth': {
+                value: 0,
+                delay: 2
+            },
+*/
+
+            opacity: {
+                easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
+                value: 0,
+                duration: 2,
+                //delay: 2
+            }
+        }, function(e) {
+        /*
+            node.transition({
+                duration: 0,
+                delay: 1,
+                height: '200px',
+                width: '200px',
+                top: 0,
+                left: 0,
+                opacity: 1
+
+            });
+        */
+        });
+
+        node.transition({
+            easing: 'ease-in',
+            duration: 1,
+            height: 0,
+            top: '100px'
+        });
+    };
+
+    node.setStyle('border', '5px solid green');
+});
+ 
+</script> 
+</body></html> 

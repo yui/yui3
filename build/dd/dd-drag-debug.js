@@ -417,6 +417,14 @@ YUI.add('dd-drag', function(Y) {
                 this.addTarget(t);
                 return t;
             }
+        },
+        /**
+        * @attribute haltDown
+        * @description Should the mousedown event be halted. Default: true
+        * @type Boolean
+        */
+        haltDown: {
+            value: true
         }
     };
 
@@ -748,7 +756,13 @@ YUI.add('dd-drag', function(Y) {
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
-                ev.preventDefault();
+                if (this.get('haltDown')) {
+                    Y.log('Halting MouseDown', 'info', 'drag');
+                    ev.halt();
+                } else {
+                    Y.log('Preventing Default on MouseDown', 'info', 'drag');
+                    ev.preventDefault();
+                }
                 
                 this._setStartPosition([ev.pageX, ev.pageY]);
 

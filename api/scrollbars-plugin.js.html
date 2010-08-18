@@ -55,7 +55,7 @@
 
 <span class="kd">var</span> <span class="nx">getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">,</span>
     <span class="nx">_classNames</span><span class="p">,</span>
-    
+
     <span class="nx">NATIVE_TRANSITIONS</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">,</span>    
     <span class="nx">SCROLLBAR</span> <span class="o">=</span> <span class="s1">&#39;scrollbar&#39;</span><span class="p">,</span>
     <span class="nx">SCROLLVIEW</span> <span class="o">=</span> <span class="s1">&#39;scrollview&#39;</span><span class="p">,</span>
@@ -75,13 +75,20 @@
     <span class="nx">HORIZ_CACHE</span> <span class="o">=</span> <span class="s2">&quot;_sbh&quot;</span><span class="p">,</span>
     <span class="nx">VERT_CACHE</span> <span class="o">=</span> <span class="s2">&quot;_sbv&quot;</span><span class="p">,</span>
 
+    <span class="nx">TRANSITION_PROPERTY</span> <span class="o">=</span> <span class="s2">&quot;transitionProperty&quot;</span><span class="p">,</span>
+    <span class="nx">TRANSFORM</span> <span class="o">=</span> <span class="s2">&quot;transform&quot;</span><span class="p">,</span>
+
+    <span class="nx">OPACITY</span> <span class="o">=</span> <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
+
     <span class="nx">TRANSLATE_X</span> <span class="o">=</span> <span class="s2">&quot;translateX(&quot;</span><span class="p">,</span>
     <span class="nx">TRANSLATE_Y</span> <span class="o">=</span> <span class="s2">&quot;translateY(&quot;</span><span class="p">,</span>
+
     <span class="nx">SCALE_X</span> <span class="o">=</span> <span class="s2">&quot;scaleX(&quot;</span><span class="p">,</span>
     <span class="nx">SCALE_Y</span> <span class="o">=</span> <span class="s2">&quot;scaleY(&quot;</span><span class="p">,</span>
 
+    <span class="nx">PX</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span><span class="p">,</span>
     <span class="nx">CLOSE</span> <span class="o">=</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
-    <span class="nx">PX_CLOSE</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
+    <span class="nx">PX_CLOSE</span> <span class="o">=</span> <span class="nx">PX</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * ScrollView plugin that adds scroll indicators to ScrollView instances</span>
@@ -190,7 +197,7 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiScrollY&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiScrollX&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hostDimensionsChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hostScrollEnd</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -210,6 +217,18 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">();</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;flash&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handler for the scrollEnd event fired by the host. Default implementation flashes the scrollbar</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _hostScrollEnd</span>
+<span class="cm">     * @param {Event.Facade} e The event facade.</span>
+<span class="cm">     */</span>
+    <span class="nx">_hostScrollEnd</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">_flicking</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">();</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -250,6 +269,10 @@
             <span class="nx">mc</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
             <span class="nx">lc</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
             <span class="nx">size</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="s2">&quot;isHoriz&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;offsetWidth&quot;</span> <span class="o">:</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="p">;</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">,</span> <span class="nx">TRANSFORM</span><span class="p">);</span>
+        <span class="nx">mc</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">,</span> <span class="nx">TRANSFORM</span><span class="p">);</span>
+        <span class="nx">lc</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">,</span> <span class="nx">TRANSFORM</span><span class="p">);</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">setData</span><span class="p">(</span><span class="nx">CHILD_CACHE</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">fc</span> <span class="o">:</span> <span class="nx">fc</span><span class="p">,</span>
@@ -351,18 +374,27 @@
             <span class="nx">scrollbarPos</span> <span class="o">=</span> <span class="nx">widgetSize</span> <span class="o">-</span> <span class="p">(</span><span class="nx">firstChildSize</span> <span class="o">+</span> <span class="nx">lastChildSize</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="c1">// Position Scrollbar</span>
-        <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
-        <span class="p">};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Position Scrollbar</span>
+            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
+            <span class="p">};</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">scrollbarPos</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">scrollbarPos</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">scrollbarPos</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">scrollbar</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">scrollbarPos</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">scrollbar</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANSFORM</span><span class="p">,</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">scrollbarPos</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">scrollbar</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">dimOffset</span><span class="p">,</span> <span class="nx">scrollbarPos</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
-
-        <span class="nx">scrollbar</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
 
         <span class="c1">// Resize Scrollbar Middle Child</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">dimCache</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">middleChildSize</span><span class="p">)</span> <span class="p">{</span>
@@ -370,34 +402,50 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">middleChildSize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>             
-                <span class="p">};</span>
-    
-                <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">scale</span> <span class="o">+</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>             
+                    <span class="p">};</span>
+
+                    <span class="k">if</span><span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">scale</span> <span class="o">+</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">transition</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">middleChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">transition</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nx">middleChildSize</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">middleChild</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANSFORM</span><span class="p">,</span> <span class="nx">scale</span> <span class="o">+</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">CLOSE</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">middleChild</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">dim</span><span class="p">,</span> <span class="nx">middleChildSize</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
-    
-                <span class="nx">middleChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
     
                 <span class="c1">// Position Last Child</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">horiz</span> <span class="o">||</span> <span class="o">!</span><span class="nx">basic</span><span class="p">)</span> <span class="p">{</span>
-    
-                    <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
-                    <span class="p">};</span>
-            
+
                     <span class="nx">lastChildPosition</span> <span class="o">=</span> <span class="nx">scrollbarSize</span> <span class="o">-</span> <span class="nx">lastChildSize</span><span class="p">;</span>
-            
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">lastChildPosition</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span> 
+    
+                    <span class="k">if</span><span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> 
+                        <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span>
+                        <span class="p">};</span>
+                
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">lastChildPosition</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">;</span> 
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lastChildPosition</span><span class="p">;</span> 
+                        <span class="p">}</span>
+
+                        <span class="nx">lastChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="nx">transition</span><span class="p">[</span><span class="nx">dimOffset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lastChildPosition</span><span class="p">;</span> 
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">lastChild</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANSFORM</span><span class="p">,</span> <span class="nx">translate</span> <span class="o">+</span> <span class="nx">lastChildPosition</span> <span class="o">+</span> <span class="nx">PX_CLOSE</span><span class="p">);</span> 
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">lastChild</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">dimOffset</span><span class="p">,</span> <span class="nx">lastChildPosition</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">);</span> 
+                        <span class="p">}</span>
                     <span class="p">}</span>
-        
-                    <span class="nx">lastChild</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -466,10 +514,10 @@
         <span class="kd">var</span> <span class="nx">verticalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VERTICAL_NODE</span><span class="p">),</span>
             <span class="nx">horizontalNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HORIZONTAL_NODE</span><span class="p">),</span>
 
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="p">(</span><span class="nx">animated</span><span class="p">)</span> <span class="o">?</span> <span class="mf">0.6</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="nx">opacity</span> <span class="o">:</span> <span class="p">(</span><span class="nx">show</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span>
-            <span class="p">};</span>
+            <span class="nx">duration</span> <span class="o">=</span> <span class="p">(</span><span class="nx">animated</span><span class="p">)</span> <span class="o">?</span> <span class="mf">0.6</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">opacity</span> <span class="o">=</span> <span class="p">(</span><span class="nx">show</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+
+            <span class="nx">transition</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_showing</span> <span class="o">=</span> <span class="nx">show</span><span class="p">;</span>
 
@@ -477,12 +525,31 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="p">,</span>
+                <span class="nx">opacity</span> <span class="o">:</span> <span class="nx">opacity</span>
+            <span class="p">};</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+            <span class="p">}</span>
+    
+            <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+            <span class="p">}</span>
+
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="nx">opacity</span><span class="p">);</span>
+            <span class="p">}</span>
+    
+            <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="nx">opacity</span><span class="p">);</span>
+            <span class="p">}</span>
+
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -504,7 +571,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">shouldFlash</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hide&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -648,7 +715,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterFlick", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterFlick", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destructor", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destructor", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

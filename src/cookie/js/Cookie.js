@@ -194,6 +194,22 @@
             return cookies;
         },    
         
+        /**
+         * Sets the document object that the cookie utility uses for setting
+         * cookies. This method is necessary to ensure that the cookie utility
+         * unit tests can pass even when run on a domain instead of locally.
+         * This method should not be used otherwise; you should use 
+         * <code>Y.config.doc</code> to change the document that the cookie
+         * utility uses for everyday purposes.
+         * @param {Object} newDoc The object to use as the document.
+         * @return {void}
+         * @method _setDoc
+         * @private
+         */         
+        _setDoc: function(newDoc){
+            doc = newDoc;
+        },
+        
         //-------------------------------------------------------------------------
         // Public Methods
         //-------------------------------------------------------------------------

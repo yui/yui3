@@ -199,6 +199,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         <div id="drag5">Drag Me V <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
         <div id="drag6">Drag Me VI <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
         <div id="drag7">Drag Me VII <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
+        <button id="drag8">Drag 8</button><br>
         <iframe src="blank.htm" height="300" width="300"></iframe>
         <p>
         <select name="wtf">
@@ -259,7 +260,7 @@ var yConfig2 = {
     debug: false
 };
 
-YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'yui-throttle', 'drag-gestures', function(Y1) {
+YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-plugin', 'dd-proxy', 'dd-constrain', 'yui-throttle', 'drag-gestures', function(Y1) {
     Y1.DD.DDM._debugShim = true;
     //dd4 = Y1.Base.create(Y1.DD.Proxy, [Y1.DD.DragConstrained], {
     /*
@@ -354,7 +355,7 @@ YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-dd
         node: '#drag6',
         offsetNode: false
     }).plug(Y1.Plugin.DDProxy, {
-        resizeFrame: false,
+        resizeFrame: false
     }).addInvalid('strong.no').on('drag:start', function() {
         this.get('dragNode').setStyles({
             height: '25px',
@@ -372,6 +373,9 @@ YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-dd
     }).addInvalid('strong.no').on('drag:start', function() {
         this.deltaXY = [-10, -10];
     });
+    
+    var drag8 = Y1.one('#drag8').plug(Y1.Plugin.Drag);
+    drag8.dd.removeInvalid('button');
     
 
 });

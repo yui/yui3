@@ -443,17 +443,24 @@ YUI.add('frame', function(Y) {
         /**
         * @method focus
         * @description Set the focus to the iframe
+        * @param {Function} fn Callback function to execute after focus happens        
         * @return {Frame}
         * @chainable        
         */
-        focus: function() {
+        focus: function(fn) {
             if (Y.UA.ie || Y.UA.gecko) {
                 this.getInstance().one('win').focus();
+                if (fn) {
+                    fn();
+                }
             } else {
                 try {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
+                        if (fn) {
+                            fn();
+                        }
                     });
                 } catch (ferr) {
                 }

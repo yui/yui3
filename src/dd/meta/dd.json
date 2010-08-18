@@ -8,7 +8,6 @@
                 },
                 "requires": [
                     "dd-drag",
-                    "event-synthetic",
                     "event-move"
                 ]
             },

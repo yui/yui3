@@ -15,6 +15,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             border: 1px solid black;
             width: 600px;
             height: 400px;
+            margin: 3em;
         }
         #demo .item {
             width: 150px;
@@ -107,7 +108,7 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', 'yui-throttle', 'drag-gestures', function(Y) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', function(Y) {
     //console.log(Y);
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM._useShim = false;
@@ -126,6 +127,11 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         invalid: '.disabled',
         handles: ['strong'],
         bubbleTargets: false
+    });
+
+    del.dd.plug(Y.Plugin.DDProxy, {
+        cloneNode: true,
+        moveOnEnd: false
     });
 
     del.on('drag:start', function(e) {

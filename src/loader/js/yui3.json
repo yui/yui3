@@ -425,7 +425,6 @@
                 }, 
                 "requires": [
                     "dd-drag", 
-                    "event-synthetic", 
                     "event-move"
                 ]
             }, 
@@ -564,21 +563,16 @@
                     "base", 
                     "frame", 
                     "node", 
-                    "exec-command"
+                    "exec-command", 
+                    "selection"
                 ]
             }, 
             "editor-bidi": {
                 "requires": [
-                    "editor-base", 
-                    "selection"
-                ]
-            }, 
-            "editor-lists": {
-                "requires": [
                     "editor-base"
                 ]
             }, 
-            "editor-tab": {
+            "editor-lists": {
                 "requires": [
                     "editor-base"
                 ]

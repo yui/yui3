@@ -64,6 +64,7 @@
     <span class="nx">STYLE_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;styleFloat&#39;</span><span class="p">,</span>
     <span class="nx">TRANSPARENT</span> <span class="o">=</span> <span class="s1">&#39;transparent&#39;</span><span class="p">,</span>
     <span class="nx">GET_COMPUTED_STYLE</span> <span class="o">=</span> <span class="s1">&#39;getComputedStyle&#39;</span><span class="p">,</span>
+    <span class="nx">GET_BOUNDING_CLIENT_RECT</span> <span class="o">=</span> <span class="s1">&#39;getBoundingClientRect&#39;</span><span class="p">,</span>
 
     <span class="nx">DOCUMENT</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
@@ -221,15 +222,59 @@
 
 <span class="p">}</span>
 
-<span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_multiplyMatrix</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-        <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-    <span class="p">];</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getAttrOffset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">),</span>
+        <span class="nx">offsetParent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetParent</span><span class="p">,</span>
+        <span class="nx">position</span><span class="p">,</span>
+        <span class="nx">parentOffset</span><span class="p">,</span>
+        <span class="nx">offset</span><span class="p">;</span>
 
-    <span class="k">return</span> <span class="nx">c</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">position</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;position&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;static&#39;</span> <span class="o">||</span> <span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;relative&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>    
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">offsetParent</span> <span class="o">&amp;&amp;</span> <span class="nx">offsetParent</span><span class="p">[</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">parentOffset</span> <span class="o">=</span> <span class="nx">offsetParent</span><span class="p">[</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">]()[</span><span class="nx">attr</span><span class="p">];</span>
+            <span class="nx">offset</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">]()[</span><span class="nx">attr</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;left&#39;</span> <span class="o">||</span> <span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;top&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">offset</span> <span class="o">-</span> <span class="nx">parentOffset</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">parentOffset</span> <span class="o">-</span> <span class="nx">node</span><span class="p">[</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">]()[</span><span class="nx">attr</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getOffset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">pos</span><span class="p">,</span>
+        <span class="nx">xy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">pos</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;position&#39;</span><span class="p">);</span>
+        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span>
+            <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// in case of &#39;auto&#39;</span>
+            <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// try inline</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// default to offset value</span>
+                <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pos</span> <span class="o">===</span> <span class="s1">&#39;relative&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetLeft</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span> 
+
+        <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// in case of &#39;auto&#39;</span>
+            <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// try inline</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// default to offset value</span>
+                <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pos</span> <span class="o">===</span> <span class="s1">&#39;relative&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetTop</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span> 
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">xy</span><span class="p">;</span>
+
 <span class="p">};</span>
 
 <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="p">{</span>
@@ -238,7 +283,7 @@
     <span class="p">},</span>
 
     <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">TRANSFORM</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">TRANSFORM</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">};</span>
 <span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>

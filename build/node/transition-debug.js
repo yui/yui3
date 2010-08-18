@@ -37,12 +37,10 @@ Y.mix(Transition.prototype, {
         var anim = this;
         anim._initAttrs();
 
-        if (anim._totalDuration) { // only fire when duration > 0 (per spec)
-            anim._node.fire(START, {
-                type: START,
-                config: anim._config 
-            });
-        }
+        anim._node.fire(START, {
+            type: START,
+            config: anim._config 
+        });
 
         Transition._running[Y.stamp(anim)] = anim;
         anim._startTime = new Date();
@@ -61,14 +59,8 @@ Y.mix(Transition.prototype, {
     },
 
     _runFrame: function() {
-        var t = new Date() - this._startTime,
-            done = (t >= this._totalDuration);
-            
+        var t = new Date() - this._startTime;
         this._runAttrs(t);
-
-        if (done) {
-            this._end();
-        }
     },
 
     _runAttrs: function(time) {
@@ -80,8 +72,9 @@ Y.mix(Transition.prototype, {
             allDone = false,
             attribute,
             setter,
-            actualDuration,
             elapsed,
+            eventElapsed,
+            delay,
             d,
             t,
             i;
@@ -90,7 +83,7 @@ Y.mix(Transition.prototype, {
             if (attr[i].to) {
                 attribute = attr[i];
                 d = attribute.duration;
-                actualDuration = d;
+                delay = attribute.delay;
                 elapsed = time / 1000;
                 t = time;
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
@@ -98,36 +91,33 @@ Y.mix(Transition.prototype, {
 
                 done = (t >= d);
 
-                if (d === 0) { // set instantly
-                    d = t = 1; // avoid dividing by zero in easings
-                } else if (t > d) {
+                if (t > d) {
                     t = d; 
                 }
 
-                if (!anim._skip[i]) {
-                    setter(anim, i, attribute.from, attribute.to, t, d,
+                if (!anim._skip[i] && (!delay || time >= delay)) {
+                    setter(anim, i, attribute.from, attribute.to, t - delay, d - delay,
                         attribute.easing, attribute.unit); 
 
                     if (done) {
                         anim._skip[i] = true;
                         anim._count--;
 
-                        if (actualDuration > 0) { // match native behavior which doesnt fire for zero duration
-                            node.fire(PROPERTY_END, {
-                                type: PROPERTY_END,
-                                elapsedTime: elapsed,
-                                propertyName: i,
+                        node.fire(PROPERTY_END, {
+                            type: PROPERTY_END,
+                            elapsedTime: (time - delay) / 1000,
+                            propertyName: i,
+                            config: anim._config
+                        });
+
+                        if (!allDone && anim._count <= 0) {
+                            allDone = true;
+                            anim._end();
+                            node.fire(END, {
+                                type: END,
+                                elapsedTime: (time - delay) / 1000,
                                 config: anim._config
                             });
-
-                            if (!allDone && anim._count <= 0) {
-                                allDone = true;
-                                node.fire(END, {
-                                    type: END,
-                                    elapsedTime: elapsed,
-                                    config: anim._config
-                                });
-                            }
                         }
 
                     }
@@ -145,6 +135,7 @@ Y.mix(Transition.prototype, {
             customAttr = Transition.behaviors,
             attrs = this._attrs,
             duration,
+            delay,
             val,
             name,
             unit, begin, end;
@@ -153,11 +144,16 @@ Y.mix(Transition.prototype, {
             if (attrs.hasOwnProperty(name)) {
                 val = attrs[name];
                 duration = this._duration * 1000;
+                delay = this._delay * 1000;
                 if (typeof val.value !== 'undefined') {
                     duration = (('duration' in val) ? val.duration : this._duration) * 1000;
+                    delay = (('delay' in val) ? val.delay : this._delay) * 1000;
                     easing = val.easing || easing;
                     val = val.value;
                 }
+
+                duration = duration || 1; // default to 1ms for 0 duration
+                duration += delay;
                 
                 if (typeof val === 'function') {
                     val = val.call(this._node, this._node);
@@ -195,6 +191,7 @@ Y.mix(Transition.prototype, {
                     to: end,
                     unit: unit,
                     duration: duration,
+                    delay: delay,
                     easing: easing
                 };
 
@@ -206,34 +203,6 @@ Y.mix(Transition.prototype, {
         }
         this._skip = {};
         this._runtimeAttr = attr;
-    },
-
-    _getOffset: function(attr) {
-        var node = this._node,
-            domNode = node._node,
-            val = node.getComputedStyle(attr),
-            position,
-            offsetParent,
-            parentOffset,
-            offset;
-
-        if (val === 'auto') {
-            position = node.getStyle('position');
-            if (position === 'static' || position === 'relative') {
-                val = 0;    
-            } else if (domNode.getBoundingClientRect) {
-                offsetParent = domNode.offsetParent;
-                parentOffset = offsetParent.getBoundingClientRect()[attr];
-                offset = domNode.getBoundingClientRect()[attr];
-                if (attr === 'left' || attr === 'top') {
-                    val = offset - parentOffset;
-                } else {
-                    val = parentOffset - domNode.getBoundingClientRect()[attr];
-                }
-            }
-        }
-
-        return val;
     },
 
     destroy: function() {
@@ -277,7 +246,7 @@ Y.mix(Y.Transition, {
     behaviors: {
         left: {
             get: function(anim, attr) {
-                return anim._getOffset(attr);
+                return Y.DOM._getAttrOffset(anim._node._node, attr);
             }
         }
     },

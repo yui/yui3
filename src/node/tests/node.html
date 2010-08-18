@@ -627,6 +627,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Y.DOM.addClass(node, 'foo');
             Y.DOM.replaceClass('foo', 'foo');
             Assert.isTrue(Y.DOM.hasClass(node, 'foo'));
+
+            node = Y.Node.create('<div></div>');
+            node.addClass('foo bar baz');
+            Assert.areEqual('foo bar baz', node._node.className);
         },
 
         test_toggle: function() {

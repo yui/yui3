@@ -2,55 +2,40 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
-    <style type="text/css" id="styleblock" class="highlight-ignore">
-        #log {
-            position: static;
-        }
-        h1 {
-            font: normal 125%/1.4 Arial, sans-serif;
-        }
-        .yui3-skin-sam .yui3-console .yui3-console-content {
-            font-size: 10px;
-            width: 32em;
-        }
-        .yui3-skin-sam .yui3-console .yui3-console-bd {
-            height: 50em;
-        }
-        .yui3-skin-sam .yui3-console-entry-pass .yui3-console-entry-cat {
-            background: #070;
-            color: #fff;
-        }
-        .yui3-skin-sam .yui3-console-entry-fail .yui3-console-entry-cat {
-            background: #700;
-            color: #fff;
-        }
-        .highlight-example {
-            display: inline;
-            float: left;
-            width: 650px;
-        }
-        .highlight-example h2 {
-            display: none;
-        }
-    </style>
 </head>
 <body class="yui3-skin-sam">
 <h1>Console filter plugin tests</h1>
 <div id="log"></div>
 
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
-<script type="text/javascript" src="../../../build/console/console-filters.js"></script>
-<script type="text/javascript">
-YUI({
-    base : '../../../build/',
-    filter : 'raw',
-    useBrowserConsole : false,
-    logExclude : {event:true,attribute:true,base:true,widget:true,Selector:true}
-}).use('test','console','plugin','console-filters',function (Y) {
+<script src="../../../build/yui/yui.js"></script>
+<script>
+YUI({ filter : 'raw' }).use('test','console-filters', function (Y) {
 
 var suite = new Y.Test.Suite("Tests");
+
+suite.add(new Y.Test.Case({
+    name : "resources",
+
+    _should: {
+        fail: {
+            //test_skin_loaded: 2529194 // bug
+        }
+    },
+
+    test_module_loaded: function () {
+        Y.Assert.isFunction(Y.Plugin.ConsoleFilters);
+    },
+
+    test_skin_loaded: function () {
+        var found = Y.all('link').some(function (node) {
+            if (/console-filters.css/.test(node.get('href'))) {
+                return true;
+            }
+        });
+
+        Y.Assert.isTrue(found);
+    }
+}));
 
 suite.add(new Y.Test.Case({
     name : "instantiation",

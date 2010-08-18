@@ -464,17 +464,24 @@ YUI.add('frame', function(Y) {
         /**
         * @method focus
         * @description Set the focus to the iframe
+        * @param {Function} fn Callback function to execute after focus happens        
         * @return {Frame}
         * @chainable        
         */
-        focus: function() {
+        focus: function(fn) {
             if (Y.UA.ie || Y.UA.gecko) {
                 this.getInstance().one('win').focus();
+                if (fn) {
+                    fn();
+                }
             } else {
                 try {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
+                        if (fn) {
+                            fn();
+                        }
                     });
                 } catch (ferr) {
                     Y.log('Frame focus failed', 'warn', 'frame');
@@ -702,6 +709,10 @@ YUI.add('selection', function(Y) {
     INNER_HTML = 'innerHTML',
     FONT_FAMILY = 'fontFamily';
 
+    if (Y.UA.ie) {
+        textContent = 'nodeValue';
+    }
+
     Y.Selection = function() {
         var sel, par, ieNode, nodes, rng, i;
 
@@ -713,7 +724,6 @@ YUI.add('selection', function(Y) {
         this._selection = sel;
         
         if (sel.pasteHTML) {
-            textContent = 'nodeValue';
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
@@ -776,17 +786,35 @@ YUI.add('selection', function(Y) {
     * @method filter
     */
     Y.Selection.filter = function(blocks) {
+        var startTime = (new Date()).getTime();
+        Y.log('Filtering nodes', 'info', 'selection');
+
         var nodes = Y.all(Y.Selection.ALL),
             baseNodes = Y.all('strong,em'),
+            classNames = {}, cssString = '',
             ls;
 
-        Y.log('Filtering nodes', 'info', 'selection');
+        var startTime1 = (new Date()).getTime();
         nodes.each(function(n) {
+            var raw = Y.Node.getDOMNode(n);
+            if (raw.style[FONT_FAMILY]) {
+                classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
+                n.addClass(n._yuid);
+                raw.style[FONT_FAMILY] = '';
+                raw.removeAttribute('face');
+                if (raw.getAttribute('style') === '') {
+                    raw.removeAttribute('style');
+                }
+                //This is for IE
+                if (raw.getAttribute('style')) {
+                    if (raw.getAttribute('style').toLowerCase() === 'font-family: ') {
+                        raw.removeAttribute('style');
+                    }
+                }
+            }
+            /*
             if (n.getStyle(FONT_FAMILY)) {
-                var sheet = new Y.StyleSheet('editor');
-                sheet.set('.' + n._yuid, {
-                    fontFamily: n.getStyle(FONT_FAMILY)
-                });
+                classNames['.' + n._yuid] = n.getStyle(FONT_FAMILY);
                 n.addClass(n._yuid);
                 n.removeAttribute('face');
                 n.setStyle(FONT_FAMILY, '');
@@ -798,7 +826,16 @@ YUI.add('selection', function(Y) {
                     n.removeAttribute('style');
                 }
             }
+            */
         });
+        var endTime1 = (new Date()).getTime();
+        Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'selection');
+
+        Y.each(classNames, function(v, k) {
+            cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';
+        });
+        Y.StyleSheet(cssString, 'editor');
+
         
         //Not sure about this one?
         baseNodes.each(function(n, k) {
@@ -822,6 +859,8 @@ YUI.add('selection', function(Y) {
         if (blocks) {
             Y.Selection.filterBlocks();
         }
+        var endTime = (new Date()).getTime();
+        Y.log('Filter Timer: ' + (endTime - startTime) + 'ms', 'info', 'selection');
     };
 
     /**
@@ -830,8 +869,10 @@ YUI.add('selection', function(Y) {
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
+        var startTime = (new Date()).getTime();
+        Y.log('RAW filter blocks', 'info', 'selection');
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br, divs, spans;
+            sel, single, br, divs, spans, c, s;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
@@ -839,8 +880,11 @@ YUI.add('selection', function(Y) {
                 if (!node.test(Y.Selection.BLOCKS)) {
                     doit = true;
                     if (childs[i].nodeType == 3) {
-                        if (childs[i].textContent == '\n') {
+                        c = childs[i][textContent].match(Y.Selection.REG_CHAR);
+                        s = childs[i][textContent].match(Y.Selection.REG_NON);
+                        if (c === null && s) {
                             doit = false;
+                            
                         }
                     }
                     if (doit) {
@@ -855,6 +899,7 @@ YUI.add('selection', function(Y) {
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
         }
+
         single = Y.all('p');
         if (single.size() === 1) {
             Y.log('Only One Paragragh, focus it..', 'info', 'selection');
@@ -877,31 +922,59 @@ YUI.add('selection', function(Y) {
                 }
             });
         }
-        divs = Y.all('div, p');
-        divs.each(function(d) {
-            var html = d.get('innerHTML');
-            if (html === '') {
-                Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
-                d.remove();
-            } else {
-                Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
-                if (d.get('childNodes').size() == 1) {
-                    Y.log('This Div/P only has one Child Node', 'info', 'selection');
-                    if (d.ancestor('p')) {
-                        Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
-                        d.replace(d.get('firstChild'));
+        
+        if (!Y.UA.ie) {
+            divs = Y.all('div, p');
+            divs.each(function(d) {
+                var html = d.get('innerHTML');
+                if (html === '') {
+                    //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                    d.remove();
+                } else {
+                    //Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                    if (d.get('childNodes').size() == 1) {
+                        //Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                        if (d.ancestor('p')) {
+                            //Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                            d.replace(d.get('firstChild'));
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        spans = Y.all('.Apple-style-span, .apple-style-span');
-        Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
-        spans.each(function(s) {
-            s.setAttribute('style', '');
-        });
+            spans = Y.all('.Apple-style-span, .apple-style-span');
+            Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
+            spans.each(function(s) {
+                s.setAttribute('style', '');
+            });
+        }
+
+
+        var endTime = (new Date()).getTime();
+        Y.log('FilterBlocks Timer: ' + (endTime - startTime) + 'ms', 'info', 'selection');
     };
 
+    /**
+    * Regular Expression to determine if a string has a character in it
+    * @static
+    * @property REG_CHAR
+    */   
+    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_]/gi;
+
+    /**
+    * Regular Expression to determine if a string has a non-character in it
+    * @static
+    * @property REG_NON
+    */
+    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+
+
+    /**
+    * Wraps an array of elements in a Block level tag
+    * @static
+    * @private
+    * @method _wrapBlock
+    */
     Y.Selection._wrapBlock = function(wrapped) {
         if (wrapped) {
             var newChild = Y.Node.create('<p></p>'),
@@ -1126,7 +1199,7 @@ YUI.add('selection', function(Y) {
             Y.config.doc.execCommand('fontname', null, Y.Selection.TMP);
             var nodes = Y.all(Y.Selection.ALL),
                 items = [];
-
+            
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY, Y.Selection.TMP)) {
                     n.setStyle(FONT_FAMILY, '');
@@ -1209,6 +1282,9 @@ YUI.add('selection', function(Y) {
                         this.selectNode(cur, collapse);
                     }
                 } else {
+                    if (node.get('nodeType') === 3) {
+                        node = node.get('parentNode');
+                    }
                     newNode = Y.Node.create(html);
                     node.append(newNode);
                 }
@@ -2031,6 +2107,9 @@ YUI.add('editor-base', function(Y) {
                 if (family2) {
                     family = family2;
                 }
+                if (family) {
+                    family = family.replace(/'/g, '').replace(/"/g, '');
+                }
                 fsize = n.getStyle('fontSize');
 
                 var cls = n.get('className').split(' ');
@@ -2233,11 +2312,12 @@ YUI.add('editor-base', function(Y) {
         /**
         * Focus the contentWindow of the iframe
         * @method focus
+        * @param {Function} fn Callback function to execute after focus happens
         * @return {EditorBase}
         * @chainable
         */
-        focus: function() {
-            this.frame.focus();
+        focus: function(fn) {
+            this.frame.focus(fn);
             return this;
         },
         /**
@@ -2478,9 +2558,10 @@ YUI.add('editor-lists', function(Y) {
         */
         _onNodeChange: function(e) {
             var inst = this.get(HOST).getInstance(), sel, li, 
-            newLi, newList, sTab, par, moved = false, tag;
+            newLi, newList, sTab, par, moved = false, tag, focusEnd = false;
 
             if (Y.UA.ie && e.changedType === 'enter') {
+                Y.log('Overriding the Enter Key', 'info', 'editorLists');
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {
                     e.changedEvent.halt();
                     e.preventDefault();
@@ -2493,7 +2574,7 @@ YUI.add('editor-lists', function(Y) {
                     li.insert(newLi, 'after');
                     
                     sel = new inst.Selection();
-                    sel.selectNode(newLi.get('firstChild'));
+                    sel.selectNode(newLi.get('firstChild'), true, false);
                 }
             }
             if (e.changedType === 'tab') {
@@ -2520,6 +2601,7 @@ YUI.add('editor-lists', function(Y) {
                             Y.log('Shifting list up one level', 'info', 'editorLists');
                             li.ancestor(LI).insert(li, 'after');
                             moved = true;
+                            focusEnd = true;
                         }
                     } else {
                         //li.setStyle('border', '1px solid red');
@@ -2533,13 +2615,16 @@ YUI.add('editor-lists', function(Y) {
                     }
                 }
                 if (moved) {
+                    if (!li.test(LI)) {
+                        li = li.ancestor(LI);
+                    }
                     li.all(EditorLists.REMOVE).remove();
                     if (Y.UA.ie) {
                         li = li.append(EditorLists.NON).one(EditorLists.NON_SEL);
                     }
                     //Selection here..
                     Y.log('Selecting the new node', 'info', 'editorLists');
-                    (new inst.Selection()).selectNode(li, true, true);
+                    (new inst.Selection()).selectNode(li, true, focusEnd);
                 }
             }
         },
@@ -2591,8 +2676,6 @@ YUI.add('editor-lists', function(Y) {
         insertunorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
-            out = (new inst.Selection()).getSelected();
-            return out;
         },
         /**
         * Override for the insertorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
@@ -2605,8 +2688,6 @@ YUI.add('editor-lists', function(Y) {
         insertorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
-            out = (new inst.Selection()).getSelected();
-            return out;   
         }
     });
 
@@ -2724,7 +2805,7 @@ YUI.add('editor-bidi', function(Y) {
                     break;
                 case 'backspace-up':
                 case 'delete-up':
-                    var ps = inst.all(FIRST_P), br, p, sel, item;
+                    var ps = inst.all(FIRST_P), br, item;
                     if (ps.size() < 2) {
                         item = inst.one(BODY);
                         if (ps.item(0)) {
@@ -2758,7 +2839,7 @@ YUI.add('editor-bidi', function(Y) {
         */
         _afterContentChange: function() {
             var host = this.get(HOST), inst = host.getInstance();
-            if (inst) {
+            if (inst && inst.Selection) {
                 inst.Selection.filterBlocks();
             }
         },

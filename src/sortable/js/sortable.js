@@ -228,7 +228,7 @@
         },
         /**
         * @method join
-        * @param Sortable sel The sortable list to join with
+        * @param Sortable sel The Sortable list to join with
         * @param String type The type of join to do: full, inner, outer, none. Default: full
         * @description Join this Sortable with another Sortable instance.
         * <ul>
@@ -269,7 +269,7 @@
         /**
         * @private
         * @method _join_full
-        * @param Sortable sel The sortable list to join with
+        * @param Sortable sel The Sortable list to join with
         * @description Joins both of the Sortables together.
         */
         _join_full: function(sel) {
@@ -279,7 +279,7 @@
         /**
         * @private
         * @method _join_outer
-        * @param Sortable sel The sortable list to join with
+        * @param Sortable sel The Sortable list to join with
         * @description Allows this Sortable to accept items from the passed Sortable.
         */
         _join_outer: function(sel) {
@@ -288,16 +288,16 @@
         /**
         * @private
         * @method _join_inner
-        * @param Sortable sel The sortable list to join with
+        * @param Sortable sel The Sortable list to join with
         * @description Allows this Sortable to give items to the passed Sortable.
         */
         _join_inner: function(sel) {
             sel.delegate.dd.addToGroup(this.get(ID));
         },
         /**
-        * @method getOrdering A custom callback to allow a user to extract some sort of id or any other data from the node to use in the "ordering list" and then that data should be returned from the callback.
+        * A custom callback to allow a user to extract some sort of id or any other data from the node to use in the "ordering list" and then that data should be returned from the callback.
+        * @method getOrdering
         * @param Function callback 
-        * @description Returns either the Nodes array or a custom array based on the current DOM ordering.
         * @returns Array
         */
         getOrdering: function(callback) {
@@ -343,7 +343,7 @@
             },
             /**
             * @attribute opacity
-            * @description The ocpacity to test the proxy item to when dragging.
+            * @description The opacity to change the proxy item to when dragging.
             * @type String
             */        
             opacity: {
@@ -359,7 +359,7 @@
             },
             /**
             * @attribute id
-            * @description The id of this sortable, used to get a reference to this sortable list from another list.
+            * @description The id of this Sortable, used to get a reference to this Sortable list from another list.
             * @type String
             */        
             id: {
@@ -408,7 +408,7 @@
         * @static
         * @method getSortable
         * @param {String|Node} node The node instance or selector string to use to find a Sortable instance.
-        * @description Get a sortable instance back from a node reference or a selector string.
+        * @description Get a Sortable instance back from a node reference or a selector string.
         */
         getSortable: function(node) {
             var s = null;
@@ -449,7 +449,7 @@
 
     /**
     * @event copy
-    * @description A sortable node was moved.
+    * @description A Sortable node was moved.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
     * <dl>
     * <dt>same</dt><dd>Moved to the same list.</dd>
@@ -460,7 +460,7 @@
     *
     *
     * @event move
-    * @description A sortable node was moved.
+    * @description A Sortable node was moved.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
     * <dl>
     * <dt>same</dt><dd>Moved to the same list.</dd>
@@ -471,7 +471,7 @@
     *
     *
     * @event insert
-    * @description A sortable node was moved.
+    * @description A Sortable node was moved.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
     * <dl>
     * <dt>same</dt><dd>Moved to the same list.</dd>
@@ -482,7 +482,7 @@
     *
     *
     * @event swap
-    * @description A sortable node was moved.
+    * @description A Sortable node was moved.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
     * <dl>
     * <dt>same</dt><dd>Moved to the same list.</dd>
@@ -493,7 +493,7 @@
     *
     *
     * @event moved
-    * @description A sortable node was moved.
+    * @description A Sortable node was moved.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
     * <dl>
     * <dt>same</dt><dd>Moved to the same list.</dd>
