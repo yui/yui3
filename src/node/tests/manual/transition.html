@@ -23,6 +23,7 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
     var node = Y.one('#demo'),
         running = false;
 
+/*
     node.on('transition:propertyStart', function(e) {
         console.log(e.type + ': ' + e.propertyName);
     });
@@ -40,6 +41,7 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
         console.log(e.elapsedTime);
 
     });
+*/
 
     document.onclick = function() {
         node.transition({
@@ -73,6 +75,8 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 //delay: 2
             }
         }, function(e) {
+            console.log('callback');
+            console.log(e);
         /*
             node.transition({
                 duration: 0,
