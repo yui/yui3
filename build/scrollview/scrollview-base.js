@@ -237,6 +237,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._moveStartClientX = e.clientX;
 
         this._isDragging = false;
+        this._flicking = false;
         this._snapToEdge = false;
     },    
     
