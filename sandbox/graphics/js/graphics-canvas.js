@@ -201,7 +201,7 @@ Graphic.prototype = {
         this._trackSize(radius * 2, radius * 2);
         context.beginPath();
         context.arc(x, y, radius, startAngle, endAngle, false);
-        this._drawShape();
+        this._draw();
         return this;
     },
 
@@ -252,7 +252,7 @@ Graphic.prototype = {
             cy = centerY + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
             context.quadraticCurveTo(cx, cy, bx, by);
         }
-        this._drawShape();
+        this._draw();
         return this;
 	},
 
@@ -276,7 +276,7 @@ Graphic.prototype = {
         ctx.lineTo(x, y);
         this._trackPos(x, y);
         this._trackSize(w, h);
-        this._drawShape();
+        this._draw();
         return this;
     },
 
@@ -304,7 +304,7 @@ Graphic.prototype = {
         ctx.quadraticCurveTo(x, y, x, y + eh);
         this._trackPos(x, y);
         this._trackSize(w, h);
-        this._drawShape();
+        this._draw();
         return this;
     },
 
@@ -383,14 +383,14 @@ Graphic.prototype = {
         }
         this._trackPos(x, y);
         this._trackSize(radius, radius);
-        this._drawShape();
+        this._draw();
     },
 
     /**
      * Ends a drawing
      */
     end: function() {
-        this._drawShape();
+        this._draw();
         this._initProps();
         return this;
     },
@@ -446,7 +446,7 @@ Graphic.prototype = {
         this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
         this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
         this._canvas.style.position = "absolute";
-    
+
         return this;
     },
 
@@ -606,7 +606,7 @@ Graphic.prototype = {
      * @private
      * Completes a shape or drawing
      */
-    _drawShape: function()
+    _draw: function()
     {
         if(this._drawingComplete || !this._shape)
         {

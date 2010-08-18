@@ -85,7 +85,7 @@ Y.extend(Renderer, Y.Widget, {
 
     _setNode: function()
     {
-        var cb = this.get("contentBox"),
+       var cb = this.get("contentBox"),
             n = document.createElement("div"),
             style = n.style;
         cb.appendChild(n);
@@ -105,7 +105,7 @@ Y.extend(Renderer, Y.Widget, {
     _setCanvas: function()
     {
         this.set("graphic", new Y.Graphic());
-        this.get("graphic").render(this.get("node"));
+        this.get("graphic").render(this.get("contentBox"));
     },
 	
     /**

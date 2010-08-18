@@ -184,7 +184,7 @@ VMLGraphics.prototype = {
         this._y = y - r;
         this._shape = "oval";
         //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
-        this._drawVML();
+        this._draw();
 	},
 
     /**
@@ -197,7 +197,7 @@ VMLGraphics.prototype = {
         this._y = y;
         this._shape = "oval";
         //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
-        this._drawVML();
+        this._draw();
     },
 
     /**
@@ -213,7 +213,7 @@ VMLGraphics.prototype = {
         this.lineTo(x + w, y + h);
         this.lineTo(x, y + h);
         this.lineTo(x, y);
-        this._drawVML();
+        this._draw();
     },
 
     /**
@@ -233,7 +233,7 @@ VMLGraphics.prototype = {
         this.quadraticCurveTo(x + w, y, x + w - ew, y);
         this.lineTo(x + ew, y);
         this.quadraticCurveTo(x, y, x, y + eh);
-        this._drawVML();
+        this._draw();
 	},
 
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
@@ -242,23 +242,40 @@ VMLGraphics.prototype = {
         this._width = radius;
         this._height = radius;
         yRadius = yRadius || radius;
+        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
+        this._width = radius * 2;
+        this._height = this._width;
+        this._shape = "shape";
+        this._draw();
+    },
+
+    /**
+     * @private
+     * @description Generates a path string for a wedge shape
+     */
+    _getWedgePath: function(config)
+    {
+        var x = config.x,
+            y = config.y,
+            startAngle = config.startAngle,
+            arc = config.arc,
+            radius = config.radius,
+            yRadius = config.yRadius || radius,
+            path;  
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
         startAngle *= 65535;
         arc *= 65536;
-        this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + radius + " " + startAngle + " " + arc;
-        this._width = radius * 2;
-        this._height = this._width;
-        this._shape = "shape";
-        this._drawVML();
+        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + radius + " " + startAngle + " " + arc;
+        return path;
     },
-
+    
     end: function() {
         if(this._shape)
         {
-            this._drawVML();
+            this._draw();
         }
         this._initProps();
     },
@@ -327,8 +344,8 @@ VMLGraphics.prototype = {
      * @private
      */
     render: function(node) {
-        var w = node.offsetWidth,
-            h = node.offsetHeight;
+        var w = node.offsetWidth || 0,
+            h = node.offsetHeight || 0;
         node = node || Y.config.doc.body;
         node.appendChild(this._vml);
         this.setSize(w, h);
@@ -392,7 +409,7 @@ VMLGraphics.prototype = {
      * @private 
      * Completes a vml shape
      */
-    _drawVML: function()
+    _draw: function()
     {
         var shape = this._createGraphicNode(this._shape),
             w = this._width,
@@ -516,6 +533,22 @@ VMLGraphics.prototype = {
     
     },
     
+    _getNodeShapeType: function(type)
+    {
+        var shape = "shape";
+        if(this._typeConversionHash.hasOwnProperty(type))
+        {
+            shape = this._typeConversionHash[type];
+        }
+        return shape;
+    },
+
+    _typeConversionHash: {
+        circle: "oval",
+        ellipse: "oval",
+        rect: "rect"
+    },
+    
     /**
      * Returns a shape.
      */
@@ -527,20 +560,31 @@ VMLGraphics.prototype = {
             border = config.border,
             fillnode,
             w = config.width,
-            h = config.height; 
+            h = config.height, 
+            path;
         if(config.node)
         {
             node = config.node;
+            type = config.type || config.shape;
         }
         else
         {
             this.clear();
             type = config.shape || "shape";
-            if(type === "circle" || type === "ellipse") 
+            node = this._createGraphicNode(this._getNodeShapeType(type));
+            if(type === "wedge")
             {
-                type = "oval";
+                path = this._getWedgePath(config.props);
+                if(fill)
+                {
+                    path += ' x';
+                }
+                if(border)
+                {
+                    path += ' e';
+                }
+                node.path = path;
             }
-            node = this._createGraphicNode(type);
         }
         this.setPosition(0, 0);
         if(border && border.weight && border.weight > 0)

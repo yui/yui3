@@ -84,11 +84,6 @@
         <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="nx">anim</span><span class="p">.</span><span class="nx">_initAttrs</span><span class="p">();</span>
 
-        <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">START</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">START</span><span class="p">,</span>
-            <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span> 
-        <span class="p">});</span>
-
         <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">anim</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">;</span>
         <span class="nx">anim</span><span class="p">.</span><span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
         <span class="nx">Transition</span><span class="p">.</span><span class="nx">_startTimer</span><span class="p">();</span>
@@ -112,9 +107,9 @@
 
     <span class="nx">_runAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
-            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_runtimeAttr</span><span class="p">,</span>
-            <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_runtimeAttrs</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">)],</span>
+            <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
             <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">attribute</span><span class="p">,</span>
@@ -150,23 +145,16 @@
                         <span class="nx">anim</span><span class="p">.</span><span class="nx">_skip</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                         <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span>
 
-                        <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">PROPERTY_END</span><span class="p">,</span> <span class="p">{</span>
-                            <span class="nx">type</span><span class="o">:</span> <span class="nx">PROPERTY_END</span><span class="p">,</span>
-                            <span class="nx">elapsedTime</span><span class="o">:</span> <span class="p">(</span><span class="nx">time</span> <span class="o">-</span> <span class="nx">delay</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
-                            <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">i</span><span class="p">,</span>
-                            <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span>
-                        <span class="p">});</span>
-
                         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">allDone</span> <span class="o">&amp;&amp;</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                             <span class="nx">anim</span><span class="p">.</span><span class="nx">_end</span><span class="p">();</span>
-                            <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">END</span><span class="p">,</span> <span class="p">{</span>
-                                <span class="nx">type</span><span class="o">:</span> <span class="nx">END</span><span class="p">,</span>
-                                <span class="nx">elapsedTime</span><span class="o">:</span> <span class="p">(</span><span class="nx">time</span> <span class="o">-</span> <span class="nx">delay</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
-                                <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span>
-                            <span class="p">});</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_callback</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">anim</span><span class="p">.</span><span class="nx">_callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="p">{</span>
+                                    <span class="nx">elapsedTime</span><span class="o">:</span> <span class="p">(</span><span class="nx">time</span> <span class="o">-</span> <span class="nx">delay</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+                                <span class="p">});</span>
+                                <span class="nx">anim</span><span class="p">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
-
                     <span class="p">}</span>
                 <span class="p">}</span>
 
@@ -181,11 +169,17 @@
             <span class="nx">attr</span> <span class="o">=</span> <span class="p">{},</span>
             <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
             <span class="nx">attrs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attrs</span><span class="p">,</span>
+            <span class="nx">yuid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">),</span>
+            <span class="nx">runtimeAttrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_runtimeAttrs</span><span class="p">[</span><span class="nx">yuid</span><span class="p">],</span>
             <span class="nx">duration</span><span class="p">,</span>
             <span class="nx">delay</span><span class="p">,</span>
             <span class="nx">val</span><span class="p">,</span>
             <span class="nx">name</span><span class="p">,</span>
             <span class="nx">unit</span><span class="p">,</span> <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">runtimeAttrs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">runtimeAttrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_runtimeAttrs</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">attrs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
@@ -233,7 +227,7 @@
                     <span class="p">}</span>
                 <span class="p">}</span>
 
-                <span class="nx">attr</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">runtimeAttrs</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="nx">from</span><span class="o">:</span> <span class="nx">begin</span><span class="p">,</span>
                     <span class="nx">to</span><span class="o">:</span> <span class="nx">end</span><span class="p">,</span>
                     <span class="nx">unit</span><span class="o">:</span> <span class="nx">unit</span><span class="p">,</span>
@@ -249,7 +243,6 @@
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_skip</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_runtimeAttr</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -259,6 +252,7 @@
 <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">_runtimeAttrs</span><span class="o">:</span> <span class="p">{},</span>
     <span class="cm">/**</span>
 <span class="cm">     * Regex of properties that should use the default unit.</span>
 <span class="cm">     *</span>

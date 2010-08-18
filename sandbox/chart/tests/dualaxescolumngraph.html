@@ -42,12 +42,12 @@ table, tr, td
     }
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
+    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
 	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../../graphics/build/dom/dom-min.js"></script>
-    <script type="text/javascript" src="../../graphics/build/node/node-min.js"></script>
-    <script type="text/javascript" src="../../graphics/build/graphics/graphics-min.js"></script>
-    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip-min.js"></script>
-    <script type="text/javascript" src="../build/infographics/infographics-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
+		
 </head>		
 <body class="yui3-skin-sam">
 		
@@ -59,7 +59,9 @@ table, tr, td
   <div style="position:absolute;top:50px;left:100px">      
 <table>
 <tr><td></td><td></td><td></td></tr>
-<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative"></div></td><td><div id="chart" style="width:100%;height:100%;position:relative"></div></td><td></td></tr>
+<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative"></div></td><td><div id="chart" style="width:100%;height:100%;position:relative"></div></td>
+<td><div id="rightaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative"></div></td>
+</tr>
 <tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px"></div></td><td></td></tr>
 </table>
 </div>
@@ -76,7 +78,7 @@ table, tr, td
 						id:"myData", 
 						data: [
 							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, {day:"Tuesday", taxes:50, expenses:9100, revenue:100}, 
-							{day:"Wednesday", taxes:-4000, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
+							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
 						]
 					};					
 
@@ -86,7 +88,7 @@ table, tr, td
                             color:"#5577AF", 
                             alpha:0.2
                         },
-                        over:{
+                        over: {
                             fill:{alpha:1}
                         },
                         width:8, 
@@ -205,22 +207,24 @@ table, tr, td
                     var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
 					timeaxis.addKey("day");
                     
-                    var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
-					numericaxis.addKey("revenue");
-			        numericaxis.addKey("expenses");	
-                    numericaxis.addKey("taxes");
-                  var lineSeries = new Y.LineSeries({
+                    var financialaxis = new Y.NumericAxis({dataProvider:dataProvider});
+					financialaxis.addKey("revenue");
+			        financialaxis.addKey("expenses");	
+
+                    var extortionaxis = new Y.NumericAxis({dataProvider:dataProvider});
+                    extortionaxis.addKey("taxes");
+                    var lineSeries = new Y.LineSeries({
                                                         type:"line",
                                                         xAxis:timeaxis,
-                                                        yAxis:numericaxis,
+                                                        yAxis:extortionaxis,
                                                         xKey:"day",
                                                         yKey:"taxes",
                                                         xDisplayName:"Day",
                                                         yDisplayName: "Taxes",
                                                         styles:taxgraphstyles});
-                var markerSeries = new Y.MarkerSeries({
+                    var markerSeries = new Y.MarkerSeries({
                                                         xAxis:timeaxis,
-                                                        yAxis:numericaxis,
+                                                        yAxis:extortionaxis,
                                                         xKey:"day",
                                                         yKey:"taxes",
                                                         xDisplayName:"Day",
@@ -229,7 +233,7 @@ table, tr, td
                    var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
                                                                                         type:"area",
                                                                                         xAxis:timeaxis,
-                                                                                        yAxis:numericaxis,
+                                                                                        yAxis:extortionaxis,
                                                                                         xKey:"day",
                                                                                         yKey:"taxes",
                                                                                         xDisplayName:"Day",
@@ -240,7 +244,7 @@ table, tr, td
                                                                                     {
                                                                                         type:"column", 
                                                                                         xAxis:timeaxis, 
-                                                                                        yAxis:numericaxis, 
+                                                                                        yAxis:financialaxis, 
                                                                                         xKey:"day", 
                                                                                         yKey:"revenue", 
                                                                                         xDisplayName:"Day",
@@ -250,13 +254,12 @@ table, tr, td
                                                                                     {
                                                                                         type:"column",
                                                                                         xAxis:timeaxis,
-                                                                                        yAxis:numericaxis,
+                                                                                        yAxis:financialaxis,
                                                                                         xKey:"day",
                                                                                         yKey:"expenses",
                                                                                         xDisplayName:"Day",
                                                                                         yDisplayName: "Expenses",
                                                                                         styles:expensegraphstyles
-                                                                                    
                                                                                     },
                                                                                     markerSeries
                                                                                     ]});
@@ -264,13 +267,17 @@ table, tr, td
                     
                     var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
                     axisrenderer.render("#axis");
+                    
+                    var raxis = new Y.AxisRenderer({position:"right", axis:extortionaxis, styles:leftaxisstyles});
+                    raxis.render("#rightaxis");
+                    
                     function updateAxisLabelRotation()
                     {
                         axisrenderer.set("styles", {label:{rotation:document.getElementById("xLabelRotationField").value}});
                         vaxis.set("styles", {label:{rotation:document.getElementById("yLabelRotationField").value}});
                     }
                     Y.on("click", updateAxisLabelRotation, "#rotationbutton");
-                    var vaxis = new Y.AxisRenderer({position:"left", axis:numericaxis, styles:leftaxisstyles});
+                    var vaxis = new Y.AxisRenderer({position:"left", axis:financialaxis, styles:leftaxisstyles});
                     vaxis.render("#vertaxis");
     
                     var tt = new Y.Tooltip({
