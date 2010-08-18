@@ -150,7 +150,7 @@ Y.mix(Transition.prototype, {
                     val = val.value;
                 }
 
-                duration = duration || 1; // default to 1 millisecond for 0 duration
+                duration = duration || 1; // default to 1ms for 0 duration
                 duration += delay;
                 
                 if (typeof val === 'function') {

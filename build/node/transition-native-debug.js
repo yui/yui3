@@ -135,19 +135,31 @@ Transition.prototype = {
     _runNative: function(time) {
         var transitions = {}, 
             anim = this,
-            style = anim._node._node.style,
+            node = anim._node,
+            domNode = node._node,
+            style = domNode.style,
+            computed = getComputedStyle(domNode),
             attrs = anim._attrs,
             cssText = '',
+            cssTransition = computed[TRANSITION_PROPERTY],
+
             transitionText = TRANSITION_PROPERTY + ': ',
-            transition,
             duration = TRANSITION_DURATION + ': ',
             easing = TRANSITION_TIMING_FUNCTION + ': ',
             delay = TRANSITION_DELAY + ': ',
-            node = anim._node,
+            transition,
             val,
             dur,
             del,
             attr;
+
+        if (cssTransition !== 'all') {
+            transitionText += cssTransition + ',';
+            duration += computed[TRANSITION_DURATION] + ',';
+            easing += computed[TRANSITION_TIMING_FUNCTION] + ',';
+            delay += computed[TRANSITION_DELAY] + ',';
+
+        }
 
         for (attr in attrs) {
             if (attrs.hasOwnProperty(attr)) {
@@ -201,9 +213,9 @@ Transition.prototype = {
             });
         //}
 
-        setTimeout(function() { // allow any style init to occur (setStyle, etc)
+        //setTimeout(function() { // allow any style init to occur (setStyle, etc)
             style.cssText += transitionText + duration + easing + delay + cssText;
-        }, 0);
+        //}, 0);
 
     },
 
@@ -263,8 +275,14 @@ Y.TransitionNative = Transition; // TODO: remove
     @chainable
 */
 Y.Node.prototype.transition = function(config, callback) {
-    var anim = (this._transition) ? this._transition.init(this, config) :
-            new Transition(this, config);
+    var anim = this._transition;
+    
+    if (anim && !anim._running) {
+        anim.init(this, config);
+    } else {
+        anim = new Transition(this, config);
+    }
+
     anim.run(callback);
     return this;
 };
