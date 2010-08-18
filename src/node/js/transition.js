@@ -96,7 +96,7 @@ Y.mix(Transition.prototype, {
                 }
 
                 if (!anim._skip[i] && (!delay || time >= delay)) {
-                    setter(anim, i, attribute.from, attribute.to, t - delay, d,
+                    setter(anim, i, attribute.from, attribute.to, t - delay, d - delay,
                         attribute.easing, attribute.unit); 
 
                     if (done) {

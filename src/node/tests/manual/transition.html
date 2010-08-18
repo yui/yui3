@@ -4,10 +4,11 @@
 <style> 
 #demo {
     background:#ccc;
-    width:20px;
-    height:20px;
+    width:200px;
+    height:200px;
     margin-top:200px;
-    position:absolute;
+    overflow: hidden;
+    position:relative;
     XX-webkit-transition: width .0001s ease-out;
 }
 </style> 
@@ -24,6 +25,10 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
 
     Y.Node.DOM_EVENTS.WebkitTransitionEnd = true;
 
+    node.on('transition:propertyStart', function(e) {
+        console.log(e.type + ': ' + e.propertyName);
+    });
+
     node.on('transition:start', function(e) {
         console.log(e.type);
     });
@@ -38,17 +43,22 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
 
     });
 
-    node.once('transition:end', function(e) {
-        node.transition({
-            duration: 0,
-            easing: 'ease-in',
-            //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
-            height: 0,
-            width: 0
+    node.on('transition:end', function(e) {
+        if (e.config.top) {
+            node.transition({
+                duration: 1,
+                easing: 'ease-in',
+                //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
+                height: '200px',
+                width: '200px',
+                top: 0,
+                left: 0,
+                opacity: 1
 
-        });
-
+            });
+        }
     });
+
     /*
     node.on('webkitTransitionEnd', function(e) {
     console.log(arguments);
@@ -58,26 +68,27 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
     //node.setStyle('width', '100px');
 
     document.onclick = function() {
-        var style = node._node.style;
-        //alert(node._node.offsetWidth);
-        if (!running) {
-            node.transition({
-                duration: 1,
-                easing: 'ease-in',
-                //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
-                height: '200px',
-                width: {
-                    value: '200px',
-                    delay: 1
-                }
+        node.transition({
+            duration: 1,
+            easing: 'ease-in',
+            top: '100px',
+            height: 0,
+            left: {
+                value: '100px',
+                delay: 1
+            },
+            width: {
+                value: 0,
+                delay: 1
+            },
 
-            });
-
-            running = true;
-        } else {
-            // stops native TODO: implement stop for non-native?
-            node.setStyle('left', node.getComputedStyle('left'));
-        }
+            opacity: {
+                easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
+                value: 0,
+                duration: 0.5,
+                delay: 2
+            }
+        });
     };
 
     node.setStyle('border', '5px solid green');
