@@ -179,7 +179,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @param {Event.Facade} e The event facade.
      */
     _hostScrollEnd : function(e) {
-        this.flash();        
+        if (!this._host._flicking) {
+            this.flash();
+        }
     },
 
     /**
@@ -522,7 +524,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         if (shouldFlash) {
-            this.show(true);
+            this.show(false);
             this._flashTimer = Y.later(800, this, 'hide', true);
         }
     },

@@ -102,19 +102,21 @@
 <span class="nx">Transition</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">constructor</span><span class="o">:</span> <span class="nx">Transition</span><span class="p">,</span>
     <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">_transition</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span> <span class="c1">// cache for reuse</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_running</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">_transition</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span> <span class="c1">// cache for reuse</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">initAttrs</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">initAttrs</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_duration</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;duration&#39;</span> <span class="k">in</span> <span class="nx">config</span><span class="p">)</span> <span class="o">?</span>
-            <span class="nx">config</span><span class="p">.</span><span class="nx">duration</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">DEFAULT_DURATION</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_duration</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;duration&#39;</span> <span class="k">in</span> <span class="nx">config</span><span class="p">)</span> <span class="o">?</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">duration</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">DEFAULT_DURATION</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_easing</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">easing</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">DEFAULT_EASING</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// track number of animated properties</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_totalDuration</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_easing</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">easing</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">DEFAULT_EASING</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// track number of animated properties</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_totalDuration</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>
 

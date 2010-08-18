@@ -226,7 +226,9 @@
 <span class="cm">     * @param {Event.Facade} e The event facade.</span>
 <span class="cm">     */</span>
     <span class="nx">_hostScrollEnd</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">();</span>        
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">_flicking</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">();</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -569,7 +571,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">shouldFlash</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hide&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
