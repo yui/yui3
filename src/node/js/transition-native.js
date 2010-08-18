@@ -98,7 +98,7 @@ Transition.prototype = {
      * @method run
      * @chainable
      */    
-    run: function() {
+    run: function(callback) {
         var anim = this,
             attrs = anim._attrs,
             attr;
@@ -108,6 +108,11 @@ Transition.prototype = {
 
             anim._start();
         }
+
+        if (callback) {
+            anim._node.once(END, callback);
+        }
+
         return anim;
     },
 
@@ -255,10 +260,10 @@ Y.TransitionNative = Transition; // TODO: remove
     @param {Object} An object containing one or more style properties, a duration and an easing.
     @chainable
 */
-Y.Node.prototype.transition = function(config) {
+Y.Node.prototype.transition = function(config, callback) {
     var anim = (this._transition) ? this._transition.init(this, config) :
             new Transition(this, config);
-    anim.run();
+    anim.run(callback);
     return this;
 };
 
