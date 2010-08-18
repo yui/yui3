@@ -182,19 +182,31 @@
     <span class="nx">_runNative</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">transitions</span> <span class="o">=</span> <span class="p">{},</span> 
             <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
-            <span class="nx">style</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span><span class="p">,</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">style</span> <span class="o">=</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">style</span><span class="p">,</span>
+            <span class="nx">computed</span> <span class="o">=</span> <span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">domNode</span><span class="p">),</span>
             <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_attrs</span><span class="p">,</span>
             <span class="nx">cssText</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="nx">cssTransition</span> <span class="o">=</span> <span class="nx">computed</span><span class="p">[</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">],</span>
+
             <span class="nx">transitionText</span> <span class="o">=</span> <span class="nx">TRANSITION_PROPERTY</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span><span class="p">,</span>
-            <span class="nx">transition</span><span class="p">,</span>
             <span class="nx">duration</span> <span class="o">=</span> <span class="nx">TRANSITION_DURATION</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span><span class="p">,</span>
             <span class="nx">easing</span> <span class="o">=</span> <span class="nx">TRANSITION_TIMING_FUNCTION</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span><span class="p">,</span>
             <span class="nx">delay</span> <span class="o">=</span> <span class="nx">TRANSITION_DELAY</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span><span class="p">,</span>
-            <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">transition</span><span class="p">,</span>
             <span class="nx">val</span><span class="p">,</span>
             <span class="nx">dur</span><span class="p">,</span>
             <span class="nx">del</span><span class="p">,</span>
             <span class="nx">attr</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cssTransition</span> <span class="o">!==</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">transitionText</span> <span class="o">+=</span> <span class="nx">cssTransition</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
+            <span class="nx">duration</span> <span class="o">+=</span> <span class="nx">computed</span><span class="p">[</span><span class="nx">TRANSITION_DURATION</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
+            <span class="nx">easing</span> <span class="o">+=</span> <span class="nx">computed</span><span class="p">[</span><span class="nx">TRANSITION_TIMING_FUNCTION</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
+            <span class="nx">delay</span> <span class="o">+=</span> <span class="nx">computed</span><span class="p">[</span><span class="nx">TRANSITION_DELAY</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
+
+        <span class="p">}</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">attr</span><span class="p">))</span> <span class="p">{</span>
@@ -248,9 +260,9 @@
             <span class="p">});</span>
         <span class="c1">//}</span>
 
-        <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// allow any style init to occur (setStyle, etc)</span>
+        <span class="c1">//setTimeout(function() { // allow any style init to occur (setStyle, etc)</span>
             <span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">+=</span> <span class="nx">transitionText</span> <span class="o">+</span> <span class="nx">duration</span> <span class="o">+</span> <span class="nx">easing</span> <span class="o">+</span> <span class="nx">delay</span> <span class="o">+</span> <span class="nx">cssText</span><span class="p">;</span>
-        <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="c1">//}, 0);</span>
 
     <span class="p">},</span>
 
@@ -310,8 +322,14 @@
 <span class="cm">    @chainable</span>
 <span class="cm">*/</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">transition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transition</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transition</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="o">:</span>
-            <span class="k">new</span> <span class="nx">Transition</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transition</span><span class="p">;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_running</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">anim</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transition</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="p">}</span>
+
     <span class="nx">anim</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
 <span class="p">};</span>
