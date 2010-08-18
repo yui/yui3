@@ -28,13 +28,14 @@ var START = 'transition:start',
     TRANSITION_PROPERTY = '-webkit-transition-property',
     TRANSITION_DURATION = '-webkit-transition-duration',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
+    TRANSITION_DELAY = '-webkit-transition-delay',
     TRANSITION_END = 'webkitTransitionEnd',
 
 Transition = function() {
     this.init.apply(this, arguments);
 };
 
-Transition._reKeywords = /^(?:node|duration|iterations|easing)$/;
+Transition._reKeywords = /^(?:node|duration|iterations|easing|delay)$/;
 
 Transition.useNative = false;
 
@@ -49,6 +50,7 @@ Transition.NAME = 'transition';
 
 Transition.DEFAULT_EASING = 'ease-in-out';
 Transition.DEFAULT_DURATION = 0.5;
+Transition.DEFAULT_DELAY = 0;
 
 Transition.prototype = {
     constructor: Transition,
@@ -62,6 +64,9 @@ Transition.prototype = {
 
             this._duration = ('duration' in config) ?
                 config.duration: this.constructor.DEFAULT_DURATION;
+
+            this._delay = ('delay' in config) ?
+                config.delay: this.constructor.DEFAULT_DELAY;
 
             this._easing = config.easing || this.constructor.DEFAULT_EASING;
             this._count = 0; // track number of animated properties
@@ -130,9 +135,11 @@ Transition.prototype = {
             transition,
             duration = TRANSITION_DURATION + ': ',
             easing = TRANSITION_TIMING_FUNCTION + ': ',
+            delay = TRANSITION_DELAY + ': ',
             node = anim._node,
             val,
             dur,
+            del,
             attr;
 
         for (attr in attrs) {
@@ -153,11 +160,15 @@ Transition.prototype = {
                 dur = (typeof transition.duration !== 'undefined') ? transition.duration :
                         anim._duration;
 
+                del = (typeof transition.delay !== 'undefined') ? transition.delay :
+                        anim._delay;
+
                 if (!dur) { // make async and fire events
                     dur = .00001;
                 }
 
                 duration += anim._prepDur(dur) + ',';
+                delay += anim._prepDur(del) + ',';
                 easing += (transition.easing || anim._easing) + ',';
 
                 transitionText += attr + ',';
@@ -168,6 +179,7 @@ Transition.prototype = {
         transitionText = transitionText.replace(/,$/, ';');
         duration = duration.replace(/,$/, ';');
         easing = easing.replace(/,$/, ';');
+        delay = delay.replace(/,$/, ';');
 
         if (!anim._hasEndEvent) {
             node.on(TRANSITION_END, this._onNativeEnd, this);
@@ -183,7 +195,7 @@ Transition.prototype = {
         //}
 
         setTimeout(function() { // allow any style init to occur (setStyle, etc)
-            style.cssText += transitionText + duration + easing + cssText;
+            style.cssText += transitionText + duration + easing + delay + cssText;
         }, 0);
 
     },

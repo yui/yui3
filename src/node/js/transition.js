@@ -72,6 +72,7 @@ Y.mix(Transition.prototype, {
             setter,
             actualDuration,
             elapsed,
+            delay,
             d,
             t,
             i;
@@ -80,6 +81,7 @@ Y.mix(Transition.prototype, {
             if (attr[i].to) {
                 attribute = attr[i];
                 d = attribute.duration;
+                delay = attribute.delay;
                 actualDuration = d;
                 elapsed = time / 1000;
                 t = time;
@@ -94,7 +96,7 @@ Y.mix(Transition.prototype, {
                     t = d; 
                 }
 
-                if (!anim._skip[i]) {
+                if (!anim._skip[i] && (!delay || delay > elapsed)) {
                     setter(anim, i, attribute.from, attribute.to, t, d,
                         attribute.easing, attribute.unit); 
 
@@ -142,8 +144,10 @@ Y.mix(Transition.prototype, {
             if (attrs.hasOwnProperty(name)) {
                 val = attrs[name];
                 duration = this._duration * 1000;
+                delay = this._delay * 1000;
                 if (typeof val.value !== 'undefined') {
                     duration = (('duration' in val) ? val.duration : this._duration) * 1000;
+                    delay = (('delay' in val) ? val.delay : this._delay) * 1000;
                     easing = val.easing || easing;
                     val = val.value;
                 }
@@ -183,7 +187,8 @@ Y.mix(Transition.prototype, {
                     from: begin,
                     to: end,
                     unit: unit,
-                    duration: duration,
+                    duration: duration + delay,
+                    delay: delay,
                     easing: easing
                 };
 

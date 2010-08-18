@@ -62,11 +62,14 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
         //alert(node._node.offsetWidth);
         if (!running) {
             node.transition({
-                duration: 0,
+                duration: 1,
                 easing: 'ease-in',
                 //easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
                 height: '200px',
-                width: '200px'
+                width: {
+                    value: '200px',
+                    delay: 1
+                }
 
             });
 
