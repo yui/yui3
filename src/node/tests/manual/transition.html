@@ -49,13 +49,13 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
             easing: 'ease-in',
             //height: 0,
             left: {
-                value: '100px',
+                value: '100px'
                 //delay: 1
             },
 
             //top: '100px',
             width: {
-                value: 0,
+                value: 0
                 //delay: 1
             },
 
@@ -71,13 +71,12 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
             opacity: {
                 easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
                 value: 0,
-                duration: 3,
+                duration: 3
                 //delay: 2
             }
         }, function(e) {
             console.log('callback');
             console.log(e);
-        /*
             node.transition({
                 duration: 0,
                 delay: 1,
@@ -88,7 +87,6 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 opacity: 1
 
             });
-        */
         });
 
         node.transition({
