@@ -162,7 +162,8 @@ var Selector = {
     },
 
     _nativeQuery: function(selector, root, one) {
-        if (Y.UA.webkit && selector.indexOf(':checked') > -1) { // webkit (chrome, safari) fails to find "selected"
+        if (Y.UA.webkit && selector.indexOf(':checked') > -1 &&
+                (Y.Selector.pseudos && Y.Selector.pseudos.checked)) { // webkit (chrome, safari) fails to find "selected"
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true to try brute query
         }
         try {
