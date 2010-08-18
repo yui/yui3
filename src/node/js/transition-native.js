@@ -109,10 +109,7 @@ Transition.prototype = {
             anim._start();
         }
 
-        if (callback) {
-            anim._node.once(END, callback);
-        }
-
+        anim._callback = callback;
         return anim;
     },
 
@@ -204,13 +201,6 @@ Transition.prototype = {
 
         }
 
-        //if (anim._totalDuration) { // only fire when duration > 0 (per spec)
-            anim._node.fire(START, {
-                type: START,
-                config: anim._config 
-            });
-        //}
-
         //setTimeout(function() { // allow any style init to occur (setStyle, etc)
             style.cssText += transitionText + duration + easing + delay + cssText;
         //}, 0);
@@ -222,24 +212,19 @@ Transition.prototype = {
             anim = this,
             node = anim._node;
 
-        node.fire(PROPERTY_END, {
-            type: PROPERTY_END,
-            elapsedTime: event.elapsedTime,
-            propertyName: event.propertyName,
-            config: anim._config
-        });
-
         anim._count--;
         if (anim._count <= 0)  {
             node._node.style[TRANSITION_CAMEL] = '';
 
             anim._running = false;
 
-            node.fire(END, {
-                type: END,
-                elapsedTime: event.elapsedTime,
-                config: anim._config
-            });
+            if (anim._callback) {
+                anim._callback.call(node, {
+                    elapsedTime: event.elapsedTime
+                });
+
+                anim._callback = null;
+            }
         }
     },
 

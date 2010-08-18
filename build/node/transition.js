@@ -37,11 +37,6 @@ Y.mix(Transition.prototype, {
         var anim = this;
         anim._initAttrs();
 
-        anim._node.fire(START, {
-            type: START,
-            config: anim._config 
-        });
-
         Transition._running[Y.stamp(anim)] = anim;
         anim._startTime = new Date();
         Transition._startTimer();
@@ -65,9 +60,9 @@ Y.mix(Transition.prototype, {
 
     _runAttrs: function(time) {
         var anim = this,
-            attr = anim._runtimeAttr,
-            customAttr = Transition.behaviors,
             node = anim._node,
+            attr = Transition._runtimeAttrs[Y.stamp(node)],
+            customAttr = Transition.behaviors,
             done = false,
             allDone = false,
             attribute,
@@ -103,23 +98,16 @@ Y.mix(Transition.prototype, {
                         anim._skip[i] = true;
                         anim._count--;
 
-                        node.fire(PROPERTY_END, {
-                            type: PROPERTY_END,
-                            elapsedTime: (time - delay) / 1000,
-                            propertyName: i,
-                            config: anim._config
-                        });
-
                         if (!allDone && anim._count <= 0) {
                             allDone = true;
                             anim._end();
-                            node.fire(END, {
-                                type: END,
-                                elapsedTime: (time - delay) / 1000,
-                                config: anim._config
-                            });
+                            if (anim._callback) {
+                                anim._callback.call(anim._node, {
+                                    elapsedTime: (time - delay) / 1000
+                                });
+                                anim._callback = null;
+                            }
                         }
-
                     }
                 }
 
@@ -134,11 +122,17 @@ Y.mix(Transition.prototype, {
             attr = {},
             customAttr = Transition.behaviors,
             attrs = this._attrs,
+            yuid = Y.stamp(this._node),
+            runtimeAttrs = Transition._runtimeAttrs[yuid],
             duration,
             delay,
             val,
             name,
             unit, begin, end;
+
+        if (!runtimeAttrs) {
+            runtimeAttrs = Transition._runtimeAttrs[yuid] = {};
+        }
 
         for (name in attrs) {
             if (attrs.hasOwnProperty(name)) {
@@ -185,7 +179,7 @@ Y.mix(Transition.prototype, {
                     }
                 }
 
-                attr[name] = {
+                runtimeAttrs[name] = {
                     from: begin,
                     to: end,
                     unit: unit,
@@ -201,7 +195,6 @@ Y.mix(Transition.prototype, {
             }
         }
         this._skip = {};
-        this._runtimeAttr = attr;
     },
 
     destroy: function() {
@@ -211,6 +204,7 @@ Y.mix(Transition.prototype, {
 }, true);
 
 Y.mix(Y.Transition, {
+    _runtimeAttrs: {},
     /**
      * Regex of properties that should use the default unit.
      *
