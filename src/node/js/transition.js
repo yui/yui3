@@ -89,9 +89,7 @@ Y.mix(Transition.prototype, {
 
                 done = (t >= d);
 
-                if (d === 0) { // set instantly
-                    d = t = 1; // avoid dividing by zero in easings
-                } else if (t > d) {
+                if (t > d) {
                     t = d; 
                 }
 
@@ -152,6 +150,7 @@ Y.mix(Transition.prototype, {
                     val = val.value;
                 }
 
+                duration = duration || 1; // default to 1 millisecond for 0 duration
                 duration += delay;
                 
                 if (typeof val === 'function') {
