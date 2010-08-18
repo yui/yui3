@@ -218,13 +218,13 @@ Transition.prototype = {
         if (anim._count <= 0)  {
             node._node.style[TRANSITION_CAMEL] = '';
 
+            anim._running = false;
+
             node.fire(END, {
                 type: END,
                 elapsedTime: event.elapsedTime,
                 config: anim._config
             });
-
-            anim._running = false;
         }
     },
 
