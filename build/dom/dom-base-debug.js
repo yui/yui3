@@ -262,7 +262,7 @@ Y.DOM = {
             if (nodes && nodes.length) {
                 for (i = 0; node = nodes[i++];) { // check for a match
                     if (node.attributes && node.attributes.id
-                            && node.attributes.id.value === id) { // avoid false positive for node.name
+                            && node.attributes.id.value === id) { // avoid false positive for node.name & form.id
                         ret.push(node);
                     }
                 }
