@@ -14,6 +14,8 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #demo {
             border: 1px solid black;
             height: 700px;
+            margin: 2em;
+            position: relative;
         }
         #demo ul {
             border: 1px solid blue;
@@ -48,7 +50,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             border: 2px solid green;
         }
         #demo li.disabled {
-            opacity: .25;
+            background-color: #aaa;
         }
 	</style>
 </head>
