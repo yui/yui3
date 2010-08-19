@@ -260,7 +260,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         x = e.clientX || 0;
         y = e.clientY || 0;
 
-        if (ua.ie && ua.ie < 9) {
+        if (ua.ie && b) {
             x += Math.max(de.scrollLeft, b.scrollLeft);
             y += Math.max(de.scrollTop, b.scrollTop);
         }
