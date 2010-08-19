@@ -48,8 +48,10 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
             duration: 1,
             easing: 'ease-in',
             //height: 0,
+            /*
             left: {
-                value: '100px'
+                value: '100px',
+                duration: 2,
                 //delay: 1
             },
 
@@ -58,6 +60,7 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 value: 0
                 //delay: 1
             },
+            */
 
             width: 0,
 
@@ -66,7 +69,6 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 value: 0,
                 delay: 2
             },
-*/
 
             opacity: {
                 easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
@@ -74,9 +76,11 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 duration: 3
                 //delay: 2
             }
+*/
         }, function(e) {
-            console.log('callback');
+            console.log('callback 1');
             console.log(e);
+            /*
             node.transition({
                 duration: 0,
                 delay: 1,
@@ -87,14 +91,30 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 opacity: 1
 
             });
+            */
         });
 
         node.transition({
             easing: 'ease-in',
-            duration: 1,
-            height: 0,
-            opacity: 0.5,
-            top: '100px'
+            duration: 2,
+            width: '100px',
+            //opacity: 0.5,
+            //top: '100px'
+        }, function(e) {
+            console.log('callback 2');
+            console.log(e);
+            /*
+            node.transition({
+                duration: 0,
+                delay: 1,
+                height: '200px',
+                width: '200px',
+                top: 0,
+                left: 0,
+                opacity: 1
+
+            });
+            */
         });
     };
 

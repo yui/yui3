@@ -21,11 +21,7 @@ YUI.add('transition-native', function(Y) {
  * @extends Base
  */
 
-var START = 'transition:start',
-    END = 'transition:end',
-    PROPERTY_END = 'transition:propertyEnd',
-
-    TRANSITION = '-webkit-transition',
+var TRANSITION = '-webkit-transition',
     TRANSITION_CAMEL = 'WebkitTransition',
     TRANSITION_PROPERTY = '-webkit-transition-property',
     TRANSITION_DURATION = '-webkit-transition-duration',
@@ -54,6 +50,8 @@ Transition.DEFAULT_EASING = 'ease-in-out';
 Transition.DEFAULT_DURATION = 0.5;
 Transition.DEFAULT_DELAY = 0;
 
+Transition._nodeAttrs = {};
+
 Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
@@ -61,8 +59,6 @@ Transition.prototype = {
             this._node = node;
             this._config = config;
             node._transition = this; // cache for reuse
-
-            this.initAttrs(config);
 
             this._duration = ('duration' in config) ?
                 config.duration: this.constructor.DEFAULT_DURATION;
@@ -74,25 +70,74 @@ Transition.prototype = {
             this._count = 0; // track number of animated properties
             this._totalDuration = 0;
             this._running = false;
+
+            this.initAttrs(config);
+
         }
+
         return this;
     },
 
     initAttrs: function(config) {
-        var attrs = {},
+        var anim = this,
+            node = anim._node,
+            uid = Y.stamp(node),
+            attrs = Transition._nodeAttrs[uid],
+            duration,
+            delay,
+            easing,
+            val,
+            transition,
             attr;
+
+        if (!attrs) {
+            attrs = Transition._nodeAttrs[uid] = {};
+        }
+
+        if (config.transform && !config['-webkit-transform']) {
+            config['-webkit-transform'] = config.transform;
+            delete config.transform; // TODO: copy
+        }
+
         for (attr in config) {
-            if (!Transition._reKeywords.test(attr)) {
-                attrs[attr] = config[attr];
+            if (config.hasOwnProperty(attr) && !Transition._reKeywords.test(attr)) {
+                val = transition = config[attr];
+
+                if (attrs[attr] && attrs[attr].transition) {
+                    attrs[attr].transition._count--; // remapping attr to this transition
+                }
+
+                if (typeof transition.value !== 'undefined') {
+                    val = transition.value; 
+                }
+
+                if (typeof val === 'function') {
+                    val = val.call(node, node);
+                }
+
+                duration = (typeof transition.duration !== 'undefined') ? transition.duration :
+                        anim._duration;
+
+                delay = (typeof transition.delay !== 'undefined') ? transition.delay :
+                        anim._delay;
+
+                if (!duration) { // make async and fire events
+                    duration = 0.00001;
+                }
+
+                easing = transition.easing || anim._easing;
+                anim._count++; // track number of bound properties
+
+                attrs[attr] = {
+                    value: val,
+                    duration: duration,
+                    delay: delay,
+                    easing: easing,
+                    transition: anim
+                };
             }
-        }
 
-        if (attrs.transform && !attrs['-webkit-transform']) {
-            attrs['-webkit-transform'] = attrs.transform;
-            delete attrs.transform;
         }
-
-        this._attrs = attrs;
     },
 
     /**
@@ -101,17 +146,15 @@ Transition.prototype = {
      * @chainable
      */    
     run: function(callback) {
-        var anim = this,
-            attrs = anim._attrs,
-            attr;
+        var anim = this;
 
         if (!anim._running) {
             anim._running = true;
 
             anim._start();
+            anim._callback = callback;
         }
 
-        anim._callback = callback;
         return anim;
     },
 
@@ -130,13 +173,13 @@ Transition.prototype = {
     },
 
     _runNative: function(time) {
-        var transitions = {}, 
-            anim = this,
+        var anim = this,
             node = anim._node,
+            uid = Y.stamp(node),
             domNode = node._node,
             style = domNode.style,
             computed = getComputedStyle(domNode),
-            attrs = anim._attrs,
+            attrs = Transition._nodeAttrs[uid],
             cssText = '',
             cssTransition = computed[TRANSITION_PROPERTY],
 
@@ -144,12 +187,10 @@ Transition.prototype = {
             duration = TRANSITION_DURATION + ': ',
             easing = TRANSITION_TIMING_FUNCTION + ': ',
             delay = TRANSITION_DELAY + ': ',
-            transition,
-            val,
-            dur,
-            del,
-            attr;
+            attr,
+            name;
 
+        // preserve existing transitions
         if (cssTransition !== 'all') {
             transitionText += cssTransition + ',';
             duration += computed[TRANSITION_DURATION] + ',';
@@ -158,37 +199,16 @@ Transition.prototype = {
 
         }
 
-        for (attr in attrs) {
-            if (attrs.hasOwnProperty(attr)) {
-                transitions[attr] = attrs[attr];
-                transition = transitions[attr];
-                val = transition;
-                anim._count++;
+        // run transitions mapped to this instance
+        for (name in attrs) {
+            attr = attrs[name];
+            if (attrs.hasOwnProperty(name) && attr.transition === anim) {
+                duration += anim._prepDur(attr.duration) + ',';
+                delay += anim._prepDur(attr.delay) + ',';
+                easing += (attr.easing) + ',';
 
-                if (typeof transition.value !== 'undefined') {
-                    val = transition.value; 
-                }
-
-                if (typeof val === 'function') {
-                    val = val.call(node, node);
-                }
-
-                dur = (typeof transition.duration !== 'undefined') ? transition.duration :
-                        anim._duration;
-
-                del = (typeof transition.delay !== 'undefined') ? transition.delay :
-                        anim._delay;
-
-                if (!dur) { // make async and fire events
-                    dur = .00001;
-                }
-
-                duration += anim._prepDur(dur) + ',';
-                delay += anim._prepDur(del) + ',';
-                easing += (transition.easing || anim._easing) + ',';
-
-                transitionText += attr + ',';
-                cssText += attr + ': ' + val + '; ';
+                transitionText += name + ',';
+                cssText += name + ': ' + attr.value + '; ';
             }
         }
 
@@ -197,35 +217,38 @@ Transition.prototype = {
         easing = easing.replace(/,$/, ';');
         delay = delay.replace(/,$/, ';');
 
-        if (!anim._hasEndEvent) {
-            node.on(TRANSITION_END, this._onNativeEnd, this);
-            anim._hasEndEvent = true;
+        // only one native end event per node
+        if (!node._hasTransitionEnd) {
+            node.on(TRANSITION_END, anim._onNativeEnd);
+            node._hasTransitionEnd = true;
 
         }
 
-        //setTimeout(function() { // allow any style init to occur (setStyle, etc)
-            style.cssText += transitionText + duration + easing + delay + cssText;
-        //}, 0);
+        style.cssText += transitionText + duration + easing + delay + cssText;
 
     },
 
     _onNativeEnd: function(e) {
-        var event = e._event,
-            anim = this,
-            node = anim._node;
+        var node = this,
+            uid = Y.stamp(node),
+            name = e._event.propertyName,
+            attrs = Transition._nodeAttrs[uid],
+            attr = attrs[name],
+            anim = attr.transition,
+            callback = anim._callback;
 
         anim._count--;
+        delete attrs[name];
         if (anim._count <= 0)  {
             node._node.style[TRANSITION_CAMEL] = '';
-
             anim._running = false;
 
-            if (anim._callback) {
-                anim._callback.call(node, {
+            if (callback) {
+                anim._callback = null;
+                callback.call(node, {
                     elapsedTime: event.elapsedTime
                 });
 
-                anim._callback = null;
             }
         }
     },
@@ -319,12 +342,7 @@ Y.mix(Transition.prototype, {
         Transition._startTimer();
     },
 
-    _end: function(finish) {
-        var duration = this._duration * 1000;
-        if (finish) { // jump to last frame
-            this._runAttrs(duration, duration);
-        }
-
+    _end: function() {
         delete Transition._running[Y.stamp(this)];
         this._running = false;
         this._startTime = null;
@@ -338,10 +356,13 @@ Y.mix(Transition.prototype, {
     _runAttrs: function(time) {
         var anim = this,
             node = anim._node,
-            attr = Transition._runtimeAttrs[Y.stamp(node)],
+            uid = Y.stamp(node),
+            attrs = Transition._nodeAttrs[uid],
             customAttr = Transition.behaviors,
             done = false,
             allDone = false,
+            callback = anim._callback,
+            name,
             attribute,
             setter,
             elapsed,
@@ -351,9 +372,9 @@ Y.mix(Transition.prototype, {
             t,
             i;
 
-        for (i in attr) {
-            if (attr[i].to) {
-                attribute = attr[i];
+        for (name in attrs) {
+            attribute = attrs[name];
+            if (attrs.hasOwnProperty(name) && (attribute.transition === anim)) {
                 d = attribute.duration;
                 delay = attribute.delay;
                 elapsed = time / 1000;
@@ -364,25 +385,25 @@ Y.mix(Transition.prototype, {
                 done = (t >= d);
 
                 if (t > d) {
-                    t = d; 
+                    t = d;
                 }
 
-                if (!anim._skip[i] && (!delay || time >= delay)) {
-                    setter(anim, i, attribute.from, attribute.to, t - delay, d - delay,
+                if (!delay || time >= delay) {
+                    setter(anim, name, attribute.from, attribute.to, t - delay, d - delay,
                         attribute.easing, attribute.unit); 
 
                     if (done) {
-                        anim._skip[i] = true;
+                        delete attrs[name];
                         anim._count--;
 
                         if (!allDone && anim._count <= 0) {
                             allDone = true;
                             anim._end();
-                            if (anim._callback) {
-                                anim._callback.call(anim._node, {
+                            if (callback) {
+                                anim._callback = null;
+                                callback.call(anim._node, {
                                     elapsedTime: (time - delay) / 1000
                                 });
-                                anim._callback = null;
                             }
                         }
                     }
@@ -395,43 +416,28 @@ Y.mix(Transition.prototype, {
     _initAttrs: function() {
         var from = {},
             to =  {},
-            easing = this._easing,
-            attr = {},
+            anim = this,
+            easing = anim._easing,
             customAttr = Transition.behaviors,
-            attrs = this._attrs,
-            yuid = Y.stamp(this._node),
-            runtimeAttrs = Transition._runtimeAttrs[yuid],
+            uid = Y.stamp(this._node),
+            attrs = Transition._nodeAttrs[uid],
+            attribute,
             duration,
             delay,
             val,
             name,
             unit, begin, end;
 
-        if (!runtimeAttrs) {
-            runtimeAttrs = Transition._runtimeAttrs[yuid] = {};
-        }
-
         for (name in attrs) {
-            if (attrs.hasOwnProperty(name)) {
-                val = attrs[name];
-                duration = this._duration * 1000;
-                delay = this._delay * 1000;
-                if (typeof val.value !== 'undefined') {
-                    duration = (('duration' in val) ? val.duration : this._duration) * 1000;
-                    delay = (('delay' in val) ? val.delay : this._delay) * 1000;
-                    easing = val.easing || easing;
-                    val = val.value;
-                }
-
-                duration = duration || 1; // default to 1ms for 0 duration
-                duration += delay;
-                
-                if (typeof val === 'function') {
-                    val = val.call(this._node, this._node);
-                }
+            attribute = attrs[name];
+            if (attrs.hasOwnProperty(name) && attribute.transition === anim) {
+                duration = attribute.duration * 1000;
+                delay = attribute.delay * 1000;
+                easing = attribute.easing;
+                val = attribute.value;
 
                 begin = (name in customAttr && 'get' in customAttr[name])  ?
-                        customAttr[name].get(this, name) : Transition.DEFAULT_GETTER(this, name);
+                        customAttr[name].get(anim, name) : Transition.DEFAULT_GETTER(anim, name);
 
                 var mFrom = Transition.RE_UNITS.exec(begin);
                 var mTo = Transition.RE_UNITS.exec(val);
@@ -457,22 +463,14 @@ Y.mix(Transition.prototype, {
                     }
                 }
 
-                runtimeAttrs[name] = {
-                    from: begin,
-                    to: end,
-                    unit: unit,
-                    duration: duration,
-                    delay: delay,
-                    easing: easing
-                };
-
-                if (duration > this._totalDuration) {
-                    this._totalDuration = duration;
-                }
-                this._count++;
+                attribute.from = begin;
+                attribute.to = end;
+                attribute.unit = unit;
+                attribute.easing = easing;
+                attribute.duration = duration;
+                attribute.delay = delay;
             }
         }
-        this._skip = {};
     },
 
     destroy: function() {
