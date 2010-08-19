@@ -57,26 +57,27 @@ Transition._count = 0;
 Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
-        if (!this._running) {
-            this._node = node;
-            this._config = config;
-            node._transition = this; // cache for reuse
+        var anim = this;
+        if (!anim._running) {
+            anim._node = node;
+            anim._config = config;
+            node._transition = anim; // cache for reuse
 
-            this._duration = ('duration' in config) ?
-                config.duration: this.constructor.DEFAULT_DURATION;
+            anim._duration = ('duration' in config) ?
+                config.duration: anim.constructor.DEFAULT_DURATION;
 
-            this._delay = ('delay' in config) ?
-                config.delay: this.constructor.DEFAULT_DELAY;
+            anim._delay = ('delay' in config) ?
+                config.delay: anim.constructor.DEFAULT_DELAY;
 
-            this._easing = config.easing || this.constructor.DEFAULT_EASING;
-            this._count = 0; // track number of animated properties
-            this._running = false;
+            anim._easing = config.easing || anim.constructor.DEFAULT_EASING;
+            anim._count = 0; // track number of animated properties
+            anim._running = false;
 
-            this.initAttrs(config);
+            anim.initAttrs(config);
 
         }
 
-        return this;
+        return anim;
     },
 
     initAttrs: function(config) {
@@ -154,6 +155,11 @@ Transition.prototype = {
         if (!anim._running) {
             anim._running = true;
 
+            anim._node.fire('transition:start', {
+                type: 'transition:start',
+                config: anim._config
+            });
+
             anim._start();
             anim._callback = callback;
         }
@@ -227,6 +233,34 @@ Transition.prototype = {
 
     },
 
+    _end: function(elapsed) {
+        var anim = this,
+            node = anim._node,
+            callback = anim._callback,
+            data = {
+                type: 'transition:end',
+                config: anim._config,
+                elapsedTime: elapsed 
+            };
+
+        anim._running = false;
+        if (callback) {
+            anim._callback = null;
+            setTimeout(function() { // IE: allow previous update to finish
+                callback.call(node, data);
+            }, 1);
+        }
+
+        node.fire('transition:end', data);
+    },
+
+    _endNative: function() {
+        var node = this._node;
+        if (Transition._count <= 0) {
+            node._node.style[TRANSITION_CAMEL] = '';
+        }
+    },
+
     _onNativeEnd: function(e) {
         var node = this,
             uid = Y.stamp(node),
@@ -243,21 +277,16 @@ Transition.prototype = {
             anim._count--;
             delete attrs[name];
             Transition._count--;
+            node.fire('transition:propertyEnd', {
+                type: 'propertyEnd',
+                propertyName: name,
+                elapsedTime: elapsed
+            });
+
             if (anim._count <= 0)  {
                 
-                anim._running = false;
-
-                if (Transition._count <= 0) {
-                    node._node.style[TRANSITION_CAMEL] = '';
-                }
-
-                if (callback) {
-                    anim._callback = null;
-                    callback.call(node, {
-                        elapsedTime: elapsed
-                    });
-
-                }
+                anim._endNative();
+                anim._end(elapsed);
             }
         }
     },
@@ -349,10 +378,10 @@ Y.mix(Transition.prototype, {
         Transition._startTimer();
     },
 
-    _end: function() {
-        delete Transition._running[Y.stamp(this)];
-        this._running = false;
-        this._startTime = null;
+    _endTimer: function() {
+        var anim = this;
+        delete Transition._running[Y.stamp(anim)];
+        anim._startTime = null;
     },
 
     _runFrame: function() {
@@ -383,7 +412,7 @@ Y.mix(Transition.prototype, {
             if ((attribute && attribute.transition === anim)) {
                 d = attribute.duration;
                 delay = attribute.delay;
-                elapsed = time / 1000;
+                elapsed = (time - delay) / 1000;
                 t = time;
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
                         customAttr[i].set : Transition.DEFAULT_SETTER;
@@ -402,17 +431,17 @@ Y.mix(Transition.prototype, {
                         delete attrs[name];
                         anim._count--;
 
+                        node.fire('transition:propertyEnd', {
+                            type: 'propertyEnd',
+                            propertyName: name,
+                            config: anim._config,
+                            elapsedTime: elapsed
+                        });
+
                         if (!allDone && anim._count <= 0) {
                             allDone = true;
-                            anim._end();
-                            if (callback) {
-                                anim._callback = null;
-                                setTimeout(function() { // IE: allow previous update to finish
-                                    callback.call(node, {
-                                        elapsedTime: (time - delay) / 1000
-                                    });
-                                }, 1);
-                            }
+                            anim._end(elapsed);
+                            anim._endTimer();
                         }
                     }
                 }
@@ -473,7 +502,7 @@ Y.mix(Transition.prototype, {
                 attribute.to = end;
                 attribute.unit = unit;
                 attribute.easing = easing;
-                attribute.duration = duration;
+                attribute.duration = duration + delay;
                 attribute.delay = delay;
             }
         }

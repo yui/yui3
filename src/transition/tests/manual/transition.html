@@ -23,11 +23,6 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
     var node = Y.one('#demo'),
         running = false;
 
-/*
-    node.on('transition:propertyStart', function(e) {
-        console.log(e.type + ': ' + e.propertyName);
-    });
-
     node.on('transition:start', function(e) {
         console.log(e.type);
     });
@@ -41,28 +36,22 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
         console.log(e.elapsedTime);
 
     });
-*/
 
     document.onclick = function() {
         node.transition({
             duration: 1,
             easing: 'ease-in',
-            //height: 0,
-            /*
+            height: 0,
             left: {
                 value: '100px',
-                duration: 2,
-                //delay: 1
+                delay: 1
             },
 
-            //top: '100px',
+            top: '100px',
             width: {
-                value: 0
-                //delay: 1
+                value: 0,
+                delay: 1
             },
-            */
-
-            width: 0,
 
 /*
             'borderWidth': {
@@ -70,17 +59,16 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 delay: 2
             },
 
+*/
             opacity: {
                 easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
                 value: 0,
-                duration: 3
-                //delay: 2
+                duration: 3,
+                delay: 2
             }
-*/
         }, function(e) {
             console.log('callback 1');
             console.log(e);
-            /*
             node.transition({
                 duration: 0,
                 delay: 1,
@@ -91,31 +79,8 @@ YUI({filter:'raw'}).use('transition', 'selector-native', 'node-style', function(
                 opacity: 1
 
             });
-            */
         });
 
-        node.transition({
-            easing: 'ease-in',
-            duration: 2,
-            width: '100px',
-            //opacity: 0.5,
-            //top: '100px'
-        }, function(e) {
-            console.log('callback 2');
-            console.log(e);
-            /*
-            node.transition({
-                duration: 0,
-                delay: 1,
-                height: '200px',
-                width: '200px',
-                top: 0,
-                left: 0,
-                opacity: 1
-
-            });
-            */
-        });
     };
 
     node.setStyle('border', '5px solid green');

@@ -40,10 +40,10 @@ Y.mix(Transition.prototype, {
         Transition._startTimer();
     },
 
-    _end: function() {
-        delete Transition._running[Y.stamp(this)];
-        this._running = false;
-        this._startTime = null;
+    _endTimer: function() {
+        var anim = this;
+        delete Transition._running[Y.stamp(anim)];
+        anim._startTime = null;
     },
 
     _runFrame: function() {
@@ -74,7 +74,7 @@ Y.mix(Transition.prototype, {
             if ((attribute && attribute.transition === anim)) {
                 d = attribute.duration;
                 delay = attribute.delay;
-                elapsed = time / 1000;
+                elapsed = (time - delay) / 1000;
                 t = time;
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
                         customAttr[i].set : Transition.DEFAULT_SETTER;
@@ -93,17 +93,17 @@ Y.mix(Transition.prototype, {
                         delete attrs[name];
                         anim._count--;
 
+                        node.fire('transition:propertyEnd', {
+                            type: 'propertyEnd',
+                            propertyName: name,
+                            config: anim._config,
+                            elapsedTime: elapsed
+                        });
+
                         if (!allDone && anim._count <= 0) {
                             allDone = true;
-                            anim._end();
-                            if (callback) {
-                                anim._callback = null;
-                                setTimeout(function() { // IE: allow previous update to finish
-                                    callback.call(node, {
-                                        elapsedTime: (time - delay) / 1000
-                                    });
-                                }, 1);
-                            }
+                            anim._end(elapsed);
+                            anim._endTimer();
                         }
                     }
                 }
@@ -164,7 +164,7 @@ Y.mix(Transition.prototype, {
                 attribute.to = end;
                 attribute.unit = unit;
                 attribute.easing = easing;
-                attribute.duration = duration;
+                attribute.duration = duration + delay;
                 attribute.delay = delay;
             }
         }

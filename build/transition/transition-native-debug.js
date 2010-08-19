@@ -57,26 +57,27 @@ Transition._count = 0;
 Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
-        if (!this._running) {
-            this._node = node;
-            this._config = config;
-            node._transition = this; // cache for reuse
+        var anim = this;
+        if (!anim._running) {
+            anim._node = node;
+            anim._config = config;
+            node._transition = anim; // cache for reuse
 
-            this._duration = ('duration' in config) ?
-                config.duration: this.constructor.DEFAULT_DURATION;
+            anim._duration = ('duration' in config) ?
+                config.duration: anim.constructor.DEFAULT_DURATION;
 
-            this._delay = ('delay' in config) ?
-                config.delay: this.constructor.DEFAULT_DELAY;
+            anim._delay = ('delay' in config) ?
+                config.delay: anim.constructor.DEFAULT_DELAY;
 
-            this._easing = config.easing || this.constructor.DEFAULT_EASING;
-            this._count = 0; // track number of animated properties
-            this._running = false;
+            anim._easing = config.easing || anim.constructor.DEFAULT_EASING;
+            anim._count = 0; // track number of animated properties
+            anim._running = false;
 
-            this.initAttrs(config);
+            anim.initAttrs(config);
 
         }
 
-        return this;
+        return anim;
     },
 
     initAttrs: function(config) {
@@ -154,6 +155,11 @@ Transition.prototype = {
         if (!anim._running) {
             anim._running = true;
 
+            anim._node.fire('transition:start', {
+                type: 'transition:start',
+                config: anim._config
+            });
+
             anim._start();
             anim._callback = callback;
         }
@@ -227,6 +233,34 @@ Transition.prototype = {
 
     },
 
+    _end: function(elapsed) {
+        var anim = this,
+            node = anim._node,
+            callback = anim._callback,
+            data = {
+                type: 'transition:end',
+                config: anim._config,
+                elapsedTime: elapsed 
+            };
+
+        anim._running = false;
+        if (callback) {
+            anim._callback = null;
+            setTimeout(function() { // IE: allow previous update to finish
+                callback.call(node, data);
+            }, 1);
+        }
+
+        node.fire('transition:end', data);
+    },
+
+    _endNative: function() {
+        var node = this._node;
+        if (Transition._count <= 0) {
+            node._node.style[TRANSITION_CAMEL] = '';
+        }
+    },
+
     _onNativeEnd: function(e) {
         var node = this,
             uid = Y.stamp(node),
@@ -243,21 +277,16 @@ Transition.prototype = {
             anim._count--;
             delete attrs[name];
             Transition._count--;
+            node.fire('transition:propertyEnd', {
+                type: 'propertyEnd',
+                propertyName: name,
+                elapsedTime: elapsed
+            });
+
             if (anim._count <= 0)  {
                 
-                anim._running = false;
-
-                if (Transition._count <= 0) {
-                    node._node.style[TRANSITION_CAMEL] = '';
-                }
-
-                if (callback) {
-                    anim._callback = null;
-                    callback.call(node, {
-                        elapsedTime: elapsed
-                    });
-
-                }
+                anim._endNative();
+                anim._end(elapsed);
             }
         }
     },

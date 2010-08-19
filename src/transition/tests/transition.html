@@ -68,7 +68,6 @@ YUI({
                     width: 0
                 }, function(e) {
                     test.resume(function() {
-                        Y.log('callback 1');
                         Y.Assert.areEqual('0px', node.getComputedStyle('width'));
                     });
                 });
@@ -77,7 +76,6 @@ YUI({
                     duration: 1,
                     height: 0
                 }, function(e) {
-                    Y.log('callback 2');
                     test.resume(function() { 
                         Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                         test.wait(4000);
@@ -95,7 +93,6 @@ YUI({
                     width: 0
                 }, function(e) {
                     test.resume(function() {
-                        Y.log('callback 1');
                         Y.Assert.areEqual('0px', node.getComputedStyle('width'));
                         test.wait(4000);
                     });
@@ -105,7 +102,6 @@ YUI({
                     duration: 2,
                     height: 0
                 }, function(e) {
-                    Y.log('callback 2');
                     test.resume(function() { 
                         Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                     });
@@ -241,6 +237,37 @@ YUI({
                     Y.Assert.areEqual(1, node.getStyle('opacity'));
                     });
                 });
+
+                test.wait(4000);
+            },
+
+            'transition:end should fire after longest duration': function() {
+                var node = Y.one('#demo'),
+                    test = this,
+
+                    config = {
+                    easing: 'ease-in',
+                    duration: 1,
+                    opacity: {
+                        value: 0,
+                        duration: 2
+                    },
+                    height: 0,
+                    width: 0
+                };
+
+                node.once('transition:end', function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
+                        Y.Assert.areSame(config, e.config);
+
+                        node.setStyle('height', '100px');
+                        node.setStyle('opacity', '1');
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                    });
+                });
+
+                node.transition(config);
 
                 test.wait(4000);
             },
