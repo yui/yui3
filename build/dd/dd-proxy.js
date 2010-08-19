@@ -153,10 +153,10 @@ YUI.add('dd-proxy', function(Y) {
                 n = host.get(NODE),
                 c = n.cloneNode(true);
 
-            c.set('id', '');
-            c.setStyle('position', 'absolute');
             delete c._yuid;
-            Y.stamp(c);
+            c.setAttribute('id', Y.guid());
+
+            c.setStyle('position', 'absolute');
             n.get('parentNode').appendChild(c);
             host.set(DRAG_NODE, c);
             return c;
@@ -207,12 +207,6 @@ YUI.add('dd-proxy', function(Y) {
         */
         _setFrame: function(drag) {
             var n = drag.get(NODE), d = drag.get(DRAG_NODE), ah, cur = 'auto';
-            if (drag.proxy.get('resizeFrame')) {
-                DDM._proxy.setStyles({
-                    height: n.get('offsetHeight') + 'px',
-                    width: n.get('offsetWidth') + 'px'
-                });
-            }
             
             ah = DDM.activeDrag.get('activeHandle');
             if (ah) {
@@ -231,6 +225,13 @@ YUI.add('dd-proxy', function(Y) {
 
             if (drag.proxy.get('cloneNode')) {
                 d = drag.proxy.clone();
+            }
+
+            if (drag.proxy.get('resizeFrame')) {
+                d.setStyles({
+                    height: n.get('offsetHeight') + 'px',
+                    width: n.get('offsetWidth') + 'px'
+                });
             }
 
             if (drag.proxy.get('positionProxy')) {

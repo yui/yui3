@@ -195,17 +195,7 @@ if (!$_GET['quirks']) {
     </tbody>
 </table>
 
-    <script type="text/javascript" src="../../../build/yui/yui.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/oop/oop.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/dump/dump.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/event-custom/event-custom.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/event-simulate/event-simulate.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/event/event.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/dom/dom.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/base/base.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/attribute/attribute.js?<?php echo rand(1, 999) ?>"></script>
-    <script type="text/javascript" src="../../../build/node/node.js?<?php echo rand(1, 999) ?>"></script>
-
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript">
 var yConfig = {
     logExclude: {
@@ -217,7 +207,7 @@ var yConfig = {
     filter: 'debug'
 };
 
-YUI(yConfig).use('*', function(Y) {
+YUI(yConfig).use('node', function(Y) {
     var tests = {};
     var sel = 'h1, .node, table th, table td, table tr, table';
     //var sel = '#fixed.node';

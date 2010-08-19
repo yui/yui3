@@ -78,8 +78,6 @@
     <span class="nx">TRANSITION_PROPERTY</span> <span class="o">=</span> <span class="s2">&quot;transitionProperty&quot;</span><span class="p">,</span>
     <span class="nx">TRANSFORM</span> <span class="o">=</span> <span class="s2">&quot;transform&quot;</span><span class="p">,</span>
 
-    <span class="nx">OPACITY</span> <span class="o">=</span> <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
-
     <span class="nx">TRANSLATE_X</span> <span class="o">=</span> <span class="s2">&quot;translateX(&quot;</span><span class="p">,</span>
     <span class="nx">TRANSLATE_Y</span> <span class="o">=</span> <span class="s2">&quot;translateY(&quot;</span><span class="p">,</span>
 
@@ -122,7 +120,7 @@
 <span class="cm"> *</span>
 <span class="cm"> * @property ScrollViewScrollbars.NAME</span>
 <span class="cm"> * @type String</span>
-<span class="cm"> * @default &#39;scrollbars-plugin&#39;</span>
+<span class="cm"> * @default &#39;pluginScrollViewScrollbars&#39;</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">ScrollbarsPlugin</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;pluginScrollViewScrollbars&#39;</span><span class="p">;</span>
@@ -503,10 +501,10 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Internal hide/show implementation utility method</span>
-<span class="cm">     * </span>
+<span class="cm">     *</span>
 <span class="cm">     * @method _show</span>
-<span class="cm">     * @param {Object} show</span>
-<span class="cm">     * @param {Object} animated</span>
+<span class="cm">     * @param {boolean} show Whether to show or hide the scrollbar </span>
+<span class="cm">     * @param {bolean} animated Whether or not to animate while showing/hide</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_show</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">show</span><span class="p">,</span> <span class="nx">animated</span><span class="p">)</span> <span class="p">{</span>
@@ -525,31 +523,17 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="p">,</span>
+            <span class="nx">opacity</span> <span class="o">:</span> <span class="nx">opacity</span>
+        <span class="p">};</span>
 
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="p">,</span>
-                <span class="nx">opacity</span> <span class="o">:</span> <span class="nx">opacity</span>
-            <span class="p">};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+        <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-            <span class="p">}</span>
-    
-            <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-            <span class="p">}</span>
-
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="nx">opacity</span><span class="p">);</span>
-            <span class="p">}</span>
-    
-            <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="nx">opacity</span><span class="p">);</span>
-            <span class="p">}</span>
-
+        <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -571,7 +555,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">shouldFlash</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hide&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -689,7 +673,7 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Plugin.ScrollViewPaginatorPlugin.html" title="Plugin.ScrollViewPaginatorPlugin">Plugin.ScrollViewPaginatorPlugin</a></li>
+                                <li class=""><a href="Plugin.ScrollViewPaginator.html" title="Plugin.ScrollViewPaginator">Plugin.ScrollViewPaginator</a></li>
                         </ul>
                     </div>
 
@@ -715,7 +699,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "destructor", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "index", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "indexChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "initializer", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "next", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "prev", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "scrollTo", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginatorPlugin.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selector", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "selectorChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_setBoundaryPoints", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__setBoundaryPoints", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginatorPlugin.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "total", "url": "Plugin.ScrollViewPaginatorPlugin.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "totalChange", "url": "Plugin.ScrollViewPaginatorPlugin.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginatorPlugin", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginatorPlugin.html#method__uiIndex", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginator.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginator.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "destructor", "url": "Plugin.ScrollViewPaginator.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginator.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "index", "url": "Plugin.ScrollViewPaginator.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "indexChange", "url": "Plugin.ScrollViewPaginator.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "initializer", "url": "Plugin.ScrollViewPaginator.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "next", "url": "Plugin.ScrollViewPaginator.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "prev", "url": "Plugin.ScrollViewPaginator.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginator.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "scrollTo", "url": "Plugin.ScrollViewPaginator.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selector", "url": "Plugin.ScrollViewPaginator.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selectorChange", "url": "Plugin.ScrollViewPaginator.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginator.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "total", "url": "Plugin.ScrollViewPaginator.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "totalChange", "url": "Plugin.ScrollViewPaginator.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginator.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

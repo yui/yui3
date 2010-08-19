@@ -199,10 +199,10 @@
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span>
                 <span class="nx">c</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
 
-            <span class="nx">c</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-            <span class="nx">c</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;absolute&#39;</span><span class="p">);</span>
             <span class="k">delete</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">;</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+            <span class="nx">c</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">());</span>
+
+            <span class="nx">c</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;absolute&#39;</span><span class="p">);</span>
             <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
             <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">c</span><span class="p">;</span>
@@ -253,12 +253,6 @@
 <span class="cm">        */</span>
         <span class="nx">_setFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">drag</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">),</span> <span class="nx">ah</span><span class="p">,</span> <span class="nx">cur</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resizeFrame&#39;</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
-                    <span class="nx">height</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
-                    <span class="nx">width</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
-                <span class="p">});</span>
-            <span class="p">}</span>
             
             <span class="nx">ah</span> <span class="o">=</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">activeDrag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">ah</span><span class="p">)</span> <span class="p">{</span>
@@ -277,6 +271,13 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cloneNode&#39;</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">d</span> <span class="o">=</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">clone</span><span class="p">();</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resizeFrame&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">d</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                    <span class="nx">height</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                    <span class="nx">width</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+                <span class="p">});</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;positionProxy&#39;</span><span class="p">))</span> <span class="p">{</span>
