@@ -96,9 +96,11 @@ Y.mix(Transition.prototype, {
                             anim._end();
                             if (callback) {
                                 anim._callback = null;
-                                callback.call(node, {
-                                    elapsedTime: (time - delay) / 1000
-                                });
+                                setTimeout(function() { // IE: allow previous update to finish
+                                    callback.call(node, {
+                                        elapsedTime: (time - delay) / 1000
+                                    });
+                                }, 1);
                             }
                         }
                     }

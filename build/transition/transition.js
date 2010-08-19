@@ -68,7 +68,6 @@ Transition.prototype = {
 
             this._easing = config.easing || this.constructor.DEFAULT_EASING;
             this._count = 0; // track number of animated properties
-            this._totalDuration = 0;
             this._running = false;
 
             this.initAttrs(config);
@@ -164,10 +163,6 @@ Transition.prototype = {
 
     _prepDur: function(dur) {
         dur = parseFloat(dur);
-
-        if (dur > this._totalDuration) {
-            this._totalDuration = dur;
-        }
 
         return dur + 's';
     },
@@ -398,9 +393,11 @@ Y.mix(Transition.prototype, {
                             anim._end();
                             if (callback) {
                                 anim._callback = null;
-                                callback.call(node, {
-                                    elapsedTime: (time - delay) / 1000
-                                });
+                                setTimeout(function() {
+                                    callback.call(node, {
+                                        elapsedTime: (time - delay) / 1000
+                                    });
+                                }, 1);
                             }
                         }
                     }

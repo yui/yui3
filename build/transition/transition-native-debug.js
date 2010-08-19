@@ -68,7 +68,6 @@ Transition.prototype = {
 
             this._easing = config.easing || this.constructor.DEFAULT_EASING;
             this._count = 0; // track number of animated properties
-            this._totalDuration = 0;
             this._running = false;
 
             this.initAttrs(config);
@@ -164,10 +163,6 @@ Transition.prototype = {
 
     _prepDur: function(dur) {
         dur = parseFloat(dur);
-
-        if (dur > this._totalDuration) {
-            this._totalDuration = dur;
-        }
 
         return dur + 's';
     },
