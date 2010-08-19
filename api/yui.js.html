@@ -150,12 +150,11 @@
                             <span class="p">}</span>
                         <span class="p">},</span>
         <span class="nx">getLoader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// var loader = YUI.Env.loaders[Y.config._sig];</span>
             <span class="kd">var</span> <span class="nx">loader</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">loader</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span>            <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-                <span class="nx">loader</span><span class="p">.</span><span class="nx">attaching</span>        <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="c1">// loader.attaching        = null;</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">data</span>             <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">required</span>         <span class="o">=</span> <span class="p">[];</span>
                 <span class="nx">loader</span><span class="p">.</span><span class="nx">loadType</span>         <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -591,19 +590,18 @@
             <span class="nx">star</span><span class="p">,</span>
             <span class="nx">ret</span>      <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">fetchCSS</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">fetchCSS</span><span class="p">,</span>
-            <span class="nx">process</span>  <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">names</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">process</span>  <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">names</span><span class="p">,</span> <span class="nx">skip</span><span class="p">)</span> <span class="p">{</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">names</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span>
 
-                <span class="c1">// var collection = YArray(names);</span>
-                <span class="kd">var</span> <span class="nx">collection</span> <span class="o">=</span> <span class="nx">names</span><span class="p">;</span>
-
-                <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">names</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
 
                     <span class="c1">// add this module to full list of things to attach</span>
-                    <span class="nx">r</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skip</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">r</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+                    <span class="p">}</span>
 
                     <span class="c1">// only attach a module once</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">used</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
@@ -625,13 +623,12 @@
                         <span class="p">}</span>
                     <span class="p">}</span>
 
-
                     <span class="k">if</span> <span class="p">(</span><span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// make sure requirements are attached</span>
                         <span class="nx">process</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
                     <span class="p">}</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">use</span> <span class="o">&amp;&amp;</span> <span class="nx">use</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// make sure we grab the submodule dependencies too</span>
-                        <span class="nx">process</span><span class="p">(</span><span class="nx">use</span><span class="p">);</span>
+                        <span class="nx">process</span><span class="p">(</span><span class="nx">use</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">});</span>
             <span class="p">},</span>
@@ -662,6 +659,7 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">origMissing</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
                     <span class="nx">missing</span> <span class="o">=</span> <span class="p">[];</span>
+                    <span class="nx">r</span> <span class="o">=</span> <span class="p">[];</span>
                     <span class="nx">process</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
                     <span class="nx">redo</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span><span class="p">)</span> <span class="p">{</span>
@@ -725,12 +723,14 @@
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">mods</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="c1">// Y.log(&#39;before loader requirements: &#39; + args + &#39;, &#39; + r, &#39;info&#39;, &#39;yui&#39;);</span>
+        <span class="c1">// Y.log(&#39;before loader requirements: &#39; + args, &#39;info&#39;, &#39;yui&#39;);</span>
         
         <span class="c1">// use loader to expand dependencies and sort the </span>
         <span class="c1">// requirements if it is available.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">star</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// loader = new Y.Loader(config);</span>
+
+            <span class="c1">// Y.log(&#39;checking dependences with loader&#39;, &#39;info&#39;, &#39;yui&#39;);</span>
+
             <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -741,14 +741,14 @@
             <span class="c1">// YUI.Env.loaders[Y.config._sig] = loader;</span>
         <span class="p">}</span>
 
-        <span class="c1">// Y.log(&#39;after loader requirements: &#39; + args + &#39;, &#39; + r, &#39;info&#39;, &#39;yui&#39;);</span>
+        <span class="c1">// Y.log(&#39;after loader requirements: &#39; + args, &#39;info&#39;, &#39;yui&#39;);</span>
 
         <span class="c1">// process each requirement and any additional requirements </span>
         <span class="c1">// the module metadata specifies</span>
         <span class="nx">process</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;requires: &#39;</span> <span class="o">+</span> <span class="nx">args</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">r</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
-        <span class="c1">// console.log(args);</span>
+        <span class="c1">// Y.log(&#39;args: &#39; + args , &#39;info&#39;, &#39;yui&#39;);</span>
+        <span class="c1">// Y.log(&#39;requires: &#39; + r, &#39;info&#39;, &#39;yui&#39;);</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
@@ -757,7 +757,7 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Modules missing: &#39;</span> <span class="o">+</span> <span class="nx">missing</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-            <span class="c1">// console.log(Y._rls(args));</span>
+        <span class="c1">// console.log(Y._rls(args));</span>
 
         <span class="c1">// dynamic load</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">)</span> <span class="p">{</span>
@@ -768,7 +768,7 @@
             <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span> <span class="o">=</span> <span class="nx">handleLoader</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">;</span>
-            <span class="nx">loader</span><span class="p">.</span><span class="nx">attaching</span> <span class="o">=</span> <span class="nx">args</span><span class="p">;</span>
+            <span class="c1">// loader.attaching = args;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">args</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">((</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="nx">missing</span> <span class="o">:</span> <span class="nx">args</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
@@ -815,7 +815,7 @@
 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;This instance is not provisioned to fetch missing modules: &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attaching available dependencies.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">handleLoader</span><span class="p">();</span>
             <span class="p">}</span>
