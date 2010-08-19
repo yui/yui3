@@ -9,7 +9,7 @@ YUI.add('uploader', function(Y) {
 var Event = Y.Event,
     Node = Y.Node;
 
-var SWFURL = Y.config.base + "uploader/assets/uploader.swf";
+var SWFURL = Y.Env.cdn + "uploader/assets/uploader.swf";
 
 /**
  * The Uploader widget is a tool for uploading files to the server.
@@ -469,9 +469,11 @@ Y.extend(Uploader, Y.Base, {
          * the 'Browse' dialog. These filters only provide
          * convenience for the user and do not strictly
          * limit the selection to certain file extensions.
+         * Each item in the array must contain a 'description'
+         * property, and an 'extensions' property that must be
+         * in the form "*.ext;*.ext;*.ext;..."
          *
-         * @attribute fileFilters This attribute is an array of Objects, each
-         * in the following format: {description:"SomeDescription", extensions:"*.ext;*.ext;*.ext"}
+         * @attribute fileFilters
          * @type {Array}
          * @default []
          */
