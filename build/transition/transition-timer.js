@@ -19,9 +19,7 @@ YUI.add('transition-timer', function(Y) {
  * @constructor
  */
 
-var START = 'transition:start',
-    END = 'transition:end',
-    PROPERTY_END = 'transition:propertyEnd',
+var PROPERTY_END = 'transition:propertyEnd',
     Transition = Y.Transition;
 
 Y.mix(Transition.prototype, {
@@ -66,7 +64,6 @@ Y.mix(Transition.prototype, {
             attribute,
             setter,
             elapsed,
-            eventElapsed,
             delay,
             d,
             t,
@@ -74,7 +71,7 @@ Y.mix(Transition.prototype, {
 
         for (name in attrs) {
             attribute = attrs[name];
-            if (attrs.hasOwnProperty(name) && (attribute.transition === anim)) {
+            if ((attribute && attribute.transition === anim)) {
                 d = attribute.duration;
                 delay = attribute.delay;
                 elapsed = time / 1000;
@@ -101,7 +98,7 @@ Y.mix(Transition.prototype, {
                             anim._end();
                             if (callback) {
                                 anim._callback = null;
-                                callback.call(anim._node, {
+                                callback.call(node, {
                                     elapsedTime: (time - delay) / 1000
                                 });
                             }
@@ -114,23 +111,21 @@ Y.mix(Transition.prototype, {
     },
 
     _initAttrs: function() {
-        var from = {},
-            to =  {},
-            anim = this,
-            easing = anim._easing,
+        var anim = this,
             customAttr = Transition.behaviors,
             uid = Y.stamp(this._node),
             attrs = Transition._nodeAttrs[uid],
             attribute,
             duration,
             delay,
+            easing,
             val,
             name,
             unit, begin, end;
 
         for (name in attrs) {
             attribute = attrs[name];
-            if (attrs.hasOwnProperty(name) && attribute.transition === anim) {
+            if (attrs.hasOwnProperty(name) && (attribute && attribute.transition === anim)) {
                 duration = attribute.duration * 1000;
                 delay = attribute.delay * 1000;
                 easing = attribute.easing;
