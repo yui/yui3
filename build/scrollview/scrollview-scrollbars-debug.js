@@ -75,7 +75,7 @@ _classNames = ScrollbarsPlugin.CLASS_NAMES;
  *
  * @property ScrollViewScrollbars.NAME
  * @type String
- * @default 'scrollbars-plugin'
+ * @default 'pluginScrollViewScrollbars'
  * @static
  */
 ScrollbarsPlugin.NAME = 'pluginScrollViewScrollbars';
@@ -456,10 +456,10 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
     /**
      * Internal hide/show implementation utility method
-     * 
+     *
      * @method _show
-     * @param {Object} show
-     * @param {Object} animated
+     * @param {boolean} show Whether to show or hide the scrollbar 
+     * @param {bolean} animated Whether or not to animate while showing/hide
      * @protected
      */
     _show : function(show, animated) {
