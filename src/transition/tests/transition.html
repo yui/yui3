@@ -59,6 +59,36 @@ YUI({
 
                 test.wait(4000);
             },
+            'last transition should win for same property': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.transition({
+                    opacity: 1
+                }, function(e) {
+                    test.resume(function() { // shouldnt fire
+                        Y.Assert.isNull(1);
+                    });
+                });
+
+                node.transition({
+                    opacity: 0
+                }, function(e) {
+                    test.resume(function() { // shouldnt fire
+                        Y.Assert.isNull(1);
+                    });
+                });
+
+                node.transition({
+                    opacity: 1
+                }, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual('1', node.getComputedStyle('opacity'));
+                    });
+                });
+
+                test.wait(4000);
+            },
             'all serial callbacks should fire': function() {
                 var node = Y.one('#demo'),
                     test = this;

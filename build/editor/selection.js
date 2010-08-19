@@ -33,7 +33,6 @@ YUI.add('selection', function(Y) {
         
         if (sel.pasteHTML) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
-
             if (this.isCollapsed) {
                 this.anchorNode = this.focusNode = Y.one(sel.parentElement());
                 
@@ -42,14 +41,14 @@ YUI.add('selection', function(Y) {
                 rng = sel.duplicate();
 
                 for (i = 0; i < nodes.length; i++) {
-                    rng.select(nodes[i]);
+                    //This causes IE to not allow a selection on a doubleclick
+                    //rng.select(nodes[i]);
                     if (rng.inRange(sel)) {
                        ieNode = nodes[i]; 
                     }
                 }
 
                 this.ieNode = ieNode;
-                
                 
                 if (ieNode) {
                     if (ieNode.nodeType !== 3) {
@@ -358,7 +357,13 @@ YUI.add('selection', function(Y) {
     * @return {String} The string of text
     */
     Y.Selection.getText = function(node) {
-        return node.get('innerHTML').replace(Y.Selection.STRIP_HTML, '');
+        var t = node.get('innerHTML').replace(Y.Selection.STRIP_HTML, ''),
+            c = t.match(Y.Selection.REG_CHAR),
+            s = t.match(Y.Selection.REG_NON);
+            if (c === null && s) {
+                t = '';
+            }
+        return t;
     };
 
     /**

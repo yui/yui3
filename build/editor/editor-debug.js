@@ -102,7 +102,7 @@ YUI.add('frame', function(Y) {
             var xy = this._iframe.getXY(),
                 node = this._instance.one('win');
 
-            //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
+            Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
             e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
             e.frameY = xy[1] + e.pageY - node.get('scrollTop');
 
@@ -110,8 +110,11 @@ YUI.add('frame', function(Y) {
             e.frameCurrentTarget = e.currentTarget;
             e.frameEvent = e;
             
+            
             //TODO: Not sure why this stopped working!!!
             this.publish(e.type, {
+                prefix: 'dom',
+                bubbles: true,
                 emitFacade: true,
                 stoppedFn: Y.bind(function(ev, domev) {
                     ev.halt();
@@ -120,7 +123,8 @@ YUI.add('frame', function(Y) {
                     ev.preventDefault();
                 }, this, e)
             });
-            this.fire(e.type, e);
+
+            this.fire('dom:' + e.type, e);
         },
         initializer: function() {
             this.publish('ready', {
@@ -173,7 +177,7 @@ YUI.add('frame', function(Y) {
                 e.clipboardData = null;
             }
 
-            this.fire('paste', e);
+            this.fire('dom:paste', e);
         },
         /**
         * @private
@@ -183,7 +187,7 @@ YUI.add('frame', function(Y) {
         _defReadyFn: function() {
             var inst = this.getInstance(),
                 fn = Y.bind(this._onDomEvent, this);
-                
+
             inst.Node.DOM_EVENTS.paste = 1;
 
             Y.each(inst.Node.DOM_EVENTS, function(v, k) {
@@ -200,6 +204,7 @@ YUI.add('frame', function(Y) {
             //Adding focus/blur to the window object
             inst.on('focus', fn, inst.config.win);
             inst.on('blur', fn, inst.config.win);
+
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 
@@ -725,7 +730,6 @@ YUI.add('selection', function(Y) {
         
         if (sel.pasteHTML) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
-
             if (this.isCollapsed) {
                 this.anchorNode = this.focusNode = Y.one(sel.parentElement());
                 
@@ -734,14 +738,14 @@ YUI.add('selection', function(Y) {
                 rng = sel.duplicate();
 
                 for (i = 0; i < nodes.length; i++) {
-                    rng.select(nodes[i]);
+                    //This causes IE to not allow a selection on a doubleclick
+                    //rng.select(nodes[i]);
                     if (rng.inRange(sel)) {
                        ieNode = nodes[i]; 
                     }
                 }
 
                 this.ieNode = ieNode;
-                
                 
                 if (ieNode) {
                     if (ieNode.nodeType !== 3) {
@@ -1063,7 +1067,13 @@ YUI.add('selection', function(Y) {
     * @return {String} The string of text
     */
     Y.Selection.getText = function(node) {
-        return node.get('innerHTML').replace(Y.Selection.STRIP_HTML, '');
+        var t = node.get('innerHTML').replace(Y.Selection.STRIP_HTML, ''),
+            c = t.match(Y.Selection.REG_CHAR),
+            s = t.match(Y.Selection.REG_NON);
+            if (c === null && s) {
+                t = '';
+            }
+        return t;
     };
 
     /**
@@ -1977,6 +1987,7 @@ YUI.add('editor-base', function(Y) {
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
             frame.addTarget(this);
+
             this.frame = frame;
 
             this.publish('nodeChange', {
@@ -2190,12 +2201,21 @@ YUI.add('editor-base', function(Y) {
         */
         _afterFrameReady: function() {
             var inst = this.frame.getInstance();
-            this.frame.on('mousedown', Y.bind(this._onFrameMouseDown, this));
-            this.frame.on('keyup', Y.bind(this._onFrameKeyUp, this));
-            this.frame.on('keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('keypress', Y.bind(this._onFrameKeyPress, this));
+            this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
+            this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
+            this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+            this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
+            this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
             inst.Selection.filter();
             this.fire('ready');
+        },
+        /**
+        * Fires nodeChange event
+        * @method _onFrameMouseUp
+        * @private
+        */
+        _onFrameMouseUp: function(e) {
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mouseup', changedEvent: e  });
         },
         /**
         * Fires nodeChange event
@@ -2741,7 +2761,7 @@ YUI.add('editor-bidi', function(Y) {
                 inst = host.getInstance(),
                 sel = new inst.Selection(),
                 node, direction;
-
+            
             if (sel.isCollapsed) {
                 node = EditorBidi.blockParent(sel.focusNode);
                 direction = node.getStyle('direction');
@@ -2864,13 +2884,13 @@ YUI.add('editor-bidi', function(Y) {
             var host = this.get(HOST);
 
             this.firstEvent = true;
-
+            
             host.after(NODE_CHANGE, Y.bind(this._afterNodeChange, this));
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
-            host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
+            host.after('dom:mouseup', Y.bind(this._afterMouseUp, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
             host.after('contentChange', Y.bind(this._afterContentChange, this));
-            host.after('frame:paste', Y.bind(this._afterPaste, this));
+            host.after('dom:paste', Y.bind(this._afterPaste, this));
         }
     }, {
         /**
@@ -3059,5 +3079,5 @@ YUI.add('editor-bidi', function(Y) {
 }, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});
+YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base']});
 

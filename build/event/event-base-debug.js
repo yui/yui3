@@ -243,7 +243,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     wrapper = wrapper || {};
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, c, t, 
+        x = e.pageX, y = e.pageY, c, t, de = d.documentElement,
         overrides = wrapper.overrides || {};
 
     this.altKey   = e.altKey;
@@ -260,9 +260,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         x = e.clientX || 0;
         y = e.clientY || 0;
 
-        if (ua.ie) {
-            x += Math.max(d.documentElement.scrollLeft, b.scrollLeft);
-            y += Math.max(d.documentElement.scrollTop, b.scrollTop);
+        if (ua.ie && b) {
+            x += Math.max(de.scrollLeft, b.scrollLeft);
+            y += Math.max(de.scrollTop, b.scrollTop);
         }
     }
 

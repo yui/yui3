@@ -7,20 +7,21 @@ YUI.add('rls', function(Y) {
  * @since 3.2.0
  */
 Y._rls = function(what) {
+
     var config = Y.config,
 
         // the configuration
         rls = config.rls || {
-            m:    1, // must have
-            v:    Y.version,
-            gv:   config.gallery,
-            env:  1, // must have
-            lang: config.lang,
-            '2in3v':  config['2in3'],
-            '2v': config.yui2,
-            filt: config.filter,
-            filts: config.filters,
-            tests: 1
+            m:       1, // required in the template
+            v:       Y.version,
+            gv:      config.gallery,
+            env:     1, // required in the template
+            lang:    config.lang,
+            '2in3v': config['2in3'],
+            '2v':    config.yui2,
+            filt:    config.filter,
+            filts:   config.filters,
+            tests:   1 // required in the template
         },
 
         // The rls base path
@@ -41,8 +42,8 @@ Y._rls = function(what) {
         url;
 
     // update the request
-    rls.m    = what;
-    rls.env  = Y.Object.keys(YUI.Env.mods);
+    rls.m     = what;
+    rls.env   = Y.Object.keys(YUI.Env.mods);
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);

@@ -152,6 +152,7 @@ YUI.add('sortable', function(Y) {
                     if (same) {
                         Y.DD.DDM.swapNode(e.drag, e.drop);
                     } else {
+                    alert(1);
                         if (this.get('moveType') == 'copy') {
                             //New List
                             oldNode = e.drag.get(NODE);
