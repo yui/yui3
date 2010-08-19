@@ -78,8 +78,6 @@
     <span class="nx">TRANSITION_PROPERTY</span> <span class="o">=</span> <span class="s2">&quot;transitionProperty&quot;</span><span class="p">,</span>
     <span class="nx">TRANSFORM</span> <span class="o">=</span> <span class="s2">&quot;transform&quot;</span><span class="p">,</span>
 
-    <span class="nx">OPACITY</span> <span class="o">=</span> <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
-
     <span class="nx">TRANSLATE_X</span> <span class="o">=</span> <span class="s2">&quot;translateX(&quot;</span><span class="p">,</span>
     <span class="nx">TRANSLATE_Y</span> <span class="o">=</span> <span class="s2">&quot;translateY(&quot;</span><span class="p">,</span>
 
@@ -525,31 +523,17 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="p">,</span>
+            <span class="nx">opacity</span> <span class="o">:</span> <span class="nx">opacity</span>
+        <span class="p">};</span>
 
-            <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="p">,</span>
-                <span class="nx">opacity</span> <span class="o">:</span> <span class="nx">opacity</span>
-            <span class="p">};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+        <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-            <span class="p">}</span>
-    
-            <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
-            <span class="p">}</span>
-
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">verticalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">verticalNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="nx">opacity</span><span class="p">);</span>
-            <span class="p">}</span>
-    
-            <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="nx">opacity</span><span class="p">);</span>
-            <span class="p">}</span>
-
+        <span class="k">if</span> <span class="p">(</span><span class="nx">horizontalNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">horizontalNode</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -571,7 +555,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">shouldFlash</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_flashTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hide&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
