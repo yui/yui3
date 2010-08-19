@@ -55,15 +55,45 @@ YUI.add('frame', function(Y) {
         * @return {Object} Hash table containing references to the new Document & Window
         */
         _create: function() {
-            var win, doc, res;
-
+            var win, doc, res, node;
+            
             this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
+
+
+            var html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
+
+            html = Y.substitute(Frame.PAGE_HTML, {
+                DIR: this.get('dir'),
+                LANG: this.get('lang'),
+                TITLE: this.get('title'),
+                META: Frame.META,
+                CONTENT: this.get('content'),
+                BASE_HREF: this.get('basehref'),
+                DEFAULT_CSS: Frame.DEFAULT_CSS,
+                EXTRA_CSS: extra_css
+            });
+            if (Y.config.doc.compatMode != 'BackCompat') {
+                html = Frame.DOC_TYPE + "\n" + html;
+            } else {
+            }
+
+
+
             res = this._resolveWinDoc();
             win = res.win;
             doc = res.doc;
+
+
+            doc.open();
+            doc.write(html);
+            doc.close();
+            if (this.get('designMode')) {
+                doc.designMode = 'on';
+            }
 
             return {
                 win: win,
@@ -311,32 +341,12 @@ YUI.add('frame', function(Y) {
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
-            this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
 
-            var html = '',
-                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : ''),
-                doc = this._instance.config.doc;
+            this._onContentReady();
+            
+            var doc = this._instance.config.doc;
 
-            html = Y.substitute(Frame.PAGE_HTML, {
-                DIR: this.get('dir'),
-                LANG: this.get('lang'),
-                TITLE: this.get('title'),
-                META: Frame.META,
-                CONTENT: this.get('content'),
-                BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS,
-                EXTRA_CSS: extra_css
-            });
-            if (Y.config.doc.compatMode != 'BackCompat') {
-                html = Frame.DOC_TYPE + "\n" + html;
-            } else {
-            }
-
-            doc.open();
-            doc.write(html);
-            doc.close();
             if (this.get('designMode')) {
-                doc.designMode = 'on';
                 if (!Y.UA.ie) {
                     this._instance.on('domready', function(e) {
                         try {
