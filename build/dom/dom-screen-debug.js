@@ -277,13 +277,12 @@ Y.mix(Y_DOM, {
         if (node && xy) {
             pos = Y_DOM.getStyle(node, POSITION);
 
-            delta = Y_DOM._getOffset(node);       
-
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
             }
 
+            delta = Y_DOM._getOffset(node);       
             currentXY = Y_DOM.getXY(node);
 
             if (xy[0] !== null) {

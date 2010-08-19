@@ -1,4 +1,4 @@
-YUI.add('transition', function(Y) {
+YUI.add('transition-timer', function(Y) {
 
 /**
 * The Transition Utility provides an API for creating advanced transitions.
