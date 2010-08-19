@@ -29,8 +29,6 @@ var getClassName = Y.ClassNameManager.getClassName,
     TRANSITION_PROPERTY = "transitionProperty",
     TRANSFORM = "transform",
 
-    OPACITY = "opacity",
-
     TRANSLATE_X = "translateX(",
     TRANSLATE_Y = "translateY(",
 
@@ -476,31 +474,17 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this._flashTimer.cancel();
         }
 
-        if (duration !== 0) {
+        transition = {
+            duration : duration,
+            opacity : opacity
+        };
 
-            transition = {
-                duration : duration,
-                opacity : opacity
-            };
+        if (verticalNode) {
+            verticalNode.transition(transition);
+        }
 
-            if (verticalNode) {
-                verticalNode.transition(transition);
-            }
-    
-            if (horizontalNode) {
-                horizontalNode.transition(transition);
-            }
-
-        } else {
-
-            if (verticalNode) {
-                verticalNode.setStyle(OPACITY, opacity);
-            }
-    
-            if (horizontalNode) {
-                horizontalNode.setStyle(OPACITY, opacity);
-            }
-
+        if (horizontalNode) {
+            horizontalNode.transition(transition);
         }
     },
 
@@ -522,7 +506,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         if (shouldFlash) {
-            this.show(false);
+            this.show(true);
             this._flashTimer = Y.later(800, this, 'hide', true);
         }
     },
