@@ -97,7 +97,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         host = this._host = this.get('host');
         
         this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
-        this.afterHostMethod('_onGestureMoveStart', this._setBoundaryPoints);
         this.beforeHostMethod('_flickFrame', this._flickFrame);
         this.afterHostEvent('scrollEnd', this._scrollEnded);
         this.after('indexChange', this._afterIndexChange);
@@ -146,28 +145,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         this._minPoints = points;
 
         this.set('total', pages.size());
-    },
-    
-    /**
-     * After host movestart handler, reset min/max scroll values on the host
-     * based on the page elements
-     *
-     * @method _setBoundaryPoints
-     * @param e {Event.Facade} The gesturemovestart event
-     */
-    _setBoundaryPoints: function(e) {
-        var host = this._host,
-            pageIndex = this.get('index');
-
-        // Set min/max points
-        if(host._scrollsHorizontal) {
-            if(Y.Lang.isNumber(this._minPoints[pageIndex-1])) {
-                host._minScrollX = this._minPoints[pageIndex-1];
-            } else {
-                host._minScrollX = this._minPoints[pageIndex];
-            }
-            host._maxScrollX = this._minPoints[pageIndex+1];
-        }
     },
 
     /**

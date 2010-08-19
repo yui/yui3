@@ -123,8 +123,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         this._bb.on('gesturemovestart', Y.bind(this._onGestureMoveStart, this));
 
-        cb.on('transition:end', Y.bind(this._transitionEnded, this), false);
-
         // TODO: Fires way to often when using non-native transitions, due to property change
         if (NATIVE_TRANSITIONS) {
             cb.on('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
@@ -169,7 +167,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             ySet = (y !== null),
             xMove = (xSet) ? x * -1 : 0,
             yMove = (ySet) ? y * -1 : 0,
-            transition;
+            transition,
+            callback = this._transEndCallback;
 
         duration = duration || 0;
         easing = easing || ScrollView.EASING;
@@ -198,7 +197,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             Y.log("Transition: duration, easing:" + [transition.duration, transition.easing], "scrollview");
 
-            cb.transition(transition);
+            if (!callback) {
+                callback = this._transEndCallback = Y.bind(this._transitionEnded, this);
+            }
+
+            cb.transition(transition, callback);
 
         } else {
             if (NATIVE_TRANSITIONS) {
