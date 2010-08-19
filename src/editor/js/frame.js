@@ -100,7 +100,7 @@
             var xy = this._iframe.getXY(),
                 node = this._instance.one('win');
 
-            //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
+            Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
             e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
             e.frameY = xy[1] + e.pageY - node.get('scrollTop');
 
@@ -108,8 +108,11 @@
             e.frameCurrentTarget = e.currentTarget;
             e.frameEvent = e;
             
+            
             //TODO: Not sure why this stopped working!!!
             this.publish(e.type, {
+                prefix: 'dom',
+                bubbles: true,
                 emitFacade: true,
                 stoppedFn: Y.bind(function(ev, domev) {
                     ev.halt();
@@ -118,7 +121,8 @@
                     ev.preventDefault();
                 }, this, e)
             });
-            this.fire(e.type, e);
+
+            this.fire('dom:' + e.type, e);
         },
         initializer: function() {
             this.publish('ready', {
@@ -171,7 +175,7 @@
                 e.clipboardData = null;
             }
 
-            this.fire('paste', e);
+            this.fire('dom:paste', e);
         },
         /**
         * @private
@@ -181,7 +185,7 @@
         _defReadyFn: function() {
             var inst = this.getInstance(),
                 fn = Y.bind(this._onDomEvent, this);
-                
+
             inst.Node.DOM_EVENTS.paste = 1;
 
             Y.each(inst.Node.DOM_EVENTS, function(v, k) {
@@ -198,6 +202,7 @@
             //Adding focus/blur to the window object
             inst.on('focus', fn, inst.config.win);
             inst.on('blur', fn, inst.config.win);
+
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 
