@@ -101,12 +101,11 @@ if (typeof YUI != 'undefined') {
                             }
                         },
         getLoader = function(Y, o) {
-            // var loader = YUI.Env.loaders[Y.config._sig];
             var loader = Y.Env._loader;
             if (loader) {
                 loader.ignoreRegistered = false;
                 loader.onEnd            = null;
-                loader.attaching        = null;
+                // loader.attaching        = null;
                 loader.data             = null;
                 loader.required         = [];
                 loader.loadType         = null;
@@ -540,19 +539,18 @@ proto = {
             star,
             ret      = true,
             fetchCSS = config.fetchCSS,
-            process  = function(names) {
+            process  = function(names, skip) {
 
                 if (!names.length) {
                     return;
                 }
 
-                // var collection = YArray(names);
-                var collection = names;
-
-                YArray.each(collection, function(name) {
+                YArray.each(names, function(name) {
 
                     // add this module to full list of things to attach
-                    r.push(name);
+                    if (!skip) {
+                        r.push(name);
+                    }
 
                     // only attach a module once
                     if (used[name]) {
@@ -574,13 +572,12 @@ proto = {
                         }
                     }
 
-
                     if (req && req.length) { // make sure requirements are attached
                         process(req);
                     }
 
                     if (use && use.length) { // make sure we grab the submodule dependencies too
-                        process(use);
+                        process(use, 1);
                     }
                 });
             },
@@ -610,6 +607,7 @@ proto = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
+                    r = [];
                     process(data);
                     redo = missing.length;
                     if (redo) {
@@ -671,7 +669,8 @@ proto = {
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (boot && !star && Y.Loader && args.length) {
-            // loader = new Y.Loader(config);
+
+
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
@@ -687,7 +686,6 @@ proto = {
         // the module metadata specifies
         process(args);
 
-        // console.log(args);
         len = missing.length;
 
         if (len) {
@@ -695,7 +693,7 @@ proto = {
             len = missing.length;
         }
 
-            // console.log(Y._rls(args));
+        // console.log(Y._rls(args));
 
         // dynamic load
         if (boot && len && Y.Loader) {
@@ -704,7 +702,7 @@ proto = {
             loader = getLoader(Y);
             loader.onEnd = handleLoader;
             loader.context = Y;
-            loader.attaching = args;
+            // loader.attaching = args;
             loader.data = args;
             loader.require((fetchCSS) ? missing : args);
             loader.insert(null, (fetchCSS) ? null : 'js');
@@ -747,7 +745,7 @@ proto = {
             if (len) {
                 Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
             }
-            ret = Y._attach(r);
+            ret = Y._attach(args);
             if (ret) {
                 handleLoader();
             }
