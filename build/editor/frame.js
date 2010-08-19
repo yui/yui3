@@ -54,7 +54,7 @@ YUI.add('frame', function(Y) {
         * @description Create the iframe or Window and get references to the Document & Window
         * @return {Object} Hash table containing references to the new Document & Window
         */
-        _create: function() {
+        _create: function(cb) {
             var win, doc, res, node;
             
             this._iframe = Y.Node.create(Frame.HTML);
@@ -84,21 +84,25 @@ YUI.add('frame', function(Y) {
 
 
             res = this._resolveWinDoc();
-            win = res.win;
-            doc = res.doc;
+            res.doc.open();
+            res.doc.write(html);
+            res.doc.close();
 
-
-            doc.open();
-            doc.write(html);
-            doc.close();
             if (this.get('designMode')) {
-                doc.designMode = 'on';
+                res.doc.designMode = 'on';
+            }
+            
+            if (!res.doc.documentElement) {
+                var timer = Y.later(1, this, function() {
+                    if (res.doc && res.doc.documentElement) {
+                        cb(res);
+                        timer.cancel();
+                    }
+                }, null, true);
+            } else {
+                cb(res);
             }
 
-            return {
-                win: win,
-                doc: doc
-            };
         },
         /**
         * @private
@@ -423,36 +427,38 @@ YUI.add('frame', function(Y) {
             if (node) {
                 this.set('container', node);
             }
-            var inst, timer,
-                res = this._create(),
-                cb = Y.bind(function(i) {
-                    this._instanceLoaded(i);
-                }, this),
-                args = Y.clone(this.get('use')),
-                config = {
-                    debug: false,
-                    bootstrap: false,
-                    win: res.win,
-                    doc: res.doc
-                },
-                fn = Y.bind(function() {
-                    config = this._resolveWinDoc(config);
-                    inst = YUI(config);
-                    try {
-                        inst.use('node-base', cb);
-                        if (timer) {
-                            clearInterval(timer);
+
+            this._create(Y.bind(function(res) {
+                var inst, timer,
+                    cb = Y.bind(function(i) {
+                        this._instanceLoaded(i);
+                    }, this),
+                    args = Y.clone(this.get('use')),
+                    config = {
+                        debug: false,
+                        bootstrap: false,
+                        win: res.win,
+                        doc: res.doc
+                    },
+                    fn = Y.bind(function() {
+                        config = this._resolveWinDoc(config);
+                        inst = YUI(config);
+                        try {
+                            inst.use('node-base', cb);
+                            if (timer) {
+                                clearInterval(timer);
+                            }
+                        } catch (e) {
+                            timer = setInterval(function() {
+                                fn();
+                            }, 350);
                         }
-                    } catch (e) {
-                        timer = setInterval(function() {
-                            fn();
-                        }, 350);
-                    }
-                }, this);
+                    }, this);
 
-            args.push(fn);
+                args.push(fn);
 
-            Y.use.apply(Y, args);
+                Y.use.apply(Y, args);
+            }, this));
             return this;
         },
         /**
