@@ -644,6 +644,10 @@ Y.Loader.prototype = {
                     } else if (i == 'modules') {
                         // add a hash of module definitions
                         YObject.each(val, self.addModule, self);
+                    } else if (i == 'gallery') {
+                        this.groups.gallery.update(val);
+                    } else if (i == 'yui2' || i == '2in3') {
+                        this.groups.yui2.update(o['2in3'], o.yui2);
                     } else if (i == 'maxURLLength') {
                         self[i] = Math.min(MAX_URL_LENGTH, val);
                     } else {
