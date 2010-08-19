@@ -52,6 +52,8 @@ Transition.DEFAULT_DELAY = 0;
 
 Transition._nodeAttrs = {};
 
+Transition._count = 0;
+
 Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
@@ -104,6 +106,8 @@ Transition.prototype = {
 
                 if (attrs[attr] && attrs[attr].transition) {
                     attrs[attr].transition._count--; // remapping attr to this transition
+                } else {
+                    Transition._count += 1;
                 }
 
                 if (typeof transition.value !== 'undefined') {
@@ -226,24 +230,34 @@ Transition.prototype = {
     _onNativeEnd: function(e) {
         var node = this,
             uid = Y.stamp(node),
-            name = e._event.propertyName,
+            event = e._event,
+            name = event.propertyName,
+            elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
             attr = attrs[name],
-            anim = attr.transition,
+            anim = (attr) ? attr.transition :null,
+            callback;
+
+        if (anim) {
             callback = anim._callback;
+            anim._count--;
+            delete attrs[name];
+            Transition._count--;
+            if (anim._count <= 0)  {
+                
+                anim._running = false;
 
-        anim._count--;
-        delete attrs[name];
-        if (anim._count <= 0)  {
-            node._node.style[TRANSITION_CAMEL] = '';
-            anim._running = false;
+                if (Transition._count <= 0) {
+                    node._node.style[TRANSITION_CAMEL] = '';
+                }
 
-            if (callback) {
-                anim._callback = null;
-                callback.call(node, {
-                    elapsedTime: event.elapsedTime
-                });
+                if (callback) {
+                    anim._callback = null;
+                    callback.call(node, {
+                        elapsedTime: elapsed
+                    });
 
+                }
             }
         }
     },

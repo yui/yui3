@@ -64,19 +64,50 @@ YUI({
                     test = this;
 
                 node.transition({
+                    duration: 2,
                     width: 0
                 }, function(e) {
                     test.resume(function() {
+                        Y.log('callback 1');
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                node.transition({
+                    duration: 1,
+                    height: 0
+                }, function(e) {
+                    Y.log('callback 2');
+                    test.resume(function() { 
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                        test.wait(4000);
+                    });
+                });
+
+                test.wait(4000);
+            },
+            'all serial callbacks should fire (duration)': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.transition({
+                    duration: 1,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.log('callback 1');
                         Y.Assert.areEqual('0px', node.getComputedStyle('width'));
                         test.wait(4000);
                     });
-                    node.transition({
-                        duration: 1,
-                        height: 0
-                    }, function(e) {
-                        test.resume(function() { 
-                            Y.Assert.areEqual('0px', node.getComputedStyle('height'));
-                        });
+                });
+
+                node.transition({
+                    duration: 2,
+                    height: 0
+                }, function(e) {
+                    Y.log('callback 2');
+                    test.resume(function() { 
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                     });
                 });
 
@@ -204,10 +235,22 @@ YUI({
                 }, function(e) {
                     test.resume(function() { 
                         Y.Assert.areEqual(2, parseInt(e.elapsedTime));
+
+                    node.setStyle('height', '100px');
+                    node.setStyle('opacity', '1');
+                    Y.Assert.areEqual(1, node.getStyle('opacity'));
                     });
                 });
 
                 test.wait(4000);
+            },
+
+            'setStyle should not transition': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
             }
         }));           
     

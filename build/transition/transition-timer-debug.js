@@ -98,7 +98,7 @@ Y.mix(Transition.prototype, {
                             anim._end();
                             if (callback) {
                                 anim._callback = null;
-                                setTimeout(function() {
+                                setTimeout(function() { // IE: allow previous update to finish
                                     callback.call(node, {
                                         elapsedTime: (time - delay) / 1000
                                     });
