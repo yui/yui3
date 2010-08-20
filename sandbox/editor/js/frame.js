@@ -53,21 +53,60 @@ YUI.add('frame', function(Y) {
         * @description Create the iframe or Window and get references to the Document & Window
         * @return {Object} Hash table containing references to the new Document & Window
         */
-        _create: function() {
-            var win, doc, res;
-
+        _create: function(cb) {
+            var win, doc, res, node;
+            
             this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
-            res = this._resolveWinDoc();
-            win = res.win;
-            doc = res.doc;
 
-            return {
-                win: win,
-                doc: doc
-            };
+
+            var html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
+
+            Y.log('Creating the document from javascript', 'info', 'frame');
+            html = Y.substitute(Frame.PAGE_HTML, {
+                DIR: this.get('dir'),
+                LANG: this.get('lang'),
+                TITLE: this.get('title'),
+                META: Frame.META,
+                CONTENT: this.get('content'),
+                BASE_HREF: this.get('basehref'),
+                DEFAULT_CSS: Frame.DEFAULT_CSS,
+                EXTRA_CSS: extra_css
+            });
+            if (Y.config.doc.compatMode != 'BackCompat') {
+                Y.log('Adding Doctype to frame', 'info', 'frame');
+                html = Frame.DOC_TYPE + "\n" + html;
+            } else {
+                Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
+            }
+
+            Y.log('Injecting content into iframe', 'info', 'frame');
+
+
+            res = this._resolveWinDoc();
+            res.doc.open();
+            res.doc.write(html);
+            res.doc.close();
+
+            if (this.get('designMode')) {
+                res.doc.designMode = 'on';
+            }
+            
+            if (!res.doc.documentElement) {
+                Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
+                var timer = Y.later(1, this, function() {
+                    if (res.doc && res.doc.documentElement) {
+                        cb(res);
+                        timer.cancel();
+                    }
+                }, null, true);
+            } else {
+                cb(res);
+            }
+
         },
         /**
         * @private
@@ -101,7 +140,7 @@ YUI.add('frame', function(Y) {
             var xy = this._iframe.getXY(),
                 node = this._instance.one('win');
 
-            //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
+            Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
             e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
             e.frameY = xy[1] + e.pageY - node.get('scrollTop');
 
@@ -109,8 +148,11 @@ YUI.add('frame', function(Y) {
             e.frameCurrentTarget = e.currentTarget;
             e.frameEvent = e;
             
+            
             //TODO: Not sure why this stopped working!!!
             this.publish(e.type, {
+                prefix: 'dom',
+                bubbles: true,
                 emitFacade: true,
                 stoppedFn: Y.bind(function(ev, domev) {
                     ev.halt();
@@ -119,7 +161,8 @@ YUI.add('frame', function(Y) {
                     ev.preventDefault();
                 }, this, e)
             });
-            this.fire(e.type, e);
+
+            this.fire('dom:' + e.type, e);
         },
         initializer: function() {
             this.publish('ready', {
@@ -172,7 +215,7 @@ YUI.add('frame', function(Y) {
                 e.clipboardData = null;
             }
 
-            this.fire('paste', e);
+            this.fire('dom:paste', e);
         },
         /**
         * @private
@@ -182,7 +225,7 @@ YUI.add('frame', function(Y) {
         _defReadyFn: function() {
             var inst = this.getInstance(),
                 fn = Y.bind(this._onDomEvent, this);
-                
+
             inst.Node.DOM_EVENTS.paste = 1;
 
             Y.each(inst.Node.DOM_EVENTS, function(v, k) {
@@ -199,6 +242,7 @@ YUI.add('frame', function(Y) {
             //Adding focus/blur to the window object
             inst.on('focus', fn, inst.config.win);
             inst.on('blur', fn, inst.config.win);
+
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 
@@ -311,36 +355,12 @@ YUI.add('frame', function(Y) {
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
-            this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
 
-            var html = '',
-                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : ''),
-                doc = this._instance.config.doc;
+            this._onContentReady();
+            
+            var doc = this._instance.config.doc;
 
-            Y.log('Creating the document from javascript', 'info', 'frame');
-            html = Y.substitute(Frame.PAGE_HTML, {
-                DIR: this.get('dir'),
-                LANG: this.get('lang'),
-                TITLE: this.get('title'),
-                META: Frame.META,
-                CONTENT: this.get('content'),
-                BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS,
-                EXTRA_CSS: extra_css
-            });
-            if (Y.config.doc.compatMode != 'BackCompat') {
-                Y.log('Adding Doctype to frame', 'info', 'frame');
-                html = Frame.DOC_TYPE + "\n" + html;
-            } else {
-                Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
-            }
-
-            Y.log('Injecting content into iframe', 'info', 'frame');
-            doc.open();
-            doc.write(html);
-            doc.close();
             if (this.get('designMode')) {
-                doc.designMode = 'on';
                 if (!Y.UA.ie) {
                     this._instance.on('domready', function(e) {
                         try {
@@ -421,43 +441,45 @@ YUI.add('frame', function(Y) {
             if (node) {
                 this.set('container', node);
             }
-            var inst, timer,
-                res = this._create(),
-                cb = Y.bind(function(i) {
-                    Y.log('Internal instance loaded with node', 'info', 'frame');
-                    this._instanceLoaded(i);
-                }, this),
-                args = Y.clone(this.get('use')),
-                config = {
-                    debug: false,
-                    bootstrap: false,
-                    win: res.win,
-                    doc: res.doc
-                },
-                fn = Y.bind(function() {
-                    Y.log('New Modules Loaded into main instance', 'info', 'frame');
-                    config = this._resolveWinDoc(config);
-                    inst = YUI(config);
-                    inst.log = Y.log; //Dump the instance logs to the parent instance.
-                    Y.log('Creating new internal instance with node only', 'info', 'frame');
-                    try {
-                        inst.use('node-base', cb);
-                        if (timer) {
-                            clearInterval(timer);
+
+            this._create(Y.bind(function(res) {
+                var inst, timer,
+                    cb = Y.bind(function(i) {
+                        Y.log('Internal instance loaded with node', 'info', 'frame');
+                        this._instanceLoaded(i);
+                    }, this),
+                    args = Y.clone(this.get('use')),
+                    config = {
+                        debug: false,
+                        bootstrap: false,
+                        win: res.win,
+                        doc: res.doc
+                    },
+                    fn = Y.bind(function() {
+                        Y.log('New Modules Loaded into main instance', 'info', 'frame');
+                        config = this._resolveWinDoc(config);
+                        inst = YUI(config);
+                        inst.log = Y.log; //Dump the instance logs to the parent instance.
+                        Y.log('Creating new internal instance with node only', 'info', 'frame');
+                        try {
+                            inst.use('node-base', cb);
+                            if (timer) {
+                                clearInterval(timer);
+                            }
+                        } catch (e) {
+                            timer = setInterval(function() {
+                                Y.log('[TIMER] Internal use call failed, retrying', 'info', 'frame');
+                                fn();
+                            }, 350);
+                            Y.log('Internal use call failed, retrying', 'info', 'frame');
                         }
-                    } catch (e) {
-                        timer = setInterval(function() {
-                            Y.log('[TIMER] Internal use call failed, retrying', 'info', 'frame');
-                            fn();
-                        }, 350);
-                        Y.log('Internal use call failed, retrying', 'info', 'frame');
-                    }
-                }, this);
+                    }, this);
 
-            args.push(fn);
+                args.push(fn);
 
-            Y.log('Adding new modules to main instance', 'info', 'frame');
-            Y.use.apply(Y, args);
+                Y.log('Adding new modules to main instance', 'info', 'frame');
+                Y.use.apply(Y, args);
+            }, this));
             return this;
         },
         /**

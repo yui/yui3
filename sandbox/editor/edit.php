@@ -206,15 +206,15 @@ var yConfig = {
         augment: true,
         get: true,
         loader: true,
-        Selector: true,
-        frame: true
+        frame: true,
+        Selector: true
     },
     throwFail: true
 };
 
 YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
-    
+
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
         var cmd = e.target.get('innerHTML').toLowerCase(),
@@ -351,6 +351,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         extracss: 'body { color: red; } p { border: 1px solid green; padding: .25em; margin: 1em; }'
     });
     editor.after('nodeChange', function(e) {
+        //console.log('changedType: ' + e.changedType);
         //if (e.changedType !== 'execcommand') {
         switch (e.changedType) {
             case 'keyup':
@@ -372,12 +373,14 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
         
     });
+
     editor.plug(Y.Plugin.EditorLists);
     editor.plug(Y.Plugin.EditorBidi);
 
     //Disabled for IE testing..
     //editor.plug(Y.Plugin.EditorTab);
-    editor.after('frame:paste', function(e) {
+    editor.after('dom:paste', function(e) {
+        console.log('DOM Paste');
         /*
         var inst = editor.getInstance();
         Y.later(100, null, function() {
@@ -398,7 +401,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         */
     });
 
-    editor.on('frame:keydown', function(e) {
+    editor.on('dom:keydown', function(e) {
         if (e.keyCode === 13) {
             if (e.ctrlKey) {
                 console.log('Control Pressed');
@@ -422,11 +425,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             }
         });
     });
-    editor.on('frame:focus', function() {console.log("Focus called");});
-    editor.on('frame:blur', function() {console.log("Blur called");});
+    editor.on('dom:focus', function() {console.log("Focus called");});
+    editor.on('dom:blur', function() {console.log("Blur called");});
     
     /*
-    editor.on('frame:keyup', function(e) {
+    editor.on('dom:keyup', function(e) {
         var inst = this.getInstance(),
             sel = new inst.Selection();
 

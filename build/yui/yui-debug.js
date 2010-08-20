@@ -101,12 +101,11 @@ if (typeof YUI != 'undefined') {
                             }
                         },
         getLoader = function(Y, o) {
-            // var loader = YUI.Env.loaders[Y.config._sig];
             var loader = Y.Env._loader;
             if (loader) {
                 loader.ignoreRegistered = false;
                 loader.onEnd            = null;
-                loader.attaching        = null;
+                // loader.attaching        = null;
                 loader.data             = null;
                 loader.required         = [];
                 loader.loadType         = null;
@@ -322,7 +321,13 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'rls', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || [ 'get', 
+                                        'rls', 
+                                        'intl-base', 
+                                        'loader', 
+                                        'yui-log', 
+                                        'yui-later', 
+                                        'yui-throttle' ];
 
         for (i=0; i<extras.length; i++) {
             if (mods[extras[i]]) {
@@ -517,8 +522,6 @@ proto = {
      */
     use: function() {
 
-        // console.log(arguments);
-
         if (!this.Array) {
             this._attach(['yui-base']);
             // this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
@@ -542,19 +545,18 @@ proto = {
             star,
             ret      = true,
             fetchCSS = config.fetchCSS,
-            process  = function(names) {
+            process  = function(names, skip) {
 
                 if (!names.length) {
                     return;
                 }
 
-                // var collection = YArray(names);
-                var collection = names;
-
-                YArray.each(collection, function(name) {
+                YArray.each(names, function(name) {
 
                     // add this module to full list of things to attach
-                    r.push(name);
+                    if (!skip) {
+                        r.push(name);
+                    }
 
                     // only attach a module once
                     if (used[name]) {
@@ -576,13 +578,12 @@ proto = {
                         }
                     }
 
-
                     if (req && req.length) { // make sure requirements are attached
                         process(req);
                     }
 
                     if (use && use.length) { // make sure we grab the submodule dependencies too
-                        process(use);
+                        process(use, 1);
                     }
                 });
             },
@@ -613,6 +614,7 @@ proto = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
+                    r = [];
                     process(data);
                     redo = missing.length;
                     if (redo) {
@@ -626,12 +628,14 @@ proto = {
                     // Y.log('redo r: ' + r);
                     // Y.log('redo data: ' + data);
                     // Y.log('redo missing: ' + missing);
-                    // Y.log('redo args: ' + args);
+                    Y.log('redo args: ' + args);
                     
                     // newData = data.concat();
-                    newData = r.concat();
+                    // newData = args.concat();
+                    newData = args.concat();
 
-                    newData = missing.concat();
+                    // newData = missing.concat();
+
                     newData.push(function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
@@ -676,12 +680,14 @@ proto = {
             args = Y.Object.keys(mods);
         }
 
-        // Y.log('before loader requirements: ' + args + ', ' + r, 'info', 'yui');
+        // Y.log('before loader requirements: ' + args, 'info', 'yui');
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (boot && !star && Y.Loader && args.length) {
-            // loader = new Y.Loader(config);
+
+            // Y.log('checking dependences with loader', 'info', 'yui');
+
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
@@ -692,14 +698,14 @@ proto = {
             // YUI.Env.loaders[Y.config._sig] = loader;
         }
 
-        // Y.log('after loader requirements: ' + args + ', ' + r, 'info', 'yui');
+        // Y.log('after loader requirements: ' + args, 'info', 'yui');
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
         process(args);
 
-        Y.log('requires: ' + args + ', ' + r, 'info', 'yui');
-        // console.log(args);
+        // Y.log('args: ' + args , 'info', 'yui');
+        // Y.log('requires: ' + r, 'info', 'yui');
         len = missing.length;
 
         if (len) {
@@ -707,8 +713,6 @@ proto = {
             len = missing.length;
             Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         }
-
-            // console.log(Y._rls(args));
 
         // dynamic load
         if (boot && len && Y.Loader) {
@@ -719,15 +723,13 @@ proto = {
             loader = getLoader(Y);
             loader.onEnd = handleLoader;
             loader.context = Y;
-            loader.attaching = args;
+            // loader.attaching = args;
             loader.data = args;
             loader.require((fetchCSS) ? missing : args);
             loader.insert(null, (fetchCSS) ? null : 'js');
         } else if (len && Y.config.use_rls) {
 
             // server side loader service
-            // console.log(Y._rls(args));
-
             Y.Get.script(Y._rls(args), {
                 onEnd: function(o) {
                     handleLoader(o.data);
@@ -766,7 +768,7 @@ Y.log('Fetching loader: ' + Y.id + ", " + config.base + config.loaderPath, 'info
 Y.log('This instance is not provisioned to fetch missing modules: ' + missing, 'log', 'yui');
             }
             Y.log('Attaching available dependencies.', 'info', 'yui');
-            ret = Y._attach(r);
+            ret = Y._attach(args);
             if (ret) {
                 handleLoader();
             }
@@ -3497,20 +3499,21 @@ YUI.add('rls', function(Y) {
  * @since 3.2.0
  */
 Y._rls = function(what) {
+
     var config = Y.config,
 
         // the configuration
         rls = config.rls || {
-            m:    1, // must have
-            v:    Y.version,
-            gv:   config.gallery,
-            env:  1, // must have
-            lang: config.lang,
-            '2in3v':  config['2in3'],
-            '2v': config.yui2,
-            filt: config.filter,
-            filts: config.filters,
-            tests: 1
+            m:       1, // required in the template
+            v:       Y.version,
+            gv:      config.gallery,
+            env:     1, // required in the template
+            lang:    config.lang,
+            '2in3v': config['2in3'],
+            '2v':    config.yui2,
+            filt:    config.filter,
+            filts:   config.filters,
+            tests:   1 // required in the template
         },
 
         // The rls base path
@@ -3531,8 +3534,8 @@ Y._rls = function(what) {
         url;
 
     // update the request
-    rls.m    = what;
-    rls.env  = Y.Object.keys(YUI.Env.mods);
+    rls.m     = what;
+    rls.env   = Y.Object.keys(YUI.Env.mods);
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);

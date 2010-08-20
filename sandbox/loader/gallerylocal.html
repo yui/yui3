@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html debug="true">
 <head>
-<title>use('gallery-')</title>
+<title>gallery-local</title>
     <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
     <script src="../../build/dump/dump-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
     <script type="text/javascript" charset="utf-8">                                                                                                                 
@@ -11,12 +11,25 @@
             groups: {
                 gallery: {
                     base:      '../../../yui3-gallery/build/',
-                    patterns:  { 'gallery-': {} }
+                    patterns:  { 'gallery-': {} },
+
+                    modules : {
+                        'gallery-aui-skin-base': {
+                            path: 'gallery-aui-skin-base/css/gallery-aui-skin-base-min.css',
+                            type: 'css'
+                        },
+                        'gallery-aui-skin-classic': {
+                            path: 'gallery-aui-skin-classic/css/gallery-aui-skin-classic-min.css',
+                            type: 'css',
+                            requires: ['gallery-aui-skin-base']
+                        }
+                    }
                 }
             }
-        }).use('node', 'base', 'gallery-port', 'gallery-treeview', function(Y) {
-            console.log('BASE: ' + Y.Base);
-            console.log('tv: ' + Y.apm.TreeView);
+        // }).use('node', 'base', 'gallery-port', 'gallery-treeview', function(Y) {
+        }).use('gallery-aui-toolbar', function(Y) {
+            // console.log('tv: ' + Y.apm.TreeView);
+            console.log(Y);
         });                                                                                                                                 
     </script>     
 <body>
