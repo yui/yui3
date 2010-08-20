@@ -554,7 +554,7 @@ Y.Loader = function(o) {
     }
 
 
-    // self._inspectPage();
+    self._inspectPage();
 
     self._internal = false;
 
@@ -649,21 +649,21 @@ Y.Loader.prototype = {
         }
     },
 
-   //  _inspectPage: function() {
-   //      YObject.each(ON_PAGE, function(v, k) {
-   //          if (v.details) {
-   //              var m = this.moduleInfo[k],
-   //                  req = v.details.requires,
-   //                  mr = m && m.requires;
-   //              if (m && !m._inspected && req && mr.length != req.length) {
-   //                  delete m.expanded;
-   //                  m._inspected = true;
-   //              } else {
-   //                  this.addModule(v.details, k);
-   //              }
-   //          }
-   //      }, this);
-   //  },
+   _inspectPage: function() {
+       YObject.each(ON_PAGE, function(v, k) {
+           if (v.details) {
+               var m = this.moduleInfo[k],
+                   req = v.details.requires,
+                   mr = m && m.requires;
+               if (m && !m._inspected && req && mr.length != req.length) {
+                   delete m.expanded;
+               } else {
+                   m = this.addModule(v.details, k);
+               }
+               m._inspected = true;
+           }
+       }, this);
+   },
 
 // returns true if b is not loaded, and is required
 // directly or by means of modules it supersedes.
@@ -1309,7 +1309,7 @@ Y.Loader.prototype = {
      * @private
      */
     _setup: function() {
-        var info = this.moduleInfo, name, i, j, m, o, l, smod,
+        var info = this.moduleInfo, name, i, j, m, l, 
             packName;
 
         for (name in info) {
