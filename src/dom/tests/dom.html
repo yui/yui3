@@ -725,11 +725,10 @@
 
                 node = document.getElementById('ft');
                 node = node.cloneNode(true);
-                node.removeAttribute('id');
+                node.id = 'ft-clone';
                 Assert.isFalse(Y.DOM.inDoc(node), "clone inDoc false");
                 document.body.appendChild(node);
                 Assert.isTrue(Y.DOM.inDoc(node), "clone inDoc true");
-
             }
 
         })); 

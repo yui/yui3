@@ -26,6 +26,121 @@ YUI({
     Y.Tests.Transition = (function(){
         var suite = new Y.Test.Suite('Transition Tests');
 
+        suite.add(new Y.Test.Case({
+            name: 'Single Transition Tests',
+            setUp: function() {
+                var node = Y.one('#demo');
+                if (node) {
+                    node.setStyles({
+                        height: '200px',
+                        width: '200px',
+                        opacity: '1'
+                    });
+                }
+            },
+            
+            'should end at final value': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.transition({
+                    width: 0       
+                }, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                test.wait(4000);
+            },
+
+            'should end at final values': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.transition({
+                    duration: 1,
+                    width: 0,
+                    height: 0,
+                    opacity: 0
+                }, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                        Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
+                    });
+                });
+
+                test.wait(4000);
+            },
+
+            'callback should fire after longest duration': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.transition({
+                    easing: 'ease-in',
+                    duration: 1,
+                    opacity: {
+                        value: 0,
+                        duration: 2
+                    },
+                    height: 0,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
+
+                    node.setStyle('height', '100px');
+                    node.setStyle('opacity', '1');
+                    Y.Assert.areEqual(1, node.getStyle('opacity'));
+                    });
+                });
+
+                test.wait(4000);
+            },
+
+            'transition:end should fire after longest duration': function() {
+                var node = Y.one('#demo'),
+                    test = this,
+
+                    config = {
+                    easing: 'ease-in',
+                    duration: 1,
+                    opacity: {
+                        value: 0,
+                        duration: 2
+                    },
+                    height: 0,
+                    width: 0
+                };
+
+                node.once('transition:end', function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
+                        Y.Assert.areSame(config, e.config);
+
+                        node.setStyle('height', '100px');
+                        node.setStyle('opacity', '1');
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                    });
+                });
+
+                node.transition(config);
+
+                test.wait(4000);
+            },
+
+            'setStyle should not transition': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            }
+        }));           
+    
 
         suite.add(new Y.Test.Case({
             name: 'Multiple Transition Tests',
@@ -197,120 +312,6 @@ YUI({
                 test.wait(4000);
             }
         }));
-        suite.add(new Y.Test.Case({
-        
-            name: 'Single Transition Tests',
-            setUp: function() {
-                var node = Y.one('#demo');
-                if (node) {
-                    node.setStyles({
-                        height: '200px',
-                        width: '200px',
-                        opacity: '1'
-                    });
-                }
-            },
-            
-            'should end at final value': function() {
-                var node = Y.one('#demo'),
-                    test = this;
-
-                node.transition({
-                    width: 0       
-                }, function(e) {
-                    test.resume(function() { 
-                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
-                    });
-                });
-
-                test.wait(4000);
-            },
-
-            'should end at final values': function() {
-                var node = Y.one('#demo'),
-                    test = this;
-
-                node.transition({
-                    width: 0,
-                    height: 0,
-                    opacity: 0
-                }, function(e) {
-                    test.resume(function() { 
-                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
-                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
-                        Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
-                    });
-                });
-
-                test.wait(4000);
-            },
-
-            'callback should fire after longest duration': function() {
-                var node = Y.one('#demo'),
-                    test = this;
-
-                node.transition({
-                    easing: 'ease-in',
-                    duration: 1,
-                    opacity: {
-                        value: 0,
-                        duration: 2
-                    },
-                    height: 0,
-                    width: 0
-                }, function(e) {
-                    test.resume(function() { 
-                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
-
-                    node.setStyle('height', '100px');
-                    node.setStyle('opacity', '1');
-                    Y.Assert.areEqual(1, node.getStyle('opacity'));
-                    });
-                });
-
-                test.wait(4000);
-            },
-
-            'transition:end should fire after longest duration': function() {
-                var node = Y.one('#demo'),
-                    test = this,
-
-                    config = {
-                    easing: 'ease-in',
-                    duration: 1,
-                    opacity: {
-                        value: 0,
-                        duration: 2
-                    },
-                    height: 0,
-                    width: 0
-                };
-
-                node.once('transition:end', function(e) {
-                    test.resume(function() { 
-                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
-                        Y.Assert.areSame(config, e.config);
-
-                        node.setStyle('height', '100px');
-                        node.setStyle('opacity', '1');
-                        Y.Assert.areEqual(1, node.getStyle('opacity'));
-                    });
-                });
-
-                node.transition(config);
-
-                test.wait(4000);
-            },
-
-            'setStyle should not transition': function() {
-                var node = Y.one('#demo'),
-                    test = this;
-
-                node.setStyle('height', '100px');
-                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
-            }
-        }));           
-    
         //return it
         return suite;
     
