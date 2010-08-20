@@ -1,21 +1,15 @@
 /**
 * The Transition Utility provides an API for creating advanced transitions.
-* @module node
+* @module transition
 */
 
 /**
 * Provides the base Transition class, for animating numeric properties.
 *
-* @module node
-* @submodule transition
+* @module transition
+* @submodule transition-timer
 */
 
-/**
- * A class for constructing animation instances.
- * @class Transition
- * @for Transition
- * @constructor
- */
 
 var PROPERTY_END = 'transition:propertyEnd',
     Transition = Y.Transition;
