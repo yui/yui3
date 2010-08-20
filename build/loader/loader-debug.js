@@ -815,7 +815,7 @@ Y.Loader.prototype = {
                     ext:   ext
                 });
 
-                Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
+                // Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
             }
         }
 
@@ -1090,7 +1090,7 @@ Y.Loader.prototype = {
 
         // if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
-            Y.log('already expanded ' + name + ', ' + mod.expanded);
+            // Y.log('already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
 
