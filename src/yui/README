@@ -26,7 +26,9 @@ The YUI Global
 * Added UA properties for mobile.  UA is only evaluated once.
 * The YUI global will overwrite itself when included again, attempting to preserve
   global the global environment of previous instances.
-* Added a remote loader service submodule
+* Added a remote loader service submodule.
+* Added a features submodule.  This is used by the capabilities-based loader
+  when dispatching to a remote loader service.
 * Added Y.Lang.sub(), which is a very lightweight version of Y.substitute()
 
 
