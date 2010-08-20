@@ -151,9 +151,13 @@ YUI.add('dd-proxy', function(Y) {
         clone: function() {
             var host = this.get(HOST),
                 n = host.get(NODE),
-                c = n.cloneNode(true);
+                c = n.cloneNode(true),
+                domNode = Y.Node.getDOMNode(c);
 
             delete c._yuid;
+            if (domNode.removeAttributeNode) {
+                domNode.removeAttributeNode(domNode.getAttributeNode('id'));
+            }
             c.setAttribute('id', Y.guid());
 
             c.setStyle('position', 'absolute');
