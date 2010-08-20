@@ -54,21 +54,55 @@ YUI.add('frame', function(Y) {
         * @description Create the iframe or Window and get references to the Document & Window
         * @return {Object} Hash table containing references to the new Document & Window
         */
-        _create: function() {
-            var win, doc, res;
-
+        _create: function(cb) {
+            var win, doc, res, node;
+            
             this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
-            res = this._resolveWinDoc();
-            win = res.win;
-            doc = res.doc;
 
-            return {
-                win: win,
-                doc: doc
-            };
+
+            var html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
+
+            html = Y.substitute(Frame.PAGE_HTML, {
+                DIR: this.get('dir'),
+                LANG: this.get('lang'),
+                TITLE: this.get('title'),
+                META: Frame.META,
+                CONTENT: this.get('content'),
+                BASE_HREF: this.get('basehref'),
+                DEFAULT_CSS: Frame.DEFAULT_CSS,
+                EXTRA_CSS: extra_css
+            });
+            if (Y.config.doc.compatMode != 'BackCompat') {
+                html = Frame.DOC_TYPE + "\n" + html;
+            } else {
+            }
+
+
+
+            res = this._resolveWinDoc();
+            res.doc.open();
+            res.doc.write(html);
+            res.doc.close();
+
+            if (this.get('designMode')) {
+                res.doc.designMode = 'on';
+            }
+            
+            if (!res.doc.documentElement) {
+                var timer = Y.later(1, this, function() {
+                    if (res.doc && res.doc.documentElement) {
+                        cb(res);
+                        timer.cancel();
+                    }
+                }, null, true);
+            } else {
+                cb(res);
+            }
+
         },
         /**
         * @private
@@ -311,32 +345,12 @@ YUI.add('frame', function(Y) {
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
-            this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
 
-            var html = '',
-                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : ''),
-                doc = this._instance.config.doc;
+            this._onContentReady();
+            
+            var doc = this._instance.config.doc;
 
-            html = Y.substitute(Frame.PAGE_HTML, {
-                DIR: this.get('dir'),
-                LANG: this.get('lang'),
-                TITLE: this.get('title'),
-                META: Frame.META,
-                CONTENT: this.get('content'),
-                BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS,
-                EXTRA_CSS: extra_css
-            });
-            if (Y.config.doc.compatMode != 'BackCompat') {
-                html = Frame.DOC_TYPE + "\n" + html;
-            } else {
-            }
-
-            doc.open();
-            doc.write(html);
-            doc.close();
             if (this.get('designMode')) {
-                doc.designMode = 'on';
                 if (!Y.UA.ie) {
                     this._instance.on('domready', function(e) {
                         try {
@@ -413,36 +427,38 @@ YUI.add('frame', function(Y) {
             if (node) {
                 this.set('container', node);
             }
-            var inst, timer,
-                res = this._create(),
-                cb = Y.bind(function(i) {
-                    this._instanceLoaded(i);
-                }, this),
-                args = Y.clone(this.get('use')),
-                config = {
-                    debug: false,
-                    bootstrap: false,
-                    win: res.win,
-                    doc: res.doc
-                },
-                fn = Y.bind(function() {
-                    config = this._resolveWinDoc(config);
-                    inst = YUI(config);
-                    try {
-                        inst.use('node-base', cb);
-                        if (timer) {
-                            clearInterval(timer);
+
+            this._create(Y.bind(function(res) {
+                var inst, timer,
+                    cb = Y.bind(function(i) {
+                        this._instanceLoaded(i);
+                    }, this),
+                    args = Y.clone(this.get('use')),
+                    config = {
+                        debug: false,
+                        bootstrap: false,
+                        win: res.win,
+                        doc: res.doc
+                    },
+                    fn = Y.bind(function() {
+                        config = this._resolveWinDoc(config);
+                        inst = YUI(config);
+                        try {
+                            inst.use('node-base', cb);
+                            if (timer) {
+                                clearInterval(timer);
+                            }
+                        } catch (e) {
+                            timer = setInterval(function() {
+                                fn();
+                            }, 350);
                         }
-                    } catch (e) {
-                        timer = setInterval(function() {
-                            fn();
-                        }, 350);
-                    }
-                }, this);
+                    }, this);
 
-            args.push(fn);
+                args.push(fn);
 
-            Y.use.apply(Y, args);
+                Y.use.apply(Y, args);
+            }, this));
             return this;
         },
         /**

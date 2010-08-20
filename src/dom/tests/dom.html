@@ -348,6 +348,10 @@
                 el = Y.DOM.create(html);
                 Assert.isTrue(el.tagName === 'DIV', html);
 
+                html = '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>';
+                el = Y.DOM.create(html);
+                Assert.areEqual(document, el.ownerDocument, html);
+
 /*
                 html = '<thead><tr><td><table><thead></thead><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
                 el = Y.DOM.create(html);
@@ -550,8 +554,11 @@
             test_position: function() { // basic position tests
                 var node = document.createElement('div');
                 ArrayAssert.itemsAreEqual([0, 0], Y.DOM.getXY(node), 'off-dom: [0, 0]');
-                Y.DOM.setXY(node, [100, 200]);
-                ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'off-dom: [100, 200]');
+
+                // off-dom is unreliable due to cascade when appended
+                //Y.DOM.setXY(node, [100, 200]);
+                //ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'off-dom: [100, 200]');
+
                 Assert.isNull(Y.DOM.getXY(null), 'Y.DOM.getXY(null)');
 
                 document.body.appendChild(node);
@@ -715,6 +722,14 @@
 
                 node = null;
                 Assert.isFalse(Y.DOM.inDoc(node), 'null node');
+
+                node = document.getElementById('ft');
+                node = node.cloneNode(true);
+                node.removeAttribute('id');
+                Assert.isFalse(Y.DOM.inDoc(node), "clone inDoc false");
+                document.body.appendChild(node);
+                Assert.isTrue(Y.DOM.inDoc(node), "clone inDoc true");
+
             }
 
         })); 

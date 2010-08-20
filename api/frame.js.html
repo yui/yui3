@@ -101,21 +101,60 @@
 <span class="cm">        * @description Create the iframe or Window and get references to the Document &amp; Window</span>
 <span class="cm">        * @return {Object} Hash table containing references to the new Document &amp; Window</span>
 <span class="cm">        */</span>
-        <span class="nx">_create</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">win</span><span class="p">,</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
-
+        <span class="nx">_create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">win</span><span class="p">,</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
+            
             <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">Frame</span><span class="p">.</span><span class="nx">HTML</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;visibility&#39;</span><span class="p">,</span> <span class="s1">&#39;hidden&#39;</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">));</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;container&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">);</span>
-            <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveWinDoc</span><span class="p">();</span>
-            <span class="nx">win</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
-            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
 
-            <span class="k">return</span> <span class="p">{</span>
-                <span class="nx">win</span><span class="o">:</span> <span class="nx">win</span><span class="p">,</span>
-                <span class="nx">doc</span><span class="o">:</span> <span class="nx">doc</span>
-            <span class="p">};</span>
+
+            <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="nx">extra_css</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;extracss&#39;</span><span class="p">))</span> <span class="o">?</span> <span class="s1">&#39;&lt;style id=&quot;extra_css&quot;&gt;&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;extracss&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/style&gt;&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Creating the document from javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+            <span class="nx">html</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span><span class="p">(</span><span class="nx">Frame</span><span class="p">.</span><span class="nx">PAGE_HTML</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">DIR</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dir&#39;</span><span class="p">),</span>
+                <span class="nx">LANG</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">),</span>
+                <span class="nx">TITLE</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span>
+                <span class="nx">META</span><span class="o">:</span> <span class="nx">Frame</span><span class="p">.</span><span class="nx">META</span><span class="p">,</span>
+                <span class="nx">CONTENT</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
+                <span class="nx">BASE_HREF</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;basehref&#39;</span><span class="p">),</span>
+                <span class="nx">DEFAULT_CSS</span><span class="o">:</span> <span class="nx">Frame</span><span class="p">.</span><span class="nx">DEFAULT_CSS</span><span class="p">,</span>
+                <span class="nx">EXTRA_CSS</span><span class="o">:</span> <span class="nx">extra_css</span>
+            <span class="p">});</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">compatMode</span> <span class="o">!=</span> <span class="s1">&#39;BackCompat&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding Doctype to frame&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                <span class="nx">html</span> <span class="o">=</span> <span class="nx">Frame</span><span class="p">.</span><span class="nx">DOC_TYPE</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span> <span class="o">+</span> <span class="nx">html</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;DocType skipped because we are in BackCompat Mode.&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Injecting content into iframe&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+
+
+            <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveWinDoc</span><span class="p">();</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">open</span><span class="p">();</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;designMode&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">designMode</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;document.documentElement was not found, running timer&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">cb</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+                        <span class="nx">timer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">},</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+            <span class="p">}</span>
+
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
@@ -364,36 +403,12 @@
 <span class="cm">        */</span>
         <span class="nx">_instanceLoaded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">inst</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;contentready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onContentReady</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="s1">&#39;body&#39;</span><span class="p">);</span>
 
-            <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                <span class="nx">extra_css</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;extracss&#39;</span><span class="p">))</span> <span class="o">?</span> <span class="s1">&#39;&lt;style id=&quot;extra_css&quot;&gt;&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;extracss&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/style&gt;&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-                <span class="nx">doc</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_onContentReady</span><span class="p">();</span>
+            
+            <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
 
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Creating the document from javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-            <span class="nx">html</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span><span class="p">(</span><span class="nx">Frame</span><span class="p">.</span><span class="nx">PAGE_HTML</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">DIR</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dir&#39;</span><span class="p">),</span>
-                <span class="nx">LANG</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">),</span>
-                <span class="nx">TITLE</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span>
-                <span class="nx">META</span><span class="o">:</span> <span class="nx">Frame</span><span class="p">.</span><span class="nx">META</span><span class="p">,</span>
-                <span class="nx">CONTENT</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
-                <span class="nx">BASE_HREF</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;basehref&#39;</span><span class="p">),</span>
-                <span class="nx">DEFAULT_CSS</span><span class="o">:</span> <span class="nx">Frame</span><span class="p">.</span><span class="nx">DEFAULT_CSS</span><span class="p">,</span>
-                <span class="nx">EXTRA_CSS</span><span class="o">:</span> <span class="nx">extra_css</span>
-            <span class="p">});</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">compatMode</span> <span class="o">!=</span> <span class="s1">&#39;BackCompat&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding Doctype to frame&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-                <span class="nx">html</span> <span class="o">=</span> <span class="nx">Frame</span><span class="p">.</span><span class="nx">DOC_TYPE</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span> <span class="o">+</span> <span class="nx">html</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;DocType skipped because we are in BackCompat Mode.&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Injecting content into iframe&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-            <span class="nx">doc</span><span class="p">.</span><span class="nx">open</span><span class="p">();</span>
-            <span class="nx">doc</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
-            <span class="nx">doc</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;designMode&#39;</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">doc</span><span class="p">.</span><span class="nx">designMode</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">try</span> <span class="p">{</span>
@@ -474,43 +489,45 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;container&#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="kd">var</span> <span class="nx">inst</span><span class="p">,</span> <span class="nx">timer</span><span class="p">,</span>
-                <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_create</span><span class="p">(),</span>
-                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Internal instance loaded with node&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_instanceLoaded</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
-                <span class="p">},</span> <span class="k">this</span><span class="p">),</span>
-                <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;use&#39;</span><span class="p">)),</span>
-                <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">debug</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-                    <span class="nx">bootstrap</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-                    <span class="nx">win</span><span class="o">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-                    <span class="nx">doc</span><span class="o">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span>
-                <span class="p">},</span>
-                <span class="nx">fn</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;New Modules Loaded into main instance&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-                    <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveWinDoc</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
-                    <span class="nx">inst</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
-                    <span class="nx">inst</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span> <span class="c1">//Dump the instance logs to the parent instance.</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Creating new internal instance with node only&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-                    <span class="k">try</span> <span class="p">{</span>
-                        <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;node-base&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_create</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">inst</span><span class="p">,</span> <span class="nx">timer</span><span class="p">,</span>
+                    <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Internal instance loaded with node&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_instanceLoaded</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                    <span class="p">},</span> <span class="k">this</span><span class="p">),</span>
+                    <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;use&#39;</span><span class="p">)),</span>
+                    <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="nx">debug</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nx">bootstrap</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nx">win</span><span class="o">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+                        <span class="nx">doc</span><span class="o">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span>
+                    <span class="p">},</span>
+                    <span class="nx">fn</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;New Modules Loaded into main instance&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                        <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveWinDoc</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+                        <span class="nx">inst</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+                        <span class="nx">inst</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span> <span class="c1">//Dump the instance logs to the parent instance.</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Creating new internal instance with node only&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                        <span class="k">try</span> <span class="p">{</span>
+                            <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;node-base&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[TIMER] Internal use call failed, retrying&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                                <span class="nx">fn</span><span class="p">();</span>
+                            <span class="p">},</span> <span class="mi">350</span><span class="p">);</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Internal use call failed, retrying&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                         <span class="p">}</span>
-                    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[TIMER] Internal use call failed, retrying&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-                            <span class="nx">fn</span><span class="p">();</span>
-                        <span class="p">},</span> <span class="mi">350</span><span class="p">);</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Internal use call failed, retrying&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-                    <span class="p">}</span>
-                <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+                    <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
-            <span class="nx">args</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
 
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding new modules to main instance&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding new modules to main instance&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">));</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
