@@ -321,7 +321,13 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'rls', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || [ 'get', 
+                                        'rls', 
+                                        'intl-base', 
+                                        'loader', 
+                                        'yui-log', 
+                                        'yui-later', 
+                                        'yui-throttle' ];
 
         for (i=0; i<extras.length; i++) {
             if (mods[extras[i]]) {
@@ -514,8 +520,6 @@ proto = {
      */
     use: function() {
 
-        // console.log(arguments);
-
         if (!this.Array) {
             this._attach(['yui-base']);
             // this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
@@ -620,9 +624,11 @@ proto = {
                 if (redo && data) {
                     
                     // newData = data.concat();
-                    newData = r.concat();
+                    // newData = args.concat();
+                    newData = args.concat();
 
-                    newData = missing.concat();
+                    // newData = missing.concat();
+
                     newData.push(function() {
                         if (Y._attach(data)) {
                             notify(response);
@@ -693,8 +699,6 @@ proto = {
             len = missing.length;
         }
 
-        // console.log(Y._rls(args));
-
         // dynamic load
         if (boot && len && Y.Loader) {
             Y._loading = true;
@@ -709,8 +713,6 @@ proto = {
         } else if (len && Y.config.use_rls) {
 
             // server side loader service
-            // console.log(Y._rls(args));
-
             Y.Get.script(Y._rls(args), {
                 onEnd: function(o) {
                     handleLoader(o.data);

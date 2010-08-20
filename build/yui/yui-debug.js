@@ -321,7 +321,13 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'rls', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || [ 'get', 
+                                        'rls', 
+                                        'intl-base', 
+                                        'loader', 
+                                        'yui-log', 
+                                        'yui-later', 
+                                        'yui-throttle' ];
 
         for (i=0; i<extras.length; i++) {
             if (mods[extras[i]]) {
@@ -516,8 +522,6 @@ proto = {
      */
     use: function() {
 
-        // console.log(arguments);
-
         if (!this.Array) {
             this._attach(['yui-base']);
             // this._attach( this.config.core || ['yui-base', 'get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle']);
@@ -624,12 +628,14 @@ proto = {
                     // Y.log('redo r: ' + r);
                     // Y.log('redo data: ' + data);
                     // Y.log('redo missing: ' + missing);
-                    // Y.log('redo args: ' + args);
+                    Y.log('redo args: ' + args);
                     
                     // newData = data.concat();
-                    newData = r.concat();
+                    // newData = args.concat();
+                    newData = args.concat();
 
-                    newData = missing.concat();
+                    // newData = missing.concat();
+
                     newData.push(function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
@@ -708,8 +714,6 @@ proto = {
             Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         }
 
-        // console.log(Y._rls(args));
-
         // dynamic load
         if (boot && len && Y.Loader) {
             // Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
@@ -726,8 +730,6 @@ proto = {
         } else if (len && Y.config.use_rls) {
 
             // server side loader service
-            // console.log(Y._rls(args));
-
             Y.Get.script(Y._rls(args), {
                 onEnd: function(o) {
                     handleLoader(o.data);

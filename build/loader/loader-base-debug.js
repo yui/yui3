@@ -14,7 +14,7 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.08.11-20-39',
+            GALLERY_VERSION = 'gallery-2010.08.18-17-12',
             // GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
             TNT_VERSION     = '3',
@@ -815,7 +815,7 @@ Y.Loader.prototype = {
                     ext:   ext
                 });
 
-                // Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
+                Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
             }
         }
 
@@ -1069,36 +1069,51 @@ Y.Loader.prototype = {
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d      = [], 
-            r      = mod.requires, 
-            o      = mod.optional, 
+            r, old_mod,
+            o, skinmod, skindef,
             intl   = mod.lang || mod.intl,
             info   = this.moduleInfo,
             hash   = {};
 
         // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
+
+            old_mod = mod;
+
+            mod = this.addModule(adddef, name);
+            mod.group = old_mod.group;
+            mod.pkg = old_mod.pkg;
             delete mod.expanded;
-            delete mod.temp;
-            if (adddef.requires) {
-                mod.requires = mod.requires.concat(adddef.requires);
-            }
-            if (adddef.optional) {
-                mod.optional = (mod.optional) ? mod.optional.concat(adddef.optional) : adddef.optional;
-            }
-            // skins?
-            // console.log('temp mod: ' + name + ', ' + mod.requires);
-            // console.log(adddef);
+            // console.log('TEMP MOD: ' + name + ', ' + mod.requires);
+            // console.log(Y.dump(mod));
         }
 
         // if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
-            // Y.log('already expanded ' + name + ', ' + mod.expanded);
+            Y.log('already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
+
+        r      = mod.requires;
+        o      = mod.optional; 
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty + ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
+
+        // Create skin modules
+        if (mod.skinnable) {
+            skindef = this.skin.overrides;
+            if (skindef && skindef[name]) {
+                for (i=0; i<skindef[name].length; i++) {
+                    skinmod = this._addSkin(skindef[name][i], name);
+                    d.push(skinmod);
+                }
+            } else {
+                skinmod = this._addSkin(this.skin.defaultSkin, name);
+                d.push(skinmod);
+            }
+        }
 
         for (i=0; i<r.length; i++) {
             // Y.log(name + ' requiring ' + r[i]);
@@ -1259,7 +1274,6 @@ Y.Loader.prototype = {
             }
 
             this._explode();
-            // this._conditions();
             if (this.allowRollup) {
                 this._rollup();
             }
@@ -1309,19 +1323,6 @@ Y.Loader.prototype = {
             if (info.hasOwnProperty(name)) {
                 m = info[name];
                 if (m) {
-                    // Create skin modules
-                    if (m.skinnable) {
-                        o = this.skin.overrides;
-                        if (o && o[name]) {
-                            for (i=0; i<o[name].length; i++) {
-                                smod = this._addSkin(o[name][i], name);
-                                m.requires.push(smod);
-                            }
-                        } else {
-                            smod = this._addSkin(this.skin.defaultSkin, name);
-                            m.requires.push(smod);
-                        }
-                    }
 
                     // remove dups
                     m.requires = YObject.keys(YArray.hash(m.requires));
