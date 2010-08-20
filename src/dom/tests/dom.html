@@ -553,9 +553,6 @@
 
             test_position: function() { // basic position tests
                 var node = document.createElement('div');
-                node.style.position = 'absolute';
-                node.style.top = 0;
-                node.style.left = 0;
                 ArrayAssert.itemsAreEqual([0, 0], Y.DOM.getXY(node), 'off-dom: [0, 0]');
 
                 // off-dom is unreliable due to cascade when appended
@@ -725,6 +722,14 @@
 
                 node = null;
                 Assert.isFalse(Y.DOM.inDoc(node), 'null node');
+
+                node = document.getElementById('ft');
+                node = node.cloneNode(true);
+                node.removeAttribute('id');
+                Assert.isFalse(Y.DOM.inDoc(node), "clone inDoc false");
+                document.body.appendChild(node);
+                Assert.isTrue(Y.DOM.inDoc(node), "clone inDoc true");
+
             }
 
         })); 
