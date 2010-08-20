@@ -370,7 +370,13 @@
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">core</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
-            <span class="nx">extras</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">core</span> <span class="o">||</span> <span class="p">[</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;rls&#39;</span><span class="p">,</span> <span class="s1">&#39;intl-base&#39;</span><span class="p">,</span> <span class="s1">&#39;loader&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-log&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-later&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-throttle&#39;</span><span class="p">];</span>
+            <span class="nx">extras</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">core</span> <span class="o">||</span> <span class="p">[</span> <span class="s1">&#39;get&#39;</span><span class="p">,</span> 
+                                        <span class="s1">&#39;rls&#39;</span><span class="p">,</span> 
+                                        <span class="s1">&#39;intl-base&#39;</span><span class="p">,</span> 
+                                        <span class="s1">&#39;loader&#39;</span><span class="p">,</span> 
+                                        <span class="s1">&#39;yui-log&#39;</span><span class="p">,</span> 
+                                        <span class="s1">&#39;yui-later&#39;</span><span class="p">,</span> 
+                                        <span class="s1">&#39;yui-throttle&#39;</span> <span class="p">];</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">extras</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span><span class="p">[</span><span class="nx">extras</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
@@ -565,8 +571,6 @@
 <span class="cm">     */</span>
     <span class="nx">use</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="c1">// console.log(arguments);</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;yui-base&#39;</span><span class="p">]);</span>
             <span class="c1">// this._attach( this.config.core || [&#39;yui-base&#39;, &#39;get&#39;, &#39;intl-base&#39;, &#39;loader&#39;, &#39;yui-log&#39;, &#39;yui-later&#39;, &#39;yui-throttle&#39;]);</span>
@@ -673,12 +677,14 @@
                     <span class="c1">// Y.log(&#39;redo r: &#39; + r);</span>
                     <span class="c1">// Y.log(&#39;redo data: &#39; + data);</span>
                     <span class="c1">// Y.log(&#39;redo missing: &#39; + missing);</span>
-                    <span class="c1">// Y.log(&#39;redo args: &#39; + args);</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;redo args: &#39;</span> <span class="o">+</span> <span class="nx">args</span><span class="p">);</span>
                     
                     <span class="c1">// newData = data.concat();</span>
-                    <span class="nx">newData</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+                    <span class="c1">// newData = args.concat();</span>
+                    <span class="nx">newData</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
 
-                    <span class="nx">newData</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+                    <span class="c1">// newData = missing.concat();</span>
+
                     <span class="nx">newData</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested USE callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
@@ -757,8 +763,6 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Modules missing: &#39;</span> <span class="o">+</span> <span class="nx">missing</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="c1">// console.log(Y._rls(args));</span>
-
         <span class="c1">// dynamic load</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;Using loader to fetch missing dependencies: &#39; + missing, &#39;info&#39;, &#39;yui&#39;);</span>
@@ -775,8 +779,6 @@
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">use_rls</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="c1">// server side loader service</span>
-            <span class="c1">// console.log(Y._rls(args));</span>
-
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span><span class="p">.</span><span class="nx">script</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_rls</span><span class="p">(</span><span class="nx">args</span><span class="p">),</span> <span class="p">{</span>
                 <span class="nx">onEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">handleLoader</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>

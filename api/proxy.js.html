@@ -197,9 +197,13 @@
         <span class="nx">clone</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span>
-                <span class="nx">c</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">),</span>
+                <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
 
             <span class="k">delete</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">removeAttributeNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">domNode</span><span class="p">.</span><span class="nx">removeAttributeNode</span><span class="p">(</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">getAttributeNode</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">));</span>
+            <span class="p">}</span>
             <span class="nx">c</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">());</span>
 
             <span class="nx">c</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;absolute&#39;</span><span class="p">);</span>
