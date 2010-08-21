@@ -83,6 +83,9 @@
 
     <span class="nx">SCALE_X</span> <span class="o">=</span> <span class="s2">&quot;scaleX(&quot;</span><span class="p">,</span>
     <span class="nx">SCALE_Y</span> <span class="o">=</span> <span class="s2">&quot;scaleY(&quot;</span><span class="p">,</span>
+    
+    <span class="nx">SCROLL_X</span> <span class="o">=</span> <span class="s2">&quot;scrollX&quot;</span><span class="p">,</span>
+    <span class="nx">SCROLL_Y</span> <span class="o">=</span> <span class="s2">&quot;scrollY&quot;</span><span class="p">,</span>
 
     <span class="nx">PX</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span><span class="p">,</span>
     <span class="nx">CLOSE</span> <span class="o">=</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
@@ -328,7 +331,7 @@
             <span class="nx">dimOffset</span><span class="p">,</span>
             <span class="nx">dimCache</span><span class="p">,</span>
             <span class="nx">widgetSize</span><span class="p">,</span>
-            <span class="nx">contentSize</span><span class="p">;</span>     
+            <span class="nx">contentSize</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">horiz</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">dim</span> <span class="o">=</span> <span class="nx">WIDTH</span><span class="p">;</span>
@@ -338,6 +341,7 @@
             <span class="nx">contentSize</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">||</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_WIDTH</span><span class="p">);</span>
             <span class="nx">translate</span> <span class="o">=</span> <span class="nx">TRANSLATE_X</span><span class="p">;</span>
             <span class="nx">scale</span> <span class="o">=</span> <span class="nx">SCALE_X</span><span class="p">;</span>
+            <span class="nx">current</span> <span class="o">=</span> <span class="p">(</span><span class="nx">current</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="nx">current</span> <span class="o">:</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">dim</span> <span class="o">=</span> <span class="nx">HEIGHT</span><span class="p">;</span>
             <span class="nx">dimOffset</span> <span class="o">=</span> <span class="nx">TOP</span><span class="p">;</span>
@@ -346,6 +350,7 @@
             <span class="nx">contentSize</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrollHeight</span> <span class="o">||</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_HEIGHT</span><span class="p">);</span>
             <span class="nx">translate</span> <span class="o">=</span> <span class="nx">TRANSLATE_Y</span><span class="p">;</span>
             <span class="nx">scale</span> <span class="o">=</span> <span class="nx">SCALE_Y</span><span class="p">;</span>
+            <span class="nx">current</span> <span class="o">=</span> <span class="p">(</span><span class="nx">current</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="nx">current</span> <span class="o">:</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">scrollbarSize</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">widgetSize</span> <span class="o">*</span> <span class="p">(</span><span class="nx">widgetSize</span><span class="o">/</span><span class="nx">contentSize</span><span class="p">));</span>
