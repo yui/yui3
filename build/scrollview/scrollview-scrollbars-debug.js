@@ -36,6 +36,9 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     SCALE_X = "scaleX(",
     SCALE_Y = "scaleY(",
+    
+    SCROLL_X = "scrollX",
+    SCROLL_Y = "scrollY",
 
     PX = "px",
     CLOSE = ")",
@@ -281,7 +284,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dimOffset,
             dimCache,
             widgetSize,
-            contentSize;     
+            contentSize;
 
         if (horiz) {
             dim = WIDTH;
@@ -291,6 +294,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             contentSize = host._scrollWidth || cb.get(SCROLL_WIDTH);
             translate = TRANSLATE_X;
             scale = SCALE_X;
+            current = (current !== undefined) ? current : host.get(SCROLL_X);
         } else {
             dim = HEIGHT;
             dimOffset = TOP;
@@ -299,6 +303,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             contentSize = host._scrollHeight || cb.get(SCROLL_HEIGHT);
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
+            current = (current !== undefined) ? current : host.get(SCROLL_Y);
         }
 
         scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
