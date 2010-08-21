@@ -97,6 +97,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
         this.beforeHostMethod('_flickFrame', this._flickFrame);
         this.afterHostEvent('scrollEnd', this._scrollEnded);
+        this.afterHostEvent('render', this._afterRender);
         this.after('indexChange', this._afterIndexChange);
 
         if(host.get('bounce') !== 0) {
@@ -172,6 +173,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
 
         return this._prevent;
+    },
+
+    /**
+     * After host render handler
+     *
+     * @method _afterRender
+     * @protected
+     */
+    _afterRender: function(e) {
+        var host = this._host;
+        host.get("boundingBox").addClass(host.getClassName("paged"));
     },
 
     /**
