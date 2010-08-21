@@ -430,7 +430,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-gestures": {
                 "condition": {
                     "test": function(Y) {
-    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
                     "trigger": "dd-drag"
                 }, 
