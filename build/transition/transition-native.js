@@ -3,22 +3,23 @@ YUI.add('transition-native', function(Y) {
 /**
 * The Native Transition Utility provides an API wrapper for CSS transitions.
 * It is also the base module for the timer-based transition module.
-* @module node
+* @module transition
 */
 
 /**
-* Provides the base Transition class.
+* Provides the base Transition class.  The "transition" method is added to Node,
+* and is how Transition should be used.
 *
-* @module node
+* @module transition
 * @submodule transition-native
 */
 
 /**
  * A class for constructing transition instances.
+ * Adds the "transition" method to Node.
  * @class Transition
- * @for Transition
+ * @see Node 
  * @constructor
- * @extends Base
  */
 
 var TRANSITION = '-webkit-transition',
@@ -301,7 +302,7 @@ Y.Transition = Transition;
 Y.TransitionNative = Transition; // TODO: remove
 
 /** 
-    Animate one or more css properties to a given value.
+    Animate one or more css properties to a given value. Requires the "transition" module.
     <pre>example usage:
         Y.one('#demo').transition({
             duration: 1, // seconds
@@ -315,7 +316,7 @@ Y.TransitionNative = Transition; // TODO: remove
             }
         });
     </pre>
-    @for node
+    @for Node
     @method transition
     @param {Object} An object containing one or more style properties, a duration and an easing.
     @chainable

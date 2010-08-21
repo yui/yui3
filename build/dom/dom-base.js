@@ -214,7 +214,9 @@ Y.DOM = {
         // there may be multiple elements with the same ID
         var nodes = [],
             ret = false,
-            id,
+            attributes,
+            id = (element && element.getAttribute) ?
+                    element.getAttribute('id') : null,
             i,
             node,
             query;
@@ -222,10 +224,18 @@ Y.DOM = {
         // avoid collision with form.id === input.name
         if (element && element.attributes) {
             doc = doc || element[OWNER_DOCUMENT];
-            if (element.attributes.id) {
-                id = element.attributes.id.value;
+            attributes = element.attributes;
+            if (attributes.id) {
+                // IE < 8 clones hang onto attribute after ID is updated
+                // form.id may be element with id="id"
+                if (attributes.id !== id && !id.nodeType) {
+                    attributes.id.value = id; // sync with actual ID
+                }
+
+                id = attributes.id.value;
             }
 
+            // need an ID to query the document for this element
             if (!id) {
                 id = Y.guid();
                 element.setAttribute('id', id);
@@ -262,7 +272,7 @@ Y.DOM = {
             if (nodes && nodes.length) {
                 for (i = 0; node = nodes[i++];) { // check for a match
                     if (node.attributes && node.attributes.id
-                            && node.attributes.id.value === id) { // avoid false positive for node.name
+                            && node.attributes.id.value === id) { // avoid false positive for node.name & form.id
                         ret.push(node);
                     }
                 }

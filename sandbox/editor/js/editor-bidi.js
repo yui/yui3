@@ -43,7 +43,7 @@ YUI.add('editor-bidi', function(Y) {
                 inst = host.getInstance(),
                 sel = new inst.Selection(),
                 node, direction;
-
+            
             if (sel.isCollapsed) {
                 node = EditorBidi.blockParent(sel.focusNode);
                 direction = node.getStyle('direction');
@@ -166,13 +166,13 @@ YUI.add('editor-bidi', function(Y) {
             var host = this.get(HOST);
 
             this.firstEvent = true;
-
+            
             host.after(NODE_CHANGE, Y.bind(this._afterNodeChange, this));
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
-            host.frame.after('mouseup', Y.bind(this._afterMouseUp, this));
+            host.after('dom:mouseup', Y.bind(this._afterMouseUp, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
             host.after('contentChange', Y.bind(this._afterContentChange, this));
-            host.after('frame:paste', Y.bind(this._afterPaste, this));
+            host.after('dom:paste', Y.bind(this._afterPaste, this));
         }
     }, {
         /**
