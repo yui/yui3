@@ -53,93 +53,86 @@
 <span class="cm"> */</span>
 
 <span class="c1">// shortcuts</span>
-<span class="kd">var</span> <span class="nx">version</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">uA</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">lG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">sF</span> <span class="o">=</span> <span class="s2">&quot;ShockwaveFlash&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">version</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+	<span class="nx">uA</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">,</span>
+	<span class="nx">lG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+	<span class="nx">sF</span> <span class="o">=</span> <span class="s2">&quot;ShockwaveFlash&quot;</span><span class="p">,</span>
+	<span class="nx">mF</span><span class="p">,</span> <span class="nx">eP</span><span class="p">,</span> <span class="nx">vS</span><span class="p">,</span> <span class="nx">ax6</span><span class="p">,</span> <span class="nx">ax</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+<span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">parseFlashVersion</span> <span class="p">(</span><span class="nx">flashVer</span><span class="p">)</span> <span class="p">{</span>
-	<span class="k">if</span> <span class="p">(</span><span class="nx">lG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">flashVer</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nx">lG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">makeInt</span><span class="p">(</span><span class="nx">flashVer</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span> <span class="p">{</span>
 		<span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span> <span class="o">=</span> <span class="nx">flashVer</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
 	<span class="p">}</span>
 	
-	<span class="k">if</span> <span class="p">(</span><span class="nx">lG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">flashVer</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nx">lG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">makeInt</span><span class="p">(</span><span class="nx">flashVer</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span> <span class="p">{</span>
 		<span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span> <span class="o">=</span> <span class="nx">flashVer</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 	<span class="p">}</span>
 	
-	<span class="k">if</span> <span class="p">(</span><span class="nx">lG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">flashVer</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nx">lG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">makeInt</span><span class="p">(</span><span class="nx">flashVer</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span> <span class="p">{</span>
 		<span class="nx">uA</span><span class="p">.</span><span class="nx">flashRev</span> <span class="o">=</span> <span class="nx">flashVer</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 	<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">uA</span><span class="p">.</span><span class="nx">webkit</span> <span class="o">||</span> <span class="nx">uA</span><span class="p">.</span><span class="nx">opera</span><span class="p">)</span> <span class="p">{</span>
-		   <span class="k">if</span> <span class="p">((</span><span class="nx">mF</span> <span class="o">=</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">mimeTypes</span><span class="p">[</span><span class="s1">&#39;application/x-shockwave-flash&#39;</span><span class="p">]))</span> <span class="p">{</span>
-		      <span class="k">if</span> <span class="p">((</span><span class="nx">eP</span> <span class="o">=</span> <span class="nx">mF</span><span class="p">.</span><span class="nx">enabledPlugin</span><span class="p">))</span> <span class="p">{</span>
-				 <span class="kd">var</span> <span class="nx">vS</span> <span class="o">=</span> <span class="p">[];</span>
-		         <span class="nx">vS</span> <span class="o">=</span> <span class="nx">eP</span><span class="p">.</span><span class="nx">description</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s[rd]/g</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[A-Za-z\s]+/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
-				 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">vS</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-				 <span class="nx">parseFlashVersion</span><span class="p">(</span><span class="nx">vS</span><span class="p">);</span>
-		      <span class="p">}</span>
-		   <span class="p">}</span>
-		<span class="p">}</span>
-		<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
-		    <span class="k">try</span>
-		    <span class="p">{</span>
-		        <span class="kd">var</span> <span class="nx">ax6</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span><span class="nx">sF</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">sF</span> <span class="o">+</span> <span class="s2">&quot;.6&quot;</span><span class="p">);</span>
-		        <span class="nx">ax6</span><span class="p">.</span><span class="nx">AllowScriptAccess</span> <span class="o">=</span> <span class="s2">&quot;always&quot;</span><span class="p">;</span>
-		    <span class="p">}</span>
-		    <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
-		    <span class="p">{</span>
-		        <span class="k">if</span><span class="p">(</span><span class="nx">ax6</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span>
-		        <span class="p">{</span>
-		            <span class="nx">version</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">;</span>
-		        <span class="p">}</span>
-		    <span class="p">}</span>
-		    <span class="k">if</span> <span class="p">(</span><span class="nx">version</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		    <span class="k">try</span>
-		    <span class="p">{</span>
-		        <span class="kd">var</span> <span class="nx">ax</span>  <span class="o">=</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span><span class="nx">sF</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">sF</span><span class="p">);</span>
-		       	<span class="kd">var</span> <span class="nx">vS</span> <span class="o">=</span> <span class="p">[];</span>
-		        <span class="nx">vS</span> <span class="o">=</span> <span class="nx">ax</span><span class="p">.</span><span class="nx">GetVariable</span><span class="p">(</span><span class="s2">&quot;$version&quot;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[A-Za-z\s]+/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
-		        <span class="nx">parseFlashVersion</span><span class="p">(</span><span class="nx">vS</span><span class="p">);</span>
-		    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{}</span>
-		    <span class="p">}</span>
-		<span class="p">}</span>
+   <span class="k">if</span> <span class="p">((</span><span class="nx">mF</span> <span class="o">=</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">mimeTypes</span><span class="p">[</span><span class="s1">&#39;application/x-shockwave-flash&#39;</span><span class="p">]))</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">((</span><span class="nx">eP</span> <span class="o">=</span> <span class="nx">mF</span><span class="p">.</span><span class="nx">enabledPlugin</span><span class="p">))</span> <span class="p">{</span>
+         <span class="nx">vS</span> <span class="o">=</span> <span class="nx">eP</span><span class="p">.</span><span class="nx">description</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s[rd]/g</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[A-Za-z\s]+/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+		 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">vS</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+		 <span class="nx">parseFlashVersion</span><span class="p">(</span><span class="nx">vS</span><span class="p">);</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+        <span class="nx">ax6</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span><span class="nx">sF</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">sF</span> <span class="o">+</span> <span class="s2">&quot;.6&quot;</span><span class="p">);</span>
+        <span class="nx">ax6</span><span class="p">.</span><span class="nx">AllowScriptAccess</span> <span class="o">=</span> <span class="s2">&quot;always&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">ax6</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="nx">version</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">version</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+        <span class="nx">ax</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span><span class="nx">sF</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">sF</span><span class="p">);</span>
+        <span class="nx">vS</span> <span class="o">=</span> <span class="nx">ax</span><span class="p">.</span><span class="nx">GetVariable</span><span class="p">(</span><span class="s2">&quot;$version&quot;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[A-Za-z\s]+/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+        <span class="nx">parseFlashVersion</span><span class="p">(</span><span class="nx">vS</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e2</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
 		
 <span class="nx">Y</span><span class="p">.</span><span class="nx">SWFDetect</span> <span class="o">=</span> <span class="p">{</span>		
-		<span class="nx">getFlashVersion</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-			<span class="k">return</span> <span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashRev</span><span class="p">));</span>
-		<span class="p">},</span>
-		
-		<span class="nx">isFlashVersionAtLeast</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flashMajor</span><span class="p">,</span> <span class="nx">flashMinor</span><span class="p">,</span> <span class="nx">flashRev</span><span class="p">)</span> <span class="p">{</span>
-
-			<span class="k">if</span> <span class="p">(</span><span class="nx">flashMajor</span> <span class="o">&lt;</span> <span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span><span class="p">)</span> <span class="p">{</span>
-				<span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-			<span class="p">}</span>
-			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">flashMajor</span> <span class="o">&gt;</span> <span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span><span class="p">)</span> <span class="p">{</span>
-				<span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-			<span class="p">}</span>
-			<span class="k">else</span> <span class="p">{</span>
-				<span class="k">if</span> <span class="p">(</span><span class="nx">flashMinor</span> <span class="o">&lt;</span> <span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span><span class="p">)</span> <span class="p">{</span>
-					<span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-				<span class="p">}</span>
-				<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">flashMinor</span> <span class="o">&gt;</span> <span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span><span class="p">)</span> <span class="p">{</span>
-					<span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-				<span class="p">}</span>
-				<span class="k">else</span> <span class="p">{</span>
-					<span class="k">if</span> <span class="p">(</span><span class="nx">flashRev</span> <span class="o">&lt;=</span> <span class="nx">uA</span><span class="p">.</span><span class="nx">flashRev</span><span class="p">)</span> <span class="p">{</span>
-						<span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-					<span class="p">}</span>
-					<span class="k">else</span> <span class="p">{</span>
-						<span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-					<span class="p">}</span>
-				<span class="p">}</span>
-			<span class="p">}</span>
+	<span class="nx">getFlashVersion</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashRev</span><span class="p">));</span>
+	<span class="p">},</span>
+	
+	<span class="nx">isFlashVersionAtLeast</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flashMajor</span><span class="p">,</span> <span class="nx">flashMinor</span><span class="p">,</span> <span class="nx">flashRev</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">uaMajor</span>    <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span><span class="p">),</span>
+			<span class="nx">uaMinor</span>    <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span><span class="p">),</span>
+			<span class="nx">uaRev</span>      <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashRev</span><span class="p">);</span>
 			
-			<span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-		<span class="p">}</span>			
-	<span class="p">};</span>
+		<span class="nx">flashMajor</span> <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">flashMajor</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+		<span class="nx">flashMinor</span> <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">flashMinor</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+		<span class="nx">flashRev</span>   <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">flashRev</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">flashMajor</span> <span class="o">===</span> <span class="nx">uaMajor</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">flashMinor</span> <span class="o">===</span> <span class="nx">uaMinor</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nx">flashRev</span> <span class="o">&lt;=</span> <span class="nx">uaRev</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="nx">flashMinor</span> <span class="o">&lt;</span> <span class="nx">uaMinor</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nx">flashMajor</span> <span class="o">&lt;</span> <span class="nx">uaMajor</span><span class="p">;</span>
+	<span class="p">}</span>			
+<span class="p">};</span>
 </pre></div>
 
                     </div>

@@ -117,7 +117,7 @@ Y.mix(Y_DOM, {
                     doc;
 
                 if (node) {
-                    if (Y_DOM.inDoc(node)) {
+                    if (Y.DOM.inDoc(node)) {
                         doc = node.ownerDocument;
                         scrollLeft = Y_DOM.docScrollX(node, doc);
                         scrollTop = Y_DOM.docScrollY(node, doc);
@@ -159,12 +159,12 @@ Y.mix(Y_DOM, {
                             }
                             
                         }
-                    } else { // default to current offsets
-                        xy = Y_DOM._getOffset(node);
+                    } else {
+                        xy = Y_DOM._getOffset(node);       
                     }
                 }
                 return xy;                   
-            };
+            }
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
                 //Calculate the Top and Left border sizes (assumes pixels)
@@ -176,7 +176,7 @@ Y.mix(Y_DOM, {
                     scrollLeft;
 
                 if (node) {
-                    if (Y_DOM.inDoc(node)) {
+                    //if (Y_DOM.inDoc(node)) {
                         xy = [node.offsetLeft, node.offsetTop];
                         doc = node.ownerDocument;
                         parentNode = node;
@@ -219,9 +219,9 @@ Y.mix(Y_DOM, {
                             xy[0] += Y_DOM.docScrollX(node, doc);
                             xy[1] += Y_DOM.docScrollY(node, doc);
                         }
-                    } else {
-                        xy = Y_DOM._getOffset(node);
-                    }
+                    //} else {
+                    //    xy = Y_DOM._getOffset(node);
+                    //}
                 }
 
                 return xy;                
@@ -274,12 +274,10 @@ Y.mix(Y_DOM, {
             pos = Y_DOM.getStyle(node, POSITION);
 
             delta = Y_DOM._getOffset(node);       
-
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
             }
-
             currentXY = Y_DOM.getXY(node);
 
             if (xy[0] !== null) {

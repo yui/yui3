@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: node  Transition   (YUI Library)</title>
+	<title>API: scrollview-paginator  Plugin.ScrollViewPaginator   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>node&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
+        <h3>scrollview-paginator&nbsp; <span class="subtitle">3.2.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_node.html" title="node">node</a>
-                 &gt; Transition 
+            &gt; <a href="./module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a>
+                 &gt; Plugin.ScrollViewPaginator 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,9 +48,9 @@
 
                         
                         
-                            Class <b property="yui:name">Transition</b>
+                            Class <b property="yui:name">Plugin.ScrollViewPaginator</b>
                         <span class="extends">
-                           - extends <a href="Base.html" title="Base">Base</a>
+                           - extends <a href="Plugin.Base.html" title="Plugin.Base">Plugin.Base</a>
                         </span>
 
                     </h2>
@@ -60,14 +60,14 @@
   
 
                     <div class="summary description" property="yui:description">
-                        A class for constructing transition instances.
+                        Scrollview plugin that adds support for paging
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">Transition</strong>
+                                <strong property="yui:name">Plugin.ScrollViewPaginator</strong>
                                 <code>
                                     (
                                     )
@@ -84,13 +84,13 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="" rel="yui:property" resource="#property_behaviors">
-                                    <h4><a name="property_behaviors" property="yui:name">behaviors</a>
-                                        - <code>static <span property="yui:type">object</span></code>
+                                    <div class="" rel="yui:property" resource="#property_ScrollViewPaginator.ATTRS">
+                                    <h4><a name="property_ScrollViewPaginator.ATTRS" property="yui:name">ScrollViewPaginator.ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Bucket for custom getters and setters
+                                            The default attribute configuration for the plugin
                                         </div>
                                     </div>
      
@@ -99,80 +99,38 @@
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_DEFAULT_GETTER">
-                                    <h4><a name="property_DEFAULT_GETTER" property="yui:name">DEFAULT_GETTER</a>
-                                        - <code>static <span property="yui:type">object</span></code>
+                                    <div class="" rel="yui:property" resource="#property_ScrollViewPaginator.NAME">
+                                    <h4><a name="property_ScrollViewPaginator.NAME" property="yui:name">ScrollViewPaginator.NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The default getter to use when getting object properties.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_DEFAULT_SETTER">
-                                    <h4><a name="property_DEFAULT_SETTER" property="yui:name">DEFAULT_SETTER</a>
-                                        - <code>static <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The default setter to use when setting object properties.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_DEFAULT_UNIT">
-                                    <h4><a name="property_DEFAULT_UNIT" property="yui:name">DEFAULT_UNIT</a>
-                                        - <code>static <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The default unit to use with properties that pass the RE_DEFAULT_UNIT test.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_intervalTime">
-                                    <h4><a name="property_intervalTime" property="yui:name">intervalTime</a>
-                                        - <code>static <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Time in milliseconds passed to setInterval for frame processing
+                                            The identity of the plugin
                                         </div>
                                     </div>
      
                                         
                                     <div class="default" property="yui:defaultValue">
-                                        Default Value: 20
+                                        Default Value: 'paginatorPlugin'
                                     </div>        
 
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_RE_DEFAULT_UNIT">
-                                    <h4><a name="property_RE_DEFAULT_UNIT" property="yui:name">RE_DEFAULT_UNIT</a>
-                                        - <code>static <span property="yui:type">object</span></code>
+                                    <div class="" rel="yui:property" resource="#property_ScrollViewPaginator.NS">
+                                    <h4><a name="property_ScrollViewPaginator.NS" property="yui:name">ScrollViewPaginator.NS</a>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Regex of properties that should use the default unit.
+                                            The namespace on which the plugin will reside
                                         </div>
                                     </div>
      
                                         
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 'pages'
+                                    </div>        
 
 
                                     <hr />
@@ -201,6 +159,18 @@
                                 </code>
                             </div>
                         </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Properties inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Plugin.Base.html#property__handles">
+                                        <a class="private" href="Plugin.Base.html#property__handles" property="yui:name" title="_handles">_handles</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
                         </div>
                     </div>
 
@@ -208,22 +178,22 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:method" resource="#method__runFrame">
+                                    <div class="protected" rel="yui:method" resource="#method__afterIndexChange">
                                     <h4>
-                                        <a name="method__runFrame">_runFrame</a></h4>
+                                        <a name="method__afterIndexChange">_afterIndexChange</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         private 
-                                         static 
+                                         protected 
+                                        
                                         
                                         void
-                                            <strong property="yui:name">_runFrame</strong>
+                                            <strong property="yui:name">_afterIndexChange</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Called per Interval to handle each animation frame.
+                                            index attr change handler
                                         </div>
 
                                         <div class="description">
@@ -238,31 +208,391 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_run">
+                                    <div class="protected" rel="yui:method" resource="#method__afterRender">
                                     <h4>
-                                        <a name="method_run">run</a></h4>
+                                        <a name="method__afterRender">_afterRender</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">run</strong>
+                                            <strong property="yui:name">_afterRender</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Starts or an animation.
+                                            After host render handler
                                         </div>
 
                                         <div class="description">
 
 
 
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__calculatePageOffsets">
+                                    <h4>
+                                        <a name="method__calculatePageOffsets">_calculatePageOffsets</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_calculatePageOffsets</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Pre-calculate the min/max boundary points when the contentBox changes
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__flickFrame">
+                                    <h4>
+                                        <a name="method__flickFrame">_flickFrame</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_flickFrame</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executed to respond to the flick event, by over-riding the default flickFrame animation. 
+This is needed to determine if the next or prev page should be activated.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__scrollEnded">
+                                    <h4>
+                                        <a name="method__scrollEnded">_scrollEnded</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_scrollEnded</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            scrollEnd handler detects if a page needs to change
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiIndex">
+                                    <h4>
+                                        <a name="method__uiIndex">_uiIndex</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiIndex</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Update the UI based on the current page index
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_destructor">
+                                    <h4>
+                                        <a name="method_destructor">destructor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">destructor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Destructor removes anything added by the plugin
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_initializer">
+                                    <h4>
+                                        <a name="method_initializer">initializer</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">initializer</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Designated initializer
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_next">
+                                    <h4>
+                                        <a name="method_next">next</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">next</strong>
+                                           (
+                                                
+                                                        
+                                                         disableAnim
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Scroll to the next page in the scrollview, with animation
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">disableAnim</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  If true, no animation is used</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_prev">
+                                    <h4>
+                                        <a name="method_prev">prev</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">prev</strong>
+                                           (
+                                                
+                                                        
+                                                         disableAnim
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Scroll to the previous page in the scrollview, with animation
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">disableAnim</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  If true, no animation is used</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_scrollTo">
+                                    <h4>
+                                        <a name="method_scrollTo">scrollTo</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">scrollTo</strong>
+                                           (
+                                                
+                                                        
+                                                         index
+                                                    
+                                                
+                                                        , 
+                                                         duration
+                                                    
+                                                
+                                                        , 
+                                                         easing
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Scroll to a given page in the scrollview, with animation.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The index of the page to scroll to</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">duration</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The number of ms the animation should last</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">easing</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The timing function to use in the animation</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_snapToCurrent">
+                                    <h4>
+                                        <a name="method_snapToCurrent">snapToCurrent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">snapToCurrent</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Snaps the scrollview to the currently selected page
+                                        </div>
+
+                                        <div class="description">
+
+
+
 
              
 
@@ -501,10 +831,178 @@
                                     </code>
                                 </div>
                             </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                                <h4>Methods inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostEvent">                                        
+                                            <a class="" href="Plugin.Base.html#method_afterHostEvent" property="yui:name" title="afterHostEvent">afterHostEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostMethod">                                        
+                                            <a class="" href="Plugin.Base.html#method_afterHostMethod" property="yui:name" title="afterHostMethod">afterHostMethod</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_beforeHostMethod">                                        
+                                            <a class="" href="Plugin.Base.html#method_beforeHostMethod" property="yui:name" title="beforeHostMethod">beforeHostMethod</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_destructor">                                        
+                                            <a class="" href="Plugin.Base.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_doAfter">                                        
+                                            <a class="" href="Plugin.Base.html#method_doAfter" property="yui:name" title="doAfter">doAfter</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_doBefore">                                        
+                                            <a class="" href="Plugin.Base.html#method_doBefore" property="yui:name" title="doBefore">doBefore</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_initializer">                                        
+                                            <a class="" href="Plugin.Base.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_onHostEvent">                                        
+                                            <a class="" href="Plugin.Base.html#method_onHostEvent" property="yui:name" title="onHostEvent">onHostEvent</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_indexChange">
+                                    <h4>
+                                        <a name="event_indexChange">indexChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">indexChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'index' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_selectorChange">
+                                    <h4>
+                                        <a name="event_selectorChange">selectorChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">selectorChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'selector' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_totalChange">
+                                    <h4>
+                                        <a name="event_totalChange">totalChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">totalChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'total' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                         <div rel="yui:inheritance">                    
@@ -528,10 +1026,76 @@
                                 </code>
                             </div>
                         </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Events inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Plugin.Base.html#event_hostChange">
+                                        <a class="" href="Plugin.Base.html#event_hostChange" property="yui:name" title="hostChange">hostChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
                         </div>
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_index">
+                                    <h4><a name="config_index">index</a>
+                                        <code>- <span property="yui:type">{Number}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The active page number for a paged scrollview
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 0
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_selector">
+                                    <h4><a name="config_selector">selector</a>
+                                        <code>- <span property="yui:type">{String}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            CSS selector for a page inside the scrollview. The scrollview
+will snap to the closest page.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_total">
+                                    <h4><a name="config_total">total</a>
+                                        <code>- <span property="yui:type">{Number}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The total number of pages
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 0
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                         <div rel="yui:inheritance">                    
                         <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
@@ -543,6 +1107,17 @@
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
                                         <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Configuration attributes inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Plugin.Base.html#config_host">                                        
+                                        <a class="" href="Plugin.Base.html#config_host" property="yui:name" title="host">host</a>
                                         </span>
                                         
                                 </code>
@@ -591,7 +1166,7 @@
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
-                                <li class="selected"><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -604,7 +1179,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
-                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class="selected"><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
@@ -634,52 +1209,62 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Node.html" title="Node">Node</a></li>
-                                <li class=""><a href="NodeList.html" title="NodeList">NodeList</a></li>
-                                <li class="selected"><a href="Transition.html" title="Transition">Transition</a></li>
+                                <li class="selected"><a href="Plugin.ScrollViewPaginator.html" title="Plugin.ScrollViewPaginator">Plugin.ScrollViewPaginator</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="node-event-html5.js.html" title="node-event-html5.js">node-event-html5.js</a></li>
-                                <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
-                                <li class=""><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
-                                <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
-                                <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
-                                <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
-                                <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
-                                <li class=""><a href="node-size.js.html" title="node-size.js">node-size.js</a></li>
-                                <li class=""><a href="node-style.js.html" title="node-style.js">node-style.js</a></li>
-                                <li class=""><a href="node.js.html" title="node.js">node.js</a></li>
-                                <li class=""><a href="nodelist.js.html" title="nodelist.js">nodelist.js</a></li>
-                                <li class=""><a href="shim-plugin.js.html" title="shim-plugin.js">shim-plugin.js</a></li>
-                                <li class=""><a href="transition.js.html" title="transition.js">transition.js</a></li>
+                                <li class=""><a href="paginator-plugin.js.html" title="paginator-plugin.js">paginator-plugin.js</a></li>
+                                <li class=""><a href="scrollbars-plugin.js.html" title="scrollbars-plugin.js">scrollbars-plugin.js</a></li>
                         </ul>
                     </div>
 
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_behaviors" title="behaviors">behaviors</a></li>
-                                <li class=""><a href="#property_DEFAULT_GETTER" title="DEFAULT_GETTER">DEFAULT_GETTER</a></li>
-                                <li class=""><a href="#property_DEFAULT_SETTER" title="DEFAULT_SETTER">DEFAULT_SETTER</a></li>
-                                <li class=""><a href="#property_DEFAULT_UNIT" title="DEFAULT_UNIT">DEFAULT_UNIT</a></li>
-                                <li class=""><a href="#property_intervalTime" title="intervalTime">intervalTime</a></li>
-                                <li class=""><a href="#property_RE_DEFAULT_UNIT" title="RE_DEFAULT_UNIT">RE_DEFAULT_UNIT</a></li>
+                                <li class=""><a href="#property_ScrollViewPaginator.ATTRS" title="ScrollViewPaginator.ATTRS">ScrollViewPaginator.ATTRS</a></li>
+                                <li class=""><a href="#property_ScrollViewPaginator.NAME" title="ScrollViewPaginator.NAME">ScrollViewPaginator.NAME</a></li>
+                                <li class=""><a href="#property_ScrollViewPaginator.NS" title="ScrollViewPaginator.NS">ScrollViewPaginator.NS</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#method__runFrame" title="_runFrame">_runFrame</a></li>
-                                <li class=""><a href="#method_run" title="run">run</a></li>
+                                <li class="protected"><a href="#method__afterIndexChange" title="_afterIndexChange">_afterIndexChange</a></li>
+                                <li class="protected"><a href="#method__afterRender" title="_afterRender">_afterRender</a></li>
+                                <li class="protected"><a href="#method__calculatePageOffsets" title="_calculatePageOffsets">_calculatePageOffsets</a></li>
+                                <li class="protected"><a href="#method__flickFrame" title="_flickFrame">_flickFrame</a></li>
+                                <li class="protected"><a href="#method__scrollEnded" title="_scrollEnded">_scrollEnded</a></li>
+                                <li class="protected"><a href="#method__uiIndex" title="_uiIndex">_uiIndex</a></li>
+                                <li class=""><a href="#method_destructor" title="destructor">destructor</a></li>
+                                <li class=""><a href="#method_initializer" title="initializer">initializer</a></li>
+                                <li class=""><a href="#method_next" title="next">next</a></li>
+                                <li class=""><a href="#method_prev" title="prev">prev</a></li>
+                                <li class=""><a href="#method_scrollTo" title="scrollTo">scrollTo</a></li>
+                                <li class=""><a href="#method_snapToCurrent" title="snapToCurrent">snapToCurrent</a></li>
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_indexChange" title="indexChange">indexChange</a></li>
+                                <li class=""><a href="#event_selectorChange" title="selectorChange">selectorChange</a></li>
+                                <li class=""><a href="#event_totalChange" title="totalChange">totalChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_index" title="index">index</a></li>
+                                <li class=""><a href="#config_selector" title="selector">selector</a></li>
+                                <li class=""><a href="#config_total" title="total">total</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -691,7 +1276,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Node", "name": "addClass", "url": "Node.html#method_addClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "addClass", "url": "NodeList.html#method_addClass", "type": "method"}, {"access": "", "host": "Node", "name": "addMethod", "url": "Node.html#method_addMethod", "type": "method"}, {"access": "", "host": "NodeList", "name": "after", "url": "NodeList.html#method_after", "type": "method"}, {"access": "", "host": "Node", "name": "all", "url": "Node.html#method_all", "type": "method"}, {"access": "", "host": "Node", "name": "ancestor", "url": "Node.html#method_ancestor", "type": "method"}, {"access": "", "host": "Node", "name": "append", "url": "Node.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "Node", "name": "appendChild", "url": "Node.html#method_appendChild", "type": "method"}, {"access": "", "host": "Node", "name": "ATTRS", "url": "Node.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Transition", "name": "behaviors", "url": "Transition.html#property_behaviors", "type": "property"}, {"access": "", "host": "Node", "name": "blur", "url": "Node.html#method_blur", "type": "method"}, {"access": "", "host": "Node", "name": "children", "url": "Node.html#config_children", "type": "config"}, {"access": "", "host": "Node", "name": "clearData", "url": "Node.html#method_clearData", "type": "method"}, {"access": "", "host": "Node", "name": "cloneNode", "url": "Node.html#method_cloneNode", "type": "method"}, {"access": "", "host": "Node", "name": "compareTo", "url": "Node.html#method_compareTo", "type": "method"}, {"access": "", "host": "Node", "name": "contains", "url": "Node.html#method_contains", "type": "method"}, {"access": "", "host": "Node", "name": "create", "url": "Node.html#method_create", "type": "method"}, {"access": "", "host": "Node", "name": "DEFAULT_GETTER", "url": "Node.html#method_DEFAULT_GETTER", "type": "method"}, {"access": "", "host": "Transition", "name": "DEFAULT_GETTER", "url": "Transition.html#property_DEFAULT_GETTER", "type": "property"}, {"access": "", "host": "Node", "name": "DEFAULT_SETTER", "url": "Node.html#method_DEFAULT_SETTER", "type": "method"}, {"access": "", "host": "Transition", "name": "DEFAULT_SETTER", "url": "Transition.html#property_DEFAULT_SETTER", "type": "property"}, {"access": "", "host": "Transition", "name": "DEFAULT_UNIT", "url": "Transition.html#property_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "Node", "name": "delegate", "url": "Node.html#method_delegate", "type": "method"}, {"access": "", "host": "Node", "name": "destroy", "url": "Node.html#method_destroy", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detachAll", "url": "NodeList.html#method_detachAll", "type": "method"}, {"access": "", "host": "Node", "name": "docHeight", "url": "Node.html#config_docHeight", "type": "config"}, {"access": "", "host": "Node", "name": "docScrollX", "url": "Node.html#config_docScrollX", "type": "config"}, {"access": "", "host": "Node", "name": "docScrollY", "url": "Node.html#config_docScrollY", "type": "config"}, {"access": "", "host": "Node", "name": "DOM_EVENTS", "url": "Node.html#property_DOM_EVENTS", "type": "property"}, {"access": "", "host": "Node", "name": "each", "url": "Node.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "even", "url": "NodeList.html#method_even", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "Node", "name": "focus", "url": "Node.html#method_focus", "type": "method"}, {"access": "private", "host": "Node", "name": "_get", "url": "Node.html#method__get", "type": "method"}, {"access": "", "host": "Node", "name": "get", "url": "Node.html#method_get", "type": "method"}, {"access": "", "host": "NodeList", "name": "get", "url": "NodeList.html#method_get", "type": "method"}, {"access": "", "host": "Node", "name": "getAttribute", "url": "Node.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "getAttrs", "url": "Node.html#method_getAttrs", "type": "method"}, {"access": "", "host": "Node", "name": "getComputedStyle", "url": "Node.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getComputedStyle", "url": "NodeList.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getData", "url": "Node.html#method_getData", "type": "method"}, {"access": "", "host": "Node", "name": "getDOMNode", "url": "Node.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "Node", "name": "getElementsByTagName", "url": "Node.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "Node", "name": "getStyle", "url": "Node.html#method_getStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getStyle", "url": "NodeList.html#method_getStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getX", "url": "Node.html#method_getX", "type": "method"}, {"access": "", "host": "Node", "name": "getXY", "url": "Node.html#method_getXY", "type": "method"}, {"access": "", "host": "Node", "name": "getY", "url": "Node.html#method_getY", "type": "method"}, {"access": "", "host": "Node", "name": "hasAttribute", "url": "Node.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "hasChildNodes", "url": "Node.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "Node", "name": "hasClass", "url": "Node.html#method_hasClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasClass", "url": "NodeList.html#method_hasClass", "type": "method"}, {"access": "", "host": "Node", "name": "importMethod", "url": "Node.html#method_importMethod", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "Node", "name": "inDoc", "url": "Node.html#method_inDoc", "type": "method"}, {"access": "", "host": "Node", "name": "inRegion", "url": "Node.html#method_inRegion", "type": "method"}, {"access": "", "host": "Node", "name": "insert", "url": "Node.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "Node", "name": "insertBefore", "url": "Node.html#method_insertBefore", "type": "method"}, {"access": "private", "host": "Node", "name": "_instances", "url": "Node.html#property__instances", "type": "property"}, {"access": "", "host": "Node", "name": "intersect", "url": "Node.html#method_intersect", "type": "method"}, {"access": "", "host": "Transition", "name": "intervalTime", "url": "Transition.html#property_intervalTime", "type": "property"}, {"access": "", "host": "Node", "name": "invoke", "url": "Node.html#method_invoke", "type": "method"}, {"access": "", "host": "NodeList", "name": "isEmpty", "url": "NodeList.html#method_isEmpty", "type": "method"}, {"access": "", "host": "Node", "name": "item", "url": "Node.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "modulus", "url": "NodeList.html#method_modulus", "type": "method"}, {"access": "", "host": "Node", "name": "NAME", "url": "Node.html#property_NAME", "type": "property"}, {"access": "", "host": "Node", "name": "next", "url": "Node.html#method_next", "type": "method"}, {"access": "private", "host": "Node", "name": "_node", "url": "Node.html#property__node", "type": "property"}, {"access": "", "host": "NodeList", "name": "NodeList.getDOMNodes", "url": "NodeList.html#method_NodeList.getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "Node.plug", "url": "NodeList.html#method_Node.plug", "type": "method"}, {"access": "private", "host": "NodeList", "name": "_nodes", "url": "NodeList.html#property__nodes", "type": "property"}, {"access": "", "host": "NodeList", "name": "Node.unplug", "url": "NodeList.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "NodeList", "name": "odd", "url": "NodeList.html#method_odd", "type": "method"}, {"access": "", "host": "NodeList", "name": "on", "url": "NodeList.html#method_on", "type": "method"}, {"access": "", "host": "Node", "name": "one", "url": "Node.html#method_one", "type": "method"}, {"access": "", "host": "Node", "name": "prepend", "url": "Node.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "Node", "name": "previous", "url": "Node.html#method_previous", "type": "method"}, {"access": "", "host": "Node", "name": "purge", "url": "Node.html#method_purge", "type": "method"}, {"access": "", "host": "Node", "name": "query", "url": "Node.html#method_query", "type": "method"}, {"access": "", "host": "Node", "name": "queryAll", "url": "Node.html#method_queryAll", "type": "method"}, {"access": "", "host": "Transition", "name": "RE_DEFAULT_UNIT", "url": "Transition.html#property_RE_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "NodeList", "name": "refresh", "url": "NodeList.html#method_refresh", "type": "method"}, {"access": "", "host": "Node", "name": "region", "url": "Node.html#config_region", "type": "config"}, {"access": "", "host": "Node", "name": "remove", "url": "Node.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "Node", "name": "removeAttribute", "url": "Node.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "removeChild", "url": "Node.html#method_removeChild", "type": "method"}, {"access": "", "host": "Node", "name": "removeClass", "url": "Node.html#method_removeClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeClass", "url": "NodeList.html#method_removeClass", "type": "method"}, {"access": "", "host": "Node", "name": "replace", "url": "Node.html#method_replace", "type": "method"}, {"access": "", "host": "Node", "name": "replaceChild", "url": "Node.html#method_replaceChild", "type": "method"}, {"access": "", "host": "Node", "name": "replaceClass", "url": "Node.html#method_replaceClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceClass", "url": "NodeList.html#method_replaceClass", "type": "method"}, {"access": "", "host": "Node", "name": "reset", "url": "Node.html#method_reset", "type": "method"}, {"access": "", "host": "Transition", "name": "run", "url": "Transition.html#method_run", "type": "method"}, {"access": "private", "host": "Transition", "name": "_runFrame", "url": "Transition.html#method__runFrame", "type": "method"}, {"access": "", "host": "Node", "name": "scrollIntoView", "url": "Node.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "Node", "name": "scrubVal", "url": "Node.html#method_scrubVal", "type": "method"}, {"access": "", "host": "Node", "name": "select", "url": "Node.html#method_select", "type": "method"}, {"access": "", "host": "Node", "name": "set", "url": "Node.html#method_set", "type": "method"}, {"access": "", "host": "NodeList", "name": "set", "url": "NodeList.html#method_set", "type": "method"}, {"access": "", "host": "Node", "name": "setAttribute", "url": "Node.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "setAttrs", "url": "Node.html#method_setAttrs", "type": "method"}, {"access": "", "host": "Node", "name": "setContent", "url": "Node.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "Node", "name": "setData", "url": "Node.html#method_setData", "type": "method"}, {"access": "", "host": "Node", "name": "setStyle", "url": "Node.html#method_setStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyle", "url": "NodeList.html#method_setStyle", "type": "method"}, {"access": "", "host": "Node", "name": "setStyles", "url": "Node.html#method_setStyles", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyles", "url": "NodeList.html#method_setStyles", "type": "method"}, {"access": "", "host": "Node", "name": "setX", "url": "Node.html#method_setX", "type": "method"}, {"access": "", "host": "Node", "name": "setXY", "url": "Node.html#method_setXY", "type": "method"}, {"access": "", "host": "Node", "name": "setY", "url": "Node.html#method_setY", "type": "method"}, {"access": "", "host": "Node", "name": "siblings", "url": "Node.html#method_siblings", "type": "method"}, {"access": "", "host": "Node", "name": "simulate", "url": "Node.html#method_simulate", "type": "method"}, {"access": "", "host": "Node", "name": "size", "url": "Node.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "Node", "name": "submit", "url": "Node.html#method_submit", "type": "method"}, {"access": "", "host": "Node", "name": "swap", "url": "Node.html#method_swap", "type": "method"}, {"access": "", "host": "Node", "name": "swapXY", "url": "Node.html#method_swapXY", "type": "method"}, {"access": "", "host": "Node", "name": "test", "url": "Node.html#method_test", "type": "method"}, {"access": "", "host": "Node", "name": "text", "url": "Node.html#config_text", "type": "config"}, {"access": "", "host": "NodeList", "name": "toFrag", "url": "NodeList.html#method_toFrag", "type": "method"}, {"access": "", "host": "Node", "name": "toggleClass", "url": "Node.html#method_toggleClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "toggleClass", "url": "NodeList.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Node", "name": "toString", "url": "Node.html#method_toString", "type": "method"}, {"access": "", "host": "Node", "name": "viewportRegion", "url": "Node.html#config_viewportRegion", "type": "config"}, {"access": "", "host": "Node", "name": "winHeight", "url": "Node.html#config_winHeight", "type": "config"}, {"access": "", "host": "Node", "name": "winWidth", "url": "Node.html#config_winWidth", "type": "config"}, {"access": "", "host": "Node", "name": "Y.get", "url": "Node.html#method_Y.get", "type": "method"}, {"access": "", "host": "Node", "name": "Y.one", "url": "Node.html#method_Y.one", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginator.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterRender", "url": "Plugin.ScrollViewPaginator.html#method__afterRender", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginator.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "destructor", "url": "Plugin.ScrollViewPaginator.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginator.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "index", "url": "Plugin.ScrollViewPaginator.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "indexChange", "url": "Plugin.ScrollViewPaginator.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "initializer", "url": "Plugin.ScrollViewPaginator.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "next", "url": "Plugin.ScrollViewPaginator.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "prev", "url": "Plugin.ScrollViewPaginator.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginator.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "scrollTo", "url": "Plugin.ScrollViewPaginator.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selector", "url": "Plugin.ScrollViewPaginator.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selectorChange", "url": "Plugin.ScrollViewPaginator.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginator.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "total", "url": "Plugin.ScrollViewPaginator.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "totalChange", "url": "Plugin.ScrollViewPaginator.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginator.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

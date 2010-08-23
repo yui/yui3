@@ -20,10 +20,23 @@
             // bootstrap: false
             // gallerybase: '../../gallerybuild/'
         // }).use('dump', 'gallery-port', 'gallery-treeview', function(Y) {
-        }).use('node', 'base', 'gallery-port', 'gallery-treeview', function(Y) {
+        }).use('node', 'base', 'gallery-port', 'yui2-yahoo', function(Y) {
             console.log('BASE: ' + Y.Base);
+        });                                                                                                                                 
+
+        YUI({
+            filter: 'debug',
+            combine: true,
+            gallery: 'gallery-2010.08.18-17-12',
+            '2in3': '1',
+            'yui2': '2.7.0',
+            onProgress: function(e) {
+                this.log('LOAD: ' + e.name);
+            }
+        }).use('gallery-treeview', 'yui2-dom', function(Y) {
             console.log('tv: ' + Y.apm.TreeView);
         });                                                                                                                                 
+
         // console.log(A.Widget);                                                                                                                                  
     </script>     
 <body>

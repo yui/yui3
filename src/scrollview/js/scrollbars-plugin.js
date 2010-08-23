@@ -29,13 +29,14 @@ var getClassName = Y.ClassNameManager.getClassName,
     TRANSITION_PROPERTY = "transitionProperty",
     TRANSFORM = "transform",
 
-    OPACITY = "opacity",
-
     TRANSLATE_X = "translateX(",
     TRANSLATE_Y = "translateY(",
 
     SCALE_X = "scaleX(",
     SCALE_Y = "scaleY(",
+    
+    SCROLL_X = "scrollX",
+    SCROLL_Y = "scrollY",
 
     PX = "px",
     CLOSE = ")",
@@ -73,7 +74,7 @@ _classNames = ScrollbarsPlugin.CLASS_NAMES;
  *
  * @property ScrollViewScrollbars.NAME
  * @type String
- * @default 'scrollbars-plugin'
+ * @default 'pluginScrollViewScrollbars'
  * @static
  */
 ScrollbarsPlugin.NAME = 'pluginScrollViewScrollbars';
@@ -281,7 +282,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dimOffset,
             dimCache,
             widgetSize,
-            contentSize;     
+            contentSize;
 
         if (horiz) {
             dim = WIDTH;
@@ -291,6 +292,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             contentSize = host._scrollWidth || cb.get(SCROLL_WIDTH);
             translate = TRANSLATE_X;
             scale = SCALE_X;
+            current = (current !== undefined) ? current : host.get(SCROLL_X);
         } else {
             dim = HEIGHT;
             dimOffset = TOP;
@@ -299,6 +301,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             contentSize = host._scrollHeight || cb.get(SCROLL_HEIGHT);
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
+            current = (current !== undefined) ? current : host.get(SCROLL_Y);
         }
 
         scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
@@ -454,10 +457,10 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
     /**
      * Internal hide/show implementation utility method
-     * 
+     *
      * @method _show
-     * @param {Object} show
-     * @param {Object} animated
+     * @param {boolean} show Whether to show or hide the scrollbar 
+     * @param {bolean} animated Whether or not to animate while showing/hide
      * @protected
      */
     _show : function(show, animated) {
@@ -476,31 +479,17 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this._flashTimer.cancel();
         }
 
-        if (duration !== 0) {
+        transition = {
+            duration : duration,
+            opacity : opacity
+        };
 
-            transition = {
-                duration : duration,
-                opacity : opacity
-            };
+        if (verticalNode) {
+            verticalNode.transition(transition);
+        }
 
-            if (verticalNode) {
-                verticalNode.transition(transition);
-            }
-    
-            if (horizontalNode) {
-                horizontalNode.transition(transition);
-            }
-
-        } else {
-
-            if (verticalNode) {
-                verticalNode.setStyle(OPACITY, opacity);
-            }
-    
-            if (horizontalNode) {
-                horizontalNode.setStyle(OPACITY, opacity);
-            }
-
+        if (horizontalNode) {
+            horizontalNode.transition(transition);
         }
     },
 
@@ -522,7 +511,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         if (shouldFlash) {
-            this.show(false);
+            this.show(true);
             this._flashTimer = Y.later(800, this, 'hide', true);
         }
     },

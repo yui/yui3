@@ -6,6 +6,19 @@ using io-upload-iframe.
 * Fixed ticket 2528893 : Configuration HTTP headers should override preset
 HTTP headers, when identical.
 
+*** 3.1.2 ***
+
+* Fix security vulnerability in io-xdr when using the Flash transport.
+Removed Security.allowDomain("*") setting from "io.as" (source) and
+"io.swf" (compiled).  The implementation reverts back to the version
+in 3.0.0.
+
+This reversion prevents third-party sites from being able to load "io.swf"
+from a disparate domain, and make HTTP requests with the SWF's domain
+privileges, and passing the domain's credentials.  Only the domain serving
+"io.swf" will be permitted to load it, and call its fields.
+
+See the "Security Bulletin" at developer.yahoo.com/yui/3/io/ for more details.
 
 *** 3.1.1 ***
 

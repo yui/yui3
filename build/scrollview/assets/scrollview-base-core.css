@@ -12,3 +12,19 @@
 .yui3-scrollview-loading {
     display:none;
 }
+
+/* Cover common use case - li content, without reset */
+.yui3-scrollview-content ul {
+    margin:0;
+    padding:0;
+}
+
+.yui3-scrollview-content li {
+    padding:0;
+    margin:0;
+    list-style:none;
+    display:-moz-inline-stack;
+    display: inline-block;
+    width: 100%;
+    *display:inline;
+}

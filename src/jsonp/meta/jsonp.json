@@ -1,15 +1,13 @@
 {
     "jsonp": {
-        "submodules": {
-            "jsonp-base": {
-                "requires": [
-                    "get",
-                    "oop"
-                ]
-            },
+        "requires": [
+            "get",
+            "oop"
+        ],
+        "plugins": {
             "jsonp-url": {
                 "requires": [
-                    "jsonp-base"
+                    "jsonp"
                 ]
             }
         }

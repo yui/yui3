@@ -1,0 +1,17 @@
+{
+    "transition": {
+        "submodules": {
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
+            },
+            "transition-timer": {
+                "requires": [
+                    "transition-native",
+                    "node-style"
+                ]
+            }
+        }
+    }
+}

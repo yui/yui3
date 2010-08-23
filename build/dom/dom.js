@@ -214,7 +214,9 @@ Y.DOM = {
         // there may be multiple elements with the same ID
         var nodes = [],
             ret = false,
-            id,
+            attributes,
+            id = (element && element.getAttribute) ?
+                    element.getAttribute('id') : null,
             i,
             node,
             query;
@@ -222,10 +224,18 @@ Y.DOM = {
         // avoid collision with form.id === input.name
         if (element && element.attributes) {
             doc = doc || element[OWNER_DOCUMENT];
-            if (element.attributes.id) {
-                id = element.attributes.id.value;
+            attributes = element.attributes;
+            if (attributes.id) {
+                // IE < 8 clones hang onto attribute after ID is updated
+                // form.id may be element with id="id"
+                if (attributes.id !== id && !id.nodeType) {
+                    attributes.id.value = id; // sync with actual ID
+                }
+
+                id = attributes.id.value;
             }
 
+            // need an ID to query the document for this element
             if (!id) {
                 id = Y.guid();
                 element.setAttribute('id', id);
@@ -262,7 +272,7 @@ Y.DOM = {
             if (nodes && nodes.length) {
                 for (i = 0; node = nodes[i++];) { // check for a match
                     if (node.attributes && node.attributes.id
-                            && node.attributes.id.value === id) { // avoid false positive for node.name
+                            && node.attributes.id.value === id) { // avoid false positive for node.name & form.id
                         ret.push(node);
                     }
                 }
@@ -1206,282 +1216,6 @@ Y.Color = {
 
 
 }, '@VERSION@' ,{requires:['dom-base']});
-YUI.add('dom-style-ie', function(Y) {
-
-(function(Y) {
-var HAS_LAYOUT = 'hasLayout',
-    PX = 'px',
-    FILTER = 'filter',
-    FILTERS = 'filters',
-    OPACITY = 'opacity',
-    AUTO = 'auto',
-
-    BORDER_WIDTH = 'borderWidth',
-    BORDER_TOP_WIDTH = 'borderTopWidth',
-    BORDER_RIGHT_WIDTH = 'borderRightWidth',
-    BORDER_BOTTOM_WIDTH = 'borderBottomWidth',
-    BORDER_LEFT_WIDTH = 'borderLeftWidth',
-    WIDTH = 'width',
-    HEIGHT = 'height',
-    TRANSPARENT = 'transparent',
-    VISIBLE = 'visible',
-    GET_COMPUTED_STYLE = 'getComputedStyle',
-    UNDEFINED = undefined,
-    documentElement = Y.config.doc.documentElement,
-
-    // TODO: unit-less lineHeight (e.g. 1.22)
-    re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
-
-    isIE8 = (Y.UA.ie >= 8),
-
-    _getStyleObj = function(node) {
-        return node.currentStyle || node.style;
-    },
-
-    ComputedStyle = {
-        CUSTOM_STYLES: {},
-
-        get: function(el, property) {
-            var value = '',
-                current;
-
-            if (el) {
-                    current = _getStyleObj(el)[property];
-
-                if (property === OPACITY && Y.DOM.CUSTOM_STYLES[OPACITY]) {
-                    value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
-                } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
-                    value = current;
-                } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
-                    value = Y.DOM.IE.COMPUTED[property](el, property);
-                } else if (re_unit.test(current)) { // convert to pixel
-                    value = ComputedStyle.getPixel(el, property) + PX;
-                } else {
-                    value = current;
-                }
-            }
-
-            return value;
-        },
-
-        sizeOffsets: {
-            width: ['Left', 'Right'],
-            height: ['Top', 'Bottom'],
-            top: ['Top'],
-            bottom: ['Bottom']
-        },
-
-        getOffset: function(el, prop) {
-            var current = _getStyleObj(el)[prop],                     // value of "width", "top", etc.
-                capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
-                offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
-                pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
-                sizeOffsets = ComputedStyle.sizeOffsets[prop], 
-                mode = el.ownerDocument.compatMode,
-                value = '';
-
-            // IE pixelWidth incorrect for percent
-            // manually compute by subtracting padding and border from offset size
-            // NOTE: clientWidth/Height (size minus border) is 0 when current === AUTO so offsetHeight is used
-            // reverting to auto from auto causes position stacking issues (old impl)
-            if (current === AUTO || current.indexOf('%') > -1) {
-                value = el['offset' + capped];
-
-                if (mode !== 'BackCompat') {
-                    if (sizeOffsets[0]) {
-                        value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[0]);
-                        value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[0] + 'Width', 1);
-                    }
-
-                    if (sizeOffsets[1]) {
-                        value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[1]);
-                        value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[1] + 'Width', 1);
-                    }
-                }
-
-            } else { // use style.pixelWidth, etc. to convert to pixels
-                // need to map style.width to currentStyle (no currentStyle.pixelWidth)
-                if (!el.style[pixel] && !el.style[prop]) {
-                    el.style[prop] = current;
-                }
-                value = el.style[pixel];
-                
-            }
-            return value + PX;
-        },
-
-        borderMap: {
-            thin: (isIE8) ? '1px' : '2px',
-            medium: (isIE8) ? '3px': '4px', 
-            thick: (isIE8) ? '5px' : '6px'
-        },
-
-        getBorderWidth: function(el, property, omitUnit) {
-            var unit = omitUnit ? '' : PX,
-                current = el.currentStyle[property];
-
-            if (current.indexOf(PX) < 0) { // look up keywords if a border exists
-                if (ComputedStyle.borderMap[current] &&
-                        el.currentStyle.borderStyle !== 'none') {
-                    current = ComputedStyle.borderMap[current];
-                } else { // otherwise no border (default is "medium")
-                    current = 0;
-                }
-            }
-            return (omitUnit) ? parseFloat(current) : current;
-        },
-
-        getPixel: function(node, att) {
-            // use pixelRight to convert to px
-            var val = null,
-                style = _getStyleObj(node),
-                styleRight = style.right,
-                current = style[att];
-
-            node.style.right = current;
-            val = node.style.pixelRight;
-            node.style.right = styleRight; // revert
-
-            return val;
-        },
-
-        getMargin: function(node, att) {
-            var val,
-                style = _getStyleObj(node);
-
-            if (style[att] == AUTO) {
-                val = 0;
-            } else {
-                val = ComputedStyle.getPixel(node, att);
-            }
-            return val + PX;
-        },
-
-        getVisibility: function(node, att) {
-            var current;
-            while ( (current = node.currentStyle) && current[att] == 'inherit') { // NOTE: assignment in test
-                node = node.parentNode;
-            }
-            return (current) ? current[att] : VISIBLE;
-        },
-
-        getColor: function(node, att) {
-            var current = _getStyleObj(node)[att];
-
-            if (!current || current === TRANSPARENT) {
-                Y.DOM.elementByAxis(node, 'parentNode', null, function(parent) {
-                    current = _getStyleObj(parent)[att];
-                    if (current && current !== TRANSPARENT) {
-                        node = parent;
-                        return true;
-                    }
-                });
-            }
-
-            return Y.Color.toRGB(current);
-        },
-
-        getBorderColor: function(node, att) {
-            var current = _getStyleObj(node),
-                val = current[att] || current.color;
-            return Y.Color.toRGB(Y.Color.toHex(val));
-        }
-    },
-
-    //fontSize: getPixelFont,
-    IEComputed = {};
-
-// use alpha filter for IE opacity
-if (Y.UA.ie && Y.UA.ie < 9) {
-    Y.DOM.CUSTOM_STYLES[OPACITY] = {
-        get: function(node) {
-            var val = 100;
-            try { // will error if no DXImageTransform
-                val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
-
-            } catch(e) {
-                try { // make sure its in the document
-                    val = node[FILTERS]('alpha')[OPACITY];
-                } catch(err) {
-                }
-            }
-            return val / 100;
-        },
-
-        set: function(node, val, style) {
-            var current,
-                styleObj;
-
-            if (val === '') { // normalize inline style behavior
-                styleObj = _getStyleObj(node);
-                current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
-                val = current;
-            }
-
-            if (typeof style[FILTER] == 'string') { // in case not appended
-                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
-                
-                if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
-                    style.zoom = 1; // needs layout 
-                }
-            }
-        }
-    };
-}
-
-try {
-    Y.config.doc.createElement('div').style.height = '-1px';
-} catch(e) { // IE throws error on invalid style set; trap common cases
-    Y.DOM.CUSTOM_STYLES.height = {
-        set: function(node, val, style) {
-            var floatVal = parseFloat(val);
-            if (isNaN(floatVal) || floatVal >= 0) {
-                style.height = val;
-            } else {
-            }
-        }
-    };
-
-    Y.DOM.CUSTOM_STYLES.width = {
-        set: function(node, val, style) {
-            var floatVal = parseFloat(val);
-            if (isNaN(floatVal) || floatVal >= 0) {
-                style.width = val;
-            } else {
-            }
-        }
-    };
-}
-
-// TODO: top, right, bottom, left
-IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
-
-IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;
-
-IEComputed[BORDER_WIDTH] = IEComputed[BORDER_TOP_WIDTH] = IEComputed[BORDER_RIGHT_WIDTH] =
-        IEComputed[BORDER_BOTTOM_WIDTH] = IEComputed[BORDER_LEFT_WIDTH] =
-        ComputedStyle.getBorderWidth;
-
-IEComputed.marginTop = IEComputed.marginRight = IEComputed.marginBottom =
-        IEComputed.marginLeft = ComputedStyle.getMargin;
-
-IEComputed.visibility = ComputedStyle.getVisibility;
-IEComputed.borderColor = IEComputed.borderTopColor =
-        IEComputed.borderRightColor = IEComputed.borderBottomColor =
-        IEComputed.borderLeftColor = ComputedStyle.getBorderColor;
-
-if (!Y.config.win[GET_COMPUTED_STYLE]) {
-    Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get; 
-}
-
-Y.namespace('DOM.IE');
-Y.DOM.IE.COMPUTED = IEComputed;
-Y.DOM.IE.ComputedStyle = ComputedStyle;
-
-})(Y);
-
-
-}, '@VERSION@' ,{requires:['dom-style']});
 YUI.add('dom-screen', function(Y) {
 
 (function(Y) {
@@ -1601,7 +1335,7 @@ Y.mix(Y_DOM, {
                     doc;
 
                 if (node) {
-                    if (Y_DOM.inDoc(node)) {
+                    if (Y.DOM.inDoc(node)) {
                         doc = node.ownerDocument;
                         scrollLeft = Y_DOM.docScrollX(node, doc);
                         scrollTop = Y_DOM.docScrollY(node, doc);
@@ -1643,12 +1377,12 @@ Y.mix(Y_DOM, {
                             }
                             
                         }
-                    } else { // default to current offsets
-                        xy = Y_DOM._getOffset(node);
+                    } else {
+                        xy = Y_DOM._getOffset(node);       
                     }
                 }
                 return xy;                   
-            };
+            }
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
                 //Calculate the Top and Left border sizes (assumes pixels)
@@ -1660,7 +1394,7 @@ Y.mix(Y_DOM, {
                     scrollLeft;
 
                 if (node) {
-                    if (Y_DOM.inDoc(node)) {
+                    //if (Y_DOM.inDoc(node)) {
                         xy = [node.offsetLeft, node.offsetTop];
                         doc = node.ownerDocument;
                         parentNode = node;
@@ -1703,9 +1437,9 @@ Y.mix(Y_DOM, {
                             xy[0] += Y_DOM.docScrollX(node, doc);
                             xy[1] += Y_DOM.docScrollY(node, doc);
                         }
-                    } else {
-                        xy = Y_DOM._getOffset(node);
-                    }
+                    //} else {
+                    //    xy = Y_DOM._getOffset(node);
+                    //}
                 }
 
                 return xy;                
@@ -1758,12 +1492,10 @@ Y.mix(Y_DOM, {
             pos = Y_DOM.getStyle(node, POSITION);
 
             delta = Y_DOM._getOffset(node);       
-
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
             }
-
             currentXY = Y_DOM.getXY(node);
 
             if (xy[0] !== null) {
@@ -2761,5 +2493,5 @@ YUI.add('selector', function(Y){}, '@VERSION@' ,{use:['selector-native', 'select
 
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-style-ie', 'dom-screen', 'selector']});
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
 

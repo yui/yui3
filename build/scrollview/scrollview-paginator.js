@@ -12,7 +12,7 @@ var BOUNCE_DECELERATION_CONST = 0.5,
 /**
  * Scrollview plugin that adds support for paging
  *
- * @class ScrollViewPaginatorPlugin
+ * @class ScrollViewPaginator
  * @namespace Plugin
  * @extends Plugin.Base 
  * @constructor
@@ -97,9 +97,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         host = this._host = this.get('host');
         
         this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
-        this.afterHostMethod('_onGestureMoveStart', this._setBoundaryPoints);
         this.beforeHostMethod('_flickFrame', this._flickFrame);
         this.afterHostEvent('scrollEnd', this._scrollEnded);
+        this.afterHostEvent('render', this._afterRender);
         this.after('indexChange', this._afterIndexChange);
 
         if(host.get('bounce') !== 0) {
@@ -147,28 +147,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         this.set('total', pages.size());
     },
-    
-    /**
-     * After host movestart handler, reset min/max scroll values on the host
-     * based on the page elements
-     *
-     * @method _setBoundaryPoints
-     * @param e {Event.Facade} The gesturemovestart event
-     */
-    _setBoundaryPoints: function(e) {
-        var host = this._host,
-            pageIndex = this.get('index');
-
-        // Set min/max points
-        if(host._scrollsHorizontal) {
-            if(Y.Lang.isNumber(this._minPoints[pageIndex-1])) {
-                host._minScrollX = this._minPoints[pageIndex-1];
-            } else {
-                host._minScrollX = this._minPoints[pageIndex];
-            }
-            host._maxScrollX = this._minPoints[pageIndex+1];
-        }
-    },
 
     /**
      * Executed to respond to the flick event, by over-riding the default flickFrame animation. 
@@ -196,6 +174,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
 
         return this._prevent;
+    },
+
+    /**
+     * After host render handler
+     *
+     * @method _afterRender
+     * @protected
+     */
+    _afterRender: function(e) {
+        var host = this._host;
+        host.get("boundingBox").addClass(host.getClassName("paged"));
     },
 
     /**

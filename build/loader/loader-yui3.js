@@ -430,7 +430,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-gestures": {
                 "condition": {
                     "test": function(Y) {
-    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
                     "trigger": "dd-drag"
                 }, 
@@ -825,19 +825,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "jsonp": {
-        "submodules": {
-            "jsonp-base": {
-                "requires": [
-                    "get", 
-                    "oop"
-                ]
-            }, 
+        "plugins": {
             "jsonp-url": {
                 "requires": [
-                    "jsonp-base"
+                    "jsonp"
                 ]
             }
-        }
+        }, 
+        "requires": [
+            "get", 
+            "oop"
+        ]
     }, 
     "loader": {
         "requires": [
@@ -1148,6 +1146,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "transition": {
+        "submodules": {
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
+            "transition-timer": {
+                "requires": [
+                    "transition-native", 
+                    "node-style"
+                ]
+            }
+        }
+    }, 
     "uploader": {
         "requires": [
             "event-custom", 
@@ -1252,7 +1265,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '69d99ecbbe3565b9022971aa02c3e1e9';
+YUI.Env[Y.version].md5 = 'b0a94bb9d8242cd96c14f145f2e94985';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

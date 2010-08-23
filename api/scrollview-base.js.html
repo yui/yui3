@@ -172,8 +172,6 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMoveStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
 
-        <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;transition:end&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionEnded</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="kc">false</span><span class="p">);</span>
-
         <span class="c1">// TODO: Fires way to often when using non-native transitions, due to property change</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;DOMSubtreeModified&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_uiDimensionsChange</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
@@ -218,7 +216,8 @@
             <span class="nx">ySet</span> <span class="o">=</span> <span class="p">(</span><span class="nx">y</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">),</span>
             <span class="nx">xMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="o">?</span> <span class="nx">x</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">yMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="o">?</span> <span class="nx">y</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">transition</span><span class="p">;</span>
+            <span class="nx">transition</span><span class="p">,</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span><span class="p">;</span>
 
         <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
         <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">EASING</span><span class="p">;</span>
@@ -247,7 +246,11 @@
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transition: duration, easing:&quot;</span> <span class="o">+</span> <span class="p">[</span><span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span><span class="p">],</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>
 
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionEnded</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
@@ -284,7 +287,31 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines whether or not the scrollview is currently being dragged</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _isDragging</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines whether or not the scrollview is currently animating a flick</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _flicking</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines whether or not the scrollview needs to snap to a boundary edge</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _snapToEdge</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">},</span>    
     
@@ -335,12 +362,27 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEvt</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndEvt</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines whether or not the scrollview has been scrolled half it&#39;s width/height</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _scrolledHalfway</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            
+            <span class="cm">/**</span>
+<span class="cm">             * Internal state, defines whether or not the scrollview has been scrolled in the forward (distance &gt; 0), or backward (distance &lt; 0) direction</span>
+<span class="cm">             * </span>
+<span class="cm">             * @property _scrolledForward</span>
+<span class="cm">             * @type boolean</span>
+<span class="cm">             * @protected</span>
+<span class="cm">             */</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledForward</span> <span class="o">=</span> <span class="nx">distance</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -387,10 +429,10 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * after listener for changes to the scrollY attr</span>
+<span class="cm">     * After listener for changes to the scrollY attribute</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _afterScrollYChange</span>
-<span class="cm">     * @param e {Event.Facade} The event</span>
+<span class="cm">     * @param e {Event.Facade} The event facade</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterScrollYChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -400,7 +442,7 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Update the UI when the scrollY attr changes</span>
+<span class="cm">     * Update the UI when the scrollY attribute changes</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _uiScrollY</span>
 <span class="cm">     * @param val {Number} The scrollY value</span>
@@ -416,10 +458,10 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * after listener for changes to the scrollX attr</span>
+<span class="cm">     * After listener for changes to the scrollX attribute</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _afterScrollXChange</span>
-<span class="cm">     * @param e {Event.Facade} The event</span>
+<span class="cm">     * @param e {Event.Facade} The event facade</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterScrollXChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -427,9 +469,9 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_uiScrollX</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">easing</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
-<span class="cm">     * Update the UI when the scrollX attr changes</span>
+<span class="cm">     * Update the UI when the scrollX attribute changes</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _uiScrollX</span>
 <span class="cm">     * @param val {Number} The scrollX value</span>
@@ -445,10 +487,10 @@
     <span class="p">},</span>
     
     <span class="cm">/**</span>
-<span class="cm">     * after listener for the height attribute</span>
+<span class="cm">     * After listener for the height attribute</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _afterHeightChange</span>
-<span class="cm">     * @param e {Event.Facade} The event</span>
+<span class="cm">     * @param e {Event.Facade} The event facade</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterHeightChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -456,10 +498,10 @@
     <span class="p">},</span>
     
     <span class="cm">/**</span>
-<span class="cm">     * after listener for the width attribute</span>
+<span class="cm">     * After listener for the width attribute</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _afterHeightChange</span>
-<span class="cm">     * @param e {Event.Facade} The event</span>
+<span class="cm">     * @method _afterWidthChange</span>
+<span class="cm">     * @param e {Event.Facade} The event facade</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterWidthChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -467,7 +509,7 @@
     <span class="p">},</span>
     
     <span class="cm">/**</span>
-<span class="cm">     * This method gets invoked whenever the height or width attrs change,</span>
+<span class="cm">     * This method gets invoked whenever the height or width attributes change,</span>
 <span class="cm">     * allowing us to determine which scrolling axes need to be enabled.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _uiDimensionsChange</span>
@@ -484,7 +526,7 @@
             <span class="nx">scrollHeight</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollHeight&#39;</span><span class="p">),</span>
             <span class="nx">scrollWidth</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollWidth&#39;</span><span class="p">);</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">height</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollHeight</span> <span class="o">&gt;</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">height</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollHeight</span> <span class="o">&gt;</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>            
             <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span> <span class="o">=</span> <span class="nx">scrollHeight</span> <span class="o">-</span> <span class="nx">height</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -499,6 +541,70 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">=</span> <span class="nx">scrollWidth</span><span class="p">;</span>
             <span class="nx">bb</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">CLASS_NAMES</span><span class="p">.</span><span class="nx">horizontal</span><span class="p">);</span>
         <span class="p">}</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines whether or not the scrollview can scroll vertically </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _scrollsVertical</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines the maximum amount that the scrollview can be scrolled along the Y axis </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _maxScrollY</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines the minimum amount that the scrollview can be scrolled along the Y axis </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _minScrollY</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, cached scrollHeight, for performance </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _scrollHeight</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines whether or not the scrollview can scroll horizontally </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _scrollsHorizontal</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines the maximum amount that the scrollview can be scrolled along the X axis </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _maxScrollX</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, defines the minimum amount that the scrollview can be scrolled along the X axis </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _minScrollX</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, cached scrollWidth, for performance </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _scrollWidth</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -511,7 +617,14 @@
 <span class="cm">     */</span>
     <span class="nx">_flick</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">flick</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">flick</span><span class="p">;</span>
-        
+
+        <span class="cm">/**</span>
+<span class="cm">         * Internal state, currently calculated velocity from the flick </span>
+<span class="cm">         * </span>
+<span class="cm">         * @property _currentVelocity</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="nx">flick</span><span class="p">.</span><span class="nx">velocity</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
@@ -614,7 +727,7 @@
 <span class="cm">     *</span>
 <span class="cm">     * @method _killTimer</span>
 <span class="cm">     * @param fireEvent {Boolean} If true, fire the scrollEnd event</span>
-<span class="cm">     * @private</span>
+<span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_killTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fireEvent</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">)</span> <span class="p">{</span>
@@ -628,10 +741,14 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * The scrollX, scrollY setter implementation</span>
+<span class="cm">     * </span>
 <span class="cm">     * @method _setScroll</span>
 <span class="cm">     * @private</span>
 <span class="cm">     * @param {Number} val</span>
 <span class="cm">     * @param {String} dim</span>
+<span class="cm">     * </span>
+<span class="cm">     * @return {Number} The constrained value, if it exceeds min/max range</span>
 <span class="cm">     */</span>
     <span class="nx">_setScroll</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">dim</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">bouncing</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_cachedBounce</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNCE</span><span class="p">),</span>
@@ -654,10 +771,11 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Setter for the scrollX ATTR</span>
+<span class="cm">     * Setter for the scrollX attribute</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _setScrollX</span>
 <span class="cm">     * @param val {Number} The new scrollX value</span>
+<span class="cm">     * @return {Number} The normalized value</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>    
     <span class="nx">_setScrollX</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
@@ -669,6 +787,7 @@
 <span class="cm">     *</span>
 <span class="cm">     * @method _setScrollY</span>
 <span class="cm">     * @param val {Number} The new scrollY value</span>
+<span class="cm">     * @return {Number} The normalized value </span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_setScrollY</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
