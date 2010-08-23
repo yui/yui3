@@ -30,7 +30,6 @@ var isFunction = Y.Lang.isFunction;
  * </ul>
  *
  * @module jsonp
- * @submodule jsonp-base
  * @class JSONPRequest
  * @constructor
  * @param url {String} the url of the JSONP service
@@ -92,13 +91,18 @@ JSONPRequest.prototype = {
      * Issues the JSONP request.
      *
      * @method send
+     * @param args* {any} any additional arguments to pass to the url formatter
+     *              beyond the base url and the proxy function name
      * @chainable
      */
     send : function () {
-        var proxy  = Y.guid(),
+        var args   = Y.Array(arguments, 0, true),
+            proxy  = Y.guid(),
             config = this._config,
-            url    = config.format.call(this,
-                        this.url, 'YUI.Env.JSONP.' + proxy);
+            url;
+            
+        args.unshift(this.url, 'YUI.Env.JSONP.' + proxy);
+        url = config.format.apply(this, args);
 
         if (!config.on.success) {
             Y.log("No success handler defined.  Aborting JSONP request.", "warn", "jsonp");
@@ -137,6 +141,7 @@ JSONPRequest.prototype = {
      * @param url { String } the original url
      * @param proxy {String} the function name that will be used as a proxy to
      *      the configured callback methods.
+     * @param args* {any} additional args passed to send()
      * @return {String} fully qualified JSONP url
      * @protected
      */
@@ -154,11 +159,13 @@ Y.JSONPRequest = JSONPRequest;
  *          placeholder where the callback function name typically goes.
  * @param c {Function|Object} Callback function accepting the JSON payload
  *          as its argument, or a configuration object (see above).
+ * @param args* {any} additional arguments to pass to send()
  * @return {JSONPRequest}
  * @static
  */
 Y.jsonp = function (url,c) {
-    return new Y.JSONPRequest(url,c).send();
+    var req = new Y.JSONPRequest(url,c);
+    return req.send.apply(req, Y.Array(arguments, 2, true));
 };
 
 if (!YUI.Env.JSONP) {
