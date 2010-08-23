@@ -79,7 +79,6 @@
 <span class="cm"> * &lt;/ul&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module jsonp</span>
-<span class="cm"> * @submodule jsonp-base</span>
 <span class="cm"> * @class JSONPRequest</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @param url {String} the url of the JSONP service</span>
@@ -141,13 +140,18 @@
 <span class="cm">     * Issues the JSONP request.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method send</span>
+<span class="cm">     * @param args* {any} any additional arguments to pass to the url formatter</span>
+<span class="cm">     *              beyond the base url and the proxy function name</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">send</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">proxy</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
+        <span class="kd">var</span> <span class="nx">args</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+            <span class="nx">proxy</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
             <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
-            <span class="nx">url</span>    <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="s1">&#39;YUI.Env.JSONP.&#39;</span> <span class="o">+</span> <span class="nx">proxy</span><span class="p">);</span>
+            <span class="nx">url</span><span class="p">;</span>
+            
+        <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="s1">&#39;YUI.Env.JSONP.&#39;</span> <span class="o">+</span> <span class="nx">proxy</span><span class="p">);</span>
+        <span class="nx">url</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;No success handler defined.  Aborting JSONP request.&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonp&quot;</span><span class="p">);</span>
@@ -186,6 +190,7 @@
 <span class="cm">     * @param url { String } the original url</span>
 <span class="cm">     * @param proxy {String} the function name that will be used as a proxy to</span>
 <span class="cm">     *      the configured callback methods.</span>
+<span class="cm">     * @param args* {any} additional args passed to send()</span>
 <span class="cm">     * @return {String} fully qualified JSONP url</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
@@ -203,11 +208,13 @@
 <span class="cm"> *          placeholder where the callback function name typically goes.</span>
 <span class="cm"> * @param c {Function|Object} Callback function accepting the JSON payload</span>
 <span class="cm"> *          as its argument, or a configuration object (see above).</span>
+<span class="cm"> * @param args* {any} additional arguments to pass to send()</span>
 <span class="cm"> * @return {JSONPRequest}</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">jsonp</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="nx">c</span><span class="p">).</span><span class="nx">send</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="nx">c</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">req</span><span class="p">.</span><span class="nx">send</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
 <span class="p">};</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">JSONP</span><span class="p">)</span> <span class="p">{</span>

@@ -41,6 +41,14 @@ CartesianSeries.ATTRS = {
 	order: {
 	    value:NaN
     },
+
+    /**
+     * Order of the ISeries instance
+     */
+    graphOrder: {
+        value:NaN
+    },
+
 	/**
 	 * x coordinates for the series.
 	 */
@@ -525,14 +533,17 @@ Y.extend(CartesianSeries, Y.Renderer, {
     getMarker: function(config)
     {
         var marker,
+            colorIndex = this.get("graphOrder"),
             cache = this._markerCache,
             styles = config.styles,
             index = config.index;
+        config.colorIndex = colorIndex;
         if(cache.length > 0)
         {
             marker = cache.shift();
             marker.set("index", index);
             marker.set("series", this);
+            marker.set("colorIndex", colorIndex);
             if(marker.get("styles") !== styles)
             {
                 marker.set("styles", styles);
@@ -597,6 +608,21 @@ Y.extend(CartesianSeries, Y.Renderer, {
                 right: 0,
                 bottom: 0
             }};
+    },
+
+    /**
+     * @private
+     * @description Colors used if style colors are not specified
+     */
+    _getDefaultColor: function(index)
+    {
+        var colors = [
+                "#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
+				"#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77",
+				"#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd"
+            ];
+        index = index || 0;
+        return colors[index];
     }
 });
 

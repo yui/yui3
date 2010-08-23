@@ -312,7 +312,7 @@ VMLGraphics.prototype = {
         this._shape = "shape";
         this._path += ' l ';
         for (i = 0; i < len; ++i) {
-            this._path += ' ' + args[i][0] + ', ' + args[i][1];
+            this._path += ' ' + Math.round(args[i][0]) + ', ' + Math.round(args[i][1]);
 
             this._trackSize.apply(this, args[i]);
         }
@@ -322,7 +322,7 @@ VMLGraphics.prototype = {
      * Moves the current drawing position to specified x and y coordinates.
      */
     moveTo: function(x, y) {
-        this._path += ' m ' + x + ', ' + y;
+        this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
     },
 
     /**

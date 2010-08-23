@@ -104,14 +104,12 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
         return {
             fill:{
                 type: "solid",
-                color: "#000000",
                 alpha: 1,
                 colors:null,
                 alphas: null,
                 ratios: null
             },
             border:{
-                color: "#000000",
                 weight: 1,
                 alpha: 1
             },
