@@ -3291,6 +3291,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-pluginhost", 
                     "classnamemanager", 
                     "skin-sam-tabview"
                 ]
@@ -3437,7 +3438,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b0a94bb9d8242cd96c14f145f2e94985';
+YUI.Env[Y.version].md5 = '6dd5aa605b518024a26036a144d7eb41';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
