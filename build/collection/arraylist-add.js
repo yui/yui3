@@ -38,21 +38,21 @@ Y.mix( Y.ArrayList.prototype, {
 
     /**
      * Removes first or all occurrences of an item to the ArrayList.  If a
-     * comparitor is not provided, uses itemsAreEqual method to determine
+     * comparator is not provided, uses itemsAreEqual method to determine
      * matches.
      *
      * @method remove
      * @param needle { mixed } Item to find and remove from the list
      * @param all { Boolean } If true, remove all occurrences
-     * @param comparitor { Function } optional a/b function to test equivalence
+     * @param comparator { Function } optional a/b function to test equivalence
      * @return {ArrayList} the instance
      * @chainable
      */
-    remove: function ( needle, all, comparitor ) {
-        comparitor = comparitor || this.itemsAreEqual;
+    remove: function ( needle, all, comparator ) {
+        comparator = comparator || this.itemsAreEqual;
 
         for (var i = this._items.length - 1; i >= 0; --i) {
-            if ( comparitor.call( this, needle, this.item( i ) ) ) {
+            if ( comparator.call( this, needle, this.item( i ) ) ) {
                 this._items.splice( i, 1 );
                 if ( !all ) {
                     break;
@@ -64,7 +64,7 @@ Y.mix( Y.ArrayList.prototype, {
     },
 
     /**
-     * Default comparitor for items stored in this list.  Used by remove().
+     * Default comparator for items stored in this list.  Used by remove().
      *
      * @method itemsAreEqual
      * @param a { mixed } item to test equivalence with
