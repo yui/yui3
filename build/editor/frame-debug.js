@@ -463,7 +463,12 @@ YUI.add('frame', function(Y) {
                         inst.log = Y.log; //Dump the instance logs to the parent instance.
                         Y.log('Creating new internal instance with node only', 'info', 'frame');
                         try {
-                            inst.use('node-base', cb);
+                            if (Y.UA.ie) {
+                                //This is needed because of Loader failing to load conditional modules inside the iframe
+                                inst.use('dom-style-ie', 'node-base', cb);
+                            } else {
+                                inst.use('node-base', cb);
+                            }
                             if (timer) {
                                 clearInterval(timer);
                             }
@@ -711,4 +716,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});

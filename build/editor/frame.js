@@ -444,7 +444,12 @@ YUI.add('frame', function(Y) {
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
                         try {
-                            inst.use('node-base', cb);
+                            if (Y.UA.ie) {
+                                //This is needed because of Loader failing to load conditional modules inside the iframe
+                                inst.use('dom-style-ie', 'node-base', cb);
+                            } else {
+                                inst.use('node-base', cb);
+                            }
                             if (timer) {
                                 clearInterval(timer);
                             }
@@ -688,4 +693,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
