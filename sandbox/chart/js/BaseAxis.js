@@ -110,8 +110,12 @@ BaseAxis.ATTRS = {
 			{
 				//remove listeners
 			}
-            value = Y.merge(value);
-			this._dataProvider = {data:value.data.concat()};
+			if(value.hasOwnProperty("data") && Y.Lang.isArray(value.data))
+            {
+                value = Y.merge(value);
+                value = value.data;
+            }
+            this._dataProvider = {data:value.concat()};
 			this._dataClone = this._dataProvider.data.concat();
 			return value;
 		},
@@ -221,10 +225,33 @@ BaseAxis.ATTRS = {
 	 * Hash of array identifed by a string value.
 	 */
 	keys: {
-		getter: function ()
+		lazyAdd: false,
+
+        getter: function ()
 		{
 			return this._keys;
-		}
+		},
+
+        setter: function(val)
+        {
+            var i, l;
+            if(Y.Lang.isArray(val))
+            {
+                l = val.length;
+                for(i = 0; i < l; ++i)
+                {
+                    this.addKey(val[i]);
+                }
+                return;
+            }
+            for(i in val)
+            {
+                if(val.hasOwnProperty(i))
+                {
+                    this.addKey(val[i]);
+                }
+            }
+        }
 	}
 };
 
@@ -325,12 +352,12 @@ Y.extend(BaseAxis, Y.Base,
 	 */
 	addKey: function (value)
 	{
-		if(this._keys.hasOwnProperty(value)) 
+		if(this.get("keys").hasOwnProperty(value)) 
 		{
 			return;
 		}
 		this._dataClone = this._dataProvider.data.concat();
-		var keys = this._keys,
+		var keys = this.get("keys"),
 			eventKeys = {},
 			event = {axis:this};
 		this._setDataByKey(value);
@@ -366,7 +393,7 @@ Y.extend(BaseAxis, Y.Base,
 			obj = dv[i];
 			arr[i] = obj[key];
 		}
-		this._keys[key] = arr;
+		this.get("keys")[key] = arr;
 		this._data = this._data.concat(arr);
 	},
 		
@@ -379,7 +406,7 @@ Y.extend(BaseAxis, Y.Base,
 	 */
 	removeKey: function(value)
 	{
-		if(!this._keys.hasOwnProperty(value)) 
+		if(!this.get("keys").hasOwnProperty(value)) 
 		{
 			return;
 		}
@@ -388,7 +415,7 @@ Y.extend(BaseAxis, Y.Base,
 			newKeys = {},
 			newData = [],
 			removedKeys = {},
-			keys = this._keys,
+			keys = this.get("keys"),
 			event = {};
 		removedKeys[value] = keys[value].concat();
 		for(key in keys)
@@ -417,7 +444,7 @@ Y.extend(BaseAxis, Y.Base,
 	getKeyValueAt: function(key, index)
 	{
 		var value = NaN,
-			keys = this._keys;
+			keys = this.get("keys");
 		if(keys[key] && keys[key][index]) 
 		{
 			value = keys[key][index];
@@ -430,7 +457,7 @@ Y.extend(BaseAxis, Y.Base,
 	 */
 	getDataByKey: function (value)
 	{
-		var keys = this._keys;
+		var keys = this.get("keys");
 		if(keys[value])
 		{
 			return keys[value];
@@ -481,7 +508,7 @@ Y.extend(BaseAxis, Y.Base,
 	newDataUpdateHandler: function()
 	{
 		var i,
-			keys = this._keys,
+			keys = this.get("keys"),
 			event = {}; 
 		this._data = [];
 		this._dataClone = this._dataProvider.data.concat();
@@ -508,7 +535,7 @@ Y.extend(BaseAxis, Y.Base,
 			event = {},
 			keysAdded = event.keysAdded,
 			keysRemoved = event.keysRemoved,
-			keys = this._keys,
+			keys = this.get("keys"),
             i;
 		for(i in keys)
 		{

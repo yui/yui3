@@ -45,13 +45,13 @@ Y.extend(Graph, Y.Base, {
      */
     _parseSeriesCollection: function(val)
     {
-        var len = val.length,
-            i = 0,
-            series;
         if(!val)
         {
             return;
         }	
+        var len = val.length,
+            i = 0,
+            series;
         if(!this._seriesCollection)
         {
             this._seriesCollection = [];
@@ -93,13 +93,13 @@ Y.extend(Graph, Y.Base, {
         {
             series.set("graph", this);
         }
-        series.graphOrder = graphSeriesLength;
         seriesCollection.push(series);
         if(!seriesTypes.hasOwnProperty(type))
         {
             this.seriesTypes[type] = [];
         }
         typeSeriesCollection = this.seriesTypes[type];
+        series.set("graphOrder", graphSeriesLength);
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
         this.fire("seriesAdded", series);
@@ -121,6 +121,7 @@ Y.extend(Graph, Y.Base, {
         typeSeriesCollection = seriesTypes[type];
         seriesData.graph = this;
         seriesData.order = typeSeriesCollection.length;
+        seriesData.graphOrder = seriesCollection.length;
         seriesType = this._getSeries(seriesData.type);
         series = new seriesType(seriesData);
         typeSeriesCollection.push(series);

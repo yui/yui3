@@ -36,6 +36,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			i,
 			styles = this.get("styles"),
 			lineType = styles.lineType,
+            lc = styles.lineColor || this._getDefaultColor(this.get("graphOrder")),
 			dashLength = styles.dashLength,
 			gapSpace = styles.gapSpace,
 			connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
@@ -44,7 +45,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
         graphic.clear();
-        graphic.lineStyle(styles.weight, styles.color);
+        graphic.lineStyle(styles.weight, lc);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
@@ -146,11 +147,9 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	_getDefaultStyles: function()
     {
         return {
-            color: "#000000",
             alpha: 1,
             weight: 1,
             marker: {
-                fillColor: "#000000",
                 alpha: 1,
                 weight: 1,
                 width: 6,
