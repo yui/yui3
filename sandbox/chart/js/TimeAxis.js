@@ -79,7 +79,7 @@ Y.extend(TimeAxis, Y.BaseAxis, {
 			}
 			arr[i] = val;
 		}
-		this._keys[key] = arr;
+		this.get("keys")[key] = arr;
 		this._data = this._data.concat(arr);
 	},
 

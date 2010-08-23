@@ -199,11 +199,13 @@ Y.extend(PieSeries, Y.Renderer, {
             cache = this._markerCache,
             styles = config.styles,
             index = config.index;
+        config.colorIndex = index;
         if(cache.length > 0)
         {
             marker = cache.shift();
             marker.set("index", index);
             marker.set("series", this);
+            marker.set("colorIndex", index);
             if(marker.get("styles") !== styles)
             {
                 marker.set("styles", styles);
@@ -213,8 +215,7 @@ Y.extend(PieSeries, Y.Renderer, {
         {
             config.series = this;
             marker = new Y.Marker(config);
-            var cb = Y.one(this.get("node"));
-            marker.render(cb);
+            marker.render(Y.one(this.get("node")));
         }
         this._markers.push(marker);
         this._markerNodes.push(Y.one(marker.get("node")));
@@ -305,8 +306,8 @@ Y.extend(PieSeries, Y.Renderer, {
             }
         }
         
-        tfc = fillColors.concat();
-        tfa = fillAlphas.concat();
+        tfc = fillColors ? fillColors.concat() : null;
+        tfa = fillAlphas ? fillAlphas.concat() : null;
         this._createMarkerCache();
         for(i = 0; i < itemCount; i++)
         {
@@ -320,29 +321,29 @@ Y.extend(PieSeries, Y.Renderer, {
                 angle = 360 * (value / totalValue);
             }
             angle = Math.round(angle);
-            if(tfc.length < 1)
+            if(tfc && tfc.length < 1)
             {
                 tfc = fillColors.concat();
             }
-            if(tfa.length < 1)
+            if(tfc && tfa.length < 1)
             {
                 tfa = fillAlphas.concat();
             }
-            if(tbw.length < 1)
+            if(tbw && tbw.length < 1)
             {
                 tbw = borderWeights.concat();
             }
-            if(tbc.length < 1)
+            if(tbw && tbc.length < 1)
             {
                 tbc = borderColors.concat();
             }
-            if(tba.length < 1)
+            if(tba && tba.length < 1)
             {
                 tba = borderAlphas.concat();
             }
-            lw = tbw.shift();
-            lc = tbc.shift();
-            la = tba.shift();
+            lw = tbw ? tbw.shift() : null;
+            lc = tbc ? tbc.shift() : null;
+            la = tba ? tba.shift() : null;
             wedgeStyle = {
                 border: {
                     color:lc,
@@ -350,8 +351,8 @@ Y.extend(PieSeries, Y.Renderer, {
                     alpha:la
                 },
                 fill: {
-                    color:tfc.shift(),
-                    alpha:tfa.shift()
+                    color:tfc ? tfc.shift() : null,
+                    alpha:tfa ? tfa.shift() : null
                 },
                 shape: "wedge",
                 props: {
@@ -404,11 +405,6 @@ Y.extend(PieSeries, Y.Renderer, {
                 right: 0,
                 bottom: 0
             },
-            fillColors:[
-				"#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
-				"#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd",
-				"#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77"
-            ],
             fillAlphas:["1"],
             borderColors:["#000000"],
             borderWeights:["0"],
@@ -419,6 +415,21 @@ Y.extend(PieSeries, Y.Renderer, {
                 fillAlphas:[1]
             }
         };
+    },
+
+    /**
+     * @private
+     * @description Colors used if style colors are not specified
+     */
+    _getDefaultColor: function(index)
+    {
+        var colors = [
+            "#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
+            "#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77",
+            "#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd"
+        ];
+        index = index || 0;
+        return colors[index];
     }
 });
 	

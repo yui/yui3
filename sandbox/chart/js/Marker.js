@@ -26,6 +26,10 @@ Marker.ATTRS = {
         value: null
     },
 
+    colorIndex: {
+        value: null
+    },
+    
     state: {
         value:"off"
     }
@@ -92,10 +96,15 @@ Y.extend(Marker, Y.Renderer, {
             w,
             h,
             x = 0,
-            y = 0;
+            y = 0,
+            fill = this._mergeStyles(styles.fill, {}),
+            border = this._mergeStyles(styles.border, {}),
+            dc = this.get("series")._getDefaultColor(this.get("colorIndex"));
+            fill.color = fill.color || dc;
+            border.color = border.color || dc;
         stateStyles = {
-                fill: this._mergeStyles(styles.fill, {}),
-                border: this._mergeStyles(styles.border, {}),
+                fill:fill,                
+                border:border, 
                 shape: styles.shape,
                 width: styles.width,
                 height: styles.height,
@@ -153,14 +162,12 @@ Y.extend(Marker, Y.Renderer, {
         return {
             fill:{
                 type: "solid",
-                color: "#000000",
                 alpha: 1,
                 colors:null,
                 alphas: null,
                 ratios: null
             },
             border:{
-                color: "#000000",
                 weight: 1,
                 alpha: 1
             },

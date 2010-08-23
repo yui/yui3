@@ -253,6 +253,9 @@ AxisRenderer.ATTRS = {
             left: "0px",
             width: "100px",
             height: "100px",
+            label: {
+                rotation: 0
+            },
             hideOverlappingLabelTicks: false
         };
     }

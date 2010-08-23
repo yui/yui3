@@ -53,7 +53,7 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 			labels[i] = obj[key];
 		}
         this._indices[key] = arr;
-		this._keys[key] = labels.concat();
+		this.get("keys")[key] = labels.concat();
 		this._data = this._data.concat(labels);
 	},
 
