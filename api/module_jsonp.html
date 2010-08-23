@@ -50,9 +50,30 @@
 
                     </h3>
                     <div class="description summary">
-                        Adds support for parsing complex callback identifiers from the jsonp url.
-This includes callback=foo[1]bar.baz["goo"] as well as referencing methods
-in the YUI instance.
+                        <p>Provides a JSONPRequest class for repeated JSONP calls, and a convenience
+method Y.jsonp(url, callback) to instantiate and send a JSONP request.</p>
+<p>Both the constructor as well as the convenience function take two
+parameters: a url string and a callback.</p>
+<p>The url provided must include the placeholder string
+&quot;{callback}&quot; which will be replaced by a dynamically
+generated routing function to pass the data to your callback function.
+An example url might look like
+&quot;http://example.com/service?callback={callback}&quot;.</p>
+<p>The second parameter can be a callback function that accepts the JSON
+payload as its argument, or a configuration object supporting the keys:</p>
+<ul>
+<li>on - map of callback subscribers
+<ul>
+<li>success - function handler for successful transmission</li>
+<li>failure - function handler for failed transmission</li>
+<li>timeout - function handler for transactions that timeout</li>
+</ul>
+</li>
+<li>format  - override function for inserting the proxy name in the url</li>
+<li>timeout - the number of milliseconds to wait before giving up</li>
+<li>context - becomes <code>this</code> in the callbacks</li>
+<li>args    - array of subsequent parameters to pass to the callbacks</li>
+</ul>
                     </div>
 
 
@@ -78,31 +99,6 @@ in the YUI instance.
                                             <dd>Adds support for parsing complex callback identifiers from the jsonp url.
 This includes callback=foo[1]bar.baz["goo"] as well as referencing methods
 in the YUI instance.</dd>
-                                            <dt><code>jsonp-base</code></dt>
-                                            <dd><p>Provides a JSONPRequest class for repeated JSONP calls, and a convenience
-method Y.jsonp(url, callback) to instantiate and send a JSONP request.</p>
-<p>Both the constructor as well as the convenience function take two
-parameters: a url string and a callback.</p>
-<p>The url provided must include the placeholder string
-&quot;{callback}&quot; which will be replaced by a dynamically
-generated routing function to pass the data to your callback function.
-An example url might look like
-&quot;http://example.com/service?callback={callback}&quot;.</p>
-<p>The second parameter can be a callback function that accepts the JSON
-payload as its argument, or a configuration object supporting the keys:</p>
-<ul>
-<li>on - map of callback subscribers
-<ul>
-<li>success - function handler for successful transmission</li>
-<li>failure - function handler for failed transmission</li>
-<li>timeout - function handler for transactions that timeout</li>
-</ul>
-</li>
-<li>format  - override function for inserting the proxy name in the url</li>
-<li>timeout - the number of milliseconds to wait before giving up</li>
-<li>context - becomes <code>this</code> in the callbacks</li>
-<li>args    - array of subsequent parameters to pass to the callbacks</li>
-</ul></dd>
                                         </dl>
                                     </div>
 

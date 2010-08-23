@@ -365,6 +365,11 @@ the url regex.</span>
                                         void
                                             <strong property="yui:name">send</strong>
                                            (
+                                                
+                                                        
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -374,6 +379,16 @@ the url regex.</span>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  any additional arguments to pass to the url formatter
+beyond the base url and the proxy function name</span>
+                                                        </dd>
+                                                </dl>
 
 
                                             <div class="chainable">
@@ -407,6 +422,10 @@ the url regex.</span>
                                                          c
                                                     
                                                 
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -431,6 +450,12 @@ placeholder where the callback function name typically goes.</span>
                                                         </code>
                                                         <span property="yui:description">  Callback function accepting the JSON payload
 as its argument, or a configuration object (see above).</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  additional arguments to pass to send()</span>
                                                         </dd>
                                                 </dl>
 
