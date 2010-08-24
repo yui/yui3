@@ -626,7 +626,6 @@
 
                     <span class="nx">txt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">inHTML</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)));</span>
                     <span class="nx">txt2</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">inHTML</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">offset</span><span class="p">)));</span>
-                    
                     <span class="nx">node</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
                     <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">newNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodeType&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">11</span><span class="p">)</span> <span class="p">{</span>
@@ -646,7 +645,7 @@
                         <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
-                    <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">prepend</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">newNode</span><span class="p">;</span>

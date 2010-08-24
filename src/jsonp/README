@@ -1,0 +1,10 @@
+The JSONP Utility
+    Provides convenient API for requesting data from web services that support
+    JSONP (wrapped JSON).
+
+    There are two modules available:
+        jsonp     - Adds Y.JSONPRequest class and Y.jsonp() method
+        jsonp-url - Adds support for discovering the callback from the url
+
+3.2.0
+    Initial release

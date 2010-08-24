@@ -1103,6 +1103,7 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-pluginhost", 
                     "classnamemanager", 
                     "skin-sam-tabview"
                 ]
@@ -1235,17 +1236,8 @@
     }, 
     "yql": {
         "requires": [
-            "jsonp"
+            "jsonp", 
+            "jsonp-url"
         ]
-    }, 
-    "yui": {
-        "submodules": {
-            "get": {}, 
-            "intl-base": {}, 
-            "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
-        }
     }
 }

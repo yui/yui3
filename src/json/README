@@ -7,6 +7,12 @@ The JSON Utility
         json-parse     - Parse valid JSON strings into JavaScript objects
         json-stringify - Serialize JavaScipt objects into valid JSON strings
 
+3.2.0
+    * Convert parse input to a string before processing
+    * eval now referenced indirectly to allow for better compression
+    * dateToString deprecated.  Use a replacer.  A Date function extension is
+      in the works.
+
 3.1.1
     No changes
 

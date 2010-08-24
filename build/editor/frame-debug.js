@@ -100,11 +100,13 @@ YUI.add('frame', function(Y) {
                 Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
                 var timer = Y.later(1, this, function() {
                     if (res.doc && res.doc.documentElement) {
+                        Y.log('document.documentElement found inside timer', 'info', 'frame');
                         cb(res);
                         timer.cancel();
                     }
                 }, null, true);
             } else {
+                Y.log('document.documentElement found', 'info', 'frame');
                 cb(res);
             }
 
@@ -141,7 +143,7 @@ YUI.add('frame', function(Y) {
             var xy = this._iframe.getXY(),
                 node = this._instance.one('win');
 
-            Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
+            //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
             e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
             e.frameY = xy[1] + e.pageY - node.get('scrollTop');
 
@@ -232,7 +234,7 @@ YUI.add('frame', function(Y) {
             Y.each(inst.Node.DOM_EVENTS, function(v, k) {
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
-                        Y.log('Adding DOM event to frame: ' + k, 'info', 'frame');
+                        //Y.log('Adding DOM event to frame: ' + k, 'info', 'frame');
                         inst.on(k, fn, inst.config.doc);
                     }
                 }
@@ -275,7 +277,7 @@ YUI.add('frame', function(Y) {
                     Y.log('Callback from final internal use call', 'info', 'frame');
                     this.fire('ready');
                 }, this));
-                Y.log('Calling use on internal instance: ', 'info', 'frame');
+                Y.log('Calling use on internal instance: ' + args, 'info', 'frame');
                 inst.use.apply(inst, args);
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
@@ -446,13 +448,12 @@ YUI.add('frame', function(Y) {
             this._create(Y.bind(function(res) {
                 var inst, timer,
                     cb = Y.bind(function(i) {
-                        Y.log('Internal instance loaded with node', 'info', 'frame');
+                        Y.log('Internal instance loaded with node-base', 'info', 'frame');
                         this._instanceLoaded(i);
                     }, this),
                     args = Y.clone(this.get('use')),
                     config = {
                         debug: false,
-                        bootstrap: false,
                         win: res.win,
                         doc: res.doc
                     },
@@ -461,7 +462,8 @@ YUI.add('frame', function(Y) {
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
                         inst.log = Y.log; //Dump the instance logs to the parent instance.
-                        Y.log('Creating new internal instance with node only', 'info', 'frame');
+
+                        Y.log('Creating new internal instance with node-base only', 'info', 'frame');
                         try {
                             inst.use('node-base', cb);
                             if (timer) {
@@ -478,9 +480,11 @@ YUI.add('frame', function(Y) {
 
                 args.push(fn);
 
-                Y.log('Adding new modules to main instance', 'info', 'frame');
+                Y.log('Adding new modules to main instance: ' + args, 'info', 'frame');
                 Y.use.apply(Y, args);
+
             }, this));
+
             return this;
         },
         /**

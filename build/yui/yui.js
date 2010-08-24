@@ -1303,7 +1303,7 @@ proto = {
  * @since 3.1.0
  * @property yui2 
  * @type string
- * @default 2.8.0
+ * @default 2.8.1
  */
 
 /**
@@ -1353,7 +1353,9 @@ proto = {
  * '2v': the version of yui2 to use in the yui 2in3 wrappers (@see the yui2 config)
  * filt: a filter def to apply to the urls (@see the filter config).
  * filts: a list of custom filters to apply per module (@see the filters config).
- * caps: ''
+ * tests: this is a map of conditional module test function id keys with the values
+ * of 1 if the test passes, 0 if not.  This must be the name of the querystring
+ * param in custom templates.
  *</pre>
  *
  * @since 3.2.0
@@ -1373,7 +1375,7 @@ proto = {
  * by the rls config -- each property that has a value will be
  * represented.
  *
- * ex: m={m}&v={v}&env={env}&lang={lang}&filt={filt}
+ * ex: m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
  *
  *
  * @since 3.2.0
@@ -3440,7 +3442,7 @@ add('load', '1', {
 // dd-gestures-test.js
 add('load', '2', {
     "test": function(Y) {
-    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
     "trigger": "dd-drag"
 });

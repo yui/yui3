@@ -436,13 +436,13 @@ YUI.add('frame', function(Y) {
                     args = Y.clone(this.get('use')),
                     config = {
                         debug: false,
-                        bootstrap: false,
                         win: res.win,
                         doc: res.doc
                     },
                     fn = Y.bind(function() {
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
+
                         try {
                             inst.use('node-base', cb);
                             if (timer) {
@@ -458,7 +458,9 @@ YUI.add('frame', function(Y) {
                 args.push(fn);
 
                 Y.use.apply(Y, args);
+
             }, this));
+
             return this;
         },
         /**

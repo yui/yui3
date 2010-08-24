@@ -100,13 +100,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _uiSizeCB: function() {},
 
     /**
-     * TranstionEnd event handler
+     * Content box transtion callback
      *
      * @method _transitionEnded
      * @param {Event.Facade} e The event facade
      * @private
      */
     _transitionEnded: function(e) {
+        this._transCB = false;
         this.fire(EV_SCROLL_END);
     },
 
@@ -201,7 +202,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 callback = this._transEndCallback = Y.bind(this._transitionEnded, this);
             }
 
-            cb.transition(transition, callback);
+            if (!this._transCB) {
+                this._transCB = true;
+                cb.transition(transition, callback);
+            }
 
         } else {
             if (NATIVE_TRANSITIONS) {

@@ -3,6 +3,10 @@
         "submodules": {
             "get": {}, 
             "yui-base": {}, 
+            "rls": {
+                requires: ['rls']
+            }, 
+            "features": {}, 
             "yui-later": {}, 
             "yui-log": {}, 
             "yui-throttle": {},

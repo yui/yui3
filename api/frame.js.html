@@ -147,11 +147,13 @@
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;document.documentElement was not found, running timer&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                 <span class="kd">var</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;document.documentElement found inside timer&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                         <span class="nx">cb</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
                         <span class="nx">timer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
                     <span class="p">}</span>
                 <span class="p">},</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;document.documentElement found&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                 <span class="nx">cb</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
             <span class="p">}</span>
 
@@ -188,7 +190,7 @@
             <span class="kd">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">getXY</span><span class="p">(),</span>
                 <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">);</span>
 
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;onDOMEvent: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+            <span class="c1">//Y.log(&#39;onDOMEvent: &#39; + e.type, &#39;info&#39;, &#39;frame&#39;);</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameX</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollLeft&#39;</span><span class="p">);</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameY</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="p">);</span>
 
@@ -279,7 +281,7 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">v</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;focus&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;blur&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;paste&#39;</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding DOM event to frame: &#39;</span> <span class="o">+</span> <span class="nx">k</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                        <span class="c1">//Y.log(&#39;Adding DOM event to frame: &#39; + k, &#39;info&#39;, &#39;frame&#39;);</span>
                         <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
@@ -322,7 +324,7 @@
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Callback from final internal use call&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">);</span>
                 <span class="p">},</span> <span class="k">this</span><span class="p">));</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Calling use on internal instance: &#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Calling use on internal instance: &#39;</span> <span class="o">+</span> <span class="nx">args</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                 <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">inst</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
                 <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;doc&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;documentElement&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-js-enabled&#39;</span><span class="p">);</span>
@@ -493,13 +495,12 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_create</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">inst</span><span class="p">,</span> <span class="nx">timer</span><span class="p">,</span>
                     <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Internal instance loaded with node&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Internal instance loaded with node-base&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">_instanceLoaded</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
                     <span class="p">},</span> <span class="k">this</span><span class="p">),</span>
                     <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;use&#39;</span><span class="p">)),</span>
                     <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
                         <span class="nx">debug</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-                        <span class="nx">bootstrap</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nx">win</span><span class="o">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
                         <span class="nx">doc</span><span class="o">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">doc</span>
                     <span class="p">},</span>
@@ -508,7 +509,8 @@
                         <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveWinDoc</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
                         <span class="nx">inst</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
                         <span class="nx">inst</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span> <span class="c1">//Dump the instance logs to the parent instance.</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Creating new internal instance with node only&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Creating new internal instance with node-base only&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                         <span class="k">try</span> <span class="p">{</span>
                             <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;node-base&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
@@ -525,9 +527,11 @@
 
                 <span class="nx">args</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
 
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding new modules to main instance&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding new modules to main instance: &#39;</span> <span class="o">+</span> <span class="nx">args</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+
             <span class="p">},</span> <span class="k">this</span><span class="p">));</span>
+
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
