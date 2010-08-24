@@ -7,14 +7,6 @@
 /*Supplemental: CSS for the YUI distribution*/
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
-table, tr, td
-{
-    border: 0px;
-    margin: 0px;
-    padding: 0px;
-    border-spacing: 0px;
-    vertical-align:top;
-}
     .yui3-tooltip {
         position:absolute;
     }
@@ -56,13 +48,14 @@ table, tr, td
     <script type="text/javascript" src="../../graphics/build/dom/dom.js"></script>
     <script type="text/javascript" src="../../graphics/build/node/node.js"></script>
     <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip-min.js"></script>
     <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 </head>		
 <body class="yui3-skin-sam">
 <div id="mychart"></chart>
 			
 <script type="text/javascript">            
-    YUI({filter:"debug"}).use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', function (Y) 
+    YUI().use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', function (Y) 
     {
 					var expensegraphstyles = {
 						color:"#5577AF",
@@ -105,12 +98,13 @@ table, tr, td
                         height:10
 					};
         var myDataValues = [ 
-							{date:"5/1/2010", taxes:2000, expenses:3700, revenue:2200}, 
-                            {date:"5/2/2010", taxes:50, expenses:9100, revenue:100}, 
-							{date:"5/3/2010", taxes:400, expenses:1100, revenue:1500}, 
-                            {date:"5/4/2010", taxes:200, expenses:1900, revenue:2800}, 
-                            {date:"5/5/2010", taxes:5000, expenses:5000, revenue:2650}
-						];
+                {date:"5/1/2010", taxes:2000, expenses:3700, revenue:2200}, 
+                {date:"5/2/2010", taxes:50, expenses:9100, revenue:100}, 
+                {date:"5/3/2010", taxes:400, expenses:1100, revenue:1500}, 
+                {date:"5/4/2010", taxes:200, expenses:1900, revenue:2800}, 
+                {date:"5/5/2010", taxes:5000, expenses:5000, revenue:2650}
+            ];
+
         var mychart = new Y.CartesianChart({
             dataValues:myDataValues,
             axes:{

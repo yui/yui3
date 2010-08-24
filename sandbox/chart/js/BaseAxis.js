@@ -356,7 +356,7 @@ Y.extend(BaseAxis, Y.Base,
 		{
 			return;
 		}
-		this._dataClone = this._dataProvider.data.concat();
+		this._dataClone = this.get("dataProvider").data.concat();
 		var keys = this.get("keys"),
 			eventKeys = {},
 			event = {axis:this};
@@ -511,7 +511,7 @@ Y.extend(BaseAxis, Y.Base,
 			keys = this.get("keys"),
 			event = {}; 
 		this._data = [];
-		this._dataClone = this._dataProvider.data.concat();
+		this._dataClone = this.get("dataProvider").data.concat();
 		for(i in keys)
 		{
 			if(keys.hasOwnProperty(i))

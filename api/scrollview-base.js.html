@@ -149,13 +149,14 @@
     <span class="nx">_uiSizeCB</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * TranstionEnd event handler</span>
+<span class="cm">     * Content box transtion callback</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _transitionEnded</span>
 <span class="cm">     * @param {Event.Facade} e The event facade</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_transitionEnded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_transCB</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
     <span class="p">},</span>
 
@@ -250,7 +251,10 @@
                 <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionEnded</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
 
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_transCB</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_transCB</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+            <span class="p">}</span>
 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
