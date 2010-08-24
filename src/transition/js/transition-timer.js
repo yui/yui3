@@ -11,8 +11,7 @@
 */
 
 
-var PROPERTY_END = 'transition:propertyEnd',
-    Transition = Y.Transition;
+var Transition = Y.Transition;
 
 Y.mix(Transition.prototype, {
     _start: function() {
@@ -51,7 +50,6 @@ Y.mix(Transition.prototype, {
             customAttr = Transition.behaviors,
             done = false,
             allDone = false,
-            callback = anim._callback,
             name,
             attribute,
             setter,
@@ -107,7 +105,7 @@ Y.mix(Transition.prototype, {
     _initAttrs: function() {
         var anim = this,
             customAttr = Transition.behaviors,
-            uid = Y.stamp(this._node),
+            uid = Y.stamp(anim._node),
             attrs = Transition._nodeAttrs[uid],
             attribute,
             duration,
@@ -115,6 +113,8 @@ Y.mix(Transition.prototype, {
             easing,
             val,
             name,
+            mTo,
+            mFrom,
             unit, begin, end;
 
         for (name in attrs) {
@@ -130,8 +130,8 @@ Y.mix(Transition.prototype, {
                     begin = (name in customAttr && 'get' in customAttr[name])  ?
                             customAttr[name].get(anim, name) : Transition.DEFAULT_GETTER(anim, name);
 
-                    var mFrom = Transition.RE_UNITS.exec(begin);
-                    var mTo = Transition.RE_UNITS.exec(val);
+                    mFrom = Transition.RE_UNITS.exec(begin);
+                    mTo = Transition.RE_UNITS.exec(val);
 
                     begin = mFrom ? mFrom[1] : begin;
                     end = mTo ? mTo[1] : val;

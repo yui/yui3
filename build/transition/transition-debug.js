@@ -23,13 +23,15 @@ YUI.add('transition-native', function(Y) {
  */
 
 var TRANSITION = '-webkit-transition',
-    TRANSITION_CAMEL = 'WebkitTransition',
+    TRANSITION_PROPERTY_CAMEL = 'WebkitTransition',
     TRANSITION_PROPERTY = '-webkit-transition-property',
     TRANSITION_DURATION = '-webkit-transition-duration',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
     TRANSITION_DELAY = '-webkit-transition-delay',
     TRANSITION_END = 'webkitTransitionEnd',
     TRANSFORM_CAMEL = 'WebkitTransform',
+
+    EMPTY_OBJ = {},
 
 Transition = function() {
     this.init.apply(this, arguments);
@@ -81,8 +83,6 @@ Transition.DEFAULT_DELAY = 0;
 
 Transition._nodeAttrs = {};
 
-Transition._count = 0;
-
 Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
@@ -109,21 +109,67 @@ Transition.prototype = {
         return anim;
     },
 
-    initAttrs: function(config) {
+    addProperty: function(prop, config) {
         var anim = this,
-            node = anim._node,
+            node = this._node,
             uid = Y.stamp(node),
             attrs = Transition._nodeAttrs[uid],
-            duration,
-            delay,
-            easing,
-            val,
-            transition,
-            attr;
+            attr,
+            val;
 
         if (!attrs) {
             attrs = Transition._nodeAttrs[uid] = {};
         }
+
+        attr = attrs[prop];
+
+        // might just be a value
+        if (config && config.value !== undefined) {
+            val = config.value;
+        } else if (config !== undefined) {
+            val = config; 
+            config = EMPTY_OBJ;
+        }
+
+        if (typeof val === 'function') {
+            val = val.call(node, node);
+        }
+
+        // take control if another transition owns this property
+        if (attr && attr.transition && attr.transition !== anim) {
+            attr.transition._count--; // remapping attr to this transition
+        }
+
+        anim._count++; // properties per transition
+
+        attrs[prop] = {
+            value: val,
+            duration: ((typeof config.duration !== 'undefined') ? config.duration :
+                    anim._duration) || 0.0001, // make 0 async and fire events
+
+            delay: (typeof config.delay !== 'undefined') ? config.delay :
+                    anim._delay,
+
+            easing: config.easing || anim._easing,
+
+            transition: anim
+        };
+    },
+
+    removeProperty: function(prop) {
+        var anim = this,
+            attrs = Transition._nodeAttrs[Y.stamp(anim._node)];
+
+        if (attrs && attrs[prop]) {
+            delete attrs[prop];
+            anim._count--;
+        }
+
+    },
+
+    initAttrs: function(config) {
+        var anim = this,
+            attr;
 
         if (config.transform && !config[TRANSFORM_CAMEL]) {
             config[TRANSFORM_CAMEL] = config.transform;
@@ -132,42 +178,7 @@ Transition.prototype = {
 
         for (attr in config) {
             if (config.hasOwnProperty(attr) && !Transition._reKeywords.test(attr)) {
-                val = transition = config[attr];
-
-                if (attrs[attr] && attrs[attr].transition) {
-                    attrs[attr].transition._count--; // remapping attr to this transition
-                } else {
-                    Transition._count += 1;
-                }
-
-                if (typeof transition.value !== 'undefined') {
-                    val = transition.value; 
-                }
-
-                if (typeof val === 'function') {
-                    val = val.call(node, node);
-                }
-
-                duration = (typeof transition.duration !== 'undefined') ? transition.duration :
-                        anim._duration;
-
-                delay = (typeof transition.delay !== 'undefined') ? transition.delay :
-                        anim._delay;
-
-                if (!duration) { // make async and fire events
-                    duration = 0.00001;
-                }
-
-                easing = transition.easing || anim._easing;
-                anim._count++; // track number of bound properties
-
-                attrs[attr] = {
-                    value: val,
-                    duration: duration,
-                    delay: delay,
-                    easing: easing,
-                    transition: anim
-                };
+                this.addProperty(attr, config[attr]);
             }
 
         }
@@ -247,9 +258,7 @@ Transition.prototype = {
                     transitionText += hyphy + ',';
                     cssText += hyphy + ': ' + attr.value + '; ';
                 } else {
-                    delete attrs[name];
-                    anim._count--;
-                    Transition._count--;
+                    this.removeProperty(name);
                 }
             }
         }
@@ -291,10 +300,14 @@ Transition.prototype = {
         node.fire('transition:end', data);
     },
 
-    _endNative: function() {
-        var node = this._node;
-        if (Transition._count <= 0) {
-            node._node.style[TRANSITION_CAMEL] = '';
+    _endNative: function(name) {
+        var node = this._node,
+            value = node.getComputedStyle(TRANSITION_PROPERTY);
+
+        if (typeof value === 'string') {
+            value = value.replace(new RegExp('(?:^|,\\s)' + name + ',?'), ',');
+            value = value.replace(/^,|,$/, '');
+            node.setStyle(TRANSITION_PROPERTY_CAMEL, value);
         }
     },
 
@@ -306,25 +319,22 @@ Transition.prototype = {
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
             attr = attrs[name],
-            anim = (attr) ? attr.transition :null,
-            callback;
+            anim = (attr) ? attr.transition : null;
 
         if (anim) {
-            callback = anim._callback;
-            anim._count--;
-            delete attrs[name];
-            Transition._count--;
+            anim.removeProperty(name);
+            anim._endNative(name);
+
             node.fire('transition:propertyEnd', {
                 type: 'propertyEnd',
                 propertyName: name,
                 elapsedTime: elapsed
             });
 
-            if (anim._count <= 0)  {
-                
-                anim._endNative();
+            if (anim._count <= 0)  { // after propertEnd fires
                 anim._end(elapsed);
             }
+
         }
     },
 
@@ -372,6 +382,7 @@ Y.Node.prototype.transition = function(config, callback) {
 
 
 
+
 }, '@VERSION@' ,{requires:['node-base']});
 YUI.add('transition-timer', function(Y) {
 
@@ -388,8 +399,7 @@ YUI.add('transition-timer', function(Y) {
 */
 
 
-var PROPERTY_END = 'transition:propertyEnd',
-    Transition = Y.Transition;
+var Transition = Y.Transition;
 
 Y.mix(Transition.prototype, {
     _start: function() {
@@ -428,7 +438,6 @@ Y.mix(Transition.prototype, {
             customAttr = Transition.behaviors,
             done = false,
             allDone = false,
-            callback = anim._callback,
             name,
             attribute,
             setter,
@@ -484,7 +493,7 @@ Y.mix(Transition.prototype, {
     _initAttrs: function() {
         var anim = this,
             customAttr = Transition.behaviors,
-            uid = Y.stamp(this._node),
+            uid = Y.stamp(anim._node),
             attrs = Transition._nodeAttrs[uid],
             attribute,
             duration,
@@ -492,6 +501,8 @@ Y.mix(Transition.prototype, {
             easing,
             val,
             name,
+            mTo,
+            mFrom,
             unit, begin, end;
 
         for (name in attrs) {
@@ -507,8 +518,8 @@ Y.mix(Transition.prototype, {
                     begin = (name in customAttr && 'get' in customAttr[name])  ?
                             customAttr[name].get(anim, name) : Transition.DEFAULT_GETTER(anim, name);
 
-                    var mFrom = Transition.RE_UNITS.exec(begin);
-                    var mTo = Transition.RE_UNITS.exec(val);
+                    mFrom = Transition.RE_UNITS.exec(begin);
+                    mTo = Transition.RE_UNITS.exec(val);
 
                     begin = mFrom ? mFrom[1] : begin;
                     end = mTo ? mTo[1] : val;
