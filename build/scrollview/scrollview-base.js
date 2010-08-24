@@ -33,6 +33,9 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
+    
+    EMPTY = "",
+    ZERO = "0s",
 
     NATIVE_TRANSITIONS = Y.Transition.useNative;
 
@@ -185,8 +188,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (NATIVE_TRANSITIONS) {
             // ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.
-            cb.setStyle("WebkitTransitionDuration", "0s");
-            cb.setStyle("WebkitTransitionProperty", "");
+            cb.setStyle(ScrollView._TRANSITION_DURATION, ZERO);
+            cb.setStyle(ScrollView._TRANSITION_PROPERTY, EMPTY);
 
             // Causes bounce back from 0,0 instead of current translation for bottom/right edge animation
             // cb.setStyle("WebkitTransform", cb.getComputedStyle("WebkitTransform"));
@@ -901,8 +904,23 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @static
      * @default 'ease-out'
      */
-    SNAP_EASING : 'ease-out'
+    SNAP_EASING : 'ease-out',
 
+    /**
+     * Style property name to use to set transition duration. Currently Webkit specific (WebkitTransitionDuration)
+     * 
+     * @property ScrollView._TRANSITION_DURATION
+     * @private
+     */
+    _TRANSITION_DURATION : "WebkitTransitionDuration",
+
+    /**
+     * Style property name to use to set transition property. Currently, Webkit specific (WebkitTransitionProperty)
+     *
+     * @property ScrollView._TRANSITION_PROPERTY
+     * @private
+     */
+    _TRANSITION_PROPERTY : "WebkitTransitionProperty"
 });
 
 
