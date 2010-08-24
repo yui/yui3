@@ -149,14 +149,13 @@
     <span class="nx">_uiSizeCB</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Content box transtion callback</span>
+<span class="cm">     * Content box transition callback</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _transitionEnded</span>
 <span class="cm">     * @param {Event.Facade} e The event facade</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_transitionEnded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_transCB</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
     <span class="p">},</span>
 
@@ -231,15 +230,24 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
         <span class="p">}</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s2">&quot;WebkitTransitionDuration&quot;</span><span class="p">,</span> <span class="s2">&quot;0s&quot;</span><span class="p">);</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s2">&quot;WebkitTransitionProperty&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+
+            <span class="c1">// Causes bounce back from 0,0 instead of current translation for bottom/right edge animation</span>
+            <span class="c1">// cb.setStyle(&quot;WebkitTransform&quot;, cb.getComputedStyle(&quot;WebkitTransform&quot;));</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            
+
             <span class="nx">transition</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">easing</span> <span class="o">:</span> <span class="nx">easing</span><span class="p">,</span>
                 <span class="nx">duration</span> <span class="o">:</span> <span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span>
             <span class="p">};</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span> <span class="nx">xMove</span> <span class="o">+</span><span class="s1">&#39;px,&#39;</span><span class="o">+</span> <span class="nx">yMove</span> <span class="o">+</span><span class="s1">&#39;px)&#39;</span><span class="p">;</span>
+                <span class="nx">transition</span><span class="p">.</span><span class="nx">transform</span> <span class="o">=</span> <span class="s1">&#39;translate3D(&#39;</span><span class="o">+</span> <span class="nx">xMove</span> <span class="o">+</span><span class="s1">&#39;px,&#39;</span><span class="o">+</span> <span class="nx">yMove</span> <span class="o">+</span><span class="s1">&#39;px, 0px)&#39;</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">xMove</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">;</span> <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="p">{</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">yMove</span> <span class="o">+</span> <span class="nx">PX</span><span class="p">;</span> <span class="p">}</span>
@@ -251,10 +259,7 @@
                 <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionEnded</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_transCB</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_transCB</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
