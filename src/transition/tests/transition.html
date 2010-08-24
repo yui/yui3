@@ -139,6 +139,25 @@ YUI({
                 test.wait(4000);
             },
 
+            'native transform should map to vendor prefix': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.transition({
+                    easing: 'ease',
+                    duration: 1,
+                    height: 0
+                    //transform: 'rotate(180deg)'
+                }, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                     //   Y.Assert.areEqual('matrix(-1, 1.22465e-16, -1.22465e-16, -1, 0, 0)', node.getComputedStyle('WebkitTransform'));
+                    });
+                });
+
+                test.wait(4000);
+            },
+
             'setStyle should not transition': function() {
                 var node = Y.one('#demo'),
                     test = this;
@@ -146,6 +165,7 @@ YUI({
                 node.setStyle('height', '100px');
                 Y.Assert.areEqual('100px', node.getComputedStyle('height'));
             }
+
         }));           
     
 
@@ -317,7 +337,15 @@ YUI({
                 });
 
                 test.wait(4000);
-            }
+            }/*,
+
+            'setStyle should not transition': function() {
+                var node = Y.one('#demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            }*/
         }));
         //return it
         return suite;
