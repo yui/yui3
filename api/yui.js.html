@@ -1373,7 +1373,7 @@
 <span class="cm"> * @since 3.1.0</span>
 <span class="cm"> * @property yui2 </span>
 <span class="cm"> * @type string</span>
-<span class="cm"> * @default 2.8.0</span>
+<span class="cm"> * @default 2.8.1</span>
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
@@ -1423,7 +1423,9 @@
 <span class="cm"> * &#39;2v&#39;: the version of yui2 to use in the yui 2in3 wrappers (@see the yui2 config)</span>
 <span class="cm"> * filt: a filter def to apply to the urls (@see the filter config).</span>
 <span class="cm"> * filts: a list of custom filters to apply per module (@see the filters config).</span>
-<span class="cm"> * caps: &#39;&#39;</span>
+<span class="cm"> * tests: this is a map of conditional module test function id keys with the values</span>
+<span class="cm"> * of 1 if the test passes, 0 if not.  This must be the name of the querystring</span>
+<span class="cm"> * param in custom templates.</span>
 <span class="cm"> *&lt;/pre&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @since 3.2.0</span>
@@ -1443,7 +1445,7 @@
 <span class="cm"> * by the rls config -- each property that has a value will be</span>
 <span class="cm"> * represented.</span>
 <span class="cm"> *</span>
-<span class="cm"> * ex: m={m}&amp;v={v}&amp;env={env}&amp;lang={lang}&amp;filt={filt}</span>
+<span class="cm"> * ex: m={m}&amp;v={v}&amp;env={env}&amp;lang={lang}&amp;filt={filt}&amp;tests={tests}</span>
 <span class="cm"> *</span>
 <span class="cm"> *</span>
 <span class="cm"> * @since 3.2.0</span>
