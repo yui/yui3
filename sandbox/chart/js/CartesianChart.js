@@ -13,7 +13,15 @@ CartesianChart.ATTRS = {
      * Data used to generate the chart.
      */
     dataValues: {
-        value: null
+        getter: function()
+        {
+            return this._dataValues;
+        },
+
+        setter: function(val)
+        {
+            this._setDataValues(val);
+        }
     },
 
     /**
@@ -35,7 +43,15 @@ CartesianChart.ATTRS = {
      * Collection of series to appear on the chart.
      */
     seriesCollection: {
-        value: null
+        getter: function()
+        {
+            return this._getSeriesCollection();
+        },
+
+        setter: function(val)
+        {
+            return this._setSeriesCollection(val);
+        }
     },
 
     /**
@@ -78,10 +94,148 @@ CartesianChart.ATTRS = {
      */
     graph: {
         value: null
+    },
+
+    /**
+     * Type of chart when there is no series collection specified.
+     */
+    type: {
+        value:"line"
+    },
+
+    /**
+     * Direction of chart when there is no series collection specified.
+     */
+    direction: {
+        value: "horizontal"
+    },
+
+    /**
+     * Default key for the x-axis when no axes are specified.
+     */
+    xKey: {
+        getter: function()
+        {
+            if(this._xKey)
+            {
+                return this._xKey;
+            }
+            if(this.get("direction") == "vertical")
+            {
+                return "values";
+            }
+            return "category";
+        },
+
+        setter: function(val)
+        {
+            this._xKey = val;
+        }
+    },
+    
+    /**
+     * Default key for the y-axis when no axes are specified.
+     */
+    yKey: {
+        getter: function()
+        {
+            if(this._yKey)
+            {
+                return this._yKey;
+            }
+            if(this.get("direction") == "vertical")
+            {
+                return "category";
+            }
+            return "values";
+        },
+
+        setter: function(val)
+        {
+            this._yKey = val;
+        }
+    },
+
+    /**
+     * Indicates whether or not to show a tooltip.
+     */
+    showTooltip: {
+        value:true
     }
 };
 
 Y.extend(CartesianChart, Y.Widget, {
+    /**
+     * @private
+     */
+    _xKey: null,
+
+    /**
+     * @private
+     */
+    _yKey: null,
+
+    /**
+     * @private
+     */
+    _dataValues: null,
+
+    /**
+     * @private
+     */
+    _setDataValues: function(val)
+    {
+        if(Y.Lang.isArray(val[0]))
+        {
+            var dp = [], cats = val[0], vals = val[1], i = 0, l = cats.length;
+            for(; i < l; ++i)
+            {
+                dp[i] = {category:cats[i], values:vals[i]};
+            }
+            this._dataValues = dp;
+            return;
+        }
+        this._dataValues = val;
+    },
+
+    /**
+     * @private 
+     */
+    _seriesCollection: null,
+
+    /**
+     * @private
+     */
+    _setSeriesCollection: function(val)
+    {
+        this._seriesCollection = val;
+    },
+
+    /**
+     * @private
+     */
+    _getSeriesCollection: function()
+    {
+        if(this._seriesCollection)
+        {
+            return this._seriesCollection;
+        }
+        var axes = this.get("axes"),
+            sc, xKey = this.get("xKey"), yKey = this.get("yKey");
+        if(axes)
+        {
+            sc = [{
+                type:this.get("type"), 
+                xAxis:"category", 
+                yAxis:"values", 
+                xKey:xKey, 
+                yKey:yKey 
+            }];
+        }
+        this._seriesCollection = sc;
+        return sc;
+    },
+
     /**
      * @private
      */
@@ -160,9 +314,7 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     bindUI: function()
     {
-        this.after("dataValuesChange", Y.bind(this._dataUpdateHandler, this));
-        this.after("axesChange", Y.bind(this._axesUpdateHandler, this));
-        this.after("seriesCollectionChange", Y.bind(this._seriesUpdateHandler, this));
+        this.after("showTooltipChange", Y.bind(this._showTooltipHandler, this));
     },
    
     /**
@@ -172,6 +324,10 @@ Y.extend(CartesianChart, Y.Widget, {
     {
         this._addAxes();
         this._addSeries();
+        if(!this.tooltip && this.get("showTooltip"))
+        {
+            this._addTooltip();
+        }
     },
     
     /**
@@ -186,16 +342,18 @@ Y.extend(CartesianChart, Y.Widget, {
                 right:this.get("rightAxesContainer"),
                 top:this.get("topAxesContainer")
             }, i, axis, p;
-        if(axes)
+        if(!axes)
         {
-            for(i in axes)
+            this.set("axes", this._getDefaultAxes());
+            axes = this.get("axes");
+        }
+        for(i in axes)
+        {
+            if(axes.hasOwnProperty(i))
             {
-                if(axes.hasOwnProperty(i))
-                {
-                    axis = axes[i];
-                    p = axis.get("position");
-                    axis.render(containers[p]);
-                }
+                axis = axes[i];
+                p = axis.get("position");
+                axis.render(containers[p]);
             }
         }
     },
@@ -210,6 +368,9 @@ Y.extend(CartesianChart, Y.Widget, {
         this.set("graph", new Y.Graph({parent:this.get("graphContainer"), seriesCollection:seriesCollection}));
     },
 
+    /**
+     * @private
+     */
     _parseSeriesAxes: function(c)
     {
         var i = 0, len = c.length, s, ar;
@@ -245,7 +406,23 @@ Y.extend(CartesianChart, Y.Widget, {
             ba = document.createElement("div"),
             ra = document.createElement("div"),
             ta = document.createElement("div"),
-            gc = document.createElement("div");
+            gc = document.createElement("div"),
+            tblstyles = "vertical-align:top;border:0px;margin:0px;padding:0px;border-spacing:0px";
+        tbl.setAttribute("style", tblstyles);
+        tr.setAttribute("style", tblstyles);
+        mr.setAttribute("style", tblstyles);
+        br.setAttribute("style", tblstyles);
+        tlc.setAttribute("style", tblstyles);
+        tcc.setAttribute("style", tblstyles);
+        trc.setAttribute("style", tblstyles);
+        mlc.setAttribute("style", tblstyles);
+        mcc.setAttribute("style", tblstyles);
+        mrc.setAttribute("style", tblstyles);
+        blc.setAttribute("style", tblstyles);
+        bcc.setAttribute("style", tblstyles);
+        brc.setAttribute("style", tblstyles);
+
+
         tr.id = "topRow";
         mr.id = "midRow";
         br.id = "bottomRow";
@@ -263,17 +440,16 @@ Y.extend(CartesianChart, Y.Widget, {
         br.appendChild(bcc);
         br.appendChild(brc);
         
-        ta.setAttribute("style", "position:relative;width:800px");
+        
+        ta.setAttribute("style", "position:relative;width:800px;");
         ta.setAttribute("id", "topAxesContainer");
-        la.setAttribute("style", "position:relative;height:300px");
+        la.setAttribute("style", "position:relative;height:300px;");
         la.setAttribute("id", "leftAxesContainer");
-        ba.setAttribute("style", "position:relative;width:800px");
+        ba.setAttribute("style", "position:relative;width:800px;");
         ba.setAttribute("id", "bottomAxesContainer");
-        ra.setAttribute("style", "position:relative;height:300px");
+        ra.setAttribute("style", "position:relative;height:300px;");
         ra.setAttribute("id", "rightAxesContainer");
-        gc.style.width = "100%";
-        gc.style.height = "100%";
-        gc.style.position = "relative";
+        gc.setAttribute("style", "position:relative;width:100%;height:100%;");
         tcc.appendChild(ta);
         mlc.appendChild(la);
         bcc.appendChild(ba);
@@ -287,16 +463,78 @@ Y.extend(CartesianChart, Y.Widget, {
         this.set("graphContainer", gc);
     },
 
-    _dataUpdateHandler: function(e)
+    /**
+     * @private
+     */
+    _getDefaultAxes: function()
     {
+        var dir = this.get("direction"),
+            xKey = this.get("xKey"),
+            yKey = this.get("yKey");
+        return {
+            values:{
+                keys:[yKey],
+                position:"left",
+                type:"numeric"
+            },
+            category:{
+                keys:[xKey],
+                position:"bottom",
+                type:"category"
+            }
+        };
     },
 
-    _axesUpdateHandler: function(e)
+    /**
+     * Reference to the tooltip
+     */
+    tooltip: null,
+
+    /**
+     * @private
+     */
+    _addTooltip: function(e)
     {
+        if(!Y.Tooltip)
+        {
+            return;
+        }
+        var tt = new Y.Tooltip({
+            triggerNodes:".yui3-seriesmarker",
+            delegate: "#" + this._parentNode.get("id"),
+            shim:false,
+            zIndex:2
+        });
+        
+        tt.render();
+        
+        tt.on("triggerEnter", function(e) {
+            var node = e.node,
+            marker = Y.Widget.getByNode(node),
+            index = marker.get("index"),
+            series = marker.get("series"),
+            xKey = series.get("xKey"),
+            yKey = series.get("yKey"),
+            msg = series.get("xDisplayName") + 
+            ": " + series.get("xAxis").getKeyValueAt(xKey, index) + 
+            "<br/>" + series.get("yDisplayName") + 
+            ": " + series.get("yAxis").getKeyValueAt(yKey, index);
+            if (node) {
+                this.setTriggerContent(msg);
+            }
+        });
+        this.tooltip = tt;
     },
-    
-    _seriesUpdateHandler: function(e)
+
+    /**
+     * @private
+     */
+    _dataTipChangeHandler: function(e)
     {
+        if(this.get("showTooltip") && this.get("rendered"))
+        {
+            this._addTooltip();
+        }
     }
 });
 
