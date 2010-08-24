@@ -29,21 +29,25 @@ YUI({
             Y.Assert.isFunction(Y.YQLRequest);
         },
         test_query: function() {
+            var returnedQuery;
+            Y.YQL('select * from weather.forecast where location=62896', function(r) {
+                returnedQuery = r;
+            });
             var wait = function() {
-                Y.YQL('select * from weather.forecast where location=62896', function(r) {
-                    Y.Assert.isObject(r);
-                    Y.Assert.isObject(r.query);
-                    Y.Assert.areEqual(1, r.query.count);
-                });
+                Y.Assert.isObject(returnedQuery);
+                Y.Assert.isObject(returnedQuery.query);
+                Y.Assert.areEqual(1, returnedQuery.query.count);
             };
             this.wait(wait, 1500);
         },
         test_failed: function() {
+            var returnedQuery;
+            Y.YQL('select * from weatherFOO.forecast where location=62896', function(r) {
+                returnedQuery = r;
+            });
             var wait = function() {
-                Y.YQL('select * from weatherFOO.forecast where location=62896', function(r) {
-                    Y.Assert.isObject(r);
-                    Y.Assert.isObject(r.error);
-                });
+                Y.Assert.isObject(returnedQuery);
+                Y.Assert.isObject(returnedQuery.error);
             };
             this.wait(wait, 1500);
         }

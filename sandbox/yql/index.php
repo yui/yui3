@@ -31,7 +31,7 @@ var yConfig = {
     throwFail: true,
     debug: false
 };
-YUI(yConfig).use('node', 'jsonp', 'yql', function(Y) {
+YUI(yConfig).use('node', 'jsonp', 'jsonp-url', 'yql', function(Y) {
 
     var res = Y.one('#res');
     
