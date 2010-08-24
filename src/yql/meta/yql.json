@@ -1,7 +1,8 @@
 {
     "yql": {
         "requires": [
-            "jsonp"
+            "jsonp",
+            "jsonp-url"
         ]
     }
 }
