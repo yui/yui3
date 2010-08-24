@@ -510,7 +510,12 @@
                         <span class="nx">inst</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span> <span class="c1">//Dump the instance logs to the parent instance.</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Creating new internal instance with node only&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
                         <span class="k">try</span> <span class="p">{</span>
-                            <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;node-base&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="c1">//This is needed because of Loader failing to load conditional modules inside the iframe</span>
+                                <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;dom-style-ie&#39;</span><span class="p">,</span> <span class="s1">&#39;node-base&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
+                            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                                <span class="nx">inst</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;node-base&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
+                            <span class="p">}</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
                             <span class="p">}</span>

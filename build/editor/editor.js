@@ -444,7 +444,12 @@ YUI.add('frame', function(Y) {
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
                         try {
-                            inst.use('node-base', cb);
+                            if (Y.UA.ie) {
+                                //This is needed because of Loader failing to load conditional modules inside the iframe
+                                inst.use('dom-style-ie', 'node-base', cb);
+                            } else {
+                                inst.use('node-base', cb);
+                            }
                             if (timer) {
                                 clearInterval(timer);
                             }
@@ -1257,7 +1262,6 @@ YUI.add('selection', function(Y) {
 
                     txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
                     txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
-                    
                     node.replace(txt, node);
                     newNode = Y.Node.create(html);
                     if (newNode.get('nodeType') === 11) {
@@ -1277,7 +1281,7 @@ YUI.add('selection', function(Y) {
                         node = node.get('parentNode');
                     }
                     newNode = Y.Node.create(html);
-                    node.append(newNode);
+                    node.prepend(newNode);
                 }
             }
             return newNode;

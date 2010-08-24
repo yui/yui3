@@ -29,6 +29,7 @@ var TRANSITION = '-webkit-transition',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
     TRANSITION_DELAY = '-webkit-transition-delay',
     TRANSITION_END = 'webkitTransitionEnd',
+    TRANSFORM_CAMEL = 'WebkitTransform',
 
 Transition = function() {
     this.init.apply(this, arguments);
@@ -43,8 +44,18 @@ Transition._toCamel = function(property) {
 };
 
 Transition._toHyphen = function(property) {
-    property = property.replace(/([a-z])([A-Z]+)/g, function(m0, m1, m2) {
-        return (m1 + '-' + m2.toLowerCase());
+    property = property.replace(/([A-Z]?)([a-z]+)([A-Z]?)/g, function(m0, m1, m2, m3) {
+        var str = '';
+        if (m1) {
+            str += '-' + m1.toLowerCase();
+        }
+        str += m2;
+        
+        if (m3) {
+            str += '-' + m3.toLowerCase();
+        }
+
+        return str;
     }); 
 
     return property;
@@ -114,8 +125,8 @@ Transition.prototype = {
             attrs = Transition._nodeAttrs[uid] = {};
         }
 
-        if (config.transform && !config['-webkit-transform']) {
-            config['-webkit-transform'] = config.transform;
+        if (config.transform && !config[TRANSFORM_CAMEL]) {
+            config[TRANSFORM_CAMEL] = config.transform;
             delete config.transform; // TODO: copy
         }
 

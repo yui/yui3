@@ -15,7 +15,7 @@
 
 <script type="text/javascript">
 
-YUI().use('event-key', function(Y) {
+YUI().use('event-key', 'event-delegate', function(Y) {
 
     ////////////////////////////////////////////////////////////////////
 
@@ -35,9 +35,11 @@ YUI().use('event-key', function(Y) {
 
     ////////////////////////////////////////////////////////////////////
 
-    Y.on('keydown', function(e) {
+    Y.delegate('keydown', function(e) {
         Y.log('keydown: ' + e.charCode);
-    }, '#text1');
+        Y.log('shift: ' + e.shiftKey);
+    }, '#form1');
+
 
     Y.on('keyup', function(e) {
         Y.log('keyup: ' + e.charCode);

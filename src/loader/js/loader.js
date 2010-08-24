@@ -561,8 +561,10 @@ Y.Loader.prototype = {
                var m = this.moduleInfo[k],
                    req = v.details.requires,
                    mr = m && m.requires;
-               if (m && !m._inspected && req && mr.length != req.length) {
-                   delete m.expanded;
+               if (m) {
+                   if (!m._inspected && req && mr.length != req.length) {
+                       delete m.expanded;
+                   }
                } else {
                    m = this.addModule(v.details, k);
                }

@@ -81,7 +81,7 @@ add('load', '1', {
 // dd-gestures-test.js
 add('load', '2', {
     "test": function(Y) {
-    return ('ontouchstart' in Y.config.win && !Y.UA.chrome);
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
     "trigger": "dd-drag"
 });

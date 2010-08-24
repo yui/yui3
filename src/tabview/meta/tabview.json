@@ -9,6 +9,7 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate",
+                    "node-pluginhost",
                     "classnamemanager",
                     "skin-sam-tabview"
                 ]

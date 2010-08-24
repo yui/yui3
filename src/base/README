@@ -5,7 +5,7 @@ across the library and provides a consistent init() and destroy()
 sequence, by chaining initialization (initializer) and destruction 
 (destructor) methods for the class hierarcy.
 
-Development Master
+3.2.0
 
 * Fixed Base.create to properly isolate ATTRS on extensions
 
