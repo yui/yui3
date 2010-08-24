@@ -4,7 +4,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>YUI: DragDrop</title>
+    <title>YUI: Sortable</title>
     <!--link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css"--> 
     <style type="text/css" media="screen">
         p, h2 {

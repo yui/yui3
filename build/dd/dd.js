@@ -2250,15 +2250,10 @@ YUI.add('dd-proxy', function(Y) {
         clone: function() {
             var host = this.get(HOST),
                 n = host.get(NODE),
-                c = n.cloneNode(true),
-                domNode = Y.Node.getDOMNode(c);
+                c = n.cloneNode(true);
 
             delete c._yuid;
-            if (domNode.removeAttributeNode) {
-                domNode.removeAttributeNode(domNode.getAttributeNode('id'));
-            }
             c.setAttribute('id', Y.guid());
-
             c.setStyle('position', 'absolute');
             n.get('parentNode').appendChild(c);
             host.set(DRAG_NODE, c);
@@ -3858,8 +3853,9 @@ YUI.add('dd-delegate', function(Y) {
         _delMouseDown: function(e) {
             var tar = e.currentTarget,
                 dd = this.dd;
-
+            
             if (tar.test(this.get(NODES)) && !tar.test(this.get('invalid'))) {
+                e.stopPropagation();
                 this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
                 this.set('currentNode', tar);
@@ -3870,6 +3866,7 @@ YUI.add('dd-delegate', function(Y) {
                     dd.set('dragNode', tar);
                 }
                 dd._prep();
+                
                 dd.fire('drag:mouseDown', { ev: e });
             }
         },
@@ -3895,7 +3892,7 @@ YUI.add('dd-delegate', function(Y) {
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
-            var conf = this.get('dragConfig') || {},
+            var conf = Y.clone(this.get('dragConfig') || {}),
                 cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);

@@ -4,7 +4,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>YUI: DragDrop</title>
+    <title>YUI: DragDrop: Delegate</title>
     <!--link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css"--> 
     <style type="text/css" media="screen">
         p, h2 {
@@ -16,6 +16,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             width: 600px;
             height: 400px;
             margin: 3em;
+            position: relative;
         }
         #demo .item {
             width: 150px;
@@ -67,17 +68,6 @@ foreach (range(1, $count) as $k) {
 <div id="drop">Drop Here..</div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/yui/yui-throttle.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/loader/loader.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
-
 
 <script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
@@ -105,7 +95,7 @@ var yConfig = {
         augment: true
     },
     throwFail: true,
-    debug: false
+    debug: true
 };
 
 YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', function(Y) {
