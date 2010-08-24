@@ -381,6 +381,13 @@ Y.Node.prototype.transition = function(config, callback) {
 };
 
 
+Y.NodeList.prototype.transition = function(config, callback) {
+    this.each(function(node) {
+        node.transition(config, callback);
+    });
+
+    return this;
+};
 
 
 }, '@VERSION@' ,{requires:['node-base']});
