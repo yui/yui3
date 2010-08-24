@@ -120,6 +120,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         
         //console.info('After ready iframe #1');
         var Y = this.getInstance();
+        Y.log(Y.DOM.IE, 'warn', 'DOM-IE');
         //Y.one('doc').set('designMode', 'On');
         Y.one('strong').set('innerHTML', 'Drag Me');
 
@@ -199,7 +200,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         container: '#test3',
         //src: 'local.htm',
         content: Y.one('#stub').get('innerHTML'),
-        use: ['node','selector-css3']
+        use: ['node','selector-css3', 'anim']
     }).render();
 
     iframe3.after('ready', function() {
