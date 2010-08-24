@@ -18,8 +18,8 @@ YUI.add('transition-native', function(Y) {
  * A class for constructing transition instances.
  * Adds the "transition" method to Node.
  * @class Transition
- * @see Node 
  * @constructor
+ * @see Node 
  */
 
 var TRANSITION = '-webkit-transition',
@@ -33,6 +33,23 @@ var TRANSITION = '-webkit-transition',
 Transition = function() {
     this.init.apply(this, arguments);
 };
+
+Transition._toCamel = function(property) {
+    property = property.replace(/-([a-z])/gi, function(m0, m1) {
+        return m1.toUpperCase();
+    });
+
+    return property;
+};
+
+Transition._toHyphen = function(property) {
+    property = property.replace(/([a-z])([A-Z]+)/g, function(m0, m1, m2) {
+        return (m1 + '-' + m2.toLowerCase());
+    }); 
+
+    return property;
+};
+
 
 Transition._reKeywords = /^(?:node|duration|iterations|easing|delay)$/;
 
@@ -193,6 +210,7 @@ Transition.prototype = {
             duration = TRANSITION_DURATION + ': ',
             easing = TRANSITION_TIMING_FUNCTION + ': ',
             delay = TRANSITION_DELAY + ': ',
+            hyphy,
             attr,
             name;
 
@@ -207,14 +225,21 @@ Transition.prototype = {
 
         // run transitions mapped to this instance
         for (name in attrs) {
+            hyphy = Transition._toHyphen(name);
             attr = attrs[name];
             if (attrs.hasOwnProperty(name) && attr.transition === anim) {
-                duration += anim._prepDur(attr.duration) + ',';
-                delay += anim._prepDur(attr.delay) + ',';
-                easing += (attr.easing) + ',';
+                if (name in domNode.style) { // only native styles allowed
+                    duration += anim._prepDur(attr.duration) + ',';
+                    delay += anim._prepDur(attr.delay) + ',';
+                    easing += (attr.easing) + ',';
 
-                transitionText += name + ',';
-                cssText += name + ': ' + attr.value + '; ';
+                    transitionText += hyphy + ',';
+                    cssText += hyphy + ': ' + attr.value + '; ';
+                } else {
+                    delete attrs[name];
+                    anim._count--;
+                    Transition._count--;
+                }
             }
         }
 
@@ -266,7 +291,7 @@ Transition.prototype = {
         var node = this,
             uid = Y.stamp(node),
             event = e._event,
-            name = event.propertyName,
+            name = Transition._toCamel(event.propertyName),
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
             attr = attrs[name],

@@ -3,7 +3,7 @@
 <head>
 <title>Transition tests</title>
 <link type="text/css" rel="stylesheet" href="../../../build/logreader/assets/skins/sam/logreader.css">
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 <style>
 #demo {
     background: #ccc;
@@ -34,6 +34,8 @@ YUI({
                     node.setStyles({
                         height: '200px',
                         width: '200px',
+                        borderWidth: '5px',
+                        paddingTop: 0,
                         opacity: '1'
                     });
                 }
@@ -62,13 +64,18 @@ YUI({
                     duration: 1,
                     width: 0,
                     height: 0,
-                    opacity: 0
+                    opacity: 0,
+                    borderWidth: '1px',
+                    foo: 0, // ignore non-supported
+                    paddingTop: '100px'
                 }, function(e) {
                     test.resume(function() { 
                         Y.Assert.areEqual(1, parseInt(e.elapsedTime));
                         Y.Assert.areEqual('0px', node.getComputedStyle('width'));
                         Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                         Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
+                        Y.Assert.areEqual('100px', node.getComputedStyle('paddingTop'));
+                        Y.Assert.areEqual('1px', node.getStyle('borderWidth'));
                     });
                 });
 

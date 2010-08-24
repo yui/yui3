@@ -18,8 +18,8 @@ YUI.add('transition-native', function(Y) {
  * A class for constructing transition instances.
  * Adds the "transition" method to Node.
  * @class Transition
- * @see Node 
  * @constructor
+ * @see Node 
  */
 
 var TRANSITION = '-webkit-transition',
@@ -33,6 +33,23 @@ var TRANSITION = '-webkit-transition',
 Transition = function() {
     this.init.apply(this, arguments);
 };
+
+Transition._toCamel = function(property) {
+    property = property.replace(/-([a-z])/gi, function(m0, m1) {
+        return m1.toUpperCase();
+    });
+
+    return property;
+};
+
+Transition._toHyphen = function(property) {
+    property = property.replace(/([a-z])([A-Z]+)/g, function(m0, m1, m2) {
+        return (m1 + '-' + m2.toLowerCase());
+    }); 
+
+    return property;
+};
+
 
 Transition._reKeywords = /^(?:node|duration|iterations|easing|delay)$/;
 
@@ -193,6 +210,7 @@ Transition.prototype = {
             duration = TRANSITION_DURATION + ': ',
             easing = TRANSITION_TIMING_FUNCTION + ': ',
             delay = TRANSITION_DELAY + ': ',
+            hyphy,
             attr,
             name;
 
@@ -207,14 +225,21 @@ Transition.prototype = {
 
         // run transitions mapped to this instance
         for (name in attrs) {
+            hyphy = Transition._toHyphen(name);
             attr = attrs[name];
             if (attrs.hasOwnProperty(name) && attr.transition === anim) {
-                duration += anim._prepDur(attr.duration) + ',';
-                delay += anim._prepDur(attr.delay) + ',';
-                easing += (attr.easing) + ',';
+                if (name in domNode.style) { // only native styles allowed
+                    duration += anim._prepDur(attr.duration) + ',';
+                    delay += anim._prepDur(attr.delay) + ',';
+                    easing += (attr.easing) + ',';
 
-                transitionText += name + ',';
-                cssText += name + ': ' + attr.value + '; ';
+                    transitionText += hyphy + ',';
+                    cssText += hyphy + ': ' + attr.value + '; ';
+                } else {
+                    delete attrs[name];
+                    anim._count--;
+                    Transition._count--;
+                }
             }
         }
 
@@ -266,7 +291,7 @@ Transition.prototype = {
         var node = this,
             uid = Y.stamp(node),
             event = e._event,
-            name = event.propertyName,
+            name = Transition._toCamel(event.propertyName),
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
             attr = attrs[name],
@@ -466,38 +491,40 @@ Y.mix(Transition.prototype, {
                 easing = attribute.easing;
                 val = attribute.value;
 
-                begin = (name in customAttr && 'get' in customAttr[name])  ?
-                        customAttr[name].get(anim, name) : Transition.DEFAULT_GETTER(anim, name);
+                // only allow supported properties
+                if (name in anim._node._node.style || name in Y.DOM.CUSTOM_STYLES) {
+                    begin = (name in customAttr && 'get' in customAttr[name])  ?
+                            customAttr[name].get(anim, name) : Transition.DEFAULT_GETTER(anim, name);
 
-                var mFrom = Transition.RE_UNITS.exec(begin);
-                var mTo = Transition.RE_UNITS.exec(val);
+                    var mFrom = Transition.RE_UNITS.exec(begin);
+                    var mTo = Transition.RE_UNITS.exec(val);
 
-                begin = mFrom ? mFrom[1] : begin;
-                end = mTo ? mTo[1] : val;
-                unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
+                    begin = mFrom ? mFrom[1] : begin;
+                    end = mTo ? mTo[1] : val;
+                    unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
 
-                if (!unit && Transition.RE_DEFAULT_UNIT.test(name)) {
-                    unit = Transition.DEFAULT_UNIT;
-                }
-
-                if (!begin || !end) {
-                    return;
-                }
-
-                if (typeof easing === 'string') {
-                    if (easing.indexOf('cubic-bezier') > -1) {
-                        easing = easing.substring(13, easing.length - 1).split(',');
-                    } else if (Transition.easings[easing]) {
-                        easing = Transition.easings[easing];
+                    if (!unit && Transition.RE_DEFAULT_UNIT.test(name)) {
+                        unit = Transition.DEFAULT_UNIT;
                     }
-                }
 
-                attribute.from = begin;
-                attribute.to = end;
-                attribute.unit = unit;
-                attribute.easing = easing;
-                attribute.duration = duration + delay;
-                attribute.delay = delay;
+                    if (typeof easing === 'string') {
+                        if (easing.indexOf('cubic-bezier') > -1) {
+                            easing = easing.substring(13, easing.length - 1).split(',');
+                        } else if (Transition.easings[easing]) {
+                            easing = Transition.easings[easing];
+                        }
+                    }
+
+                    attribute.from = Number(begin);
+                    attribute.to = Number(end);
+                    attribute.unit = unit;
+                    attribute.easing = easing;
+                    attribute.duration = duration + delay;
+                    attribute.delay = delay;
+                } else {
+                    delete attrs[name];
+                    anim._count--;
+                }
             }
         }
     },

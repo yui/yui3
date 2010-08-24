@@ -255,4 +255,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['test', 'jsonp']});
+}, '@VERSION@' ,{requires:['test', 'jsonp-url']});

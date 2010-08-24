@@ -809,19 +809,17 @@
         }
     }, 
     "jsonp": {
-        "submodules": {
-            "jsonp-base": {
-                "requires": [
-                    "get", 
-                    "oop"
-                ]
-            }, 
+        "plugins": {
             "jsonp-url": {
                 "requires": [
-                    "jsonp-base"
+                    "jsonp"
                 ]
             }
-        }
+        }, 
+        "requires": [
+            "get", 
+            "oop"
+        ]
     }, 
     "loader": {
         "requires": [
@@ -1105,6 +1103,7 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-pluginhost", 
                     "classnamemanager", 
                     "skin-sam-tabview"
                 ]
@@ -1239,15 +1238,5 @@
         "requires": [
             "jsonp"
         ]
-    }, 
-    "yui": {
-        "submodules": {
-            "get": {}, 
-            "intl-base": {}, 
-            "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
-        }
     }
 }

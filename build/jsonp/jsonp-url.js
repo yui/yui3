@@ -123,4 +123,4 @@ Y.mix(JSONPRequest.prototype, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['jsonp-base']});
+}, '@VERSION@' ,{requires:['jsonp']});

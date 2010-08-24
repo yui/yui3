@@ -112,8 +112,12 @@ BaseAxis.ATTRS = {
 			{
 				//remove listeners
 			}
-            value = Y.merge(value);
-			this._dataProvider = {data:value.data.concat()};
+			if(value.hasOwnProperty("data") && Y.Lang.isArray(value.data))
+            {
+                value = Y.merge(value);
+                value = value.data;
+            }
+            this._dataProvider = {data:value.concat()};
 			this._dataClone = this._dataProvider.data.concat();
 			return value;
 		},
@@ -223,10 +227,33 @@ BaseAxis.ATTRS = {
 	 * Hash of array identifed by a string value.
 	 */
 	keys: {
-		getter: function ()
+		lazyAdd: false,
+
+        getter: function ()
 		{
 			return this._keys;
-		}
+		},
+
+        setter: function(val)
+        {
+            var i, l;
+            if(Y.Lang.isArray(val))
+            {
+                l = val.length;
+                for(i = 0; i < l; ++i)
+                {
+                    this.addKey(val[i]);
+                }
+                return;
+            }
+            for(i in val)
+            {
+                if(val.hasOwnProperty(i))
+                {
+                    this.addKey(val[i]);
+                }
+            }
+        }
 	}
 };
 
@@ -327,12 +354,12 @@ Y.extend(BaseAxis, Y.Base,
 	 */
 	addKey: function (value)
 	{
-		if(this._keys.hasOwnProperty(value)) 
+		if(this.get("keys").hasOwnProperty(value)) 
 		{
 			return;
 		}
 		this._dataClone = this._dataProvider.data.concat();
-		var keys = this._keys,
+		var keys = this.get("keys"),
 			eventKeys = {},
 			event = {axis:this};
 		this._setDataByKey(value);
@@ -368,7 +395,7 @@ Y.extend(BaseAxis, Y.Base,
 			obj = dv[i];
 			arr[i] = obj[key];
 		}
-		this._keys[key] = arr;
+		this.get("keys")[key] = arr;
 		this._data = this._data.concat(arr);
 	},
 		
@@ -381,7 +408,7 @@ Y.extend(BaseAxis, Y.Base,
 	 */
 	removeKey: function(value)
 	{
-		if(!this._keys.hasOwnProperty(value)) 
+		if(!this.get("keys").hasOwnProperty(value)) 
 		{
 			return;
 		}
@@ -390,7 +417,7 @@ Y.extend(BaseAxis, Y.Base,
 			newKeys = {},
 			newData = [],
 			removedKeys = {},
-			keys = this._keys,
+			keys = this.get("keys"),
 			event = {};
 		removedKeys[value] = keys[value].concat();
 		for(key in keys)
@@ -419,7 +446,7 @@ Y.extend(BaseAxis, Y.Base,
 	getKeyValueAt: function(key, index)
 	{
 		var value = NaN,
-			keys = this._keys;
+			keys = this.get("keys");
 		if(keys[key] && keys[key][index]) 
 		{
 			value = keys[key][index];
@@ -432,7 +459,7 @@ Y.extend(BaseAxis, Y.Base,
 	 */
 	getDataByKey: function (value)
 	{
-		var keys = this._keys;
+		var keys = this.get("keys");
 		if(keys[value])
 		{
 			return keys[value];
@@ -483,7 +510,7 @@ Y.extend(BaseAxis, Y.Base,
 	newDataUpdateHandler: function()
 	{
 		var i,
-			keys = this._keys,
+			keys = this.get("keys"),
 			event = {}; 
 		this._data = [];
 		this._dataClone = this._dataProvider.data.concat();
@@ -510,7 +537,7 @@ Y.extend(BaseAxis, Y.Base,
 			event = {},
 			keysAdded = event.keysAdded,
 			keysRemoved = event.keysRemoved,
-			keys = this._keys,
+			keys = this.get("keys"),
             i;
 		for(i in keys)
 		{
@@ -934,7 +961,7 @@ Y.extend(TimeAxis, Y.BaseAxis, {
 			}
 			arr[i] = val;
 		}
-		this._keys[key] = arr;
+		this.get("keys")[key] = arr;
 		this._data = this._data.concat(arr);
 	},
 
@@ -1044,7 +1071,7 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 			labels[i] = obj[key];
 		}
         this._indices[key] = arr;
-		this._keys[key] = labels.concat();
+		this.get("keys")[key] = labels.concat();
 		this._data = this._data.concat(labels);
 	},
 
@@ -1280,6 +1307,10 @@ Marker.ATTRS = {
         value: null
     },
 
+    colorIndex: {
+        value: null
+    },
+    
     state: {
         value:"off"
     }
@@ -1346,10 +1377,15 @@ Y.extend(Marker, Y.Renderer, {
             w,
             h,
             x = 0,
-            y = 0;
+            y = 0,
+            fill = this._mergeStyles(styles.fill, {}),
+            border = this._mergeStyles(styles.border, {}),
+            dc = this.get("series")._getDefaultColor(this.get("colorIndex"));
+            fill.color = fill.color || dc;
+            border.color = border.color || dc;
         stateStyles = {
-                fill: this._mergeStyles(styles.fill, {}),
-                border: this._mergeStyles(styles.border, {}),
+                fill:fill,                
+                border:border, 
                 shape: styles.shape,
                 width: styles.width,
                 height: styles.height,
@@ -1407,14 +1443,12 @@ Y.extend(Marker, Y.Renderer, {
         return {
             fill:{
                 type: "solid",
-                color: "#000000",
                 alpha: 1,
                 colors:null,
                 alphas: null,
                 ratios: null
             },
             border:{
-                color: "#000000",
                 weight: 1,
                 alpha: 1
             },
@@ -1636,11 +1670,13 @@ Y.extend(PieSeries, Y.Renderer, {
             cache = this._markerCache,
             styles = config.styles,
             index = config.index;
+        config.colorIndex = index;
         if(cache.length > 0)
         {
             marker = cache.shift();
             marker.set("index", index);
             marker.set("series", this);
+            marker.set("colorIndex", index);
             if(marker.get("styles") !== styles)
             {
                 marker.set("styles", styles);
@@ -1650,8 +1686,7 @@ Y.extend(PieSeries, Y.Renderer, {
         {
             config.series = this;
             marker = new Y.Marker(config);
-            var cb = Y.one(this.get("node"));
-            marker.render(cb);
+            marker.render(Y.one(this.get("node")));
         }
         this._markers.push(marker);
         this._markerNodes.push(Y.one(marker.get("node")));
@@ -1742,8 +1777,8 @@ Y.extend(PieSeries, Y.Renderer, {
             }
         }
         
-        tfc = fillColors.concat();
-        tfa = fillAlphas.concat();
+        tfc = fillColors ? fillColors.concat() : null;
+        tfa = fillAlphas ? fillAlphas.concat() : null;
         this._createMarkerCache();
         for(i = 0; i < itemCount; i++)
         {
@@ -1757,29 +1792,29 @@ Y.extend(PieSeries, Y.Renderer, {
                 angle = 360 * (value / totalValue);
             }
             angle = Math.round(angle);
-            if(tfc.length < 1)
+            if(tfc && tfc.length < 1)
             {
                 tfc = fillColors.concat();
             }
-            if(tfa.length < 1)
+            if(tfc && tfa.length < 1)
             {
                 tfa = fillAlphas.concat();
             }
-            if(tbw.length < 1)
+            if(tbw && tbw.length < 1)
             {
                 tbw = borderWeights.concat();
             }
-            if(tbc.length < 1)
+            if(tbw && tbc.length < 1)
             {
                 tbc = borderColors.concat();
             }
-            if(tba.length < 1)
+            if(tba && tba.length < 1)
             {
                 tba = borderAlphas.concat();
             }
-            lw = tbw.shift();
-            lc = tbc.shift();
-            la = tba.shift();
+            lw = tbw ? tbw.shift() : null;
+            lc = tbc ? tbc.shift() : null;
+            la = tba ? tba.shift() : null;
             wedgeStyle = {
                 border: {
                     color:lc,
@@ -1787,8 +1822,8 @@ Y.extend(PieSeries, Y.Renderer, {
                     alpha:la
                 },
                 fill: {
-                    color:tfc.shift(),
-                    alpha:tfa.shift()
+                    color:tfc ? tfc.shift() : null,
+                    alpha:tfa ? tfa.shift() : null
                 },
                 shape: "wedge",
                 props: {
@@ -1841,11 +1876,6 @@ Y.extend(PieSeries, Y.Renderer, {
                 right: 0,
                 bottom: 0
             },
-            fillColors:[
-				"#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
-				"#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd",
-				"#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77"
-            ],
             fillAlphas:["1"],
             borderColors:["#000000"],
             borderWeights:["0"],
@@ -1856,6 +1886,21 @@ Y.extend(PieSeries, Y.Renderer, {
                 fillAlphas:[1]
             }
         };
+    },
+
+    /**
+     * @private
+     * @description Colors used if style colors are not specified
+     */
+    _getDefaultColor: function(index)
+    {
+        var colors = [
+            "#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
+            "#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77",
+            "#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd"
+        ];
+        index = index || 0;
+        return colors[index];
     }
 });
 	
@@ -1903,6 +1948,14 @@ CartesianSeries.ATTRS = {
 	order: {
 	    value:NaN
     },
+
+    /**
+     * Order of the ISeries instance
+     */
+    graphOrder: {
+        value:NaN
+    },
+
 	/**
 	 * x coordinates for the series.
 	 */
@@ -2387,14 +2440,17 @@ Y.extend(CartesianSeries, Y.Renderer, {
     getMarker: function(config)
     {
         var marker,
+            colorIndex = this.get("graphOrder"),
             cache = this._markerCache,
             styles = config.styles,
             index = config.index;
+        config.colorIndex = colorIndex;
         if(cache.length > 0)
         {
             marker = cache.shift();
             marker.set("index", index);
             marker.set("series", this);
+            marker.set("colorIndex", colorIndex);
             if(marker.get("styles") !== styles)
             {
                 marker.set("styles", styles);
@@ -2459,6 +2515,21 @@ Y.extend(CartesianSeries, Y.Renderer, {
                 right: 0,
                 bottom: 0
             }};
+    },
+
+    /**
+     * @private
+     * @description Colors used if style colors are not specified
+     */
+    _getDefaultColor: function(index)
+    {
+        var colors = [
+                "#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
+				"#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77",
+				"#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd"
+            ];
+        index = index || 0;
+        return colors[index];
     }
 });
 
@@ -2569,14 +2640,12 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
         return {
             fill:{
                 type: "solid",
-                color: "#000000",
                 alpha: 1,
                 colors:null,
                 alphas: null,
                 ratios: null
             },
             border:{
-                color: "#000000",
                 weight: 1,
                 alpha: 1
             },
@@ -2633,6 +2702,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			i,
 			styles = this.get("styles"),
 			lineType = styles.lineType,
+            lc = styles.lineColor || this._getDefaultColor(this.get("graphOrder")),
 			dashLength = styles.dashLength,
 			gapSpace = styles.gapSpace,
 			connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
@@ -2641,7 +2711,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
         graphic.clear();
-        graphic.lineStyle(styles.weight, styles.color);
+        graphic.lineStyle(styles.weight, lc);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
@@ -2743,11 +2813,9 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	_getDefaultStyles: function()
     {
         return {
-            color: "#000000",
             alpha: 1,
             weight: 1,
             marker: {
-                fillColor: "#000000",
                 alpha: 1,
                 weight: 1,
                 width: 6,
@@ -3312,7 +3380,6 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     {
         return {
             fill: {
-                color: "#000000",
                 alpha: "1",
                 colors: [],
                 alphas: [],
@@ -3501,7 +3568,6 @@ Y.extend(BarSeries, Y.CartesianSeries, {
     {
         return {
             fill: {
-                color: "#000000",
                 alpha: "1",
                 colors: [],
                 alphas: [],
@@ -4648,13 +4714,13 @@ Y.extend(Graph, Y.Base, {
      */
     _parseSeriesCollection: function(val)
     {
-        var len = val.length,
-            i = 0,
-            series;
         if(!val)
         {
             return;
         }	
+        var len = val.length,
+            i = 0,
+            series;
         if(!this._seriesCollection)
         {
             this._seriesCollection = [];
@@ -4696,13 +4762,13 @@ Y.extend(Graph, Y.Base, {
         {
             series.set("graph", this);
         }
-        series.graphOrder = graphSeriesLength;
         seriesCollection.push(series);
         if(!seriesTypes.hasOwnProperty(type))
         {
             this.seriesTypes[type] = [];
         }
         typeSeriesCollection = this.seriesTypes[type];
+        series.set("graphOrder", graphSeriesLength);
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
         this.fire("seriesAdded", series);
@@ -4724,6 +4790,7 @@ Y.extend(Graph, Y.Base, {
         typeSeriesCollection = seriesTypes[type];
         seriesData.graph = this;
         seriesData.order = typeSeriesCollection.length;
+        seriesData.graphOrder = seriesCollection.length;
         seriesType = this._getSeries(seriesData.type);
         series = new seriesType(seriesData);
         typeSeriesCollection.push(series);
@@ -5057,6 +5124,9 @@ AxisRenderer.ATTRS = {
             left: "0px",
             width: "100px",
             height: "100px",
+            label: {
+                rotation: 0
+            },
             hideOverlappingLabelTicks: false
         };
     }
@@ -6243,6 +6313,309 @@ Y.mix(Y.AxisRenderer.prototype, {
 });
 
 
+/**
+ * A basic chart application.
+ */
+function CartesianChart(config)
+{
+    CartesianChart.superclass.constructor.apply(this, arguments);
+}
+
+CartesianChart.NAME = "cartesianChart";
+
+CartesianChart.ATTRS = {
+    /**
+     * Data used to generate the chart.
+     */
+    dataValues: {
+        value: null
+    },
+
+    /**
+     * Axes to appear in the chart. 
+     */
+    axes: {
+        getter: function()
+        {
+            return this._axes;
+        },
+
+        setter: function(val)
+        {
+            this._parseAxes(val);
+        }
+    },
+
+    /**
+     * Collection of series to appear on the chart.
+     */
+    seriesCollection: {
+        value: null
+    },
+
+    /**
+     * Element that contains left axes
+     */
+    leftAxesContainer: {
+        value: null
+    },
+
+    /**
+     * Element that contains bottom axes
+     */
+    bottomAxesContainer: {
+        value: null
+    },
+
+    /**
+     * Element that contains right axes
+     */
+    rightAxesContainer: {
+        value: null
+    },
+
+    /**
+     * Element that contains top axes
+     */
+    topAxesContainer: {
+        value: null
+    },
+
+    /**
+     * Element that contains graphs
+     */
+    graphContainer: {
+        value: null
+    },
+
+    /**
+     * Reference to graph stack instance
+     */
+    graph: {
+        value: null
+    }
+};
+
+Y.extend(CartesianChart, Y.Widget, {
+    /**
+     * @private
+     */
+    _getDataClass: function(t)
+    {
+        return this._dataClass[t];
+    },
+
+    /**
+     * @private
+     */
+    _dataClass: {
+        numeric: Y.NumericAxis,
+        category: Y.CategoryAxis,
+        time: Y.TimeAxis
+    },
+
+    /**
+     * @private
+     */
+    _parseAxes: function(hash)
+    {
+        if(!this._axes)
+        {
+            this._axes = {};
+        }
+        if(!this._dataAxes)
+        {
+            this._dataAxes = {};
+        }
+        var i, pos, axis, dataAxis, dh, config, dataClass;
+
+        for(i in hash)
+        {
+            if(hash.hasOwnProperty(i))
+            {
+                dh = hash[i];
+                pos = dh.position;
+                dataClass = this._getDataClass(dh.type);
+                config = {dataProvider:this.get("dataValues"), keys:dh.keys};
+                if(dh.hasOwnProperty("roundingUnit"))
+                {
+                    config.roundingUnit = dh.roundingUnit;
+                }
+                dataAxis = new dataClass(config);
+                if(pos && pos != "none")
+                {
+                    axis = new Y.AxisRenderer({axis:dataAxis, position:dh.position, styles:dh.styles});
+                    this._axes[i] = axis;
+                }
+                this._dataAxes[i] = dataAxis;
+            }
+        }
+    },
+
+    /**
+     * @private
+     */
+    _dataAxes: null,
+
+    /**
+     * @private
+     */
+    _axes: null,
+
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._createLayout();
+    },
+    
+    /**
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("dataValuesChange", Y.bind(this._dataUpdateHandler, this));
+        this.after("axesChange", Y.bind(this._axesUpdateHandler, this));
+        this.after("seriesCollectionChange", Y.bind(this._seriesUpdateHandler, this));
+    },
+   
+    /**
+     * @private
+     */
+    syncUI: function()
+    {
+        this._addAxes();
+        this._addSeries();
+    },
+    
+    /**
+     * @private
+     */
+    _addAxes: function()
+    {
+        var axes = this.get("axes"),
+            containers = {
+                left:this.get("leftAxesContainer"),
+                bottom:this.get("bottomAxesContainer"),
+                right:this.get("rightAxesContainer"),
+                top:this.get("topAxesContainer")
+            }, i, axis, p;
+        if(axes)
+        {
+            for(i in axes)
+            {
+                if(axes.hasOwnProperty(i))
+                {
+                    axis = axes[i];
+                    p = axis.get("position");
+                    axis.render(containers[p]);
+                }
+            }
+        }
+    },
+
+    /**
+     * @private
+     */
+    _addSeries: function()
+    {
+        var seriesCollection = this.get("seriesCollection");
+        this._parseSeriesAxes(seriesCollection);
+        this.set("graph", new Y.Graph({parent:this.get("graphContainer"), seriesCollection:seriesCollection}));
+    },
+
+    _parseSeriesAxes: function(c)
+    {
+        var i = 0, len = c.length, s, ar;
+        for(; i < len; ++i)
+        {
+            s = c[i];
+            s.xAxis = this._dataAxes[s.xAxis];
+            s.yAxis = this._dataAxes[s.yAxis];
+        }
+    },
+
+    /**
+     * @private
+     * @description Creates the layout container for the chart.
+     */
+    _createLayout: function()
+    {
+        var cb = this.get("contentBox"),
+            tbl = document.createElement("table"),
+            tr = document.createElement("tr"),
+            mr = document.createElement("tr"),
+            br = document.createElement("tr"),
+            tlc = document.createElement("td"),
+            tcc = document.createElement("td"),
+            trc = document.createElement("td"),
+            mlc = document.createElement("td"),
+            mcc = document.createElement("td"),
+            mrc = document.createElement("td"),
+            blc = document.createElement("td"),
+            bcc = document.createElement("td"),
+            brc = document.createElement("td"),
+            la = document.createElement("div"),
+            ba = document.createElement("div"),
+            ra = document.createElement("div"),
+            ta = document.createElement("div"),
+            gc = document.createElement("div");
+        tr.id = "topRow";
+        mr.id = "midRow";
+        br.id = "bottomRow";
+        cb.appendChild(tbl);
+        tbl.appendChild(tr);
+        tr.appendChild(tlc);
+        tr.appendChild(tcc);
+        tr.appendChild(trc);
+        tbl.appendChild(mr);
+        mr.appendChild(mlc);
+        mr.appendChild(mcc);
+        mr.appendChild(mrc);
+        tbl.appendChild(br);
+        br.appendChild(blc);
+        br.appendChild(bcc);
+        br.appendChild(brc);
+        
+        ta.setAttribute("style", "position:relative;width:800px");
+        ta.setAttribute("id", "topAxesContainer");
+        la.setAttribute("style", "position:relative;height:300px");
+        la.setAttribute("id", "leftAxesContainer");
+        ba.setAttribute("style", "position:relative;width:800px");
+        ba.setAttribute("id", "bottomAxesContainer");
+        ra.setAttribute("style", "position:relative;height:300px");
+        ra.setAttribute("id", "rightAxesContainer");
+        gc.style.width = "100%";
+        gc.style.height = "100%";
+        gc.style.position = "relative";
+        tcc.appendChild(ta);
+        mlc.appendChild(la);
+        bcc.appendChild(ba);
+        mrc.appendChild(ra);
+        mcc.appendChild(gc);
+
+        this.set("leftAxesContainer", la);
+        this.set("bottomAxesContainer", ba);
+        this.set("rightAxesContainer", ra);
+        this.set("topAxesContainer", ta);
+        this.set("graphContainer", gc);
+    },
+
+    _dataUpdateHandler: function(e)
+    {
+    },
+
+    _axesUpdateHandler: function(e)
+    {
+    },
+    
+    _seriesUpdateHandler: function(e)
+    {
+    }
+});
+
+Y.CartesianChart = CartesianChart;
 
 
 }, '@VERSION@' );

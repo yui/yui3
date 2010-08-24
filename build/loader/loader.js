@@ -2969,19 +2969,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "jsonp": {
-        "submodules": {
-            "jsonp-base": {
-                "requires": [
-                    "get", 
-                    "oop"
-                ]
-            }, 
+        "plugins": {
             "jsonp-url": {
                 "requires": [
-                    "jsonp-base"
+                    "jsonp"
                 ]
             }
-        }
+        }, 
+        "requires": [
+            "get", 
+            "oop"
+        ]
     }, 
     "loader": {
         "requires": [
@@ -3265,6 +3263,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-pluginhost", 
                     "classnamemanager", 
                     "skin-sam-tabview"
                 ]
@@ -3399,19 +3398,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "jsonp"
         ]
-    }, 
-    "yui": {
-        "submodules": {
-            "get": {}, 
-            "intl-base": {}, 
-            "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
-        }
     }
 };
-YUI.Env[Y.version].md5 = '42218b0abf475577189a01bc2403f0d6';
+YUI.Env[Y.version].md5 = 'fdd70fbb00b386cd3174508e249467ba';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

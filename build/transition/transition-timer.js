@@ -127,38 +127,40 @@ Y.mix(Transition.prototype, {
                 easing = attribute.easing;
                 val = attribute.value;
 
-                begin = (name in customAttr && 'get' in customAttr[name])  ?
-                        customAttr[name].get(anim, name) : Transition.DEFAULT_GETTER(anim, name);
+                // only allow supported properties
+                if (name in anim._node._node.style || name in Y.DOM.CUSTOM_STYLES) {
+                    begin = (name in customAttr && 'get' in customAttr[name])  ?
+                            customAttr[name].get(anim, name) : Transition.DEFAULT_GETTER(anim, name);
 
-                var mFrom = Transition.RE_UNITS.exec(begin);
-                var mTo = Transition.RE_UNITS.exec(val);
+                    var mFrom = Transition.RE_UNITS.exec(begin);
+                    var mTo = Transition.RE_UNITS.exec(val);
 
-                begin = mFrom ? mFrom[1] : begin;
-                end = mTo ? mTo[1] : val;
-                unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
+                    begin = mFrom ? mFrom[1] : begin;
+                    end = mTo ? mTo[1] : val;
+                    unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
 
-                if (!unit && Transition.RE_DEFAULT_UNIT.test(name)) {
-                    unit = Transition.DEFAULT_UNIT;
-                }
-
-                if (!begin || !end) {
-                    return;
-                }
-
-                if (typeof easing === 'string') {
-                    if (easing.indexOf('cubic-bezier') > -1) {
-                        easing = easing.substring(13, easing.length - 1).split(',');
-                    } else if (Transition.easings[easing]) {
-                        easing = Transition.easings[easing];
+                    if (!unit && Transition.RE_DEFAULT_UNIT.test(name)) {
+                        unit = Transition.DEFAULT_UNIT;
                     }
-                }
 
-                attribute.from = begin;
-                attribute.to = end;
-                attribute.unit = unit;
-                attribute.easing = easing;
-                attribute.duration = duration + delay;
-                attribute.delay = delay;
+                    if (typeof easing === 'string') {
+                        if (easing.indexOf('cubic-bezier') > -1) {
+                            easing = easing.substring(13, easing.length - 1).split(',');
+                        } else if (Transition.easings[easing]) {
+                            easing = Transition.easings[easing];
+                        }
+                    }
+
+                    attribute.from = Number(begin);
+                    attribute.to = Number(end);
+                    attribute.unit = unit;
+                    attribute.easing = easing;
+                    attribute.duration = duration + delay;
+                    attribute.delay = delay;
+                } else {
+                    delete attrs[name];
+                    anim._count--;
+                }
             }
         }
     },
