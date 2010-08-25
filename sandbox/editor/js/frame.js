@@ -179,6 +179,12 @@ YUI.add('frame', function(Y) {
             inst = null;
             this._iframe.remove();
         },
+        /**
+        * @private
+        * @method _DOMPaste
+        * @description Simple pass thru handler for the paste event so we can do content cleanup
+        * @param {Event.Facade} e
+        */
         _DOMPaste: function(e) {
             var inst = this.getInstance(),
                 data = '', win = inst.config.win;
