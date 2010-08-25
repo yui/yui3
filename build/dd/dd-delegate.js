@@ -82,7 +82,6 @@ YUI.add('dd-delegate', function(Y) {
                 dd = this.dd;
             
             if (tar.test(this.get(NODES)) && !tar.test(this.get('invalid'))) {
-                e.stopPropagation();
                 this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
                 this.set('currentNode', tar);
@@ -329,4 +328,4 @@ YUI.add('dd-delegate', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, optional:['dd-drop-plugin'], requires:['dd-drag', 'event-mouseenter']});
+}, '@VERSION@' ,{optional:['dd-drop-plugin'], requires:['dd-drag', 'event-mouseenter'], skinnable:false});
