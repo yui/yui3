@@ -27,8 +27,9 @@
     padding:0;
     margin:0;
     list-style:none;
-    display:-moz-inline-stack;
+    display: -moz-inline-stack;
     display: inline-block;
-    width: 100%;
-    *display:inline;
+    *display: inline;
+    *zoom:1;
+    width:100%;
 }
