@@ -1,122 +1,4 @@
-YUI.add('record', function(Y) {
-
-function Record(config) {
-    Record.superclass.constructor.apply(this, arguments);
-}
-
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "record"
- */
-Record.NAME = "record";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Record Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Record.ATTRS = {
-    id: {
-        valueFn: "_setId",
-        writeOnce: true
-    },
-    data : {
-    }
-};
-
-/* Record extends Base */
-Y.extend(Record, Y.Base, {
-    _setId: function() {
-        return Y.guid();
-    },
-
-    initializer: function() {
-    },
-
-    destructor: function() {
-    },
-    
-    getValue: function(field) {
-        return this.get("data")[field];
-    }
-});
-
-Y.Record = Record;
-
-
-
-}, '@VERSION@' ,{requires:['base']});
-
-YUI.add('recordset', function(Y) {
-
-function Recordset(config) {
-    Recordset.superclass.constructor.apply(this, arguments);
-}
-
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "recordset"
- */
-Recordset.NAME = "recordset";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Recordset Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Recordset.ATTRS = {
-    records: {
-        value: null,
-        setter: "_setRecords"
-    },
-    
-    length: {
-        value: 0,
-        readOnly:true
-    }
-};
-
-/* Recordset extends Base */
-Y.extend(Recordset, Y.Base, {
-    _setRecords: function(allData) {
-        var records = [];
-
-        function initRecord(oneData){
-            records.push(new Y.Record({data:oneData}));
-        }
-
-        Y.Array.each(allData, initRecord);
-        return records;
-    },
-
-    initializer: function() {
-    },
-    
-    destructor: function() {
-    },
-    
-    getRecord: function(i) {
-        return this.get("records")[i];
-    }
-});
-
-Y.Recordset = Recordset;
-
-
-
-}, '@VERSION@' ,{requires:['base','record']});
-
-YUI.add('column', function(Y) {
+YUI.add('datatable-base', function(Y) {
 
 function Column(config) {
     Column.superclass.constructor.apply(this, arguments);
@@ -232,12 +114,6 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
-
-
-
-}, '@VERSION@' ,{requires:['base']});
-
-YUI.add('columnset', function(Y) {
 
 var Lang = Y.Lang;
 
@@ -547,12 +423,6 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
-
-
-
-}, '@VERSION@' ,{requires:['base','column']});
-
-YUI.add('datatable-base', function(Y) {
 
 var LANG = Y.Lang,
     NODE = Y.Node,
@@ -1032,13 +902,13 @@ Y.namespace("DataTable").Base = DTBase;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget']});
+}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset']});
 
 YUI.add('datatable-sort', function(Y) {
 
 //TODO: break out into own component
 var //getClassName = Y.ClassNameManager.getClassName,
-    COMPARE = Y.Sort.compare,
+    COMPARE = Y.ArraySort.compare,
 
     //DATATABLE = "datatable",
     ASC = "asc",
@@ -1256,5 +1126,5 @@ Y.namespace('Plugin').DataTableColResize = DataTableColResize;
 
 
 
-YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['record','recordset','column','columnset','datatable-base','datatable-sort','datatable-colresize']});
+YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize']});
 

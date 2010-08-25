@@ -376,6 +376,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "datatable": {
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset", 
+                    "widget"
+                ]
+            }, 
+            "datatable-sort": {
+                "requires": [
+                    "arraysort", 
+                    "datatable-base", 
+                    "plugin"
+                ]
+            }
+        }
+    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
@@ -1109,6 +1126,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom"
         ]
     }, 
+    "recordset": {
+        "requires": [
+            "base"
+        ]
+    }, 
     "scrollview": {
         "plugins": {
             "scrollview-base": {
@@ -1379,7 +1401,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'bdc6ba2e25e049ae166285b848d3f1e5';
+YUI.Env[Y.version].md5 = 'fb83124d900d57db37a78d4bba60761a';
 
 
 

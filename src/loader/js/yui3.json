@@ -367,6 +367,23 @@
             }
         }
     }, 
+    "datatable": {
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset", 
+                    "widget"
+                ]
+            }, 
+            "datatable-sort": {
+                "requires": [
+                    "arraysort", 
+                    "datatable-base", 
+                    "plugin"
+                ]
+            }
+        }
+    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
@@ -1091,6 +1108,11 @@
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "recordset": {
+        "requires": [
+            "base"
         ]
     }, 
     "scrollview": {

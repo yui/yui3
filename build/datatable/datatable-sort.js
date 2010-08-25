@@ -2,7 +2,7 @@ YUI.add('datatable-sort', function(Y) {
 
 //TODO: break out into own component
 var //getClassName = Y.ClassNameManager.getClassName,
-    COMPARE = Y.Sort.compare,
+    COMPARE = Y.ArraySort.compare,
 
     //DATATABLE = "datatable",
     ASC = "asc",

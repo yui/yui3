@@ -1,33 +1,12 @@
 {
     "datatable": {
         "submodules": {
-            "column": {
-                "requires": [
-                    "base"
-                ]
-            },
-            "columnset": {
-                "requires": [
-                    "base"
-                ]
-            },
-            "record": {
-                "requires": [
-                    "base"
-                ]
-            },
-            "recordset": {
-                "requires": [
-                    "base"
-                ]
-            },
             "datatable-base": {
                 "requires": [
-                    "columnset",
                     "recordset",
                     "widget"
                 ]
-            }
+            },
             "datatable-sort": {
                 "requires": [
                     "arraysort",
