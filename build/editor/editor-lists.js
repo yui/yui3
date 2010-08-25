@@ -93,7 +93,17 @@ YUI.add('editor-lists', function(Y) {
             this.get(HOST).on('nodeChange', Y.bind(this._onNodeChange, this));
         }
     }, {
+        /**
+        * The non element placeholder, used for positioning the cursor and filling empty items
+        * @property REMOVE
+        * @static
+        */
         NON: '<span class="yui-non">&nbsp;</span>',
+        /**
+        * The selector query to get all non elements
+        * @property NONSEL
+        * @static
+        */
         NON_SEL: 'span.yui-non',
         /**
         * The items to removed from a list when a list item is moved, currently removes BR nodes
