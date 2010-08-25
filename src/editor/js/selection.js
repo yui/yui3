@@ -215,7 +215,7 @@
                 if (html == '' || html == ' ') {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
-                    sel.focusCursor(true, false);
+                    sel.focusCursor(true, true);
                 }
             }
         } else {
@@ -410,9 +410,38 @@
     */
     Y.Selection.DEFAULT_TAG = 'span';
 
+    /**
+    * The id of the outer cursor wrapper
+    * @static
+    * @property DEFAULT_TAG
+    */
     Y.Selection.CURID = 'yui-cursor';
 
-    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '">&nbsp;</span>';
+    /**
+    * The id used to wrap the inner space of the cursor position
+    * @static
+    * @property CUR_WRAPID
+    */
+    Y.Selection.CUR_WRAPID = 'yui-cursor-wrapper';
+
+    /**
+    * The default HTML used to focus the cursor..
+    * @static
+    * @property CURSOR
+    */
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+
+    /**
+    * Called from Editor keydown to remove the "extra" space before the cursor.
+    * @static
+    * @method cleanCursor
+    */
+    Y.Selection.cleanCursor = function() {
+        var cur = Y.one('#' + Y.Selection.CUR_WRAPID);
+        if (cur && cur.get('innerHTML') == '&nbsp;') {
+            cur.remove();
+        }
+    };
 
     Y.Selection.prototype = {
         /**
@@ -577,6 +606,7 @@
 
                     txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
                     txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
+
                     node.replace(txt, node);
                     newNode = Y.Node.create(html);
                     if (newNode.get('nodeType') === 11) {
@@ -585,7 +615,6 @@
                         newNode = b;
                     }
                     txt.insert(newNode, 'after');
-
                     if (txt2 && txt2.get('length')) {
                         newNode.insert(cur, 'after');
                         cur.insert(txt2, 'after');
@@ -765,7 +794,7 @@
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    cur.set('innerHTML', '&nbsp;');
+                    cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
                 } else {
                     cur.remove();
                 }
