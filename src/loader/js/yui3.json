@@ -41,6 +41,7 @@
             }
         }
     }, 
+    "arraysort": {}, 
     "async-queue": {
         "requires": [
             "event-custom"

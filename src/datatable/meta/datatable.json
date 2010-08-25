@@ -30,7 +30,7 @@
             }
             "datatable-sort": {
                 "requires": [
-                    "sort",
+                    "arraysort",
                     "datatable-base",
                     "plugin"
                 ]

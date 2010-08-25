@@ -1,49 +1,6 @@
 //TODO: break out into own component
-Y.Sort = {
-    /**
-     * Comparator function for simple case-insensitive string sorting.
-     *
-     * @method compare
-     * @param a {Object} First sort argument.
-     * @param b {Object} Second sort argument.
-     * @param desc {Boolean} True if sort direction is descending, false if
-     * sort direction is ascending.
-     * @return {Boolean} Return -1 when a < b. Return 0 when a = b.
-     * Return 1 when a > b.
-     */
-    compare: function(a, b, desc) {
-        if((a === null) || (typeof a == "undefined")) {
-            if((b === null) || (typeof b == "undefined")) {
-                return 0;
-            }
-            else {
-                return 1;
-            }
-        }
-        else if((b === null) || (typeof b == "undefined")) {
-            return -1;
-        }
-
-        if(a.constructor == String) {
-            a = a.toLowerCase();
-        }
-        if(b.constructor == String) {
-            b = b.toLowerCase();
-        }
-        if(a < b) {
-            return (desc) ? 1 : -1;
-        }
-        else if (a > b) {
-            return (desc) ? -1 : 1;
-        }
-        else {
-            return 0;
-        }
-    }
-};
-
 var //getClassName = Y.ClassNameManager.getClassName,
-    COMPARE = Y.Sort.compare,
+    COMPARE = Y.ArraySort.compare,
 
     //DATATABLE = "datatable",
     ASC = "asc",

@@ -2245,6 +2245,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "arraysort": {}, 
     "async-queue": {
         "requires": [
             "event-custom"
@@ -3573,7 +3574,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '99689a93c88e7c457ac6798d166b32ed';
+YUI.Env[Y.version].md5 = 'bdc6ba2e25e049ae166285b848d3f1e5';
 
 
 
