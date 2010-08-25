@@ -116,6 +116,7 @@
 
 <div id="stub">
 </div>
+<?php //include('mail.php'); ?>
     <!---div><br></div>
     <ul>
         <li style="font-family: courier new">Item #1</li>
@@ -195,8 +196,10 @@ This is some <strong>other</strong> loose test.
 
 <script type="text/javascript">
 var yConfig = {
-    debug: true,
-    filter: 'DEBUG',
+    //debug: true,
+    //filter: 'DEBUG',
+    debug: false,
+    filter: 'MIN',
     allowRollup: false,
     logExclude: {
         'yui': true,
@@ -356,10 +359,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         switch (e.changedType) {
             case 'keyup':
             case 'mouseup':
-                updateButtons(e);
+                //updateButtons(e);
                 break;
         }
         
+        /*
         if (e.changedType === 'keyup') {
             if (e.changedNode) {
                 var txt = e.changedNode.get('text');
@@ -371,6 +375,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 });
             }
         }
+        */
         
     });
 
@@ -425,8 +430,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             }
         });
     });
-    editor.on('dom:focus', function() {console.log("Focus called");});
-    editor.on('dom:blur', function() {console.log("Blur called");});
+    //editor.on('dom:focus', function() {console.log("Focus called");});
+    //editor.on('dom:blur', function() {console.log("Blur called");});
     
     /*
     editor.on('dom:keyup', function(e) {

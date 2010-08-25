@@ -213,10 +213,42 @@ YUI.add('editor-base', function(Y) {
         * @param {Node} node The Node to start from 
         */
         getDomPath: function(node) {
-            
-			var domPath = [],
+			var domPath = [], domNode,
                 inst = this.frame.getInstance();
 
+            domNode = inst.Node.getDOMNode(node);
+            //return inst.all(domNode);
+
+            while (domNode !== null) {
+                
+                if ((domNode === inst.config.doc.documentElement) || (domNode === inst.config.doc) || !domNode.tagName) {
+                    domNode = null;
+                    break;
+                }
+                if (!domNode.offsetParent) {
+                    domNode = null;
+                    break;
+                }
+                /*
+                if (!inst.DOM.inDoc(domNode)) {
+                    domNode = null;
+                    break;
+                }
+                */
+                //Check to see if we get el.nodeName and nodeType
+                if (domNode.nodeName && domNode.nodeType && (domNode.nodeType == 1)) {
+                    domPath.push(domNode);
+                }
+
+                if (domNode == inst.config.doc.body) {
+                    domNode = null;
+                    break;
+                }
+
+                domNode = domNode.parentNode;
+            }
+
+            /*{{{ Using Node 
             while (node !== null) {
                 if (node.test('html') || node.test('doc') || !node.get('tagName')) {
                     node = null;
@@ -238,9 +270,12 @@ YUI.add('editor-base', function(Y) {
 
                 node = node.get('parentNode');
             }
+            }}}*/
+
             if (domPath.length === 0) {
                 domPath[0] = inst.config.doc.body;
             }
+
             
             return inst.all(domPath.reverse());
 
