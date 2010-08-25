@@ -621,9 +621,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
     _getDefaultColor: function(index)
     {
         var colors = [
-                "#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
-				"#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77",
-				"#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd"
+                "#2011e6", "#f5172c", "#00ff33", "#ff6600", "#7f03d6", "#f3f301",
+				"#4982b8", "#f905eb", "#0af9da", "#fecb01", "#8e9a9b", "#d701fe",
+				"#8cb3d1", "#d18cae", "#b3ddd3", "#fcc551", "#785a85", "#f86b0e"
             ];
         index = index || 0;
         return colors[index];

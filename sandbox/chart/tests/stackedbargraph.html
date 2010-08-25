@@ -97,8 +97,7 @@ table, tr, td
                             fill:{
                                 color:"#ff0000"
                             }
-                        },
-                        padding:{top:50, bottom:50}
+                        }
 					};
 
 					// Add revenue graph styles
@@ -116,8 +115,7 @@ table, tr, td
                             fill: {
                                 color:"#eeeeee"
                             }
-                        },
-                        padding:{top:50, bottom:50}
+                        }
 					};
 
                     var taxgraphstyles = {
@@ -135,8 +133,7 @@ table, tr, td
                             fill:{
                                 alpha:0.2
                             }
-                        },
-                        padding:{top:50, bottom:50}
+                        }
                     };
 					
                     var taxareastyles = {
@@ -153,8 +150,7 @@ table, tr, td
                             fill:{
                                 alpha:0.2
                             }
-                        },
-                        padding:{top:50, bottom:50}
+                        }
                     };
 
 					// Create bottom axis styles
@@ -202,11 +198,10 @@ table, tr, td
 						majorUnit:
 						{
 							count:5
-						},
-                        padding:{top:50, bottom:50}
+						}
 					};	
                     var dataProvider = mydata;
-                    var timeaxis = new Y.TimeAxis({dataProvider:dataProvider});
+                    var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
 					timeaxis.addKey("day");
                     
                     var numericaxis = new Y.StackedAxis({dataProvider:dataProvider});

@@ -190,6 +190,9 @@ Y.extend(Graph, Y.Base, {
             case "pieseries" :
                 seriesClass = Y.PieSeries;
             break;
+            case "combo" :
+                seriesClass = Y.ComboSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;
