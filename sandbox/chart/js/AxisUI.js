@@ -69,18 +69,20 @@ Y.mix(Y.AxisRenderer.prototype, {
 		ui.setTickOffsets();
         uiLength = this.getLength();
         lineStart = ui.getLineStart();
+        len = axis.getTotalMajorUnits(majorUnit, uiLength);
+        majorUnitDistance = axis.getMajorUnitDistance(len, uiLength, majorUnit);
+        this.set("edgeOffset", axis.getEdgeOffset(len, uiLength) * 0.5);
         tickPoint = this.getFirstPoint(lineStart);
         this.drawLine(lineStart, this.getLineEnd(tickPoint), this.get("styles").line);
         if(drawTicks) 
         {
            ui.drawTick(tickPoint, majorTickStyles);
         }
-        len = axis.getTotalMajorUnits(majorUnit, uiLength);
         if(len < 1) 
         {
             return;
         }
-        majorUnitDistance = uiLength/(len - 1);
+        //majorUnitDistance = uiLength/(len - 1);
         this._createLabelCache();
         ui.set("maxLabelSize", 0);
         for(; i < len; ++i)
@@ -232,11 +234,11 @@ Y.mix(Y.AxisRenderer.prototype, {
             np = {x:pt.x, y:pt.y};
         if(pos === "top" || pos === "bottom")
         {
-            np.x += padding.left;
+            np.x += padding.left + this.get("edgeOffset");
         }
         else
         {
-            np.y += padding.top;
+            np.y += padding.top + this.get("edgeOffset");
         }
         return np;
     },

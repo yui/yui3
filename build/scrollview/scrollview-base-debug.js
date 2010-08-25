@@ -879,7 +879,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     BOUNCE_RANGE : 150,
 
     /**
-     * The step amount used when animating the flick
+     * The interval used when animating the flick
      *
      * @property ScrollView.FRAME_STEP
      * @type Number

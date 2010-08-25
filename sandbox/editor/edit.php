@@ -115,14 +115,14 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+</div>
+    <!---div><br></div>
     <ul>
         <li style="font-family: courier new">Item #1</li>
         <li>Item #1</li>
         <li>Item #1</li>
     </ul>
     <p>This is a test..</p>
-</div>
-    <!---div><br></div>
     <div style="font-family: ; font-size: ;"><br>
         <div style="font-family: times new roman, new york, times, serif; font-size: 12pt;">
             <font size="2" face="Tahoma">

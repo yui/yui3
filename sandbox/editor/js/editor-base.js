@@ -74,8 +74,9 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _defNodeChangeFn: function(e) {
-            //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
+            Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
             var inst = this.getInstance();
+
 
             /*
             * @TODO
@@ -85,6 +86,9 @@ YUI.add('editor-base', function(Y) {
             */
             
             switch (e.changedType) {
+                case 'keydown':
+                    inst.Selection.cleanCursor();
+                    break;
                 case 'enter':
                     if (Y.UA.webkit) {
                         //Webkit doesn't support shift+enter as a BR, this fixes that.
