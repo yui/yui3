@@ -140,12 +140,16 @@ YUI.add('frame', function(Y) {
         * @param {Event.Facade} e
         */
         _onDomEvent: function(e) {
-            var xy = this._iframe.getXY(),
-                node = this._instance.one('win');
+            var xy, node = this._instance.one('win');
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
-            e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
-            e.frameY = xy[1] + e.pageY - node.get('scrollTop');
+            e.frameX = e.frameY = 0;
+
+            if (e.pageX > 0 || e.pageY > 0) {
+                xy = this._iframe.getXY()
+                e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
+                e.frameY = xy[1] + e.pageY - node.get('scrollTop');
+            }
 
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
@@ -503,7 +507,7 @@ YUI.add('frame', function(Y) {
         focus: function(fn) {
             if (Y.UA.ie || Y.UA.gecko) {
                 this.getInstance().one('win').focus();
-                if (fn) {
+                if (Y.Lang.isFunction(fn)) {
                     fn();
                 }
             } else {
@@ -511,7 +515,7 @@ YUI.add('frame', function(Y) {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
-                        if (fn) {
+                        if (Y.Lang.isFunction(fn)) {
                             fn();
                         }
                     });
