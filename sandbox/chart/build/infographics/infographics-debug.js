@@ -588,6 +588,25 @@ Y.extend(BaseAxis, Y.Base,
         return Math.min(units, this._data.length);
     },
 
+    getMajorUnitDistance: function(len, uiLen, majorUnit)
+    {
+        var dist;
+        if(majorUnit.determinant === "count")
+        {
+            dist = uiLen/(len - 1);
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            dist = majorUnit.distance;
+        }
+        return dist;
+    },
+
+    getEdgeOffset: function(ct, l)
+    {
+        return 0;
+    },
+
     getLabelAtPosition:function(pos, len, format)
     {
         var min = this.get("minimum"),
@@ -1087,9 +1106,31 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 		}
 		return null;
 	},
+
     getTotalMajorUnits: function(majorUnit, len)
     {
         return this._data.length;
+    },
+    
+    getMajorUnitDistance: function(len, uiLen, majorUnit)
+    {
+        var dist,
+            ct = majorUnit.count,
+            catsize = uiLen/ct;
+        if(majorUnit.determinant === "count")
+        {
+            dist = uiLen/len;
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            dist = majorUnit.distance;
+        }
+        return dist;
+    },
+   
+    getEdgeOffset: function(ct, l)
+    {
+        return l/ct;
     },
     
     getLabelAtPosition: function(pos, len, format)
@@ -1098,7 +1139,6 @@ Y.extend(CategoryAxis, Y.BaseAxis,
         i = Math.round(pos/(len/count));
         return this._data[i];
     }
-			
 });
 
 Y.CategoryAxis = CategoryAxis;
@@ -1469,6 +1509,276 @@ Y.extend(Marker, Y.Renderer, {
 });
 
 Y.Marker = Marker;
+function Lines(){}
+
+Lines.prototype = {
+    /**
+	 * @private
+	 */
+	drawLines: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords").concat(),
+			ycoords = this.get("ycoords").concat(),
+			len = xcoords.length,
+			lastX = xcoords[0],
+			lastY = ycoords[0],
+			lastValidX = lastX,
+			lastValidY = lastY,
+			nextX,
+			nextY,
+			i,
+			styles = this.get("styles"),
+			lineType = styles.lineType,
+            lc = styles.lineColor || this._getDefaultColor(this.get("graphOrder")),
+			dashLength = styles.dashLength,
+			gapSpace = styles.gapSpace,
+			connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
+			discontinuousType = styles.discontinuousType,
+			discontinuousDashLength = styles.discontinuousDashLength,
+			discontinuousGapSpace = styles.discontinuousGapSpace,
+			graphic = this.get("graphic");
+        graphic.clear();
+        graphic.lineStyle(styles.weight, lc);
+        graphic.moveTo(lastX, lastY);
+        for(i = 1; i < len; i = ++i)
+		{
+			nextX = xcoords[i];
+			nextY = ycoords[i];
+            if(isNaN(nextY))
+			{
+				lastValidX = nextX;
+				lastValidY = nextY;
+				continue;
+			}
+			if(lastValidX == lastX)
+			{
+                if(lineType != "dashed")
+				{
+                    graphic.lineTo(nextX, nextY);
+				}
+				else
+				{
+					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+												dashLength, 
+												gapSpace);
+				}
+			}
+			else if(!connectDiscontinuousPoints)
+			{
+				graphic.moveTo(nextX, nextY);
+			}
+			else
+			{
+				if(discontinuousType != "solid")
+				{
+					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+												discontinuousDashLength, 
+												discontinuousGapSpace);
+				}
+				else
+				{
+                    graphic.lineTo(nextX, nextY);
+				}
+			}
+		
+			lastX = lastValidX = nextX;
+			lastY = lastValidY = nextY;
+        }
+        graphic.end();
+	},
+	
+    /**
+	 * Draws a dashed line between two points.
+	 * 
+	 * @param xStart	The x position of the start of the line
+	 * @param yStart	The y position of the start of the line
+	 * @param xEnd		The x position of the end of the line
+	 * @param yEnd		The y position of the end of the line
+	 * @param dashSize	the size of dashes, in pixels
+	 * @param gapSize	the size of gaps between dashes, in pixels
+	 */
+	drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
+	{
+		dashSize = dashSize || 10;
+		gapSize = gapSize || 10;
+		var segmentLength = dashSize + gapSize,
+			xDelta = xEnd - xStart,
+			yDelta = yEnd - yStart,
+			delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
+			segmentCount = Math.floor(Math.abs(delta / segmentLength)),
+			radians = Math.atan2(yDelta, xDelta),
+			xCurrent = xStart,
+			yCurrent = yStart,
+			i,
+			graphic = this.get("graphic");
+		xDelta = Math.cos(radians) * segmentLength;
+		yDelta = Math.sin(radians) * segmentLength;
+		
+		for(i = 0; i < segmentCount; ++i)
+		{
+			graphic.moveTo(xCurrent, yCurrent);
+			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+			xCurrent += xDelta;
+			yCurrent += yDelta;
+		}
+		
+		graphic.moveTo(xCurrent, yCurrent);
+		delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
+		
+		if(delta > dashSize)
+		{
+			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+		}
+		else if(delta > 0)
+		{
+			graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+		}
+		
+		graphic.moveTo(xEnd, yEnd);
+	}
+};
+
+Y.Lines = Lines;
+function Fills(){}
+
+Fills.prototype = {
+    /**
+	 * @protected
+	 */
+	drawFill: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+			len = xcoords.length,
+			firstX = xcoords[0],
+			firstY = ycoords[0],
+			lastX = firstX,
+            lastY = firstY,
+            lastValidX = lastX,
+			lastValidY = lastY,
+			nextX,
+			nextY,
+			i,
+			styles = this.get("styles"),
+			graphic = this.get("graphic");
+        graphic.clear();
+        graphic.beginFill(styles.color, styles.alpha);
+        graphic.moveTo(lastX, lastY);
+        for(i = 1; i < len; i = ++i)
+		{
+			nextX = xcoords[i];
+			nextY = ycoords[i];
+			if(isNaN(nextY))
+			{
+				lastValidX = nextX;
+				lastValidY = nextY;
+				continue;
+			}
+            graphic.lineTo(nextX, nextY);
+			lastX = lastValidX = nextX;
+			lastY = lastValidY = nextY;
+        }
+        if(this.get("direction") === "vertical")
+        {
+            graphic.lineTo(this._leftOrigin, lastY);
+            graphic.lineTo(this._leftOrigin, firstY);
+        }
+        else
+        {
+            graphic.lineTo(lastX, this._bottomOrigin);
+            graphic.lineTo(firstX, this._bottomOrigin);
+        }
+        graphic.lineTo(firstX, firstY);
+        graphic.end();
+	}
+};
+
+Y.Fills = Fills;
+function Plots(){}
+
+Plots.prototype = {
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+    },
+    
+    drawPlots: function()
+    {
+	    if(!this.get("xcoords") || this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var style = this.get("styles"),
+            w = style.width,
+            h = style.height,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            i = 0,
+            len = xcoords.length,
+            top = ycoords[0],
+            left,
+            marker,
+            mnode,
+            offsetWidth = w/2,
+            offsetHeight = h/2;
+            this._createMarkerCache();
+        for(; i < len; ++i)
+        {
+            top = (ycoords[i] - offsetWidth) + "px";
+            left = (xcoords[i] - offsetHeight) + "px";
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
+            mnode = marker.get("boundingBox");
+            mnode.setStyle("position", "absolute"); 
+            mnode.setStyle("top", top);
+            mnode.setStyle("left", left);
+        }
+        this._clearMarkerCache();
+ 	},
+
+    _markerEventHandler: function(e)
+    {
+        var type = e.type,
+            marker = Y.Widget.getByNode(e.currentTarget),
+            w,
+            h,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
+            bb = marker.get("boundingBox");
+            switch(type)
+            {
+                case "mouseout" :
+                    marker.set("state", "off");
+                break;
+                case "mouseover" :
+                    marker.set("state", "over");
+                break;
+                case "mouseup" :
+                    marker.set("state", "over");
+                break;
+                case "mousedown" :
+                    marker.set("state", "down");
+                break;
+            }
+            w = marker.get("width");
+            h = marker.get("height");
+            bb.setStyle("left", (xcoords[i] - w/2) + "px");
+            bb.setStyle("top", (ycoords[i] - h/2) + "px");    
+    }
+};
+
+Y.Plots = Plots;
 function PieSeries(config)
 {
     PieSeries.superclass.constructor.apply(this, arguments);
@@ -1895,10 +2205,10 @@ Y.extend(PieSeries, Y.Renderer, {
     _getDefaultColor: function(index)
     {
         var colors = [
-            "#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
-            "#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77",
-            "#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd"
-        ];
+                "#2011e6", "#f5172c", "#00ff33", "#ff6600", "#7f03d6", "#f3f301",
+				"#4982b8", "#f905eb", "#0af9da", "#fecb01", "#8e9a9b", "#d701fe",
+				"#8cb3d1", "#d18cae", "#b3ddd3", "#fcc551", "#785a85", "#f86b0e"
+            ];
         index = index || 0;
         return colors[index];
     }
@@ -2173,29 +2483,33 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	{
         var nextX, nextY,
             node = Y.Node.one(this._parentNode).get("parentNode"),
-			w = node.get("offsetWidth"),
+            w = node.get("offsetWidth"),
             h = node.get("offsetHeight"),
+            xAxis = this.get("xAxis"),
+            yAxis = this.get("yAxis"),
+            xData = this.get("xData").concat(),
+            yData = this.get("yData").concat(),
+            xOffset = xAxis.getEdgeOffset(xData.length, w),
+            yOffset = yAxis.getEdgeOffset(yData.length, h),
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
-			dataWidth = w - (leftPadding + padding.right),
-			dataHeight = h - (topPadding + padding.bottom),
+			dataWidth = w - (leftPadding + padding.right + xOffset),
+			dataHeight = h - (topPadding + padding.bottom + yOffset),
 			xcoords = [],
 			ycoords = [],
-            xAxis = this.get("xAxis"),
-            yAxis = this.get("yAxis"),
 			xMax = xAxis.get("maximum"),
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-            xData = this.get("xData").concat(),
-            yData = this.get("yData").concat(),
             dataLength,
             direction = this.get("direction"),
             i = 0;
             dataLength = xData.length; 	
+            xOffset *= 0.5;
+            yOffset *= 0.5;
         //Assuming a vertical graph has a range/category for its vertical axis.    
         if(direction === "vertical")
         {
@@ -2205,12 +2519,12 @@ Y.extend(CartesianSeries, Y.Renderer, {
         {
             this.get("graphic").setSize(w, h);
         }
-        this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
-        this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
+        this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
+        this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
         for (; i < dataLength; ++i) 
 		{
-            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
-			nextY = Math.round(((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
+            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding + xOffset));
+			nextY = Math.round(((dataHeight + topPadding + yOffset) - (yData[i] - yMin) * yScaleFactor));
             xcoords.push(nextX);
             ycoords.push(nextY);
         }
@@ -2524,9 +2838,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
     _getDefaultColor: function(index)
     {
         var colors = [
-                "#00b8bf", "#8dd5e7", "#c0fff6", "#ffa928", "#edff9f", "#d00050",
-				"#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77",
-				"#c6c6c6", "#c3eafb", "#fcffad", "#cfff83", "#444444", "#4d95dd"
+                "#2011e6", "#f5172c", "#00ff33", "#ff6600", "#7f03d6", "#f3f301",
+				"#4982b8", "#f905eb", "#0af9da", "#fecb01", "#8e9a9b", "#d701fe",
+				"#8cb3d1", "#d18cae", "#b3ddd3", "#fcc551", "#785a85", "#f86b0e"
             ];
         index = index || 0;
         return colors[index];
@@ -2534,23 +2848,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
 });
 
 Y.CartesianSeries = CartesianSeries;
-function MarkerSeries(config)
-{
-	MarkerSeries.superclass.constructor.apply(this, arguments);
-}
-
-MarkerSeries.NAME = "markerSeries";
-
-MarkerSeries.ATTRS = {
-	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-        value:"marker"
-    }
-};
-
-Y.extend(MarkerSeries, Y.CartesianSeries, {
+Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**
      * @private
      */
@@ -2558,81 +2856,12 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
     {
         this._setNode();
     },
-    
-    bindUI: function()
-    {
-        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
-        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
-        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
-        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
-    },
-    
     /**
      * @private
-     * @description Draws the markers for the graph
      */
 	drawSeries: function()
 	{
-	    if(!this.get("xcoords") || this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var style = this.get("styles"),
-            w = style.width,
-            h = style.height,
-            xcoords = this.get("xcoords"),
-            ycoords = this.get("ycoords"),
-            i = 0,
-            len = xcoords.length,
-            top = ycoords[0],
-            left,
-            marker,
-            mnode,
-            offsetWidth = w/2,
-            offsetHeight = h/2;
-            this._createMarkerCache();
-        for(; i < len; ++i)
-        {
-            top = (ycoords[i] - offsetWidth) + "px";
-            left = (xcoords[i] - offsetHeight) + "px";
-            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
-            mnode = marker.get("boundingBox");
-            mnode.setStyle("position", "absolute"); 
-            mnode.setStyle("top", top);
-            mnode.setStyle("left", left);
-        }
-        this._clearMarkerCache();
- 	},
-
-    _markerEventHandler: function(e)
-    {
-        var type = e.type,
-            marker = Y.Widget.getByNode(e.currentTarget),
-            w,
-            h,
-            xcoords = this.get("xcoords"),
-            ycoords = this.get("ycoords"),
-            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
-            bb = marker.get("boundingBox");
-            switch(type)
-            {
-                case "mouseout" :
-                    marker.set("state", "off");
-                break;
-                case "mouseover" :
-                    marker.set("state", "over");
-                break;
-                case "mouseup" :
-                    marker.set("state", "over");
-                break;
-                case "mousedown" :
-                    marker.set("state", "down");
-                break;
-            }
-            w = marker.get("width");
-            h = marker.get("height");
-            bb.setStyle("left", (xcoords[i] - w/2) + "px");
-            bb.setStyle("top", (ycoords[i] - h/2) + "px");    
+        this.drawPlots();
     },
 
 	_getDefaultStyles: function()
@@ -2661,154 +2890,23 @@ Y.extend(MarkerSeries, Y.CartesianSeries, {
             }
         };
     }
+},{
+    ATTRS : {
+        type: {
+            /**
+             * Indicates the type of graph.
+             */
+            value:"marker"
+        }
+    }
 });
 
-Y.MarkerSeries = MarkerSeries;
-function LineSeries(config)
-{
-	LineSeries.superclass.constructor.apply(this, arguments);
-}
 
-LineSeries.NAME = "lineSeries";
-
-LineSeries.ATTRS = {
-	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-        value:"line"
-    }
-};
-
-Y.extend(LineSeries, Y.CartesianSeries, {
-	/**
-	 * @private
-	 */
+Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 	drawSeries: function()
-	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-			len = xcoords.length,
-			lastX = xcoords[0],
-			lastY = ycoords[0],
-			lastValidX = lastX,
-			lastValidY = lastY,
-			nextX,
-			nextY,
-			i,
-			styles = this.get("styles"),
-			lineType = styles.lineType,
-            lc = styles.lineColor || this._getDefaultColor(this.get("graphOrder")),
-			dashLength = styles.dashLength,
-			gapSpace = styles.gapSpace,
-			connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
-			discontinuousType = styles.discontinuousType,
-			discontinuousDashLength = styles.discontinuousDashLength,
-			discontinuousGapSpace = styles.discontinuousGapSpace,
-			graphic = this.get("graphic");
-        graphic.clear();
-        graphic.lineStyle(styles.weight, lc);
-        graphic.moveTo(lastX, lastY);
-        for(i = 1; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
-			if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
-			if(lastValidX == lastX)
-			{
-                if(lineType != "dashed")
-				{
-                    graphic.lineTo(nextX, nextY);
-				}
-				else
-				{
-					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
-												dashLength, 
-												gapSpace);
-				}
-			}
-			else if(!connectDiscontinuousPoints)
-			{
-				graphic.moveTo(nextX, nextY);
-			}
-			else
-			{
-				if(discontinuousType != "solid")
-				{
-					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
-												discontinuousDashLength, 
-												discontinuousGapSpace);
-				}
-				else
-				{
-                    graphic.lineTo(nextX, nextY);
-				}
-			}
-		
-			lastX = lastValidX = nextX;
-			lastY = lastValidY = nextY;
-        }
-        graphic.end();
-	},
-	
-    /**
-	 * Draws a dashed line between two points.
-	 * 
-	 * @param xStart	The x position of the start of the line
-	 * @param yStart	The y position of the start of the line
-	 * @param xEnd		The x position of the end of the line
-	 * @param yEnd		The y position of the end of the line
-	 * @param dashSize	the size of dashes, in pixels
-	 * @param gapSize	the size of gaps between dashes, in pixels
-	 */
-	drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
-	{
-		dashSize = dashSize || 10;
-		gapSize = gapSize || 10;
-		var segmentLength = dashSize + gapSize,
-			xDelta = xEnd - xStart,
-			yDelta = yEnd - yStart,
-			delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
-			segmentCount = Math.floor(Math.abs(delta / segmentLength)),
-			radians = Math.atan2(yDelta, xDelta),
-			xCurrent = xStart,
-			yCurrent = yStart,
-			i,
-			graphic = this.get("graphic");
-		xDelta = Math.cos(radians) * segmentLength;
-		yDelta = Math.sin(radians) * segmentLength;
-		
-		for(i = 0; i < segmentCount; ++i)
-		{
-			graphic.moveTo(xCurrent, yCurrent);
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-			xCurrent += xDelta;
-			yCurrent += yDelta;
-		}
-		
-		graphic.moveTo(xCurrent, yCurrent);
-		delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
-		
-		if(delta > dashSize)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-		}
-		else if(delta > 0)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
-		}
-		
-		graphic.moveTo(xEnd, yEnd);
-	},
+    {
+        this.drawLines();
+    },
 
 	_getDefaultStyles: function()
     {
@@ -2838,9 +2936,19 @@ Y.extend(LineSeries, Y.CartesianSeries, {
             }
         };
     }
+},
+{
+    ATTRS: {
+        type: {
+            /**
+             * Indicates the type of graph.
+             */
+            value:"line"
+        }
+    }
+
 });
 
-Y.LineSeries = LineSeries;
 
 
 		
@@ -3588,79 +3696,11 @@ Y.extend(BarSeries, Y.CartesianSeries, {
 });
 
 Y.BarSeries = BarSeries;
-function AreaSeries(config)
-{
-	AreaSeries.superclass.constructor.apply(this, arguments);
-}
-
-AreaSeries.NAME = "areaSeries";
-
-AreaSeries.ATTRS = {
-	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-        value:"area"
-    },
-    direction: {
-        value:"horizontal"
-    }
-};
-
-Y.extend(AreaSeries, Y.CartesianSeries, {
-	/**
-	 * @protected
-	 */
+Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 	drawSeries: function()
-	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-			len = xcoords.length,
-			firstX = xcoords[0],
-			firstY = ycoords[0],
-			lastX = firstX,
-            lastY = firstY,
-            lastValidX = lastX,
-			lastValidY = lastY,
-			nextX,
-			nextY,
-			i,
-			styles = this.get("styles"),
-			graphic = this.get("graphic");
-        graphic.clear();
-        graphic.beginFill(styles.color, styles.alpha);
-        graphic.moveTo(lastX, lastY);
-        for(i = 1; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
-			if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
-            graphic.lineTo(nextX, nextY);
-			lastX = lastValidX = nextX;
-			lastY = lastValidY = nextY;
-        }
-        if(this.get("direction") === "vertical")
-        {
-            graphic.lineTo(this._leftOrigin, lastY);
-            graphic.lineTo(this._leftOrigin, firstY);
-        }
-        else
-        {
-            graphic.lineTo(lastX, this._bottomOrigin);
-            graphic.lineTo(firstX, this._bottomOrigin);
-        }
-        graphic.lineTo(firstX, firstY);
-        graphic.end();
-	},
+    {
+        this.drawFill();
+    },
 	
 	_getDefaultStyles: function()
     {
@@ -3675,9 +3715,102 @@ Y.extend(AreaSeries, Y.CartesianSeries, {
             }
         };
     }
+},
+{
+    ATTRS: {
+        type: {
+            /**
+             * Indicates the type of graph.
+             */
+            value:"area"
+        },
+        direction: {
+            value:"horizontal"
+        }
+    }
 });
 
-Y.AreaSeries = AreaSeries;
+
+
+		
+
+		
+Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
+	drawSeries: function()
+    {
+        if(this.get("showFill"))
+        {
+            this.drawFill();
+        }
+        if(this.get("showLines")) 
+        {
+            this.drawLines();
+        }
+        if(this.get("showMarkers"))
+        {
+            this.drawPlots();
+        }   
+    },
+
+	_getDefaultStyles: function()
+    {
+        return {
+            fill:{
+                type: "solid",
+                alpha: 1,
+                colors:null,
+                alphas: null,
+                ratios: null
+            },
+            border:{
+                weight: 1,
+                alpha: 1
+            },
+            width: 6,
+            height: 6,
+            shape: "circle",
+            alpha: 1,
+            weight: 1,
+            lineType:"solid", 
+            dashLength:10, 
+            gapSpace:10, 
+            connectDiscontinuousPoint:true, 
+            discontinuousType:"dashed", 
+            discontinuousDashLength:10, 
+            discontinuousGapSpace:10,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+},
+{
+    ATTRS: {
+        type: {
+            /**
+             * Indicates the type of graph.
+             */
+            value:"combo"
+        },
+
+        showFill: {
+            value: false
+        },
+
+        showLines: {
+            value: true
+        },
+
+        showMarkers: {
+            value: true
+        }
+    }
+
+});
+
 
 
 		
@@ -4859,6 +4992,9 @@ Y.extend(Graph, Y.Base, {
             case "pieseries" :
                 seriesClass = Y.PieSeries;
             break;
+            case "combo" :
+                seriesClass = Y.ComboSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;
@@ -4880,6 +5016,10 @@ function AxisRenderer(config)
 AxisRenderer.NAME = "axisRenderer";
 
 AxisRenderer.ATTRS = {
+        edgeOffset: {
+            value: 0
+        },
+
         /**
          * The graphic in which the axis line and ticks will be rendered.
          */
@@ -6072,18 +6212,20 @@ Y.mix(Y.AxisRenderer.prototype, {
 		ui.setTickOffsets();
         uiLength = this.getLength();
         lineStart = ui.getLineStart();
+        len = axis.getTotalMajorUnits(majorUnit, uiLength);
+        majorUnitDistance = axis.getMajorUnitDistance(len, uiLength, majorUnit);
+        this.set("edgeOffset", axis.getEdgeOffset(len, uiLength) * 0.5);
         tickPoint = this.getFirstPoint(lineStart);
         this.drawLine(lineStart, this.getLineEnd(tickPoint), this.get("styles").line);
         if(drawTicks) 
         {
            ui.drawTick(tickPoint, majorTickStyles);
         }
-        len = axis.getTotalMajorUnits(majorUnit, uiLength);
         if(len < 1) 
         {
             return;
         }
-        majorUnitDistance = uiLength/(len - 1);
+        //majorUnitDistance = uiLength/(len - 1);
         this._createLabelCache();
         ui.set("maxLabelSize", 0);
         for(; i < len; ++i)
@@ -6235,11 +6377,11 @@ Y.mix(Y.AxisRenderer.prototype, {
             np = {x:pt.x, y:pt.y};
         if(pos === "top" || pos === "bottom")
         {
-            np.x += padding.left;
+            np.x += padding.left + this.get("edgeOffset");
         }
         else
         {
-            np.y += padding.top;
+            np.y += padding.top + this.get("edgeOffset");
         }
         return np;
     },
@@ -6415,7 +6557,7 @@ CartesianChart.ATTRS = {
      * Type of chart when there is no series collection specified.
      */
     type: {
-        value:"line"
+        value:"combo"
     },
 
     /**
@@ -6629,7 +6771,7 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     bindUI: function()
     {
-        this.after("showTooltipChange", Y.bind(this._showTooltipHandler, this));
+        this.after("showTooltipChange", Y.bind(this._showTooltipChangeHandler, this));
     },
    
     /**
@@ -6844,7 +6986,7 @@ Y.extend(CartesianChart, Y.Widget, {
     /**
      * @private
      */
-    _dataTipChangeHandler: function(e)
+    _showTooltipChangeHandler: function(e)
     {
         if(this.get("showTooltip") && this.get("rendered"))
         {

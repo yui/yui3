@@ -100,7 +100,7 @@ CartesianChart.ATTRS = {
      * Type of chart when there is no series collection specified.
      */
     type: {
-        value:"line"
+        value:"combo"
     },
 
     /**
@@ -314,7 +314,7 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     bindUI: function()
     {
-        this.after("showTooltipChange", Y.bind(this._showTooltipHandler, this));
+        this.after("showTooltipChange", Y.bind(this._showTooltipChangeHandler, this));
     },
    
     /**
@@ -529,7 +529,7 @@ Y.extend(CartesianChart, Y.Widget, {
     /**
      * @private
      */
-    _dataTipChangeHandler: function(e)
+    _showTooltipChangeHandler: function(e)
     {
         if(this.get("showTooltip") && this.get("rendered"))
         {

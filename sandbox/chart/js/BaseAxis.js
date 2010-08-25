@@ -586,6 +586,25 @@ Y.extend(BaseAxis, Y.Base,
         return Math.min(units, this._data.length);
     },
 
+    getMajorUnitDistance: function(len, uiLen, majorUnit)
+    {
+        var dist;
+        if(majorUnit.determinant === "count")
+        {
+            dist = uiLen/(len - 1);
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            dist = majorUnit.distance;
+        }
+        return dist;
+    },
+
+    getEdgeOffset: function(ct, l)
+    {
+        return 0;
+    },
+
     getLabelAtPosition:function(pos, len, format)
     {
         var min = this.get("minimum"),

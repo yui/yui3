@@ -180,6 +180,12 @@ YUI.add('frame', function(Y) {
             inst = null;
             this._iframe.remove();
         },
+        /**
+        * @private
+        * @method _DOMPaste
+        * @description Simple pass thru handler for the paste event so we can do content cleanup
+        * @param {Event.Facade} e
+        */
         _DOMPaste: function(e) {
             var inst = this.getInstance(),
                 data = '', win = inst.config.win;
@@ -935,7 +941,7 @@ YUI.add('selection', function(Y) {
                 if (html == '' || html == ' ') {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
-                    sel.focusCursor(true, false);
+                    sel.focusCursor(true, true);
                 }
             }
         } else {
@@ -1130,9 +1136,38 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.DEFAULT_TAG = 'span';
 
+    /**
+    * The id of the outer cursor wrapper
+    * @static
+    * @property DEFAULT_TAG
+    */
     Y.Selection.CURID = 'yui-cursor';
 
-    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '">&nbsp;</span>';
+    /**
+    * The id used to wrap the inner space of the cursor position
+    * @static
+    * @property CUR_WRAPID
+    */
+    Y.Selection.CUR_WRAPID = 'yui-cursor-wrapper';
+
+    /**
+    * The default HTML used to focus the cursor..
+    * @static
+    * @property CURSOR
+    */
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+
+    /**
+    * Called from Editor keydown to remove the "extra" space before the cursor.
+    * @static
+    * @method cleanCursor
+    */
+    Y.Selection.cleanCursor = function() {
+        var cur = Y.one('#' + Y.Selection.CUR_WRAPID);
+        if (cur && cur.get('innerHTML') == '&nbsp;') {
+            cur.remove();
+        }
+    };
 
     Y.Selection.prototype = {
         /**
@@ -1297,6 +1332,7 @@ YUI.add('selection', function(Y) {
 
                     txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
                     txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
+
                     node.replace(txt, node);
                     newNode = Y.Node.create(html);
                     if (newNode.get('nodeType') === 11) {
@@ -1305,7 +1341,6 @@ YUI.add('selection', function(Y) {
                         newNode = b;
                     }
                     txt.insert(newNode, 'after');
-
                     if (txt2 && txt2.get('length')) {
                         newNode.insert(cur, 'after');
                         cur.insert(txt2, 'after');
@@ -1485,7 +1520,7 @@ YUI.add('selection', function(Y) {
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    cur.set('innerHTML', '&nbsp;');
+                    cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
                 } else {
                     cur.remove();
                 }
@@ -1806,8 +1841,10 @@ YUI.add('exec-command', function(Y) {
                     if (sel.isCollapsed) {
                         n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
                         prev = n.get('previousSibling');
-                        if (prev.get('nodeType') === 3) {
-                            prev.remove();
+                        if (prev && prev.get('nodeType') === 3) {
+                            if (prev.get('length') < 2) {
+                                prev.remove();
+                            }
                         }
                         sel.selectNode(n.get('firstChild'), true, false);
                         return n;
@@ -2049,6 +2086,7 @@ YUI.add('editor-base', function(Y) {
             //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
             var inst = this.getInstance();
 
+
             /*
             * @TODO
             * This whole method needs to be fixed and made more dynamic.
@@ -2057,6 +2095,9 @@ YUI.add('editor-base', function(Y) {
             */
             
             switch (e.changedType) {
+                case 'keydown':
+                    inst.Selection.cleanCursor();
+                    break;
                 case 'enter':
                     if (Y.UA.webkit) {
                         //Webkit doesn't support shift+enter as a BR, this fixes that.
@@ -2182,10 +2223,42 @@ YUI.add('editor-base', function(Y) {
         * @param {Node} node The Node to start from 
         */
         getDomPath: function(node) {
-            
-			var domPath = [],
+			var domPath = [], domNode,
                 inst = this.frame.getInstance();
 
+            domNode = inst.Node.getDOMNode(node);
+            //return inst.all(domNode);
+
+            while (domNode !== null) {
+                
+                if ((domNode === inst.config.doc.documentElement) || (domNode === inst.config.doc) || !domNode.tagName) {
+                    domNode = null;
+                    break;
+                }
+                if (!domNode.offsetParent) {
+                    domNode = null;
+                    break;
+                }
+                /*
+                if (!inst.DOM.inDoc(domNode)) {
+                    domNode = null;
+                    break;
+                }
+                */
+                //Check to see if we get el.nodeName and nodeType
+                if (domNode.nodeName && domNode.nodeType && (domNode.nodeType == 1)) {
+                    domPath.push(domNode);
+                }
+
+                if (domNode == inst.config.doc.body) {
+                    domNode = null;
+                    break;
+                }
+
+                domNode = domNode.parentNode;
+            }
+
+            /*{{{ Using Node 
             while (node !== null) {
                 if (node.test('html') || node.test('doc') || !node.get('tagName')) {
                     node = null;
@@ -2207,9 +2280,12 @@ YUI.add('editor-base', function(Y) {
 
                 node = node.get('parentNode');
             }
+            }}}*/
+
             if (domPath.length === 0) {
                 domPath[0] = inst.config.doc.body;
             }
+
             
             return inst.all(domPath.reverse());
 
@@ -2672,7 +2748,17 @@ YUI.add('editor-lists', function(Y) {
             this.get(HOST).on('nodeChange', Y.bind(this._onNodeChange, this));
         }
     }, {
+        /**
+        * The non element placeholder, used for positioning the cursor and filling empty items
+        * @property REMOVE
+        * @static
+        */
         NON: '<span class="yui-non">&nbsp;</span>',
+        /**
+        * The selector query to get all non elements
+        * @property NONSEL
+        * @static
+        */
         NON_SEL: 'span.yui-non',
         /**
         * The items to removed from a list when a list item is moved, currently removes BR nodes

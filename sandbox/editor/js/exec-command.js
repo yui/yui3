@@ -282,8 +282,10 @@ YUI.add('exec-command', function(Y) {
                     if (sel.isCollapsed) {
                         n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
                         prev = n.get('previousSibling');
-                        if (prev.get('nodeType') === 3) {
-                            prev.remove();
+                        if (prev && prev.get('nodeType') === 3) {
+                            if (prev.get('length') < 2) {
+                                prev.remove();
+                            }
                         }
                         sel.selectNode(n.get('firstChild'), true, false);
                         return n;
