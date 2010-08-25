@@ -588,6 +588,25 @@ Y.extend(BaseAxis, Y.Base,
         return Math.min(units, this._data.length);
     },
 
+    getMajorUnitDistance: function(len, uiLen, majorUnit)
+    {
+        var dist;
+        if(majorUnit.determinant === "count")
+        {
+            dist = uiLen/(len - 1);
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            dist = majorUnit.distance;
+        }
+        return dist;
+    },
+
+    getEdgeOffset: function(ct, l)
+    {
+        return 0;
+    },
+
     getLabelAtPosition:function(pos, len, format)
     {
         var min = this.get("minimum"),
@@ -1087,9 +1106,31 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 		}
 		return null;
 	},
+
     getTotalMajorUnits: function(majorUnit, len)
     {
         return this._data.length;
+    },
+    
+    getMajorUnitDistance: function(len, uiLen, majorUnit)
+    {
+        var dist,
+            ct = majorUnit.count,
+            catsize = uiLen/ct;
+        if(majorUnit.determinant === "count")
+        {
+            dist = uiLen/len;
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            dist = majorUnit.distance;
+        }
+        return dist;
+    },
+   
+    getEdgeOffset: function(ct, l)
+    {
+        return l/ct;
     },
     
     getLabelAtPosition: function(pos, len, format)
@@ -1098,7 +1139,6 @@ Y.extend(CategoryAxis, Y.BaseAxis,
         i = Math.round(pos/(len/count));
         return this._data[i];
     }
-			
 });
 
 Y.CategoryAxis = CategoryAxis;
@@ -2173,29 +2213,33 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	{
         var nextX, nextY,
             node = Y.Node.one(this._parentNode).get("parentNode"),
-			w = node.get("offsetWidth"),
+            w = node.get("offsetWidth"),
             h = node.get("offsetHeight"),
+            xAxis = this.get("xAxis"),
+            yAxis = this.get("yAxis"),
+            xData = this.get("xData").concat(),
+            yData = this.get("yData").concat(),
+            xOffset = xAxis.getEdgeOffset(xData.length, w),
+            yOffset = yAxis.getEdgeOffset(yData.length, h),
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
-			dataWidth = w - (leftPadding + padding.right),
-			dataHeight = h - (topPadding + padding.bottom),
+			dataWidth = w - (leftPadding + padding.right + xOffset),
+			dataHeight = h - (topPadding + padding.bottom + yOffset),
 			xcoords = [],
 			ycoords = [],
-            xAxis = this.get("xAxis"),
-            yAxis = this.get("yAxis"),
 			xMax = xAxis.get("maximum"),
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-            xData = this.get("xData").concat(),
-            yData = this.get("yData").concat(),
             dataLength,
             direction = this.get("direction"),
             i = 0;
             dataLength = xData.length; 	
+            xOffset *= 0.5;
+            yOffset *= 0.5;
         //Assuming a vertical graph has a range/category for its vertical axis.    
         if(direction === "vertical")
         {
@@ -2205,12 +2249,12 @@ Y.extend(CartesianSeries, Y.Renderer, {
         {
             this.get("graphic").setSize(w, h);
         }
-        this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
-        this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
+        this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
+        this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
         for (; i < dataLength; ++i) 
 		{
-            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
-			nextY = Math.round(((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
+            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding + xOffset));
+			nextY = Math.round(((dataHeight + topPadding + yOffset) - (yData[i] - yMin) * yScaleFactor));
             xcoords.push(nextX);
             ycoords.push(nextY);
         }
@@ -4880,6 +4924,10 @@ function AxisRenderer(config)
 AxisRenderer.NAME = "axisRenderer";
 
 AxisRenderer.ATTRS = {
+        edgeOffset: {
+            value: 0
+        },
+
         /**
          * The graphic in which the axis line and ticks will be rendered.
          */
@@ -6072,18 +6120,20 @@ Y.mix(Y.AxisRenderer.prototype, {
 		ui.setTickOffsets();
         uiLength = this.getLength();
         lineStart = ui.getLineStart();
+        len = axis.getTotalMajorUnits(majorUnit, uiLength);
+        majorUnitDistance = axis.getMajorUnitDistance(len, uiLength, majorUnit);
+        this.set("edgeOffset", axis.getEdgeOffset(len, uiLength) * 0.5);
         tickPoint = this.getFirstPoint(lineStart);
         this.drawLine(lineStart, this.getLineEnd(tickPoint), this.get("styles").line);
         if(drawTicks) 
         {
            ui.drawTick(tickPoint, majorTickStyles);
         }
-        len = axis.getTotalMajorUnits(majorUnit, uiLength);
         if(len < 1) 
         {
             return;
         }
-        majorUnitDistance = uiLength/(len - 1);
+        //majorUnitDistance = uiLength/(len - 1);
         this._createLabelCache();
         ui.set("maxLabelSize", 0);
         for(; i < len; ++i)
@@ -6235,11 +6285,11 @@ Y.mix(Y.AxisRenderer.prototype, {
             np = {x:pt.x, y:pt.y};
         if(pos === "top" || pos === "bottom")
         {
-            np.x += padding.left;
+            np.x += padding.left + this.get("edgeOffset");
         }
         else
         {
-            np.y += padding.top;
+            np.y += padding.top + this.get("edgeOffset");
         }
         return np;
     },

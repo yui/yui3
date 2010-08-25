@@ -43,18 +43,18 @@
     }
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../../graphics/build/dom/dom.js"></script>
-    <script type="text/javascript" src="../../graphics/build/node/node.js"></script>
-    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics-min.js"></script>
     <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip-min.js"></script>
-    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics-min.js"></script>
 </head>		
 <body class="yui3-skin-sam">
 <div id="mychart"></chart>
 			
 <script type="text/javascript">            
-    YUI({filter:"debug"}).use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', function (Y) 
+    YUI({}).use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', function (Y) 
     {
         var myDataValues = [ 
                 {date:"5/1/2010", taxes:2000, expenses:3700, revenue:2200}, 
@@ -74,7 +74,7 @@
                 dateRange:{
                     keys:["date"],
                     position:"bottom",
-                    type:"time"
+                    type:"category"
                 }
             },
             seriesCollection:[
