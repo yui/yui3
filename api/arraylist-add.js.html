@@ -85,21 +85,21 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Removes first or all occurrences of an item to the ArrayList.  If a</span>
-<span class="cm">     * comparitor is not provided, uses itemsAreEqual method to determine</span>
+<span class="cm">     * comparator is not provided, uses itemsAreEqual method to determine</span>
 <span class="cm">     * matches.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method remove</span>
 <span class="cm">     * @param needle { mixed } Item to find and remove from the list</span>
 <span class="cm">     * @param all { Boolean } If true, remove all occurrences</span>
-<span class="cm">     * @param comparitor { Function } optional a/b function to test equivalence</span>
+<span class="cm">     * @param comparator { Function } optional a/b function to test equivalence</span>
 <span class="cm">     * @return {ArrayList} the instance</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
-    <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">needle</span><span class="p">,</span> <span class="nx">all</span><span class="p">,</span> <span class="nx">comparitor</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="nx">comparitor</span> <span class="o">=</span> <span class="nx">comparitor</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemsAreEqual</span><span class="p">;</span>
+    <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">needle</span><span class="p">,</span> <span class="nx">all</span><span class="p">,</span> <span class="nx">comparator</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">comparator</span> <span class="o">=</span> <span class="nx">comparator</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemsAreEqual</span><span class="p">;</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span> <span class="nx">comparitor</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span> <span class="k">this</span><span class="p">,</span> <span class="nx">needle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span> <span class="nx">i</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">comparator</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span> <span class="k">this</span><span class="p">,</span> <span class="nx">needle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span> <span class="nx">i</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span> <span class="nx">i</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">all</span> <span class="p">)</span> <span class="p">{</span>
                     <span class="k">break</span><span class="p">;</span>
@@ -111,7 +111,7 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Default comparitor for items stored in this list.  Used by remove().</span>
+<span class="cm">     * Default comparator for items stored in this list.  Used by remove().</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method itemsAreEqual</span>
 <span class="cm">     * @param a { mixed } item to test equivalence with</span>

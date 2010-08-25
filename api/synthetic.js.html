@@ -62,12 +62,11 @@
     <span class="nx">noop</span>     <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Triggering mechanism used by SyntheticEvents.  The logic defining the</span>
-<span class="cm"> * actions taken during each subscription receives a Notifier to fire when the</span>
-<span class="cm"> * conditions for firing are eventually met. Typically, this involves firing</span>
-<span class="cm"> * the notifier from the callback of other DOM subscriptions subscriptions.</span>
+<span class="cm"> * &lt;p&gt;The triggering mechanism used by SyntheticEvents.&lt;/p&gt;</span>
 <span class="cm"> *</span>
-<span class="cm"> * Implementers should probably not instantiate these directly.</span>
+<span class="cm"> * &lt;p&gt;Implementers should not instantiate these directly.  Use the Notifier</span>
+<span class="cm"> * provided to the event&#39;s implemented &lt;code&gt;on(node, sub, notifier)&lt;/code&gt; or</span>
+<span class="cm"> * &lt;code&gt;delegate(node, sub, notifier, filter)&lt;/code&gt; methods.&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @class SyntheticEvent.Notifier</span>
 <span class="cm"> * @constructor</span>
@@ -76,10 +75,12 @@
 <span class="cm"> *              on(..) or delegate(..)</span>
 <span class="cm"> * @param emitFacade {Boolean} take steps to ensure the first arg received by</span>
 <span class="cm"> *              the subscription callback is an event facade</span>
+<span class="cm"> * @private</span>
+<span class="cm"> * @since 3.2.0</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">handle</span>         <span class="o">=</span> <span class="nx">handle</span><span class="p">;</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span>     <span class="o">=</span> <span class="nx">emitFacade</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">handle</span>     <span class="o">=</span> <span class="nx">handle</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="nx">emitFacade</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="cm">/**</span>
@@ -104,6 +105,7 @@
 <span class="cm"> * @method fire</span>
 <span class="cm"> * @param e {EventFacade|DOMEventFacade|Object|any} (see description)</span>
 <span class="cm"> * @param arg* {any} additional arguments received by all subscriptions</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>
 <span class="nx">Notifier</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fire</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// first arg to delegate notifier should be an object with currentTarget</span>
@@ -148,6 +150,9 @@
 <span class="cm"> * infrastructure.  Don&#39;t instantiate this object directly, use</span>
 <span class="cm"> * &lt;code&gt;Y.Event.define(type, config)&lt;/code&gt;.  See that method for details.&lt;/p&gt;</span>
 <span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Properties that MAY or SHOULD be specified in the configuration are noted</span>
+<span class="cm"> * below and in the description of &lt;code&gt;Y.Event.define&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm"> *</span>
 <span class="cm"> * @class SyntheticEvent</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @param cfg {Object} Implementation pieces and configuration</span>
@@ -174,6 +179,7 @@
 <span class="cm">     * @return {Array}</span>
 <span class="cm">     * @static</span>
 <span class="cm">     * @protected</span>
+<span class="cm">     * @since 3.2.0</span>
 <span class="cm">     */</span>
     <span class="nx">getRegistry</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">create</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">el</span>     <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
@@ -212,6 +218,7 @@
 <span class="cm">     * @method _deleteSub</span>
 <span class="cm">     * @param sub {Subscription} the subscription to clean up</span>
 <span class="cm">     * @private</span>
+<span class="cm">     * @since 3.2.0</span>
 <span class="cm">     */</span>
     <span class="nx">_deleteSub</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">sub</span> <span class="o">&amp;&amp;</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
@@ -234,7 +241,7 @@
         <span class="nx">constructor</span><span class="o">:</span> <span class="nx">SyntheticEvent</span><span class="p">,</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * Setup/construction logic for the event.</span>
+<span class="cm">         * Construction logic for the event.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method _init</span>
 <span class="cm">         * @protected</span>
@@ -250,7 +257,7 @@
         <span class="p">},</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;Implementers may provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         * &lt;p&gt;Implementers MAY provide this method definition.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;p&gt;Implement this function if the event supports a different</span>
 <span class="cm">         * subscription signature.  This function is used by both</span>
@@ -259,12 +266,12 @@
 <span class="cm">         * &lt;code&gt;delegate()&lt;/code&gt;.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;p&gt;Implementations must remove extra arguments from the args list</span>
-<span class="cm">         * before returning.  The required args list order for &lt;code&gt;on()&lt;/code&gt;</span>
-<span class="cm">         * subscriptions is&lt;/p&gt;</span>
+<span class="cm">         * before returning.  The required args for &lt;code&gt;on()&lt;/code&gt;</span>
+<span class="cm">         * subscriptions are&lt;/p&gt;</span>
 <span class="cm">         * &lt;pre&gt;&lt;code&gt;[type, callback, target, context, argN...]&lt;/code&gt;&lt;/pre&gt;</span>
 <span class="cm">         *</span>
-<span class="cm">         * &lt;p&gt;The required args list order for &lt;code&gt;delegate()&lt;/code&gt;</span>
-<span class="cm">         * subscriptions is&lt;/p&gt;</span>
+<span class="cm">         * &lt;p&gt;The required args for &lt;code&gt;delegate()&lt;/code&gt;</span>
+<span class="cm">         * subscriptions are&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;pre&gt;&lt;code&gt;[type, callback, target, filter, context, argN...]&lt;/code&gt;&lt;/pre&gt;</span>
 <span class="cm">         *</span>
@@ -279,7 +286,7 @@
         <span class="nx">processArgs</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;Implementers may override this property.&lt;/p&gt;</span>
+<span class="cm">         * &lt;p&gt;Implementers MAY override this property.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;p&gt;Whether to prevent multiple subscriptions to this event that are</span>
 <span class="cm">         * classified as being the same.  By default, this means the subscribed</span>
@@ -294,19 +301,19 @@
         <span class="c1">//preventDups  : false,</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;Implementers should provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * Implementation logic for subscriptions done via &lt;code&gt;node.on(type,</span>
-<span class="cm">         * fn)&lt;/code&gt; or &lt;code&gt;Y.delegate(type, fn, target)&lt;/code&gt;.  This</span>
-<span class="cm">         * function should create the environment for the</span>
-<span class="cm">         * event being fired.  Typically this involves subscribing to at least</span>
-<span class="cm">         * one DOM event.  It is recommended to store detach handles from any</span>
-<span class="cm">         * DOM subscriptions on the &lt;code&gt;sub&lt;/code&gt; object provided to</span>
-<span class="cm">         * facilitate simple detach in that implementation method.  Also for</span>
-<span class="cm">         * SyntheticEvents that leverage a single DOM subscription under the</span>
-<span class="cm">         * hood, it is recommended to pass the DOM event object to</span>
-<span class="cm">         * &lt;code&gt;notifier.fire(e)&lt;/code&gt;.  (The event name on the object will</span>
-<span class="cm">         * be updated).</span>
+<span class="cm">         * fn)&lt;/code&gt; or &lt;code&gt;Y.on(type, fn, target)&lt;/code&gt;.  This</span>
+<span class="cm">         * function should set up the monitor(s) that will eventually fire the</span>
+<span class="cm">         * event.  Typically this involves subscribing to at least one DOM</span>
+<span class="cm">         * event.  It is recommended to store detach handles from any DOM</span>
+<span class="cm">         * subscriptions to make for easy cleanup in the &lt;code&gt;detach&lt;/code&gt;</span>
+<span class="cm">         * method.  Typically these handles are added to the &lt;code&gt;sub&lt;/code&gt;</span>
+<span class="cm">         * object.  Also for SyntheticEvents that leverage a single DOM</span>
+<span class="cm">         * subscription under the hood, it is recommended to pass the DOM event</span>
+<span class="cm">         * object to &lt;code&gt;notifier.fire(e)&lt;/code&gt;.  (The event name on the</span>
+<span class="cm">         * object will be updated).</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method on</span>
 <span class="cm">         * @param node {Node} the node the subscription is being applied to</span>
@@ -317,11 +324,11 @@
         <span class="nx">on</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;Implementers should provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
 <span class="cm">         *</span>
-<span class="cm">         * Implementation logic for detaching subscriptions done via</span>
+<span class="cm">         * &lt;p&gt;Implementation logic for detaching subscriptions done via</span>
 <span class="cm">         * &lt;code&gt;node.on(type, fn)&lt;/code&gt;.  This function should clean up any</span>
-<span class="cm">         * subscriptions made in the &lt;code&gt;on()&lt;/code&gt; phase.</span>
+<span class="cm">         * subscriptions made in the &lt;code&gt;on()&lt;/code&gt; phase.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method detach</span>
 <span class="cm">         * @param node {Node} the node the subscription was applied to</span>
@@ -332,20 +339,20 @@
         <span class="nx">detach</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;Implementers should provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;p&gt;Implementation logic for subscriptions done via</span>
 <span class="cm">         * &lt;code&gt;node.delegate(type, fn, filter)&lt;/code&gt; or</span>
 <span class="cm">         * &lt;code&gt;Y.delegate(type, fn, container, filter)&lt;/code&gt;.  Like with</span>
-<span class="cm">         * &lt;code&gt;on()&lt;/code&gt; above, this function should create the environment</span>
+<span class="cm">         * &lt;code&gt;on()&lt;/code&gt; above, this function should monitor the environment</span>
 <span class="cm">         * for the event being fired, and trigger subscription execution by</span>
 <span class="cm">         * calling &lt;code&gt;notifier.fire(e)&lt;/code&gt;.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;p&gt;This function receives a fourth argument, which is the filter</span>
 <span class="cm">         * used to identify which Node&#39;s are of interest to the subscription.</span>
-<span class="cm">         * The filter will be either a function that accepts an event object</span>
-<span class="cm">         * and returns an array of matching target nodes, or a selector string.</span>
-<span class="cm">         * To translate selector strings into filter functions, use</span>
+<span class="cm">         * The filter will be either a boolean function that accepts a target</span>
+<span class="cm">         * Node for each hierarchy level as the event bubbles, or a selector</span>
+<span class="cm">         * string.  To translate selector strings into filter functions, use</span>
 <span class="cm">         * &lt;code&gt;Y.delegate.compileFilter(filter)&lt;/code&gt;.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method delegate</span>
@@ -356,17 +363,18 @@
 <span class="cm">         * @param filter {String|Function} Selector string or function that</span>
 <span class="cm">         *              accepts an event object and returns null, a Node, or an</span>
 <span class="cm">         *              array of Nodes matching the criteria for processing.</span>
+<span class="cm">         * @since 3.2.0</span>
 <span class="cm">         */</span>
         <span class="nx">delegate</span>       <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;Implementers should provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
 <span class="cm">         *</span>
-<span class="cm">         * Implementation logic for detaching subscriptions done via</span>
+<span class="cm">         * &lt;p&gt;Implementation logic for detaching subscriptions done via</span>
 <span class="cm">         * &lt;code&gt;node.delegate(type, fn, filter)&lt;/code&gt; or</span>
 <span class="cm">         * &lt;code&gt;Y.delegate(type, fn, container, filter)&lt;/code&gt;.  This function</span>
 <span class="cm">         * should clean up any subscriptions made in the</span>
-<span class="cm">         * &lt;code&gt;delegate()&lt;/code&gt; phase.</span>
+<span class="cm">         * &lt;code&gt;delegate()&lt;/code&gt; phase.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method detachDelegate</span>
 <span class="cm">         * @param node {Node} the node the subscription was applied to</span>
@@ -376,6 +384,7 @@
 <span class="cm">         * @param filter {String|Function} Selector string or function that</span>
 <span class="cm">         *              accepts an event object and returns null, a Node, or an</span>
 <span class="cm">         *              array of Nodes matching the criteria for processing.</span>
+<span class="cm">         * @since 3.2.0</span>
 <span class="cm">         */</span>
         <span class="nx">detachDelegate</span> <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
 
@@ -390,6 +399,7 @@
 <span class="cm">         * &lt;code&gt;Y.delegate(...)&lt;/code&gt;</span>
 <span class="cm">         * @return {EventHandle} the detach handle for this subscription</span>
 <span class="cm">         * @private</span>
+<span class="cm">         * since 3.2.0</span>
 <span class="cm">         */</span>
         <span class="nx">_on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">handles</span>  <span class="o">=</span> <span class="p">[],</span>
@@ -440,7 +450,8 @@
         <span class="p">},</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * Creates a new Notifier object for use by this event&#39;s &lt;code&gt;on(...)&lt;/code&gt; or &lt;code&gt;delegate(...)&lt;/code&gt; implementation.</span>
+<span class="cm">         * Creates a new Notifier object for use by this event&#39;s</span>
+<span class="cm">         * &lt;code&gt;on(...)&lt;/code&gt; or &lt;code&gt;delegate(...)&lt;/code&gt; implementation.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method _getNotifier</span>
 <span class="cm">         * @param node {Node} the Node hosting the event</span>
@@ -455,6 +466,7 @@
 <span class="cm">         *              present when called from &lt;code&gt;Y.on(...)&lt;/code&gt;)</span>
 <span class="cm">         * @return {SyntheticEvent.Notifier}</span>
 <span class="cm">         * @private</span>
+<span class="cm">         * @since 3.2.0</span>
 <span class="cm">         */</span>
         <span class="nx">_getNotifier</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">extra</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">),</span>
@@ -491,6 +503,7 @@
 <span class="cm">         * @method _unregisterSub</span>
 <span class="cm">         * @param sub {Subscription} the subscription</span>
 <span class="cm">         * @private</span>
+<span class="cm">         * @since 3.2.0</span>
 <span class="cm">         */</span>
         <span class="nx">_unregisterSub</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">getRegistry</span><span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
@@ -514,9 +527,11 @@
 <span class="cm">         * @param args {Array} The arguments passed to</span>
 <span class="cm">         *                  &lt;code&gt;node.detach(...)&lt;/code&gt;</span>
 <span class="cm">         * @private</span>
+<span class="cm">         * @since 3.2.0</span>
 <span class="cm">         */</span>
         <span class="nx">_detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Can&#39;t use Y.all because it doesn&#39;t support window (yet?)</span>
+            <span class="c1">// TODO: Does Y.all support window now?</span>
             <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                 <span class="nx">els</span>    <span class="o">=</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">target</span><span class="p">))</span> <span class="o">?</span>
                             <span class="nx">query</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="o">:</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">target</span><span class="p">),</span>
@@ -541,7 +556,7 @@
         <span class="p">},</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * Gets the detach handles of subscriptions on a node that satisfy a</span>
+<span class="cm">         * Returns the detach handles of subscriptions on a node that satisfy a</span>
 <span class="cm">         * search/filter function.  By default, the filter used is the</span>
 <span class="cm">         * &lt;code&gt;subMatch&lt;/code&gt; method.</span>
 <span class="cm">         *</span>
@@ -582,7 +597,7 @@
         <span class="p">},</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;Implementers may override this to define what constitutes a</span>
+<span class="cm">         * &lt;p&gt;Implementers MAY override this to define what constitutes a</span>
 <span class="cm">         * &amp;quot;same&amp;quot; subscription.  Override implementations should</span>
 <span class="cm">         * consider the lack of a comparator as a match, so calling</span>
 <span class="cm">         * &lt;code&gt;getSubs()&lt;/code&gt; with no arguments will return all subs.&lt;/p&gt;</span>
@@ -598,6 +613,7 @@
 <span class="cm">         *                  &lt;code&gt;Y.on(...)&lt;/code&gt; etc.</span>
 <span class="cm">         * @return {Boolean} true if the sub can be described by the args</span>
 <span class="cm">         *                  present</span>
+<span class="cm">         * @since 3.2.0</span>
 <span class="cm">         */</span>
         <span class="nx">subMatch</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Default detach cares only about the callback matching</span>
@@ -610,14 +626,14 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Defines a new event in the DOM event system.  Implementers are</span>
-<span class="cm"> * responsible for creating a scenario whereby the event is fired.  A notifier</span>
-<span class="cm"> * object is provided to the functions identified below.  When the criteria</span>
-<span class="cm"> * defining the event are met, call notifier.fire( [args] ); to execute event</span>
-<span class="cm"> * subscribers.&lt;/p&gt;</span>
+<span class="cm"> * responsible for monitoring for a scenario whereby the event is fired.  A</span>
+<span class="cm"> * notifier object is provided to the functions identified below.  When the</span>
+<span class="cm"> * criteria defining the event are met, call notifier.fire( [args] ); to</span>
+<span class="cm"> * execute event subscribers.&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;The first parameter is the name of the event.  The second parameter is a</span>
-<span class="cm"> * configuration object which will serve as the prototype of a subclass</span>
-<span class="cm"> * implementation of SyntheticEvent.  That said, the methods that should be</span>
+<span class="cm"> * configuration object which define the behavior of the event system when the</span>
+<span class="cm"> * new event is subscribed to or detached from.  The methods that should be</span>
 <span class="cm"> * defined in this configuration object are &lt;code&gt;on&lt;/code&gt;,</span>
 <span class="cm"> * &lt;code&gt;detach&lt;/code&gt;, &lt;code&gt;delegate&lt;/code&gt;, and &lt;code&gt;detachDelegate&lt;/code&gt;.</span>
 <span class="cm"> * You are free to define any other methods or properties needed to define your</span>
@@ -654,9 +670,9 @@
 <span class="cm"> *       expects an event object as input and should output either null, a</span>
 <span class="cm"> *       matching Node, or an array of matching Nodes.  Otherwise, this acts</span>
 <span class="cm"> *       like &lt;code&gt;on&lt;/code&gt; DOM event subscriptions.  Store subscription</span>
-<span class="cm"> *       related objects andu information on the &lt;code&gt;subscription&lt;/code&gt;</span>
+<span class="cm"> *       related objects and information on the &lt;code&gt;subscription&lt;/code&gt;</span>
 <span class="cm"> *       object.  When the criteria have been met to fire the synthetic event,</span>
-<span class="cm"> *       call &lt;code&gt;fireEvent.fire(e)&lt;/code&gt; as noted above.&lt;/dd&gt;</span>
+<span class="cm"> *       call &lt;code&gt;notifier.fire(e)&lt;/code&gt; as noted above.&lt;/dd&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> *   &lt;dt&gt;&lt;code&gt;detachDelegate&lt;/code&gt;&lt;/dt&gt;</span>
 <span class="cm"> *       &lt;dd&gt;&lt;code&gt;function (node, subscription, notifier)&lt;/code&gt; The</span>
@@ -666,10 +682,8 @@
 <span class="cm"> *</span>
 <span class="cm"> *   &lt;dt&gt;&lt;code&gt;publishConfig&lt;/code&gt;&lt;/dt&gt;</span>
 <span class="cm"> *       &lt;dd&gt;(Object) The configuration object that will be used to instantiate</span>
-<span class="cm"> *       the underlying CustomEvent.  By default, the event is defined with</span>
-<span class="cm"> *       &lt;code&gt;emitFacade: true&lt;/code&gt; which will guarantee the first argument</span>
-<span class="cm"> *       received by subscribers is an event facade.  See Notifier&#39;s</span>
-<span class="cm"> *       &lt;code&gt;fire&lt;/code&gt; method for details.&lt;/dd&gt;</span>
+<span class="cm"> *       the underlying CustomEvent. See Notifier&#39;s &lt;code&gt;fire&lt;/code&gt; method</span>
+<span class="cm"> *       for details.&lt;/dd&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> *   &lt;dt&gt;&lt;code&gt;processArgs&lt;/code&gt;&lt;/dt</span>
 <span class="cm"> *       &lt;dd&gt;</span>
@@ -682,7 +696,7 @@
 <span class="cm"> *          &lt;p&gt;When processing an atypical argument signature, make sure the</span>
 <span class="cm"> *          args array is returned to the normal signature before returning</span>
 <span class="cm"> *          from the function.  For example, in the &amp;quot;hover&amp;quot; example</span>
-<span class="cm"> *          above, the &lt;code&gt;outCallback&lt;/code&gt; needs to be &lt;code&gt;splice&lt;/code&gt;</span>
+<span class="cm"> *          above, the &lt;code&gt;outCallback&lt;/code&gt; needs to be &lt;code&gt;splice&lt;/code&gt;d</span>
 <span class="cm"> *          out of the array.  The expected signature of the args array for</span>
 <span class="cm"> *          &lt;code&gt;on()&lt;/code&gt; subscriptions is:&lt;/p&gt;</span>
 <span class="cm"> *          &lt;pre&gt;</span>
@@ -692,13 +706,20 @@
 <span class="cm"> *          &lt;pre&gt;</span>
 <span class="cm"> *              &lt;code&gt;[type, callback, target, filter, contextOverride, argN...]&lt;/code&gt;</span>
 <span class="cm"> *          &lt;/pre&gt;</span>
-<span class="cm"> *          &lt;p&gt;Where &lt;code&gt;target&lt;/code&gt; is the node the event is being</span>
+<span class="cm"> *          &lt;p&gt;where &lt;code&gt;target&lt;/code&gt; is the node the event is being</span>
 <span class="cm"> *          subscribed for.  You can see these signatures documented for</span>
 <span class="cm"> *          &lt;code&gt;Y.on()&lt;/code&gt; and &lt;code&gt;Y.delegate()&lt;/code&gt; respectively.&lt;/p&gt;</span>
 <span class="cm"> *          &lt;p&gt;Whatever gets returned from the function will be stored on the</span>
 <span class="cm"> *          &lt;code&gt;subscription&lt;/code&gt; object under</span>
 <span class="cm"> *          &lt;code&gt;subscription._extra&lt;/code&gt;.&lt;/p&gt;&lt;/dd&gt;</span>
-<span class="cm"> *   &lt;dt&gt;</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;subMatch&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;</span>
+<span class="cm"> *           &lt;p&gt;&lt;code&gt;function (sub, args)&lt;/code&gt;  Compares a set of</span>
+<span class="cm"> *           subscription arguments against a Subscription object to determine</span>
+<span class="cm"> *           if they match.  The default implementation compares the callback</span>
+<span class="cm"> *           function against the second argument passed to</span>
+<span class="cm"> *           &lt;code&gt;Y.on(...)&lt;/code&gt; or &lt;code&gt;node.detach(...)&lt;/code&gt; etc.&lt;/p&gt;</span>
+<span class="cm"> *       &lt;/dd&gt;</span>
 <span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method Event.define</span>
@@ -874,7 +895,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "delegate", "url": "SyntheticEvent.html#method_delegate", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_deleteSub", "url": "SyntheticEvent.html#method__deleteSub", "type": "method"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_detach", "url": "SyntheticEvent.html#method__detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detach", "url": "SyntheticEvent.html#method_detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detachDelegate", "url": "SyntheticEvent.html#method_detachDelegate", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "Event.define", "url": "Event.html#method_Event.define", "type": "method"}, {"access": "", "host": "SyntheticEvent.Notifier", "name": "fire", "url": "SyntheticEvent.Notifier.html#method_fire", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_getNotifier", "url": "SyntheticEvent.html#method__getNotifier", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "getRegistry", "url": "SyntheticEvent.html#method_getRegistry", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "getSubs", "url": "SyntheticEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_init", "url": "SyntheticEvent.html#method__init", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_on", "url": "SyntheticEvent.html#method__on", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "on", "url": "SyntheticEvent.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "preventDups", "url": "SyntheticEvent.html#property_preventDups", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "processArgs", "url": "SyntheticEvent.html#method_processArgs", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "subMatch", "url": "SyntheticEvent.html#method_subMatch", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "_touch", "url": "DOMEventFacade.html#method__touch", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_unregisterSub", "url": "SyntheticEvent.html#method__unregisterSub", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "delegate", "url": "SyntheticEvent.html#method_delegate", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_deleteSub", "url": "SyntheticEvent.html#method__deleteSub", "type": "method"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_detach", "url": "SyntheticEvent.html#method__detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detach", "url": "SyntheticEvent.html#method_detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detachDelegate", "url": "SyntheticEvent.html#method_detachDelegate", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "Event.define", "url": "Event.html#method_Event.define", "type": "method"}, {"access": "private", "host": "SyntheticEvent.Notifier", "name": "fire", "url": "SyntheticEvent.Notifier.html#method_fire", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_getNotifier", "url": "SyntheticEvent.html#method__getNotifier", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "getRegistry", "url": "SyntheticEvent.html#method_getRegistry", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "getSubs", "url": "SyntheticEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_init", "url": "SyntheticEvent.html#method__init", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_on", "url": "SyntheticEvent.html#method__on", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "on", "url": "SyntheticEvent.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "preventDups", "url": "SyntheticEvent.html#property_preventDups", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "processArgs", "url": "SyntheticEvent.html#method_processArgs", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "subMatch", "url": "SyntheticEvent.html#method_subMatch", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "_touch", "url": "DOMEventFacade.html#method__touch", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_unregisterSub", "url": "SyntheticEvent.html#method__unregisterSub", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
 </script>
 </body>
 </html>

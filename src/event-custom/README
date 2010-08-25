@@ -1,6 +1,11 @@
 YUI Custom Events
     Custom event system
 
+3.2.0
+    - Fixed defaultTargetOnly publish configuration
+    - Detach now decrements subCount/afterCount
+    - Detaching via category no longer affects subscriptions on other objects
+
 3.1.1
     - No changes 
 

@@ -1,8 +1,27 @@
 YUI Event Utility
     DOM event utilities
 
-Development Master
-    - Initial event and facade support for touch (WIP)
+3.2.0
+    - Added event and facade support for touch
+    - Synthetic event infrastructure rebuilt.  Changes include
+        * Support for delegation
+        * Passing DOMEventFacade to notifier.fire(e) now recommended
+        * Fixed issue where firing the notifier from inside DOM event subs would
+          result in duplicate synth sub execution if the same synth was
+          subscribed multiple times on the same Node
+        * Synths can now be detached with node.purge(t|f, 'synthName')
+        * Event.define(type, config, *force*) third arg added to override
+          existing events.  Only use this if you really know what you're doing.
+        * Changed allowDups to preventDups, true by default to mimic existing
+          behavior elsewhere in the event system
+    - delegate now defers to synthetic event def more intelligently
+    - Added support for passing filter function to delegate
+    - delegate now executes callback for each filter match up the bubble path
+    - Added detach category support to delegate
+    - Migrate mouseenter, mouseleave, focus, and blur to Event.define
+    - Focus and blur now guarantee execution order of subs matches bubble order
+      when multiple delegates are created from different levels
+    - event-synthetic added to 'event' rollup module
 
 3.1.1
     - fired fireOnce listeners are executed synchronously

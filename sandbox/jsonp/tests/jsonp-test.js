@@ -24,7 +24,7 @@ suite.add(new Y.Test.Case({
     "callback function as second arg should be success handler": function () {
         var self = this;
 
-        Y.jsonp("server/service.php", function (json) {
+        Y.jsonp("server/service.php?callback={callback}", function (json) {
             self.resume(function () {
                 Y.Assert.isObject(json);
             });
@@ -60,7 +60,7 @@ suite.add(new Y.Test.Case({
     "success handler in callback object should execute": function () {
         var self = this;
 
-        Y.jsonp("server/service.php", {
+        Y.jsonp("server/service.php?callback={callback}", {
             on: {
                 success: function (json) {
                     self.resume(function () {

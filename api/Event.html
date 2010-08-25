@@ -605,13 +605,13 @@ of ids and/or elements to remove the listener from.</span>
                                         
                                         <div class="description" property="yui:description">
                                             <p>Defines a new event in the DOM event system.  Implementers are
-responsible for creating a scenario whereby the event is fired.  A notifier
-object is provided to the functions identified below.  When the criteria
-defining the event are met, call notifier.fire( [args] ); to execute event
-subscribers.</p>
+responsible for monitoring for a scenario whereby the event is fired.  A
+notifier object is provided to the functions identified below.  When the
+criteria defining the event are met, call notifier.fire( [args] ); to
+execute event subscribers.</p>
 <p>The first parameter is the name of the event.  The second parameter is a
-configuration object which will serve as the prototype of a subclass
-implementation of SyntheticEvent.  That said, the methods that should be
+configuration object which define the behavior of the event system when the
+new event is subscribed to or detached from.  The methods that should be
 defined in this configuration object are <code>on</code>,
 <code>detach</code>, <code>delegate</code>, and <code>detachDelegate</code>.
 You are free to define any other methods or properties needed to define your
@@ -644,9 +644,9 @@ filter function from a selector string if needed.  The filter function
 expects an event object as input and should output either null, a
 matching Node, or an array of matching Nodes.  Otherwise, this acts
 like <code>on</code> DOM event subscriptions.  Store subscription
-related objects andu information on the <code>subscription</code>
+related objects and information on the <code>subscription</code>
 object.  When the criteria have been met to fire the synthetic event,
-call <code>fireEvent.fire(e)</code> as noted above.</dd>
+call <code>notifier.fire(e)</code> as noted above.</dd>
 <dt><code>detachDelegate</code></dt>
 <dd><code>function (node, subscription, notifier)</code> The
 implementation logic for cleaning up a detached delegate subscription.
@@ -654,10 +654,8 @@ E.g. detach any DOM delegate subscriptions added in
 <code>delegate</code>.</dd>
 <dt><code>publishConfig</code></dt>
 <dd>(Object) The configuration object that will be used to instantiate
-the underlying CustomEvent.  By default, the event is defined with
-<code>emitFacade: true</code> which will guarantee the first argument
-received by subscribers is an event facade.  See Notifier's
-<code>fire</code> method for details.</dd>
+the underlying CustomEvent. See Notifier's <code>fire</code> method
+for details.</dd>
 <dt><code>processArgs</code></dt
 <dd>
 <p><code>function (argArray, fromDelegate)</code> Optional method
@@ -669,7 +667,7 @@ outCallback)</code>.</p>
 <p>When processing an atypical argument signature, make sure the
 args array is returned to the normal signature before returning
 from the function.  For example, in the &quot;hover&quot; example
-above, the <code>outCallback</code> needs to be <code>splice</code>
+above, the <code>outCallback</code> needs to be <code>splice</code>d
 out of the array.  The expected signature of the args array for
 <code>on()</code> subscriptions is:</p>
 <pre>
@@ -679,13 +677,20 @@ out of the array.  The expected signature of the args array for
 <pre>
 <code>[type, callback, target, filter, contextOverride, argN...]</code>
 </pre>
-<p>Where <code>target</code> is the node the event is being
+<p>where <code>target</code> is the node the event is being
 subscribed for.  You can see these signatures documented for
 <code>Y.on()</code> and <code>Y.delegate()</code> respectively.</p>
 <p>Whatever gets returned from the function will be stored on the
 <code>subscription</code> object under
 <code>subscription._extra</code>.</p></dd>
-<dt>
+<dt><code>subMatch</code></dt>
+<dd>
+<p><code>function (sub, args)</code>  Compares a set of
+subscription arguments against a Subscription object to determine
+if they match.  The default implementation compares the callback
+function against the second argument passed to
+<code>Y.on(...)</code> or <code>node.detach(...)</code> etc.</p>
+</dd>
 </dl>
                                         </div>
 
