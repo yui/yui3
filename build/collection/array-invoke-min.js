@@ -1,1 +1,1 @@
-YUI.add("array-invoke",function(A){A.Array.invoke=function(B,E){var D=A.Array(arguments,2,true),F=A.Lang.isFunction,C=[];A.Array.each(A.Array(B),function(H,G){if(F(H[E])){C[G]=H[E].apply(H,D);}});return C;};},"@VERSION@");
+YUI.add("array-invoke",function(a){a.Array.invoke=function(b,e){var d=a.Array(arguments,2,true),f=a.Lang.isFunction,c=[];a.Array.each(a.Array(b),function(h,g){if(f(h[e])){c[g]=h[e].apply(h,d);}});return c;};},"@VERSION@");
