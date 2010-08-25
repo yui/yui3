@@ -168,8 +168,7 @@ Transition.prototype = {
     },
 
     initAttrs: function(config) {
-        var anim = this,
-            attr;
+        var attr;
 
         if (config.transform && !config[TRANSFORM_CAMEL]) {
             config[TRANSFORM_CAMEL] = config.transform;
@@ -270,7 +269,7 @@ Transition.prototype = {
 
         // only one native end event per node
         if (!node._hasTransitionEnd) {
-            node.on(TRANSITION_END, anim._onNativeEnd);
+            anim._detach = node.on(TRANSITION_END, anim._onNativeEnd);
             node._hasTransitionEnd = true;
 
         }
@@ -339,8 +338,11 @@ Transition.prototype = {
     },
 
     destroy: function() {
-        this.detachAll();
-        this._node = null;
+        var anim = this;
+        if (anim._detach) {
+            anim._detach.detach();
+        }
+        anim._node = null;
     }
 };
 

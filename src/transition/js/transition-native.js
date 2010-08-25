@@ -166,8 +166,7 @@ Transition.prototype = {
     },
 
     initAttrs: function(config) {
-        var anim = this,
-            attr;
+        var attr;
 
         if (config.transform && !config[TRANSFORM_CAMEL]) {
             config[TRANSFORM_CAMEL] = config.transform;
