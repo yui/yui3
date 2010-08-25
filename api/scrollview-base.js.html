@@ -80,6 +80,9 @@
 
     <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
     <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="p">,</span>
+    
+    <span class="nx">EMPTY</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nx">ZERO</span> <span class="o">=</span> <span class="s2">&quot;0s&quot;</span><span class="p">,</span>
 
     <span class="nx">NATIVE_TRANSITIONS</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">;</span>
 
@@ -232,8 +235,8 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s2">&quot;WebkitTransitionDuration&quot;</span><span class="p">,</span> <span class="s2">&quot;0s&quot;</span><span class="p">);</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s2">&quot;WebkitTransitionProperty&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">_TRANSITION_DURATION</span><span class="p">,</span> <span class="nx">ZERO</span><span class="p">);</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">_TRANSITION_PROPERTY</span><span class="p">,</span> <span class="nx">EMPTY</span><span class="p">);</span>
 
             <span class="c1">// Causes bounce back from 0,0 instead of current translation for bottom/right edge animation</span>
             <span class="c1">// cb.setStyle(&quot;WebkitTransform&quot;, cb.getComputedStyle(&quot;WebkitTransform&quot;));</span>
@@ -950,8 +953,23 @@
 <span class="cm">     * @static</span>
 <span class="cm">     * @default &#39;ease-out&#39;</span>
 <span class="cm">     */</span>
-    <span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="s1">&#39;ease-out&#39;</span>
+    <span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="s1">&#39;ease-out&#39;</span><span class="p">,</span>
 
+    <span class="cm">/**</span>
+<span class="cm">     * Style property name to use to set transition duration. Currently Webkit specific (WebkitTransitionDuration)</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property ScrollView._TRANSITION_DURATION</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_TRANSITION_DURATION</span> <span class="o">:</span> <span class="s2">&quot;WebkitTransitionDuration&quot;</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Style property name to use to set transition property. Currently, Webkit specific (WebkitTransitionProperty)</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property ScrollView._TRANSITION_PROPERTY</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_TRANSITION_PROPERTY</span> <span class="o">:</span> <span class="s2">&quot;WebkitTransitionProperty&quot;</span>
 <span class="p">});</span>
 </pre></div>
 
