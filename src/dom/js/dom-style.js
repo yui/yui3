@@ -26,7 +26,9 @@ var DOCUMENT_ELEMENT = 'documentElement',
     VENDOR_TRANSFORM = [
         'WebkitTransform',
         'MozTransform',
-        'OTransform'
+        'OTransform',
+        'MSTransform'
+
     ],
 
     re_color = /color$/i,

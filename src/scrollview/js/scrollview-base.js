@@ -31,6 +31,9 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
+    
+    EMPTY = "",
+    ZERO = "0s",
 
     NATIVE_TRANSITIONS = Y.Transition.useNative;
 
@@ -100,14 +103,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _uiSizeCB: function() {},
 
     /**
-     * Content box transtion callback
+     * Content box transition callback
      *
      * @method _transitionEnded
      * @param {Event.Facade} e The event facade
      * @private
      */
     _transitionEnded: function(e) {
-        this._transCB = false;
         this.fire(EV_SCROLL_END);
     },
 
@@ -182,15 +184,24 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             this.set(SCROLL_Y, y, { src: UI });
         }
 
+        if (NATIVE_TRANSITIONS) {
+            // ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.
+            cb.setStyle(ScrollView._TRANSITION_DURATION, ZERO);
+            cb.setStyle(ScrollView._TRANSITION_PROPERTY, EMPTY);
+
+            // Causes bounce back from 0,0 instead of current translation for bottom/right edge animation
+            // cb.setStyle("WebkitTransform", cb.getComputedStyle("WebkitTransform"));
+        }
+
         if (duration !== 0) {
-            
+
             transition = {
                 easing : easing,
                 duration : duration/1000
             };
 
             if (NATIVE_TRANSITIONS) {
-                transition.transform = 'translate('+ xMove +'px,'+ yMove +'px)';
+                transition.transform = 'translate3D('+ xMove +'px,'+ yMove +'px, 0px)';
             } else {
                 if (xSet) { transition.left = xMove + PX; }
                 if (ySet) { transition.top = yMove + PX; }
@@ -202,10 +213,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 callback = this._transEndCallback = Y.bind(this._transitionEnded, this);
             }
 
-            if (!this._transCB) {
-                this._transCB = true;
-                cb.transition(transition, callback);
-            }
+            cb.transition(transition, callback);
 
         } else {
             if (NATIVE_TRANSITIONS) {
@@ -869,7 +877,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     BOUNCE_RANGE : 150,
 
     /**
-     * The step amount used when animating the flick
+     * The interval used when animating the flick
      *
      * @property ScrollView.FRAME_STEP
      * @type Number
@@ -896,6 +904,21 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @static
      * @default 'ease-out'
      */
-    SNAP_EASING : 'ease-out'
+    SNAP_EASING : 'ease-out',
 
+    /**
+     * Style property name to use to set transition duration. Currently Webkit specific (WebkitTransitionDuration)
+     * 
+     * @property ScrollView._TRANSITION_DURATION
+     * @private
+     */
+    _TRANSITION_DURATION : "WebkitTransitionDuration",
+
+    /**
+     * Style property name to use to set transition property. Currently, Webkit specific (WebkitTransitionProperty)
+     *
+     * @property ScrollView._TRANSITION_PROPERTY
+     * @private
+     */
+    _TRANSITION_PROPERTY : "WebkitTransitionProperty"
 });
