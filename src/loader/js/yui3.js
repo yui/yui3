@@ -1117,7 +1117,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
-                    "node-pluginhost", 
                     "classnamemanager", 
                     "skin-sam-tabview"
                 ]
@@ -1132,7 +1131,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "widget-parent", 
             "widget-child", 
-            "tabview-base"
+            "tabview-base", 
+            "node-pluginhost", 
+            "node-focusmanager"
         ], 
         "skinnable": true
     }, 
@@ -1255,4 +1256,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '071454acce18fbd8445f331333fd3ea7';
+YUI.Env[Y.version].md5 = '503dbdf98b671df8f52177363e74b6a3';
