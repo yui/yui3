@@ -121,7 +121,7 @@
 <span class="cm">        * @private</span>
 <span class="cm">        */</span>
         <span class="nx">_defNodeChangeFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Default nodeChange function: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedType</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+            <span class="c1">//Y.log(&#39;Default nodeChange function: &#39; + e.changedType, &#39;info&#39;, &#39;editor&#39;);</span>
             <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
 
 
@@ -261,34 +261,69 @@
 <span class="cm">        * @param {Node} node The Node to start from </span>
 <span class="cm">        */</span>
         <span class="nx">getDomPath</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            
-			<span class="kd">var</span> <span class="nx">domPath</span> <span class="o">=</span> <span class="p">[],</span>
+			<span class="kd">var</span> <span class="nx">domPath</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">domNode</span><span class="p">,</span>
                 <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
 
-            <span class="k">while</span> <span class="p">(</span><span class="nx">node</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;html&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;doc&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;tagName&#39;</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+            <span class="c1">//return inst.all(domNode);</span>
+
+            <span class="k">while</span> <span class="p">(</span><span class="nx">domNode</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+                
+                <span class="k">if</span> <span class="p">((</span><span class="nx">domNode</span> <span class="o">===</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">domNode</span> <span class="o">===</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">domNode</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">())</span> <span class="p">{</span>
-                    <span class="nx">node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">offsetParent</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">domNode</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
+                <span class="cm">/*</span>
+<span class="cm">                if (!inst.DOM.inDoc(domNode)) {</span>
+<span class="cm">                    domNode = null;</span>
+<span class="cm">                    break;</span>
+<span class="cm">                }</span>
+<span class="cm">                */</span>
                 <span class="c1">//Check to see if we get el.nodeName and nodeType</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodeName&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodeType&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodeType&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">domPath</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">node</span><span class="p">));</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">nodeName</span> <span class="o">&amp;&amp;</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">domPath</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">domNode</span><span class="p">);</span>
                 <span class="p">}</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">domNode</span> <span class="o">==</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">domNode</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
 
-                <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
+                <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
             <span class="p">}</span>
+
+            <span class="cm">/*{{{ Using Node </span>
+<span class="cm">            while (node !== null) {</span>
+<span class="cm">                if (node.test(&#39;html&#39;) || node.test(&#39;doc&#39;) || !node.get(&#39;tagName&#39;)) {</span>
+<span class="cm">                    node = null;</span>
+<span class="cm">                    break;</span>
+<span class="cm">                }</span>
+<span class="cm">                if (!node.inDoc()) {</span>
+<span class="cm">                    node = null;</span>
+<span class="cm">                    break;</span>
+<span class="cm">                }</span>
+<span class="cm">                //Check to see if we get el.nodeName and nodeType</span>
+<span class="cm">                if (node.get(&#39;nodeName&#39;) &amp;&amp; node.get(&#39;nodeType&#39;) &amp;&amp; (node.get(&#39;nodeType&#39;) == 1)) {</span>
+<span class="cm">                    domPath.push(inst.Node.getDOMNode(node));</span>
+<span class="cm">                }</span>
+
+<span class="cm">                if (node.test(&#39;body&#39;)) {</span>
+<span class="cm">                    node = null;</span>
+<span class="cm">                    break;</span>
+<span class="cm">                }</span>
+
+<span class="cm">                node = node.get(&#39;parentNode&#39;);</span>
+<span class="cm">            }</span>
+<span class="cm">            }}}*/</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">domPath</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">domPath</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
             <span class="p">}</span>
+
             
             <span class="k">return</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">domPath</span><span class="p">.</span><span class="nx">reverse</span><span class="p">());</span>
 
