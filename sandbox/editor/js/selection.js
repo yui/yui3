@@ -578,6 +578,7 @@ YUI.add('selection', function(Y) {
 
                     txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
                     txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
+
                     node.replace(txt, node);
                     newNode = Y.Node.create(html);
                     if (newNode.get('nodeType') === 11) {
@@ -586,7 +587,6 @@ YUI.add('selection', function(Y) {
                         newNode = b;
                     }
                     txt.insert(newNode, 'after');
-
                     if (txt2 && txt2.get('length')) {
                         newNode.insert(cur, 'after');
                         cur.insert(txt2, 'after');
