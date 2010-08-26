@@ -12,33 +12,6 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
 	drawSeries: function()
 	{
         this.drawPlots();
-    },
-
-	_getDefaultStyles: function()
-    {
-        return {
-            fill:{
-                type: "solid",
-                alpha: 1,
-                colors:null,
-                alphas: null,
-                ratios: null
-            },
-            border:{
-                weight: 1,
-                alpha: 1
-            },
-            width: 6,
-            height: 6,
-            shape: "circle",
-
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 },{
     ATTRS : {
@@ -47,6 +20,23 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
              * Indicates the type of graph.
              */
             value:"marker"
+        },
+        
+        styles: {
+            getter: function()
+            {
+                var styles = this.get("marker");
+                styles.padding = this.get("padding");
+            },
+            
+            setter: function(val)
+            {
+                this.set("marker", val);
+                if(val.hasOwnProperty("padding"))
+                {
+                    this.set("padding", val.padding);
+                }
+            }
         }
     }
 });

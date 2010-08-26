@@ -1,6 +1,7 @@
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
 	drawSeries: function()
     {
+        this.get("graphic").clear();
         if(this.get("showFill"))
         {
             this.drawFill();
@@ -13,41 +14,6 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this.drawPlots();
         }   
-    },
-
-	_getDefaultStyles: function()
-    {
-        return {
-            fill:{
-                type: "solid",
-                alpha: 1,
-                colors:null,
-                alphas: null,
-                ratios: null
-            },
-            border:{
-                weight: 1,
-                alpha: 1
-            },
-            width: 6,
-            height: 6,
-            shape: "circle",
-            alpha: 1,
-            weight: 1,
-            lineType:"solid", 
-            dashLength:10, 
-            gapSpace:10, 
-            connectDiscontinuousPoint:true, 
-            discontinuousType:"dashed", 
-            discontinuousDashLength:10, 
-            discontinuousGapSpace:10,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 },
 {
@@ -69,9 +35,32 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
 
         showMarkers: {
             value: true
+        },
+
+        styles: {
+            getter: function()
+            {
+                var styles = {};
+                styles.marker = this.get("marker");
+                styles.line = this.get("line");
+                styles.area = this.get("area");
+                styles.padding = this.get("padding");
+                return styles;
+            },
+
+            setter: function(val)
+            {
+                var col = {area:"area", line:"line", marker:"marker", padding:"padding"}, i;
+                for(i in col)
+                {
+                    if(val.hasOwnProperty(i))
+                    {
+                        this.set(i, val[i]);
+                    }
+                }
+            }
         }
     }
-
 });
 
 

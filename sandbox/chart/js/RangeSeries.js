@@ -24,32 +24,34 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
-			dataWidth = w - (leftPadding + padding.right),
+            xAxis = this.get("xAxis"),
+            yAxis = this.get("yAxis"),
+			xKey = this.get("xKey"),
+			yKey = this.get("yKey"),
+			xData = xAxis.getDataByKey(xKey).concat(),
+			yData = yAxis.getDataByKey(yKey).concat(),
+            xOffset = xAxis.getEdgeOffset(xData.length, w),
+			dataWidth = w - (leftPadding + padding.right + xOffset),
 			dataHeight = h - (topPadding + padding.bottom),
 			xcoords = [],
 			ycoords = [],
-            xAxis = this.get("xAxis"),
-            yAxis = this.get("yAxis"),
 			xMax = xAxis.get("maximum"),
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
-			xKey = this.get("xKey"),
-			yKey = this.get("yKey"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-			xData = xAxis.getDataByKey(xKey),
-			yData = yAxis.getDataByKey(yKey),
 			dataLength = xData.length, 	
             i,
             yValues;
+        xOffset *= 0.5;
         this.get("graphic").setSize(w, h);
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (i = 0; i < dataLength; ++i) 
 		{
             yValues = yData[i];
-            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
+            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding + xOffset));
 			nextY = {
                 h: Math.round(((dataHeight + topPadding) - (yValues.high - yMin) * yScaleFactor)),
                 l: Math.round(((dataHeight + topPadding) - (yValues.low - yMin) * yScaleFactor)),

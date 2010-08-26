@@ -6,6 +6,19 @@ function Renderer(config)
 Renderer.NAME = "renderer";
 
 Renderer.ATTRS = {
+    padding: {
+        getter: function()
+        {
+            return this._padding || this._getDefPadding();
+        },
+
+        setter: function(val)
+        {
+            var def = this._padding || this._getDefPadding();
+            this._padding = Y.merge(def, val);
+        }
+    },
+
     node: {
         value: null
     },
@@ -169,6 +182,19 @@ Y.extend(Renderer, Y.Widget, {
     _getDefaultStyles: function()
     {
         return {};
+    },
+
+    /**
+     * @private
+     */
+    _getDefPadding: function()
+    {
+        return {
+            top:0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        };
     }
 });
 

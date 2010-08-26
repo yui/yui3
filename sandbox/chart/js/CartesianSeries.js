@@ -274,7 +274,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
             yData = this.get("yData").concat(),
             xOffset = xAxis.getEdgeOffset(xData.length, w),
             yOffset = yAxis.getEdgeOffset(yData.length, h),
-            padding = this.get("styles").padding,
+            padding = this.get("padding"),
 			leftPadding = padding.left,
 			topPadding = padding.top,
 			dataWidth = w - (leftPadding + padding.right + xOffset),

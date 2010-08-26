@@ -77,9 +77,7 @@ Y.extend(CategoryAxis, Y.BaseAxis,
     
     getMajorUnitDistance: function(len, uiLen, majorUnit)
     {
-        var dist,
-            ct = majorUnit.count,
-            catsize = uiLen/ct;
+        var dist;
         if(majorUnit.determinant === "count")
         {
             dist = uiLen/len;

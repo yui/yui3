@@ -468,8 +468,7 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     _getDefaultAxes: function()
     {
-        var dir = this.get("direction"),
-            xKey = this.get("xKey"),
+        var xKey = this.get("xKey"),
             yKey = this.get("yKey");
         return {
             values:{

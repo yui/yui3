@@ -1,6 +1,29 @@
-function Lines(){}
+function Lines(cfg)
+{
+    var attrs = {
+        line: {
+            getter: function()
+            {
+                return this._defaults || this._getLineDefaults();
+            },
+
+            setter: function(val)
+            {
+                var defaults = this._defaults || this._getLineDefaults();
+                this._defaults = Y.merge(defaults, val);
+            }
+        }
+    };
+    this.addAttrs(attrs, cfg);
+    this.get("styles");
+}
 
 Lines.prototype = {
+    /**
+     * @private
+     */
+    _defaults: null,
+
     /**
 	 * @private
 	 */
@@ -20,7 +43,7 @@ Lines.prototype = {
 			nextX,
 			nextY,
 			i,
-			styles = this.get("styles"),
+			styles = this.get("line"),
 			lineType = styles.lineType,
             lc = styles.lineColor || this._getDefaultColor(this.get("graphOrder")),
 			dashLength = styles.dashLength,
@@ -30,7 +53,6 @@ Lines.prototype = {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
-        graphic.clear();
         graphic.lineStyle(styles.weight, lc);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
@@ -128,7 +150,22 @@ Lines.prototype = {
 		}
 		
 		graphic.moveTo(xEnd, yEnd);
-	}
-};
+	},
 
+	_getLineDefaults: function()
+    {
+        return {
+            alpha: 1,
+            weight: 1,
+            lineType:"solid", 
+            dashLength:10, 
+            gapSpace:10, 
+            connectDiscontinuousPoint:true, 
+            discontinuousType:"dashed", 
+            discontinuousDashLength:10, 
+            discontinuousGapSpace:10
+        };
+    }
+};
+Y.augment(Lines, Y.Attribute);
 Y.Lines = Lines;
