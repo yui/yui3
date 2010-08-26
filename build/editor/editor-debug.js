@@ -157,6 +157,7 @@ YUI.add('frame', function(Y) {
             
             
             //TODO: Not sure why this stopped working!!!
+            /*
             this.publish(e.type, {
                 prefix: 'dom',
                 bubbles: true,
@@ -168,6 +169,7 @@ YUI.add('frame', function(Y) {
                     ev.preventDefault();
                 }, this, e)
             });
+            */
 
             this.fire('dom:' + e.type, e);
         },
@@ -1189,10 +1191,18 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
+        var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
+        if (cur && cur.innerHTML == '&nbsp;') {
+            if (cur.parentNode) {
+                cur.parentNode.removeChild(cur);
+            }
+        }
+        /*
         var cur = Y.one('#' + Y.Selection.CUR_WRAPID);
         if (cur && cur.get('innerHTML') == '&nbsp;') {
             cur.remove();
         }
+        */
     };
 
     Y.Selection.prototype = {
@@ -2314,16 +2324,16 @@ YUI.add('editor-base', function(Y) {
                     break;
             }
 
-            var changed = this.getDomPath(e.changedNode),
+            var changed = this.getDomPath(e.changedNode, false),
                 cmds = {}, family, fsize, classes = [],
                 fColor = '', bColor = '';
 
             if (e.commands) {
                 cmds = e.commands;
             }
-
-            changed.each(function(n) {
-                var el = Y.Node.getDOMNode(n),
+            
+            Y.each(changed, function(n) {
+                var el = inst.Node.getDOMNode(n),
                     tag = el.tagName.toLowerCase(),
                     cmd = EditorBase.TAG2CMD[tag];
 
@@ -2374,7 +2384,7 @@ YUI.add('editor-base', function(Y) {
                 
             });
             
-            e.dompath = changed;
+            e.dompath = inst.all(changed);
             e.classNames = classes;
             e.commands = cmds;
 
@@ -2400,7 +2410,7 @@ YUI.add('editor-base', function(Y) {
         * @method getDomPath
         * @param {Node} node The Node to start from 
         */
-        getDomPath: function(node) {
+        getDomPath: function(node, nodeList) {
 			var domPath = [], domNode,
                 inst = this.frame.getInstance();
 
@@ -2413,16 +2423,12 @@ YUI.add('editor-base', function(Y) {
                     domNode = null;
                     break;
                 }
-                if (!domNode.offsetParent) {
-                    domNode = null;
-                    break;
-                }
-                /*
+                
                 if (!inst.DOM.inDoc(domNode)) {
                     domNode = null;
                     break;
                 }
-                */
+                
                 //Check to see if we get el.nodeName and nodeType
                 if (domNode.nodeName && domNode.nodeType && (domNode.nodeType == 1)) {
                     domPath.push(domNode);
@@ -2464,8 +2470,11 @@ YUI.add('editor-base', function(Y) {
                 domPath[0] = inst.config.doc.body;
             }
 
-            
-            return inst.all(domPath.reverse());
+            if (nodeList) {
+                return inst.all(domPath.reverse());
+            } else {
+                return domPath.reverse();
+            }
 
         },
         /**
@@ -2475,6 +2484,7 @@ YUI.add('editor-base', function(Y) {
         */
         _afterFrameReady: function() {
             var inst = this.frame.getInstance();
+            
             this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
@@ -2527,6 +2537,10 @@ YUI.add('editor-base', function(Y) {
             } else {
                 var sel = this._currentSelection;
             }
+                var inst = this.frame.getInstance(),
+                    sel = new inst.Selection();
+
+                this._currentSelection = sel;
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e });

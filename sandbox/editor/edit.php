@@ -360,7 +360,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         switch (e.changedType) {
             case 'keyup':
             case 'mouseup':
-                updateButtons(e);
+                //updateButtons(e);
                 break;
         }
         
