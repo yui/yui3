@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>event-valuechange purge test</title>
+</head>
+<body class="yui3-skin-sam">
+
+<input type="text" id="inputbox">
+<button id="purge">Purge</button>
+
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({filter: 'raw'}).use("console", "event-valuechange", "node-base", function(Y) {
+
+new Y.Console({
+    height: '400px',
+    width: '35%'
+}).render('#log');
+
+Y.one('#inputbox').on('valueChange', function(e) {
+    Y.log('valueChange: ' + e.newVal, 'info');
+});
+
+Y.one('#purge').once('click', function () {
+    Y.one('#inputbox').purge(true);
+    Y.log('input node has been purged (reload the page to test again)', 'info');
+})
+
+});
+</script>
+
+</body>
+</html>
