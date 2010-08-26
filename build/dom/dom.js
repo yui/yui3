@@ -18,6 +18,7 @@ YUI.add('dom-base', function(Y) {
  */
 var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
+    DOCUMENT_ELEMENT = 'documentElement',
     DEFAULT_VIEW = 'defaultView',
     PARENT_WINDOW = 'parentWindow',
     TAG_NAME = 'tagName',
@@ -211,42 +212,19 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
-        // there may be multiple elements with the same ID
-        var nodes = [],
-            ret = false,
-            attributes,
-            id = (element && element.getAttribute) ?
-                    element.getAttribute('id') : null,
-            i,
-            node,
-            query;
-                
-        // avoid collision with form.id === input.name
-        if (element && element.attributes) {
-            doc = doc || element[OWNER_DOCUMENT];
-            attributes = element.attributes;
-            if (attributes.id) {
-                // IE < 8 clones hang onto attribute after ID is updated
-                // form.id may be element with id="id"
-                if (attributes.id !== id && !id.nodeType) {
-                    attributes.id.value = id; // sync with actual ID
-                }
+        var ret = false,
+            rootNode;
 
-                id = attributes.id.value;
-            }
+        if (element && element.nodeType) {
+            (doc) || (doc = element[OWNER_DOCUMENT]);
 
-            // need an ID to query the document for this element
-            if (!id) {
-                id = Y.guid();
-                element.setAttribute('id', id);
-            }
+            rootNode = doc[DOCUMENT_ELEMENT];
 
-            nodes = Y.DOM.allById(id, doc);
-            for (i = 0; node = nodes[i++];) { // check for a match
-                if (node === element) {
-                    ret = true;
-                    break;
-                }
+            // contains only works with HTML_ELEMENT
+            if (rootNode && rootNode.contains && element.tagName) {
+                ret = rootNode.contains(element);
+            } else {
+                ret = Y.DOM.contains(rootNode, element);
             }
         }
 
@@ -1342,11 +1320,21 @@ Y.mix(Y_DOM, {
                     off1, off2,
                     bLeft, bTop,
                     mode,
-                    doc;
+                    doc,
+                    rootNode;
 
-                if (node) {
-                    if (Y.DOM.inDoc(node)) {
-                        doc = node.ownerDocument;
+                if (node && node.tagName) {
+                    doc = node.ownerDocument;
+                    rootNode = doc[DOCUMENT_ELEMENT];
+
+                    // inline inDoc check for perf
+                    if (rootNode.contains) {
+                        inDoc = rootNode.contains(node); 
+                    } else {
+                        inDoc = Y.DOM.contains(rootNode, node);
+                    }
+
+                    if (inDoc) {
                         scrollLeft = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollLeft : Y_DOM.docScrollX(node, doc);
                         scrollTop = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollTop : Y_DOM.docScrollY(node, doc);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
@@ -1404,7 +1392,7 @@ Y.mix(Y_DOM, {
                     scrollLeft;
 
                 if (node) {
-                    //if (Y_DOM.inDoc(node)) {
+                    if (Y_DOM.inDoc(node)) {
                         xy = [node.offsetLeft, node.offsetTop];
                         doc = node.ownerDocument;
                         parentNode = node;
@@ -1447,9 +1435,9 @@ Y.mix(Y_DOM, {
                             xy[0] += Y_DOM.docScrollX(node, doc);
                             xy[1] += Y_DOM.docScrollY(node, doc);
                         }
-                    //} else {
-                    //    xy = Y_DOM._getOffset(node);
-                    //}
+                    } else {
+                        xy = Y_DOM._getOffset(node);
+                    }
                 }
 
                 return xy;                
