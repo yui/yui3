@@ -19,6 +19,7 @@ var VALUE        = 'value',
 // Just a simple namespace to make methods overridable.
 VC = {
     // -- Static Constants -----------------------------------------------------
+    POLL_INTERVAL: 50,
     TIMEOUT: 10000,
 
     // -- Protected Static Properties ------------------------------------------
@@ -28,9 +29,8 @@ VC = {
     _timeouts : {},
 
     // -- Protected Static Methods ---------------------------------------------
-    _poll: function (node, e) {
-        var stamp   = Y.stamp(node),
-            newVal  = node.get(VALUE),
+    _poll: function (node, stamp, e) {
+        var newVal  = node._node.value, // performance cheat; getValue() is a big hit when polling
             prevVal = VC._history[stamp];
 
         if (newVal !== prevVal) {
@@ -42,32 +42,64 @@ VC = {
                 prevVal: prevVal
             });
 
-            VC._startPolling(node, e);
+            VC._refreshTimeout(node, stamp);
         }
     },
 
-    _startPolling: function (node, e) {
-        var stamp = Y.stamp(node);
+    _refreshTimeout: function (node, stamp) {
+        VC._stopTimeout(node, stamp); // avoid dupes
 
-        VC._stopPolling(node); // avoid dupes
+        // If we don't see any changes within the timeout period (10 seconds by
+        // default), stop polling.
+        VC._timeouts[stamp] = setTimeout(function () {
+            VC._stopPolling(node, stamp);
+        }, VC.TIMEOUT);
+
+        Y.log('_refreshTimeout: ' + stamp, 'info', 'event-valuechange');
+    },
+
+    _startPolling: function (node, stamp, e, force) {
+        if (!stamp) {
+            stamp = Y.stamp(node);
+        }
+
+        // Don't bother continuing if we're already polling.
+        if (!force && VC._intervals[stamp]) {
+            return;
+        }
+
+        VC._stopPolling(node, stamp); // avoid dupes
 
         // Poll for changes to the node's value. We can't rely on keyboard
         // events for this, since the value may change due to a mouse-initiated
         // paste event, an IME input event, or for some other reason that
         // doesn't trigger a key event.
-        VC._intervals[stamp] = setInterval(Y.bind(VC._poll, null, node, e), 20);
+        VC._intervals[stamp] = setInterval(function () {
+            VC._poll(node, stamp, e);
+        }, VC.POLL_INTERVAL);
 
-        // If we don't see any changes within the timeout period (10 seconds by
-        // default), stop polling.
-        VC._timeouts[stamp] = setTimeout(Y.bind(VC._stopPolling, null, node),
-                VC.TIMEOUT);
+        VC._refreshTimeout(node, stamp, e);
+
+        Y.log('_startPolling: ' + stamp, 'info', 'event-valuechange');
     },
 
-    _stopPolling: function (node) {
-        var stamp = Y.stamp(node);
+    _stopPolling: function (node, stamp) {
+        if (!stamp) {
+            stamp = Y.stamp(node);
+        }
 
-        clearTimeout(VC._timeouts[stamp]);
-        clearInterval(VC._intervals[stamp]);
+        VC._intervals[stamp] = clearInterval(VC._intervals[stamp]);
+        VC._stopTimeout(node, stamp);
+
+        Y.log('_stopPolling: ' + stamp, 'info', 'event-valuechange');
+    },
+
+    _stopTimeout: function (node, stamp) {
+        if (!stamp) {
+            stamp = Y.stamp(node);
+        }
+
+        VC._timeouts[stamp] = clearTimeout(VC._timeouts[stamp]);
     },
 
     // -- Protected Static Event Handlers --------------------------------------
@@ -76,19 +108,19 @@ VC = {
     },
 
     _onKeyDown: function (e) {
-        VC._startPolling(e.currentTarget, e);
+        VC._startPolling(e.currentTarget, null, e);
     },
 
     _onKeyUp: function (e) {
         // These charCodes indicate that an IME has started. We'll restart
         // polling and give the IME up to 10 seconds (by default) to finish.
         if (e.charCode === 229 || e.charCode === 197) {
-            VC._startPolling(e.currentTarget, e);
+            VC._startPolling(e.currentTarget, null, e, true);
         }
     },
 
     _onMouseDown: function (e) {
-        VC._startPolling(e.currentTarget, e);
+        VC._startPolling(e.currentTarget, null, e);
     },
 
     _onSubscribe: function (node, subscription, customEvent) {
@@ -110,7 +142,7 @@ VC = {
             var stamp = Y.stamp(node);
 
             node.detachAll(VALUE_CHANGE + '|*');
-            VC._stopPolling(node);
+            VC._stopPolling(node, stamp);
 
             delete VC._events[stamp];
             delete VC._history[stamp];
