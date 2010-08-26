@@ -34,7 +34,7 @@ YUI.add('editor-base', function(Y) {
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
-            frame.addTarget(this);
+            //frame.addTarget(this);
 
             this.frame = frame;
 
@@ -440,13 +440,11 @@ YUI.add('editor-base', function(Y) {
         */
         _afterFrameReady: function() {
             var inst = this.frame.getInstance();
-            /*
             this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
             this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
-            */
             inst.Selection.filter();
             this.fire('ready');
         },
