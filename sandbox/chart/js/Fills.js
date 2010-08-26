@@ -1,6 +1,28 @@
-function Fills(){}
+function Fills(cfg)
+{
+    var attrs = {
+        area: {
+            getter: function()
+            {
+                return this._defaults || this._getAreaDefaults();
+            },
+
+            setter: function(val)
+            {
+                var defaults = this._defaults || this._getAreaDefaults();
+                this._defaults = Y.merge(defaults, val);
+            }
+        }
+    };
+    this.addAttrs(attrs, cfg);
+}
 
 Fills.prototype = {
+    /**
+     * @private
+     */
+    _defaults: null,
+
     /**
 	 * @protected
 	 */
@@ -10,8 +32,8 @@ Fills.prototype = {
 		{
 			return;
 		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+        var xcoords = this.get("xcoords").concat(),
+			ycoords = this.get("ycoords").concat(),
 			len = xcoords.length,
 			firstX = xcoords[0],
 			firstY = ycoords[0],
@@ -22,10 +44,10 @@ Fills.prototype = {
 			nextX,
 			nextY,
 			i,
-			styles = this.get("styles"),
-			graphic = this.get("graphic");
-        graphic.clear();
-        graphic.beginFill(styles.color, styles.alpha);
+			styles = this.get("area"),
+			graphic = this.get("graphic"),
+            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
+        graphic.beginFill(color, styles.alpha);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
@@ -53,7 +75,14 @@ Fills.prototype = {
         }
         graphic.lineTo(firstX, firstY);
         graphic.end();
-	}
-};
+	},
 
+	_getAreaDefaults: function()
+    {
+        return {
+            alpha: 0.5
+        };
+    }
+};
+Y.augment(Fills, Y.Attribute);
 Y.Fills = Fills;

@@ -1,6 +1,7 @@
 Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 	drawSeries: function()
     {
+        this.get("graphic").clear();
         this.drawFill();
     },
 	
@@ -28,6 +29,18 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
         },
         direction: {
             value:"horizontal"
+        },
+        
+        styles: {
+            getter: function()
+            {
+                return this.get("area");
+            },
+
+            setter: function(val)
+            {
+                this.set("area", val);
+            }
         }
     }
 });

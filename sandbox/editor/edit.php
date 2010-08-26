@@ -115,6 +115,7 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+    <b>This is a test</b>
 </div>
 <?php //include('mail.php'); ?>
     <!---div><br></div>
@@ -196,10 +197,10 @@ This is some <strong>other</strong> loose test.
 
 <script type="text/javascript">
 var yConfig = {
-    //debug: true,
-    //filter: 'DEBUG',
     debug: false,
-    filter: 'MIN',
+    filter: 'RAW',
+    //debug: false,
+    //filter: 'MIN',
     allowRollup: false,
     logExclude: {
         'yui': true,
@@ -359,7 +360,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         switch (e.changedType) {
             case 'keyup':
             case 'mouseup':
-                //updateButtons(e);
+                updateButtons(e);
                 break;
         }
         
