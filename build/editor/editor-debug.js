@@ -2475,11 +2475,13 @@ YUI.add('editor-base', function(Y) {
         */
         _afterFrameReady: function() {
             var inst = this.frame.getInstance();
+            /*
             this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
             this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+            */
             inst.Selection.filter();
             this.fire('ready');
         },
@@ -2505,18 +2507,30 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _currentSelection: null,
+        _currentSelectionTimer: null,
+        _currentSelectionClear: null,
         /**
         * Fires nodeChange event
         * @method _onFrameKeyDown
         * @private
         */
         _onFrameKeyDown: function(e) {
-            var inst = this.frame.getInstance(),
-                sel = new inst.Selection();
+            if (!this._currentSelection) {
+                if (this._currentSelectionTimer) {
+                    this._currentSelectionTimer.cancel();
+                }
+                this._currentSelectionTimer = Y.later(850, this, function() {
+                    this._currentSelectionClear = true;
+                });
+                var inst = this.frame.getInstance(),
+                    sel = new inst.Selection();
 
-            this._currentSelection = sel;
+                this._currentSelection = sel;
+            } else {
+                var sel = this._currentSelection;
+            }
 
-            if (sel.anchorNode) {
+            if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e });
@@ -2532,7 +2546,7 @@ YUI.add('editor-base', function(Y) {
         _onFrameKeyPress: function(e) {
             var sel = this._currentSelection;
 
-            if (sel.anchorNode) {
+            if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keypress', changedEvent: e });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-press', changedEvent: e });
@@ -2547,11 +2561,14 @@ YUI.add('editor-base', function(Y) {
         _onFrameKeyUp: function(e) {
             var sel = this._currentSelection;
 
-            if (sel.anchorNode) {
+            if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e  });
                 }
+            }
+            if (this._currentSelectionClear) {
+                this._currentSelectionClear = this._currentSelection = null;
             }
         },
         /**
