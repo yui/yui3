@@ -27,7 +27,17 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
     // TODO: how about thead/tbody/tfoot/tr?
     // TODO: does caption matter?
-    RE_TABLE = /^t(?:able|d|h)$/i;
+    RE_TABLE = /^t(?:able|d|h)$/i,
+
+    SCROLL_NODE;
+
+if (Y.UA.ie) {
+    if (Y.config.doc[COMPAT_MODE] !== 'quirks') {
+        SCROLL_NODE = DOCUMENT_ELEMENT; 
+    } else {
+        SCROLL_NODE = 'body';
+    }
+}
 
 Y.mix(Y_DOM, {
     /**
@@ -123,8 +133,8 @@ Y.mix(Y_DOM, {
                 if (node) {
                     if (Y.DOM.inDoc(node)) {
                         doc = node.ownerDocument;
-                        scrollLeft = Y_DOM.docScrollX(node, doc);
-                        scrollTop = Y_DOM.docScrollY(node, doc);
+                        scrollLeft = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollLeft : Y_DOM.docScrollX(node, doc);
+                        scrollTop = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollTop : Y_DOM.docScrollY(node, doc);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
                         xy = [box.left, box.top];
 
