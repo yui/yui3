@@ -563,7 +563,8 @@
 
                 document.body.appendChild(node);
                 Y.DOM.setXY(node, [100, 200]);
-                ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'setXY([100, 200]');
+                var pos = Y.DOM.getXY(node);
+                ArrayAssert.itemsAreEqual([100, 200], [Math.round(pos[0]), Math.round(pos[1])], 'setXY([100, 200]');
             },
 
             test_region: function() {
