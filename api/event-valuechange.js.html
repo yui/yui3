@@ -68,6 +68,7 @@
 <span class="c1">// Just a simple namespace to make methods overridable.</span>
 <span class="nx">VC</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1">// -- Static Constants -----------------------------------------------------</span>
+    <span class="nx">POLL_INTERVAL</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
     <span class="nx">TIMEOUT</span><span class="o">:</span> <span class="mi">10000</span><span class="p">,</span>
 
     <span class="c1">// -- Protected Static Properties ------------------------------------------</span>
@@ -77,9 +78,8 @@
     <span class="nx">_timeouts</span> <span class="o">:</span> <span class="p">{},</span>
 
     <span class="c1">// -- Protected Static Methods ---------------------------------------------</span>
-    <span class="nx">_poll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">stamp</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
-            <span class="nx">newVal</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">),</span>
+    <span class="nx">_poll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">newVal</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="c1">// performance cheat; getValue() is a big hit when polling</span>
             <span class="nx">prevVal</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">!==</span> <span class="nx">prevVal</span><span class="p">)</span> <span class="p">{</span>
@@ -91,32 +91,64 @@
                 <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">prevVal</span>
             <span class="p">});</span>
 
-            <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="nx">VC</span><span class="p">.</span><span class="nx">_refreshTimeout</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
-    <span class="nx">_startPolling</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="nx">_refreshTimeout</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopTimeout</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span> <span class="c1">// avoid dupes</span>
 
-        <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span> <span class="c1">// avoid dupes</span>
+        <span class="c1">// If we don&#39;t see any changes within the timeout period (10 seconds by</span>
+        <span class="c1">// default), stop polling.</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_timeouts</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">TIMEOUT</span><span class="p">);</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;_refreshTimeout: &#39;</span> <span class="o">+</span> <span class="nx">stamp</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;event-valuechange&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_startPolling</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stamp</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Don&#39;t bother continuing if we&#39;re already polling.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">stamp</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span> <span class="c1">// avoid dupes</span>
 
         <span class="c1">// Poll for changes to the node&#39;s value. We can&#39;t rely on keyboard</span>
         <span class="c1">// events for this, since the value may change due to a mouse-initiated</span>
         <span class="c1">// paste event, an IME input event, or for some other reason that</span>
         <span class="c1">// doesn&#39;t trigger a key event.</span>
-        <span class="nx">VC</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">VC</span><span class="p">.</span><span class="nx">_poll</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">),</span> <span class="mi">20</span><span class="p">);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">VC</span><span class="p">.</span><span class="nx">_poll</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">POLL_INTERVAL</span><span class="p">);</span>
 
-        <span class="c1">// If we don&#39;t see any changes within the timeout period (10 seconds by</span>
-        <span class="c1">// default), stop polling.</span>
-        <span class="nx">VC</span><span class="p">.</span><span class="nx">_timeouts</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">node</span><span class="p">),</span>
-                <span class="nx">VC</span><span class="p">.</span><span class="nx">TIMEOUT</span><span class="p">);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_refreshTimeout</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;_startPolling: &#39;</span> <span class="o">+</span> <span class="nx">stamp</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;event-valuechange&#39;</span><span class="p">);</span>
     <span class="p">},</span>
 
-    <span class="nx">_stopPolling</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="nx">_stopPolling</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stamp</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">VC</span><span class="p">.</span><span class="nx">_timeouts</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]);</span>
-        <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">VC</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">VC</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopTimeout</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;_stopPolling: &#39;</span> <span class="o">+</span> <span class="nx">stamp</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;event-valuechange&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_stopTimeout</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stamp</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_timeouts</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">VC</span><span class="p">.</span><span class="nx">_timeouts</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]);</span>
     <span class="p">},</span>
 
     <span class="c1">// -- Protected Static Event Handlers --------------------------------------</span>
@@ -125,19 +157,19 @@
     <span class="p">},</span>
 
     <span class="nx">_onKeyDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="nx">_onKeyUp</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// These charCodes indicate that an IME has started. We&#39;ll restart</span>
         <span class="c1">// polling and give the IME up to 10 seconds (by default) to finish.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">charCode</span> <span class="o">===</span> <span class="mi">229</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">charCode</span> <span class="o">===</span> <span class="mi">197</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="nx">_onMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="nx">_onSubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscription</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">)</span> <span class="p">{</span>
@@ -159,7 +191,7 @@
             <span class="kd">var</span> <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
 
             <span class="nx">node</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span> <span class="o">+</span> <span class="s1">&#39;|*&#39;</span><span class="p">);</span>
-            <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+            <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span>
 
             <span class="k">delete</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
             <span class="k">delete</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
