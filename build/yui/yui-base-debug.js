@@ -2267,7 +2267,7 @@ O.each = function (o, f, c, proto) {
     return Y;
 };
 
-/*
+/**
  * Executes a function on each item, but halts if the
  * function returns true.  The function
  * receives the value, the key, and the object

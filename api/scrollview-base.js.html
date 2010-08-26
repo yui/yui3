@@ -83,6 +83,11 @@
     
     <span class="nx">EMPTY</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">ZERO</span> <span class="o">=</span> <span class="s2">&quot;0s&quot;</span><span class="p">,</span>
+    
+    <span class="nx">OWNER_DOC</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="p">,</span>
+    <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="s2">&quot;mouseup&quot;</span><span class="p">,</span>
+
+    <span class="nx">IE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">,</span>
 
     <span class="nx">NATIVE_TRANSITIONS</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">;</span>
 
@@ -171,9 +176,22 @@
     <span class="nx">bindUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
             <span class="nx">flick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FLICK</span><span class="p">);</span> 
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMoveStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+        <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMoveStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+
+        <span class="c1">// IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">IE</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="p">)));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_cbDoc</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OWNER_DOC</span><span class="p">);</span>
+
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;mousedown&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_selectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_iePreventSelect</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_cbDoc</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="nx">MOUSE_UP</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_ieRestoreSelect</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="c1">// TODO: Fires way to often when using non-native transitions, due to property change</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
@@ -192,7 +210,7 @@
             <span class="s1">&#39;renderedChange&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">);</span> <span class="p">}</span> 
         <span class="p">});</span>
     <span class="p">},</span>
-
+    
     <span class="cm">/**</span>
 <span class="cm">     * syncUI implementation</span>
 <span class="cm">     *</span>
@@ -275,6 +293,26 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * Native onselectstart handle to prevent selection in IE</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _iePreventSelect</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_iePreventSelect</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Restores native onselectstart handle, backed up to prevent selection in IE</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _ieRestoreSelect</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_ieRestoreSelect</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_selectstart</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
 <span class="cm">     * gesturemovestart event handler</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _onGestureMoveStart</span>
@@ -283,11 +321,11 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMoveStart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
+        <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">;</span>
+
         <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
-
-        <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEvt</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemove&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMove</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndEvt</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemoveend&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMoveEnd</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
@@ -362,7 +400,7 @@
     <span class="nx">_onGestureMoveEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
-        
+
         <span class="kd">var</span> <span class="nx">minY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">,</span>
             <span class="nx">maxY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">,</span>
             <span class="nx">minX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollX</span><span class="p">,</span>

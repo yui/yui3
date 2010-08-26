@@ -138,12 +138,16 @@
         * @param {Event.Facade} e
         */
         _onDomEvent: function(e) {
-            var xy = this._iframe.getXY(),
-                node = this._instance.one('win');
+            var xy, node = this._instance.one('win');
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
-            e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
-            e.frameY = xy[1] + e.pageY - node.get('scrollTop');
+            e.frameX = e.frameY = 0;
+
+            if (e.pageX > 0 || e.pageY > 0) {
+                xy = this._iframe.getXY()
+                e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
+                e.frameY = xy[1] + e.pageY - node.get('scrollTop');
+            }
 
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
@@ -235,7 +239,8 @@
 
             inst.Node.DOM_EVENTS.paste = 1;
 
-            Y.each(inst.Node.DOM_EVENTS, function(v, k) {
+            //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
+            Y.each(Frame.DOM_EVENTS, function(v, k) {
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         //Y.log('Adding DOM event to frame: ' + k, 'info', 'frame');
@@ -501,7 +506,7 @@
         focus: function(fn) {
             if (Y.UA.ie || Y.UA.gecko) {
                 this.getInstance().one('win').focus();
-                if (fn) {
+                if (Y.Lang.isFunction(fn)) {
                     fn();
                 }
             } else {
@@ -509,7 +514,7 @@
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
-                        if (fn) {
+                        if (Y.Lang.isFunction(fn)) {
                             fn();
                         }
                     });
@@ -552,7 +557,28 @@
             return this;
         }
     }, {
+        
+        /**
+        * @static
+        * @property DOM_EVENTS
+        * @description The DomEvents that the frame automatically attaches and bubbles
+        * @type Object
+        */
+        DOM_EVENTS: {
+            paste: 1,
+            mouseup: 1,
+            mousedown: 1,
+            keyup: 1,
+            keydown: 1,
+            keypress: 1
+        },
 
+        /**
+        * @static
+        * @property DEFAULT_CSS
+        * @description The default css used when creating the document.
+        * @type String
+        */
         DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
         
         //DEFAULT_CSS: 'html { } body { margin: -15px 0 0 -15px; padding: 7px 0 0 15px; display: block; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',

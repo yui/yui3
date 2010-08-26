@@ -9,7 +9,6 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate",
-                    "node-pluginhost",
                     "classnamemanager",
                     "skin-sam-tabview"
                 ]
@@ -19,7 +18,9 @@
             "widget", 
             "widget-parent",
             "widget-child",
-            "tabview-base"
+            "tabview-base",
+            "node-pluginhost",
+            "node-focusmanager"
         ], 
         "skinnable": true
     } 

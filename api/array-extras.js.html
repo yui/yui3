@@ -217,7 +217,11 @@
 
 <span class="cm">/**</span>
 <span class="cm">* Executes the supplied function on each item in the array.</span>
-<span class="cm">* Reduce &quot;folds&quot; the array into a single value.</span>
+<span class="cm">* Reduce &quot;folds&quot; the array into a single value.  The callback</span>
+<span class="cm">* function receives four arguments:</span>
+<span class="cm">* the value from the previous callback call (or the initial value), </span>
+<span class="cm">* the value of the current element, the current index, and </span>
+<span class="cm">* the array over which iteration is occurring.</span>
 <span class="cm">* @method Array.reduce</span>
 <span class="cm">* @param a {Array} the array to iterate</span>
 <span class="cm">* @param init The initial value to start from</span>

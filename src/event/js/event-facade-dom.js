@@ -142,13 +142,13 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     //////////////////////////////////////////////////////
 
-    if (!x && 0 !== x) {
-        x = e.clientX || 0;
-        y = e.clientY || 0;
+    if (('clientX' in e) && (!x) && (0 !== x)) {
+        x = e.clientX; 
+        y = e.clientY;
 
-        if (ua.ie && b) {
-            x += Math.max(de.scrollLeft, b.scrollLeft);
-            y += Math.max(de.scrollTop, b.scrollTop);
+        if (ua.ie) {
+            x += (de.scrollLeft || b.scrollLeft || 0);
+            y += (de.scrollTop  || b.scrollTop  || 0);
         }
     }
 

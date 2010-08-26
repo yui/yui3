@@ -182,7 +182,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                         if (drop && drop.shim) {
                             if ((dMode == this.INTERSECT) && this._noShim) {
                                 r = ((aRegion) ? aRegion : this.activeDrag.get('node'));
-                                return drop.get('node').intersect(r).inRegion;
+                                return drop.get('node').intersect(r, drop.region).inRegion;
                             } else {
                                 if (this._noShim) {
                                     node = drop.get('node');

@@ -596,7 +596,11 @@ rejected by the test function (or an empty array).</dd>
                                         
                                         <div class="description" property="yui:description">
                                             Executes the supplied function on each item in the array.
-Reduce "folds" the array into a single value.
+Reduce "folds" the array into a single value.  The callback
+function receives four arguments:
+the value from the previous callback call (or the initial value), 
+the value of the current element, the current index, and 
+the array over which iteration is occurring.
                                         </div>
 
                                         <div class="description">

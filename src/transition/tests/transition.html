@@ -294,11 +294,11 @@ YUI({
             'nodelist should transition together': function() {
                 var test = this;
 
-                Y.all('.demo').transition({opacity: 0}, function() {
+                Y.all('.demo').transition({duration: 1, opacity: 0}, function(e) {
                     test.resume(function() {
                         var nodes = Y.all('.demo');
                         Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
-                        Y.Assert.areEqual(0, nodes.item(1).getStyle('opacity'));
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
                     });
                 });
                 test.wait();

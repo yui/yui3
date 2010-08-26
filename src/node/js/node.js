@@ -132,6 +132,7 @@ Y_Node.DOM_EVENTS = {
     reset: 1,
     resize: 1,
     select: 1,
+    selectstart: 1,
     submit: 1,
     scroll: 1,
     textInput: 1,

@@ -168,7 +168,11 @@ A.map = (Native.map) ?
 
 /**
 * Executes the supplied function on each item in the array.
-* Reduce "folds" the array into a single value.
+* Reduce "folds" the array into a single value.  The callback
+* function receives four arguments:
+* the value from the previous callback call (or the initial value), 
+* the value of the current element, the current index, and 
+* the array over which iteration is occurring.
 * @method Array.reduce
 * @param a {Array} the array to iterate
 * @param init The initial value to start from

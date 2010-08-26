@@ -33,24 +33,23 @@
 </form>
 
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../../../build/event-valuechange/event-valuechange.js"></script>
 <script>
-var Y = YUI().use('event-valuechange', function(Y) {
+var Y = YUI({filter: 'raw'}).use('event-valuechange', function(Y) {
     Y.all('.valuechange').on('valueChange', function (e) {
-        Y.log("valueChange: from " + e.prevVal + " to " + e.newVal);
+        Y.log("valueChange: from " + e.prevVal + " to " + e.newVal, 'info');
     });
 
     Y.Node.DOM_EVENTS['input'] = true;
     Y.all('.input').on('input', function (e) {
-        Y.log("input: from ? to " + e.currentTarget.get('value'));
+        Y.log("input: from ? to " + e.currentTarget.get('value'), 'info');
     });
 
     Y.all('.keyup').on('keyup', function (e) {
-        Y.log("keyup: from ? to " + e.currentTarget.get('value'));
+        Y.log("keyup: from ? to " + e.currentTarget.get('value'), 'info');
     });
 
     Y.all('.keypress').on('keypress', function (e) {
-        Y.log("keypress: from ? to " + e.currentTarget.get('value'));
+        Y.log("keypress: from ? to " + e.currentTarget.get('value'), 'info');
     });
 });
 </script>
