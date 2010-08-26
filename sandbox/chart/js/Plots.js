@@ -1,6 +1,29 @@
-function Plots(){}
+function Plots(cfg)
+{
+    var attrs = {
+        marker: {
+            getter: function()
+            {
+                return this._defaults || this._getPlotDefaults();
+            },
+
+            setter: function(val)
+            {
+                var defaults = this._defaults || this._getPlotDefaults();
+                this._defaults = Y.merge(defaults, val);
+            }
+        }
+    };
+    this.addAttrs(attrs, cfg);
+    this.get("styles");
+}
 
 Plots.prototype = {
+    /**
+     * @private
+     */
+    _defaults: null,
+
     bindUI: function()
     {
         Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
@@ -15,7 +38,7 @@ Plots.prototype = {
 		{
 			return;
 		}
-        var style = this.get("styles"),
+        var style = this.get("marker"),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -41,6 +64,33 @@ Plots.prototype = {
         }
         this._clearMarkerCache();
  	},
+
+	_getPlotDefaults: function()
+    {
+        return {
+            fill:{
+                type: "solid",
+                alpha: 1,
+                colors:null,
+                alphas: null,
+                ratios: null
+            },
+            border:{
+                weight: 1,
+                alpha: 1
+            },
+            width: 6,
+            height: 6,
+            shape: "circle",
+
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    },
 
     _markerEventHandler: function(e)
     {
@@ -74,4 +124,5 @@ Plots.prototype = {
     }
 };
 
+Y.augment(Plots, Y.Attribute);
 Y.Plots = Plots;

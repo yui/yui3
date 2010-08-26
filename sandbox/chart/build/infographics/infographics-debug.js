@@ -1114,9 +1114,7 @@ Y.extend(CategoryAxis, Y.BaseAxis,
     
     getMajorUnitDistance: function(len, uiLen, majorUnit)
     {
-        var dist,
-            ct = majorUnit.count,
-            catsize = uiLen/ct;
+        var dist;
         if(majorUnit.determinant === "count")
         {
             dist = uiLen/len;
@@ -1151,6 +1149,19 @@ function Renderer(config)
 Renderer.NAME = "renderer";
 
 Renderer.ATTRS = {
+    padding: {
+        getter: function()
+        {
+            return this._padding || this._getDefPadding();
+        },
+
+        setter: function(val)
+        {
+            var def = this._padding || this._getDefPadding();
+            this._padding = Y.merge(def, val);
+        }
+    },
+
     node: {
         value: null
     },
@@ -1314,6 +1325,19 @@ Y.extend(Renderer, Y.Widget, {
     _getDefaultStyles: function()
     {
         return {};
+    },
+
+    /**
+     * @private
+     */
+    _getDefPadding: function()
+    {
+        return {
+            top:0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        };
     }
 });
 
@@ -1473,45 +1497,36 @@ Y.extend(Marker, Y.Renderer, {
     _update: function()
     {
         this.get("graphic").updateShape(this._shape, this._getStateStyles());
-    },
-
-    /**
-	 * @private
-	 */
-    _getDefaultStyles: function()
-    {
-        return {
-            fill:{
-                type: "solid",
-                alpha: 1,
-                colors:null,
-                alphas: null,
-                ratios: null
-            },
-            border:{
-                weight: 1,
-                alpha: 1
-            },
-            width: 6,
-            height: 6,
-            shape: "circle",
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            },
-
-            over: null,        
-            down: null
-        };
     }
 });
 
 Y.Marker = Marker;
-function Lines(){}
+function Lines(cfg)
+{
+    var attrs = {
+        line: {
+            getter: function()
+            {
+                return this._defaults || this._getLineDefaults();
+            },
+
+            setter: function(val)
+            {
+                var defaults = this._defaults || this._getLineDefaults();
+                this._defaults = Y.merge(defaults, val);
+            }
+        }
+    };
+    this.addAttrs(attrs, cfg);
+    this.get("styles");
+}
 
 Lines.prototype = {
+    /**
+     * @private
+     */
+    _defaults: null,
+
     /**
 	 * @private
 	 */
@@ -1531,7 +1546,7 @@ Lines.prototype = {
 			nextX,
 			nextY,
 			i,
-			styles = this.get("styles"),
+			styles = this.get("line"),
 			lineType = styles.lineType,
             lc = styles.lineColor || this._getDefaultColor(this.get("graphOrder")),
 			dashLength = styles.dashLength,
@@ -1541,7 +1556,6 @@ Lines.prototype = {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
-        graphic.clear();
         graphic.lineStyle(styles.weight, lc);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
@@ -1639,13 +1653,50 @@ Lines.prototype = {
 		}
 		
 		graphic.moveTo(xEnd, yEnd);
-	}
-};
+	},
 
+	_getLineDefaults: function()
+    {
+        return {
+            alpha: 1,
+            weight: 1,
+            lineType:"solid", 
+            dashLength:10, 
+            gapSpace:10, 
+            connectDiscontinuousPoint:true, 
+            discontinuousType:"dashed", 
+            discontinuousDashLength:10, 
+            discontinuousGapSpace:10
+        };
+    }
+};
+Y.augment(Lines, Y.Attribute);
 Y.Lines = Lines;
-function Fills(){}
+function Fills(cfg)
+{
+    var attrs = {
+        area: {
+            getter: function()
+            {
+                return this._defaults || this._getAreaDefaults();
+            },
+
+            setter: function(val)
+            {
+                var defaults = this._defaults || this._getAreaDefaults();
+                this._defaults = Y.merge(defaults, val);
+            }
+        }
+    };
+    this.addAttrs(attrs, cfg);
+}
 
 Fills.prototype = {
+    /**
+     * @private
+     */
+    _defaults: null,
+
     /**
 	 * @protected
 	 */
@@ -1655,8 +1706,8 @@ Fills.prototype = {
 		{
 			return;
 		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+        var xcoords = this.get("xcoords").concat(),
+			ycoords = this.get("ycoords").concat(),
 			len = xcoords.length,
 			firstX = xcoords[0],
 			firstY = ycoords[0],
@@ -1667,10 +1718,10 @@ Fills.prototype = {
 			nextX,
 			nextY,
 			i,
-			styles = this.get("styles"),
-			graphic = this.get("graphic");
-        graphic.clear();
-        graphic.beginFill(styles.color, styles.alpha);
+			styles = this.get("area"),
+			graphic = this.get("graphic"),
+            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
+        graphic.beginFill(color, styles.alpha);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
@@ -1698,13 +1749,43 @@ Fills.prototype = {
         }
         graphic.lineTo(firstX, firstY);
         graphic.end();
-	}
-};
+	},
 
+	_getAreaDefaults: function()
+    {
+        return {
+            alpha: 0.5
+        };
+    }
+};
+Y.augment(Fills, Y.Attribute);
 Y.Fills = Fills;
-function Plots(){}
+function Plots(cfg)
+{
+    var attrs = {
+        marker: {
+            getter: function()
+            {
+                return this._defaults || this._getPlotDefaults();
+            },
+
+            setter: function(val)
+            {
+                var defaults = this._defaults || this._getPlotDefaults();
+                this._defaults = Y.merge(defaults, val);
+            }
+        }
+    };
+    this.addAttrs(attrs, cfg);
+    this.get("styles");
+}
 
 Plots.prototype = {
+    /**
+     * @private
+     */
+    _defaults: null,
+
     bindUI: function()
     {
         Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
@@ -1719,7 +1800,7 @@ Plots.prototype = {
 		{
 			return;
 		}
-        var style = this.get("styles"),
+        var style = this.get("marker"),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -1745,6 +1826,33 @@ Plots.prototype = {
         }
         this._clearMarkerCache();
  	},
+
+	_getPlotDefaults: function()
+    {
+        return {
+            fill:{
+                type: "solid",
+                alpha: 1,
+                colors:null,
+                alphas: null,
+                ratios: null
+            },
+            border:{
+                weight: 1,
+                alpha: 1
+            },
+            width: 6,
+            height: 6,
+            shape: "circle",
+
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    },
 
     _markerEventHandler: function(e)
     {
@@ -1778,6 +1886,7 @@ Plots.prototype = {
     }
 };
 
+Y.augment(Plots, Y.Attribute);
 Y.Plots = Plots;
 function PieSeries(config)
 {
@@ -2491,7 +2600,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
             yData = this.get("yData").concat(),
             xOffset = xAxis.getEdgeOffset(xData.length, w),
             yOffset = yAxis.getEdgeOffset(yData.length, h),
-            padding = this.get("styles").padding,
+            padding = this.get("padding"),
 			leftPadding = padding.left,
 			topPadding = padding.top,
 			dataWidth = w - (leftPadding + padding.right + xOffset),
@@ -2862,33 +2971,6 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
 	drawSeries: function()
 	{
         this.drawPlots();
-    },
-
-	_getDefaultStyles: function()
-    {
-        return {
-            fill:{
-                type: "solid",
-                alpha: 1,
-                colors:null,
-                alphas: null,
-                ratios: null
-            },
-            border:{
-                weight: 1,
-                alpha: 1
-            },
-            width: 6,
-            height: 6,
-            shape: "circle",
-
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 },{
     ATTRS : {
@@ -2897,44 +2979,32 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
              * Indicates the type of graph.
              */
             value:"marker"
+        },
+        
+        styles: {
+            getter: function()
+            {
+                var styles = this.get("marker");
+                styles.padding = this.get("padding");
+            },
+            
+            setter: function(val)
+            {
+                this.set("marker", val);
+                if(val.hasOwnProperty("padding"))
+                {
+                    this.set("padding", val.padding);
+                }
+            }
         }
     }
 });
 
-
 Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 	drawSeries: function()
     {
+        this.get("graphic").clear();
         this.drawLines();
-    },
-
-	_getDefaultStyles: function()
-    {
-        return {
-            alpha: 1,
-            weight: 1,
-            marker: {
-                alpha: 1,
-                weight: 1,
-                width: 6,
-                height: 6
-            },
-            showMarkers: false,
-            showLines: true,
-            lineType:"solid", 
-            dashLength:10, 
-            gapSpace:10, 
-            connectDiscontinuousPoint:true, 
-            discontinuousType:"dashed", 
-            discontinuousDashLength:10, 
-            discontinuousGapSpace:10,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 },
 {
@@ -2944,9 +3014,25 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
              * Indicates the type of graph.
              */
             value:"line"
+        },
+
+        styles: {
+            getter: function()
+            {
+                var styles = this.get("line");
+                styles.padding = this.get("padding");
+            },
+
+            setter: function(val)
+            {
+                this.set("line", val);
+                if(val.hasOwnProperty("padding"))
+                {
+                    this.set("padding", val.padding);
+                }
+            }
         }
     }
-
 });
 
 
@@ -3699,6 +3785,7 @@ Y.BarSeries = BarSeries;
 Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 	drawSeries: function()
     {
+        this.get("graphic").clear();
         this.drawFill();
     },
 	
@@ -3726,6 +3813,18 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
         },
         direction: {
             value:"horizontal"
+        },
+        
+        styles: {
+            getter: function()
+            {
+                return this.get("area");
+            },
+
+            setter: function(val)
+            {
+                this.set("area", val);
+            }
         }
     }
 });
@@ -3738,6 +3837,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
 	drawSeries: function()
     {
+        this.get("graphic").clear();
         if(this.get("showFill"))
         {
             this.drawFill();
@@ -3750,41 +3850,6 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this.drawPlots();
         }   
-    },
-
-	_getDefaultStyles: function()
-    {
-        return {
-            fill:{
-                type: "solid",
-                alpha: 1,
-                colors:null,
-                alphas: null,
-                ratios: null
-            },
-            border:{
-                weight: 1,
-                alpha: 1
-            },
-            width: 6,
-            height: 6,
-            shape: "circle",
-            alpha: 1,
-            weight: 1,
-            lineType:"solid", 
-            dashLength:10, 
-            gapSpace:10, 
-            connectDiscontinuousPoint:true, 
-            discontinuousType:"dashed", 
-            discontinuousDashLength:10, 
-            discontinuousGapSpace:10,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 },
 {
@@ -3806,9 +3871,32 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
 
         showMarkers: {
             value: true
+        },
+
+        styles: {
+            getter: function()
+            {
+                var styles = {};
+                styles.marker = this.get("marker");
+                styles.line = this.get("line");
+                styles.area = this.get("area");
+                styles.padding = this.get("padding");
+                return styles;
+            },
+
+            setter: function(val)
+            {
+                var col = {area:"area", line:"line", marker:"marker", padding:"padding"}, i;
+                for(i in col)
+                {
+                    if(val.hasOwnProperty(i))
+                    {
+                        this.set(i, val[i]);
+                    }
+                }
+            }
         }
     }
-
 });
 
 
@@ -3842,32 +3930,34 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
-			dataWidth = w - (leftPadding + padding.right),
+            xAxis = this.get("xAxis"),
+            yAxis = this.get("yAxis"),
+			xKey = this.get("xKey"),
+			yKey = this.get("yKey"),
+			xData = xAxis.getDataByKey(xKey).concat(),
+			yData = yAxis.getDataByKey(yKey).concat(),
+            xOffset = xAxis.getEdgeOffset(xData.length, w),
+			dataWidth = w - (leftPadding + padding.right + xOffset),
 			dataHeight = h - (topPadding + padding.bottom),
 			xcoords = [],
 			ycoords = [],
-            xAxis = this.get("xAxis"),
-            yAxis = this.get("yAxis"),
 			xMax = xAxis.get("maximum"),
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
-			xKey = this.get("xKey"),
-			yKey = this.get("yKey"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-			xData = xAxis.getDataByKey(xKey),
-			yData = yAxis.getDataByKey(yKey),
 			dataLength = xData.length, 	
             i,
             yValues;
+        xOffset *= 0.5;
         this.get("graphic").setSize(w, h);
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (i = 0; i < dataLength; ++i) 
 		{
             yValues = yData[i];
-            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
+            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding + xOffset));
 			nextY = {
                 h: Math.round(((dataHeight + topPadding) - (yValues.high - yMin) * yScaleFactor)),
                 l: Math.round(((dataHeight + topPadding) - (yValues.low - yMin) * yScaleFactor)),
@@ -6925,8 +7015,7 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     _getDefaultAxes: function()
     {
-        var dir = this.get("direction"),
-            xKey = this.get("xKey"),
+        var xKey = this.get("xKey"),
             yKey = this.get("yKey");
         return {
             values:{
