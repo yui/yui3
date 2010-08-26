@@ -17,7 +17,7 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            //filter: 'debug',
+            filter: 'debug',
             logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true, 
                 Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true}
@@ -503,7 +503,7 @@
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
                     Y.Event.simulate(document.getElementById('clicker2'), 'click');
 
-                    @TODO FIX
+                    // @TODO FIX
 
                     // Y.all('.foo').detach('category|click');
                     list.detach('category|click');
