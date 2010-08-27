@@ -1,6 +1,5 @@
 YUI.add('selection', function(Y) {
 
-YUI.add('selection', function(Y) {
     /**
      * Wraps some common Selection/Range functionality into a simple object
      * @module editor
@@ -850,7 +849,6 @@ YUI.add('selection', function(Y) {
             return 'Selection Object';
         }
     };
-});
 
 
 }, '@VERSION@' ,{requires:['node'], skinnable:false});

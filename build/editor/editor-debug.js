@@ -1,6 +1,5 @@
 YUI.add('frame', function(Y) {
 
-YUI.add('frame', function(Y) {
     /**
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
@@ -735,13 +734,11 @@ YUI.add('frame', function(Y) {
 
     Y.Frame = Frame;
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false });
 
 
 }, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
 YUI.add('selection', function(Y) {
 
-YUI.add('selection', function(Y) {
     /**
      * Wraps some common Selection/Range functionality into a simple object
      * @module editor
@@ -1591,7 +1588,6 @@ YUI.add('selection', function(Y) {
             return 'Selection Object';
         }
     };
-});
 
 
 }, '@VERSION@' ,{requires:['node'], skinnable:false});
@@ -2047,7 +2043,6 @@ YUI.add('createlink-base', function(Y) {
 }, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
-YUI.add('editor-base', function(Y) {
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
@@ -2725,7 +2720,6 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false });
 
 
 }, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});

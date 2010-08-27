@@ -1,4 +1,3 @@
-YUI.add('editor-base', function(Y) {
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
@@ -676,4 +675,3 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false });
