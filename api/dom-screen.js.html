@@ -74,7 +74,17 @@
 
     <span class="c1">// TODO: how about thead/tbody/tfoot/tr?</span>
     <span class="c1">// TODO: does caption matter?</span>
-    <span class="nx">RE_TABLE</span> <span class="o">=</span> <span class="sr">/^t(?:able|d|h)$/i</span><span class="p">;</span>
+    <span class="nx">RE_TABLE</span> <span class="o">=</span> <span class="sr">/^t(?:able|d|h)$/i</span><span class="p">,</span>
+
+    <span class="nx">SCROLL_NODE</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">[</span><span class="nx">COMPAT_MODE</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;quirks&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">SCROLL_NODE</span> <span class="o">=</span> <span class="nx">DOCUMENT_ELEMENT</span><span class="p">;</span> 
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">SCROLL_NODE</span> <span class="o">=</span> <span class="s1">&#39;body&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">,</span> <span class="p">{</span>
     <span class="cm">/**</span>
@@ -165,13 +175,23 @@
                     <span class="nx">off1</span><span class="p">,</span> <span class="nx">off2</span><span class="p">,</span>
                     <span class="nx">bLeft</span><span class="p">,</span> <span class="nx">bTop</span><span class="p">,</span>
                     <span class="nx">mode</span><span class="p">,</span>
-                    <span class="nx">doc</span><span class="p">;</span>
+                    <span class="nx">doc</span><span class="p">,</span>
+                    <span class="nx">rootNode</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
-                        <span class="nx">scrollLeft</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
-                        <span class="nx">scrollTop</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
+                    <span class="nx">rootNode</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">];</span>
+
+                    <span class="c1">// inline inDoc check for perf</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">rootNode</span><span class="p">.</span><span class="nx">contains</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">inDoc</span> <span class="o">=</span> <span class="nx">rootNode</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span> 
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">inDoc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">inDoc</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">scrollLeft</span> <span class="o">=</span> <span class="p">(</span><span class="nx">SCROLL_NODE</span><span class="p">)</span> <span class="o">?</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">SCROLL_NODE</span><span class="p">].</span><span class="nx">scrollLeft</span> <span class="o">:</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+                        <span class="nx">scrollTop</span> <span class="o">=</span> <span class="p">(</span><span class="nx">SCROLL_NODE</span><span class="p">)</span> <span class="o">?</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">SCROLL_NODE</span><span class="p">].</span><span class="nx">scrollTop</span> <span class="o">:</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
                         <span class="nx">box</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">]();</span>
                         <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">box</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">box</span><span class="p">.</span><span class="nx">top</span><span class="p">];</span>
 
@@ -227,7 +247,7 @@
                     <span class="nx">scrollLeft</span><span class="p">;</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c1">//if (Y_DOM.inDoc(node)) {</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">))</span> <span class="p">{</span>
                         <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">node</span><span class="p">.</span><span class="nx">offsetLeft</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetTop</span><span class="p">];</span>
                         <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
                         <span class="nx">parentNode</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
@@ -270,9 +290,9 @@
                             <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
                             <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
                         <span class="p">}</span>
-                    <span class="c1">//} else {</span>
-                    <span class="c1">//    xy = Y_DOM._getOffset(node);</span>
-                    <span class="c1">//}</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getOffset</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
 
                 <span class="k">return</span> <span class="nx">xy</span><span class="p">;</span>                
