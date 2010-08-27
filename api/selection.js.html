@@ -672,7 +672,8 @@
                         <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">b</span><span class="p">;</span>
                     <span class="p">}</span>
                     <span class="nx">txt</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="s1">&#39;after&#39;</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">txt2</span> <span class="o">&amp;&amp;</span> <span class="nx">txt2</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="c1">//if (txt2 &amp;&amp; txt2.get(&#39;length&#39;)) {</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">txt2</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">newNode</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">cur</span><span class="p">,</span> <span class="s1">&#39;after&#39;</span><span class="p">);</span>
                         <span class="nx">cur</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">txt2</span><span class="p">,</span> <span class="s1">&#39;after&#39;</span><span class="p">);</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">selectNode</span><span class="p">(</span><span class="nx">cur</span><span class="p">,</span> <span class="nx">collapse</span><span class="p">);</span>
@@ -682,7 +683,7 @@
                         <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
-                    <span class="nx">node</span><span class="p">.</span><span class="nx">prepend</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="s1">&#39;before&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">newNode</span><span class="p">;</span>
