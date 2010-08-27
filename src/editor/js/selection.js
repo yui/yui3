@@ -85,7 +85,11 @@
         if (Y.Lang.isString(sel.text)) {
             this.text = sel.text;
         } else {
-            this.text = sel.toString();
+            if (sel.toString) {
+                this.text = sel.toString();
+            } else {
+                this.text = '';
+            }
         }
     };
     
