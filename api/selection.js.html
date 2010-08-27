@@ -68,7 +68,7 @@
         <span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;nodeValue&#39;</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">domEvent</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">sel</span><span class="p">,</span> <span class="nx">par</span><span class="p">,</span> <span class="nx">ieNode</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">,</span> <span class="nx">rng</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">getSelection</span><span class="p">)</span> <span class="p">{</span>
@@ -82,16 +82,22 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">isCollapsed</span> <span class="o">=</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">compareEndPoints</span><span class="p">(</span><span class="s1">&#39;StartToEnd&#39;</span><span class="p">,</span> <span class="nx">sel</span><span class="p">))</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">anchorNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">focusNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">());</span>
-                
-                <span class="nx">par</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">();</span>
-                <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">par</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">;</span>
-                <span class="nx">rng</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">duplicate</span><span class="p">();</span>
 
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c1">//This causes IE to not allow a selection on a doubleclick</span>
-                    <span class="c1">//rng.select(nodes[i]);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">rng</span><span class="p">.</span><span class="nx">inRange</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
-                       <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span> 
+                <span class="k">if</span> <span class="p">(</span><span class="nx">domEvent</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">elementFromPoint</span><span class="p">(</span><span class="nx">domEvent</span><span class="p">.</span><span class="nx">clientX</span><span class="p">,</span> <span class="nx">domEvent</span><span class="p">.</span><span class="nx">clientY</span><span class="p">);</span>
+                <span class="p">}</span>
+                
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ieNode</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">par</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">();</span>
+                    <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">par</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">;</span>
+                    <span class="nx">rng</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">duplicate</span><span class="p">();</span>
+
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">//This causes IE to not allow a selection on a doubleclick</span>
+                        <span class="c1">//rng.select(nodes[i]);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">rng</span><span class="p">.</span><span class="nx">inRange</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
+                           <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span> 
+                        <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
 
@@ -487,9 +493,12 @@
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CUR_WRAPID</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span> <span class="o">&amp;&amp;</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">==</span> <span class="s1">&#39;&amp;nbsp;&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">cur</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cur</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">==</span> <span class="s1">&#39;&amp;nbsp;&#39;</span> <span class="o">||</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">==</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">cur</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="cm">/*</span>
@@ -642,7 +651,9 @@
             
             <span class="k">if</span> <span class="p">(</span><span class="nx">range</span><span class="p">.</span><span class="nx">pasteHTML</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
-                <span class="nx">range</span><span class="p">.</span><span class="nx">pasteHTML</span><span class="p">(</span><span class="s1">&#39;&lt;span id=&quot;rte-insert&quot;&gt;&lt;/span&gt;&#39;</span><span class="p">);</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="nx">range</span><span class="p">.</span><span class="nx">pasteHTML</span><span class="p">(</span><span class="s1">&#39;&lt;span id=&quot;rte-insert&quot;&gt;&lt;/span&gt;&#39;</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{}</span>
                 <span class="nx">inHTML</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#rte-insert&#39;</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">inHTML</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">inHTML</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
