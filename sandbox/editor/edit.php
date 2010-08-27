@@ -115,7 +115,7 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
-    <b>This is a test</b>
+<?php include('mail.php'); ?>
 </div>
 <?php //include('mail.php'); ?>
     <!---div><br></div>
@@ -360,7 +360,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         switch (e.changedType) {
             case 'keyup':
             case 'mouseup':
-                updateButtons(e);
+                //updateButtons(e);
                 break;
         }
         

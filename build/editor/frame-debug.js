@@ -157,6 +157,7 @@ YUI.add('frame', function(Y) {
             
             
             //TODO: Not sure why this stopped working!!!
+            /*
             this.publish(e.type, {
                 prefix: 'dom',
                 bubbles: true,
@@ -168,6 +169,7 @@ YUI.add('frame', function(Y) {
                     ev.preventDefault();
                 }, this, e)
             });
+            */
 
             this.fire('dom:' + e.type, e);
         },

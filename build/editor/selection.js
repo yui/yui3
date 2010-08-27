@@ -426,10 +426,18 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
+        var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
+        if (cur && cur.innerHTML == '&nbsp;') {
+            if (cur.parentNode) {
+                cur.parentNode.removeChild(cur);
+            }
+        }
+        /*
         var cur = Y.one('#' + Y.Selection.CUR_WRAPID);
         if (cur && cur.get('innerHTML') == '&nbsp;') {
             cur.remove();
         }
+        */
     };
 
     Y.Selection.prototype = {
