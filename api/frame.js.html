@@ -187,38 +187,28 @@
 <span class="cm">        * @param {Event.Facade} e</span>
 <span class="cm">        */</span>
         <span class="nx">_onDomEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">xy</span><span class="p">,</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">xy</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
 
             <span class="c1">//Y.log(&#39;onDOMEvent: &#39; + e.type, &#39;info&#39;, &#39;frame&#39;);</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">frameY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">getXY</span><span class="p">()</span>
-                <span class="nx">e</span><span class="p">.</span><span class="nx">frameX</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollLeft&#39;</span><span class="p">);</span>
-                <span class="nx">e</span><span class="p">.</span><span class="nx">frameY</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;key&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">);</span>
+                    <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">getXY</span><span class="p">()</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">frameX</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollLeft&#39;</span><span class="p">);</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">frameY</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
 
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameCurrentTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameEvent</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
-            
-            
-            <span class="c1">//TODO: Not sure why this stopped working!!!</span>
-            <span class="cm">/*</span>
-<span class="cm">            this.publish(e.type, {</span>
-<span class="cm">                prefix: &#39;dom&#39;,</span>
-<span class="cm">                bubbles: true,</span>
-<span class="cm">                emitFacade: true,</span>
-<span class="cm">                stoppedFn: Y.bind(function(ev, domev) {</span>
-<span class="cm">                    ev.halt();</span>
-<span class="cm">                }, this, e),</span>
-<span class="cm">                preventedFn: Y.bind(function(ev, domev) {</span>
-<span class="cm">                    ev.preventDefault();</span>
-<span class="cm">                }, this, e)</span>
-<span class="cm">            });</span>
-<span class="cm">            */</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;dom:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="c1">//this.fire(&#39;dom:&#39; + e.type, e);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;dom:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">e</span><span class="p">);</span>
         <span class="p">},</span>
         <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="p">{</span>
@@ -295,10 +285,14 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">v</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;focus&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;blur&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">k</span> <span class="o">!==</span> <span class="s1">&#39;paste&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="c1">//Y.log(&#39;Adding DOM event to frame: &#39; + k, &#39;info&#39;, &#39;frame&#39;);</span>
-                        <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">k</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;key&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">);</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">});</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
             
             <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;paste&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_DOMPaste</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">));</span>
 
@@ -555,7 +549,8 @@
 <span class="cm">        * @chainable        </span>
 <span class="cm">        */</span>
         <span class="nx">focus</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//if (Y.UA.ie || Y.UA.gecko) {</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">).</span><span class="nx">focus</span><span class="p">();</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">fn</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">fn</span><span class="p">();</span>
