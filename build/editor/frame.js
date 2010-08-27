@@ -1,5 +1,6 @@
 YUI.add('frame', function(Y) {
 
+YUI.add('frame', function(Y) {
     /**
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
@@ -478,23 +479,15 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function(fn) {
-            //if (Y.UA.ie || Y.UA.gecko) {
-            if (Y.UA.ie) {
-                this.getInstance().one('win').focus();
-                if (Y.Lang.isFunction(fn)) {
-                    fn();
-                }
-            } else {
-                try {
-                    Y.one('win').focus();
-                    Y.later(100, this, function() {
-                        this.getInstance().one('win').focus();
-                        if (Y.Lang.isFunction(fn)) {
-                            fn();
-                        }
-                    });
-                } catch (ferr) {
-                }
+            try {
+                Y.one('win').focus();
+                Y.later(100, this, function() {
+                    this.getInstance().one('win').focus();
+                    if (Y.Lang.isFunction(fn)) {
+                        fn();
+                    }
+                });
+            } catch (ferr) {
             }
             return this;
         },
@@ -717,6 +710,7 @@ YUI.add('frame', function(Y) {
 
     Y.Frame = Frame;
 
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false });
 
 
 }, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});

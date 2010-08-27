@@ -1,5 +1,6 @@
 YUI.add('frame', function(Y) {
 
+YUI.add('frame', function(Y) {
     /**
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
@@ -478,23 +479,15 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function(fn) {
-            //if (Y.UA.ie || Y.UA.gecko) {
-            if (Y.UA.ie) {
-                this.getInstance().one('win').focus();
-                if (Y.Lang.isFunction(fn)) {
-                    fn();
-                }
-            } else {
-                try {
-                    Y.one('win').focus();
-                    Y.later(100, this, function() {
-                        this.getInstance().one('win').focus();
-                        if (Y.Lang.isFunction(fn)) {
-                            fn();
-                        }
-                    });
-                } catch (ferr) {
-                }
+            try {
+                Y.one('win').focus();
+                Y.later(100, this, function() {
+                    this.getInstance().one('win').focus();
+                    if (Y.Lang.isFunction(fn)) {
+                        fn();
+                    }
+                });
+            } catch (ferr) {
             }
             return this;
         },
@@ -717,11 +710,13 @@ YUI.add('frame', function(Y) {
 
     Y.Frame = Frame;
 
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false });
 
 
 }, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
 YUI.add('selection', function(Y) {
 
+YUI.add('selection', function(Y) {
     /**
      * Wraps some common Selection/Range functionality into a simple object
      * @module editor
@@ -743,7 +738,7 @@ YUI.add('selection', function(Y) {
         textContent = 'nodeValue';
     }
 
-    Y.Selection = function() {
+    Y.Selection = function(domEvent) {
         var sel, par, ieNode, nodes, rng, i;
 
         if (Y.config.win.getSelection) {
@@ -757,16 +752,22 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
             if (this.isCollapsed) {
                 this.anchorNode = this.focusNode = Y.one(sel.parentElement());
-                
-                par = sel.parentElement();
-                nodes = par.childNodes;
-                rng = sel.duplicate();
 
-                for (i = 0; i < nodes.length; i++) {
-                    //This causes IE to not allow a selection on a doubleclick
-                    //rng.select(nodes[i]);
-                    if (rng.inRange(sel)) {
-                       ieNode = nodes[i]; 
+                if (domEvent) {
+                    ieNode = Y.config.doc.elementFromPoint(domEvent.clientX, domEvent.clientY);
+                }
+                
+                if (!ieNode) {
+                    par = sel.parentElement();
+                    nodes = par.childNodes;
+                    rng = sel.duplicate();
+
+                    for (i = 0; i < nodes.length; i++) {
+                        //This causes IE to not allow a selection on a doubleclick
+                        //rng.select(nodes[i]);
+                        if (rng.inRange(sel)) {
+                           ieNode = nodes[i]; 
+                        }
                     }
                 }
 
@@ -1149,9 +1150,12 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.cleanCursor = function() {
         var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
-        if (cur && cur.innerHTML == '&nbsp;') {
-            if (cur.parentNode) {
-                cur.parentNode.removeChild(cur);
+        if (cur) {
+            cur.id = '';
+            if (cur.innerHTML == '&nbsp;' || cur.innerHTML == '<br>') {
+                if (cur.parentNode) {
+                    cur.parentNode.removeChild(cur);
+                }
             }
         }
         /*
@@ -1304,7 +1308,9 @@ YUI.add('selection', function(Y) {
             
             if (range.pasteHTML) {
                 newNode = Y.Node.create(html);
-                range.pasteHTML('<span id="rte-insert"></span>');
+                try {
+                    range.pasteHTML('<span id="rte-insert"></span>');
+                } catch (e) {}
                 inHTML = Y.one('#rte-insert');
                 if (inHTML) {
                     inHTML.set('id', '');
@@ -1543,6 +1549,7 @@ YUI.add('selection', function(Y) {
             return 'Selection Object';
         }
     };
+});
 
 
 }, '@VERSION@' ,{requires:['node'], skinnable:false});
@@ -1993,6 +2000,7 @@ YUI.add('createlink-base', function(Y) {
 }, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
+YUI.add('editor-base', function(Y) {
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
@@ -2341,7 +2349,7 @@ YUI.add('editor-base', function(Y) {
                     this._currentSelectionClear = true;
                 });
                 var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
+                    sel = new inst.Selection(e);
 
                 this._currentSelection = sel;
             } else {
@@ -2666,6 +2674,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false });
 
 
 }, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});

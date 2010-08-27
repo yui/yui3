@@ -350,7 +350,7 @@ YUI.add('editor-base', function(Y) {
                     this._currentSelectionClear = true;
                 });
                 var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
+                    sel = new inst.Selection(e);
 
                 this._currentSelection = sel;
             } else {

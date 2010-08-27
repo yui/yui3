@@ -1,5 +1,6 @@
 YUI.add('selection', function(Y) {
 
+YUI.add('selection', function(Y) {
     /**
      * Wraps some common Selection/Range functionality into a simple object
      * @module editor
@@ -21,7 +22,7 @@ YUI.add('selection', function(Y) {
         textContent = 'nodeValue';
     }
 
-    Y.Selection = function() {
+    Y.Selection = function(domEvent) {
         var sel, par, ieNode, nodes, rng, i;
 
         if (Y.config.win.getSelection) {
@@ -35,16 +36,22 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
             if (this.isCollapsed) {
                 this.anchorNode = this.focusNode = Y.one(sel.parentElement());
-                
-                par = sel.parentElement();
-                nodes = par.childNodes;
-                rng = sel.duplicate();
 
-                for (i = 0; i < nodes.length; i++) {
-                    //This causes IE to not allow a selection on a doubleclick
-                    //rng.select(nodes[i]);
-                    if (rng.inRange(sel)) {
-                       ieNode = nodes[i]; 
+                if (domEvent) {
+                    ieNode = Y.config.doc.elementFromPoint(domEvent.clientX, domEvent.clientY);
+                }
+                
+                if (!ieNode) {
+                    par = sel.parentElement();
+                    nodes = par.childNodes;
+                    rng = sel.duplicate();
+
+                    for (i = 0; i < nodes.length; i++) {
+                        //This causes IE to not allow a selection on a doubleclick
+                        //rng.select(nodes[i]);
+                        if (rng.inRange(sel)) {
+                           ieNode = nodes[i]; 
+                        }
                     }
                 }
 
@@ -427,9 +434,12 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.cleanCursor = function() {
         var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
-        if (cur && cur.innerHTML == '&nbsp;') {
-            if (cur.parentNode) {
-                cur.parentNode.removeChild(cur);
+        if (cur) {
+            cur.id = '';
+            if (cur.innerHTML == '&nbsp;' || cur.innerHTML == '<br>') {
+                if (cur.parentNode) {
+                    cur.parentNode.removeChild(cur);
+                }
             }
         }
         /*
@@ -582,7 +592,9 @@ YUI.add('selection', function(Y) {
             
             if (range.pasteHTML) {
                 newNode = Y.Node.create(html);
-                range.pasteHTML('<span id="rte-insert"></span>');
+                try {
+                    range.pasteHTML('<span id="rte-insert"></span>');
+                } catch (e) {}
                 inHTML = Y.one('#rte-insert');
                 if (inHTML) {
                     inHTML.set('id', '');
@@ -821,6 +833,7 @@ YUI.add('selection', function(Y) {
             return 'Selection Object';
         }
     };
+});
 
 
 }, '@VERSION@' ,{requires:['node'], skinnable:false});

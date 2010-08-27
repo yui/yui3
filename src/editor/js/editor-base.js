@@ -1,3 +1,4 @@
+YUI.add('editor-base', function(Y) {
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
@@ -349,7 +350,7 @@
                     this._currentSelectionClear = true;
                 });
                 var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
+                    sel = new inst.Selection(e);
 
                 this._currentSelection = sel;
             } else {
@@ -675,3 +676,4 @@
 
 
 
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false });
