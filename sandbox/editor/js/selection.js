@@ -624,7 +624,8 @@ YUI.add('selection', function(Y) {
                         newNode = b;
                     }
                     txt.insert(newNode, 'after');
-                    if (txt2 && txt2.get('length')) {
+                    //if (txt2 && txt2.get('length')) {
+                    if (txt2) {
                         newNode.insert(cur, 'after');
                         cur.insert(txt2, 'after');
                         this.selectNode(cur, collapse);
@@ -634,7 +635,7 @@ YUI.add('selection', function(Y) {
                         node = node.get('parentNode');
                     }
                     newNode = Y.Node.create(html);
-                    node.prepend(newNode);
+                    node.insert(newNode, 'before');
                 }
             }
             return newNode;

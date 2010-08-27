@@ -199,8 +199,8 @@ This is some <strong>other</strong> loose test.
 var yConfig = {
     debug: false,
     filter: 'RAW',
-    //debug: false,
-    //filter: 'MIN',
+    //debug: true,
+    //filter: 'debug',
     allowRollup: false,
     logExclude: {
         'yui': true,
