@@ -133,37 +133,27 @@ YUI.add('frame', function(Y) {
         * @param {Event.Facade} e
         */
         _onDomEvent: function(e) {
-            var xy, node = this._instance.one('win');
+            var xy, node;
 
             e.frameX = e.frameY = 0;
 
             if (e.pageX > 0 || e.pageY > 0) {
-                xy = this._iframe.getXY()
-                e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
-                e.frameY = xy[1] + e.pageY - node.get('scrollTop');
+                if (e.type.substring(0, 3) !== 'key') {
+                    node = this._instance.one('win');
+                    xy = this._iframe.getXY()
+                    e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
+                    e.frameY = xy[1] + e.pageY - node.get('scrollTop');
+                }
             }
 
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
             e.frameEvent = e;
-            
-            
-            //TODO: Not sure why this stopped working!!!
-            /*
-            this.publish(e.type, {
-                prefix: 'dom',
-                bubbles: true,
-                emitFacade: true,
-                stoppedFn: Y.bind(function(ev, domev) {
-                    ev.halt();
-                }, this, e),
-                preventedFn: Y.bind(function(ev, domev) {
-                    ev.preventDefault();
-                }, this, e)
-            });
-            */
 
-            this.fire('dom:' + e.type, e);
+            //this.fire('dom:' + e.type, e);
+            Y.later(1, this, function(e) {
+                this.fire('dom:' + e.type, e);
+            }, e);
         },
         initializer: function() {
             this.publish('ready', {
@@ -238,10 +228,14 @@ YUI.add('frame', function(Y) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
-                        inst.on(k, fn, inst.config.doc);
+                        if (k.substring(0, 3) === 'key') {
+                            inst.on(k, Y.throttle(fn, 200), inst.config.doc);
+                        } else {
+                            inst.on(k, fn, inst.config.doc);
+                        }
                     }
                 }
-            });
+            }, this);
             
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
@@ -484,7 +478,8 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function(fn) {
-            if (Y.UA.ie || Y.UA.gecko) {
+            //if (Y.UA.ie || Y.UA.gecko) {
+            if (Y.UA.ie) {
                 this.getInstance().one('win').focus();
                 if (Y.Lang.isFunction(fn)) {
                     fn();

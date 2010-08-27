@@ -74,147 +74,6 @@ YUI.add('editor-base', function(Y) {
         * @param {Event} e The event
         * @private
         */
-        _defNodeChangeFnTest: function(e) {
-            this._defNodeChangeFn2(e);
-        },
-        _defNodeChangeFn1: function(e) {
-            var startTime = (new Date()).getTime();
-        /* {{{ Old _defNodeChangeFn*/
-            var inst = this.getInstance();
-
-
-            /*
-            * @TODO
-            * This whole method needs to be fixed and made more dynamic.
-            * Maybe static functions for the e.changeType and an object bag
-            * to walk through and filter to pass off the event to before firing..
-            */
-            
-            switch (e.changedType) {
-                case 'keydown':
-                    inst.Selection.cleanCursor();
-                    break;
-                case 'enter':
-                    if (Y.UA.webkit) {
-                        //Webkit doesn't support shift+enter as a BR, this fixes that.
-                        if (e.changedEvent.shiftKey) {
-                            this.execCommand('insertbr');
-                            e.changedEvent.preventDefault();
-                        }
-                    }
-                    break;
-                case 'tab':
-                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        var sel = new inst.Selection();
-                        sel.setCursor();
-                        var cur = sel.getCursor();
-                        cur.insert(EditorBase.TABKEY, 'before');
-                        sel.focusCursor();
-                        e.changedEvent.preventDefault();
-                    }
-                    break;
-                case 'enter-up':
-                    if (e.changedNode.test('p')) {
-                        var prev = e.changedNode.previous(), lc, lc2, found = false;
-                        if (prev) {
-                            lc = prev.one(':last-child');
-                            while (!found) {
-                                if (lc) {
-                                    lc2 = lc.one(':last-child');
-                                    if (lc2) {
-                                        lc = lc2;
-                                    } else {
-                                        found = true;
-                                    }
-                                } else {
-                                    found = true;
-                                }
-                            }
-                            if (lc) {
-                                this.copyStyles(lc, e.changedNode);
-                            }
-                        }
-                    }
-                    break;
-            }
-
-            var changed = this.getDomPath(e.changedNode),
-                cmds = {}, family, fsize, classes = [],
-                fColor = '', bColor = '';
-
-            if (e.commands) {
-                cmds = e.commands;
-            }
-
-            changed.each(function(n) {
-                var tag = n.get('tagName').toLowerCase(),
-                    cmd = EditorBase.TAG2CMD[tag],
-                    el = Y.Node.getDOMNode(n);
-
-                if (cmd) {
-                    cmds[cmd] = 1;
-                }
-
-                //Bold and Italic styles
-                var s = el.style;
-                if (s.fontWeight.toLowerCase() == 'bold') {
-                    cmds.bold = 1;
-                }
-                if (s.fontStyle.toLowerCase() == 'italic') {
-                    cmds.italic = 1;
-                }
-                if (s.textDecoration.toLowerCase() == 'underline') {
-                    cmds.underline = 1;
-                }
-                if (s.textDecoration.toLowerCase() == 'line-through') {
-                    cmds.strikethrough = 1;
-                }
-
-                var family2 = n.getStyle('fontFamily').split(',')[0].toLowerCase();
-                if (family2) {
-                    family = family2;
-                }
-                if (family) {
-                    family = family.replace(/'/g, '').replace(/"/g, '');
-                }
-                fsize = n.getStyle('fontSize');
-
-                var cls = n.get('className').split(' ');
-                Y.each(cls, function(v) {
-                    if (v !== '' && (v.substr(0, 4) !== 'yui_')) {
-                        classes.push(v);
-                    }
-                });
-
-                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
-                var bColor2 = EditorBase.FILTER_RGB(n.getStyle('backgroundColor'));
-                if (bColor2 !== 'transparent') {
-                    bColor = bColor2;
-                }
-                
-            });
-            
-            e.dompath = changed;
-            e.classNames = classes;
-            e.commands = cmds;
-
-            //TODO Dont' like this, not dynamic enough..
-            if (!e.fontFamily) {
-                e.fontFamily = family;
-            }
-            if (!e.fontSize) {
-                e.fontSize = fsize;
-            }
-            if (!e.fontColor) {
-                e.fontColor = fColor;
-            }
-            if (!e.backgroundColor) {
-                e.backgroundColor = bColor;
-            }
-
-        /*}}}*/
-            var endTime = (new Date()).getTime();
-        },
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
             var inst = this.getInstance();
@@ -242,12 +101,13 @@ YUI.add('editor-base', function(Y) {
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
+                        e.changedEvent.preventDefault();
+
                         var sel = new inst.Selection();
                         sel.setCursor();
                         var cur = sel.getCursor();
                         cur.insert(EditorBase.TABKEY, 'before');
                         sel.focusCursor();
-                        e.changedEvent.preventDefault();
                     }
                     break;
                 case 'enter-up':
@@ -437,9 +297,16 @@ YUI.add('editor-base', function(Y) {
             
             this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
+            /*
             this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
             this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+            */
+            //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
+            this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
+            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 500));
+            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 500));
+
             inst.Selection.filter();
             this.fire('ready');
         },
@@ -449,7 +316,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameMouseUp: function(e) {
-            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mouseup', changedEvent: e  });
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mouseup', changedEvent: e.frameEvent  });
         },
         /**
         * Fires nodeChange event
@@ -457,7 +324,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameMouseDown: function(e) {
-            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mousedown', changedEvent: e  });
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mousedown', changedEvent: e.frameEvent  });
         },
         /**
         * Caches a copy of the selection for key events. Only creating the selection on keydown
@@ -493,10 +360,10 @@ YUI.add('editor-base', function(Y) {
                 this._currentSelection = sel;
 
             if (sel && sel.anchorNode) {
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e });
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e.frameEvent });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e });
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-down', changedEvent: e });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e.frameEvent });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-down', changedEvent: e.frameEvent });
                 }
             }
         },
@@ -509,9 +376,9 @@ YUI.add('editor-base', function(Y) {
             var sel = this._currentSelection;
 
             if (sel && sel.anchorNode) {
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keypress', changedEvent: e });
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keypress', changedEvent: e.frameEvent });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-press', changedEvent: e });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-press', changedEvent: e.frameEvent });
                 }
             }
         },
@@ -524,9 +391,9 @@ YUI.add('editor-base', function(Y) {
             var sel = this._currentSelection;
 
             if (sel && sel.anchorNode) {
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e  });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e.frameEvent  });
                 }
             }
             if (this._currentSelectionClear) {

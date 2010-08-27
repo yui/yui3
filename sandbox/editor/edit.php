@@ -360,7 +360,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         switch (e.changedType) {
             case 'keyup':
             case 'mouseup':
-                //updateButtons(e);
+                updateButtons(e);
                 break;
         }
         
@@ -380,7 +380,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         
     });
 
-    editor.plug(Y.Plugin.EditorLists);
+    //editor.plug(Y.Plugin.EditorLists);
     editor.plug(Y.Plugin.EditorBidi);
 
     //Disabled for IE testing..
