@@ -150,10 +150,7 @@ YUI.add('frame', function(Y) {
             e.frameCurrentTarget = e.currentTarget;
             e.frameEvent = e;
 
-            //this.fire('dom:' + e.type, e);
-            Y.later(1, this, function(e) {
-                this.fire('dom:' + e.type, e);
-            }, e);
+            this.fire('dom:' + e.type, e);
         },
         initializer: function() {
             this.publish('ready', {

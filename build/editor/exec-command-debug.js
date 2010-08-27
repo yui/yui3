@@ -200,6 +200,29 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The color value to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
+                forecolor: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (!Y.UA.ie) {
+                        this._command('styleWithCSS', 'true');
+                    }
+                    if (sel.isCollapsed) {
+                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                            sel.anchorNode.setStyle('color', val);
+                            n = sel.anchorNode;
+                        } else {
+                            n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                            sel.focusCursor(true, true);
+                        }
+                        return n;
+                    } else {
+                        return this._command(cmd, val);
+                    }
+                    if (!Y.UA.ie) {
+                        this._command('styleWithCSS', false);
+                    }
+                },
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
@@ -214,16 +237,10 @@ YUI.add('exec-command', function(Y) {
                         if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
                             sel.anchorNode.setStyle('backgroundColor', val);
                             n = sel.anchorNode;
-                            n.set('innerHTML', '<br>');
                         } else {
                             n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
                             sel.focusCursor(true, true);
                         }
-                        /*
-                        n = this.command('inserthtml', '<span style="background-color: ' + val + '"><span>&nbsp;</span>&nbsp;</span>');
-                        inst.Selection.filterBlocks();
-                        sel.selectNode(n.get('firstChild'));
-                        */
                         return n;
                     } else {
                         return this._command(cmd, val);

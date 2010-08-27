@@ -150,10 +150,7 @@ YUI.add('frame', function(Y) {
             e.frameCurrentTarget = e.currentTarget;
             e.frameEvent = e;
 
-            //this.fire('dom:' + e.type, e);
-            Y.later(1, this, function(e) {
-                this.fire('dom:' + e.type, e);
-            }, e);
+            this.fire('dom:' + e.type, e);
         },
         initializer: function() {
             this.publish('ready', {
@@ -1748,6 +1745,29 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The color value to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
+                forecolor: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (!Y.UA.ie) {
+                        this._command('styleWithCSS', 'true');
+                    }
+                    if (sel.isCollapsed) {
+                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                            sel.anchorNode.setStyle('color', val);
+                            n = sel.anchorNode;
+                        } else {
+                            n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                            sel.focusCursor(true, true);
+                        }
+                        return n;
+                    } else {
+                        return this._command(cmd, val);
+                    }
+                    if (!Y.UA.ie) {
+                        this._command('styleWithCSS', false);
+                    }
+                },
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
@@ -1762,16 +1782,10 @@ YUI.add('exec-command', function(Y) {
                         if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
                             sel.anchorNode.setStyle('backgroundColor', val);
                             n = sel.anchorNode;
-                            n.set('innerHTML', '<br>');
                         } else {
                             n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
                             sel.focusCursor(true, true);
                         }
-                        /*
-                        n = this.command('inserthtml', '<span style="background-color: ' + val + '"><span>&nbsp;</span>&nbsp;</span>');
-                        inst.Selection.filterBlocks();
-                        sel.selectNode(n.get('firstChild'));
-                        */
                         return n;
                     } else {
                         return this._command(cmd, val);
@@ -2300,8 +2314,8 @@ YUI.add('editor-base', function(Y) {
             */
             //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 500));
-            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 500));
+            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
 
             inst.Selection.filter();
             this.fire('ready');

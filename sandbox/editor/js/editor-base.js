@@ -306,8 +306,8 @@ YUI.add('editor-base', function(Y) {
             */
             //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 500));
-            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 500));
+            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
 
             inst.Selection.filter();
             this.fire('ready');
