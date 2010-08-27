@@ -380,8 +380,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         
     });
 
-    //editor.plug(Y.Plugin.EditorLists);
-    editor.plug(Y.Plugin.EditorBidi);
+    editor.plug(Y.Plugin.EditorLists);
+    //editor.plug(Y.Plugin.EditorBidi);
 
     //Disabled for IE testing..
     //editor.plug(Y.Plugin.EditorTab);
