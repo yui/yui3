@@ -81,7 +81,7 @@
             <span class="p">}).</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ExecCommand</span><span class="p">);</span>
 
             <span class="nx">frame</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterFrameReady</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
-            <span class="nx">frame</span><span class="p">.</span><span class="nx">addTarget</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+            <span class="c1">//frame.addTarget(this);</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">frame</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">;</span>
 
@@ -326,16 +326,16 @@
                     <span class="k">break</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="kd">var</span> <span class="nx">changed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDomPath</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">),</span>
+            <span class="kd">var</span> <span class="nx">changed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDomPath</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">,</span> <span class="kc">false</span><span class="p">),</span>
                 <span class="nx">cmds</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">family</span><span class="p">,</span> <span class="nx">fsize</span><span class="p">,</span> <span class="nx">classes</span> <span class="o">=</span> <span class="p">[],</span>
                 <span class="nx">fColor</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">bColor</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">commands</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">cmds</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">commands</span><span class="p">;</span>
             <span class="p">}</span>
-
-            <span class="nx">changed</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">n</span><span class="p">),</span>
+            
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">changed</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">n</span><span class="p">),</span>
                     <span class="nx">tag</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">tagName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">(),</span>
                     <span class="nx">cmd</span> <span class="o">=</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">TAG2CMD</span><span class="p">[</span><span class="nx">tag</span><span class="p">];</span>
 
@@ -386,7 +386,7 @@
                 
             <span class="p">});</span>
             
-            <span class="nx">e</span><span class="p">.</span><span class="nx">dompath</span> <span class="o">=</span> <span class="nx">changed</span><span class="p">;</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">dompath</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">changed</span><span class="p">);</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">classNames</span> <span class="o">=</span> <span class="nx">classes</span><span class="p">;</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">commands</span> <span class="o">=</span> <span class="nx">cmds</span><span class="p">;</span>
 
@@ -412,7 +412,7 @@
 <span class="cm">        * @method getDomPath</span>
 <span class="cm">        * @param {Node} node The Node to start from </span>
 <span class="cm">        */</span>
-        <span class="nx">getDomPath</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">getDomPath</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">nodeList</span><span class="p">)</span> <span class="p">{</span>
 			<span class="kd">var</span> <span class="nx">domPath</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">domNode</span><span class="p">,</span>
                 <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
 
@@ -425,16 +425,12 @@
                     <span class="nx">domNode</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">offsetParent</span><span class="p">)</span> <span class="p">{</span>
+                
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inst</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(</span><span class="nx">domNode</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">domNode</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
-                <span class="cm">/*</span>
-<span class="cm">                if (!inst.DOM.inDoc(domNode)) {</span>
-<span class="cm">                    domNode = null;</span>
-<span class="cm">                    break;</span>
-<span class="cm">                }</span>
-<span class="cm">                */</span>
+                
                 <span class="c1">//Check to see if we get el.nodeName and nodeType</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">nodeName</span> <span class="o">&amp;&amp;</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">domNode</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">domPath</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">domNode</span><span class="p">);</span>
@@ -476,8 +472,11 @@
                 <span class="nx">domPath</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
             <span class="p">}</span>
 
-            
-            <span class="k">return</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">domPath</span><span class="p">.</span><span class="nx">reverse</span><span class="p">());</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">nodeList</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">domPath</span><span class="p">.</span><span class="nx">reverse</span><span class="p">());</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">domPath</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+            <span class="p">}</span>
 
         <span class="p">},</span>
         <span class="cm">/**</span>
@@ -487,6 +486,7 @@
 <span class="cm">        */</span>
         <span class="nx">_afterFrameReady</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+            
             <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:mouseup&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameMouseUp</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:mousedown&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameMouseDown</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keyup&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyUp</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
@@ -517,18 +517,34 @@
 <span class="cm">        * @private</span>
 <span class="cm">        */</span>
         <span class="nx">_currentSelection</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">_currentSelectionTimer</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">_currentSelectionClear</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         <span class="cm">/**</span>
 <span class="cm">        * Fires nodeChange event</span>
 <span class="cm">        * @method _onFrameKeyDown</span>
 <span class="cm">        * @private</span>
 <span class="cm">        */</span>
         <span class="nx">_onFrameKeyDown</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
-                <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentSelectionTimer</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelectionTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelectionTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">850</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelectionClear</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">});</span>
+                <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                    <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">sel</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span><span class="p">;</span>
+            <span class="p">}</span>
+                <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                    <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span> <span class="o">&amp;&amp;</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="s1">&#39;keydown&#39;</span><span class="p">,</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="p">});</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">],</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="p">});</span>
@@ -544,7 +560,7 @@
         <span class="nx">_onFrameKeyPress</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">sel</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span> <span class="o">&amp;&amp;</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="s1">&#39;keypress&#39;</span><span class="p">,</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="p">});</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-press&#39;</span><span class="p">,</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="p">});</span>
@@ -559,11 +575,14 @@
         <span class="nx">_onFrameKeyUp</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">sel</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span> <span class="o">&amp;&amp;</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="s1">&#39;keyup&#39;</span><span class="p">,</span> <span class="nx">selection</span><span class="o">:</span> <span class="nx">sel</span><span class="p">,</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span>  <span class="p">});</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-up&#39;</span><span class="p">,</span> <span class="nx">selection</span><span class="o">:</span> <span class="nx">sel</span><span class="p">,</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span>  <span class="p">});</span>
                 <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentSelectionClear</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelectionClear</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_currentSelection</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="cm">/**</span>

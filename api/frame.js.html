@@ -204,17 +204,19 @@
             
             
             <span class="c1">//TODO: Not sure why this stopped working!!!</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">prefix</span><span class="o">:</span> <span class="s1">&#39;dom&#39;</span><span class="p">,</span>
-                <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-                <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-                <span class="nx">stoppedFn</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">ev</span><span class="p">,</span> <span class="nx">domev</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">ev</span><span class="p">.</span><span class="nx">halt</span><span class="p">();</span>
-                <span class="p">},</span> <span class="k">this</span><span class="p">,</span> <span class="nx">e</span><span class="p">),</span>
-                <span class="nx">preventedFn</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">ev</span><span class="p">,</span> <span class="nx">domev</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">ev</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
-                <span class="p">},</span> <span class="k">this</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span>
-            <span class="p">});</span>
+            <span class="cm">/*</span>
+<span class="cm">            this.publish(e.type, {</span>
+<span class="cm">                prefix: &#39;dom&#39;,</span>
+<span class="cm">                bubbles: true,</span>
+<span class="cm">                emitFacade: true,</span>
+<span class="cm">                stoppedFn: Y.bind(function(ev, domev) {</span>
+<span class="cm">                    ev.halt();</span>
+<span class="cm">                }, this, e),</span>
+<span class="cm">                preventedFn: Y.bind(function(ev, domev) {</span>
+<span class="cm">                    ev.preventDefault();</span>
+<span class="cm">                }, this, e)</span>
+<span class="cm">            });</span>
+<span class="cm">            */</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;dom:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
         <span class="p">},</span>

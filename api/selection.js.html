@@ -486,10 +486,18 @@
 <span class="cm">    * @method cleanCursor</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CUR_WRAPID</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span> <span class="o">&amp;&amp;</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&amp;nbsp;&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cur</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CUR_WRAPID</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span> <span class="o">&amp;&amp;</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">==</span> <span class="s1">&#39;&amp;nbsp;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cur</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
+        <span class="cm">/*</span>
+<span class="cm">        var cur = Y.one(&#39;#&#39; + Y.Selection.CUR_WRAPID);</span>
+<span class="cm">        if (cur &amp;&amp; cur.get(&#39;innerHTML&#39;) == &#39;&amp;nbsp;&#39;) {</span>
+<span class="cm">            cur.remove();</span>
+<span class="cm">        }</span>
+<span class="cm">        */</span>
     <span class="p">};</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
