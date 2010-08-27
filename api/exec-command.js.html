@@ -246,6 +246,29 @@
 <span class="cm">                * @param {String} val The color value to apply</span>
 <span class="cm">                * @return {NodeList} NodeList of the items touched by this command.</span>
 <span class="cm">                */</span>
+                <span class="nx">forecolor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                        <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">(),</span> <span class="nx">n</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;styleWithCSS&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&amp;nbsp;&#39;</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+                            <span class="nx">n</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">;</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;span style=&quot;color: &#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">+</span> <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="p">);</span>
+                            <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;styleWithCSS&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
                 <span class="nx">backcolor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
                     <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
                         <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">(),</span> <span class="nx">n</span><span class="p">;</span>
@@ -260,16 +283,10 @@
                         <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&amp;nbsp;&#39;</span><span class="p">))</span> <span class="p">{</span>
                             <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;backgroundColor&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                             <span class="nx">n</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">;</span>
-                            <span class="nx">n</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">);</span>
                         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                             <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;span style=&quot;background-color: &#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">+</span> <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="p">);</span>
                             <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
                         <span class="p">}</span>
-                        <span class="cm">/*</span>
-<span class="cm">                        n = this.command(&#39;inserthtml&#39;, &#39;&lt;span style=&quot;background-color: &#39; + val + &#39;&quot;&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;&amp;nbsp;&lt;/span&gt;&#39;);</span>
-<span class="cm">                        inst.Selection.filterBlocks();</span>
-<span class="cm">                        sel.selectNode(n.get(&#39;firstChild&#39;));</span>
-<span class="cm">                        */</span>
                         <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>

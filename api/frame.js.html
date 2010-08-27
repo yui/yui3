@@ -205,10 +205,7 @@
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameCurrentTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">frameEvent</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
 
-            <span class="c1">//this.fire(&#39;dom:&#39; + e.type, e);</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;dom:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
-            <span class="p">},</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;dom:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
         <span class="p">},</span>
         <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="p">{</span>
