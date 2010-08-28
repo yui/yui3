@@ -28,8 +28,8 @@ YUI.add('editor-lists', function(Y) {
             newLi, newList, sTab, par, moved = false, tag, focusEnd = false;
 
             if (Y.UA.ie && e.changedType === 'enter') {
-                Y.log('Overriding the Enter Key', 'info', 'editorLists');
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {
+                    Y.log('Overriding the Enter Key', 'info', 'editorLists');
                     e.changedEvent.halt();
                     e.preventDefault();
                     li = e.changedNode;

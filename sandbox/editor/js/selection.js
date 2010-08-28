@@ -107,8 +107,12 @@ YUI.add('selection', function(Y) {
 
         var nodes = Y.all(Y.Selection.ALL),
             baseNodes = Y.all('strong,em'),
+            doc = Y.config.doc,
+            hrs = doc.getElementsByTagName('hr'),
             classNames = {}, cssString = '',
             ls;
+
+            console.log(hrs);
 
         var startTime1 = (new Date()).getTime();
         nodes.each(function(n) {
@@ -146,6 +150,16 @@ YUI.add('selection', function(Y) {
         });
         var endTime1 = (new Date()).getTime();
         Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'selection');
+
+        Y.each(hrs, function(hr) {
+            var el = doc.createElement('div');
+                el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
+                el.setAttribute('readonly', true);
+                if (hr.parentNode) {
+                    hr.parentNode.replaceChild(el, hr);
+                }
+
+        });
 
         Y.each(classNames, function(v, k) {
             cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';

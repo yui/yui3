@@ -115,9 +115,10 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+Above the HR
+<hr size="1">
 <?php include('mail.php'); ?>
 </div>
-<?php //include('mail.php'); ?>
     <!---div><br></div>
     <ul>
         <li style="font-family: courier new">Item #1</li>
@@ -197,10 +198,10 @@ This is some <strong>other</strong> loose test.
 
 <script type="text/javascript">
 var yConfig = {
-    debug: false,
-    filter: 'RAW',
-    //debug: true,
-    //filter: 'debug',
+    //debug: false,
+    //filter: 'RAW',
+    debug: true,
+    filter: 'debug',
     allowRollup: false,
     logExclude: {
         'yui': true,
@@ -210,7 +211,6 @@ var yConfig = {
         augment: true,
         get: true,
         loader: true,
-        frame: true,
         Selector: true
     },
     throwFail: true
@@ -380,7 +380,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         
     });
 
-    editor.plug(Y.Plugin.EditorLists);
+    //editor.plug(Y.Plugin.EditorLists);
     //editor.plug(Y.Plugin.EditorBidi);
 
     //Disabled for IE testing..
