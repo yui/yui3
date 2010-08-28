@@ -155,8 +155,12 @@
 
         <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">ALL</span><span class="p">),</span>
             <span class="nx">baseNodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;strong,em&#39;</span><span class="p">),</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+            <span class="nx">hrs</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;hr&#39;</span><span class="p">),</span>
             <span class="nx">classNames</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">cssString</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="nx">ls</span><span class="p">;</span>
+
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">hrs</span><span class="p">);</span>
 
         <span class="kd">var</span> <span class="nx">startTime1</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
         <span class="nx">nodes</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
@@ -194,6 +198,16 @@
         <span class="p">});</span>
         <span class="kd">var</span> <span class="nx">endTime1</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Node Filter Timer: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">endTime1</span> <span class="o">-</span> <span class="nx">startTime1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;ms&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hrs</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hr</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;&#39;</span><span class="p">);</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">hr</span><span class="p">);</span>
+                <span class="p">}</span>
+
+        <span class="p">});</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">classNames</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">cssString</span> <span class="o">+=</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39; { font-family: &#39;</span> <span class="o">+</span> <span class="nx">v</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/gi</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;; }&#39;</span><span class="p">;</span>
