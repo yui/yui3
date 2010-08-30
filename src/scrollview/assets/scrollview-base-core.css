@@ -13,10 +13,6 @@
     position:relative;
 }
 
-.yui3-scrollview-loading {
-    display:none;
-}
-
 /* Cover common use case - li content, without reset */
 .yui3-scrollview-content ul {
     margin:0;
