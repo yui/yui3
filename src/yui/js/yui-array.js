@@ -128,10 +128,8 @@ YArray.each = (Native.forEach) ?
  */
 YArray.hash = function(k, v) {
     var o = {}, l = k.length, vl = v && v.length, i;
-    for (i=0; i<l; i=i+1) {
-        if (k[i]) {
-            o[k[i]] = (vl && vl > i) ? v[i] : true;
-        }
+    for (i=0; i<l; i++) {
+        o[k[i]] = (vl && vl > i) ? v[i] : true;
     }
 
     return o;
