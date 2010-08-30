@@ -173,7 +173,6 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
     {
         return {
             fill: {
-                color: "#000000",
                 alpha: "1",
                 colors: [],
                 alphas: [],

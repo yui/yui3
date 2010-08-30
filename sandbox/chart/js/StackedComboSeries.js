@@ -26,6 +26,10 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [], {
     ATTRS : {
         type: {
             value: "stackedCombo"
+        },
+
+        showAreaFill: {
+            value: true
         }
     }
 });

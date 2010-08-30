@@ -111,7 +111,7 @@ CartesianChart.ATTRS = {
 
         setter: function(val)
         {
-            this._type = val;
+            this._setChartType(val);
         }
     },
     
@@ -123,7 +123,24 @@ CartesianChart.ATTRS = {
      * Direction of chart when there is no series collection specified.
      */
     direction: {
-        value: "horizontal"
+        getter: function()
+        {
+            var type = this.get("type");
+            if(type == "bar")
+            {   
+                return "vertical";
+            }
+            else if(type == "column")
+            {
+                return "horizontal";
+            }
+            return this._direction;
+        },
+
+        setter: function(val)
+        {
+            this._direction = val;
+        }
     },
 
     /**
@@ -138,7 +155,7 @@ CartesianChart.ATTRS = {
     },
 
     showAreaFill: {
-        value: false
+        value: null
     }
 };
 
@@ -148,6 +165,11 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     _type: "combo",
 
+    /**
+     * @private
+     */
+    _direction: "horizontal",
+    
     /**
      * @private
      */
@@ -243,7 +265,7 @@ Y.extend(CartesianChart, Y.Widget, {
                 sc[i][valAxis] = "values";
                 sc[i][catKey] = key;
                 sc[i][seriesKey] = seriesKeys[i];
-                if(type == "combo" || type == "stackedcombo")
+                if((type == "combo" || type == "stackedcombo" || type == "combospline" || type == "stackedcombospline") && showAreaFill !== null)
                 {
                     sc[i].showAreaFill = showAreaFill;
                 }
@@ -346,6 +368,32 @@ Y.extend(CartesianChart, Y.Widget, {
         {
             this._addTooltip();
         }
+    },
+    
+    /**
+     * @private
+     */
+    _setChartType: function(val)
+    {
+        if(val == this._type)
+        {
+            return;
+        }
+        if(this._type == "bar")
+        {
+            if(val != "bar")
+            {
+                this.set("direction", "horizontal");
+            }
+        }
+        else
+        {
+            if(val == "bar")
+            {
+                this.set("direction", "vertical");
+            }
+        }
+        this._type = val;
     },
     
     /**
@@ -492,7 +540,20 @@ Y.extend(CartesianChart, Y.Widget, {
             seriesKeys = [], 
             i, 
             dv = this.get("dataValues")[0],
+            direction = this.get("direction"),
+            seriesPosition,
+            categoryPosition,
             seriesAxis = this.get("stacked") ? "stacked" : "numeric";
+        if(direction == "vertical")
+        {
+            seriesPosition = "bottom";
+            categoryPosition = "left";
+        }
+        else
+        {
+            seriesPosition = "left";
+            categoryPosition = "bottom";
+        }
         for(i in dv)
         {
             if(i != catKey)
@@ -503,12 +564,12 @@ Y.extend(CartesianChart, Y.Widget, {
         return {
             values:{
                 keys:seriesKeys,
-                position:"left",
+                position:seriesPosition,
                 type:seriesAxis
             },
             category:{
                 keys:[catKey],
-                position:"bottom",
+                position:categoryPosition,
                 type:"category"
             }
         };
