@@ -219,7 +219,10 @@ YUI.add('frame', function(Y) {
             var inst = this.getInstance(),
                 fn = Y.bind(this._onDomEvent, this);
 
-            inst.Node.DOM_EVENTS.paste = 1;
+            inst.Node.DOM_EVENTS.activate = 1;
+            inst.Node.DOM_EVENTS.focusin = 1;
+            inst.Node.DOM_EVENTS.deactivate = 1;
+            inst.Node.DOM_EVENTS.focusout = 1;
 
             //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
@@ -233,6 +236,8 @@ YUI.add('frame', function(Y) {
                     }
                 }
             }, this);
+
+            inst.Node.DOM_EVENTS.paste = 1;
             
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
@@ -475,15 +480,23 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function(fn) {
-            try {
+            if (Y.UA.ie) {
                 Y.one('win').focus();
-                Y.later(100, this, function() {
-                    this.getInstance().one('win').focus();
-                    if (Y.Lang.isFunction(fn)) {
-                        fn();
-                    }
-                });
-            } catch (ferr) {
+                this.getInstance().one('win').focus();
+                if (Y.Lang.isFunction(fn)) {
+                    fn();
+                }
+            } else {
+                try {
+                    Y.one('win').focus();
+                    Y.later(100, this, function() {
+                        this.getInstance().one('win').focus();
+                        if (Y.Lang.isFunction(fn)) {
+                            fn();
+                        }
+                    });
+                } catch (ferr) {
+                }
             }
             return this;
         },
@@ -533,7 +546,11 @@ YUI.add('frame', function(Y) {
             mousedown: 1,
             keyup: 1,
             keydown: 1,
-            keypress: 1
+            keypress: 1,
+            activate: 1,
+            deactivate: 1,
+            focusin: 1,
+            focusout: 1
         },
 
         /**
@@ -829,7 +846,8 @@ YUI.add('selection', function(Y) {
             if (raw.style[FONT_FAMILY]) {
                 classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
                 n.addClass(n._yuid);
-                raw.style[FONT_FAMILY] = '';
+                raw.style[FONT_FAMILY] = 'inherit';
+
                 raw.removeAttribute('face');
                 if (raw.getAttribute('style') === '') {
                     raw.removeAttribute('style');
@@ -1161,6 +1179,7 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
+        /*
         var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
         if (cur) {
             cur.id = '';
@@ -1170,12 +1189,18 @@ YUI.add('selection', function(Y) {
                 }
             }
         }
-        /*
-        var cur = Y.one('#' + Y.Selection.CUR_WRAPID);
-        if (cur && cur.get('innerHTML') == '&nbsp;') {
-            cur.remove();
-        }
         */
+        
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        if (cur.size) {
+            cur.each(function(c) {
+                var html = c.get('innerHTML');
+                if (html == '&nbsp' || html == '<br>') {
+                    c.remove();
+                }
+            });
+        }
+        
     };
 
     Y.Selection.prototype = {
@@ -1507,6 +1532,7 @@ YUI.add('selection', function(Y) {
         * @return {Node}
         */
         setCursor: function() {
+            this.removeCursor(false);
             return this.insertContent(Y.Selection.CURSOR);
         },
         /**
@@ -1515,7 +1541,7 @@ YUI.add('selection', function(Y) {
         * @return {Node}
         */
         getCursor: function() {
-            return Y.one('#' + Y.Selection.CURID);
+            return Y.all('#' + Y.Selection.CURID);
         },
         /**
         * Remove the cursor placeholder from the DOM.
@@ -1549,7 +1575,9 @@ YUI.add('selection', function(Y) {
             }
             var cur = this.removeCursor(true);
             if (cur) {
-                this.selectNode(cur, collapse, end);
+                cur.each(function(c) {
+                    this.selectNode(c, collapse, end);
+                }, this);
             }
         },
         /**
@@ -2063,7 +2091,7 @@ YUI.add('editor-base', function(Y) {
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
-            //frame.addTarget(this);
+            frame.addTarget(this);
 
             this.frame = frame;
 
@@ -2097,6 +2125,12 @@ YUI.add('editor-base', function(Y) {
             to.setStyles(newStyles);
         },
         /**
+        * Holder for the selection bookmark in IE.
+        * @property _lastBookmark
+        * @private
+        */
+        _lastBookmark: null,
+        /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
         * @param {Event} e The event
@@ -2104,8 +2138,12 @@ YUI.add('editor-base', function(Y) {
         */
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
-            var inst = this.getInstance();
+            var inst = this.getInstance(), sel;
 
+            if (Y.UA.ie) {
+    	        sel = inst.config.doc.selection.createRange();
+                this._lastBookmark = sel.getBookmark();
+            }
 
             /*
             * @TODO
@@ -2331,12 +2369,34 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
             */
             //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
+
+
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
             this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
             this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
 
+            if (Y.UA.ie) {
+                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+            }
+
             inst.Selection.filter();
             this.fire('ready');
+        },
+        /**
+        * Moves the cached selection bookmark back so IE can place the cursor in the right place.
+        * @method _onFrameActivate
+        * @private
+        */
+        _onFrameActivate: function() {
+            if (this._lastBookmark) {
+                var inst = this.getInstance(),
+                    sel = inst.config.doc.selection.createRange(),
+                    bk = sel.moveToBookmark(this._lastBookmark);
+
+                sel.collapse(true);
+                sel.select();
+                this._lastBookmark = null;
+            }
         },
         /**
         * Fires nodeChange event

@@ -226,7 +226,10 @@
             var inst = this.getInstance(),
                 fn = Y.bind(this._onDomEvent, this);
 
-            inst.Node.DOM_EVENTS.paste = 1;
+            inst.Node.DOM_EVENTS.activate = 1;
+            inst.Node.DOM_EVENTS.focusin = 1;
+            inst.Node.DOM_EVENTS.deactivate = 1;
+            inst.Node.DOM_EVENTS.focusout = 1;
 
             //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
@@ -241,6 +244,8 @@
                     }
                 }
             }, this);
+
+            inst.Node.DOM_EVENTS.paste = 1;
             
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
@@ -497,16 +502,24 @@
         * @chainable        
         */
         focus: function(fn) {
-            try {
+            if (Y.UA.ie) {
                 Y.one('win').focus();
-                Y.later(100, this, function() {
-                    this.getInstance().one('win').focus();
-                    if (Y.Lang.isFunction(fn)) {
-                        fn();
-                    }
-                });
-            } catch (ferr) {
-                Y.log('Frame focus failed', 'warn', 'frame');
+                this.getInstance().one('win').focus();
+                if (Y.Lang.isFunction(fn)) {
+                    fn();
+                }
+            } else {
+                try {
+                    Y.one('win').focus();
+                    Y.later(100, this, function() {
+                        this.getInstance().one('win').focus();
+                        if (Y.Lang.isFunction(fn)) {
+                            fn();
+                        }
+                    });
+                } catch (ferr) {
+                    Y.log('Frame focus failed', 'warn', 'frame');
+                }
             }
             return this;
         },
@@ -556,7 +569,11 @@
             mousedown: 1,
             keyup: 1,
             keydown: 1,
-            keypress: 1
+            keypress: 1,
+            activate: 1,
+            deactivate: 1,
+            focusin: 1,
+            focusout: 1
         },
 
         /**
