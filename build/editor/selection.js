@@ -112,8 +112,6 @@ YUI.add('selection', function(Y) {
             classNames = {}, cssString = '',
             ls;
 
-            console.log(hrs);
-
         var startTime1 = (new Date()).getTime();
         nodes.each(function(n) {
             var raw = Y.Node.getDOMNode(n);
@@ -152,8 +150,10 @@ YUI.add('selection', function(Y) {
 
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
+                el.className = 'hr';
                 el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
                 el.setAttribute('readonly', true);
+                el.setAttribute('contenteditable', false); //Keep it from being Edited
                 if (hr.parentNode) {
                     hr.parentNode.replaceChild(el, hr);
                 }
