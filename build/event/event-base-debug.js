@@ -229,9 +229,7 @@ var whitelist = {
         }
 
         return Y.one(n);
-    },
-    
-    lastTarget;
+    };
 
 
 // provide a single event with browser abstractions resolved
@@ -243,147 +241,133 @@ var whitelist = {
 Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     wrapper = wrapper || {};
-    var d = Y.config.doc, b = d.body, de = d.documentElement,
-        overrides = wrapper.overrides || {}, event;
+
+    var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
+        x = e.pageX, y = e.pageY, c, t, de = d.documentElement,
+        overrides = wrapper.overrides || {};
+
+    this.altKey   = e.altKey;
+    this.ctrlKey  = e.ctrlKey;
+    this.metaKey  = e.metaKey;
+    this.shiftKey = e.shiftKey;
+    this.type     = overrides.type || e.type;
+    this.clientX  = e.clientX;
+    this.clientY  = e.clientY;
+
+    //////////////////////////////////////////////////////
+
+    if (('clientX' in e) && (!x) && (0 !== x)) {
+        x = e.clientX; 
+        y = e.clientY;
+
+        if (ua.ie) {
+            x += (de.scrollLeft || b.scrollLeft || 0);
+            y += (de.scrollTop  || b.scrollTop  || 0);
+        }
+    }
+
+    this._yuifacade = true;
+
+    /**
+     * The native event
+     * @property _event
+     */
+    this._event = e;
+
+    /**
+     * The X location of the event on the page (including scroll)
+     * @property pageX
+     * @type int
+     */
+    this.pageX = x;
+
+    /**
+     * The Y location of the event on the page (including scroll)
+     * @property pageY
+     * @type int
+     */
+    this.pageY = y;
+
+    //////////////////////////////////////////////////////
+
+    c = e.keyCode || e.charCode || 0;
+
+    if (ua.webkit && (c in webkitKeymap)) {
+        c = webkitKeymap[c];
+    }
+
+    /**
+     * The keyCode for key events.  Uses charCode if keyCode is not available
+     * @property keyCode
+     * @type int
+     */
+    this.keyCode = c;
+
+    /**
+     * The charCode for key events.  Same as keyCode
+     * @property charCode
+     * @type int
+     */
+    this.charCode = c;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * The button that was pushed.
+     * @property button
+     * @type int
+     */
+    this.button = e.which || e.button;
+
+    /**
+     * The button that was pushed.  Same as button.
+     * @property which
+     * @type int
+     */
+    this.which = this.button;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * Node reference for the targeted element
+     * @propery target
+     * @type Node
+     */
+    this.target = resolve(e.target || e.srcElement);
 
     /**
      * Node reference for the element that the listener was attached to.
      * @propery currentTarget
      * @type Node
      */
-    this.currentTarget = resolve(currentTarget);
-    this._yuifacade = true;
-    this.type     = overrides.type || ev.type;
+    this.currentTarget = resolve(ot);
 
-    this.update = function(e) {
+    t = e.relatedTarget;
 
-        var x = e.pageX, y = e.pageY, c, target;
-
-        this.altKey   = e.altKey;
-        this.ctrlKey  = e.ctrlKey;
-        this.metaKey  = e.metaKey;
-        this.shiftKey = e.shiftKey;
-        this.clientX  = e.clientX;
-        this.clientY  = e.clientY;
-
-        //////////////////////////////////////////////////////
-
-        if (('clientX' in e) && (!x) && (0 !== x)) {
-            x = e.clientX; 
-            y = e.clientY;
-
-            if (ua.ie) {
-                x += (de.scrollLeft || b.scrollLeft || 0);
-                y += (de.scrollTop  || b.scrollTop  || 0);
-            }
+    if (!t) {
+        if (e.type == "mouseout") {
+            t = e.toElement;
+        } else if (e.type == "mouseover") {
+            t = e.fromElement;
         }
+    }
 
-        /**
-         * The native event
-         * @property _event
-         */
-        this._event = e;
+    /**
+     * Node reference to the relatedTarget
+     * @propery relatedTarget
+     * @type Node
+     */
+    this.relatedTarget = resolve(t);
 
-        /**
-         * The X location of the event on the page (including scroll)
-         * @property pageX
-         * @type int
-         */
-        this.pageX = x;
-
-        /**
-         * The Y location of the event on the page (including scroll)
-         * @property pageY
-         * @type int
-         */
-        this.pageY = y;
-
-        //////////////////////////////////////////////////////
-
-        c = e.keyCode || e.charCode || 0;
-
-        if (ua.webkit && (c in webkitKeymap)) {
-            c = webkitKeymap[c];
-        }
-
-        /**
-         * The keyCode for key events.  Uses charCode if keyCode is not available
-         * @property keyCode
-         * @type int
-         */
-        this.keyCode = c;
-
-        /**
-         * The charCode for key events.  Same as keyCode
-         * @property charCode
-         * @type int
-         */
-        this.charCode = c;
-
-        //////////////////////////////////////////////////////
-
-        /**
-         * The button that was pushed.
-         * @property button
-         * @type int
-         */
-        this.button = e.which || e.button;
-
-        /**
-         * The button that was pushed.  Same as button.
-         * @property which
-         * @type int
-         */
-        this.which = this.button;
-
-        //////////////////////////////////////////////////////
-
-        target = e.target || e.srcElement;
-        
-        if (target != lastTarget) {
-
-            lastTarget = target;
-
-            /**
-             * Node reference for the targeted element
-             * @propery target
-             * @type Node
-             */
-            this.target = resolve(target);
-        }
-
-
-        target = e.relatedTarget;
-
-        if (!target) {
-            if (e.type == "mouseout") {
-                target = e.toElement;
-            } else if (e.type == "mouseover") {
-                target = e.fromElement;
-            }
-        }
-
-        /**
-         * Node reference to the relatedTarget
-         * @propery relatedTarget
-         * @type Node
-         */
-        if (target) {
-            this.relatedTarget = resolve(target);
-        }
-
-        /**
-         * Number representing the direction and velocity of the movement of the mousewheel.
-         * Negative is down, the higher the number, the faster.  Applies to the mousewheel event.
-         * @property wheelDelta
-         * @type int
-         */
-        if (e.type == "mousewheel" || e.type == "DOMMouseScroll") {
-            this.wheelDelta = (e.detail) ? (e.detail * -1) : Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
-        }
-    };
-
-    this.update(ev);
+    /**
+     * Number representing the direction and velocity of the movement of the mousewheel.
+     * Negative is down, the higher the number, the faster.  Applies to the mousewheel event.
+     * @property wheelDelta
+     * @type int
+     */
+    if (e.type == "mousewheel" || e.type == "DOMMouseScroll") {
+        this.wheelDelta = (e.detail) ? (e.detail * -1) : Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
+    }
 
     //////////////////////////////////////////////////////
     // methods
@@ -393,10 +377,10 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * @method stopPropagation
      */
     this.stopPropagation = function() {
-        if (event.stopPropagation) {
-            event.stopPropagation();
+        if (e.stopPropagation) {
+            e.stopPropagation();
         } else {
-            event.cancelBubble = true;
+            e.cancelBubble = true;
         }
         wrapper.stopped = 1;
         this.stopped = 1;
@@ -409,8 +393,8 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * @method stopImmediatePropagation
      */
     this.stopImmediatePropagation = function() {
-        if (event.stopImmediatePropagation) {
-            event.stopImmediatePropagation();
+        if (e.stopImmediatePropagation) {
+            e.stopImmediatePropagation();
         } else {
             this.stopPropagation();
         }
@@ -426,10 +410,10 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * confirmation query to the beforeunload event).
      */
     this.preventDefault = function(returnValue) {
-        if (event.preventDefault) {
-            event.preventDefault();
+        if (e.preventDefault) {
+            e.preventDefault();
         }
-        event.returnValue = returnValue || false;
+        e.returnValue = returnValue || false;
         wrapper.prevented = 1;
         this.prevented = 1;
     };
@@ -452,7 +436,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     };
 
     if (this._touch) {
-        this._touch(event, currentTarget, wrapper);
+        this._touch(e, currentTarget, wrapper);
     }
 
 };
@@ -1033,18 +1017,10 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */
         getEvent: function(e, el, noFacade) {
-            var ev = e || win.event, 
-                wrapper = _wrappers['event:' + Y.stamp(el, true) + e.type],
-                facade = wrapper && wrapper._cachedFacade;
+            var ev = e || win.event;
 
-            if (facade) {
-                facade.update(ev);
-            } else {
-                facade = new Y.DOMEventFacade(ev, el, wrapper);
-                wrapper._cachedFacade = facade;
-            }
-                
-            return (noFacade) ? ev : facade;
+            return (noFacade) ? ev : 
+                new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
         },
 
         /**

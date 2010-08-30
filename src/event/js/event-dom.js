@@ -573,18 +573,10 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */
         getEvent: function(e, el, noFacade) {
-            var ev = e || win.event, 
-                wrapper = _wrappers['event:' + Y.stamp(el, true) + e.type],
-                facade = wrapper && wrapper._cachedFacade;
+            var ev = e || win.event;
 
-            if (facade) {
-                facade.update(ev);
-            } else {
-                facade = new Y.DOMEventFacade(ev, el, wrapper);
-                wrapper._cachedFacade = facade;
-            }
-                
-            return (noFacade) ? ev : facade;
+            return (noFacade) ? ev : 
+                new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
         },
 
         /**
