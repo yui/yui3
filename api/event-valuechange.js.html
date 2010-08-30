@@ -62,8 +62,7 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">VALUE</span>        <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
-    <span class="nx">VALUE_CHANGE</span> <span class="o">=</span> <span class="s1">&#39;valueChange&#39;</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
 
 <span class="c1">// Just a simple namespace to make methods overridable.</span>
 <span class="nx">VC</span> <span class="o">=</span> <span class="p">{</span>
@@ -72,23 +71,28 @@
     <span class="nx">TIMEOUT</span><span class="o">:</span> <span class="mi">10000</span><span class="p">,</span>
 
     <span class="c1">// -- Protected Static Properties ------------------------------------------</span>
-    <span class="nx">_events</span>   <span class="o">:</span> <span class="p">{},</span>
     <span class="nx">_history</span>  <span class="o">:</span> <span class="p">{},</span>
     <span class="nx">_intervals</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="nx">_notifiers</span><span class="o">:</span> <span class="p">{},</span>
     <span class="nx">_timeouts</span> <span class="o">:</span> <span class="p">{},</span>
 
     <span class="c1">// -- Protected Static Methods ---------------------------------------------</span>
     <span class="nx">_poll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">newVal</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="c1">// performance cheat; getValue() is a big hit when polling</span>
-            <span class="nx">prevVal</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
+            <span class="nx">prevVal</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">],</span>
+            <span class="nx">facade</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">!==</span> <span class="nx">prevVal</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">newVal</span><span class="p">;</span>
 
-            <span class="nx">VC</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">stamp</span><span class="p">].</span><span class="nx">fire</span><span class="p">({</span>
+            <span class="nx">facade</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">_event</span> <span class="o">:</span> <span class="nx">e</span><span class="p">,</span>
                 <span class="nx">newVal</span> <span class="o">:</span> <span class="nx">newVal</span><span class="p">,</span>
                 <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">prevVal</span>
+            <span class="p">};</span>
+
+            <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">VC</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">[</span><span class="nx">stamp</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">notifier</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">facade</span><span class="p">);</span>
             <span class="p">});</span>
 
             <span class="nx">VC</span><span class="p">.</span><span class="nx">_refreshTimeout</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span>
@@ -172,30 +176,43 @@
         <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
     <span class="p">},</span>
 
-    <span class="nx">_onSubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscription</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">node</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="nx">_onSubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscription</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stamp</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
+            <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
 
-            <span class="nx">VC</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span>  <span class="o">=</span> <span class="nx">customEvent</span><span class="p">;</span>
-            <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
 
-            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span> <span class="o">+</span> <span class="s1">&#39;|blur&#39;</span><span class="p">,</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onBlur</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span> <span class="o">+</span> <span class="s1">&#39;|mousedown&#39;</span><span class="p">,</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onMouseDown</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span> <span class="o">+</span> <span class="s1">&#39;|keydown&#39;</span><span class="p">,</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyDown</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span> <span class="o">+</span> <span class="s1">&#39;|keyup&#39;</span><span class="p">,</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyUp</span><span class="p">);</span>
+        <span class="nx">notifier</span><span class="p">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
+            <span class="nx">blur</span>     <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onBlur</span><span class="p">,</span>
+            <span class="nx">keydown</span>  <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyDown</span><span class="p">,</span>
+            <span class="nx">keyup</span>    <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyUp</span><span class="p">,</span>
+            <span class="nx">mousedown</span><span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onMouseDown</span>
         <span class="p">});</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">notifiers</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
+
+        <span class="nx">notifiers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">notifier</span><span class="p">);</span>
     <span class="p">},</span>
 
-    <span class="nx">_onUnsubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscription</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">node</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="nx">_onUnsubscribe</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscription</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stamp</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
+            <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">[</span><span class="nx">stamp</span><span class="p">],</span>
+            <span class="nx">index</span>     <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">notifiers</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">);</span>
 
-            <span class="nx">node</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span> <span class="o">+</span> <span class="s1">&#39;|*&#39;</span><span class="p">);</span>
-            <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span>
+        <span class="nx">notifier</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
 
-            <span class="k">delete</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
-            <span class="k">delete</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
-        <span class="p">});</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">notifiers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">notifiers</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">);</span>
+
+                <span class="k">delete</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
+                <span class="k">delete</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
@@ -248,12 +265,11 @@
 <span class="cm"> * @for YUI</span>
 <span class="cm"> */</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;valueChange&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onUnsubscribe</span><span class="p">,</span>
     <span class="nx">on</span>    <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onSubscribe</span><span class="p">,</span>
 
     <span class="nx">publishConfig</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">broadcast</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">}</span>
 <span class="p">});</span>
