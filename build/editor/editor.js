@@ -217,7 +217,8 @@ YUI.add('frame', function(Y) {
         */
         _defReadyFn: function() {
             var inst = this.getInstance(),
-                fn = Y.bind(this._onDomEvent, this);
+                fn = Y.bind(this._onDomEvent, this),
+                kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
 
             inst.Node.DOM_EVENTS.activate = 1;
             inst.Node.DOM_EVENTS.focusin = 1;
@@ -229,7 +230,7 @@ YUI.add('frame', function(Y) {
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         if (k.substring(0, 3) === 'key') {
-                            inst.on(k, Y.throttle(fn, 200), inst.config.doc);
+                            inst.on(k, kfn, inst.config.doc);
                         } else {
                             inst.on(k, fn, inst.config.doc);
                         }
@@ -361,13 +362,11 @@ YUI.add('frame', function(Y) {
 
             if (this.get('designMode')) {
                 if (!Y.UA.ie) {
-                    this._instance.on('domready', function(e) {
-                        try {
-                            //Force other browsers into non CSS styling
-                            doc.execCommand('styleWithCSS', false, false);
-                            doc.execCommand('insertbronreturn', false, false);
-                        } catch (err) {}
-                    });
+                    try {
+                        //Force other browsers into non CSS styling
+                        doc.execCommand('styleWithCSS', false, false);
+                        doc.execCommand('insertbronreturn', false, false);
+                    } catch (err) {}
                 }
             }
         },
@@ -1388,7 +1387,12 @@ YUI.add('selection', function(Y) {
                         node = node.get('parentNode');
                     }
                     newNode = Y.Node.create(html);
-                    node.insert(newNode, 'before');
+                    html = node.get('innerHTML');
+                    if (html == '' || html == '<br>') {
+                        node.append(newNode);
+                    } else {
+                        node.insert(newNode, 'before');
+                    }
                 }
             }
             return newNode;
@@ -2372,11 +2376,14 @@ YUI.add('editor-base', function(Y) {
 
 
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
-            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
 
             if (Y.UA.ie) {
                 this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+                this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
+            } else {
+                this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+                this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
             }
 
             inst.Selection.filter();

@@ -115,9 +115,9 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
-Above the HR
+<p>Above the HR</p>
 <hr size="1">
-<?php include('mail.php'); ?>
+<?php //include('mail.php'); ?>
 </div>
     <!---div><br></div>
     <ul>

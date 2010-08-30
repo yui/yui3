@@ -319,11 +319,14 @@ YUI.add('editor-base', function(Y) {
 
 
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
-            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
 
             if (Y.UA.ie) {
                 this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+                this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
+            } else {
+                this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+                this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
             }
 
             inst.Selection.filter();
