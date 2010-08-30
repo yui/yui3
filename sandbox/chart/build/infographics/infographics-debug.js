@@ -1624,6 +1624,44 @@ Lines.prototype = {
 	},
     
     /**
+	 * @private
+	 */
+	drawSpline: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords = this.getCurveControlPoints(xcoords, ycoords),
+			len = curvecoords.length,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			styles = this.get("styles"),
+			graphic = this.get("graphic"),
+            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
+        graphic.lineStyle(styles.weight, color);
+        graphic.moveTo(xcoords[0], ycoords[0]);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        graphic.end();
+	},
+    
+    /**
 	 * Draws a dashed line between two points.
 	 * 
 	 * @param xStart	The x position of the start of the line
@@ -1819,6 +1857,141 @@ Fills.prototype = {
         graphic.end();
 	},
 	
+    /**
+	 * @private
+	 */
+	drawAreaSpline: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords = this.getCurveControlPoints(xcoords, ycoords),
+			len = curvecoords.length,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			firstX = xcoords[0],
+            firstY = ycoords[0],
+            styles = this.get("area"),
+			graphic = this.get("graphic"),
+            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
+        graphic.beginFill(color, styles.alpha);
+        graphic.moveTo(firstX, firstY);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        if(this.get("direction") === "vertical")
+        {
+            graphic.lineTo(this._leftOrigin, y);
+            graphic.lineTo(this._leftOrigin, firstY);
+        }
+        else
+        {
+            graphic.lineTo(x, this._bottomOrigin);
+            graphic.lineTo(firstX, this._bottomOrigin);
+        }
+        graphic.lineTo(firstX, firstY);
+        graphic.end();
+	},
+    
+    /**
+	 * @private
+	 */
+	drawStackedAreaSpline: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords,
+            order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            prevXCoords,
+            prevYCoords,
+			len,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			firstX,
+            firstY,
+            styles = this.get("area"),
+			graphic = this.get("graphic"),
+            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
+		firstX = xcoords[0];
+        firstY = ycoords[0];
+        curvecoords = this.getCurveControlPoints(xcoords, ycoords);
+        len = curvecoords.length;
+        graphic.beginFill(color, styles.alpha);
+        graphic.moveTo(firstX, firstY);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        if(order > 0)
+        {
+            prevXCoords = seriesCollection[order - 1].get("xcoords").concat().reverse();
+            prevYCoords = seriesCollection[order - 1].get("ycoords").concat().reverse();
+            curvecoords = this.getCurveControlPoints(prevXCoords, prevYCoords);
+            i = 0;
+            len = curvecoords.length;
+            graphic.lineTo(prevXCoords[0], prevYCoords[0]);
+            for(; i < len; i = ++i)
+            {
+                x = curvecoords[i].endx;
+                y = curvecoords[i].endy;
+                cx1 = curvecoords[i].ctrlx1;
+                cx2 = curvecoords[i].ctrlx2;
+                cy1 = curvecoords[i].ctrly1;
+                cy2 = curvecoords[i].ctrly2;
+                graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+            }
+        }
+        else
+        {
+            if(this.get("direction") === "vertical")
+            {
+                graphic.lineTo(this._leftOrigin, ycoords[ycoords.length-1]);
+                graphic.lineTo(this._leftOrigin, firstY);
+            }
+            else
+            {
+                graphic.lineTo(xcoords[xcoords.length-1], this._bottomOrigin);
+                graphic.lineTo(firstX, this._bottomOrigin);
+            }
+
+        }
+        graphic.lineTo(firstX, firstY);
+        graphic.end();
+	},
+    
     _getAreaDefaults: function()
     {
         return {
@@ -3108,167 +3281,51 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 		
 
 		
-function SplineSeries(config)
-{
-	SplineSeries.superclass.constructor.apply(this, arguments);
-}
-
-SplineSeries.NAME = "splineSeries";
-
-SplineSeries.ATTRS = {
-	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-        value:"spline"
-    }
-};
-
-Y.extend(SplineSeries, Y.CartesianSeries, {
+Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.Lines], {
 	/**
 	 * @private
 	 */
 	drawSeries: function()
 	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-            curvecoords = this.getCurveControlPoints(xcoords, ycoords),
-			len = curvecoords.length,
-            cx1,
-            cx2,
-            cy1,
-            cy2,
-            x,
-            y,
-            i = 0,
-			styles = this.get("styles"),
-			graphic = this.get("graphic");
-        graphic.clear();
-        graphic.lineStyle(styles.weight, styles.color);
-        graphic.moveTo(xcoords[0], ycoords[0]);
-        for(; i < len; i = ++i)
-		{
-            x = curvecoords[i].endx;
-            y = curvecoords[i].endy;
-            cx1 = curvecoords[i].ctrlx1;
-            cx2 = curvecoords[i].ctrlx2;
-            cy1 = curvecoords[i].ctrly1;
-            cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        this.get("graphic").clear();
+        this.drawSpline();
+    }
+}, {
+	ATTRS : {
+        type : {
+            /**
+             * Indicates the type of graph.
+             */
+            value:"spline"
         }
-        graphic.end();
-	},
-    
-	_getDefaultStyles: function()
-    {
-        return {
-            color: "#000000",
-            alpha: 1,
-            weight: 1,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 });
 
-Y.SplineSeries = SplineSeries;
 
 
 		
 
 		
-function AreaSplineSeries(config)
-{
-	AreaSplineSeries.superclass.constructor.apply(this, arguments);
-}
-
-AreaSplineSeries.NAME = "areaSplineSeries";
-
-AreaSplineSeries.ATTRS = {
-	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-        value:"areaSpline"
-    }
-};
-
-Y.extend(AreaSplineSeries, Y.CartesianSeries, {
+Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fills], {
 	/**
 	 * @private
 	 */
 	drawSeries: function()
 	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-            curvecoords = this.getCurveControlPoints(xcoords, ycoords),
-			len = curvecoords.length,
-            cx1,
-            cx2,
-            cy1,
-            cy2,
-            x,
-            y,
-            i = 0,
-			firstX = xcoords[0],
-            firstY = ycoords[0],
-            styles = this.get("styles"),
-			graphic = this.get("graphic");
-        graphic.clear();
-        graphic.beginFill(styles.color, styles.alpha);
-        graphic.moveTo(firstX, firstY);
-        for(; i < len; i = ++i)
-		{
-            x = curvecoords[i].endx;
-            y = curvecoords[i].endy;
-            cx1 = curvecoords[i].ctrlx1;
-            cx2 = curvecoords[i].ctrlx2;
-            cy1 = curvecoords[i].ctrly1;
-            cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        this.get("graphic").clear();
+        this.drawAreaSpline();
+    }
+}, {
+	ATTRS : {
+        type: {
+            /**
+             * Indicates the type of graph.
+             */
+            value:"areaSpline"
         }
-        if(this.get("direction") === "vertical")
-        {
-            graphic.lineTo(this._leftOrigin, y);
-            graphic.lineTo(this._leftOrigin, firstY);
-        }
-        else
-        {
-            graphic.lineTo(x, this._bottomOrigin);
-            graphic.lineTo(firstX, this._bottomOrigin);
-        }
-        graphic.lineTo(firstX, firstY);
-        graphic.end();
-	},
-    
-	_getDefaultStyles: function()
-    {
-        return {
-            color: "#000000",
-            alpha: 1,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 });
 
-Y.AreaSplineSeries = AreaSplineSeries;
 function StackedSplineSeries(config)
 {
 	StackedSplineSeries.superclass.constructor.apply(this, arguments);
@@ -3285,183 +3342,15 @@ StackedSplineSeries.ATTRS = {
     }
 };
 
-Y.extend(StackedSplineSeries, Y.CartesianSeries, {
-    /**
-	 * @private
-	 */
-	drawSeries: function()
-	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-            curvecoords,
-			len,
-            cx1,
-            cx2,
-            cy1,
-            cy2,
-            x,
-            y,
-            i = 0,
-			styles = this.get("styles"),
-			graphic = this.get("graphic");
-        this._stackCoordinates();
-        curvecoords = this.getCurveControlPoints(xcoords.concat(), ycoords.concat());
-        len = curvecoords.length;
-        graphic.clear();
-        graphic.lineStyle(styles.weight, styles.color);
-        graphic.moveTo(xcoords[0], ycoords[0]);
-        for(; i < len; i = ++i)
-		{
-            x = curvecoords[i].endx;
-            y = curvecoords[i].endy;
-            cx1 = curvecoords[i].ctrlx1;
-            cx2 = curvecoords[i].ctrlx2;
-            cy1 = curvecoords[i].ctrly1;
-            cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
-        }
-        graphic.end();
-	},
-    
-	_getDefaultStyles: function()
-    {
-        return {
-            color: "#000000",
-            alpha: 1,
-            weight: 1,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
+Y.extend(StackedSplineSeries, Y.SplineSeries, {
+    setAreaData: function()
+    {   
+        StackedSplineSeries.superclass.setAreaData.apply(this);
+        this._stackCoordinates.apply(this);
     }
 });
 
 Y.StackedSplineSeries = StackedSplineSeries;
-function StackedAreaSplineSeries(config)
-{
-	StackedAreaSplineSeries.superclass.constructor.apply(this, arguments);
-}
-
-StackedAreaSplineSeries.NAME = "stackedAreaSplineSeries";
-
-StackedAreaSplineSeries.ATTRS = {
-	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-        value:"stackedAreaSpline"
-    }
-};
-
-Y.extend(StackedAreaSplineSeries, Y.CartesianSeries, {
-	/**
-	 * @private
-	 */
-	drawSeries: function()
-	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-            curvecoords,
-            order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
-            prevXCoords,
-            prevYCoords,
-			len,
-            cx1,
-            cx2,
-            cy1,
-            cy2,
-            x,
-            y,
-            i = 0,
-			firstX,
-            firstY,
-            styles = this.get("styles"),
-			graphic = this.get("graphic");
-        this._stackCoordinates();
-		firstX = xcoords[0];
-        firstY = ycoords[0];
-        curvecoords = this.getCurveControlPoints(xcoords, ycoords);
-        len = curvecoords.length;
-        graphic.clear();
-        graphic.beginFill(styles.color, styles.alpha);
-        graphic.moveTo(firstX, firstY);
-        for(; i < len; i = ++i)
-		{
-            x = curvecoords[i].endx;
-            y = curvecoords[i].endy;
-            cx1 = curvecoords[i].ctrlx1;
-            cx2 = curvecoords[i].ctrlx2;
-            cy1 = curvecoords[i].ctrly1;
-            cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
-        }
-        if(order > 0)
-        {
-            prevXCoords = seriesCollection[order - 1].get("xcoords").concat().reverse();
-            prevYCoords = seriesCollection[order - 1].get("ycoords").concat().reverse();
-            curvecoords = this.getCurveControlPoints(prevXCoords, prevYCoords);
-            i = 0;
-            len = curvecoords.length;
-            graphic.lineTo(prevXCoords[0], prevYCoords[0]);
-            for(; i < len; i = ++i)
-            {
-                x = curvecoords[i].endx;
-                y = curvecoords[i].endy;
-                cx1 = curvecoords[i].ctrlx1;
-                cx2 = curvecoords[i].ctrlx2;
-                cy1 = curvecoords[i].ctrly1;
-                cy2 = curvecoords[i].ctrly2;
-                graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
-            }
-        }
-        else
-        {
-            if(this.get("direction") === "vertical")
-            {
-                graphic.lineTo(this._leftOrigin, ycoords[ycoords.length-1]);
-                graphic.lineTo(this._leftOrigin, firstY);
-            }
-            else
-            {
-                graphic.lineTo(xcoords[xcoords.length-1], this._bottomOrigin);
-                graphic.lineTo(firstX, this._bottomOrigin);
-            }
-
-        }
-        graphic.lineTo(firstX, firstY);
-        graphic.end();
-	},
-
-	_getDefaultStyles: function()
-    {
-        return {
-            color: "#000000",
-            alpha: 1,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
-    }
-});
-
-Y.StackedAreaSplineSeries = StackedAreaSplineSeries;
 function StackedMarkerSeries(config)
 {
 	StackedMarkerSeries.superclass.constructor.apply(this, arguments);
@@ -3865,9 +3754,6 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
              */
             value:"area"
         },
-        direction: {
-            value:"horizontal"
-        },
         
         styles: {
             getter: function()
@@ -3893,6 +3779,27 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 		
 
 		
+Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSeries, [], {
+	/**
+	 * @private
+	 */
+	drawSeries: function()
+	{
+        this.get("graphic").clear();
+        this._stackCoordinates();
+        this.drawStackedAreaSpline();
+    }
+}, {
+    ATTRS : {
+        type: {
+            /**
+             * Indicates the type of graph.
+             */
+            value:"stackedAreaSpline"
+        }
+    }
+});
+
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
 	drawSeries: function()
     {
@@ -3992,6 +3899,62 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [], {
     ATTRS : {
         type: {
             value: "stackedCombo"
+        },
+
+        showAreaFill: {
+            value: true
+        }
+    }
+});
+Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [], {
+	drawSeries: function()
+    {
+        this.get("graphic").clear();
+        if(this.get("showAreaFill"))
+        {
+            this.drawAreaSpline();
+        }
+        if(this.get("showLines")) 
+        {
+            this.drawSpline();
+        }
+        if(this.get("showMarkers"))
+        {
+            this.drawPlots();
+        }   
+    }
+}, {
+    ATTRS: {
+        type: {
+            value : "comboSpline"
+        }
+    }
+});
+Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.StackedComboSeries, [], {
+	drawSeries: function()
+    {
+        this.get("graphic").clear();
+        if(this.get("showAreaFill"))
+        {
+            this.drawStackedAreaSpline();
+        }
+        if(this.get("showLines")) 
+        {
+            this.drawSpline();
+        }
+        if(this.get("showMarkers"))
+        {
+            this.drawPlots();
+        }   
+    }
+}, {
+    ATTRS: {
+        type : {
+            value : "stackedComboSpline"
+        },
+
+        showAreaFill: {
+            value: true
         }
     }
 });
@@ -4544,7 +4507,6 @@ Y.extend(StackedColumnSeries, Y.CartesianSeries, {
     {
         return {
             fill: {
-                color: "#000000",
                 alpha: "1",
                 colors: [],
                 alphas: [],
@@ -4747,7 +4709,6 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
     {
         return {
             fill: {
-                color: "#000000",
                 alpha: "1",
                 colors: [],
                 alphas: [],
@@ -4965,6 +4926,12 @@ Y.extend(Graph, Y.Base, {
             break;
             case "stackedcombo" :
                 seriesClass = Y.StackedComboSeries;
+            break;
+            case "combospline" :
+                seriesClass = Y.ComboSplineSeries;
+            break;
+            case "stackedcombospline" :
+                seriesClass = Y.StackedComboSplineSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;
@@ -6539,7 +6506,7 @@ CartesianChart.ATTRS = {
 
         setter: function(val)
         {
-            this._type = val;
+            this._setChartType(val);
         }
     },
     
@@ -6551,7 +6518,24 @@ CartesianChart.ATTRS = {
      * Direction of chart when there is no series collection specified.
      */
     direction: {
-        value: "horizontal"
+        getter: function()
+        {
+            var type = this.get("type");
+            if(type == "bar")
+            {   
+                return "vertical";
+            }
+            else if(type == "column")
+            {
+                return "horizontal";
+            }
+            return this._direction;
+        },
+
+        setter: function(val)
+        {
+            this._direction = val;
+        }
     },
 
     /**
@@ -6566,7 +6550,7 @@ CartesianChart.ATTRS = {
     },
 
     showAreaFill: {
-        value: false
+        value: null
     }
 };
 
@@ -6576,6 +6560,11 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     _type: "combo",
 
+    /**
+     * @private
+     */
+    _direction: "horizontal",
+    
     /**
      * @private
      */
@@ -6671,7 +6660,7 @@ Y.extend(CartesianChart, Y.Widget, {
                 sc[i][valAxis] = "values";
                 sc[i][catKey] = key;
                 sc[i][seriesKey] = seriesKeys[i];
-                if(type == "combo" || type == "stackedcombo")
+                if((type == "combo" || type == "stackedcombo" || type == "combospline" || type == "stackedcombospline") && showAreaFill !== null)
                 {
                     sc[i].showAreaFill = showAreaFill;
                 }
@@ -6774,6 +6763,32 @@ Y.extend(CartesianChart, Y.Widget, {
         {
             this._addTooltip();
         }
+    },
+    
+    /**
+     * @private
+     */
+    _setChartType: function(val)
+    {
+        if(val == this._type)
+        {
+            return;
+        }
+        if(this._type == "bar")
+        {
+            if(val != "bar")
+            {
+                this.set("direction", "horizontal");
+            }
+        }
+        else
+        {
+            if(val == "bar")
+            {
+                this.set("direction", "vertical");
+            }
+        }
+        this._type = val;
     },
     
     /**
@@ -6920,7 +6935,20 @@ Y.extend(CartesianChart, Y.Widget, {
             seriesKeys = [], 
             i, 
             dv = this.get("dataValues")[0],
+            direction = this.get("direction"),
+            seriesPosition,
+            categoryPosition,
             seriesAxis = this.get("stacked") ? "stacked" : "numeric";
+        if(direction == "vertical")
+        {
+            seriesPosition = "bottom";
+            categoryPosition = "left";
+        }
+        else
+        {
+            seriesPosition = "left";
+            categoryPosition = "bottom";
+        }
         for(i in dv)
         {
             if(i != catKey)
@@ -6931,12 +6959,12 @@ Y.extend(CartesianChart, Y.Widget, {
         return {
             values:{
                 keys:seriesKeys,
-                position:"left",
+                position:seriesPosition,
                 type:seriesAxis
             },
             category:{
                 keys:[catKey],
-                position:"bottom",
+                position:categoryPosition,
                 type:"category"
             }
         };

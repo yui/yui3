@@ -106,6 +106,44 @@ Lines.prototype = {
 	},
     
     /**
+	 * @private
+	 */
+	drawSpline: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            curvecoords = this.getCurveControlPoints(xcoords, ycoords),
+			len = curvecoords.length,
+            cx1,
+            cx2,
+            cy1,
+            cy2,
+            x,
+            y,
+            i = 0,
+			styles = this.get("styles"),
+			graphic = this.get("graphic"),
+            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
+        graphic.lineStyle(styles.weight, color);
+        graphic.moveTo(xcoords[0], ycoords[0]);
+        for(; i < len; i = ++i)
+		{
+            x = curvecoords[i].endx;
+            y = curvecoords[i].endy;
+            cx1 = curvecoords[i].ctrlx1;
+            cx2 = curvecoords[i].ctrlx2;
+            cy1 = curvecoords[i].ctrly1;
+            cy2 = curvecoords[i].ctrly2;
+            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+        }
+        graphic.end();
+	},
+    
+    /**
 	 * Draws a dashed line between two points.
 	 * 
 	 * @param xStart	The x position of the start of the line

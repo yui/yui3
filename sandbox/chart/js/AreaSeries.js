@@ -13,9 +13,6 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
              */
             value:"area"
         },
-        direction: {
-            value:"horizontal"
-        },
         
         styles: {
             getter: function()
