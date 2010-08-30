@@ -117,7 +117,8 @@
             if (raw.style[FONT_FAMILY]) {
                 classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
                 n.addClass(n._yuid);
-                raw.style[FONT_FAMILY] = '';
+                raw.style[FONT_FAMILY] = 'inherit';
+
                 raw.removeAttribute('face');
                 if (raw.getAttribute('style') === '') {
                     raw.removeAttribute('style');
@@ -461,6 +462,7 @@
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
+        /*
         var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
         if (cur) {
             cur.id = '';
@@ -470,12 +472,18 @@
                 }
             }
         }
-        /*
-        var cur = Y.one('#' + Y.Selection.CUR_WRAPID);
-        if (cur && cur.get('innerHTML') == '&nbsp;') {
-            cur.remove();
-        }
         */
+        
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        if (cur.size) {
+            cur.each(function(c) {
+                var html = c.get('innerHTML');
+                if (html == '&nbsp' || html == '<br>') {
+                    c.remove();
+                }
+            });
+        }
+        
     };
 
     Y.Selection.prototype = {
@@ -663,7 +671,12 @@
                         node = node.get('parentNode');
                     }
                     newNode = Y.Node.create(html);
-                    node.insert(newNode, 'before');
+                    html = node.get('innerHTML');
+                    if (html == '' || html == '<br>') {
+                        node.append(newNode);
+                    } else {
+                        node.insert(newNode, 'before');
+                    }
                 }
             }
             return newNode;
@@ -811,6 +824,7 @@
         * @return {Node}
         */
         setCursor: function() {
+            this.removeCursor(false);
             return this.insertContent(Y.Selection.CURSOR);
         },
         /**
@@ -819,7 +833,7 @@
         * @return {Node}
         */
         getCursor: function() {
-            return Y.one('#' + Y.Selection.CURID);
+            return Y.all('#' + Y.Selection.CURID);
         },
         /**
         * Remove the cursor placeholder from the DOM.
@@ -853,7 +867,9 @@
             }
             var cur = this.removeCursor(true);
             if (cur) {
-                this.selectNode(cur, collapse, end);
+                cur.each(function(c) {
+                    this.selectNode(c, collapse, end);
+                }, this);
             }
         },
         /**

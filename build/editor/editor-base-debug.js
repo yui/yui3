@@ -35,7 +35,7 @@ YUI.add('editor-base', function(Y) {
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
-            //frame.addTarget(this);
+            frame.addTarget(this);
 
             this.frame = frame;
 
@@ -69,6 +69,12 @@ YUI.add('editor-base', function(Y) {
             to.setStyles(newStyles);
         },
         /**
+        * Holder for the selection bookmark in IE.
+        * @property _lastBookmark
+        * @private
+        */
+        _lastBookmark: null,
+        /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
         * @param {Event} e The event
@@ -77,8 +83,12 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
             //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
-            var inst = this.getInstance();
+            var inst = this.getInstance(), sel;
 
+            if (Y.UA.ie) {
+    	        sel = inst.config.doc.selection.createRange();
+                this._lastBookmark = sel.getBookmark();
+            }
 
             /*
             * @TODO
@@ -306,12 +316,38 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
             */
             //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
+
+
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
-            this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
+
+            if (Y.UA.ie) {
+                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+                this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
+            } else {
+                this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+                this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+            }
 
             inst.Selection.filter();
             this.fire('ready');
+        },
+        /**
+        * Moves the cached selection bookmark back so IE can place the cursor in the right place.
+        * @method _onFrameActivate
+        * @private
+        */
+        _onFrameActivate: function() {
+            if (this._lastBookmark) {
+                Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
+                var inst = this.getInstance(),
+                    sel = inst.config.doc.selection.createRange(),
+                    bk = sel.moveToBookmark(this._lastBookmark);
+
+                sel.collapse(true);
+                sel.select();
+                this._lastBookmark = null;
+            }
         },
         /**
         * Fires nodeChange event
