@@ -15,8 +15,7 @@ YUI.add('event-valuechange', function(Y) {
  * @static
  */
 
-var VALUE        = 'value',
-    VALUE_CHANGE = 'valueChange',
+var YArray = Y.Array,
 
 // Just a simple namespace to make methods overridable.
 VC = {
@@ -25,23 +24,28 @@ VC = {
     TIMEOUT: 10000,
 
     // -- Protected Static Properties ------------------------------------------
-    _events   : {},
     _history  : {},
     _intervals: {},
+    _notifiers: {},
     _timeouts : {},
 
     // -- Protected Static Methods ---------------------------------------------
     _poll: function (node, stamp, e) {
         var newVal  = node._node.value, // performance cheat; getValue() is a big hit when polling
-            prevVal = VC._history[stamp];
+            prevVal = VC._history[stamp],
+            facade;
 
         if (newVal !== prevVal) {
             VC._history[stamp] = newVal;
 
-            VC._events[stamp].fire({
+            facade = {
                 _event : e,
                 newVal : newVal,
                 prevVal: prevVal
+            };
+
+            YArray.each(VC._notifiers[stamp], function (notifier) {
+                notifier.fire(facade);
             });
 
             VC._refreshTimeout(node, stamp);
@@ -122,30 +126,43 @@ VC = {
         VC._startPolling(e.currentTarget, null, e);
     },
 
-    _onSubscribe: function (node, subscription, customEvent) {
-        Y.all(node).each(function (node) {
-            var stamp = Y.stamp(node);
+    _onSubscribe: function (node, subscription, notifier) {
+        var stamp     = Y.stamp(node),
+            notifiers = VC._notifiers[stamp];
 
-            VC._events[stamp]  = customEvent;
-            VC._history[stamp] = node.get(VALUE);
+        VC._history[stamp] = node.get('value');
 
-            node.on(VALUE_CHANGE + '|blur', VC._onBlur);
-            node.on(VALUE_CHANGE + '|mousedown', VC._onMouseDown);
-            node.on(VALUE_CHANGE + '|keydown', VC._onKeyDown);
-            node.on(VALUE_CHANGE + '|keyup', VC._onKeyUp);
+        notifier._handles = node.on({
+            blur     : VC._onBlur,
+            keydown  : VC._onKeyDown,
+            keyup    : VC._onKeyUp,
+            mousedown: VC._onMouseDown
         });
+
+        if (!notifiers) {
+            notifiers = VC._notifiers[stamp] = [];
+        }
+
+        notifiers.push(notifier);
     },
 
-    _onUnsubscribe: function (node, subscription, customEvent) {
-        Y.all(node).each(function (node) {
-            var stamp = Y.stamp(node);
+    _onUnsubscribe: function (node, subscription, notifier) {
+        var stamp     = Y.stamp(node),
+            notifiers = VC._notifiers[stamp],
+            index     = YArray.indexOf(notifiers, notifier);
 
-            node.detachAll(VALUE_CHANGE + '|*');
-            VC._stopPolling(node, stamp);
+        notifier._handles.detach();
 
-            delete VC._events[stamp];
-            delete VC._history[stamp];
-        });
+        if (index !== -1) {
+            notifiers.splice(index, 1);
+
+            if (!notifiers.length) {
+                VC._stopPolling(node, stamp);
+
+                delete VC._notifiers[stamp];
+                delete VC._history[stamp];
+            }
+        }
     }
 };
 
@@ -198,12 +215,11 @@ VC = {
  * @for YUI
  */
 
-Y.Event.define(VALUE_CHANGE, {
+Y.Event.define('valueChange', {
     detach: VC._onUnsubscribe,
     on    : VC._onSubscribe,
 
     publishConfig: {
-        broadcast: 1,
         emitFacade: true
     }
 });
