@@ -99,9 +99,11 @@
 
             switch (e.changedType) {
                 case 'keydown':
-                    var cont = inst.config.doc.body.innerHTML;
-                    if (cont && cont.toLowerCase() == '<br>') {
-                        this._fixFirstPara();
+                    if (inst.config.doc.childNodes.length < 2) {
+                        var cont = inst.config.doc.body.innerHTML;
+                        if (cont && cont.length < 5 && cont.toLowerCase() == '<br>') {
+                            this._fixFirstPara();
+                        }
                     }
                     break;
                 case 'backspace-up':

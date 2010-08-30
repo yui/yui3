@@ -3,7 +3,7 @@
 <head>
     <title>history-hash test</title>
     <style>
-        #critters {
+        #menu {
             list-style: none;
             margin: 0;
             padding: 0;
@@ -27,10 +27,10 @@
 <h1>history-hash test</h1>
 
 <form>
-    <ul id="critters">
-        <li><label><input type="checkbox" id="aardvark">Aardvark</label></li>
-        <li><label><input type="checkbox" id="bumblebee">Bumblebee</label></li>
-        <li><label><input type="checkbox" id="cheetah">Cheetah</label></li>
+    <ul id="menu">
+        <li><label><input type="checkbox" id="asparagus">Asparagus</label></li>
+        <li><label><input type="checkbox" id="bluebird">Bluebird</label></li>
+        <li><label><input type="checkbox" id="coffee">Coffee</label></li>
     </ul>
 </form>
 
@@ -49,36 +49,22 @@ var Y = YUI({
         history: 'debug'
     },
     useBrowserConsole: false
-}).use('console-filters', 'event-delegate', 'history-hash', 'json-stringify', function (Y) {
-    new Y.Console({
-        style: 'block',
-        width: Y.UA.ie ? '100%' : 'inherit',
-
-        entryTemplate:
-            '<div class="{entry_class} {cat_class} {src_class}">' +
-                '<pre class="{entry_content_class}">{message}</pre>' +
-            '</div>',
-
-        after: {
-            render: function () {
-                this.get('contentBox').insertBefore(this._foot, this._body);
-            }
-        }
-    }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
+}).use('console', 'event-delegate', 'history-hash', 'json-stringify', function (Y) {
+    new Y.Console().render('#log');
 
     var history    = new Y.History(),
         bookmarked = history.get(),
         images  = {
-            aardvark : 'http://farm3.static.flickr.com/2380/3530738527_4d1e318df2.jpg', // http://www.flickr.com/photos/dipthongasaurus_rex/3530738527/
-            bumblebee: 'http://farm4.static.flickr.com/3293/2923728081_8c78210921.jpg', // http://www.flickr.com/photos/vickisnature/2923728081/
-            cheetah  : 'http://farm4.static.flickr.com/3287/2380266276_570418b291.jpg'  // http://www.flickr.com/photos/80835774@N00/2380266276/
+            asparagus: 'http://farm5.static.flickr.com/4005/4686935131_253e921bf7_m.jpg', // http://www.flickr.com/photos/allenr/4686935131/
+            bluebird : 'http://farm1.static.flickr.com/26/66307916_811efccdfc_m.jpg',     // http://www.flickr.com/photos/allenr/66307916/
+            coffee   : 'http://farm4.static.flickr.com/3336/4638474362_093edb7565_m.jpg'  // http://www.flickr.com/photos/allenr/4638474362/
         },
 
-        crittersNode = Y.one('#critters'),
-        photosNode   = Y.one('#photos');
+        menuNode   = Y.one('#menu'),
+        photosNode = Y.one('#photos');
 
     function refresh(state) {
-        crittersNode.all('input[type="checkbox"]').set('checked', false);
+        menuNode.all('input[type="checkbox"]').set('checked', false);
         photosNode.setContent('');
 
         Y.Object.each(state, function (value, key) {
@@ -88,7 +74,7 @@ var Y = YUI({
                 img.src = images[key];
                 img.alt = key;
 
-                crittersNode.one('#' + key).set('checked', true);
+                menuNode.one('#' + key).set('checked', true);
                 photosNode.append(img);
             }
         });
@@ -98,7 +84,7 @@ var Y = YUI({
         refresh(e.newVal);
     });
 
-    Y.one('#critters').delegate('click', function (e) {
+    menuNode.delegate('click', function (e) {
         var node = e.currentTarget;
         history.addValue(node.get('id'), node.get('checked') ? '1' : null);
     }, 'input');

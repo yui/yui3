@@ -32,7 +32,7 @@ YUI({
         },
         test_frame: function() {
             var iframeReady = false,
-                iframe = new Y.Frame({
+            iframe = new Y.Frame({
                 container: '#editor',
                 designMode: true,
                 content: 'This is a test.',
@@ -72,7 +72,7 @@ YUI({
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'EditorBase instance can not be created');
             
-            editor.after('frame:ready', function() {
+            editor.after('ready', function() {
                 iframeReady = true;
             });
             editor.on('nodeChange', function(e) {
