@@ -15,6 +15,7 @@ function Fills(cfg)
         }
     };
     this.addAttrs(attrs, cfg);
+    this.get("styles");
 }
 
 Fills.prototype = {
@@ -77,7 +78,56 @@ Fills.prototype = {
         graphic.end();
 	},
 
-	_getAreaDefaults: function()
+	/**
+	 * @private
+	 */
+	drawStackedFill: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+            allXCoords,
+            allYCoords,
+            len = xcoords.length,
+			firstX = xcoords[0],
+			firstY = ycoords[0],
+            lastValidX = firstX,
+			lastValidY = firstY,
+			nextX,
+			nextY,
+			i = 0,
+			styles = this.get("area"),
+			graphic = this.get("graphic"),
+            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
+        allXCoords = this._getAllStackedCoordinates("xcoords");
+        allYCoords = this._getAllStackedCoordinates("ycoords");
+        firstX = allXCoords[0];
+        firstY = allYCoords[0];
+        len = allXCoords.length;
+        graphic.clear();
+        graphic.beginFill(color, styles.alpha);
+        graphic.moveTo(firstX, firstY);
+        for(i = 1; i < len; i = ++i)
+		{
+			nextX = allXCoords[i];
+			nextY = allYCoords[i];
+			if(isNaN(nextY))
+			{
+				lastValidX = nextX;
+				lastValidY = nextY;
+				continue;
+			}
+            graphic.lineTo(nextX, nextY);
+            lastValidX = nextX;
+			lastValidY = nextY;
+        }
+        graphic.end();
+	},
+	
+    _getAreaDefaults: function()
     {
         return {
             alpha: 0.5

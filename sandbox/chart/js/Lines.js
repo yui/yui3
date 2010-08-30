@@ -35,9 +35,10 @@ Lines.prototype = {
 		}
         var xcoords = this.get("xcoords").concat(),
 			ycoords = this.get("ycoords").concat(),
-			len = xcoords.length,
-			lastX = xcoords[0],
-			lastY = ycoords[0],
+            direction = this.get("direction"),
+			len = direction === "vertical" ? ycoords.length : xcoords.length,
+			lastX,
+			lastY,
 			lastValidX = lastX,
 			lastValidY = lastY,
 			nextX,
@@ -45,7 +46,7 @@ Lines.prototype = {
 			i,
 			styles = this.get("line"),
 			lineType = styles.lineType,
-            lc = styles.lineColor || this._getDefaultColor(this.get("graphOrder")),
+            lc = styles.color || this._getDefaultColor(this.get("graphOrder")),
 			dashLength = styles.dashLength,
 			gapSpace = styles.gapSpace,
 			connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
@@ -53,6 +54,8 @@ Lines.prototype = {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
+        lastX = lastValidX = xcoords[0];
+        lastY = lastValidY = ycoords[0];
         graphic.lineStyle(styles.weight, lc);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
@@ -101,7 +104,7 @@ Lines.prototype = {
         }
         graphic.end();
 	},
-	
+    
     /**
 	 * Draws a dashed line between two points.
 	 * 

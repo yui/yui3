@@ -3,20 +3,6 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     {
         this.get("graphic").clear();
         this.drawFill();
-    },
-	
-	_getDefaultStyles: function()
-    {
-        return {
-            color: "#000000",
-            alpha: 1,
-            padding:{
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            }
-        };
     }
 },
 {
@@ -34,12 +20,17 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
         styles: {
             getter: function()
             {
-                return this.get("area");
+                var styles = this.get("area");
+                styles.padding = this.get("padding");
             },
 
             setter: function(val)
             {
                 this.set("area", val);
+                if(val.hasOwnProperty("padding"))
+                {
+                    this.set("padding", val.padding);
+                }
             }
         }
     }

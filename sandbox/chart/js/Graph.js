@@ -193,6 +193,9 @@ Y.extend(Graph, Y.Base, {
             case "combo" :
                 seriesClass = Y.ComboSeries;
             break;
+            case "stackedcombo" :
+                seriesClass = Y.StackedComboSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;

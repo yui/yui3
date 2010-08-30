@@ -2,7 +2,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
 	drawSeries: function()
     {
         this.get("graphic").clear();
-        if(this.get("showFill"))
+        if(this.get("showAreaFill"))
         {
             this.drawFill();
         }
@@ -25,7 +25,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
             value:"combo"
         },
 
-        showFill: {
+        showAreaFill: {
             value: false
         },
 
@@ -40,7 +40,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         styles: {
             getter: function()
             {
-                var styles = {};
+                var styles = this._styles || this._getDefaultStyles();
                 styles.marker = this.get("marker");
                 styles.line = this.get("line");
                 styles.area = this.get("area");
@@ -58,6 +58,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
                         this.set(i, val[i]);
                     }
                 }
+                this.styles = val;
             }
         }
     }

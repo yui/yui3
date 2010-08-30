@@ -100,7 +100,23 @@ CartesianChart.ATTRS = {
      * Type of chart when there is no series collection specified.
      */
     type: {
-        value:"combo"
+        getter: function()
+        {
+            if(this.get("stacked"))
+            {
+                return "stacked" + this._type;
+            }
+            return this._type;
+        },
+
+        setter: function(val)
+        {
+            this._type = val;
+        }
+    },
+    
+    stacked: {
+        value: false
     },
 
     /**
@@ -111,56 +127,18 @@ CartesianChart.ATTRS = {
     },
 
     /**
-     * Default key for the x-axis when no axes are specified.
-     */
-    xKey: {
-        getter: function()
-        {
-            if(this._xKey)
-            {
-                return this._xKey;
-            }
-            if(this.get("direction") == "vertical")
-            {
-                return "values";
-            }
-            return "category";
-        },
-
-        setter: function(val)
-        {
-            this._xKey = val;
-        }
-    },
-    
-    /**
-     * Default key for the y-axis when no axes are specified.
-     */
-    yKey: {
-        getter: function()
-        {
-            if(this._yKey)
-            {
-                return this._yKey;
-            }
-            if(this.get("direction") == "vertical")
-            {
-                return "category";
-            }
-            return "values";
-        },
-
-        setter: function(val)
-        {
-            this._yKey = val;
-        }
-    },
-
-    /**
      * Indicates whether or not to show a tooltip.
      */
     showTooltip: {
         value:true
+    },
+
+    categoryKey: {
+        value: "category"
+    },
+
+    showAreaFill: {
+        value: false
     }
 };
 
@@ -168,12 +146,7 @@ Y.extend(CartesianChart, Y.Widget, {
     /**
      * @private
      */
-    _xKey: null,
-
-    /**
-     * @private
-     */
-    _yKey: null,
+    _type: "combo",
 
     /**
      * @private
@@ -187,10 +160,21 @@ Y.extend(CartesianChart, Y.Widget, {
     {
         if(Y.Lang.isArray(val[0]))
         {
-            var dp = [], cats = val[0], vals = val[1], i = 0, l = cats.length;
+            var hash, 
+                dp = [], 
+                cats = val[0], 
+                i = 0, 
+                l = cats.length, 
+                n, 
+                sl = val.length;
             for(; i < l; ++i)
             {
-                dp[i] = {category:cats[i], values:vals[i]};
+                hash = {category:cats[i]};
+                for(n = 1; n < sl; ++n)
+                {
+                    hash["series" + n] = val[n][i];
+                }
+                dp[i] = hash; 
             }
             this._dataValues = dp;
             return;
@@ -221,16 +205,49 @@ Y.extend(CartesianChart, Y.Widget, {
             return this._seriesCollection;
         }
         var axes = this.get("axes"),
-            sc, xKey = this.get("xKey"), yKey = this.get("yKey");
+            dir = this.get("direction"), 
+            sc = [], 
+            catAxis,
+            valAxis,
+            seriesKeys,
+            i = 0,
+            l,
+            type = this.get("type"),
+            key,
+            catKey,
+            seriesKey,
+            showAreaFill = this.get("showAreaFill");
+        if(dir == "vertical")
+        {
+            catAxis = "yAxis";
+            catKey = "yKey";
+            valAxis = "xAxis";
+            seriesKey = "xKey";
+        }
+        else
+        {
+            catAxis = "xAxis";
+            catKey = "xKey";
+            valAxis = "yAxis";
+            seriesKey = "yKey";
+        }
         if(axes)
         {
-            sc = [{
-                type:this.get("type"), 
-                xAxis:"category", 
-                yAxis:"values", 
-                xKey:xKey, 
-                yKey:yKey 
-            }];
+            seriesKeys = axes.values.get("axis").get("keyCollection");
+            key = axes.category.get("axis").get("keyCollection")[0];
+            l = seriesKeys.length;
+            for(; i < l; ++i)
+            {
+                sc[i] = {type:type};
+                sc[i][catAxis] = "category";
+                sc[i][valAxis] = "values";
+                sc[i][catKey] = key;
+                sc[i][seriesKey] = seriesKeys[i];
+                if(type == "combo" || type == "stackedcombo")
+                {
+                    sc[i].showAreaFill = showAreaFill;
+                }
+            }
         }
         this._seriesCollection = sc;
         return sc;
@@ -248,6 +265,7 @@ Y.extend(CartesianChart, Y.Widget, {
      * @private
      */
     _dataClass: {
+        stacked: Y.StackedAxis,
         numeric: Y.NumericAxis,
         category: Y.CategoryAxis,
         time: Y.TimeAxis
@@ -373,7 +391,9 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     _parseSeriesAxes: function(c)
     {
-        var i = 0, len = c.length, s, ar;
+        var i = 0, 
+            len = c.length, 
+            s;
         for(; i < len; ++i)
         {
             s = c[i];
@@ -468,16 +488,26 @@ Y.extend(CartesianChart, Y.Widget, {
      */
     _getDefaultAxes: function()
     {
-        var xKey = this.get("xKey"),
-            yKey = this.get("yKey");
+        var catKey = this.get("categoryKey"),
+            seriesKeys = [], 
+            i, 
+            dv = this.get("dataValues")[0],
+            seriesAxis = this.get("stacked") ? "stacked" : "numeric";
+        for(i in dv)
+        {
+            if(i != catKey)
+            {
+                seriesKeys.push(i);
+            }
+        }
         return {
             values:{
-                keys:[yKey],
+                keys:seriesKeys,
                 position:"left",
-                type:"numeric"
+                type:seriesAxis
             },
             category:{
-                keys:[xKey],
+                keys:[catKey],
                 position:"bottom",
                 type:"category"
             }

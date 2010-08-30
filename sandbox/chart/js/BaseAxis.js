@@ -16,6 +16,7 @@ function BaseAxis (config)
     this._createId();
     this._keys = {};
     this._data = [];
+    this._keyCollection = [];
     BaseAxis.superclass.constructor.apply(this, arguments);
 }
 
@@ -252,7 +253,15 @@ BaseAxis.ATTRS = {
                 }
             }
         }
-	}
+	},
+
+    keyCollection: {
+        getter: function()
+        {
+            return this._keyCollection;
+        },
+        readOnly: true
+    }
 };
 
 Y.extend(BaseAxis, Y.Base,
@@ -356,6 +365,7 @@ Y.extend(BaseAxis, Y.Base,
 		{
 			return;
 		}
+        this._keyCollection.push(value);
 		this._dataClone = this.get("dataProvider").data.concat();
 		var keys = this.get("keys"),
 			eventKeys = {},
@@ -416,7 +426,12 @@ Y.extend(BaseAxis, Y.Base,
 			newData = [],
 			removedKeys = {},
 			keys = this.get("keys"),
-			event = {};
+			event = {},
+            keyCollection = this.get("keyCollection");
+        if(keyCollection.indexOf(value) > -1)
+        {
+            keyCollection.splice(keyCollection.indexOf(value), 1);
+        }
 		removedKeys[value] = keys[value].concat();
 		for(key in keys)
 		{
