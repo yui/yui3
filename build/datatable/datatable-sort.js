@@ -9,7 +9,7 @@ var //getClassName = Y.ClassNameManager.getClassName,
     DESC = "desc",
     //CLASS_ASC = getClassName(DATATABLE, "asc"),
     //CLASS_DESC = getClassName(DATATABLE, "desc"),
-    //CLASS_SORTABLE = getClassName(DATATABLE, "sortable"),
+    CLASS_SORTABLE = Y.ClassNameManager.getClassName("datatable", "sortable"),
 
     TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
 
@@ -107,9 +107,10 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         dt.get("recordset").plug(RecordsetSort, {dt: dt});
         
         //TODO: Don't use hrefs - use tab/arrow/enter
-        //this.doBefore("_getThNodeMarkup", this._beforeGetThNodeMarkup);
+        this.doBefore("_getThNodeMarkup", this._beforeGetThNodeMarkup);
 
         // Attach click handlers
+        //TODO: use delegation on sortable class rather than theadcellclick event
         dt.on("theadCellClick", this._onEventSortColumn);
 
         // Attach UI hooks
@@ -127,18 +128,19 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         //add Column sortFn ATTR
     },
 
-    /*_beforeGetThNodeMarkup: function(o, column) {
+    _beforeGetThNodeMarkup: function(o, column) {
         if(column.get("sortable")) {
             o.link_class = "foo";
             o.link_title = "bar";
             o.link_href = "bat";
             o.value = Y.substitute(this.thLinkTemplate, o);
         }
-    },*/
+    },
 
     _onEventSortColumn: function(e) {
         e.halt();
-        var column = this.get("columnset").get("hash")[e.target.get("id")],
+        //TODO: normalize e.currentTarget to TH
+        var column = this.get("columnset").get("hash")[e.currentTarget.get("id")],
             field = column.get("field"),
             prevSortedBy = this.get("sortedBy"),
             dir = (prevSortedBy &&

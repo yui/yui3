@@ -5,7 +5,8 @@
                 "requires": [
                     "recordset",
                     "widget"
-                ]
+                ],
+                "skinnable": true
             },
             "datatable-sort": {
                 "requires": [

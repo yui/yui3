@@ -382,7 +382,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "recordset", 
                     "widget"
-                ]
+                ], 
+                "skinnable": true
             }, 
             "datatable-sort": {
                 "requires": [
@@ -1401,7 +1402,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'fb83124d900d57db37a78d4bba60761a';
+YUI.Env[Y.version].md5 = '990d278d22dede91c8ec6dcaf11ed9c8';
 
 
 

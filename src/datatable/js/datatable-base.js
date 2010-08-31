@@ -3,16 +3,18 @@ var LANG = Y.Lang,
     GETCLASSNAME = Y.ClassNameManager.getClassName,
     BIND = Y.bind,
 
-    DATATABLE = "datatable",
+    DATATABLE = "basedatatable",
 
+    CLASS_HEADER = GETCLASSNAME(DATATABLE, "header"),
     CLASS_DATA = GETCLASSNAME(DATATABLE, "data"),
     CLASS_MSG = GETCLASSNAME(DATATABLE, "msg"),
+    CLASS_LINER = GETCLASSNAME(DATATABLE, "liner"),
     CLASS_FIRST = GETCLASSNAME(DATATABLE, "first"),
     CLASS_LAST = GETCLASSNAME(DATATABLE, "last"),
 
-    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}">{value}</th>',
+    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'">{value}</div></th>',
     TEMPLATE_TR = '<tr id="{id}"></tr>',
-    TEMPLATE_TD = '<td headers="{headers}">{value}</td>',
+    TEMPLATE_TD = '<td headers="{headers}"><div class="'+CLASS_LINER+'">{value}</div></td>',
     TEMPLATE_VALUE = '{value}';
 
 function DTBase(config) {
@@ -164,7 +166,7 @@ Y.extend(DTBase, Y.Widget, {
 
     _createTheadNode: function(tableNode) {
         if(tableNode) {
-            this._theadNode = tableNode.insertBefore(NODE.create("<thead class='"+CLASS_DATA+"'></thead>"), this._colgroupNode.next());
+            this._theadNode = tableNode.insertBefore(NODE.create("<thead class='"+CLASS_HEADER+"'></thead>"), this._colgroupNode.next());
             return this._theadNode;
         }
     },
@@ -191,7 +193,7 @@ Y.extend(DTBase, Y.Widget, {
             msgNode = this._msgNode,
             contentBox = this.get("contentBox");
 
-        this._tableNode.delegate("click", BIND(this._onTheadClick, this), "thead."+CLASS_DATA+">tr>th");
+        this._tableNode.delegate("click", BIND(this._onTheadClick, this), "thead."+CLASS_HEADER+">tr>th");
         this._tableNode.delegate("click", BIND(this._onTbodyClick, this), "tbody."+CLASS_DATA+">tr>td");
         this._tableNode.delegate("click", BIND(this._onMsgClick, this), "tbody."+CLASS_MSG+">tr>td");
 
@@ -242,7 +244,8 @@ Y.extend(DTBase, Y.Widget, {
     _onTheadKeydown: function() {
     },
 
-    _onTheadClick: function(e, target, container) {
+    // e.currentTarget holds the clicked element
+    _onTheadClick: function(e) {
         this.fire("theadCellClick", e);
         this.fire("theadRowClick", e);
         this.fire("theadClick", e);
