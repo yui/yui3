@@ -732,7 +732,7 @@ proto = {
             // server side loader service
             Y.Get.script(Y._rls(args), {
                 onEnd: function(o) {
-                    handleLoader(o.data);
+                    handleLoader(o);
                 }, 
                 data: args
             });
