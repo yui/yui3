@@ -28,7 +28,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
     // -- onhashchange ---------------------------------------------------------
     'synthetic hashchange event should fire when the hash changes': function () {
-        var changed = true;
+        var changed;
 
         Y.once('hashchange', function (e) {
             changed = true;
