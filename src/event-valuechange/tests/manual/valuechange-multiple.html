@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>ValueChange Multiple Subscriptions</title>
+    </head>
+
+    <body>
+
+        <h1>ValueChange Multiple Subscriptions</h1>
+
+        <label for="my-input">Type Here</label>
+        <input id="my-input" type="text">
+        <button id="detach">Detach First Subscription</button>
+        <button id="detach2">Detach Second Subscription</button>
+
+        <script src="../../../../build/yui/yui.js"></script>
+        <script>
+
+            YUI({
+
+                combine : false,
+                filter  : 'debug'
+
+            }).use('node', 'event-valuechange', function(Y){
+
+                var myInput = Y.one('#my-input'), sub, sub2;
+
+                sub = myInput.on('valueChange', function(e){
+                    Y.log('sub 1: ' + e.newVal);
+                });
+
+                sub2 = myInput.on('valueChange', function(e){
+                    Y.log('sub 2: ' + e.newVal);
+                });
+
+                Y.one('#detach').once('click', function (e) {
+                    sub.detach();
+                });
+
+                Y.one('#detach2').once('click', function (e) {
+                    sub2.detach();
+                });
+            });
+
+        </script>
+
+    </body>
+
+</html>

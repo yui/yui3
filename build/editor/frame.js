@@ -217,22 +217,28 @@ YUI.add('frame', function(Y) {
         */
         _defReadyFn: function() {
             var inst = this.getInstance(),
-                fn = Y.bind(this._onDomEvent, this);
+                fn = Y.bind(this._onDomEvent, this),
+                kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
 
-            inst.Node.DOM_EVENTS.paste = 1;
+            inst.Node.DOM_EVENTS.activate = 1;
+            inst.Node.DOM_EVENTS.focusin = 1;
+            inst.Node.DOM_EVENTS.deactivate = 1;
+            inst.Node.DOM_EVENTS.focusout = 1;
 
             //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         if (k.substring(0, 3) === 'key') {
-                            inst.on(k, Y.throttle(fn, 200), inst.config.doc);
+                            inst.on(k, kfn, inst.config.doc);
                         } else {
                             inst.on(k, fn, inst.config.doc);
                         }
                     }
                 }
             }, this);
+
+            inst.Node.DOM_EVENTS.paste = 1;
             
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
@@ -356,13 +362,11 @@ YUI.add('frame', function(Y) {
 
             if (this.get('designMode')) {
                 if (!Y.UA.ie) {
-                    this._instance.on('domready', function(e) {
-                        try {
-                            //Force other browsers into non CSS styling
-                            doc.execCommand('styleWithCSS', false, false);
-                            doc.execCommand('insertbronreturn', false, false);
-                        } catch (err) {}
-                    });
+                    try {
+                        //Force other browsers into non CSS styling
+                        doc.execCommand('styleWithCSS', false, false);
+                        doc.execCommand('insertbronreturn', false, false);
+                    } catch (err) {}
                 }
             }
         },
@@ -475,15 +479,23 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function(fn) {
-            try {
+            if (Y.UA.ie) {
                 Y.one('win').focus();
-                Y.later(100, this, function() {
-                    this.getInstance().one('win').focus();
-                    if (Y.Lang.isFunction(fn)) {
-                        fn();
-                    }
-                });
-            } catch (ferr) {
+                this.getInstance().one('win').focus();
+                if (Y.Lang.isFunction(fn)) {
+                    fn();
+                }
+            } else {
+                try {
+                    Y.one('win').focus();
+                    Y.later(100, this, function() {
+                        this.getInstance().one('win').focus();
+                        if (Y.Lang.isFunction(fn)) {
+                            fn();
+                        }
+                    });
+                } catch (ferr) {
+                }
             }
             return this;
         },
@@ -533,7 +545,11 @@ YUI.add('frame', function(Y) {
             mousedown: 1,
             keyup: 1,
             keydown: 1,
-            keypress: 1
+            keypress: 1,
+            activate: 1,
+            deactivate: 1,
+            focusin: 1,
+            focusout: 1
         },
 
         /**

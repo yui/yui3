@@ -13,14 +13,14 @@
     position:relative;
 }
 
-.yui3-scrollview-loading {
-    display:none;
-}
-
 /* Cover common use case - li content, without reset */
-.yui3-scrollview-content ul {
+.yui3-scrollview .yui3-scrollview-content ul {
     margin:0;
     padding:0;
+}
+
+.yui3-scrollview-vert .yui3-scrollview-content ul {
+    *zoom:1
 }
 
 .yui3-scrollview-content li {
