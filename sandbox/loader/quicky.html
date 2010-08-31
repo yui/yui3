@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>Test</title>
+<script src="../../build/quickyui/quickyui-debug.js"></script>
+</head>
+<body>
+
+<div id="demo">
+    <p><em>Whose child am I?</em></p>
+</div>
+
+<script type="text/javascript">
+
+var node = Y.one('#demo p');
+ 
+    var onClick = function(e) {
+        var tag = e.target.get('parentNode.tagName'); // e.target === node || #demo p em
+        e.currentTarget.one('em').setContent('I am a child of ' + tag + '.'); // e.currentTarget === node
+    };
+ 
+    node.on('click', onClick);
+
+console.log(Y);
+
+</script>
+</body>
+</html>
+
