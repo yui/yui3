@@ -20,6 +20,7 @@
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
         <url>event-custom/tests/customevent.html</url>
+        <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-synthetic.html</url>
