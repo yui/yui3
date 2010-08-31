@@ -558,6 +558,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
             config.series = this;
             marker = new Y.Marker(config);
             marker.render(this.get("node"));
+            Y.one(marker.get("boundingBox")).setStyle("zIndex", 2);
         }
         this._markers.push(marker);
         this._markerNodes.push(Y.one(marker.get("node")));

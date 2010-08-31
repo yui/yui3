@@ -88,6 +88,7 @@ Y.extend(RightAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
+            margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y,
             rot =  Math.min(Math.max(style.rotation, -90), 90),
@@ -99,6 +100,10 @@ Y.extend(RightAxisLayout, Y.Base, {
             m12 = rot > 0 ? -sinRadians : sinRadians,
             m21 = -m12,
             m22 = m11;
+            if(style.margin && style.margin.right)
+            {
+                margin = style.margin.right;
+            }
         if(Y.UA.ie)
         {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=0)";
@@ -118,7 +123,7 @@ Y.extend(RightAxisLayout, Y.Base, {
             {
                 topOffset -= (sinRadians * label.offsetWidth) +  (cosRadians * (label.offsetHeight * 0.5));
             }
-            
+            leftOffset += margin;
             label.style.left = leftOffset + "px";
             label.style.top = topOffset + "px";
             label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
@@ -146,6 +151,7 @@ Y.extend(RightAxisLayout, Y.Base, {
             topOffset -= cosRadians * (label.offsetHeight * 0.6);
             leftOffset += sinRadians * label.offsetHeight;
         }
+        leftOffset += margin;
         label.style.left = leftOffset + "px";
         label.style.top = topOffset + "px";
         label.style.MozTransformOrigin =  "0 0";
@@ -157,9 +163,10 @@ Y.extend(RightAxisLayout, Y.Base, {
     /**
      * Calculates the size and positions the content elements.
      */
-    setSizeAndPosition: function(labelSize)
+    setSizeAndPosition: function()
     {
         var ar = this.get("axisRenderer"),
+            labelSize = this.get("maxLabelSize"),
             style = ar.get("styles"),
             sz = style.line.weight,
             majorTicks = style.majorTicks,
