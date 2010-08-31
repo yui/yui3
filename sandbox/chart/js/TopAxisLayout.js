@@ -91,6 +91,7 @@ Y.extend(TopAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
+            margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y,
             rot =  Math.max(-90, Math.min(90, style.rotation)),
@@ -102,10 +103,14 @@ Y.extend(TopAxisLayout, Y.Base, {
             m12,
             m21,
             m22;
-            rot = Math.min(90, rot);
-            rot = Math.max(-90, rot);
-       if(Y.UA.ie)
-       {
+        rot = Math.min(90, rot);
+        rot = Math.max(-90, rot);
+        if(style.margin && style.margin.bottom)
+        {
+            margin = style.margin.bottom;
+        }
+        if(Y.UA.ie)
+        {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=0)";
             m11 = cosRadians;
             m12 = rot > 0 ? -sinRadians : sinRadians;
@@ -131,6 +136,7 @@ Y.extend(TopAxisLayout, Y.Base, {
                 leftOffset -= sinRadians * (label.offsetHeight * 0.5);
                 topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight));
             }
+            topOffset -= margin;
             label.style.left = leftOffset;
             label.style.top = topOffset;
             label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
@@ -162,6 +168,7 @@ Y.extend(TopAxisLayout, Y.Base, {
             leftOffset -= (cosRadians * label.offsetWidth) - (sinRadians * (label.offsetHeight * 0.6));
             topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight);
         }
+        topOffset -= margin;
         label.style.left = leftOffset + "px";
         label.style.top =  topOffset + "px";
         label.style.MozTransformOrigin =  "0 0";

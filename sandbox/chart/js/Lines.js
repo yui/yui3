@@ -4,13 +4,13 @@ function Lines(cfg)
         line: {
             getter: function()
             {
-                return this._defaults || this._getLineDefaults();
+                return this._lineDefaults || this._getLineDefaults();
             },
 
             setter: function(val)
             {
                 var defaults = this._defaults || this._getLineDefaults();
-                this._defaults = Y.merge(defaults, val);
+                this._lineDefaults = Y.merge(defaults, val);
             }
         }
     };
@@ -22,7 +22,7 @@ Lines.prototype = {
     /**
      * @private
      */
-    _defaults: null,
+    _lineDefaults: null,
 
     /**
 	 * @private
@@ -125,7 +125,7 @@ Lines.prototype = {
             x,
             y,
             i = 0,
-			styles = this.get("styles"),
+			styles = this.get("line"),
 			graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"));
         graphic.lineStyle(styles.weight, color);

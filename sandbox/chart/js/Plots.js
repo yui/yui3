@@ -4,13 +4,13 @@ function Plots(cfg)
         marker: {
             getter: function()
             {
-                return this._defaults || this._getPlotDefaults();
+                return this._plotDefaults || this._getPlotDefaults();
             },
 
             setter: function(val)
             {
-                var defaults = this._defaults || this._getPlotDefaults();
-                this._defaults = Y.merge(defaults, val);
+                var defaults = this._plotDefaults || this._getPlotDefaults();
+                this._plotDefaults = Y.merge(defaults, val);
             }
         }
     };
@@ -22,7 +22,7 @@ Plots.prototype = {
     /**
      * @private
      */
-    _defaults: null,
+    _plotDefaults: null,
 
     bindUI: function()
     {

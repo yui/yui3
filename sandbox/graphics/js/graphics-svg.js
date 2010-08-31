@@ -643,10 +643,10 @@ Graphic.prototype = {
      * @private
      * Creates a vml node.
      */
-    _createGraphicNode: function(type)
+    _createGraphicNode: function(type, pe)
     {
         var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
-            v = type === "svg" ? "none" : "visiblePainted";
+            v = pe || "none";
         if(type !== "defs" && type !== "stop" && type !== "linearGradient")
         {
             node.setAttribute("pointer-events", v);
@@ -702,7 +702,7 @@ Graphic.prototype = {
             {
                 type = "ellipse";
             }
-            node = this._createGraphicNode(this._getNodeShapeType(type));
+            node = this._createGraphicNode(this._getNodeShapeType(type), "visiblePainted");
             if(type === "wedge")
             {
                 path = this._getWedgePath(config.props) + " Z";
