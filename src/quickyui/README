@@ -2,7 +2,7 @@ Quick YUI
     This is a rollup of commonly used YUI modules delivered with a global Y instance with all the functionality attached.
     It contains the following modules:
 
-    yui,oop,dom,event-custom,event-base,pluginhost,node,event-delegate,io-base,json-parse,transition,selector-css3,dom-style-ie,event-touch,event-synthetic,event-gestures
+    yui,oop,dom,event-custom-base,event-base,pluginhost,node,event-delegate,io-base,json-parse,transition,selector-css3,dom-style-ie
 
 3.2.0
   * Initial release
