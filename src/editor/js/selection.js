@@ -151,7 +151,7 @@
 
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
-                el.className = 'hr';
+                el.className = 'hr yui-non';
                 el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
                 el.setAttribute('readonly', true);
                 el.setAttribute('contenteditable', false); //Keep it from being Edited
@@ -256,6 +256,9 @@
         if (!Y.UA.ie) {
             divs = Y.all('div, p');
             divs.each(function(d) {
+                if (d.hasClass('yui-non')) {
+                    return;
+                }
                 var html = d.get('innerHTML');
                 if (html === '') {
                     //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
