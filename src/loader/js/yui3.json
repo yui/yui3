@@ -564,7 +564,8 @@
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection"
+                    "selection", 
+                    "editor-para"
                 ]
             }, 
             "editor-bidi": {
@@ -573,6 +574,11 @@
                 ]
             }, 
             "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-para": {
                 "requires": [
                     "editor-base"
                 ]

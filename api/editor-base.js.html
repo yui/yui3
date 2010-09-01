@@ -90,10 +90,8 @@
                 <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
                 <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defNodeChangeFn</span>
             <span class="p">});</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">EditorPara</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">//this.plug(Y.Plugin.EditorPara);</span>
-            <span class="p">}</span>
+            
+            <span class="k">this</span><span class="p">.</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">EditorPara</span><span class="p">);</span>
         <span class="p">},</span>
         <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
