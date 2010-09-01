@@ -12,10 +12,10 @@ CartesianChart.ATTRS = {
     /**
      * Data used to generate the chart.
      */
-    dataValues: {
+    dataProvider: {
         getter: function()
         {
-            return this._dataValues;
+            return this._dataProvider;
         },
 
         setter: function(val)
@@ -154,12 +154,73 @@ CartesianChart.ATTRS = {
         value: "category"
     },
 
+    seriesKeys: {
+        value: null    
+    },
+
     showAreaFill: {
         value: null
     }
 };
 
 Y.extend(CartesianChart, Y.Widget, {
+    /**
+     * Returns a series instance by index
+     */
+    getSeriesByIndex: function(val)
+    {
+        var series, 
+            graph = this.get("graph");
+        if(graph)
+        {
+            series = graph.getSeriesByIndex(val);
+        }
+        return series;
+    },
+
+    /**
+     * Returns a series instance by key value.
+     */
+    getSeriesByKey: function(val)
+    {
+        var series, 
+            graph = this.get("graph");
+        if(graph)
+        {
+            series = graph.getSeriesByKey(val);
+        }
+        return series;
+    },
+
+    /**
+     * Returns axis by key reference
+     */
+    getAxisByKey: function(val)
+    {
+        var axis,
+            axes = this.get("axes");
+        if(axes.hasOwnProperty(val))
+        {
+            axis = axes[val];
+        }
+        return axis;
+    },
+
+    /**
+     * Returns the category axis for the chart.
+     */
+    getCategoryAxis: function()
+    {
+        var axis,
+            key = this.get("categoryKey"),
+            axes = this.get("axes");
+        if(axes.hasOwnProperty(key))
+        {
+            axis = axes[key];
+        }
+        return axis;
+    },
+
     /**
      * @private
      */
@@ -173,7 +234,7 @@ Y.extend(CartesianChart, Y.Widget, {
     /**
      * @private
      */
-    _dataValues: null,
+    _dataProvider: null,
 
     /**
      * @private
@@ -198,10 +259,10 @@ Y.extend(CartesianChart, Y.Widget, {
                 }
                 dp[i] = hash; 
             }
-            this._dataValues = dp;
+            this._dataProvider = dp;
             return;
         }
-        this._dataValues = val;
+        this._dataProvider = val;
     },
 
     /**
@@ -315,7 +376,7 @@ Y.extend(CartesianChart, Y.Widget, {
                 dh = hash[i];
                 pos = dh.position;
                 dataClass = this._getDataClass(dh.type);
-                config = {dataProvider:this.get("dataValues"), keys:dh.keys};
+                config = {dataProvider:this.get("dataProvider"), keys:dh.keys};
                 if(dh.hasOwnProperty("roundingUnit"))
                 {
                     config.roundingUnit = dh.roundingUnit;
@@ -431,7 +492,12 @@ Y.extend(CartesianChart, Y.Widget, {
     {
         var seriesCollection = this.get("seriesCollection");
         this._parseSeriesAxes(seriesCollection);
-        this.set("graph", new Y.Graph({parent:this.get("graphContainer"), seriesCollection:seriesCollection}));
+        this.set("graph", new Y.Graph({parent:this.get("graphContainer")}));
+        this.get("graph").on("chartRendered", Y.bind(function(e) {
+            this.fire("chartRendered");
+        }, this));
+        this.get("graph").set("seriesCollection", seriesCollection);
+        this._seriesCollection = this.get("graph").get("seriesCollection");
     },
 
     /**
@@ -490,7 +556,6 @@ Y.extend(CartesianChart, Y.Widget, {
         bcc.setAttribute("style", tblstyles);
         brc.setAttribute("style", tblstyles);
 
-
         tr.id = "topRow";
         mr.id = "midRow";
         br.id = "bottomRow";
@@ -507,7 +572,6 @@ Y.extend(CartesianChart, Y.Widget, {
         br.appendChild(blc);
         br.appendChild(bcc);
         br.appendChild(brc);
-        
         
         ta.setAttribute("style", "position:relative;width:800px;");
         ta.setAttribute("id", "topAxesContainer");
@@ -537,9 +601,9 @@ Y.extend(CartesianChart, Y.Widget, {
     _getDefaultAxes: function()
     {
         var catKey = this.get("categoryKey"),
-            seriesKeys = [], 
+            seriesKeys = this.get("seriesKeys") || [], 
             i, 
-            dv = this.get("dataValues")[0],
+            dv = this.get("dataProvider")[0],
             direction = this.get("direction"),
             seriesPosition,
             categoryPosition,
@@ -554,11 +618,18 @@ Y.extend(CartesianChart, Y.Widget, {
             seriesPosition = "left";
             categoryPosition = "bottom";
         }
-        for(i in dv)
+        if(seriesKeys.length < 1)
         {
-            if(i != catKey)
+            for(i in dv)
             {
-                seriesKeys.push(i);
+                if(i != catKey)
+                {
+                    seriesKeys.push(i);
+                }
+            }
+            if(seriesKeys.length > 0)
+            {
+                this.set("seriesKeys", seriesKeys);
             }
         }
         return {

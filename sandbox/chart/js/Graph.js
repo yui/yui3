@@ -28,15 +28,60 @@ Graph.ATTRS = {
 
 Y.extend(Graph, Y.Base, {
     /**
+     * Hash of arrays containing series mapped to a series type.
+     */
+    seriesTypes: null,
+
+    /**
+     * Returns a series instance based on an index.
+     */
+    getSeriesByIndex: function(val)
+    {
+        var col = this._seriesCollection,
+            series;
+        if(col && col.length > val)
+        {
+            series = col[val];
+        }
+        return series;
+    },
+
+    /**
+     * Returns a series instance based on a key value.
+     */
+    getSeriesByKey: function(val)
+    {
+        var obj = this._seriesDictionary,
+            series;
+        if(obj && obj.hasOwnProperty(val))
+        {
+            series = obj[val];
+        }
+        return series;
+    },
+
+    /**
+     * Adds dispatcher to collection
+     */
+    addDispatcher: function(val)
+    {
+        if(!this._dispatchers)
+        {
+            this._dispatchers = [];
+        }
+        this._dispatchers.push(val);
+    },
+
+    /**
      * @private 
      * @description Collection of series to be displayed in the graph.
      */
     _seriesCollection: null,
-
+    
     /**
-     * Hash of arrays containing series mapped to a series type.
+     * @private
      */
-    seriesTypes: null,
+    _seriesDictionary: null,
 
     /**
      * @private
@@ -51,10 +96,15 @@ Y.extend(Graph, Y.Base, {
         }	
         var len = val.length,
             i = 0,
-            series;
+            series,
+            seriesKey;
         if(!this._seriesCollection)
         {
             this._seriesCollection = [];
+        }
+        if(!this._seriesDictionary)
+        {
+            this._seriesDictionary = {};
         }
         if(!this.seriesTypes)
         {
@@ -73,7 +123,10 @@ Y.extend(Graph, Y.Base, {
         len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
         {
-            this._seriesCollection[i].render(this.get("parent"));
+            series = this._seriesCollection[i];
+            seriesKey = series.get("direction") == "horizontal" ? "yKey" : "xKey";
+            this._seriesDictionary[series.get(seriesKey)] = series;
+            series.render(this.get("parent"));
         }
     },
 
@@ -102,6 +155,8 @@ Y.extend(Graph, Y.Base, {
         series.set("graphOrder", graphSeriesLength);
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
+        this.addDispatcher(series);
+        series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         this.fire("seriesAdded", series);
     },
 
@@ -124,6 +179,8 @@ Y.extend(Graph, Y.Base, {
         seriesData.graphOrder = seriesCollection.length;
         seriesType = this._getSeries(seriesData.type);
         series = new seriesType(seriesData);
+        this.addDispatcher(series);
+        series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
     },
@@ -207,8 +264,29 @@ Y.extend(Graph, Y.Base, {
             break;
         }
         return seriesClass;
-    }
+    },
 
+    /**
+     * @private
+     */
+    _dispatchers: null,
+
+    /**
+     * @private
+     */
+    _drawingCompleteHandler: function(e)
+    {
+        var series = e.currentTarget,
+            index = Y.Array.indexOf(this._dispatchers, series);
+        if(index > -1)
+        {
+            this._dispatchers.splice(index, 1);
+        }
+        if(this._dispatchers.length < 1)
+        {
+            this.fire("chartRendered");
+        }
+    }
 });
 
 Y.Graph = Graph;

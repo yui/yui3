@@ -429,30 +429,31 @@ Y.extend(BaseAxis, Y.Base,
 			removedKeys = {},
 			keys = this.get("keys"),
 			event = {},
-            keyCollection = this.get("keyCollection");
-        if(keyCollection.indexOf(value) > -1)
+            keyCollection = this.get("keyCollection"),
+            i = Y.Array.indexOf(keyCollection, value);
+        if(keyCollection && keyCollection.length > 0 && i > -1)
         {
-            keyCollection.splice(keyCollection.indexOf(value), 1);
+            keyCollection.splice(i, 1);
         }
-		removedKeys[value] = keys[value].concat();
-		for(key in keys)
-		{
-			if(keys.hasOwnProperty(key))
-			{
-				if(key == value) 
-				{
-					continue;
-				}
-				oldKey = keys[key];
-				newData = newData.concat(oldKey);
-				newKeys[key] = oldKey;
-			}
-		}
-		keys = newKeys;
-		this._data = newData;
-		this._updateMinAndMax();
-		event.keysRemoved = removedKeys;
-		this.fire("axisUpdate", event);
+        removedKeys[value] = keys[value].concat();
+        for(key in keys)
+        {
+            if(keys.hasOwnProperty(key))
+            {
+                if(key == value) 
+                {
+                    continue;
+                }
+                oldKey = keys[key];
+                newData = newData.concat(oldKey);
+                newKeys[key] = oldKey;
+            }
+        }
+        keys = newKeys;
+        this._data = newData;
+        this._updateMinAndMax();
+        event.keysRemoved = removedKeys;
+        this.fire("axisUpdate", event);
 	},
 
 	/**
@@ -4760,15 +4761,60 @@ Graph.ATTRS = {
 
 Y.extend(Graph, Y.Base, {
     /**
+     * Hash of arrays containing series mapped to a series type.
+     */
+    seriesTypes: null,
+
+    /**
+     * Returns a series instance based on an index.
+     */
+    getSeriesByIndex: function(val)
+    {
+        var col = this._seriesCollection,
+            series;
+        if(col && col.length > val)
+        {
+            series = col[val];
+        }
+        return series;
+    },
+
+    /**
+     * Returns a series instance based on a key value.
+     */
+    getSeriesByKey: function(val)
+    {
+        var obj = this._seriesDictionary,
+            series;
+        if(obj && obj.hasOwnProperty(val))
+        {
+            series = obj[val];
+        }
+        return series;
+    },
+
+    /**
+     * Adds dispatcher to collection
+     */
+    addDispatcher: function(val)
+    {
+        if(!this._dispatchers)
+        {
+            this._dispatchers = [];
+        }
+        this._dispatchers.push(val);
+    },
+
+    /**
      * @private 
      * @description Collection of series to be displayed in the graph.
      */
     _seriesCollection: null,
-
+    
     /**
-     * Hash of arrays containing series mapped to a series type.
+     * @private
      */
-    seriesTypes: null,
+    _seriesDictionary: null,
 
     /**
      * @private
@@ -4783,10 +4829,15 @@ Y.extend(Graph, Y.Base, {
         }	
         var len = val.length,
             i = 0,
-            series;
+            series,
+            seriesKey;
         if(!this._seriesCollection)
         {
             this._seriesCollection = [];
+        }
+        if(!this._seriesDictionary)
+        {
+            this._seriesDictionary = {};
         }
         if(!this.seriesTypes)
         {
@@ -4805,7 +4856,10 @@ Y.extend(Graph, Y.Base, {
         len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
         {
-            this._seriesCollection[i].render(this.get("parent"));
+            series = this._seriesCollection[i];
+            seriesKey = series.get("direction") == "horizontal" ? "yKey" : "xKey";
+            this._seriesDictionary[series.get(seriesKey)] = series;
+            series.render(this.get("parent"));
         }
     },
 
@@ -4834,6 +4888,8 @@ Y.extend(Graph, Y.Base, {
         series.set("graphOrder", graphSeriesLength);
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
+        this.addDispatcher(series);
+        series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         this.fire("seriesAdded", series);
     },
 
@@ -4856,6 +4912,8 @@ Y.extend(Graph, Y.Base, {
         seriesData.graphOrder = seriesCollection.length;
         seriesType = this._getSeries(seriesData.type);
         series = new seriesType(seriesData);
+        this.addDispatcher(series);
+        series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
     },
@@ -4939,8 +4997,29 @@ Y.extend(Graph, Y.Base, {
             break;
         }
         return seriesClass;
-    }
+    },
 
+    /**
+     * @private
+     */
+    _dispatchers: null,
+
+    /**
+     * @private
+     */
+    _drawingCompleteHandler: function(e)
+    {
+        var series = e.currentTarget,
+            index = Y.Array.indexOf(this._dispatchers, series);
+        if(index > -1)
+        {
+            this._dispatchers.splice(index, 1);
+        }
+        if(this._dispatchers.length < 1)
+        {
+            this.fire("chartRendered");
+        }
+    }
 });
 
 Y.Graph = Graph;
@@ -6192,7 +6271,6 @@ Y.mix(Y.AxisRenderer.prototype, {
         {
             return;
         }
-        //majorUnitDistance = uiLength/(len - 1);
         this._createLabelCache();
         ui.set("maxLabelSize", 0);
         for(; i < len; ++i)
@@ -6212,6 +6290,7 @@ Y.mix(Y.AxisRenderer.prototype, {
         {
             ui.offsetNodeForTick(this.get("node"));
         }
+        this.fire("axisRendered");
     },
 
     /**
@@ -6436,10 +6515,10 @@ CartesianChart.ATTRS = {
     /**
      * Data used to generate the chart.
      */
-    dataValues: {
+    dataProvider: {
         getter: function()
         {
-            return this._dataValues;
+            return this._dataProvider;
         },
 
         setter: function(val)
@@ -6578,12 +6657,73 @@ CartesianChart.ATTRS = {
         value: "category"
     },
 
+    seriesKeys: {
+        value: null    
+    },
+
     showAreaFill: {
         value: null
     }
 };
 
 Y.extend(CartesianChart, Y.Widget, {
+    /**
+     * Returns a series instance by index
+     */
+    getSeriesByIndex: function(val)
+    {
+        var series, 
+            graph = this.get("graph");
+        if(graph)
+        {
+            series = graph.getSeriesByIndex(val);
+        }
+        return series;
+    },
+
+    /**
+     * Returns a series instance by key value.
+     */
+    getSeriesByKey: function(val)
+    {
+        var series, 
+            graph = this.get("graph");
+        if(graph)
+        {
+            series = graph.getSeriesByKey(val);
+        }
+        return series;
+    },
+
+    /**
+     * Returns axis by key reference
+     */
+    getAxisByKey: function(val)
+    {
+        var axis,
+            axes = this.get("axes");
+        if(axes.hasOwnProperty(val))
+        {
+            axis = axes[val];
+        }
+        return axis;
+    },
+
+    /**
+     * Returns the category axis for the chart.
+     */
+    getCategoryAxis: function()
+    {
+        var axis,
+            key = this.get("categoryKey"),
+            axes = this.get("axes");
+        if(axes.hasOwnProperty(key))
+        {
+            axis = axes[key];
+        }
+        return axis;
+    },
+
     /**
      * @private
      */
@@ -6597,7 +6737,7 @@ Y.extend(CartesianChart, Y.Widget, {
     /**
      * @private
      */
-    _dataValues: null,
+    _dataProvider: null,
 
     /**
      * @private
@@ -6622,10 +6762,10 @@ Y.extend(CartesianChart, Y.Widget, {
                 }
                 dp[i] = hash; 
             }
-            this._dataValues = dp;
+            this._dataProvider = dp;
             return;
         }
-        this._dataValues = val;
+        this._dataProvider = val;
     },
 
     /**
@@ -6739,7 +6879,7 @@ Y.extend(CartesianChart, Y.Widget, {
                 dh = hash[i];
                 pos = dh.position;
                 dataClass = this._getDataClass(dh.type);
-                config = {dataProvider:this.get("dataValues"), keys:dh.keys};
+                config = {dataProvider:this.get("dataProvider"), keys:dh.keys};
                 if(dh.hasOwnProperty("roundingUnit"))
                 {
                     config.roundingUnit = dh.roundingUnit;
@@ -6855,7 +6995,12 @@ Y.extend(CartesianChart, Y.Widget, {
     {
         var seriesCollection = this.get("seriesCollection");
         this._parseSeriesAxes(seriesCollection);
-        this.set("graph", new Y.Graph({parent:this.get("graphContainer"), seriesCollection:seriesCollection}));
+        this.set("graph", new Y.Graph({parent:this.get("graphContainer")}));
+        this.get("graph").on("chartRendered", Y.bind(function(e) {
+            this.fire("chartRendered");
+        }, this));
+        this.get("graph").set("seriesCollection", seriesCollection);
+        this._seriesCollection = this.get("graph").get("seriesCollection");
     },
 
     /**
@@ -6914,7 +7059,6 @@ Y.extend(CartesianChart, Y.Widget, {
         bcc.setAttribute("style", tblstyles);
         brc.setAttribute("style", tblstyles);
 
-
         tr.id = "topRow";
         mr.id = "midRow";
         br.id = "bottomRow";
@@ -6931,7 +7075,6 @@ Y.extend(CartesianChart, Y.Widget, {
         br.appendChild(blc);
         br.appendChild(bcc);
         br.appendChild(brc);
-        
         
         ta.setAttribute("style", "position:relative;width:800px;");
         ta.setAttribute("id", "topAxesContainer");
@@ -6961,9 +7104,9 @@ Y.extend(CartesianChart, Y.Widget, {
     _getDefaultAxes: function()
     {
         var catKey = this.get("categoryKey"),
-            seriesKeys = [], 
+            seriesKeys = this.get("seriesKeys") || [], 
             i, 
-            dv = this.get("dataValues")[0],
+            dv = this.get("dataProvider")[0],
             direction = this.get("direction"),
             seriesPosition,
             categoryPosition,
@@ -6978,11 +7121,18 @@ Y.extend(CartesianChart, Y.Widget, {
             seriesPosition = "left";
             categoryPosition = "bottom";
         }
-        for(i in dv)
+        if(seriesKeys.length < 1)
         {
-            if(i != catKey)
+            for(i in dv)
             {
-                seriesKeys.push(i);
+                if(i != catKey)
+                {
+                    seriesKeys.push(i);
+                }
+            }
+            if(seriesKeys.length > 0)
+            {
+                this.set("seriesKeys", seriesKeys);
             }
         }
         return {
