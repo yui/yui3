@@ -18,6 +18,7 @@ YUI.add('dom-base', function(Y) {
  */
 var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
+    DOCUMENT_ELEMENT = 'documentElement',
     DEFAULT_VIEW = 'defaultView',
     PARENT_WINDOW = 'parentWindow',
     TAG_NAME = 'tagName',
@@ -211,21 +212,19 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
-        // there may be multiple elements with the same ID
-        doc = doc || element[OWNER_DOCUMENT];
-        var nodes = [],
-            ret = false,
-            i,
-            node,
-            query;
-                
-        element.id = element.id || Y.guid(); 
+        var ret = false,
+            rootNode;
 
-        nodes = Y.DOM.allById(element.id, doc);
-        for (i = 0; node = nodes[i++];) { // check for a match
-            if (node === element) {
-                ret = true;
-                break;
+        if (element && element.nodeType) {
+            (doc) || (doc = element[OWNER_DOCUMENT]);
+
+            rootNode = doc[DOCUMENT_ELEMENT];
+
+            // contains only works with HTML_ELEMENT
+            if (rootNode && rootNode.contains && element.tagName) {
+                ret = rootNode.contains(element);
+            } else {
+                ret = Y.DOM.contains(rootNode, element);
             }
         }
 
@@ -250,7 +249,8 @@ Y.DOM = {
 
             if (nodes && nodes.length) {
                 for (i = 0; node = nodes[i++];) { // check for a match
-                    if (node.id === id) { // avoid false positive for node.name
+                    if (node.attributes && node.attributes.id
+                            && node.attributes.id.value === id) { // avoid false positive for node.name & form.id
                         ret.push(node);
                     }
                 }
@@ -729,7 +729,7 @@ Y.DOM = {
             var val = node.value,
                 options = node.options;
 
-            if (options && val === '') {
+            if (options && options.length && val === '') {
                 // TODO: implement multipe select
                 if (node.multiple) {
                 } else {

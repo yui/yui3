@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>rls2</title>
+</head>
+<body>
+
+<p id="t1">Task one, done</p>
+
+<script src="../../build/yui/yui-debug.js"></script>
+<script>
+
+YUI.unbox = function (o) {
+    console.log('unbox');
+    eval(o.query.results.result.js);
+};
+
+YUI({
+    filter: 'raw',
+    use_rls: true,
+    rls_base: 'http://query.yahooapis.com/v1/public/yql?q=USE%20%22http%3A//lucassmith.name/pub/yql/rls_bug0.xml%3Fv%3D19%22%20AS%20lsn_table%3B%20SELECT%20*%20FROM%20lsn_table%20where%20modules%20%3D%20%225%22%3B&format=json&callback=YUI.unbox&blah=blah&'
+}).use('node',function (Y) {
+
+console.log(Y.one('#t1').get('text'));
+
+});
+</script>
+</body>
+</html>
+

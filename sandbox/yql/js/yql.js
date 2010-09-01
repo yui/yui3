@@ -18,7 +18,10 @@ YUI.add('yql', function(Y) {
             params = {};
         }
         params.q = sql;
-        params.format = 'json';
+        //Allow format override.. JSON-P-X
+        if (!params.format) {
+            params.format = Y.YQLRequest.FORMAT;
+        }
         if (!params.env) {
             params.env = Y.YQLRequest.ENV;
         }
@@ -68,6 +71,12 @@ YUI.add('yql', function(Y) {
         }
     };
 
+    /**
+    * @static
+    * @property FORMAT
+    * @description Default format to use: json
+    */
+    YQLRequest.FORMAT = 'json';
     /**
     * @static
     * @property PROTO

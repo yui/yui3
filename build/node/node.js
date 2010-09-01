@@ -134,6 +134,7 @@ Y_Node.DOM_EVENTS = {
     reset: 1,
     resize: 1,
     select: 1,
+    selectstart: 1,
     submit: 1,
     scroll: 1,
     textInput: 1,
@@ -183,7 +184,7 @@ Y_Node.getDOMNode = function(node) {
  */
 Y_Node.scrubVal = function(val, node) {
     if (node && val) { // only truthy values are risky
-        if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
+         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y_DOM.isWindow(val)) {// node || window
                 val = Y.one(val);
             } else if ((val.item && !val._nodes) || // dom collection or Node instance
@@ -193,6 +194,8 @@ Y_Node.scrubVal = function(val, node) {
         }
     } else if (val === undefined) {
         val = node; // for chaining
+    } else if (val === null) {
+        val = null; // IE: DOM null not the same as null
     }
 
     return val;
@@ -283,11 +286,13 @@ Y_Node.one = function(node) {
             return node; // NOTE: return
         }
 
-        uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
-        instance = Y_Node._instances[uid]; // reuse exising instances
-        cachedNode = instance ? instance._node : null;
-        if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
-            instance = new Y_Node(node);
+        if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
+            uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
+            instance = Y_Node._instances[uid]; // reuse exising instances
+            cachedNode = instance ? instance._node : null;
+            if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
+                instance = new Y_Node(node);
+            }
         }
     }
     return instance;
@@ -460,25 +465,28 @@ Y.mix(Y_Node.prototype, {
  * @return {String} A string representation of the Node instance 
  */
     toString: function() {
-        var str = '',
-            errorMsg = this[UID] + ': not bound to a node',
+        var str = this[UID] + ': not bound to a node',
             node = this._node,
-            id = (node.getAttribute) ? node.getAttribute('id') : node.id; // form.id may be a field name
+            attrs, id, className;
 
         if (node) {
-            str += node[NODE_NAME];
+            attrs = node.attributes;
+            id = (attrs && attrs.id) ? node.getAttribute('id') : null;
+            className = (attrs && attrs.className) ? node.getAttribute('className') : null;
+            str = node[NODE_NAME];
+
             if (id) {
                 str += '#' + id; 
             }
 
-            if (node.className) {
-                str += '.' + node.className.replace(' ', '.'); 
+            if (className) {
+                str += '.' + className.replace(' ', '.'); 
             }
 
             // TODO: add yuid?
             str += ' ' + this[UID];
         }
-        return str || errorMsg;
+        return str;
     },
 
     /**
@@ -501,6 +509,8 @@ Y.mix(Y_Node.prototype, {
 
         if (val) {
             val = Y_Node.scrubVal(val, this);
+        } else if (val === null) {
+            val = null; // IE: DOM null is not true null (even though they ===)
         }
         return val;
     },
@@ -611,6 +621,7 @@ Y.mix(Y_Node.prototype, {
      */
     compareTo: function(refNode) {
         var node = this._node;
+
         if (refNode instanceof Y_Node) { 
             refNode = refNode._node;
         }
@@ -1054,7 +1065,7 @@ Y.mix(Y_Node.prototype, {
     * @chainable
     */
     clearData: function(name) {
-        if (arguments.length) {
+        if (this._data && arguments.length) {
             delete this._data[name];
         } else {
             this._data = {};
@@ -1095,7 +1106,7 @@ var NodeList = function(nodes) {
     if (typeof nodes === 'string') { // selector query
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType) { // domNode
+    } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
         nodes = [nodes];
     } else if (nodes instanceof Y.Node) {
         nodes = [nodes._node];
@@ -2292,26 +2303,51 @@ YUI.add('node-event-delegate', function(Y) {
  */
 
 /**
- * Functionality to make the node a delegated event container
+ * <p>Sets up a delegation listener for an event occurring inside the Node.
+ * The delegated event will be verified against a supplied selector or
+ * filtering function to test if the event references at least one node that
+ * should trigger the subscription callback.</p>
+ *
+ * <p>Selector string filters will trigger the callback if the event originated
+ * from a node that matches it or is contained in a node that matches it.
+ * Function filters are called for each Node up the parent axis to the
+ * subscribing container node, and receive at each level the Node and the event
+ * object.  The function should return true (or a truthy value) if that Node
+ * should trigger the subscription callback.  Note, it is possible for filters
+ * to match multiple Nodes for a single event.  In this case, the delegate
+ * callback will be executed for each matching Node.</p>
+ *
+ * <p>For each matching Node, the callback will be executed with its 'this'
+ * object set to the Node matched by the filter (unless a specific context was
+ * provided during subscription), and the provided event's
+ * <code>currentTarget</code> will also be set to the matching Node.  The
+ * containing Node from which the subscription was originally made can be
+ * referenced as <code>e.container</code>.
+ *
  * @method delegate
  * @param type {String} the event type to delegate
- * @param fn {Function} the function to execute
- * @param selector {String} a selector that must match the target of the event.
- * @return {Event.Handle} the detach handle
+ * @param fn {Function} the callback function to execute.  This function
+ *              will be provided the event object for the delegated event.
+ * @param spec {String|Function} a selector that must match the target of the
+ *              event or a function to test target and its parents for a match
+ * @param context {Object} optional argument that specifies what 'this' refers to.
+ * @param args* {any} 0..n additional arguments to pass on to the callback function.
+ *              These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
  * @for Node
  */
 Y.Node.prototype.delegate = function(type, fn, selector) {
 
-    var args = Array.prototype.slice.call(arguments, 3),
-        a = [type, fn, Y.Node.getDOMNode(this), selector];
-    a = a.concat(args);
+    var args = Y.Array(arguments, 0, true);
 
-    return Y.delegate.apply(Y, a);
+    args.splice(2, 0, this._node);
+
+    return Y.delegate.apply(Y, args);
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
+}, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
 

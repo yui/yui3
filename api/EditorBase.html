@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>editor&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>editor&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_editor.html" title="editor">editor</a>
                  &gt; EditorBase 
@@ -84,6 +84,36 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__currentSelection">
+                                    <h4><a name="property__currentSelection" property="yui:name">_currentSelection</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Caches a copy of the selection for key events. Only creating the selection on keydown
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__lastBookmark">
+                                    <h4><a name="property__lastBookmark" property="yui:name">_lastBookmark</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Holder for the selection bookmark in IE.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:property" resource="#property_frame">
                                     <h4><a name="property_frame" property="yui:name">frame</a>
                                         - <code><span property="yui:type">object</span></code>
@@ -151,6 +181,36 @@
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Title of frame document: Rich Text Editor
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_TABKEY">
+                                    <h4><a name="property_TABKEY" property="yui:name">TABKEY</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The HTML markup to use for the tabkey
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_TAG2CMD">
+                                    <h4><a name="property_TAG2CMD" property="yui:name">TAG2CMD</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A hash table of tags to their execcomand's
                                         </div>
                                     </div>
      
@@ -279,6 +339,36 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="private" rel="yui:method" resource="#method__onFrameActivate">
+                                    <h4>
+                                        <a name="method__onFrameActivate">_onFrameActivate</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onFrameActivate</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Moves the cached selection bookmark back so IE can place the cursor in the right place.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="private" rel="yui:method" resource="#method__onFrameKeyDown">
                                     <h4>
                                         <a name="method__onFrameKeyDown">_onFrameKeyDown</a></h4>
@@ -289,6 +379,36 @@
                                         
                                         void
                                             <strong property="yui:name">_onFrameKeyDown</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires nodeChange event
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__onFrameKeyPress">
+                                    <h4>
+                                        <a name="method__onFrameKeyPress">_onFrameKeyPress</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onFrameKeyPress</strong>
                                            (
                                             )
                                         </code>
@@ -369,6 +489,90 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="private" rel="yui:method" resource="#method__onFrameMouseUp">
+                                    <h4>
+                                        <a name="method__onFrameMouseUp">_onFrameMouseUp</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onFrameMouseUp</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires nodeChange event
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_copyStyles">
+                                    <h4>
+                                        <a name="method_copyStyles">copyStyles</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">copyStyles</strong>
+                                           (
+                                                
+                                                        
+                                                         from
+                                                    
+                                                
+                                                        , 
+                                                         to
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Copy certain styles from one node instance to another (used for new paragraph creation mainly)
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">from</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The Node instance to copy the styles from</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">to</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The Node instance to copy the styles to</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_execCommand">
                                     <h4>
                                         <a name="method_execCommand">execCommand</a></h4>
@@ -430,16 +634,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_filter_rgb">
+                                    <div class="" rel="yui:method" resource="#method_FILTER_RGB">
                                     <h4>
-                                        <a name="method_filter_rgb">filter_rgb</a></h4>
+                                        <a name="method_FILTER_RGB">FILTER_RGB</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
+                                         static 
                                         
                                         
-                                        
-                                            <strong property="yui:name">filter_rgb</strong>
+                                            <strong property="yui:name">FILTER_RGB</strong>
                                            (
                                                 
                                                         
@@ -491,6 +695,11 @@
                                         EditorBase
                                             <strong property="yui:name">focus</strong>
                                            (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -500,6 +709,15 @@
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Callback function to execute after focus happens</span>
+                                                        </dd>
+                                                </dl>
 
 
                                             <div class="chainable">
@@ -1169,6 +1387,50 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_ready">
+                                    <h4>
+                                        <a name="event_ready">ready</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">ready</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fired after the frame is ready.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -1293,14 +1555,20 @@
                                 <li class="selected"><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -1310,6 +1578,10 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -1319,7 +1591,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -1341,7 +1613,9 @@
                                 <li class="selected"><a href="EditorBase.html" title="EditorBase">EditorBase</a></li>
                                 <li class=""><a href="Frame.html" title="Frame">Frame</a></li>
                                 <li class=""><a href="Plugin.CreateLinkBase.html" title="Plugin.CreateLinkBase">Plugin.CreateLinkBase</a></li>
+                                <li class=""><a href="Plugin.EditorBidi.html" title="Plugin.EditorBidi">Plugin.EditorBidi</a></li>
                                 <li class=""><a href="Plugin.EditorLists.html" title="Plugin.EditorLists">Plugin.EditorLists</a></li>
+                                <li class=""><a href="Plugin.EditorPara.html" title="Plugin.EditorPara">Plugin.EditorPara</a></li>
                                 <li class=""><a href="Plugin.EditorTab.html" title="Plugin.EditorTab">Plugin.EditorTab</a></li>
                                 <li class=""><a href="Plugin.ExecCommand.html" title="Plugin.ExecCommand">Plugin.ExecCommand</a></li>
                                 <li class=""><a href="Selection.html" title="Selection">Selection</a></li>
@@ -1353,6 +1627,8 @@
                         <ul class="content">        
                                 <li class=""><a href="createlink-base.js.html" title="createlink-base.js">createlink-base.js</a></li>
                                 <li class=""><a href="editor-base.js.html" title="editor-base.js">editor-base.js</a></li>
+                                <li class=""><a href="editor-bidi.js.html" title="editor-bidi.js">editor-bidi.js</a></li>
+                                <li class=""><a href="editor-para.js.html" title="editor-para.js">editor-para.js</a></li>
                                 <li class=""><a href="editor-tab.js.html" title="editor-tab.js">editor-tab.js</a></li>
                                 <li class=""><a href="exec-command.js.html" title="exec-command.js">exec-command.js</a></li>
                                 <li class=""><a href="frame.js.html" title="frame.js">frame.js</a></li>
@@ -1364,11 +1640,15 @@
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class="private"><a href="#property__currentSelection" title="_currentSelection">_currentSelection</a></li>
+                                <li class="private"><a href="#property__lastBookmark" title="_lastBookmark">_lastBookmark</a></li>
                                 <li class=""><a href="#property_frame" title="frame">frame</a></li>
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
                                 <li class=""><a href="#property_NC_KEYS" title="NC_KEYS">NC_KEYS</a></li>
                                 <li class=""><a href="#property_STRINGS" title="STRINGS">STRINGS</a></li>
                                 <li class=""><a href="#property_STRINGS.title" title="STRINGS.title">STRINGS.title</a></li>
+                                <li class=""><a href="#property_TABKEY" title="TABKEY">TABKEY</a></li>
+                                <li class=""><a href="#property_TAG2CMD" title="TAG2CMD">TAG2CMD</a></li>
                                 <li class=""><a href="#property_USE" title="USE">USE</a></li>
                         </ul>
                     </div>
@@ -1378,11 +1658,15 @@
                         <ul class="content">        
                                 <li class="private"><a href="#method__afterFrameReady" title="_afterFrameReady">_afterFrameReady</a></li>
                                 <li class="private"><a href="#method__defNodeChangeFn" title="_defNodeChangeFn">_defNodeChangeFn</a></li>
+                                <li class="private"><a href="#method__onFrameActivate" title="_onFrameActivate">_onFrameActivate</a></li>
                                 <li class="private"><a href="#method__onFrameKeyDown" title="_onFrameKeyDown">_onFrameKeyDown</a></li>
+                                <li class="private"><a href="#method__onFrameKeyPress" title="_onFrameKeyPress">_onFrameKeyPress</a></li>
                                 <li class="private"><a href="#method__onFrameKeyUp" title="_onFrameKeyUp">_onFrameKeyUp</a></li>
                                 <li class="private"><a href="#method__onFrameMouseDown" title="_onFrameMouseDown">_onFrameMouseDown</a></li>
+                                <li class="private"><a href="#method__onFrameMouseUp" title="_onFrameMouseUp">_onFrameMouseUp</a></li>
+                                <li class=""><a href="#method_copyStyles" title="copyStyles">copyStyles</a></li>
                                 <li class=""><a href="#method_execCommand" title="execCommand">execCommand</a></li>
-                                <li class=""><a href="#method_filter_rgb" title="filter_rgb">filter_rgb</a></li>
+                                <li class=""><a href="#method_FILTER_RGB" title="FILTER_RGB">FILTER_RGB</a></li>
                                 <li class=""><a href="#method_focus" title="focus">focus</a></li>
                                 <li class=""><a href="#method_getContent" title="getContent">getContent</a></li>
                                 <li class=""><a href="#method_getDomPath" title="getDomPath">getDomPath</a></li>
@@ -1400,6 +1684,7 @@
                                 <li class=""><a href="#event_dirChange" title="dirChange">dirChange</a></li>
                                 <li class=""><a href="#event_extracssChange" title="extracssChange">extracssChange</a></li>
                                 <li class=""><a href="#event_nodeChange" title="nodeChange">nodeChange</a></li>
+                                <li class=""><a href="#event_ready" title="ready">ready</a></li>
                         </ul>
                     </div>
 
@@ -1422,7 +1707,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "EditorBase", "name": "_afterFrameReady", "url": "EditorBase.html#method__afterFrameReady", "type": "method"}, {"access": "", "host": "EditorBase", "name": "content", "url": "EditorBase.html#config_content", "type": "config"}, {"access": "", "host": "EditorBase", "name": "contentChange", "url": "EditorBase.html#event_contentChange", "type": "event"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "DEFAULT", "url": "Plugin.CreateLinkBase.html#property_DEFAULT", "type": "property"}, {"access": "private", "host": "EditorBase", "name": "_defNodeChangeFn", "url": "EditorBase.html#method__defNodeChangeFn", "type": "method"}, {"access": "", "host": "EditorBase", "name": "dir", "url": "EditorBase.html#config_dir", "type": "config"}, {"access": "", "host": "EditorBase", "name": "dirChange", "url": "EditorBase.html#event_dirChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "execCommand", "url": "EditorBase.html#method_execCommand", "type": "method"}, {"access": "", "host": "EditorBase", "name": "extracss", "url": "EditorBase.html#config_extracss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "extracssChange", "url": "EditorBase.html#event_extracssChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "filter_rgb", "url": "EditorBase.html#method_filter_rgb", "type": "method"}, {"access": "", "host": "EditorBase", "name": "focus", "url": "EditorBase.html#method_focus", "type": "method"}, {"access": "", "host": "EditorBase", "name": "frame", "url": "EditorBase.html#property_frame", "type": "property"}, {"access": "", "host": "EditorBase", "name": "getContent", "url": "EditorBase.html#method_getContent", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getDomPath", "url": "EditorBase.html#method_getDomPath", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getInstance", "url": "EditorBase.html#method_getInstance", "type": "method"}, {"access": "", "host": "EditorBase", "name": "hide", "url": "EditorBase.html#method_hide", "type": "method"}, {"access": "", "host": "EditorBase", "name": "NAME", "url": "EditorBase.html#property_NAME", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NC_KEYS", "url": "EditorBase.html#property_NC_KEYS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "nodeChange", "url": "EditorBase.html#event_nodeChange", "type": "event"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyDown", "url": "EditorBase.html#method__onFrameKeyDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyUp", "url": "EditorBase.html#method__onFrameKeyUp", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseDown", "url": "EditorBase.html#method__onFrameMouseDown", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "PROMPT", "url": "Plugin.CreateLinkBase.html#property_PROMPT", "type": "property"}, {"access": "", "host": "EditorBase", "name": "render", "url": "EditorBase.html#method_render", "type": "method"}, {"access": "", "host": "EditorBase", "name": "show", "url": "EditorBase.html#method_show", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "STRINGS", "url": "Plugin.CreateLinkBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS", "url": "EditorBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS.title", "url": "EditorBase.html#property_STRINGS.title", "type": "property"}, {"access": "", "host": "EditorBase", "name": "USE", "url": "EditorBase.html#property_USE", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "private", "host": "EditorBase", "name": "_afterFrameReady", "url": "EditorBase.html#method__afterFrameReady", "type": "method"}, {"access": "", "host": "EditorBase", "name": "content", "url": "EditorBase.html#config_content", "type": "config"}, {"access": "", "host": "EditorBase", "name": "contentChange", "url": "EditorBase.html#event_contentChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "copyStyles", "url": "EditorBase.html#method_copyStyles", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_currentSelection", "url": "EditorBase.html#property__currentSelection", "type": "property"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "DEFAULT", "url": "Plugin.CreateLinkBase.html#property_DEFAULT", "type": "property"}, {"access": "private", "host": "EditorBase", "name": "_defNodeChangeFn", "url": "EditorBase.html#method__defNodeChangeFn", "type": "method"}, {"access": "", "host": "EditorBase", "name": "dir", "url": "EditorBase.html#config_dir", "type": "config"}, {"access": "", "host": "EditorBase", "name": "dirChange", "url": "EditorBase.html#event_dirChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "execCommand", "url": "EditorBase.html#method_execCommand", "type": "method"}, {"access": "", "host": "EditorBase", "name": "extracss", "url": "EditorBase.html#config_extracss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "extracssChange", "url": "EditorBase.html#event_extracssChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "FILTER_RGB", "url": "EditorBase.html#method_FILTER_RGB", "type": "method"}, {"access": "", "host": "EditorBase", "name": "focus", "url": "EditorBase.html#method_focus", "type": "method"}, {"access": "", "host": "EditorBase", "name": "frame", "url": "EditorBase.html#property_frame", "type": "property"}, {"access": "", "host": "EditorBase", "name": "getContent", "url": "EditorBase.html#method_getContent", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getDomPath", "url": "EditorBase.html#method_getDomPath", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getInstance", "url": "EditorBase.html#method_getInstance", "type": "method"}, {"access": "", "host": "EditorBase", "name": "hide", "url": "EditorBase.html#method_hide", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_lastBookmark", "url": "EditorBase.html#property__lastBookmark", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NAME", "url": "EditorBase.html#property_NAME", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NC_KEYS", "url": "EditorBase.html#property_NC_KEYS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "nodeChange", "url": "EditorBase.html#event_nodeChange", "type": "event"}, {"access": "private", "host": "EditorBase", "name": "_onFrameActivate", "url": "EditorBase.html#method__onFrameActivate", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyDown", "url": "EditorBase.html#method__onFrameKeyDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyPress", "url": "EditorBase.html#method__onFrameKeyPress", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyUp", "url": "EditorBase.html#method__onFrameKeyUp", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseDown", "url": "EditorBase.html#method__onFrameMouseDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseUp", "url": "EditorBase.html#method__onFrameMouseUp", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "PROMPT", "url": "Plugin.CreateLinkBase.html#property_PROMPT", "type": "property"}, {"access": "", "host": "EditorBase", "name": "ready", "url": "EditorBase.html#event_ready", "type": "event"}, {"access": "", "host": "EditorBase", "name": "render", "url": "EditorBase.html#method_render", "type": "method"}, {"access": "", "host": "EditorBase", "name": "show", "url": "EditorBase.html#method_show", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "STRINGS", "url": "Plugin.CreateLinkBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS", "url": "EditorBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS.title", "url": "EditorBase.html#property_STRINGS.title", "type": "property"}, {"access": "", "host": "EditorBase", "name": "TABKEY", "url": "EditorBase.html#property_TABKEY", "type": "property"}, {"access": "", "host": "EditorBase", "name": "TAG2CMD", "url": "EditorBase.html#property_TAG2CMD", "type": "property"}, {"access": "", "host": "EditorBase", "name": "USE", "url": "EditorBase.html#property_USE", "type": "property"}];
 </script>
 </body>
 </html>

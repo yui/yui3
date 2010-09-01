@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>event-valuechange manual tests</title>
+</head>
+<body>
+
+<h1>event-valuechange manual tests</h1>
+
+<h2>valueChange</h2>
+<form>
+    <input type="text" class="valuechange">
+    <textarea class="valuechange"></textarea>
+</form>
+
+<h2>input</h2>
+<form>
+    <input type="text" class="input">
+    <textarea class="input"></textarea>
+</form>
+
+<h2>keyup</h2>
+<form>
+    <input type="text" class="keyup">
+    <textarea class="keyup"></textarea>
+</form>
+
+<h2>keypress</h2>
+<form>
+    <input type="text" class="keypress">
+    <textarea class="keypress"></textarea>
+</form>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({filter: 'raw'}).use('event-valuechange', function(Y) {
+    Y.all('.valuechange').on('valueChange', function (e) {
+        Y.log("valueChange: from " + e.prevVal + " to " + e.newVal, 'info');
+    });
+
+    Y.Node.DOM_EVENTS['input'] = true;
+    Y.all('.input').on('input', function (e) {
+        Y.log("input: from ? to " + e.currentTarget.get('value'), 'info');
+    });
+
+    Y.all('.keyup').on('keyup', function (e) {
+        Y.log("keyup: from ? to " + e.currentTarget.get('value'), 'info');
+    });
+
+    Y.all('.keypress').on('keypress', function (e) {
+        Y.log("keypress: from ? to " + e.currentTarget.get('value'), 'info');
+    });
+});
+</script>
+</body>
+</html>

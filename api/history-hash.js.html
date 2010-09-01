@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>history&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>history&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
                 
@@ -63,18 +63,19 @@
 <span class="cm"> *   documentation for details.</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">HistoryBase</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
-    <span class="nx">Lang</span>           <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-    <span class="nx">Obj</span>            <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
-    <span class="nx">GlobalEnv</span>      <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.HistoryHash&#39;</span><span class="p">),</span>
+<span class="kd">var</span> <span class="nx">HistoryBase</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
+    <span class="nx">Lang</span>        <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">YArray</span>      <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+    <span class="nx">GlobalEnv</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.HistoryHash&#39;</span><span class="p">),</span>
 
-    <span class="nx">SRC_HASH</span>       <span class="o">=</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_HASH</span>    <span class="o">=</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span>
 
     <span class="nx">hashNotifiers</span><span class="p">,</span>
     <span class="nx">oldHash</span><span class="p">,</span>
     <span class="nx">oldUrl</span><span class="p">,</span>
-    <span class="nx">win</span>            <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-    <span class="nx">location</span>       <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+    <span class="nx">win</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+    <span class="nx">location</span>        <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">,</span>
+    <span class="nx">useHistoryHTML5</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useHistoryHTML5</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">HistoryHash</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -83,16 +84,20 @@
 <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">,</span> <span class="nx">HistoryBase</span><span class="p">,</span> <span class="p">{</span>
     <span class="c1">// -- Initialization -------------------------------------------------------</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Use the bookmarked state as the initialState if no initialState was</span>
-        <span class="c1">// specified.</span>
+        <span class="kd">var</span> <span class="nx">bookmarkedState</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">();</span>
+
+        <span class="c1">// If an initialState was provided, merge the bookmarked state into it</span>
+        <span class="c1">// (the bookmarked state wins).</span>
         <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span> <span class="o">||</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_initialState</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span> <span class="o">?</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span><span class="p">,</span> <span class="nx">bookmarkedState</span><span class="p">)</span> <span class="o">:</span> <span class="nx">bookmarkedState</span><span class="p">;</span>
 
         <span class="c1">// Subscribe to the synthetic hashchange event (defined below) to handle</span>
         <span class="c1">// changes.</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterHashChange</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">win</span><span class="p">);</span>
 
-        <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+        <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
@@ -187,7 +192,7 @@
         <span class="kd">var</span> <span class="nx">encode</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">encode</span><span class="p">,</span>
             <span class="nx">hash</span>   <span class="o">=</span> <span class="p">[];</span>
 
-        <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">hash</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">encode</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">encode</span><span class="p">(</span><span class="nx">value</span><span class="p">));</span>
             <span class="p">}</span>
@@ -341,7 +346,6 @@
 <span class="p">});</span>
 
 <span class="c1">// -- Synthetic hashchange Event -----------------------------------------------</span>
-<span class="nx">hashNotifiers</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.HistoryHash._hashNotifiers&#39;</span><span class="p">);</span>
 
 <span class="c1">// TODO: YUIDoc currently doesn&#39;t provide a good way to document synthetic DOM</span>
 <span class="c1">// events. For now, we&#39;re just documenting the hashchange event on the YUI</span>
@@ -397,26 +401,31 @@
 <span class="cm"> *   &lt;/dd&gt;</span>
 <span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> * @for YUI</span>
+<span class="cm"> * @since 3.2.0</span>
 <span class="cm"> */</span>
+
+<span class="nx">hashNotifiers</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">hashNotifiers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">hashNotifiers</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_notifiers</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="p">}</span>
+
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Ignore this subscriber if the node is anything other than the</span>
+        <span class="c1">// Ignore this subscription if the node is anything other than the</span>
         <span class="c1">// window or document body, since those are the only elements that</span>
         <span class="c1">// should support the hashchange event. Note that the body could also be</span>
         <span class="c1">// a frameset, but that&#39;s okay since framesets support hashchange too.</span>
-        <span class="k">if</span> <span class="p">((</span><span class="nx">node</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">win</span><span class="p">)</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">))</span> <span class="o">&amp;&amp;</span>
-                <span class="o">!</span><span class="nx">Obj</span><span class="p">.</span><span class="nx">owns</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">.</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-
-            <span class="nx">hashNotifiers</span><span class="p">[</span><span class="nx">notifier</span><span class="p">.</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">notifier</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">win</span><span class="p">)</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">hashNotifiers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">notifier</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// TODO: Is it safe to use hasSubs()? It&#39;s not marked private/protected,</span>
-        <span class="c1">// but also not documented. Also, subscriber counts don&#39;t seem to be</span>
-        <span class="c1">// updated after detach().</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">notifier</span><span class="p">.</span><span class="nx">hasSubs</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">delete</span> <span class="nx">hashNotifiers</span><span class="p">[</span><span class="nx">notifier</span><span class="p">.</span><span class="nx">key</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">hashNotifiers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">});</span>
@@ -430,8 +439,11 @@
         <span class="kd">var</span> <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span><span class="p">(),</span>
             <span class="nx">newUrl</span>  <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">();</span>
 
-        <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Iterate over a copy of the hashNotifiers array since a subscriber</span>
+        <span class="c1">// could detach during iteration and cause the array to be re-indexed.</span>
+        <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">.</span><span class="nx">concat</span><span class="p">(),</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">notifier</span><span class="p">.</span><span class="nx">fire</span><span class="p">({</span>
+                <span class="nx">_event</span> <span class="o">:</span> <span class="nx">e</span><span class="p">,</span>
                 <span class="nx">oldHash</span><span class="o">:</span> <span class="nx">oldHash</span><span class="p">,</span>
                 <span class="nx">oldUrl</span> <span class="o">:</span> <span class="nx">oldUrl</span><span class="p">,</span>
                 <span class="nx">newHash</span><span class="o">:</span> <span class="nx">newHash</span><span class="p">,</span>
@@ -468,7 +480,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">oldHash</span> <span class="o">!==</span> <span class="nx">newHash</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">newUrl</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">();</span>
 
-                <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">notifier</span><span class="p">.</span><span class="nx">fire</span><span class="p">({</span>
                         <span class="nx">oldHash</span><span class="o">:</span> <span class="nx">oldHash</span><span class="p">,</span>
                         <span class="nx">oldUrl</span> <span class="o">:</span> <span class="nx">oldUrl</span><span class="p">,</span>
@@ -486,11 +498,9 @@
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">;</span>
 
-<span class="c1">// Only point Y.History at HistoryHash if it doesn&#39;t already exist and if the</span>
-<span class="c1">// current browser doesn&#39;t support HTML5 history, or if the HistoryHTML5 class</span>
-<span class="c1">// is not present. The history-hash module is always loaded after history-html5</span>
-<span class="c1">// if history-html5 is loaded, so this check doesn&#39;t introduce a race condition.</span>
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span><span class="p">))</span> <span class="p">{</span>
+<span class="c1">// HistoryHash will never win over HistoryHTML5 unless useHistoryHTML5 is false.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">useHistoryHTML5</span> <span class="o">===</span> <span class="kc">false</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">&amp;&amp;</span> <span class="nx">useHistoryHTML5</span> <span class="o">!==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span>
+        <span class="p">(</span><span class="o">!</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span><span class="p">)))</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
@@ -524,14 +534,20 @@
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class="selected"><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -541,6 +557,10 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -550,7 +570,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -599,7 +619,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "addValue", "url": "HistoryBase.html#method_addValue", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_afterHashChange", "url": "HistoryHash.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "createHash", "url": "HistoryHash.html#method_createHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "decode", "url": "HistoryHash.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "encode", "url": "HistoryHash.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getHash", "url": "HistoryHash.html#method_getHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getUrl", "url": "HistoryHash.html#method_getUrl", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "hashPrefix", "url": "HistoryHash.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "html5", "url": "HistoryBase.html#property_html5", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "private", "host": "HistoryBase", "name": "_isSimpleObject", "url": "HistoryBase.html#method__isSimpleObject", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "nativeHashChange", "url": "HistoryBase.html#property_nativeHashChange", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_onPopState", "url": "HistoryHTML5.html#method__onPopState", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "parseHash", "url": "HistoryHash.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_REGEX_HASH", "url": "HistoryHash.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "replaceHash", "url": "HistoryHash.html#method_replaceHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "replaceValue", "url": "HistoryBase.html#method_replaceValue", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "setHash", "url": "HistoryHash.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "SRC_HASH", "url": "HistoryHash.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryHTML5", "name": "SRC_POPSTATE", "url": "HistoryHTML5.html#property_SRC_POPSTATE", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeState", "url": "HistoryHTML5.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_updateIframe", "url": "HistoryHash.html#method__updateIframe", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "addValue", "url": "HistoryBase.html#method_addValue", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_afterHashChange", "url": "HistoryHash.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_config", "url": "HistoryBase.html#property__config", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "createHash", "url": "HistoryHash.html#method_createHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "decode", "url": "HistoryHash.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "encode", "url": "HistoryHash.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getHash", "url": "HistoryHash.html#method_getHash", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_getSessionKey", "url": "HistoryHTML5.html#method__getSessionKey", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getUrl", "url": "HistoryHash.html#method_getUrl", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "hashPrefix", "url": "HistoryHash.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "html5", "url": "HistoryBase.html#property_html5", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_initialState", "url": "HistoryBase.html#property__initialState", "type": "property"}, {"access": "private", "host": "HistoryBase", "name": "_isSimpleObject", "url": "HistoryBase.html#method__isSimpleObject", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_loadSessionState", "url": "HistoryHTML5.html#method__loadSessionState", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "nativeHashChange", "url": "HistoryBase.html#property_nativeHashChange", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_onPopState", "url": "HistoryHTML5.html#method__onPopState", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "parseHash", "url": "HistoryHash.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_REGEX_HASH", "url": "HistoryHash.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "replaceHash", "url": "HistoryHash.html#method_replaceHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "replaceValue", "url": "HistoryBase.html#method_replaceValue", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "setHash", "url": "HistoryHash.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "SRC_HASH", "url": "HistoryHash.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryHTML5", "name": "SRC_POPSTATE", "url": "HistoryHTML5.html#property_SRC_POPSTATE", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeSessionState", "url": "HistoryHTML5.html#method__storeSessionState", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeState", "url": "HistoryHTML5.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_updateIframe", "url": "HistoryHash.html#method__updateIframe", "type": "method"}];
 </script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+{
+    "event-valuechange": {
+        "requires": [
+            "event-focus",
+            "event-synthetic"
+        ]
+    }
+}

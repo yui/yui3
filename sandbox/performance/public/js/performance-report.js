@@ -222,9 +222,9 @@ Y.extend(Report, Y.Widget, {
                 chartUrl : this.CHART_URL + this._createQueryString(chartParams),
                 code     : this._htmlEntities(test.test.toString()),
                 groupName: this._htmlEntities(group.name || 'Default'),
-                mediandev: resultData.mediandev !== '' ? '±' + resultData.mediandev : '',
+                mediandev: resultData.mediandev !== '' ? '&plusmn;' + resultData.mediandev : '',
                 name     : this._htmlEntities(resultData.name),
-                stdev    : resultData.stdev !== '' ? '±' + resultData.stdev : ''
+                stdev    : resultData.stdev !== '' ? '&plusmn;' + resultData.stdev : ''
             }),
 
             function (key, value, meta) {

@@ -8,6 +8,12 @@
                     "event-custom-base"
                 ]
             }, 
+            "event-synthetic": {
+                "requires": [
+                    "node-base",
+                    "event-custom"
+                ]
+            },
             "event-delegate": {
                 "requires": [
                     "node-base"
@@ -15,37 +21,31 @@
             }, 
             "event-focus": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-key": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mouseenter": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }
         },
         "plugins": {
-            "event-synthetic": {
-                "requires": [
-                    "node-base",
-                    "event-custom"
-                ]
-            },
             "event-touch": {
                 "requires" : [
                      "node-base"

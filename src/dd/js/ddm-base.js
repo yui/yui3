@@ -104,7 +104,7 @@
         * @description The PREFIX to attach to all DD CSS class names
         * @type {String}
         */
-        CSS_PREFIX: 'yui3-dd',
+        CSS_PREFIX: Y.ClassNameManager.getClassName('dd'),
         _activateTargets: function() {},        
         /**
         * @private
@@ -159,11 +159,10 @@
         _setupListeners: function() {
             this._createPG();
             this._active = true;
-            //var doc = Y.one(Y.config.doc);
-            //doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            //doc.on('mouseup', Y.bind(this._end, this));
-            //doc.on('move', Y.bind(this._move, this));
-            //doc.on('moveend', Y.bind(this._end, this));
+
+            var doc = Y.one(Y.config.doc);
+            doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
         * @private

@@ -4,8 +4,8 @@
             "autocomplete-base": {
                 "requires": [
                     "base-base",
+                    "event-valuechange",
                     "node-base",
-                    "value-change"
                 ]
             },
 

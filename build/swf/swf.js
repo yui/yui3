@@ -17,14 +17,14 @@ YUI.add('swf', function(Y) {
 		FLASH_TYPE = "application/x-shockwave-flash",
 		FLASH_VER = "10.0.22",
 		EXPRESS_INSTALL_URL = "http://fpdownload.macromedia.com/pub/flashplayer/update/current/swf/autoUpdater.swf?" + Math.random(),
+		EVENT_HANDLER = "SWF.eventHandler",
 		possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", menu:"", name:"", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
 		
 		/**
-		 * The SWF utility is a tool for embedding Flash applications in HTMl pages.
+		 * The SWF utility is a tool for embedding Flash applications in HTML pages.
 		 * @module swf
 		 * @title SWF Utility
-		 * @requires yahoo, dom, event
-		 * @namespace YAHOO.widget
+		 * @requires event-custom, node, swfdetect
 		 */
 
 		/**
@@ -37,11 +37,18 @@ YUI.add('swf', function(Y) {
 		 *        The width and height of the SWF will be set to the width and height of this container element.
 		 * @param {String} swfURL The URL of the SWF to be embedded into the page.
 		 * @param {Object} p_oAttributes (optional) Configuration parameters for the Flash application and values for Flashvars
-		 *        to be passed to the SWF.
+		 *        to be passed to the SWF. The p_oAttributes object allows the following additional properties:
+		 *        <dl>
+         *          <dt>version : String</dt>
+         *          <dd>The minimum version of Flash required on the user's machine.</dd>
+         *          <dt>fixedAttributes : Object</dt>
+         *          <dd>An object literal containing one or more of the following String keys and their values: <code>align, 
+         *              allowFullScreen, allowNetworking, allowScriptAccess, base, bgcolor, menu, name, quality, salign, scale,
+         *              tabindex, wmode.</code> event from the thumb</dd>
+         *        </dl>
 		 */
 				
-function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/) {
-	
+function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
 	
 	this._id = Y.guid("yuiswf");
 	
@@ -57,7 +64,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	var flashURL = (shouldExpressInstall)?EXPRESS_INSTALL_URL:swfURL;
 	var objstring = '<object ';
 	var w, h;
-	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id;
+	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id + "&YUIBridgeCallback=" + EVENT_HANDLER + "&allowedDomain=" + document.location.hostname;
 	
 	Y.SWF._instances[_id] = this;
     if (oElement && (isFlashVersionRight || shouldExpressInstall) && flashURL) {
@@ -99,26 +106,34 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 				oElement.setContent(objstring);
 			
 				this._swf = Node.one("#" + _id);
-			}				
+			}
+	/**
+	* Fired when the Flash player version on the user's machine is below the required value.
+	*
+	* @event wrongflashversion
+    */
+	else {
+			this.publish("wrongflashversion", {fireOnce:true});
+	     	this.fire("wrongflashversion", event);
+		}		
 };
 
 /**
+ * @private
  * The static collection of all instances of the SWFs on the page.
  * @property _instances
- * @private
  * @type Object
  */
-
 
 SWF._instances = SWF._instances || {};
 
 /**
+ * @private
  * Handles an event coming from within the SWF and delegate it
  * to a specific instance of SWF.
  * @method eventHandler
  * @param swfid {String} the id of the SWF dispatching the event
  * @param event {Object} the event being transmitted.
- * @private
  */
 SWF.eventHandler = function (swfid, event) {
 	SWF._instances[swfid]._eventHandler(event);
@@ -132,12 +147,43 @@ SWF.prototype =
 	 * @method _eventHandler
 	 * @param event {Object} The event to be propagated from Flash.
 	 */
+	
 	_eventHandler: function(event)
 	{
-        this.fire(event.type, event);
+		if (event.type === "swfReady") 
+		{
+			this.publish("swfReady", {fireOnce:true});
+	     	this.fire("swfReady", event);
+        }
+		else if(event.type === "log")
+		{
+		}
+        else
+		{
+			this.fire(event.type, event);
+        } 
 	},
 		
-
+	/**
+	 * Calls a specific function exposed by the SWF's
+	 * ExternalInterface.
+	 * @method callSWF
+	 * @param func {String} the name of the function to call
+	 * @param args {Object} the set of arguments to pass to the function.
+	 */
+	
+	callSWF: function (func, args)
+	{
+		if (!args) { 
+			  args= []; 
+		};	
+		if (this._swf._node[func]) {
+		return(this._swf._node[func].apply(this._swf._node, args));
+	    } else {
+		return null;
+	    }
+	},
+	
 	/**
 	 * Public accessor to the unique name of the SWF instance.
 	 *
@@ -150,7 +196,6 @@ SWF.prototype =
 	}
 };
 
-//
 Y.augment(SWF, Y.EventTarget);
 
 Y.SWF = SWF;

@@ -1,7 +1,23 @@
+/**
+ * Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade
+ *
+ * @module event-touch
+ */
+
 var SCALE = "scale",
     ROTATION = "rotation",
     IDENTIFIER = "identifier";
 
+/**
+ * Adds touch event facade normalization properties to the DOM event facade
+ *
+ * @method _touch
+ * @for DOMEventFacade
+ * @private
+ * @param ev {Event} the DOM event
+ * @param currentTarget {HTMLElement} the element the listener was attached to
+ * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
+ */
 Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
     var i,l, etCached, et,touchCache;

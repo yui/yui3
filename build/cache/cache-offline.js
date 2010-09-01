@@ -10,12 +10,15 @@ function CacheOffline() {
     CacheOffline.superclass.constructor.apply(this, arguments);
 }
 
+var localStorage = Y.config.win.localStorage,
+    JSON = Y.JSON,
+
     /////////////////////////////////////////////////////////////////////////////
     //
     // CacheOffline static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(CacheOffline, {
+    cacheOfflineStatic = {
     /**
      * Class name.
      *
@@ -35,128 +38,66 @@ Y.mix(CacheOffline, {
         /////////////////////////////////////////////////////////////////////////////
 
         /**
+        * @attribute sandbox
+        * @description A string that must be passed in via the constructor.
+        * This identifier is used to sandbox one cache instance's entries
+        * from another. Calling the cache instance's flush and length methods
+        * or get("entries") will apply to only these sandboxed entries.
+        * @type String
+        * @default "default"
+        * @initOnly
+        */
+        sandbox: {
+            value: "default",
+            writeOnce: "initOnly"
+        },
+
+        /**
         * @attribute expires
         * @description Absolute Date when data expires or
         * relative number of milliseconds. Zero disables expiration.
         * @type Date | Number
-        * @default 0
+        * @default 86400000 (one day)
         */
         expires: {
-            value: 86400000, //one day
-            validator: function(v) {
-                return Y.Lang.isNumber(v) && v >= 0;
-            }
+            value: 86400000
         },
 
         /**
         * @attribute max
         * @description Disabled.
-        * @readonly
+        * @readOnly
         * @default null
         */
         max: {
             value: null,
-            readonly: true,
-            setter: function() {
-                return null;
-            }
+            readOnly: true
         },
 
         /**
         * @attribute uniqueKeys
         * @description Always true for CacheOffline.
-        * @readonly
+        * @readOnly
         * @default true
         */
         uniqueKeys: {
             value: true,
-            readonly: true,
+            readOnly: true,
             setter: function() {
                 return true;
             }
         }
-    }
-});
-
-
-var localStorage = Y.config.win.localStorage,
-    isDate = Y.Lang.isDate,
-    JSON = Y.JSON,
-    cacheOfflinePrototype =  localStorage ? {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // CacheOffline protected methods
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Sets max.
-     *
-     * @method _setMax
-     * @protected
-     */
-    //_setMax: function(value) {
-        //return null;
-    //},
+    },
     
     /**
-     * Gets size.
+     * Removes all items from all sandboxes. Useful if localStorage has
+     * exceeded quota. Only supported on browsers that implement HTML 5
+     * localStorage.
      *
-     * @method _getSize
-     * @protected
+     * @method flushAll
+     * @static
      */
-    _getSize: function() {
-        return localStorage.length;
-    },
-
-    /**
-     * Gets all entries.
-     *
-     * @method _getEntries
-     * @protected
-     */
-    _getEntries: function() {
-        var entries = this._entries,
-            i=0,
-            l=this._getSize();
-        if(entries) { // Could be null if instance was destroyed
-            for(; i<l; ++i) {
-                entries[i] = JSON.parse(localStorage.key(i));
-            }
-        }
-        return entries;
-    },
-
-
-    /**
-     * Adds entry to cache.
-     *
-     * @method _defAddFn
-     * @param e {Event.Facade} Event Facade with the following properties:
-     * <dl>
-     * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
-     * </dl>
-     * @protected
-     */
-    _defAddFn: function(e) {
-        var entry = e.entry,
-            request = entry.request,
-            expires = this.get("expires");
-            
-        entry.expires = isDate(expires) ? expires :
-            (expires ? new Date().getTime() + expires : null);
-
-        localStorage.setItem(JSON.stringify({"request":request}), JSON.stringify(entry));
-    },
-
-    /**
-     * Flushes cache.
-     *
-     * @method _defFlushFn
-     * @param e {Event.Facade} Event Facade object.
-     * @protected
-     */
-    _defFlushFn: function(e) {
+    flushAll: function() {
         var store = localStorage, key;
         if(store) {
             if(store.clear) {
@@ -172,11 +113,137 @@ var localStorage = Y.config.win.localStorage,
                 }
             }
         }
+        else {
+        }
+    }
+    },
+
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // CacheOffline events
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    /**
+    * @event error
+    * @description Fired when an entry could not be added, most likely due to
+    * exceeded browser quota.
+    * <dl>
+    * <dt>error (Object)</dt> <dd>The error object.</dd>
+    * </dl>
+    */
+
+    cacheOfflinePrototype =  localStorage ? {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // CacheOffline protected methods
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Always return null.
+     *
+     * @method _setMax
+     * @protected
+     */
+    _setMax: function(value) {
+        return null;
     },
 
     /**
+     * Gets size.
+     *
+     * @method _getSize
+     * @protected
+     */
+    _getSize: function() {
+        var count = 0,
+            i=0,
+            l=localStorage.length;
+        for(; i<l; ++i) {
+            // Match sandbox id
+            if(localStorage.key(i).indexOf(this.get("sandbox")) === 0) {
+                count++;
+            }
+        }
+        return count;
+    },
+
+    /**
+     * Gets all entries.
+     *
+     * @method _getEntries
+     * @protected
+     */
+    _getEntries: function() {
+        var entries = [],
+            i=0,
+            l=localStorage.length,
+            sandbox = this.get("sandbox");
+        for(; i<l; ++i) {
+            // Match sandbox id
+            if(localStorage.key(i).indexOf(sandbox) === 0) {
+                entries[i] = JSON.parse(localStorage.key(i).substring(sandbox.length));
+            }
+        }
+        return entries;
+    },
+
+    /**
+     * Adds entry to cache.
+     *
+     * @method _defAddFn
+     * @param e {Event.Facade} Event Facade with the following properties:
+     * <dl>
+     * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
+     * </dl>
+     * @protected
+     */
+    _defAddFn: function(e) {
+        var entry = e.entry,
+            request = entry.request,
+            cached = entry.cached,
+            expires = entry.expires;
+            
+        // Convert Dates to msecs on the way into localStorage
+        entry.cached = cached.getTime();
+        entry.expires = expires ? expires.getTime() : expires;
+
+        try {
+            localStorage.setItem(this.get("sandbox")+JSON.stringify({"request":request}), JSON.stringify(entry));
+        }
+        catch(error) {
+            this.fire("error", {error:error});
+        }
+    },
+
+    /**
+     * Flushes cache.
+     *
+     * @method _defFlushFn
+     * @param e {Event.Facade} Event Facade object.
+     * @protected
+     */
+    _defFlushFn: function(e) {
+        var key,
+            i=localStorage.length-1;
+        for(; i>-1; --i) {
+            // Match sandbox id
+            key = localStorage.key(i);
+            if(key.indexOf(this.get("sandbox")) === 0) {
+                localStorage.removeItem(key);
+            }
+        }
+    },
+    
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // CacheOffline public methods
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
      * Adds a new entry to the cache of the format
-     * {request:request, response:response, expires: expires}.
+     * {request:request, response:response, cached:cached, expires: expires}.
      *
      * @method add
      * @param request {Object} Request value must be a String or JSON.
@@ -195,24 +262,27 @@ var localStorage = Y.config.win.localStorage,
     retrieve: function(request) {
         this.fire("request", {request: request});
 
-        var entry, expires, cached;
+        var entry, expires, sandboxedrequest;
 
         try {
-            request = JSON.stringify({"request":request});
+            sandboxedrequest = this.get("sandbox")+JSON.stringify({"request":request});
             try {
-                entry = JSON.parse(localStorage.getItem(request));
+                entry = JSON.parse(localStorage.getItem(sandboxedrequest));
             }
             catch(e) {
             }
         }
         catch(e2) {
         }
-        
+
         if(entry) {
-            cached = entry.cached;
-            entry.cached = cached ? new Date(cached) : cached;
+            // Convert msecs to Dates on the way out of localStorage
+            entry.cached = new Date(entry.cached);
             expires = entry.expires;
-            if(!expires || new Date() < expires) {
+            expires = !expires ? null : new Date(expires);
+            entry.expires = expires;
+            
+            if(this._isMatch(request, entry)) {
                 this.fire("retrieve", {entry: entry});
                 return entry;
             }
@@ -221,44 +291,17 @@ var localStorage = Y.config.win.localStorage,
     }
 } : {
     /**
-     * Adds entry to cache with an expires property.
+     * Always return null.
      *
-     * @method _defAddFn
-     * @param e {Event.Facade} Event Facade with the following properties:
-     * <dl>
-     * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
-     * </dl>
+     * @method _setMax
      * @protected
      */
-    _defAddFn: function(e) {
-        var expires = this.get("expires");
-        e.entry.expires = isDate(expires) ? expires :
-            (expires ? new Date().getTime() + this.get("expires") : null);
-        
-        CacheOffline.superclass._defAddFn.call(this, e);
-    },
-
-    /**
-     * Overrides the default method to check for expired entry.
-     * Returns true if current request matches the cached request, otherwise
-     * false. Implementers should override this method to customize the
-     * cache-matching algorithm.
-     *
-     * @method _isMatch
-     * @param request {Object} Request object.
-     * @param entry {Object} Cached entry.
-     * @return {Boolean} True if current request matches given cached request
-     * and entry has not expired, false otherwise.
-     * @protected
-     */
-    _isMatch: function(request, entry) {
-        if(!entry.expires || new Date() < entry.expires) {
-            return (request === entry.request);
-        }
-        return false;
+    _setMax: function(value) {
+        return null;
     }
 };
 
+Y.mix(CacheOffline, cacheOfflineStatic);
 Y.extend(CacheOffline, Y.Cache, cacheOfflinePrototype);
 
 

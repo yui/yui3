@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head> 
+<style> 
+.demo {
+    background:#ccc;
+    width:200px;
+    height:200px;
+    Xpadding-bottom: 100px;
+    overflow: hidden;
+    position:relative;
+    XX-webkit-transition: width .0001s ease-out;
+}
+</style> 
+<script src="../../../../build/yui/yui.js"></script> 
+
+</head><body> 
+<div class="demo">this is a demo</div> 
+<div class="demo">this is a demo</div> 
+
+<script type="text/javascript"> 
+ 
+YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native', 'node-style', function(Y) {
+    var nodes = Y.all('.demo'),
+        node = nodes.item(0),
+        running = false;
+
+    node.on('transition:start', function(e) {
+        console.log(e.type);
+    });
+    node.on('transition:propertyEnd', function(e) {
+        console.log(e.type + ': ' + e.propertyName);
+        console.log(e.elapsedTime);
+    });
+
+    node.on('transition:end', function(e) {
+        console.log(e.type);
+        console.log(e.elapsedTime);
+
+    });
+
+    document.onclick = function() {
+        node.transition({
+            easing: 'ease-in',
+            duration: 2,
+            opacity: {
+                value: 0,
+                duration: 3
+            },
+            height: 0,
+            width: 0
+        }, function(e) {
+            Y.log(e);
+            Y.log('callback 1');
+        });
+
+        node.transition({
+            duration: 1,
+            opacity: 0
+        }, function(e) {
+                Y.log(e);
+                Y.log('callback 2');
+        });
+
+/*
+        node.transition({
+            duration: 1,
+            easing: 'ease-in',
+    //        paddingBottom: 0,
+    //        foo: 0,
+            height: 0,
+            width: {
+                value: 0,
+            },
+
+            left: {
+                value: '100px',
+                delay: 1
+            },
+
+            top: '100px',
+            'borderWidth': {
+                value: 0,
+                delay: 2
+            },
+
+            opacity: {
+                easing: 'cubic-bezier(0.75, 0.5, 0.25, 0)',
+                value: 0,
+                duration: 3,
+                delay: 2
+            }
+        }, function(e) {
+            console.log('callback 1');
+            console.log(e);
+            node.transition({
+                duration: 0,
+                delay: 1,
+                height: '200px',
+                width: '200px',
+                top: 0,
+                left: 0,
+                opacity: 1
+
+            });
+        });
+
+        nodes.item(1).transition({
+            duration: 2,
+            height: '100px',
+            width: '100px',
+        }, function(e) {
+            Y.log(e); 
+            console.log('callback 2');
+            nodes.item(1).setStyle('height', 0);
+            nodes.item(1).setStyle('width', 0);
+        });
+    */
+    };
+
+    nodes.setStyle('border', '5px solid green');
+});
+ 
+</script> 
+</body></html> 

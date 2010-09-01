@@ -1,1 +1,1 @@
-YUI.add("node-event-delegate",function(A){A.Node.prototype.delegate=function(F,E,B){var D=Array.prototype.slice.call(arguments,3),C=[F,E,A.Node.getDOMNode(this),B];C=C.concat(D);return A.delegate.apply(A,C);};},"@VERSION@",{requires:["node-base","event-delegate","pluginhost"]});
+YUI.add("node-event-delegate",function(A){A.Node.prototype.delegate=function(E,D,B){var C=A.Array(arguments,0,true);C.splice(2,0,this._node);return A.delegate.apply(A,C);};},"@VERSION@",{requires:["node-base","event-delegate"]});

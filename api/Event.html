@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>event&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                  &gt; Event 
@@ -566,6 +566,165 @@ of ids and/or elements to remove the listener from.</span>
                                                             boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">true if the unbind was successful, false otherwise.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Event.define">
+                                    <h4>
+                                        <a name="method_Event.define">Event.define</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        SyntheticEvent
+                                            <strong property="yui:name">Event.define</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         config
+                                                    
+                                                
+                                                        , 
+                                                         force
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Defines a new event in the DOM event system.  Implementers are
+responsible for monitoring for a scenario whereby the event is fired.  A
+notifier object is provided to the functions identified below.  When the
+criteria defining the event are met, call notifier.fire( [args] ); to
+execute event subscribers.</p>
+<p>The first parameter is the name of the event.  The second parameter is a
+configuration object which define the behavior of the event system when the
+new event is subscribed to or detached from.  The methods that should be
+defined in this configuration object are <code>on</code>,
+<code>detach</code>, <code>delegate</code>, and <code>detachDelegate</code>.
+You are free to define any other methods or properties needed to define your
+event.  Be aware, however, that since the object is used to subclass
+SyntheticEvent, you should avoid method names used by SyntheticEvent unless
+your intention is to override the default behavior.</p>
+<p>This is a list of properties and methods that you can or should specify
+in the configuration object:</p>
+<dl>
+<dt><code>on</code></dt>
+<dd><code>function (node, subscription, notifier)</code> The
+implementation logic for subscription.  Any special setup you need to
+do to create the environment for the event being fired--E.g. native
+DOM event subscriptions.  Store subscription related objects and
+state on the <code>subscription</code> object.  When the
+criteria have been met to fire the synthetic event, call
+<code>notifier.fire(e)</code>.  See Notifier's <code>fire()</code>
+method for details about what to pass as parameters.</dd>
+<dt><code>detach</code></dt>
+<dd><code>function (node, subscription, notifier)</code> The
+implementation logic for cleaning up a detached subscription. E.g.
+detach any DOM subscriptions added in <code>on</code>.</dd>
+<dt><code>delegate</code></dt>
+<dd><code>function (node, subscription, notifier, filter)</code> The
+implementation logic for subscription via <code>Y.delegate</code> or
+<code>node.delegate</code>.  The filter is typically either a selector
+string or a function.  You can use
+<code>Y.delegate.compileFilter(selectorString)</code> to create a
+filter function from a selector string if needed.  The filter function
+expects an event object as input and should output either null, a
+matching Node, or an array of matching Nodes.  Otherwise, this acts
+like <code>on</code> DOM event subscriptions.  Store subscription
+related objects and information on the <code>subscription</code>
+object.  When the criteria have been met to fire the synthetic event,
+call <code>notifier.fire(e)</code> as noted above.</dd>
+<dt><code>detachDelegate</code></dt>
+<dd><code>function (node, subscription, notifier)</code> The
+implementation logic for cleaning up a detached delegate subscription.
+E.g. detach any DOM delegate subscriptions added in
+<code>delegate</code>.</dd>
+<dt><code>publishConfig</code></dt>
+<dd>(Object) The configuration object that will be used to instantiate
+the underlying CustomEvent. See Notifier's <code>fire</code> method
+for details.</dd>
+<dt><code>processArgs</code></dt
+<dd>
+<p><code>function (argArray, fromDelegate)</code> Optional method
+to extract any additional arguments from the subscription
+signature.  Using this allows <code>on</code> or
+<code>delegate</code> signatures like
+<code>node.on(&quot;hover&quot;, overCallback,
+outCallback)</code>.</p>
+<p>When processing an atypical argument signature, make sure the
+args array is returned to the normal signature before returning
+from the function.  For example, in the &quot;hover&quot; example
+above, the <code>outCallback</code> needs to be <code>splice</code>d
+out of the array.  The expected signature of the args array for
+<code>on()</code> subscriptions is:</p>
+<pre>
+<code>[type, callback, target, contextOverride, argN...]</code>
+</pre>
+<p>And for <code>delegate()</code>:</p>
+<pre>
+<code>[type, callback, target, filter, contextOverride, argN...]</code>
+</pre>
+<p>where <code>target</code> is the node the event is being
+subscribed for.  You can see these signatures documented for
+<code>Y.on()</code> and <code>Y.delegate()</code> respectively.</p>
+<p>Whatever gets returned from the function will be stored on the
+<code>subscription</code> object under
+<code>subscription._extra</code>.</p></dd>
+<dt><code>subMatch</code></dt>
+<dd>
+<p><code>function (sub, args)</code>  Compares a set of
+subscription arguments against a Subscription object to determine
+if they match.  The default implementation compares the callback
+function against the second argument passed to
+<code>Y.on(...)</code> or <code>node.detach(...)</code> etc.</p>
+</dd>
+</dl>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the name of the event</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the prototype definition for the new event (see above)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">force</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  override an existing event (use with caution)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            SyntheticEvent
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the subclass implementation instance created to
+handle event subscriptions of this type</dd>
                                                 </dl>
 
 
@@ -1290,14 +1449,20 @@ left out, all listeners will be removed</span>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class="selected"><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -1307,6 +1472,10 @@ left out, all listeners will be removed</span>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -1316,7 +1485,7 @@ left out, all listeners will be removed</span>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -1337,6 +1506,8 @@ left out, all listeners will be removed</span>
                         <ul class="content">
                                 <li class=""><a href="DOMEventFacade.html" title="DOMEventFacade">DOMEventFacade</a></li>
                                 <li class="selected"><a href="Event.html" title="Event">Event</a></li>
+                                <li class=""><a href="SyntheticEvent.html" title="SyntheticEvent">SyntheticEvent</a></li>
+                                <li class=""><a href="SyntheticEvent.Notifier.html" title="SyntheticEvent.Notifier">SyntheticEvent.Notifier</a></li>
                         </ul>
                     </div>
 
@@ -1347,7 +1518,6 @@ left out, all listeners will be removed</span>
                                 <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
                                 <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
-                                <li class=""><a href="event-facade-dom.js.html" title="event-facade-dom.js">event-facade-dom.js</a></li>
                                 <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
                                 <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
@@ -1385,6 +1555,7 @@ left out, all listeners will be removed</span>
                                 <li class="private"><a href="#method__unload" title="_unload">_unload</a></li>
                                 <li class=""><a href="#method_attach" title="attach">attach</a></li>
                                 <li class=""><a href="#method_detach" title="detach">detach</a></li>
+                                <li class=""><a href="#method_Event.define" title="Event.define">Event.define</a></li>
                                 <li class=""><a href="#method_generateId" title="generateId">generateId</a></li>
                                 <li class=""><a href="#method_getEvent" title="getEvent">getEvent</a></li>
                                 <li class=""><a href="#method_getListeners" title="getListeners">getListeners</a></li>
@@ -1410,7 +1581,7 @@ left out, all listeners will be removed</span>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "Event", "name": "Event.define", "url": "Event.html#method_Event.define", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
 </script>
 </body>
 </html>

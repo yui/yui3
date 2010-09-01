@@ -1,5 +1,31 @@
 {
     "dd": {
+        "plugins": {
+            "dd-gestures": {
+                "condition": {
+                    "trigger": "dd-drag",
+                    "test": "dd-gestures-test.js"
+                },
+                "requires": [
+                    "dd-drag",
+                    "event-move"
+                ]
+            },
+            "dd-drop-plugin": {
+                "requires": [
+                    "dd-drop"
+                ]
+            }, 
+            "dd-plugin": {
+                "optional": [
+                    "dd-constrain", 
+                    "dd-proxy"
+                ], 
+                "requires": [
+                    "dd-drag"
+                ]
+            } 
+        },
         "submodules": {
             "dd-constrain": {
                 "requires": [
@@ -16,7 +42,8 @@
                 "requires": [
                     "node", 
                     "base", 
-                    "yui-throttle"
+                    "yui-throttle",
+                    "classnamemanager"
                 ]
             }, 
             "dd-ddm-drop": {
@@ -25,38 +52,20 @@
                 ]
             }, 
             "dd-delegate": {
-                "optional": [
-                    "dd-drop-plugin"
-                ], 
                 "requires": [
                     "dd-drag", 
+                    "dd-drop-plugin",
                     "event-mouseenter"
                 ]
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base",
-                    "event-synthetic",
-                    "event-gestures"
+                    "dd-ddm-base"
                 ]
-            }, 
+            },
             "dd-drop": {
                 "requires": [
                     "dd-ddm-drop"
-                ]
-            }, 
-            "dd-drop-plugin": {
-                "requires": [
-                    "dd-drop"
-                ]
-            }, 
-            "dd-plugin": {
-                "optional": [
-                    "dd-constrain", 
-                    "dd-proxy"
-                ], 
-                "requires": [
-                    "dd-drag"
                 ]
             }, 
             "dd-proxy": {

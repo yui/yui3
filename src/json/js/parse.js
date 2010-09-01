@@ -35,6 +35,9 @@
 
 
 // All internals kept private for security reasons
+function fromGlobal(ref) {
+    return (Y.config.win || this || {})[ref];
+}
 
 
     /**
@@ -44,7 +47,9 @@
      * @type {Object}
      * @private
      */
-var _JSON  = (Y.config.win || {}).JSON,
+var _JSON  = fromGlobal('JSON'),
+    // Create an indirect reference to eval to allow for minification
+    _eval  = fromGlobal('eval'),
     Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
     useNative = !!Native,
 
@@ -176,7 +181,7 @@ var _JSON  = (Y.config.win || {}).JSON,
 
             // Eval the text into a JavaScript data structure, apply any
             // reviver function, and return
-            return _revive( eval('(' + s + ')'), reviver );
+            return _revive( _eval('(' + s + ')'), reviver );
         }
 
         throw new SyntaxError('JSON.parse');

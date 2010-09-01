@@ -42,6 +42,12 @@ YUI.add('dd-delegate', function(Y) {
         _shimState: null,
         /**
         * @private
+        * @property _handles
+        * @description Array of event handles to be destroyed
+        */
+        _handles: null,
+        /**
+        * @private
         * @method _onNodeChange
         * @description Listens to the nodeChange event and sets the dragNode on the temp dd instance.
         * @param {Event} e The Event.
@@ -73,7 +79,7 @@ YUI.add('dd-delegate', function(Y) {
         _delMouseDown: function(e) {
             var tar = e.currentTarget,
                 dd = this.dd;
-
+            
             if (tar.test(this.get(NODES)) && !tar.test(this.get('invalid'))) {
                 this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
@@ -85,6 +91,7 @@ YUI.add('dd-delegate', function(Y) {
                     dd.set('dragNode', tar);
                 }
                 dd._prep();
+                
                 dd.fire('drag:mouseDown', { ev: e });
             }
         },
@@ -107,11 +114,10 @@ YUI.add('dd-delegate', function(Y) {
         _onMouseLeave: function(e) {
             Y.DD.DDM._noShim = this._shimState;
         },
-        _handles: null,
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
-            var conf = this.get('dragConfig') || {},
+            var conf = Y.clone(this.get('dragConfig') || {}),
                 cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);
@@ -128,7 +134,7 @@ YUI.add('dd-delegate', function(Y) {
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
 
             //Attach the delegate to the container
-            this._handles.push(Y.delegate('mousedown', Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
+            this._handles.push(Y.delegate(Y.DD.Drag.START_EVENT, Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
 
             this._handles.push(Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont));
 

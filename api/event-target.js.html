@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-custom&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>event-custom&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
                 
@@ -78,6 +78,7 @@
     <span class="nx">PREFIX_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span>
     <span class="nx">CATEGORY_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span>
     <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="p">,</span>
+    <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
 
     <span class="nx">_wildType</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(.*)(:)(.*)/</span><span class="p">,</span> <span class="s2">&quot;*$2$3&quot;</span><span class="p">);</span>
@@ -187,7 +188,11 @@
 <span class="cm">     */</span>
     <span class="nx">once</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-        <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">handle</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">hand</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">hand</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
         <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
     <span class="p">},</span>
 
@@ -221,15 +226,15 @@
 
             <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">;</span> 
             <span class="nx">c</span> <span class="o">=</span> <span class="nx">context</span><span class="p">;</span> 
-            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">[];</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">isArr</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">after</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">_after</span><span class="p">;</span>
-                <span class="k">delete</span> <span class="nx">type</span><span class="p">.</span><span class="nx">_after</span><span class="p">;</span>
             <span class="p">}</span>
+
+            <span class="nx">after</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">_after</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="nx">type</span><span class="p">.</span><span class="nx">_after</span><span class="p">;</span>
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
 
@@ -238,11 +243,13 @@
                     <span class="nx">c</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">c</span><span class="p">;</span>
                 <span class="p">}</span>
 
-                <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">isArr</span><span class="p">)</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="p">((</span><span class="nx">after</span><span class="p">)</span> <span class="o">?</span> <span class="nx">AFTER_PREFIX</span> <span class="o">+</span> <span class="nx">k</span> <span class="o">:</span> <span class="nx">k</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">nv</span> <span class="o">=</span> <span class="p">(</span><span class="nx">after</span><span class="p">)</span> <span class="o">?</span> <span class="nx">AFTER_PREFIX</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+                <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">nv</span> <span class="o">+</span> <span class="p">((</span><span class="nx">isArr</span><span class="p">)</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">k</span><span class="p">);</span>
                 <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">f</span><span class="p">;</span>
                 <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
 
-                <span class="nx">ret</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span> 
+                <span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">));</span>
 
             <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
@@ -256,7 +263,7 @@
 
         <span class="c1">// extra redirection so we catch adaptor events too.  take a look at this.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
             <span class="c1">// Y.log(&quot;Node detected, redirecting with these args: &quot; + args);</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
@@ -267,7 +274,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
-            <span class="nx">args</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span>  <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">shorttype</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
@@ -299,7 +306,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
-            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">after</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;after&#39;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">?</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">after</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;after&#39;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">detachcategory</span><span class="p">)</span> <span class="p">{</span>
@@ -400,7 +407,7 @@
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="c1">// extra redirection so we catch adaptor events too.  take a look at this.</span>
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isNode</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="nx">shorttype</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">)))</span> <span class="p">{</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
@@ -410,7 +417,7 @@
 
         <span class="c1">// The YUI instance handles DOM events and adaptors</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="c1">// use the adaptor specific detach code if</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="p">.</span><span class="nx">detach</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">adapt</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
@@ -634,7 +641,7 @@
         <span class="kd">var</span> <span class="nx">typeIncluded</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">type</span><span class="p">),</span>
             <span class="nx">t</span> <span class="o">=</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="p">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
             <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">pre</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">,</span> <span class="nx">ce2</span><span class="p">,</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="nx">arguments</span><span class="p">;</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="nx">arguments</span><span class="p">;</span>
 
         <span class="nx">t</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">t</span><span class="p">;</span>
 
@@ -716,11 +723,16 @@
 <span class="cm">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 
         <span class="k">switch</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
                 <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="k">case</span> <span class="s1">&#39;array&#39;</span><span class="o">:</span>
+            <span class="c1">//     YArray.each(a[0], function(v) {</span>
+            <span class="c1">//         v = AFTER_PREFIX + v;</span>
+            <span class="c1">//     });</span>
+            <span class="c1">//     break;</span>
             <span class="k">case</span> <span class="s1">&#39;object&#39;</span><span class="o">:</span>
                 <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">_after</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="k">break</span><span class="p">;</span>
@@ -777,7 +789,6 @@
 <span class="c1">// @TODO implement a global namespace function on Y.Global?</span>
 
 <span class="p">})();</span>
-
 
 <span class="cm">/**</span>
 <span class="cm"> * &lt;code&gt;YUI&lt;/code&gt;&#39;s &lt;code&gt;on&lt;/code&gt; method is a unified interface for subscribing to</span>
@@ -839,15 +850,8 @@
 <span class="cm"> * alias for &lt;code&gt;on&lt;/code&gt;.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method on </span>
-<span class="cm"> * @param type** event type (this parameter does not apply for function events)</span>
+<span class="cm"> * @param type event type (this parameter does not apply for function events)</span>
 <span class="cm"> * @param fn the callback</span>
-<span class="cm"> * @param target** a descriptor for the target (applies to custom events only).</span>
-<span class="cm"> * For function events, this is the object that contains the function to</span>
-<span class="cm"> * execute.</span>
-<span class="cm"> * @param extra** 0..n Extra information a particular event may need.  These</span>
-<span class="cm"> * will be documented with the event.  In the case of function events, this</span>
-<span class="cm"> * is the name of the function to execute on the host.  In the case of</span>
-<span class="cm"> * delegate listeners, this is the event delegation specification.</span>
 <span class="cm"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
 <span class="cm"> * @param args* 0..n additional arguments to pass to the callback.</span>
 <span class="cm"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
@@ -859,15 +863,8 @@
 <span class="cm">  * the listener is immediately detached when executed.</span>
 <span class="cm">  * @see on</span>
 <span class="cm">  * @method once</span>
-<span class="cm">  * @param type** event type (this parameter does not apply for function events)</span>
+<span class="cm">  * @param type event type (this parameter does not apply for function events)</span>
 <span class="cm">  * @param fn the callback</span>
-<span class="cm">  * @param target** a descriptor for the target (applies to custom events only).</span>
-<span class="cm">  * For function events, this is the object that contains the function to</span>
-<span class="cm">  * execute.</span>
-<span class="cm">  * @param extra** 0..n Extra information a particular event may need.  These</span>
-<span class="cm">  * will be documented with the event.  In the case of function events, this</span>
-<span class="cm">  * is the name of the function to execute on the host.  In the case of</span>
-<span class="cm">  * delegate listeners, this is the event delegation specification.</span>
 <span class="cm">  * @param context optionally change the value of &#39;this&#39; in the callback</span>
 <span class="cm">  * @param args* 0..n additional arguments to pass to the callback.</span>
 <span class="cm">  * @return the event target or a detach handle per &#39;chain&#39; config</span>
@@ -884,13 +881,6 @@
 <span class="cm"> * @method after</span>
 <span class="cm"> * @param type event type (this parameter does not apply for function events)</span>
 <span class="cm"> * @param fn the callback</span>
-<span class="cm"> * @param target a descriptor for the target (applies to custom events only).</span>
-<span class="cm"> * For function events, this is the object that contains the function to</span>
-<span class="cm"> * execute.</span>
-<span class="cm"> * @param extra 0..n Extra information a particular event may need.  These</span>
-<span class="cm"> * will be documented with the event.  In the case of function events, this</span>
-<span class="cm"> * is the name of the function to execute on the host.  In the case of</span>
-<span class="cm"> * delegate listeners, this is the event delegation specification.</span>
 <span class="cm"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
 <span class="cm"> * @param args* 0..n additional arguments to pass to the callback.</span>
 <span class="cm"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
@@ -927,14 +917,20 @@
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class="selected"><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -944,6 +940,10 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -953,7 +953,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>

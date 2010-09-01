@@ -270,8 +270,9 @@ YUI.add('attribute-base', function(Y) {
          *    <dd>
          *    <p>A function, which will return the initial value to set on the attribute. This is useful
          *    for cases where the attribute configuration is defined statically, but needs to 
-         *    reference the host instance ("this") to obtain an initial value.
-         *    If defined, valueFn has precedence over the value property.</p>
+         *    reference the host instance ("this") to obtain an initial value. If both the value and valueFn properties are defined, 
+         *    the value returned by the valueFn has precedence over the value property, unless it returns undefined, in which 
+         *    case the value property is used.</p>
          *
          *    <p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
          *    </dd>
@@ -280,10 +281,14 @@ YUI.add('attribute-base', function(Y) {
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
          *        cannot be modified by invoking the set method.</dd>
          *
-         *    <dt>writeOnce &#60;boolean&#62;</dt>
-         *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+         *    <dt>writeOnce &#60;boolean&#62; or &#60;string&#62;</dt>
+         *    <dd>
+         *        Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
          *        can only have their values set once, be it through the default configuration, 
-         *        constructor configuration arguments, or by invoking set.</dd>
+         *        constructor configuration arguments, or by invoking set.
+         *        <p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
+         *        (when used with Base, this means it can only be set during construction)</p>
+         *    </dd>
          *
          *    <dt>setter &#60;Function | String&#62;</dt>
          *    <dd>
@@ -1110,14 +1115,13 @@ YUI.add('attribute-base', function(Y) {
          * Returns an object with the configuration properties (and value)
          * for the given attrubute. If attrName is not provided, returns the
          * configuration properties for all attributes.
-         * 
+         *
          * @method _getAttrCfg
          * @protected
-         * @param {String} attrName
-         * @return {Object} The configuration properties for the given attribute,
-         * or all attributes.
+         * @param {String} name Optional. The attribute name. If not provided, the method will return the configuration for all attributes.
+         * @return {Object} The configuration properties for the given attribute, or all attributes.
          */
-        _getAttrCfg : function(attrName) {
+        _getAttrCfg : function(name) {
             var o,
                 data = this._state.data;
 
@@ -1125,9 +1129,9 @@ YUI.add('attribute-base', function(Y) {
                 o = {};
 
                 Y.each(data, function(cfg, cfgProp) {
-                    if (attrName) {
-                        if(attrName in cfg) {
-                            o[cfgProp] = cfg[attrName];
+                    if (name) {
+                        if(name in cfg) {
+                            o[cfgProp] = cfg[name];
                         }
                     } else {
                         Y.each(cfg, function(attrCfg, attr) {

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>oop&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>oop&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_oop.html" title="oop">oop</a>
                 
@@ -108,7 +108,7 @@
             <span class="nx">rProto</span>           <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> 
             <span class="nx">target</span>           <span class="o">=</span> <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="p">,</span> 
             <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
-            <span class="nx">sequestered</span><span class="p">,</span> <span class="nx">replacements</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="nx">sequestered</span><span class="p">,</span> <span class="nx">replacements</span><span class="p">;</span>
 
         <span class="c1">// working on a class, so apply constructor infrastructure</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">rProto</span> <span class="o">&amp;&amp;</span> <span class="nx">construct</span><span class="p">)</span> <span class="p">{</span>
@@ -124,7 +124,7 @@
 <span class="c1">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing EventTarget&#39;);</span>
 <span class="c1">// overwrite the prototype with all of the sequestered functions,</span>
 <span class="c1">// but only if it hasn&#39;t been overridden</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">sequestered</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
                             <span class="c1">// Y.log(&#39;... restoring &#39; + k);</span>
                             <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sequestered</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
@@ -181,7 +181,7 @@
 <span class="cm">     * will be overwritten if found on the supplier.</span>
 <span class="cm">     * @param wl {string[]} a whitelist.  If supplied, only properties in </span>
 <span class="cm">     * this list will be applied to the receiver.</span>
-<span class="cm">     * @return {object} the extended object</span>
+<span class="cm">     * @return the extended object</span>
 <span class="cm">     */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
@@ -197,7 +197,7 @@
 <span class="cm">     * @param {Function} s the object to inherit</span>
 <span class="cm">     * @param {Object} px prototype properties to add/override</span>
 <span class="cm">     * @param {Object} sx static properties to add/override</span>
-<span class="cm">     * @return {YUI} the YUI instance</span>
+<span class="cm">     * @return the extended object</span>
 <span class="cm">     */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">s</span><span class="o">||!</span><span class="nx">r</span><span class="p">)</span> <span class="p">{</span>
@@ -433,14 +433,20 @@
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class="selected"><a href="module_oop.html" title="oop">oop</a></li>
@@ -450,6 +456,10 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -459,7 +469,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>

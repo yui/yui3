@@ -75,6 +75,11 @@
         borderStyle: {
             value: '1px solid #808080'
         },
+        /**
+        * @attribute cloneNode
+        * @description Should the node be cloned into the proxy for you. Default: false
+        * @type Boolean
+        */
         cloneNode: {
             value: false
         }
@@ -145,10 +150,10 @@
             var host = this.get(HOST),
                 n = host.get(NODE),
                 c = n.cloneNode(true);
-            c.set('id', '');
-            c.setStyle('position', 'absolute');
+
             delete c._yuid;
-            Y.stamp(c);
+            c.setAttribute('id', Y.guid());
+            c.setStyle('position', 'absolute');
             n.get('parentNode').appendChild(c);
             host.set(DRAG_NODE, c);
             return c;
@@ -183,8 +188,8 @@
                     left: '-999px'
                 });
 
-                b.insertBefore(p, b.get('firstChild'));
-                p.set('id', Y.stamp(p));
+                b.prepend(p);
+                p.set('id', Y.guid());
                 p.addClass(DDM.CSS_PREFIX + '-proxy');
                 DDM._proxy = p;
             }
@@ -199,12 +204,6 @@
         */
         _setFrame: function(drag) {
             var n = drag.get(NODE), d = drag.get(DRAG_NODE), ah, cur = 'auto';
-            if (drag.proxy.get('resizeFrame')) {
-                DDM._proxy.setStyles({
-                    height: n.get('offsetHeight') + 'px',
-                    width: n.get('offsetWidth') + 'px'
-                });
-            }
             
             ah = DDM.activeDrag.get('activeHandle');
             if (ah) {
@@ -223,6 +222,13 @@
 
             if (drag.proxy.get('cloneNode')) {
                 d = drag.proxy.clone();
+            }
+
+            if (drag.proxy.get('resizeFrame')) {
+                d.setStyles({
+                    height: n.get('offsetHeight') + 'px',
+                    width: n.get('offsetWidth') + 'px'
+                });
             }
 
             if (drag.proxy.get('positionProxy')) {

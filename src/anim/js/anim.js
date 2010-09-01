@@ -116,8 +116,17 @@
      * @static
      */
     Y.Anim.DEFAULT_SETTER = function(anim, att, from, to, elapsed, duration, fn, unit) {
-        unit = unit || '';
-        anim._node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
+        var node = anim._node,
+            val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
+
+        if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
+            unit = unit || '';
+            node.setStyle(att, val + unit);
+        } else if (node._node.attributes[att]) {
+            node.setAttribute(att, val);
+        } else {
+            node.set(att, val);
+        }
     };
 
     /**
@@ -126,8 +135,19 @@
      * @property DEFAULT_GETTER
      * @static
      */
-    Y.Anim.DEFAULT_GETTER = function(anim, prop) {
-        return anim._node.getComputedStyle(prop);
+    Y.Anim.DEFAULT_GETTER = function(anim, att) {
+        var node = anim._node,
+            val = '';
+
+        if (att in node._node.style || att in Y.DOM.CUSTOM_STYLES) {
+            val = node.getComputedStyle(att);
+        } else if (node._node.attributes[att]) {
+            val = node.getAttribute(att);
+        } else {
+            val = node.get(att);
+        }
+
+        return val;
     };
 
     Y.Anim.ATTRS = {
@@ -325,6 +345,7 @@
                 _running[i].pause();
             }
         }
+
         Y.Anim._stopTimer();
     };
 
@@ -407,6 +428,7 @@
         /**
          * Stops the animation and resets its time.
          * @method stop
+         * @param {Boolean} finish If true, the animation will move to the last frame
          * @chainable
          */    
         stop: function(finish) {
@@ -447,6 +469,8 @@
         _resume: function() {
             this._set(PAUSED, false);
             _running[Y.stamp(this)] = this;
+            this._set(START_TIME, new Date() - this.get(ELAPSED_TIME));
+            Y.Anim._startTimer();
 
             /**
             * @event resume
@@ -494,9 +518,14 @@
                 customAttr = Y.Anim.behaviors,
                 easing = attr.easing,
                 lastFrame = d,
+                done = false,
                 attribute,
                 setter,
                 i;
+
+            if (t >= d) {
+                done = true;
+            }
 
             if (reverse) {
                 t = d - t;
@@ -509,7 +538,7 @@
                     setter = (i in customAttr && 'set' in customAttr[i]) ?
                             customAttr[i].set : Y.Anim.DEFAULT_SETTER;
 
-                    if (t < d) {
+                    if (!done) {
                         setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
                     } else {
                         setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 

@@ -64,6 +64,7 @@
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -85,7 +86,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-bidi', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
@@ -125,11 +126,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     var editor = new Y.EditorBase({
         content: ''
     });
+    editor.plug(Y.Plugin.EditorBidi);
     editor.on('nodeChange', function(e) {
-        updateButtons(e.node);
+        updateButtons(e.changedNode);
     });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
+        editor.focus();
     });
     editor.on('frame:keydown', function(e) {
         if (e.keyCode === 13) {
@@ -139,7 +142,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             inst.all('br').remove(); //Remove the BR
             var html = editor.getContent();
             editor.set('content', '');
-            alert('Send: ' + html);
+            //alert('Send: ' + html);
+            editor.focus();
         }
     });
     editor.on('frame:keyup', function(e) {

@@ -348,6 +348,10 @@
                 el = Y.DOM.create(html);
                 Assert.isTrue(el.tagName === 'DIV', html);
 
+                html = '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>';
+                el = Y.DOM.create(html);
+                Assert.areEqual(document, el.ownerDocument, html);
+
 /*
                 html = '<thead><tr><td><table><thead></thead><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
                 el = Y.DOM.create(html);
@@ -550,13 +554,17 @@
             test_position: function() { // basic position tests
                 var node = document.createElement('div');
                 ArrayAssert.itemsAreEqual([0, 0], Y.DOM.getXY(node), 'off-dom: [0, 0]');
-                Y.DOM.setXY(node, [100, 200]);
-                ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'off-dom: [100, 200]');
+
+                // off-dom is unreliable due to cascade when appended
+                //Y.DOM.setXY(node, [100, 200]);
+                //ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'off-dom: [100, 200]');
+
                 Assert.isNull(Y.DOM.getXY(null), 'Y.DOM.getXY(null)');
 
                 document.body.appendChild(node);
                 Y.DOM.setXY(node, [100, 200]);
-                ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'setXY([100, 200]');
+                var pos = Y.DOM.getXY(node);
+                ArrayAssert.itemsAreEqual([100, 200], [Math.round(pos[0]), Math.round(pos[1])], 'setXY([100, 200]');
             },
 
             test_region: function() {
@@ -690,12 +698,44 @@
                 rgb = "rgb(97, 11, 56)" ; //610B38
                 hex = Y.Color.toHex(rgb);
                 Assert.areSame(hex, "#610B38", " shoudl be #610B38");
+            },
+
+            test_inDoc: function() {
+                var node = document.createElement('div');
+                Assert.isFalse(Y.DOM.inDoc(node), 'new off doc');
+
+                document.body.appendChild(node);
+                Assert.isTrue(Y.DOM.inDoc(node), 'new in doc');
+
+                document.body.removeChild(node);
+                Assert.isFalse(Y.DOM.inDoc(node), 'removed');
+
+                // test dupe ID
+                node.id = 'doc';
+                document.body.appendChild(node);
+                Assert.isTrue(Y.DOM.inDoc(node), 'dupe id in doc');
+
+                document.body.removeChild(node);
+                Assert.isFalse(Y.DOM.inDoc(node), 'dupe if off doc');
+
+                // test form with input name="id" (IE collision with form.id)
+                Assert.isTrue(Y.DOM.inDoc(Y.DOM.byId('search')), "form.id === 'search'");
+
+                node = null;
+                Assert.isFalse(Y.DOM.inDoc(node), 'null node');
+
+                node = document.getElementById('ft');
+                node = node.cloneNode(true);
+                node.id = 'ft-clone';
+                Assert.isFalse(Y.DOM.inDoc(node), "clone inDoc false");
+                document.body.appendChild(node);
+                Assert.isTrue(Y.DOM.inDoc(node), "clone inDoc true");
             }
 
         })); 
         Y.Test.Runner.add(suite);
 
-        if (parent && parent != window) {
+        if (parent && parent != window && Y.Test.Manager) {
             Y.Test.Manager.load();
         } else {
             Y.Test.Runner.run();
@@ -773,6 +813,7 @@ form {
                                 <legend>Search</legend>
                                 <label for="search-p" id="search-p-label">Query</label>
                                 <input type="text" name="p" id="search-p">
+                                <input name="id">
                                 <input type="submit" value="search">
                             </fieldset>
                         </form>

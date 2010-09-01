@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+/*Supplemental: CSS for the YUI distribution*/
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mychart
+{
+    position:absolute;
+    display:block;
+    top:50px;
+    left:100px;
+}
+.yui3-tooltip {
+    position:absolute;
+}
+
+.yui3-tooltip-content {
+    color: #000;
+    padding: 2px 5px;
+    border-color: #aeae9e;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #edeeee;
+}
+
+.yui3-tooltip-hidden {
+    visibility:hidden;
+}
+
+.yui3-tooltip-content {
+    font-size: 9px;
+    font-weight:bold;
+}
+
+.yui3-tooltip-content strong {
+    font-size:9px;
+    font-weight:bold;
+}
+</style>
+<!-- BEGIN EXAMPLE CODE -->	
+	<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics-min.js"></script>
+    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip-min.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics-min.js"></script>
+</head>		
+<body class="yui3-skin-sam">
+<div id="mychart"></chart>
+			
+<script type="text/javascript">            
+    YUI().use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', function (Y) 
+    {
+        var myDataValues = [
+            ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            [1000, 500, 3000, 4000, 2000],
+            [500, 1500, 3000, 3800, 4500],
+            [2000, 1500, 400, 200, 5000]
+        ];
+        
+        var mychart = new Y.CartesianChart({type:"bar", dataValues:myDataValues, render:"#mychart"});
+    });
+</script>
+</body>
+</html>

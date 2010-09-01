@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>sortable&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>sortable&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_sortable.html" title="sortable">sortable</a>
                 
@@ -168,11 +168,14 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">).</span><span class="nx">contains</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">)))</span> <span class="p">{</span>
                 <span class="nx">same</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">same</span> <span class="o">&amp;&amp;</span> <span class="nx">moveType</span> <span class="o">==</span> <span class="s1">&#39;move&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">moveType</span> <span class="o">=</span> <span class="s1">&#39;insert&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
             <span class="k">switch</span> <span class="p">(</span><span class="nx">moveType</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">case</span> <span class="s1">&#39;insert&#39;</span><span class="o">:</span>
                     <span class="nx">dir</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_up</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;before&#39;</span> <span class="o">:</span> <span class="s1">&#39;after&#39;</span><span class="p">);</span>
                     <span class="nx">dropNode</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">dropNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONT</span><span class="p">)))</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Sortable</span><span class="p">.</span><span class="nx">_test</span><span class="p">(</span><span class="nx">dropNode</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONT</span><span class="p">)))</span> <span class="p">{</span>
                         <span class="nx">dropNode</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">));</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                         <span class="nx">dropNode</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span> <span class="nx">dir</span><span class="p">);</span>
@@ -273,7 +276,7 @@
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @method join</span>
-<span class="cm">        * @param Sortable sel The sortable list to join with</span>
+<span class="cm">        * @param Sortable sel The Sortable list to join with</span>
 <span class="cm">        * @param String type The type of join to do: full, inner, outer, none. Default: full</span>
 <span class="cm">        * @description Join this Sortable with another Sortable instance.</span>
 <span class="cm">        * &lt;ul&gt;</span>
@@ -314,7 +317,7 @@
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
 <span class="cm">        * @method _join_full</span>
-<span class="cm">        * @param Sortable sel The sortable list to join with</span>
+<span class="cm">        * @param Sortable sel The Sortable list to join with</span>
 <span class="cm">        * @description Joins both of the Sortables together.</span>
 <span class="cm">        */</span>
         <span class="nx">_join_full</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sel</span><span class="p">)</span> <span class="p">{</span>
@@ -324,7 +327,7 @@
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
 <span class="cm">        * @method _join_outer</span>
-<span class="cm">        * @param Sortable sel The sortable list to join with</span>
+<span class="cm">        * @param Sortable sel The Sortable list to join with</span>
 <span class="cm">        * @description Allows this Sortable to accept items from the passed Sortable.</span>
 <span class="cm">        */</span>
         <span class="nx">_join_outer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sel</span><span class="p">)</span> <span class="p">{</span>
@@ -333,12 +336,32 @@
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
 <span class="cm">        * @method _join_inner</span>
-<span class="cm">        * @param Sortable sel The sortable list to join with</span>
+<span class="cm">        * @param Sortable sel The Sortable list to join with</span>
 <span class="cm">        * @description Allows this Sortable to give items to the passed Sortable.</span>
 <span class="cm">        */</span>
         <span class="nx">_join_inner</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sel</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">sel</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">addToGroup</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
-        <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * A custom callback to allow a user to extract some sort of id or any other data from the node to use in the &quot;ordering list&quot; and then that data should be returned from the callback.</span>
+<span class="cm">        * @method getOrdering</span>
+<span class="cm">        * @param Function callback </span>
+<span class="cm">        * @returns Array</span>
+<span class="cm">        */</span>
+        <span class="nx">getOrdering</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ordering</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">callback</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONT</span><span class="p">)).</span><span class="nx">all</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODES</span><span class="p">)).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ordering</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">(</span><span class="nx">node</span><span class="p">));</span>
+            <span class="p">});</span>
+            <span class="k">return</span> <span class="nx">ordering</span><span class="p">;</span>
+       <span class="p">}</span>
     <span class="p">},</span> <span class="p">{</span>
         <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;sortable&#39;</span><span class="p">,</span>
         <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
@@ -368,7 +391,7 @@
             <span class="p">},</span>
             <span class="cm">/**</span>
 <span class="cm">            * @attribute opacity</span>
-<span class="cm">            * @description The ocpacity to test the proxy item to when dragging.</span>
+<span class="cm">            * @description The opacity to change the proxy item to when dragging.</span>
 <span class="cm">            * @type String</span>
 <span class="cm">            */</span>        
             <span class="nx">opacity</span><span class="o">:</span> <span class="p">{</span>
@@ -384,7 +407,7 @@
             <span class="p">},</span>
             <span class="cm">/**</span>
 <span class="cm">            * @attribute id</span>
-<span class="cm">            * @description The id of this sortable, used to get a reference to this sortable list from another list.</span>
+<span class="cm">            * @description The id of this Sortable, used to get a reference to this Sortable list from another list.</span>
 <span class="cm">            * @type String</span>
 <span class="cm">            */</span>        
             <span class="nx">id</span><span class="o">:</span> <span class="p">{</span>
@@ -417,15 +440,29 @@
         <span class="nx">_sortables</span><span class="o">:</span> <span class="p">[],</span>
         <span class="cm">/**</span>
 <span class="cm">        * @static</span>
+<span class="cm">        * @method _test</span>
+<span class="cm">        * @param {Node} node The node instance to test.</span>
+<span class="cm">        * @param {String|Node} test The node instance or selector string to test against.</span>
+<span class="cm">        * @description Test a Node or a selector for the container</span>
+<span class="cm">        */</span>
+        <span class="nx">_test</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">test</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">test</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nx">test</span> <span class="o">===</span> <span class="nx">node</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">test</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @static</span>
 <span class="cm">        * @method getSortable</span>
 <span class="cm">        * @param {String|Node} node The node instance or selector string to use to find a Sortable instance.</span>
-<span class="cm">        * @description Get a sortable instance back from a node reference or a selector string.</span>
+<span class="cm">        * @description Get a Sortable instance back from a node reference or a selector string.</span>
 <span class="cm">        */</span>
         <span class="nx">getSortable</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Sortable</span><span class="p">.</span><span class="nx">_sortables</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONT</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Sortable</span><span class="p">.</span><span class="nx">_test</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONT</span><span class="p">)))</span> <span class="p">{</span>
                     <span class="nx">s</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">});</span>
@@ -460,7 +497,7 @@
 
     <span class="cm">/**</span>
 <span class="cm">    * @event copy</span>
-<span class="cm">    * @description A sortable node was moved.</span>
+<span class="cm">    * @description A Sortable node was moved.</span>
 <span class="cm">    * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
 <span class="cm">    * &lt;dl&gt;</span>
 <span class="cm">    * &lt;dt&gt;same&lt;/dt&gt;&lt;dd&gt;Moved to the same list.&lt;/dd&gt;</span>
@@ -471,7 +508,7 @@
 <span class="cm">    *</span>
 <span class="cm">    *</span>
 <span class="cm">    * @event move</span>
-<span class="cm">    * @description A sortable node was moved.</span>
+<span class="cm">    * @description A Sortable node was moved.</span>
 <span class="cm">    * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
 <span class="cm">    * &lt;dl&gt;</span>
 <span class="cm">    * &lt;dt&gt;same&lt;/dt&gt;&lt;dd&gt;Moved to the same list.&lt;/dd&gt;</span>
@@ -482,7 +519,7 @@
 <span class="cm">    *</span>
 <span class="cm">    *</span>
 <span class="cm">    * @event insert</span>
-<span class="cm">    * @description A sortable node was moved.</span>
+<span class="cm">    * @description A Sortable node was moved.</span>
 <span class="cm">    * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
 <span class="cm">    * &lt;dl&gt;</span>
 <span class="cm">    * &lt;dt&gt;same&lt;/dt&gt;&lt;dd&gt;Moved to the same list.&lt;/dd&gt;</span>
@@ -493,7 +530,7 @@
 <span class="cm">    *</span>
 <span class="cm">    *</span>
 <span class="cm">    * @event swap</span>
-<span class="cm">    * @description A sortable node was moved.</span>
+<span class="cm">    * @description A Sortable node was moved.</span>
 <span class="cm">    * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
 <span class="cm">    * &lt;dl&gt;</span>
 <span class="cm">    * &lt;dt&gt;same&lt;/dt&gt;&lt;dd&gt;Moved to the same list.&lt;/dd&gt;</span>
@@ -504,7 +541,7 @@
 <span class="cm">    *</span>
 <span class="cm">    *</span>
 <span class="cm">    * @event moved</span>
-<span class="cm">    * @description A sortable node was moved.</span>
+<span class="cm">    * @description A Sortable node was moved.</span>
 <span class="cm">    * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
 <span class="cm">    * &lt;dl&gt;</span>
 <span class="cm">    * &lt;dt&gt;same&lt;/dt&gt;&lt;dd&gt;Moved to the same list.&lt;/dd&gt;</span>
@@ -544,14 +581,20 @@
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -561,6 +604,10 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class="selected"><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -570,7 +617,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -616,7 +663,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Sortable", "name": "container", "url": "Plugin.Sortable.html#config_container", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "containerChange", "url": "Plugin.Sortable.html#event_containerChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "copy", "url": "Plugin.Sortable.html#event_copy", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "delegate", "url": "Plugin.Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Plugin.Sortable", "name": "getSortable", "url": "Plugin.Sortable.html#method_getSortable", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "handles", "url": "Plugin.Sortable.html#config_handles", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "handlesChange", "url": "Plugin.Sortable.html#event_handlesChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "id", "url": "Plugin.Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "idChange", "url": "Plugin.Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "invalid", "url": "Plugin.Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "invalidChange", "url": "Plugin.Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "join", "url": "Plugin.Sortable.html#method_join", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_full", "url": "Plugin.Sortable.html#method__join_full", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_inner", "url": "Plugin.Sortable.html#method__join_inner", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_none", "url": "Plugin.Sortable.html#method__join_none", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_outer", "url": "Plugin.Sortable.html#method__join_outer", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "moveType", "url": "Plugin.Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "moveTypeChange", "url": "Plugin.Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "protected", "host": "Plugin.SortScroll", "name": "NAME", "url": "Plugin.SortScroll.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.Sortable", "name": "nodes", "url": "Plugin.Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "nodesChange", "url": "Plugin.Sortable.html#event_nodesChange", "type": "event"}, {"access": "protected", "host": "Plugin.SortScroll", "name": "NS", "url": "Plugin.SortScroll.html#property_NS", "type": "property"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDragEnd", "url": "Plugin.Sortable.html#method__onDragEnd", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDragOver", "url": "Plugin.Sortable.html#method__onDragOver", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDragStart", "url": "Plugin.Sortable.html#method__onDragStart", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDropOver", "url": "Plugin.Sortable.html#method__onDropOver", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "opacity", "url": "Plugin.Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "opacityChange", "url": "Plugin.Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "opacityNode", "url": "Plugin.Sortable.html#config_opacityNode", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "opacityNodeChange", "url": "Plugin.Sortable.html#event_opacityNodeChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "plug", "url": "Plugin.Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "reg", "url": "Plugin.Sortable.html#method_reg", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_sortables", "url": "Plugin.Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Plugin.Sortable", "name": "unreg", "url": "Plugin.Sortable.html#method_unreg", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Sortable", "name": "container", "url": "Plugin.Sortable.html#config_container", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "containerChange", "url": "Plugin.Sortable.html#event_containerChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "copy", "url": "Plugin.Sortable.html#event_copy", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "delegate", "url": "Plugin.Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Plugin.Sortable", "name": "getOrdering", "url": "Plugin.Sortable.html#method_getOrdering", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "getSortable", "url": "Plugin.Sortable.html#method_getSortable", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "handles", "url": "Plugin.Sortable.html#config_handles", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "handlesChange", "url": "Plugin.Sortable.html#event_handlesChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "id", "url": "Plugin.Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "idChange", "url": "Plugin.Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "invalid", "url": "Plugin.Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "invalidChange", "url": "Plugin.Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "join", "url": "Plugin.Sortable.html#method_join", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_full", "url": "Plugin.Sortable.html#method__join_full", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_inner", "url": "Plugin.Sortable.html#method__join_inner", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_none", "url": "Plugin.Sortable.html#method__join_none", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_join_outer", "url": "Plugin.Sortable.html#method__join_outer", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "moveType", "url": "Plugin.Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "moveTypeChange", "url": "Plugin.Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "protected", "host": "Plugin.SortScroll", "name": "NAME", "url": "Plugin.SortScroll.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.Sortable", "name": "nodes", "url": "Plugin.Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "nodesChange", "url": "Plugin.Sortable.html#event_nodesChange", "type": "event"}, {"access": "protected", "host": "Plugin.SortScroll", "name": "NS", "url": "Plugin.SortScroll.html#property_NS", "type": "property"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDragEnd", "url": "Plugin.Sortable.html#method__onDragEnd", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDragOver", "url": "Plugin.Sortable.html#method__onDragOver", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDragStart", "url": "Plugin.Sortable.html#method__onDragStart", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_onDropOver", "url": "Plugin.Sortable.html#method__onDropOver", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "opacity", "url": "Plugin.Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "opacityChange", "url": "Plugin.Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "opacityNode", "url": "Plugin.Sortable.html#config_opacityNode", "type": "config"}, {"access": "", "host": "Plugin.Sortable", "name": "opacityNodeChange", "url": "Plugin.Sortable.html#event_opacityNodeChange", "type": "event"}, {"access": "", "host": "Plugin.Sortable", "name": "plug", "url": "Plugin.Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "reg", "url": "Plugin.Sortable.html#method_reg", "type": "method"}, {"access": "private", "host": "Plugin.Sortable", "name": "_sortables", "url": "Plugin.Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Plugin.Sortable", "name": "_test", "url": "Plugin.Sortable.html#method__test", "type": "method"}, {"access": "", "host": "Plugin.Sortable", "name": "unreg", "url": "Plugin.Sortable.html#method_unreg", "type": "method"}];
 </script>
 </body>
 </html>

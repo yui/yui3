@@ -1,65 +1,73 @@
 YUI.add('graphics', function(Y) {
 
 var Graphic = function(config) {
+    
     this.initializer.apply(this, arguments);
 };
 
 Graphic.prototype = {
     initializer: function(config) {
-        this._dummy = this._createDummy();
-        this._canvas = this._createGraphic();
-        this._context = this._canvas.getContext('2d');
+        config = config || {};
+        var w = config.width || 0,
+            h = config.height || 0;
+        this._svg = this._createGraphics();
+        this.setSize(w, h);
         this._initProps();
     },
-
 
     /** 
      *Specifies a bitmap fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
     beginBitmapFill: function(config) {
-        var context = this._context,
-            bitmap = config.bitmap,
-            repeat = config.repeat || 'repeat';
-        this._fillWidth = config.width || null;
-        this._fillHeight = config.height || null;
-        this._fillX = !isNaN(config.tx) ? config.tx : NaN;
-        this._fillY = !isNaN(config.ty) ? config.ty : NaN;
-        this._fillType =  'bitmap';
-        this._bitmapFill = context.createPattern(bitmap, repeat);
+       
+        var fill = {};
+        fill.src = config.bitmap.src;
+        fill.type = "tile";
+        this._fillProps = fill;
+        if(!isNaN(config.tx) ||
+            !isNaN(config.ty) ||
+            !isNaN(config.width) ||
+            !isNaN(config.height))
+        {
+            this._gradientBox = {
+                tx:config.tx,
+                ty:config.ty,
+                width:config.width,
+                height:config.height
+            };
+        }
+        else
+        {
+            this._gradientBox = null;
+        }
     },
 
     /**
      * Specifes a solid fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
     beginFill: function(color, alpha) {
-        var context = this._context;
-        context.beginPath();
         if (color) {
-            if (alpha) {
-               color = this._2RGBA(color, alpha);
-            } else {
-                color = this._2RGB(color);
-            }
-
+            this._fillAlpha = alpha || 1;
             this._fillColor = color;
             this._fillType = 'solid';
+            this._fill = 1;
         }
-
         return this;
     },
-
+    
     /** 
      *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
     beginGradientFill: function(config) {
-        var color,
-            alpha,
-            i = 0,
-            colors = config.colors,
-            alphas = config.alphas || [],
-            len = colors.length;
+        var colors = config.colors,
+            alphas = config.alphas || [];
+        if(!this._defs)
+        {
+            this._defs = this._createGraphicNode("defs");
+            this._svg.appendChild(this._defs);
+        }
         this._fillAlphas = alphas;
-        this._fillColors = colors;
+        this._fillColors = config.colors;
         this._fillType =  config.type || "linear";
         this._fillRatios = config.ratios || [];
         this._fillRotation = config.rotation || 0;
@@ -67,136 +75,224 @@ Graphic.prototype = {
         this._fillHeight = config.height || null;
         this._fillX = !isNaN(config.tx) ? config.tx : NaN;
         this._fillY = !isNaN(config.ty) ? config.ty : NaN;
-        for(;i < len; ++i)
-        {
-            alpha = alphas[i];
-            color = colors[i];
-            if (alpha) {
-               color = this._2RGBA(color, alpha);
-            } else {
-                color = this._2RGB(color);
-            }
-            colors[i] = color;
-        }
-        this._context.beginPath();
+        this._gradientId = "lg" + Math.round(100000 * Math.random());
+        return this;
     },
-   
+
     /**
      * Clears the graphics object.
      */
     clear: function() {
-        this._initProps();
-        this._canvas.width = this._canvas.width;
+        this._path = '';
     },
 
     /**
      * Draws a bezier curve
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-        this._drawingComplete = false;
+        this._shapeType = "path";
+        if(this._path.indexOf("C") < 0 || this._pathType !== "C")
+        {
+            this._pathType = "C";
+            this._path += ' C';
+        }
+        this._path += Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y + " ";
+        this._trackSize(x, y);
     },
 
     /**
-     * Draws a quadratic curve
+     * Draws a quadratic bezier curve
      */
-    quadraticCurveTo: function(controlX, controlY, anchorX, anchorY) {
-        this._context.quadraticCurveTo(controlX, controlY, anchorX, anchorY);
-        this._drawingComplete = false;
+    quadraticCurveTo: function(cpx, cpy, x, y) {
+        if(this._path.indexOf("Q") < 0 || this._pathType !== "Q")
+        {
+            this._pathType = "Q";
+            this._path += " Q";
+        }
+        this._path +=  Math.round(cpx) + " " + Math.round(cpy) + " " + Math.round(x) + " " + Math.round(y);
     },
 
     /**
      * Draws a circle
      */
-	drawCircle: function(x, y, radius) {
-        var context = this._context,
-            startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180;
-        this._drawingComplete = false;
-        this._trackPos(x, y);
-        this._trackSize(radius * 2, radius * 2);
-        context.beginPath();
-        context.arc(x, y, radius, startAngle, endAngle, false);
-        this._drawShape();
-    },
+	drawCircle: function(x, y, r) {
+        this._shape = {
+            x:x - r,
+            y:y - r,
+            w:r * 2,
+            h:r * 2
+        };
+        this._attributes = {cx:x, cy:y, r:r};
+        this._width = this._height = r * 2;
+        this._x = x - r;
+        this._y = y - r;
+        this._shapeType = "circle";
+        this._draw();
+	},
 
     /**
      * Draws an ellipse
      */
-	drawEllipse: function(x, y, w, h) {
-        var context = this._context,
-            l = 8,
-            theta = -(45/180) * Math.PI,
-            angle = 0,
-            angleMid,
-            radius = w/2,
-            yRadius = h/2,
-            i = 0,
-            centerX = x + radius,
-            centerY = y + yRadius,
-            ax, ay, bx, by, cx, cy;
-        this._drawingComplete = false;
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        context.beginPath();
-        ax = centerX + Math.cos(0) * radius;
-        ay = centerY + Math.sin(0) * yRadius;
-        context.moveTo(ax, ay);
-        
-        for(; i < l; i++)
-        {
-            angle += theta;
-            angleMid = angle - (theta / 2);
-            bx = centerX + Math.cos(angle) * radius;
-            by = centerY + Math.sin(angle) * yRadius;
-            cx = centerX + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
-            cy = centerY + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-            context.quadraticCurveTo(cx, cy, bx, by);
-        }
-        this._drawShape();
-	},
+    drawEllipse: function(x, y, w, h) {
+        this._shape = {
+            x:x,
+            y:y,
+            w:w,
+            h:h
+        };
+        this._width = w;
+        this._height = h;
+        this._x = x;
+        this._y = y;
+        this._shapeType = "ellipse";
+        this._draw();
+    },
 
     /**
      * Draws a rectangle
      */
     drawRect: function(x, y, w, h) {
-        this._drawingComplete = false;
-        this._context.beginPath();
-        this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._drawShape();
+        this._shape = {
+            x:x,
+            y:y,
+            w:w,
+            h:h
+        };
+        this._x = x;
+        this._y = y;
+        this._width = w;
+        this._height = h;
+        this.moveTo(x, y);
+        this.lineTo(x + w, y);
+        this.lineTo(x + w, y + h);
+        this.lineTo(x, y + h);
+        this.lineTo(x, y);
+        this._draw();
     },
 
     /**
      * Draws a rectangle with rounded corners
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
-        var ctx = this._context;
+        this._shape = {
+            x:x,
+            y:y,
+            w:w,
+            h:h
+        };
+        this._x = x;
+        this._y = y;
+        this._width = w;
+        this._height = h;
+        this.moveTo(x, y + eh);
+        this.lineTo(x, y + h - eh);
+        this.quadraticCurveTo(x, y + h, x + ew, y + h);
+        this.lineTo(x + w - ew, y + h);
+        this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+        this.lineTo(x + w, y + eh);
+        this.quadraticCurveTo(x + w, y, x + w - ew, y);
+        this.lineTo(x + ew, y);
+        this.quadraticCurveTo(x, y, x, y + eh);
+        this._draw();
+	},
+
+    /**
+     * @private
+     * Draws a wedge.
+     * 
+     * @param x				x component of the wedge's center point
+     * @param y				y component of the wedge's center point
+     * @param startAngle	starting angle in degrees
+     * @param arc			sweep of the wedge. Negative values draw clockwise.
+     * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param yRadius		[optional] y radius for wedge.
+     */
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    {
         this._drawingComplete = false;
-        ctx.beginPath();
-        ctx.moveTo(x, y + eh);
-        ctx.lineTo(x, y + h - eh);
-        ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
-        ctx.lineTo(x + w - ew, y + h);
-        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-        ctx.lineTo(x + w, y + eh);
-        ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
-        ctx.lineTo(x + ew, y);
-        ctx.quadraticCurveTo(x, y, x, y + eh);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._drawShape();
+        this._path = this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
+        this._width = radius * 2;
+        this._height = this._width;
+        this._shapeType = "path";
+        this._draw();
+
     },
 
     /**
-     * Ends a drawing
+     * @private
+     * @description Generates a path string for a wedge shape
      */
+    _getWedgePath: function(config)
+    {
+        var x = config.x,
+            y = config.y,
+            startAngle = config.startAngle,
+            arc = config.arc,
+            radius = config.radius,
+            yRadius = config.yRadius || radius,
+            segs,
+            segAngle,
+            theta,
+            angle,
+            angleMid,
+            ax,
+            ay,
+            bx,
+            by,
+            cx,
+            cy,
+            i = 0,
+            path = ' M' + x + ', ' + y;  
+        
+        // limit sweep to reasonable numbers
+        if(Math.abs(arc) > 360)
+        {
+            arc = 360;
+        }
+        
+        // First we calculate how many segments are needed
+        // for a smooth arc.
+        segs = Math.ceil(Math.abs(arc) / 45);
+        
+        // Now calculate the sweep of each segment.
+        segAngle = arc / segs;
+        
+        // The math requires radians rather than degrees. To convert from degrees
+        // use the formula (degrees/180)*Math.PI to get radians.
+        theta = -(segAngle / 180) * Math.PI;
+        
+        // convert angle startAngle to radians
+        angle = -(startAngle / 180) * Math.PI;
+        if(segs > 0)
+        {
+            // draw a line from the center to the start of the curve
+            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
+            ay = y + Math.sin(-startAngle / 180 * Math.PI) * yRadius;
+            path += " L" + Math.round(ax) + ", " +  Math.round(ay);
+            path += " Q";
+            for(; i < segs; ++i)
+            {
+                angle += theta;
+                angleMid = angle - (theta / 2);
+                bx = x + Math.cos(angle) * radius;
+                by = y + Math.sin(angle) * yRadius;
+                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
+                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
+                path +=  Math.round(cx) + " " + Math.round(cy) + " " + Math.round(bx) + " " + Math.round(by) + " ";
+            }
+            path += ' L' + x + ", " + y;
+        }
+        return path;
+    },
+
     end: function() {
-        this._drawShape();
+        if(this._shapeType)
+        {
+            this._draw();
+        }
         this._initProps();
     },
-    
+
     /**
      * @private
      * Not implemented
@@ -205,128 +301,208 @@ Graphic.prototype = {
     lineGradientStyle: function() {
         Y.log('lineGradientStyle not implemented', 'warn', 'graphics-canvas');
     },
-
+    
     /**
      * Specifies a line style used for subsequent calls to drawing methods
      */
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        color = color || '#000000';
-        var context = this._context;
-        if(this._stroke)
-        {
-            context.stroke();
-        }
-        context.lineWidth = thickness;
-
-        if (thickness) {
-            this._stroke = 1;
-        } else {
-            this._stroke = 0;
-        }
-
+        this._stroke = 1;
+        this._strokeWeight = thickness;
         if (color) {
-            this._strokeStyle = color;
-            if (alpha) {
-                this._strokeStyle = this._2RGBA(this._strokeStyle, alpha);
-            }
+            this._strokeColor = color;
         }
-        
-        if(!this._fill)
-        {
-            context.beginPath();
-        }
-
-        if (caps === 'butt') {
-            caps = 'none';
-        }
-
-        if (context.lineCap) { // FF errors when trying to set
-            //context.lineCap = caps;
-        }
-        this._drawingComplete = false;
+        this._strokeAlpha = alpha || 1;
     },
 
     /**
      * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
      */
     lineTo: function(point1, point2, etc) {
-        var args = arguments, 
-            context = this._context,
-            i, len;
+        var args = arguments,
+            i,
+            len;
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             args = [[point1, point2]];
         }
-
-        for (i = 0, len = args.length; i < len; ++i) {
-            context.lineTo(args[i][0], args[i][1]);
+        len = args.length;
+        this._shapeType = "path";
+        if(this._path.indexOf("L") < 0 || this._pathType !== "L")
+        {
+            this._pathType = "L";
+            this._path += ' L';
+        }
+        for (i = 0; i < len; ++i) {
+            this._path += args[i][0] + ', ' + args[i][1] + " ";
 
             this._trackSize.apply(this, args[i]);
         }
-        this._drawingComplete = false;
     },
 
     /**
      * Moves the current drawing position to specified x and y coordinates.
      */
     moveTo: function(x, y) {
-        this._context.moveTo(x, y);
-        this._trackPos(x, y);
-        this._drawingComplete = false;
+        this._pathType = "M";
+        this._path += ' M' + x + ', ' + y;
     },
 
     /**
-     * Sets the size of the canvas object
+     * Sets the size of the graphics object
      */
-    setSize: function(w, h)
+    setSize: function(w, h) {
+        if(w > this._svg.getAttribute("width"))
+        {
+            this._svg.setAttribute("width",  w);
+        }
+        if(h > this._svg.getAttribute("height"))
+        {
+            this._svg.setAttribute("height", h);
+        }
+   },
+   
+    setPosition: function(x, y)
     {
-        this._node.style.width = w + "px";
-        this._node.style.height = h + "px";
-        this._canvas.width = w;
-        this._canvas.height = h;
+        this._svg.setAttribute("x", x);
+        this._svg.setAttribute("y", y);
     },
 
     /**
      * @private
      */
     render: function(node) {
+        var w = node.offsetWidth,
+            h = node.offsetHeight;
         node = node || Y.config.doc.body;
-        this._node = document.createElement("div");
-        this._node.style.width = node.offsetWidth + "px";
-        this._node.style.height = node.offsetHeight + "px";
-        this._node.style.display = "block";
-        this._node.style.position = "absolute";
-        this._node.style.left = node.style.left;
-        this._node.style.top = node.style.top;
-        node.appendChild(this._node);
-        this._node.appendChild(this._canvas);
-        this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
-        this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
+        node.appendChild(this._svg);
+        this.setSize(w, h);
+        this._initProps();
         return this;
     },
 
     /**
      * @private
-     * Clears all values
+     * Reference to current vml shape
+     */
+    _shapeType: null,
+
+    /**
+     * @private
+     * Updates the size of the graphics object
+     */
+    _trackSize: function(w, h) {
+        if (w > this._width) {
+            this._width = w;
+        }
+        if (h > this._height) {
+            this._height = h;
+        }
+        this.setSize(w, h);
+    },
+
+    /**
+     * @private
+     * Clears the properties
      */
     _initProps: function() {
-        var context = this._context;
-        
-        context.fillStyle = 'rgba(0, 0, 0, 1)'; // use transparent when no fill
-        context.lineWidth = 1;
-        //context.lineCap = 'butt';
-        context.lineJoin = 'miter';
-        context.miterLimit = 3;
-        this._strokeStyle = 'rgba(0, 0, 0, 1)';
-
+        this._shape = null;
+        this._fillColor = null;
+        this._strokeColor = null;
+        this._strokeWeight = 0;
+        this._fillProps = null;
+        this._fillAlphas = null;
+        this._fillColors = null;
+        this._fillType =  null;
+        this._fillRatios = null;
+        this._fillRotation = null;
+        this._fillWidth = null;
+        this._fillHeight = null;
+        this._fillX = NaN;
+        this._fillY = NaN;
+        this._path = '';
         this._width = 0;
         this._height = 0;
-
         this._x = 0;
         this._y = 0;
-        this._fillType = null;
-        this._stroke = null;
-        this._bitmapFill = null;
-        this._drawingComplete = false;
+        this._fill = null;
+        this._stroke = 0;
+        this._stroked = false;
+        this._pathType = null;
+        this._attributes = {};
+    },
+
+    /**
+     * @private
+     * Clears path properties
+     */
+    _clearPath: function()
+    {
+        this._shape = null;
+        this._shapeType = null;
+        this._path = '';
+        this._width = 0;
+        this._height = 0;
+        this._x = 0;
+        this._y = 0;
+        this._pathType = null;
+        this._attributes = {};
+    },
+
+    /**
+     * @private 
+     * Completes a vml shape
+     */
+    _draw: function()
+    {
+        var shape = this._createGraphicNode(this._shapeType),
+            fillProps = this._fillProps,
+            i,
+            gradFill;
+        if(this._path)
+        {
+            if(this._fill)
+            {
+                this._path += 'z';
+            }
+            shape.setAttribute("d", this._path);
+        }
+        else
+        {
+            for(i in this._attributes)
+            {
+                if(this._attributes.hasOwnProperty(i))
+                {
+                    shape.setAttribute(i, this._attributes[i]);
+                }
+            }
+        }
+        shape.setAttribute("stroke-width",  this._strokeWeight);
+        if(this._strokeColor)
+        {
+            shape.setAttribute("stroke", this._strokeColor);
+            shape.setAttribute("stroke-opacity", this._strokeAlpha);
+        }
+        if(!this._fillType || this._fillType === "solid")
+        {
+            if(this._fillColor)
+            {
+               shape.setAttribute("fill", this._fillColor);
+               shape.setAttribute("fill-opacity", this._fillAlpha);
+            }
+            else
+            {
+                shape.setAttribute("fill", "none");
+            }
+        }
+        else if(this._fillType === "linear")
+        {
+            gradFill = this._getFill();
+            gradFill.setAttribute("id", this._gradientId);
+            this._defs.appendChild(gradFill);
+            shape.setAttribute("fill", "url(#" + this._gradientId + ")");
+
+        }
+        this._svg.appendChild(shape);
+        this._clearPath();
     },
 
     /**
@@ -341,15 +517,11 @@ Graphic.prototype = {
             case 'linear': 
                 fill = this._getLinearGradient('fill');
                 break;
-
             case 'radial': 
-                fill = this._getRadialGradient('fill');
+                //fill = this._getRadialGradient('fill');
                 break;
             case 'bitmap':
-                fill = this._bitmapFill;
-                break;
-            case 'solid': 
-                fill = this._fillColor;
+                //fill = this._bitmapFill;
                 break;
         }
         return fill;
@@ -360,37 +532,52 @@ Graphic.prototype = {
      * Returns a linear gradient fill
      */
     _getLinearGradient: function(type) {
-        var prop = '_' + type,
+        var fill = this._createGraphicNode("linearGradient"),
+            prop = '_' + type,
             colors = this[prop + 'Colors'],
             ratios = this[prop + 'Ratios'],
-            x = !isNaN(this._fillX) ? this._fillX : this._x,
-            y = !isNaN(this._fillY) ? this._fillY : this._y,
-            w = this._fillWidth || (this._width - x),
-            h = this._fillHeight || (this._height - y),
-            ctx = this._context,
+            alphas = this[prop + 'Alphas'],
+            x = !isNaN(this._fillX) ? this._fillX : this._shape.x,
+            y = !isNaN(this._fillY) ? this._fillY : this._shape.y,
+            w = this._fillWidth || (this._shape.w),
+            h = this._fillHeight || (this._shape.h),
             r = this[prop + 'Rotation'],
             i,
             l,
             color,
             ratio,
+            alpha,
             def,
-            grad,
+            stop,
             x1, x2, y1, y2,
-            cx = x + w/2,
-            cy = y + h/2,
-            radCon = Math.PI/180,
-            tanRadians = parseFloat(parseFloat(Math.tan(r * radCon)).toFixed(8));
+            cx = w/2,
+            cy = h/2,
+            radCon,
+            tanRadians;
+        /*
+        if(r > 0 && r < 90)
+        {
+            r *= h/w;
+        }
+        else if(r > 90 && r < 180)
+        {
+
+            r =  90 + ((r-90) * w/h);
+        }
+*/
+        radCon = Math.PI/180;
+        tanRadians = parseFloat(parseFloat(Math.tan(r * radCon)).toFixed(8));
         if(Math.abs(tanRadians) * w/2 >= h/2)
         {
             if(r < 180)
             {
-                y1 = y;
-                y2 = y + h;
+                y1 = 0;
+                y2 = h;
             }
             else
             {
-                y1 = y + h;
-                y2 = y;
+                y1 = h;
+                y2 = 0;
             }
             x1 = cx - ((cy - y1)/tanRadians);
             x2 = cx - ((cy - y2)/tanRadians); 
@@ -399,188 +586,247 @@ Graphic.prototype = {
         {
             if(r > 90 && r < 270)
             {
-                x1 = x + w;
-                x2 = x;
+                x1 = w;
+                x2 = 0;
             }
             else
             {
-                x1 = x;
-                x2 = x + w;
+                x1 = 0;
+                x2 = w;
             }
             y1 = ((tanRadians * (cx - x1)) - cy) * -1;
             y2 = ((tanRadians * (cx - x2)) - cy) * -1;
         }
-        grad = ctx.createLinearGradient(x1, y1, x2, y2);
+        /*
+        fill.setAttribute("spreadMethod", "pad");
+        
+        fill.setAttribute("x1", Math.round(100 * x1/w) + "%");
+        fill.setAttribute("y1", Math.round(100 * y1/h) + "%");
+        fill.setAttribute("x2", Math.round(100 * x2/w) + "%");
+        fill.setAttribute("y2", Math.round(100 * y2/h) + "%");
+        */
+        fill.setAttribute("gradientTransform", "rotate(" + r + ")");//," + (w/2) + ", " + (h/2) + ")");
+        fill.setAttribute("width", w);
+        fill.setAttribute("height", h);
+        fill.setAttribute("gradientUnits", "userSpaceOnUse");
         l = colors.length;
         def = 0;
         for(i = 0; i < l; ++i)
         {
             color = colors[i];
             ratio = ratios[i] || i/(l - 1);
-            grad.addColorStop(ratio, color);
+            ratio = Math.round(ratio * 100) + "%";
+            alpha = alphas[i] || "1";
             def = (i + 1) / l;
+            stop = this._createGraphicNode("stop");
+            stop.setAttribute("offset", ratio);
+            stop.setAttribute("stop-color", color);
+            stop.setAttribute("stop-opacity", alpha);
+            fill.appendChild(stop);
+        }
+        return fill;
+    },
+
+    _defs: null,
+
+    /**
+     * @private
+     * Creates a group element
+     */
+    _createGraphics: function() {
+        var group = this._createGraphicNode("svg");
+        group.style.position = "absolute";
+        group.style.top = "0px";
+        group.style.left = "0px";
+        return group;
+    },
+
+    /**
+     * @private
+     * Creates a vml node.
+     */
+    _createGraphicNode: function(type, pe)
+    {
+        var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
+            v = pe || "none";
+        if(type !== "defs" && type !== "stop" && type !== "linearGradient")
+        {
+            node.setAttribute("pointer-events", v);
+        }
+        return node;
+    },
+    
+    _getNodeShapeType: function(type)
+    {
+        if(this._typeConversionHash.hasOwnProperty(type))
+        {
+            type = this._typeConversionHash[type];
+        }
+        return type;
+    },
+
+    _typeConversionHash: {
+        circle: "ellipse",
+        wedge: "path"
+    },
+
+    /**
+     * Returns a shape.
+     */
+    getShape: function(config) {
+        var shape,
+            node,
+            type,
+            fill = config.fill,
+            border = config.border,
+            fillnode,
+            w = config.width,
+            h = config.height,
+            cx = w/2,
+            cy = h/2,
+            rx = w/2,
+            ry = h/2,
+            path;
+        if(config.node)
+        {
+            node = config.node;
+            type = config.type || config.shape;
+            if(type === "circle")
+            {
+                type = "ellipse";
+            }
+        }
+        else
+        {
+            this.clear();
+            type = config.shape || "shape";
+            if(type === "circle")
+            {
+                type = "ellipse";
+            }
+            node = this._createGraphicNode(this._getNodeShapeType(type), "visiblePainted");
+            if(type === "wedge")
+            {
+                path = this._getWedgePath(config.props) + " Z";
+                node.setAttribute("d", path);
+            }
+        }
+        if(border && border.weight && border.weight > 0)
+        {
+            border.color = border.color || "#000000";
+            border.weight = border.weight || 1;
+            border.alpha = border.alpha || 1;
+            node.setAttribute("stroke", border.color);
+            node.setAttribute("stroke-width",  border.weight);
+            node.setAttribute("stroke-opacity", border.alpha);
+        }
+        else
+        {
+            node.setAttribute("stroke", "none");
+        }
+        this.setSize(w, h); 
+        this.setPosition(0, 0);
+        if(type === "ellipse")
+        {
+            if(border.weight && border.weight > 0)
+            {
+                rx -= border.weight;
+                ry -= border.weight;
+            }
+            node.setAttribute("cx", cx);
+            node.setAttribute("cy", cy);
+            node.setAttribute("rx", rx);
+            node.setAttribute("ry", ry);
+        }
+        else
+        {
+            node.setAttribute("width", w);
+            node.setAttribute("height", h);
+            node.style.width = w + "px";
+            node.style.height = h + "px";
+        }
+        if(fill.type === "linear" || fill.type === "radial")
+        {
+            //this.beginGradientFill(fill);
+            //node.appendChild(this._getFill());
+        }
+        else if(fill.type === "bitmap")
+        {
+            //this.beginBitmapFill(fill);
+            //node.appendChild(this._getFill());
+        }
+        else
+        {
+            if(!fill.color)
+            {
+                node.setAttribute("fill", "none");
+            }
+            else
+            {
+                fill.alpha = fill.alpha || 1;
+                node.setAttribute("fill", fill.color);
+                node.setAttribute("fill-opacity", fill.alpha);
+            }
         }
         
-        return grad;
-    },
-
-    /**
-     * @private
-     * Returns a radial gradient fill
-     */
-    _getRadialGradient: function(type) {
-        var prop = '_' + type,
-            colors = this[prop + "Colors"],
-            ratios = this[prop + "Ratios"],
-            i,
-            l,
-            w = this._fillWidth || this._width,
-            x = !isNaN(this._fillX) ? this._fillX : this._x,
-            y = !isNaN(this._fillY) ? this._fillY : this._y,
-            color,
-            ratio,
-            def,
-            grad,
-            ctx = this._context;
-            x += this._fillWidth/2;
-            y += this._fillHeight/2;
-        grad = ctx.createRadialGradient(x, y, 1, x, y, w/2);
-        l = colors.length;
-        def = 0;
-        for(i = 0; i < l; ++i) {
-            color = colors[i];
-            ratio = ratios[i] || i/(l - 1);
-            grad.addColorStop(ratio, color);
-        }
-        return grad;
-    },
-   
-    /**
-     * @private
-     * Completes a shape or drawing
-     */
-    _drawShape: function()
-    {
-        if(this._drawingComplete)
+        node.style.display = "block";
+        node.style.position = "absolute";
+        if(!config.node)
         {
-            return;
+            this._svg.appendChild(node);
         }
-        var context = this._context,
-            fill;
-
-        if (this._fillType) {
-            fill = this._getFill();
-            if (fill) {
-                context.fillStyle = fill;
+        shape = {
+            width:w,
+            height:h,
+            fill:fill,
+            node:node,
+            border:border,
+            type:type
+        };
+        return shape; 
+    },
+    
+    /**
+     * @description Updates an existing shape with new properties.
+     */
+    updateShape: function(shape, config)
+    {
+        if(config.fill)
+        {
+            shape.fill = Y.merge(shape.fill, config.fill);
+        }
+        if(config.border)
+        {
+            shape.border = Y.merge(shape.border, config.border);
+            if(config.border.weight)
+            {
+                shape.border.weight = config.border.weight;
             }
-            context.closePath();
+            else if(config.border.weight === 0)
+            {
+                shape.border.weight = 0;
+            }
         }
-
-        if (this._fillType) {
-            context.fill();
+        if(config.width)
+        {
+            shape.width = config.width;
         }
-
-        if (this._stroke) {
-            context.strokeStyle = this._strokeStyle;
-            context.stroke();
+        if(config.height)
+        {
+            shape.height = config.height;
         }
-        this._drawingComplete = true;
-    },
-
-    _drawingComplete: false,
-
-    /**
-     * @private
-     * Reference to the node for the graphics object
-     */
-    _node: null,
-    
-    /**
-     * @private
-     * Regex expression used for converting hex strings to rgb
-     */
-    _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-
-    /**
-     * @private
-     * Parses hex color string and alpha value to rgba
-     */
-    _2RGBA: function(val, alpha) {
-        alpha = (alpha !== undefined) ? alpha : 1;
-        if (this._reHex.exec(val)) {
-            val = 'rgba(' + [
-                parseInt(RegExp.$1, 16),
-                parseInt(RegExp.$2, 16),
-                parseInt(RegExp.$3, 16)
-            ].join(',') + ',' + alpha + ')';
+        if(config.shape !== shape.type)
+        {
+            config.node = null;
         }
-        return val;
-    },
-
-    /**
-     * @private
-     * Creates dom element used for converting color string to rgb
-     */
-    _createDummy: function() {
-        var dummy = Y.config.doc.createElement('div');
-        dummy.style.height = 0;
-        dummy.style.width = 0;
-        dummy.style.overflow = 'hidden';
-        Y.config.doc.documentElement.appendChild(dummy);
-        return dummy;
-    },
-
-    /**
-     * @private
-     * Creates canvas element
-     */
-    _createGraphic: function(config) {
-        var graphic = Y.config.doc.createElement('canvas');
-
-        // no size until drawn on
-        graphic.width = 600;
-        graphic.height = 600;
-        return graphic;
-    },
-
-    /**
-     * @private 
-     * Converts color to rgb format
-     */
-    _2RGB: function(val) {
-        this._dummy.style.background = val;
-        return this._dummy.style.backgroundColor;
-    },
-    
-    /**
-     * @private
-     * Updates the size of the graphics object
-     */
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = h;
-        }
-    },
-
-    /**
-     * @private
-     * Updates the position of the current drawing
-     */
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
+        return this.getShape(shape);
     }
-};
 
+};
 Y.Graphic = Graphic;
+
 var VMLGraphics = function(config) {
+    
     this.initializer.apply(this, arguments);
 };
 
@@ -635,7 +881,6 @@ VMLGraphics.prototype = {
             this._fillColor = color;
             this._fill = 1;
         }
-
         return this;
     },
 
@@ -721,13 +966,33 @@ VMLGraphics.prototype = {
      */
     clear: function() {
         this._path = '';
+        this._removeChildren(this._vml);
+    },
+
+    /**
+     * @private
+     */
+    _removeChildren: function(node)
+    {
+        if(node.hasChildNodes())
+        {
+            var child;
+            while(node.firstChild)
+            {
+                child = node.firstChild;
+                this._removeChildren(child);
+                node.removeChild(child);
+            }
+        }
     },
 
     /**
      * Draws a bezier curve
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._path += ' c ' + cp1x + ", " + cp1y + ", " + cp2x + ", " + cp2y + ", " + x + ", " + y;
+        this._shape = "shape";
+        this._path += ' c ' + Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y;
+        this._trackSize(x, y);
     },
 
     /**
@@ -746,7 +1011,7 @@ VMLGraphics.prototype = {
         this._y = y - r;
         this._shape = "oval";
         //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
-        this._drawVML();
+        this._draw();
 	},
 
     /**
@@ -759,7 +1024,7 @@ VMLGraphics.prototype = {
         this._y = y;
         this._shape = "oval";
         //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
-        this._drawVML();
+        this._draw();
     },
 
     /**
@@ -775,13 +1040,7 @@ VMLGraphics.prototype = {
         this.lineTo(x + w, y + h);
         this.lineTo(x, y + h);
         this.lineTo(x, y);
-        this._drawVML();
-    },
-
-    getShape: function(config)
-    {
-
-
+        this._draw();
     },
 
     /**
@@ -801,13 +1060,49 @@ VMLGraphics.prototype = {
         this.quadraticCurveTo(x + w, y, x + w - ew, y);
         this.lineTo(x + ew, y);
         this.quadraticCurveTo(x, y, x, y + eh);
-        this._drawVML();
+        this._draw();
 	},
 
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    {
+        this._drawingComplete = false;
+        this._width = radius;
+        this._height = radius;
+        yRadius = yRadius || radius;
+        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
+        this._width = radius * 2;
+        this._height = this._width;
+        this._shape = "shape";
+        this._draw();
+    },
+
+    /**
+     * @private
+     * @description Generates a path string for a wedge shape
+     */
+    _getWedgePath: function(config)
+    {
+        var x = config.x,
+            y = config.y,
+            startAngle = config.startAngle,
+            arc = config.arc,
+            radius = config.radius,
+            yRadius = config.yRadius || radius,
+            path;  
+        if(Math.abs(arc) > 360)
+        {
+            arc = 360;
+        }
+        startAngle *= 65535;
+        arc *= 65536;
+        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + radius + " " + startAngle + " " + arc;
+        return path;
+    },
+    
     end: function() {
         if(this._shape)
         {
-            this._drawVML();
+            this._draw();
         }
         this._initProps();
     },
@@ -844,7 +1139,7 @@ VMLGraphics.prototype = {
         this._shape = "shape";
         this._path += ' l ';
         for (i = 0; i < len; ++i) {
-            this._path += ' ' + args[i][0] + ', ' + args[i][1];
+            this._path += ' ' + Math.round(args[i][0]) + ', ' + Math.round(args[i][1]);
 
             this._trackSize.apply(this, args[i]);
         }
@@ -854,7 +1149,7 @@ VMLGraphics.prototype = {
      * Moves the current drawing position to specified x and y coordinates.
      */
     moveTo: function(x, y) {
-        this._path += ' m ' + x + ', ' + y;
+        this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
     },
 
     /**
@@ -865,13 +1160,19 @@ VMLGraphics.prototype = {
         this._vml.style.height = h + 'px';
         this._vml.coordSize = w + ' ' + h;
     },
-    
+   
+    setPosition: function(x, y)
+    {
+        this._vml.style.left = x + "px";
+        this._vml.style.top = y + "px";
+    },
+
     /**
      * @private
      */
     render: function(node) {
-        var w = node.offsetWidth,
-            h = node.offsetHeight;
+        var w = node.offsetWidth || 0,
+            h = node.offsetHeight || 0;
         node = node || Y.config.doc.body;
         node.appendChild(this._vml);
         this.setSize(w, h);
@@ -935,13 +1236,12 @@ VMLGraphics.prototype = {
      * @private 
      * Completes a vml shape
      */
-    _drawVML: function()
+    _draw: function()
     {
         var shape = this._createGraphicNode(this._shape),
             w = this._width,
             h = this._height,
             fillProps = this._fillProps;
-        
         if(this._path)
         {
             if(this._fill || this._fillProps)
@@ -1058,6 +1358,157 @@ VMLGraphics.prototype = {
     {
         return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
     
+    },
+    
+    _getNodeShapeType: function(type)
+    {
+        var shape = "shape";
+        if(this._typeConversionHash.hasOwnProperty(type))
+        {
+            shape = this._typeConversionHash[type];
+        }
+        return shape;
+    },
+
+    _typeConversionHash: {
+        circle: "oval",
+        ellipse: "oval",
+        rect: "rect"
+    },
+    
+    /**
+     * Returns a shape.
+     */
+    getShape: function(config) {
+        var shape,
+            node,
+            type,
+            fill = config.fill,
+            border = config.border,
+            fillnode,
+            w = config.width,
+            h = config.height, 
+            path;
+        if(config.node)
+        {
+            node = config.node;
+            type = config.type || config.shape;
+        }
+        else
+        {
+            this.clear();
+            type = config.shape || "shape";
+            node = this._createGraphicNode(this._getNodeShapeType(type));
+            if(type === "wedge")
+            {
+                path = this._getWedgePath(config.props);
+                if(fill)
+                {
+                    path += ' x';
+                }
+                if(border)
+                {
+                    path += ' e';
+                }
+                node.path = path;
+            }
+        }
+        this.setPosition(0, 0);
+        if(border && border.weight && border.weight > 0)
+        {
+            node.strokecolor = border.color || "#000000";
+            node.strokeweight = border.weight || 1;
+            node.stroked = true;
+            w -= border.weight;
+            h -= border.weight;
+        }
+        else
+        {
+            node.stroked = false;
+        }
+        this.setSize(w, h);
+        node.style.width = w + "px";
+        node.style.height = h + "px";
+        node.filled = true;
+        if(fill.type === "linear" || fill.type === "radial")
+        {
+            this.beginGradientFill(fill);
+            node.appendChild(this._getFill());
+        }
+        else if(fill.type === "bitmap")
+        {
+            this.beginBitmapFill(fill);
+            node.appendChild(this._getFill());
+        }
+        else
+        {
+            if(!fill.color)
+            {
+                node.filled = false;
+            }
+            else
+            {
+                if(config.fillnode)
+                {
+                    this._removeChildren(config.fillnode);
+                }
+                fillnode = this._createGraphicNode("fill");
+                fillnode.setAttribute("type", "solid");
+                fill.alpha = fill.alpha || 1;                
+                fillnode.setAttribute("color", fill.color);
+                fillnode.setAttribute("opacity", fill.alpha);
+                node.appendChild(fillnode);
+            }
+        }
+        node.style.display = "block";
+        node.style.position = "absolute";
+        if(!config.node)
+        {
+            this._vml.appendChild(node);
+        }
+        shape = {
+            width:w,
+            height:h,
+            fill:fill,
+            node:node,
+            fillnode:fillnode,
+            border:border
+        };
+        return shape; 
+    },
+   
+    /**
+     * @description Updates an existing shape with new properties.
+     */
+    updateShape: function(shape, config)
+    {
+        if(config.fill)
+        {
+            shape.fill = Y.merge(shape.fill, config.fill);
+        }
+        if(config.border)
+        {
+            shape.border = Y.merge(shape.border, config.border);
+        }
+        if(config.width)
+        {
+            shape.width = config.width;
+        }
+        if(config.height)
+        {
+            shape.height = config.height;
+        }
+        if(config.shape !== shape.type)
+        {
+            config.node = null;
+            config.fillnode = null;
+        }
+        return this.getShape(shape);
+    },
+
+    addChild: function(child)
+    {
+        this._vml.appendChild(child);
     }
 };
 

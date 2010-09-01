@@ -199,6 +199,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         <div id="drag5">Drag Me V <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
         <div id="drag6">Drag Me VI <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
         <div id="drag7">Drag Me VII <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
+        <button id="drag8">Drag 8</button><br>
         <iframe src="blank.htm" height="300" width="300"></iframe>
         <p>
         <select name="wtf">
@@ -225,6 +226,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <script type="text/javascript" src="js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag-gestures.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -233,10 +235,10 @@ var yConfig = {
     //base: 'http://yeshouseborn-lx.corp.yahoo.com/yui-clean/yui3/build/',
     allowRollup: false,
     logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
+        'yui': true,
+        event: true,
+        base: true,
+        attribute: true,
         augment: true
     },
     throwFail: true,
@@ -248,19 +250,18 @@ var yConfig2 = {
     filter: 'DEBUG',
     allowRollup: false,
     logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
+        'yui': true,
+        event: true,
+        base: true,
+        attribute: true,
         augment: true
     },
     throwFail: true,
     debug: false
 };
 
-YUI(yConfig).use('event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'yui-throttle', function(Y1) {
+YUI(yConfig).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-plugin', 'dd-proxy', 'dd-constrain', 'yui-throttle', 'drag-gestures', function(Y1) {
     Y1.DD.DDM._debugShim = true;
-    
     //dd4 = Y1.Base.create(Y1.DD.Proxy, [Y1.DD.DragConstrained], {
     /*
     myDD = Y1.Base.build(Y1.DD.Proxy, [Y1.DD.DragConstrained]);
@@ -354,7 +355,7 @@ YUI(yConfig).use('event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-p
         node: '#drag6',
         offsetNode: false
     }).plug(Y1.Plugin.DDProxy, {
-        resizeFrame: false,
+        resizeFrame: false
     }).addInvalid('strong.no').on('drag:start', function() {
         this.get('dragNode').setStyles({
             height: '25px',
@@ -373,10 +374,13 @@ YUI(yConfig).use('event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-p
         this.deltaXY = [-10, -10];
     });
     
+    var drag8 = Y1.one('#drag8').plug(Y1.Plugin.Drag);
+    drag8.dd.removeInvalid('button');
+    
 
 });
 
-YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle', function(Y) {
+YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle','drag-gestures', function(Y) {
     
     //alert(navigator.userAgent);
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
@@ -657,7 +661,8 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
         
     }
         
-  
+    
+    localStorage.clear();
 });
 </script>
 </body>

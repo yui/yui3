@@ -4,7 +4,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>YUI: DragDrop</title>
+    <title>YUI: Sortable</title>
     <!--link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css"--> 
     <style type="text/css" media="screen">
         p, h2 {
@@ -14,6 +14,8 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #demo {
             border: 1px solid black;
             height: 700px;
+            margin: 2em;
+            position: relative;
         }
         #demo ul {
             border: 1px solid blue;
@@ -48,7 +50,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             border: 2px solid green;
         }
         #demo li.disabled {
-            opacity: .25;
+            background-color: #aaa;
         }
 	</style>
 </head>
@@ -110,7 +112,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     //Y.DD.DDM._debugShim = true;
 
     var sel = new Y.Sortable({
-        container: '#one',
+        container: Y.one('#one'),
         nodes: '.item',
         opacity: '.5',
         moveType: 'move',

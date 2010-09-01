@@ -103,17 +103,11 @@ YUI.add('dd-ddm', function(Y) {
                 width: '5px'
             });
             pg.set('id', Y.stamp(pg));
-            pg.addClass('yui3-dd-shim');
-            if (bd.get('firstChild')) {
-                bd.insertBefore(pg, bd.get('firstChild'));
-            } else {
-                bd.appendChild(pg);
-            }
+            pg.addClass(Y.DD.DDM.CSS_PREFIX + '-shim');
+            bd.prepend(pg);
             this._pg = pg;
-            //this._pg.on('mouseup', Y.bind(this._end, this));
-            //this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            this._pg.on('move', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            this._pg.on('moveend', Y.bind(this._end, this));
+            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on('mouseup', Y.bind(this._end, this));
             
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));

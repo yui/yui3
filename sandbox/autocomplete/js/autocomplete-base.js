@@ -30,7 +30,6 @@ YUI.add('autocomplete-base', function (Y) {
 
 // -- Shorthand & Private Variables --------------------------------------------
 var Lang       = Y.Lang,
-    YArray     = Y.Array,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
 
@@ -61,10 +60,10 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
         var input = this.get(INPUT_NODE);
 
         if (!input) {
-            Y.error('No input node specified');
+            Y.error('No input node specified.');
         }
 
-        if (input.get('nodeName') === 'INPUT') {
+        if (input.get('nodeName').toLowerCase() === 'input') {
             input.setAttribute(AC, this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
         }
 
@@ -542,81 +541,9 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
                 return isFunction(value) || value === null;
             }
         }
-    },
-
-    /**
-     * Regular expression that matches an individual non-word character.
-     *
-     * @property REGEX_NOT_WORD
-     * @type RegExp
-     * @static
-     * @final
-     */
-    REGEX_NOT_WORD: /\W/,
-
-    // -- Public Static Methods ------------------------------------------------
-
-    /**
-     * Returns an array of unique words in the specified string. A "word" is any
-     * consecutive part of the string that doesn't match the
-     * <code>REGEX_NOT_WORD</code> regular expression.
-     *
-     * @method getWords
-     * @param {String} string String to parse
-     * @param {Boolean} preserveCase (optional) If <code>true</code>, case will
-     *   be preserved; otherwise all words will be converted to lowercase.
-     * @return {Array} Unique words in the string
-     * @static
-     */
-    getWords: function (string, preserveCase) {
-        var regex = AutoComplete.REGEX_NOT_WORD,
-            words = YArray.unique((preserveCase ? string : string.toLowerCase()).split(regex));
-
-        return YArray.reject(words, function (word) {
-            return word === '' || regex.test(word);
-        });
-    },
-
-    // -- Protected Static Methods ---------------------------------------------
-
-    /**
-     * Returns a copy of the specified string with special HTML characters
-     * escaped. The following characters will be converted to their
-     * corresponding character entities:
-     * <code>&amp; &lt; &gt; &quot; &#x27; &#x2F;</code>
-     *
-     * @method _escapeHTML
-     * @param {String} string string to escape
-     * @return {String} escaped string
-     * @protected
-     * @static
-     */
-    _escapeHTML: function (string) {
-        // Based on the OWASP HTML escaping recommendations at
-        // http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
-        return string.replace(/&/g, '&amp;').
-                      replace(/</g, '&lt;').
-                      replace(/>/g, '&gt;').
-                      replace(/"/g, '&quot;').
-                      replace(/'/g, '&#x27;').
-                      replace(/\//g, '&#x2F;');
-    },
-
-    /**
-     * Returns a copy of the specified string with special RegExp characters
-     * escaped.
-     *
-     * @method _escapeRegExp
-     * @param {String} string string to escape
-     * @return {String} escaped string
-     * @protected
-     * @static
-     */
-    _escapeRegExp: function (string) {
-        return string.replace(/([\\\^\$*+\[\]?{}.=!:(|)])/g, '\\$1');
     }
 });
 
 }, '@VERSION@', {
-    requires: ['base-base', 'node-base', 'value-change']
+    requires: ['base-base', 'event-valuechange', 'node-base']
 });

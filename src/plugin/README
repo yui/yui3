@@ -1,8 +1,9 @@
 Provides the base class for Plugins, which can be added to a PluginHost. 
 
-Development Master
+3.2.0
 
 * Fixed onHostEvent to actually use on (was using after)
+* Plugin.Base can now be mixed in as an extension
 
 3.1.1
 

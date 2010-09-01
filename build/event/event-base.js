@@ -243,7 +243,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     wrapper = wrapper || {};
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, c, t, 
+        x = e.pageX, y = e.pageY, c, t, de = d.documentElement,
         overrides = wrapper.overrides || {};
 
     this.altKey   = e.altKey;
@@ -256,13 +256,13 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     //////////////////////////////////////////////////////
 
-    if (!x && 0 !== x) {
-        x = e.clientX || 0;
-        y = e.clientY || 0;
+    if (('clientX' in e) && (!x) && (0 !== x)) {
+        x = e.clientX; 
+        y = e.clientY;
 
         if (ua.ie) {
-            x += Math.max(d.documentElement.scrollLeft, b.scrollLeft);
-            y += Math.max(d.documentElement.scrollTop, b.scrollTop);
+            x += (de.scrollLeft || b.scrollLeft || 0);
+            y += (de.scrollTop  || b.scrollTop  || 0);
         }
     }
 
@@ -383,6 +383,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.cancelBubble = true;
         }
         wrapper.stopped = 1;
+        this.stopped = 1;
     };
 
     /**
@@ -398,6 +399,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
         wrapper.stopped = 2;
+        this.stopped = 2;
     };
 
     /**
@@ -413,6 +415,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         }
         e.returnValue = returnValue || false;
         wrapper.prevented = 1;
+        this.prevented = 1;
     };
 
     /**
@@ -1239,13 +1242,19 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          */           
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
-                results=[] , key = (type) ? 'event:' + ek + type : null;
+                results=[] , key = (type) ? 'event:' + ek + type : null,
+                adapters = _eventenv.plugins;
 
             if (!evts) {
                 return null;
             }
 
             if (key) {
+                // look for synthetic events
+                if (adapters[type] && adapters[type].eventDef) {
+                    key += '_synth';
+                }
+
                 if (evts[key]) {
                     results.push(evts[key]);
                 }

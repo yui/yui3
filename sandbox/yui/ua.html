@@ -2,7 +2,11 @@
 <html>
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+
+<script src="../../build/yui/yui-debug.js"></script>
+
+<base href="http://localhost/src/yui3/sandbox/yui/ua.html" />
+
 <style>
 .dd {
             padding-left: 20px;
@@ -29,13 +33,8 @@ top: 200px;
 <div id="ddtarg" class="dd"></div>
 
 
-
 <script type="text/javascript">
-YUI({
-
-    base: '../../build/'
-
-}).use('node', 'dump', function(Y) {
+YUI({ }).use('node', 'dump', function(Y) {
     var node = Y.get('#demo');
     // var ua = [];
     // Y.each(Y.UA, function(v, k) {

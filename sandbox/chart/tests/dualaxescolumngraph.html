@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+/*Supplemental: CSS for the YUI distribution*/
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+table, tr, td
+{
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-spacing: 0px;
+    vertical-align:top;
+}
+    .yui3-tooltip {
+        position:absolute;
+    }
+
+    .yui3-tooltip-content {
+        color: #000;
+        padding: 2px 5px;
+        border-color: #aeae9e;
+        border-width: 1px;
+        border-style: solid;
+        background-color: #edeeee;
+    }
+
+    .yui3-tooltip-hidden {
+        visibility:hidden;
+    }
+
+    .yui3-tooltip-content {
+        font-size: 9px;
+        font-weight:bold;
+    }
+
+    .yui3-tooltip-content strong {
+        font-size:9px;
+        font-weight:bold;
+    }
+</style>
+<!-- BEGIN EXAMPLE CODE -->	
+    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
+		
+</head>		
+<body class="yui3-skin-sam">
+		
+<div>
+        <input type="text" name="xLabelRotationField" id="xLabelRotationField" />
+        <button id="rotationbutton" type="button">Update Axes Label Rotation</button>
+        <input type="text" name="yLabelRotationField" id="yLabelRotationField" />
+        
+  <div style="position:absolute;top:50px;left:100px">      
+<table>
+<tr><td></td><td></td><td></td></tr>
+<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative"></div></td><td><div id="chart" style="width:100%;height:100%;position:relative"></div></td>
+<td><div id="rightaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative"></div></td>
+</tr>
+<tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px"></div></td><td></td></tr>
+</table>
+</div>
+<br/>
+<div style="position:absolute;top:400px;left:100px;min-height:300px;min-width:300px;border:1px solid #ff0000" id="logdiv"></div>
+<script>
+
+			YUI().use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', function (Y)
+				{ 
+
+
+					// Create data 
+					var mydata = {
+						id:"myData", 
+						data: [
+							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, {day:"Tuesday", taxes:50, expenses:9100, revenue:100}, 
+							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
+						]
+					};					
+
+					var expensegraphstyles = {
+						color:"#5577AF",
+						fill: {
+                            color:"#5577AF", 
+                            alpha:0.2
+                        },
+                        over: {
+                            fill:{alpha:1}
+                        },
+                        width:8, 
+                        height:6,
+                        border: {
+						    weight:"1",
+                            color: "#ff0000"
+                        },
+                        padding:{left:50, right:50}
+					};
+
+					// Add revenue graph styles
+					var revenuegraphstyles = {
+						color:"#FF0000",
+						fill: {
+                            color:"#ff0000", 
+                            alpha:0.2
+                        },
+                        border: {
+						    weight:1,
+                            color:"#0000ff"
+                        },
+                        over: {
+                            fill:{
+                                color:"#0000ff",
+                                alpha: 0.2
+                            },
+                            border:{
+                                color:"#0000ff"
+                            }
+                        },
+                        width:16,
+                        height:10,
+                        padding:{left:50, right:50}
+					};
+
+                    var taxgraphstyles = {
+						fill:
+                        {
+                            color:"#0000ff"
+						},
+                        over: {
+                            fill: {
+                                color:"#ff0000"
+                            },
+                            border: {
+                                weight:1,
+                                color:"#0000ee"
+                            },
+                            width:10,
+                            height:10
+                        },
+                        width:6, 
+                        height:6,
+						border:
+                        {
+                            weight:"0"
+                        },    
+                        padding:{left:50, right:50}
+                    };
+				
+                    var taxareastyles = {
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        padding:{left:50, right:50}
+                    };
+					// Create bottom axis styles
+					var bottomaxisstyles = {
+						label:{
+							color:"#BDD7EB",
+							rotation:0,
+							margin:{top:5},
+						},
+						dataFormat:{
+							pattern:"%b %d, %y"
+						},
+						majorTicks:{
+							color:"#BDD7EB",
+                            display:"inside"
+						},
+						line:{
+							color:"#BDD7EB"
+						},
+						majorUnit:
+						{
+							count:5
+						},
+                        padding:{left:50, right:50}
+                    };	
+                    
+					var leftaxisstyles = {
+						label:{
+							color:"#BDD7EB",
+							rotation:0,
+							margin:{top:5},
+						},
+						dataFormat:{
+							pattern:
+                            {
+                                prefix: "$"
+                            }
+						},
+						majorTicks:{
+							color:"#BDD7EB",
+                            display:"outside"
+						},
+						line:{
+							color:"#BDD7EB"
+						},
+						majorUnit:
+						{
+							count:5
+						}
+					};	
+                    var dataProvider = mydata;
+                    var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
+					timeaxis.addKey("day");
+                    
+                    var financialaxis = new Y.NumericAxis({dataProvider:dataProvider});
+					financialaxis.addKey("revenue");
+			        financialaxis.addKey("expenses");	
+
+                    var extortionaxis = new Y.NumericAxis({dataProvider:dataProvider});
+                    extortionaxis.addKey("taxes");
+                    var lineSeries = new Y.LineSeries({
+                                                        type:"line",
+                                                        xAxis:timeaxis,
+                                                        yAxis:extortionaxis,
+                                                        xKey:"day",
+                                                        yKey:"taxes",
+                                                        xDisplayName:"Day",
+                                                        yDisplayName: "Taxes",
+                                                        styles:taxgraphstyles});
+                    var markerSeries = new Y.MarkerSeries({
+                                                        xAxis:timeaxis,
+                                                        yAxis:extortionaxis,
+                                                        xKey:"day",
+                                                        yKey:"taxes",
+                                                        xDisplayName:"Day",
+                                                        yDisplayName: "Taxes",
+                                                        styles:taxgraphstyles});
+                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
+                                                                                        type:"area",
+                                                                                        xAxis:timeaxis,
+                                                                                        yAxis:extortionaxis,
+                                                                                        xKey:"day",
+                                                                                        yKey:"taxes",
+                                                                                        xDisplayName:"Day",
+                                                                                        yDisplayName: "Taxes",
+                                                                                        styles:taxareastyles
+                                                                                    },
+                                                                                    lineSeries,
+                                                                                    {
+                                                                                        type:"column", 
+                                                                                        xAxis:timeaxis, 
+                                                                                        yAxis:financialaxis, 
+                                                                                        xKey:"day", 
+                                                                                        yKey:"revenue", 
+                                                                                        xDisplayName:"Day",
+                                                                                        yDisplayName: "Revenue",
+                                                                                        styles:revenuegraphstyles
+                                                                                    },
+                                                                                    {
+                                                                                        type:"column",
+                                                                                        xAxis:timeaxis,
+                                                                                        yAxis:financialaxis,
+                                                                                        xKey:"day",
+                                                                                        yKey:"expenses",
+                                                                                        xDisplayName:"Day",
+                                                                                        yDisplayName: "Expenses",
+                                                                                        styles:expensegraphstyles
+                                                                                    },
+                                                                                    markerSeries
+                                                                                    ]});
+                    
+                    
+                    var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
+                    axisrenderer.render("#axis");
+                    
+                    var raxis = new Y.AxisRenderer({position:"right", axis:extortionaxis, styles:leftaxisstyles});
+                    raxis.render("#rightaxis");
+                    
+                    function updateAxisLabelRotation()
+                    {
+                        axisrenderer.set("styles", {label:{rotation:document.getElementById("xLabelRotationField").value}});
+                        vaxis.set("styles", {label:{rotation:document.getElementById("yLabelRotationField").value}});
+                    }
+                    Y.on("click", updateAxisLabelRotation, "#rotationbutton");
+                    var vaxis = new Y.AxisRenderer({position:"left", axis:financialaxis, styles:leftaxisstyles});
+                    vaxis.render("#vertaxis");
+    
+                    var tt = new Y.Tooltip({
+                        triggerNodes:".yui3-seriesmarker",
+                        delegate: "#chart",
+                        shim:false,
+                        zIndex:2
+                    });
+                    
+                    tt.render();
+                    
+                    tt.on("triggerEnter", function(e) {
+                        var node = e.node,
+                        marker = Y.Widget.getByNode(node),
+                        index = marker.get("index"),
+                        series = marker.get("series"),
+                        xKey = series.get("xKey"),
+                        yKey = series.get("yKey"),
+                        msg = series.get("xDisplayName") + 
+                        ": " + series.get("xAxis").getKeyValueAt(xKey, index) + 
+                        "<br/>" + series.get("yDisplayName") + 
+                        ": " + series.get("yAxis").getKeyValueAt(yKey, index);
+                        if (node) {
+                            
+                            this.setTriggerContent(msg);
+                        }
+                    });
+            });
+
+</script>
+<!-- END EXAMPLE CODE -->
+</div>
+</body>
+</html>

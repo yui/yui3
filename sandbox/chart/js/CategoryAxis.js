@@ -7,6 +7,11 @@ CategoryAxis.NAME = "categoryAxis";
 
 Y.extend(CategoryAxis, Y.BaseAxis,
 {
+    /**
+     * @private
+     */
+    _indices: null,
+
 	/**
 	 * Constant used to generate unique id.
 	 */
@@ -17,20 +22,6 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 	 */
 	_dataType: "category",
 		
-	/**
-	 * @private (override)
-	 * Returns a numeric value based of a key value and an index.
-	 */
-	_getKeyValueAt: function(key, index)
-	{
-		var value = NaN;
-		if(this.keys[key])
-		{
-			value = index;
-		}
-		return value;
-	},
-
 	/**
 	 * @private
 	 */
@@ -51,19 +42,56 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 			labels = [], 
 			dv = this._dataClone.concat(), 
 			len = dv.length;
-		for(i = 0; i < len; ++i)
+	    if(!this._indices)
+        {
+            this._indices = {};
+        }
+        for(i = 0; i < len; ++i)
 		{
 			obj = dv[i];
 			arr[i] = i;
 			labels[i] = obj[key];
 		}
-		this._keys[key] = arr;
+        this._indices[key] = arr;
+		this.get("keys")[key] = labels.concat();
 		this._data = this._data.concat(labels);
+	},
+
+	/**
+	 * Returns an array of values based on an identifier key.
+	 */
+	getDataByKey: function (value)
+	{
+		var keys = this._indices;
+		if(keys[value])
+		{
+			return keys[value];
+		}
+		return null;
 	},
 
     getTotalMajorUnits: function(majorUnit, len)
     {
         return this._data.length;
+    },
+    
+    getMajorUnitDistance: function(len, uiLen, majorUnit)
+    {
+        var dist;
+        if(majorUnit.determinant === "count")
+        {
+            dist = uiLen/len;
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            dist = majorUnit.distance;
+        }
+        return dist;
+    },
+   
+    getEdgeOffset: function(ct, l)
+    {
+        return l/ct;
     },
     
     getLabelAtPosition: function(pos, len, format)
@@ -72,7 +100,6 @@ Y.extend(CategoryAxis, Y.BaseAxis,
         i = Math.round(pos/(len/count));
         return this._data[i];
     }
-			
 });
 
 Y.CategoryAxis = CategoryAxis;

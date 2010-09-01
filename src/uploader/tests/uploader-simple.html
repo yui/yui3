@@ -1,85 +1,98 @@
 <html>
 <head>
-    <title>Uploader Tests</title>
-	<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js"></script>
+    <title>Uploader Example: Single File Upload with Progress Tracking and a Sprite-skinned Button</title>
+	<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 	<script type="text/javascript" src="../../../build/uploader/uploader.js"></script>
+
+	<style type="text/css">
+		.uploadButton a {
+			display:block;
+			width:100px;
+			height:40px;
+			text-decoration: none;
+		}
+
+		.uploadButton a {
+			background: url("assets/uploadFileButton.png") 0 0 no-repeat;
+		}
+
+	    .uploadButton a:visited {
+			background-position: 0 0;
+		}
+
+	    .uploadButton a:hover {	
+			background-position: 0 -40px;
+		}
+
+	    .uploadButton a:active {
+			background-position: 0 -80px;
+		}
+	</style>
+
 </head>
 <body>
-<h1>SWF Tests</h1>
-<div id="uploaderContainer"> 
-	<div id="uploaderOverlay" style="position:absolute; z-index:2"></div> 
-	<div id="selectFilesLink" style="z-index:1"><a id="selectLink" href="#">Select Files</a></div> 
-</div> 
-<div id="uploadFilesLink"><a id="uploadLink" href="#">Upload Files</a></div>
+<h1>Uploader Example: Single File Upload with Progress Tracking and a Sprite-skinned Button</h1>
 
-<div id="files">
-  <table id="filenames" style="border-width:1px; border-style:solid; padding:5px;">
-	<tr><td>Filename</td><td>File size</td><td>Percent uploaded</td></tr>
-  </table>	
+<div id="selectButton" style="width:100px;height:40px"></div> 
+<div class="uploadButton"><a href="#" id="uploadButtonLink"></a></div>
+
+<div id="filename">
+File selected:
 </div>
+<div id="percent">
+Percent uploaded:
+</div>
+
+
+
 <script>
 
 YUI({ debug:true, filter:"raw" }).use('base', 'event', 'node', 'swf', 'uploader', function (Y) {
 
-var newuploader;
+var uploader = new Y.Uploader({boundingBox:"#selectButton", 
+							   swfURL:"../../../build/uploader/assets/uploader.swf",
+							   buttonSkin:"assets/selectFileButton.png",
+							   transparent: false});	
 
-function init () {
+uploader.on("uploaderReady", setupUploader);
+uploader.on("fileselect", fileSelect);
+uploader.on("uploadprogress", updateProgress);
+uploader.on("uploadcomplete", uploadComplete);
+
+Y.one("#uploadButtonLink").on("click", uploadFile);
+
+
+function setupUploader (event) {
+	uploader.set("multiFiles", false);
+	uploader.set("log", true);
 	
-var overlayRegion = Y.one("#selectLink").get('region');
-Y.log(overlayRegion);
-Y.one("#uploaderOverlay").set("offsetWidth", overlayRegion.width);
-Y.one("#uploaderOverlay").set("offsetHeight", overlayRegion.height);
-
-newuploader = new Y.uploader({p_oElement:"#uploaderOverlay", 
-								  p_oAttributes: {swfURL:"../../../build/uploader/assets/uploader.swf",
-								                  transparent: true}
-								 });	
-
-newuploader.on("fileselect", fileSelect);
-newuploader.on("uploaderReady", setupUploader);
-newuploader.on("uploadprogress", updateProgress);
-newuploader.on("uploadcomplete", uploadComplete);
-}
-
-Y.on("domready", init);
-
-
-var setupUploader = function (event) {
-	newuploader.set("multiFiles", true);
-	newuploader.set("simLimit", 3);
-	newuploader.set("log", true);
-	
-	var ff = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif"},
+	var fileFilters = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif"},
 	                   {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}); 
 	
-    newuploader.set("fileFilters", ff); 
+    uploader.set("fileFilters", fileFilters);
 }
 
-var fileSelect = function (event) {
-	Y.log("File was selected, parsing...");
-	var fileData = event.fileList;
-	var output = "";	
-	
-	for each (key in fileData) {
-		output = "<tr><td>" + key.name + "</td><td>" + key.size + "</td><td id='" + key.id + "'>0%</td></tr>\n";
-		Y.one("#filenames").append(output);
+
+function fileSelect (event) {
+	var fileData = event.fileList;	
+
+	for (var key in fileData) {
+		var output = "File selected: " + fileData[key].name;
+		Y.one("#filename").setContent(output);
 	}
 }
 
-var updateProgress = function (event) {
-	Y.one("#" + event.id).setContent((100 * event.bytesLoaded / event.bytesTotal) + "%");
+function updateProgress (event) {
+	Y.one("#percent").setContent("Percent uploaded: " + Math.round((100 * event.bytesLoaded / event.bytesTotal)) + "%");
 }
 
-var uploadComplete = function (event) {
-	Y.one("#" + event.id).setContent("Upload complete!");
+function uploadComplete (event) {
+	Y.one("#percent").setContent("Upload complete!");
 }
 
-var uploadFile = function (event) {
-	newuploader.uploadAll("http://www.yswfblog.com/upload/upload_simple.php");
+function uploadFile (event) {
+	uploader.uploadAll("http://www.yswfblog.com/upload/upload_simple.php");
 }
-
-Y.one("#uploadFilesLink").on("click", uploadFile);
-
 
 
 });

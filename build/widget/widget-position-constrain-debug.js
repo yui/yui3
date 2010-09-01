@@ -342,4 +342,4 @@ PositionConstrain.prototype = {
 Y.WidgetPositionConstrain = PositionConstrain;
 
 
-}, '@VERSION@' ,{requires:['widget', 'widget-position']});
+}, '@VERSION@' ,{requires:['widget-position']});

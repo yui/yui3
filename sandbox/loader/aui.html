@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>YUI 3.0</title>
+<script src="http://yui.yahooapis.com/3.1.0/build/yui/yui-min.js"></script>
+<!--
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+-->
+<style id="styleoverrides">
+  body {
+      background-color: #f7f7f7
+  }
+</style>
+</head>
+<body>
+<input id="button1" type="button" value="Button 1" class="button" />
+<input id="button2" type="button" value="Button 2" class="button" />
+<input id="text1" type="text" value="something" class="nothing" />
+<script>
+
+YUI({
+   gallery: 'gallery-2010.06.02-20-36',
+   modules: {
+       'gallery-aui-skin-base': { 
+           fullpath: 'http://yui.yahooapis.com/gallery-2010.06.02-20-36/build/gallery-aui-skin-base/css/gallery-aui-skin-base.css',
+           type: 'css'
+       },
+       'gallery-aui-skin-classic': {
+           fullpath: 'http://yui.yahooapis.com/gallery-2010.06.02-20-36/build/gallery-aui-skin-classic/css/gallery-aui-skin-classic.css',
+           type: 'css',
+           after: ['gallery-aui-skin-base']
+       }
+   }
+}).use('gallery-aui-skin-classic', 'gallery-aui-autocomplete', function(Y) {
+    new Y.AutoComplete().render();
+});
+
+
+</script> 
+</body>
+</html>

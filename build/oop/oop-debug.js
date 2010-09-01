@@ -61,7 +61,7 @@ YUI.add('oop', function(Y) {
             rProto           = r.prototype, 
             target           = rProto || r, 
             applyConstructor = false,
-            sequestered, replacements, i;
+            sequestered, replacements;
 
         // working on a class, so apply constructor infrastructure
         if (rProto && construct) {
@@ -77,7 +77,7 @@ YUI.add('oop', function(Y) {
 // Y.log('sequestered function "' + k + '" executed.  Initializing EventTarget');
 // overwrite the prototype with all of the sequestered functions,
 // but only if it hasn't been overridden
-                    for (i in sequestered) {
+                    for (var i in sequestered) {
                         if (sequestered.hasOwnProperty(i) && (this[i] === replacements[i])) {
                             // Y.log('... restoring ' + k);
                             this[i] = sequestered[i];
@@ -134,7 +134,7 @@ YUI.add('oop', function(Y) {
      * will be overwritten if found on the supplier.
      * @param wl {string[]} a whitelist.  If supplied, only properties in 
      * this list will be applied to the receiver.
-     * @return {object} the extended object
+     * @return the extended object
      */
     Y.aggregate = function(r, s, ov, wl) {
         return Y.mix(r, s, ov, wl, 0, true);
@@ -150,7 +150,7 @@ YUI.add('oop', function(Y) {
      * @param {Function} s the object to inherit
      * @param {Object} px prototype properties to add/override
      * @param {Object} sx static properties to add/override
-     * @return {YUI} the YUI instance
+     * @return the extended object
      */
     Y.extend = function(r, s, px, sx) {
         if (!s||!r) {

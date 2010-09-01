@@ -95,6 +95,11 @@ exports.Response = function Response(res) {
         return false;
     };
 
+    res.send304 = function send304() {
+        res.statusCode = 304;
+        res.sendResponse();
+    };
+
     res.send404 = function send404() {
         res.sendError(404, 'The requested resource was not found.');
     };
@@ -170,8 +175,13 @@ exports.Server = function Server(config) {
 
     // -- Private Methods ------------------------------------------------------
     function init() {
-        publicRoot = config && config.publicRoot || 'public';
-        server     = http.createServer(handleRequest);
+        try {
+            publicRoot = fs.realpathSync(config && config.publicRoot || 'public');
+        } catch (ex) {
+            publicRoot = null;
+        }
+
+        server = http.createServer(handleRequest);
     }
 
     function addRoute(method, pattern, handler) {
@@ -204,6 +214,10 @@ exports.Server = function Server(config) {
     function matchPublic(req, res, callback, pathOverride) {
         var fullPath,
             requestPath = pathOverride || req.parsedURL.pathname;
+
+        if (!publicRoot) {
+            return finish(false);
+        }
 
         function finish(matched) {
             if (callback) {

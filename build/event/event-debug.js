@@ -243,7 +243,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     wrapper = wrapper || {};
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, c, t, 
+        x = e.pageX, y = e.pageY, c, t, de = d.documentElement,
         overrides = wrapper.overrides || {};
 
     this.altKey   = e.altKey;
@@ -256,13 +256,13 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     //////////////////////////////////////////////////////
 
-    if (!x && 0 !== x) {
-        x = e.clientX || 0;
-        y = e.clientY || 0;
+    if (('clientX' in e) && (!x) && (0 !== x)) {
+        x = e.clientX; 
+        y = e.clientY;
 
         if (ua.ie) {
-            x += Math.max(d.documentElement.scrollLeft, b.scrollLeft);
-            y += Math.max(d.documentElement.scrollTop, b.scrollTop);
+            x += (de.scrollLeft || b.scrollLeft || 0);
+            y += (de.scrollTop  || b.scrollTop  || 0);
         }
     }
 
@@ -383,6 +383,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.cancelBubble = true;
         }
         wrapper.stopped = 1;
+        this.stopped = 1;
     };
 
     /**
@@ -398,6 +399,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
         wrapper.stopped = 2;
+        this.stopped = 2;
     };
 
     /**
@@ -413,6 +415,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         }
         e.returnValue = returnValue || false;
         wrapper.prevented = 1;
+        this.prevented = 1;
     };
 
     /**
@@ -1249,13 +1252,19 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */           
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
-                results=[] , key = (type) ? 'event:' + ek + type : null;
+                results=[] , key = (type) ? 'event:' + ek + type : null,
+                adapters = _eventenv.plugins;
 
             if (!evts) {
                 return null;
             }
 
             if (key) {
+                // look for synthetic events
+                if (adapters[type] && adapters[type].eventDef) {
+                    key += '_synth';
+                }
+
                 if (evts[key]) {
                     results.push(evts[key]);
                 }
@@ -1404,313 +1413,979 @@ YUI.add('event-delegate', function(Y) {
  * @submodule event-delegate
  */
 
-var Event = Y.Event,
-    Lang = Y.Lang,
+var toArray          = Y.Array,
+    YLang            = Y.Lang,
+    isString         = YLang.isString,
+    selectorTest     = Y.Selector.test,
+    detachCategories = Y.Env.evt.handles;
 
-    delegates = {},
-    
-    specialTypes = {
-        mouseenter: "mouseover",
-        mouseleave: "mouseout"
-    },
+/**
+ * <p>Sets up event delegation on a container element.  The delegated event
+ * will use a supplied selector or filtering function to test if the event
+ * references at least one node that should trigger the subscription
+ * callback.</p>
+ *
+ * <p>Selector string filters will trigger the callback if the event originated
+ * from a node that matches it or is contained in a node that matches it.
+ * Function filters are called for each Node up the parent axis to the
+ * subscribing container node, and receive at each level the Node and the event
+ * object.  The function should return true (or a truthy value) if that Node
+ * should trigger the subscription callback.  Note, it is possible for filters
+ * to match multiple Nodes for a single event.  In this case, the delegate
+ * callback will be executed for each matching Node.</p>
+ *
+ * <p>For each matching Node, the callback will be executed with its 'this'
+ * object set to the Node matched by the filter (unless a specific context was
+ * provided during subscription), and the provided event's
+ * <code>currentTarget</code> will also be set to the matching Node.  The
+ * containing Node from which the subscription was originally made can be
+ * referenced as <code>e.container</code>.
+ *
+ * @method delegate
+ * @param type {String} the event type to delegate
+ * @param fn {Function} the callback function to execute.  This function
+ *              will be provided the event object for the delegated event.
+ * @param el {String|node} the element that is the delegation container
+ * @param spec {string|Function} a selector that must match the target of the
+ *              event or a function to test target and its parents for a match
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ *              These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
+ */
+function delegate(type, fn, el, filter) {
+    var args     = toArray(arguments, 0, true),
+        query    = isString(el) ? el : null,
+        typeBits = type.split(/\|/),
+        synth, container, categories, cat, handle;
 
-    resolveTextNode = function(n) {
-        try {
-            if (n && 3 == n.nodeType) {
-                return n.parentNode;
-            }
-        } catch(e) { }
-        return n;
-    },
+    if (typeBits.length > 1) {
+        cat  = typeBits.shift();
+        type = typeBits.shift();
+    }
 
-    delegateHandler = function(delegateKey, e, el) {
+    synth = Y.Node.DOM_EVENTS[type];
 
-        var target = resolveTextNode((e.target || e.srcElement)), 
-            tests  = delegates[delegateKey],
-            spec, 
-            ename,
-            matched,
-            fn,
-            ev;
+    if (YLang.isObject(synth) && synth.delegate) {
+        handle = synth.delegate.apply(synth, arguments);
+    }
 
-
-        var getMatch = function(el, selector, container) {
-            
-            var returnVal;
-            
-            if (!el || el === container) {
-                returnVal = false;
-            }
-            else {
-                returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
-            }
-            
-            return returnVal;
-            
-        };
-
-
-        for (spec in tests) {
-
-            if (tests.hasOwnProperty(spec)) {
-
-                ename  = tests[spec];
-                fn  = tests.fn;
-                matched = null;
-
-
-                if (Y.Selector.test(target, spec, el)) {
-                    matched = target;
-                }
-                else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
-                     
-                 //  The target is a descendant of an element matching 
-                 //  the selector, so crawl up to find the ancestor that 
-                 //  matches the selector
-                 
-                 matched = getMatch(target, spec, el);
-                 
-                }
-
-
-                if (matched) {
-
-                    if (!ev) {
-                        ev = new Y.DOMEventFacade(e, el);
-                        ev.container = ev.currentTarget;
-                    }
-
-                    ev.currentTarget = Y.one(matched);
-
-                    Y.publish(ename, {
-                           contextFn: function() {
-                               return ev.currentTarget;
-                           }
-                       });
-
-                    if (fn) {
-                        fn(ev, ename);
-                    }
-                    else {
-                        Y.fire(ename, ev);                              
-                    }
-                    
-                }
-
-            }
+    if (!handle) {
+        if (!type || !fn || !el || !filter) {
+            Y.log("delegate requires type, callback, parent, & filter", "warn");
+            return;
         }
 
-    },
+        container = (query) ? Y.Selector.query(query, null, true) : el;
 
-    attach = function (type, key, element) {
-
-        var focusMethods = {
-                focus: Event._attachFocus,
-                blur: Event._attachBlur
-            },
-
-            attachFn = focusMethods[type],
-
-            args = [type, 
-            function (e) {
-                delegateHandler(key, (e || Y.config.win.event), element);
-            }, 
-            element];
-
-
-        if (attachFn) {
-            return attachFn(args, { capture: true, facade: false });
+        if (!container && isString(el)) {
+            handle = Y.on('available', function () {
+                Y.mix(handle, Y.delegate.apply(Y, args), true);
+            }, el);
         }
-        else {
-            return Event._attach(args, { facade: false });
+
+        if (!handle && container) {
+            args.splice(2, 2, container); // remove the filter
+
+            if (isString(filter)) {
+                filter = Y.delegate.compileFilter(filter);
+            }
+
+            handle = Y.on.apply(Y, args);
+            handle.sub.filter  = filter;
+            handle.sub._notify = delegate.notifySub;
         }
+    }
+
+    if (handle && cat) {
+        categories = detachCategories[cat]  || (detachCategories[cat] = {});
+        categories = categories[type] || (categories[type] = []);
+        categories.push(handle);
+    }
+
+    return handle;
+}
+
+/**
+ * Overrides the <code>_notify</code> method on the normal DOM subscription to inject the filtering logic and only proceed in the case of a match.
+ * 
+ * @method delegate.notifySub
+ * @param thisObj {Object} default 'this' object for the callback
+ * @param args {Array} arguments passed to the event's <code>fire()</code>
+ * @param ce {CustomEvent} the custom event managing the DOM subscriptions for
+ *              the subscribed event on the subscribing node.
+ * @return {Boolean} false if the event was stopped
+ * @private
+ * @static
+ * @since 3.2.0
+ */
+delegate.notifySub = function (thisObj, args, ce) {
+    // Preserve args for other subscribers
+    args = args.slice();
+    if (this.args) {
+        args.push.apply(args, this.args);
+    }
+
+    // Only notify subs if the event occurred on a targeted element
+    var e             = args[0],
+        currentTarget = delegate._applyFilter(this.filter, args),
+        container     = e.currentTarget,
+        i, ret, target;
+
+    if (currentTarget) {
+        // Support multiple matches up the the container subtree
+        currentTarget = toArray(currentTarget);
+
+        for (i = currentTarget.length - 1; i >= 0; --i) {
+            target = currentTarget[i];
+
+            // New facade to avoid corrupting facade sent to direct subs
+            args[0] = new Y.DOMEventFacade(e, target, ce);
+
+            args[0].container = container;
         
-    },
+            thisObj = this.context || target;
 
-    sanitize = Y.cached(function(str) {
-        return str.replace(/[|,:]/g, '~');
-    });
+            ret = this.fn.apply(thisObj, args);
 
+            if (ret === false) { // stop further notifications
+                break;
+            }
+        }
 
+        return ret;
+    }
+};
+
+/**
+ * <p>Compiles a selector string into a filter function to identify whether
+ * Nodes along the parent axis of an event's target should trigger event
+ * notification.</p>
+ *
+ * <p>This function is memoized, so previously compiled filter functions are
+ * returned if the same selector string is provided.</p>
+ *
+ * <p>This function may be useful when defining synthetic events for delegate
+ * handling.</p>
+ *
+ * @method delegate.compileFilter
+ * @param selector {String} the selector string to base the filtration on
+ * @return {Function}
+ * @since 3.2.0
+ * @static
+ */
+delegate.compileFilter = Y.cached(function (selector) {
+    return function (target, e) {
+        return selectorTest(target._node, selector, e.currentTarget._node);
+    };
+});
+
+/**
+ * Walks up the parent axis of an event's target, and tests each element
+ * against a supplied filter function.  If any Nodes satisfy the filter, the
+ * delegated callback will be triggered for each.
+ *
+ * @method delegate._applyFilter
+ * @param filter {Function} boolean function to test for inclusion in event
+ *                  notification
+ * @param args {Array} the arguments that would be passed to subscribers
+ * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter
+ * @protected
+ */
+delegate._applyFilter = function (filter, args) {
+    var e         = args[0],
+        container = e.currentTarget,
+        target    = e.target,
+        match     = [];
+
+    // passing target as the first arg rather than leaving well enough alone
+    // making 'this' in the filter function refer to the target.  This is to
+    // support bound filter functions.
+    args.unshift(target);
+
+    while (target && target !== container) {
+        // filter(target, e, extra args...) - this === target
+        if (filter.apply(target, args)) {
+            match.push(target);
+        }
+        args[0] = target = target.get('parentNode');
+    }
+
+    if (match.length <= 1) {
+        match = match[0]; // single match or undefined
+    }
+
+    // remove the target
+    args.shift();
+
+    return match;
+};
 
 /**
  * Sets up event delegation on a container element.  The delegated event
- * will use a supplied selector to test if the target or one of the
- * descendants of the target match it.  The supplied callback function 
- * will only be executed if a match was encountered, and, in fact, 
- * will be executed for each element that matches if you supply an 
- * ambiguous selector.
+ * will use a supplied filter to test if the callback should be executed.
+ * This filter can be either a selector string or a function that returns
+ * a Node to use as the currentTarget for the event.
  *
  * The event object for the delegated event is supplied to the callback
  * function.  It is modified slightly in order to support all properties
  * that may be needed for event delegation.  'currentTarget' is set to
- * the element that matched the delegation specifcation.  'container' is
- * set to the element that the listener is bound to (this normally would
- * be the 'currentTarget').
+ * the element that matched the selector string filter or the Node returned
+ * from the filter function.  'container' is set to the element that the
+ * listener is delegated from (this normally would be the 'currentTarget').
+ *
+ * Filter functions will be called with the arguments that would be passed to
+ * the callback function, including the event object as the first parameter.
+ * The function should return false (or a falsey value) if the success criteria
+ * aren't met, and the Node to use as the event's currentTarget and 'this'
+ * object if they are.
  *
  * @method delegate
  * @param type {string} the event type to delegate
  * @param fn {function} the callback function to execute.  This function
  * will be provided the event object for the delegated event.
  * @param el {string|node} the element that is the delegation container
- * @param spec {string} a selector that must match the target of the
- * event.
+ * @param filter {string|function} a selector that must match the target of the
+ * event or a function that returns a Node or false.
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  * These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
  * @for YUI
  */
-Event.delegate = function (type, fn, el, spec) {
-
-    if (!spec) {
-        Y.log('delegate: no spec, nothing to do', 'warn', 'event');
-        return false;
-    }
-
-
-    var args = Y.Array(arguments, 0, true),     
-        element = el,   // HTML element serving as the delegation container
-        availHandle;    
-
-
-    if (Lang.isString(el)) {
-        
-        //  Y.Selector.query returns an array of matches unless specified 
-        //  to return just the first match.  Since the primary use case for
-        //  event delegation is to use a single event handler on a container,
-        //  Y.delegate doesn't currently support being able to bind a 
-        //  single listener to multiple containers.
-        
-        element = Y.Selector.query(el, null, true);
-        
-        if (!element) { // Not found, check using onAvailable
-
-            availHandle = Event.onAvailable(el, function() {
-
-                availHandle.handle = Event.delegate.apply(Event, args);
-
-            }, Event, true, false);
-
-            return availHandle;
-            
-        }
-        
-    }
-
-
-    element = Y.Node.getDOMNode(element);
-
-
-    var guid = Y.stamp(element),
-            
-        // The Custom Event for the delegation spec
-        ename = 'delegate:' + guid + type + sanitize(spec),
-
-        // The key to the listener for the event type and container
-        delegateKey = type + guid,
-
-        delegate = delegates[delegateKey],
-
-        domEventHandle,
-        
-        ceHandle,
-        
-        listeners;
-    
-
-    if (!delegate) {
-
-        delegate = {};
-
-        if (specialTypes[type]) {
-            
-            if (!Event._fireMouseEnter) {
-                Y.log("Delegating a " + type + " event requires the event-mouseenter submodule.", "error", "Event");
-                return false;               
-            }
-            
-            type = specialTypes[type];
-            delegate.fn = Event._fireMouseEnter;
-            
-        }
-
-        //  Create the DOM Event wrapper that will fire the Custom Event
-
-        domEventHandle = attach(type, delegateKey, element);
-
-
-        //  Hook into the _delete method for the Custom Event wrapper of this
-        //  DOM Event in order to clean up the 'delegates' map and unsubscribe
-        //  the associated Custom Event listeners fired by this DOM event
-        //  listener if/when the user calls "purgeElement" OR removes all 
-        //  listeners of the Custom Event.
-        
-        Y.after(function (sub) {
-
-            if (domEventHandle.sub == sub) {
-
-                //  Delete this event from the map of known delegates
-                delete delegates[delegateKey];
-
-                Y.log("DOM event listener associated with the " + ename + " Custom Event removed.  Removing all " + ename + " listeners.", "info", "Event");
-
-                //  Unsubscribe all listeners of the Custom Event fired 
-                //  by this DOM event.
-                Y.detachAll(ename);
-                
-            }
-
-        }, domEventHandle.evt, "_delete");
-            
-        delegate.handle = domEventHandle;
-
-        delegates[delegateKey] = delegate;
-
-    }
-
-
-    listeners = delegate.listeners;
-
-    delegate.listeners = listeners ? (listeners + 1) : 1;
-    delegate[spec] = ename;
-
-
-    args[0] = ename;
-
-    // Remove element, delegation spec
-    args.splice(2, 2);
-        
-
-    // Subscribe to the Custom Event for the delegation spec
-
-    ceHandle = Y.on.apply(Y, args);
-
-
-    //  Hook into the detach method of the handle in order to clean up the 
-    //  'delegates' map and remove the associated DOM event handler 
-    //  responsible for firing this Custom Event if all listener for this 
-    //  event have been removed.
-
-    Y.after(function () {
-            
-        delegate.listeners = (delegate.listeners - 1);
-        
-        if (delegate.listeners === 0) {
-            Y.log("No more listeners for the " + ename + " Custom Event.  Removing its associated DOM event listener.", "info", "Event");
-            delegate.handle.detach();
-        }
-
-    }, ceHandle, "detach");
-
-    return ceHandle;
-    
-};
-
-Y.delegate = Event.delegate;
+Y.delegate = Y.Event.delegate = delegate;
 
 
 }, '@VERSION@' ,{requires:['node-base']});
+YUI.add('event-synthetic', function(Y) {
+
+/**
+ * Define new DOM events that can be subscribed to from Nodes.
+ *
+ * @module event
+ * @submodule event-synthetic
+ */
+var DOMMap   = Y.Env.evt.dom_map,
+    toArray  = Y.Array,
+    YLang    = Y.Lang,
+    isObject = YLang.isObject,
+    isString = YLang.isString,
+    query    = Y.Selector.query,
+    noop     = function () {};
+
+/**
+ * <p>The triggering mechanism used by SyntheticEvents.</p>
+ *
+ * <p>Implementers should not instantiate these directly.  Use the Notifier
+ * provided to the event's implemented <code>on(node, sub, notifier)</code> or
+ * <code>delegate(node, sub, notifier, filter)</code> methods.</p>
+ *
+ * @class SyntheticEvent.Notifier
+ * @constructor
+ * @param handle {EventHandle} the detach handle for the subscription to an
+ *              internal custom event used to execute the callback passed to
+ *              on(..) or delegate(..)
+ * @param emitFacade {Boolean} take steps to ensure the first arg received by
+ *              the subscription callback is an event facade
+ * @private
+ * @since 3.2.0
+ */
+function Notifier(handle, emitFacade) {
+    this.handle     = handle;
+    this.emitFacade = emitFacade;
+}
+
+/**
+ * <p>Executes the subscription callback, passing the firing arguments as the
+ * first parameters to that callback. For events that are configured with
+ * emitFacade=true, it is common practice to pass the triggering DOMEventFacade
+ * as the first parameter.  Barring a proper DOMEventFacade or EventFacade
+ * (from a CustomEvent), a new EventFacade will be generated.  In that case, if
+ * fire() is called with a simple object, it will be mixed into the facade.
+ * Otherwise, the facade will be prepended to the callback parameters.</p>
+ *
+ * <p>For notifiers provided to delegate logic, the first argument should be an
+ * object with a &quot;currentTarget&quot; property to identify what object to
+ * default as 'this' in the callback.  Typically this is gleaned from the
+ * DOMEventFacade or EventFacade, but if configured with emitFacade=false, an
+ * object must be provided.  In that case, the object will be removed from the
+ * callback parameters.</p>
+ *
+ * <p>Additional arguments passed during event subscription will be
+ * automatically added after those passed to fire().</p>
+ *
+ * @method fire
+ * @param e {EventFacade|DOMEventFacade|Object|any} (see description)
+ * @param arg* {any} additional arguments received by all subscriptions
+ * @private
+ */
+Notifier.prototype.fire = function (e) {
+    // first arg to delegate notifier should be an object with currentTarget
+    var args     = toArray(arguments, 0, true),
+        handle   = this.handle,
+        ce       = handle.evt,
+        sub      = handle.sub,
+        thisObj  = sub.context,
+        delegate = sub.filter,
+        event    = e || {};
+
+    if (this.emitFacade) {
+        if (!e || !e.preventDefault) {
+            event = ce._getFacade();
+
+            if (isObject(e) && !e.preventDefault) {
+                Y.mix(event, e, true);
+                args[0] = event;
+            } else {
+                args.unshift(event);
+            }
+        }
+
+        event.type    = ce.type;
+        event.details = args.slice();
+
+        if (delegate) {
+            event.container = ce.host;
+        }
+    } else if (delegate && isObject(e) && e.currentTarget) {
+        args.shift();
+    }
+
+    sub.context = thisObj || event.currentTarget || ce.host;
+    ce.fire.apply(ce, args);
+    sub.context = thisObj; // reset for future firing
+};
+
+
+/**
+ * <p>Wrapper class for the integration of new events into the YUI event
+ * infrastructure.  Don't instantiate this object directly, use
+ * <code>Y.Event.define(type, config)</code>.  See that method for details.</p>
+ *
+ * <p>Properties that MAY or SHOULD be specified in the configuration are noted
+ * below and in the description of <code>Y.Event.define</code>.</p>
+ *
+ * @class SyntheticEvent
+ * @constructor
+ * @param cfg {Object} Implementation pieces and configuration
+ * @since 3.1.0
+ * @in event-synthetic
+ */
+function SyntheticEvent() {
+    this._init.apply(this, arguments);
+}
+
+Y.mix(SyntheticEvent, {
+    Notifier: Notifier,
+
+    /**
+     * Returns the array of subscription handles for a node for the given event
+     * type.  Passing true as the third argument will create a registry entry
+     * in the event system's DOM map to host the array if one doesn't yet exist.
+     *
+     * @method getRegistry
+     * @param node {Node} the node
+     * @param type {String} the event
+     * @param create {Boolean} create a registration entry to host a new array
+     *                  if one doesn't exist.
+     * @return {Array}
+     * @static
+     * @protected
+     * @since 3.2.0
+     */
+    getRegistry: function (node, type, create) {
+        var el     = node._node,
+            yuid   = Y.stamp(el),
+            key    = 'event:' + yuid + type + '_synth',
+            events = DOMMap[yuid] || (DOMMap[yuid] = {});
+
+        if (!events[key] && create) {
+            events[key] = {
+                type      : '_synth',
+                fn        : noop,
+                capture   : false,
+                el        : el,
+                key       : key,
+                domkey    : yuid,
+                notifiers : [],
+
+                detachAll : function () {
+                    var notifiers = this.notifiers,
+                        i = notifiers.length;
+
+                    while (--i >= 0) {
+                        notifiers[i].detach();
+                    }
+                }
+            };
+        }
+
+        return (events[key]) ? events[key].notifiers : null;
+    },
+
+    /**
+     * Alternate <code>_delete()</code> method for the CustomEvent object
+     * created to manage SyntheticEvent subscriptions.
+     *
+     * @method _deleteSub
+     * @param sub {Subscription} the subscription to clean up
+     * @private
+     * @since 3.2.0
+     */
+    _deleteSub: function (sub) {
+        if (sub && sub.fn) {
+            var synth = this.eventDef,
+                method = (sub.filter) ? 'detachDelegate' : 'detach';
+
+            this.subscribers = {};
+            this.subCount = 0;
+
+            synth[method](sub.node, sub, this.notifier, sub.filter);
+            synth._unregisterSub(sub);
+
+            delete sub.fn;
+            delete sub.node;
+            delete sub.context;
+        }
+    },
+
+    prototype: {
+        constructor: SyntheticEvent,
+
+        /**
+         * Construction logic for the event.
+         *
+         * @method _init
+         * @protected
+         */
+        _init: function () {
+            var config = this.publishConfig || (this.publishConfig = {});
+
+            // The notification mechanism handles facade creation
+            this.emitFacade = ('emitFacade' in config) ?
+                                config.emitFacade :
+                                true;
+            config.emitFacade  = false;
+        },
+
+        /**
+         * <p>Implementers MAY provide this method definition.</p>
+         *
+         * <p>Implement this function if the event supports a different
+         * subscription signature.  This function is used by both
+         * <code>on()</code> and <code>delegate()</code>.  The second parameter
+         * indicates that the event is being subscribed via
+         * <code>delegate()</code>.</p>
+         *
+         * <p>Implementations must remove extra arguments from the args list
+         * before returning.  The required args for <code>on()</code>
+         * subscriptions are</p>
+         * <pre><code>[type, callback, target, context, argN...]</code></pre>
+         *
+         * <p>The required args for <code>delegate()</code>
+         * subscriptions are</p>
+         *
+         * <pre><code>[type, callback, target, filter, context, argN...]</code></pre>
+         *
+         * <p>The return value from this function will be stored on the
+         * subscription in the '_extra' property for reference elsewhere.</p>
+         *
+         * @method processArgs
+         * @param args {Array} parmeters passed to Y.on(..) or Y.delegate(..)
+         * @param delegate {Boolean} true if the subscription is from Y.delegate
+         * @return {any}
+         */
+        processArgs: noop,
+
+        /**
+         * <p>Implementers MAY override this property.</p>
+         *
+         * <p>Whether to prevent multiple subscriptions to this event that are
+         * classified as being the same.  By default, this means the subscribed
+         * callback is the same function.  See the <code>subMatch</code>
+         * method.  Setting this to true will impact performance for high volume
+         * events.</p>
+         *
+         * @property preventDups
+         * @type {Boolean}
+         * @default false
+         */
+        //preventDups  : false,
+
+        /**
+         * <p>Implementers SHOULD provide this method definition.</p>
+         *
+         * Implementation logic for subscriptions done via <code>node.on(type,
+         * fn)</code> or <code>Y.on(type, fn, target)</code>.  This
+         * function should set up the monitor(s) that will eventually fire the
+         * event.  Typically this involves subscribing to at least one DOM
+         * event.  It is recommended to store detach handles from any DOM
+         * subscriptions to make for easy cleanup in the <code>detach</code>
+         * method.  Typically these handles are added to the <code>sub</code>
+         * object.  Also for SyntheticEvents that leverage a single DOM
+         * subscription under the hood, it is recommended to pass the DOM event
+         * object to <code>notifier.fire(e)</code>.  (The event name on the
+         * object will be updated).
+         *
+         * @method on
+         * @param node {Node} the node the subscription is being applied to
+         * @param sub {Subscription} the object to track this subscription
+         * @param notifier {SyntheticEvent.Notifier} call notifier.fire(..) to
+         *              trigger the execution of the subscribers
+         */
+        on: noop,
+
+        /**
+         * <p>Implementers SHOULD provide this method definition.</p>
+         *
+         * <p>Implementation logic for detaching subscriptions done via
+         * <code>node.on(type, fn)</code>.  This function should clean up any
+         * subscriptions made in the <code>on()</code> phase.</p>
+         *
+         * @method detach
+         * @param node {Node} the node the subscription was applied to
+         * @param sub {Subscription} the object tracking this subscription
+         * @param notifier {SyntheticEvent.Notifier} the Notifier used to
+         *              trigger the execution of the subscribers
+         */
+        detach: noop,
+
+        /**
+         * <p>Implementers SHOULD provide this method definition.</p>
+         *
+         * <p>Implementation logic for subscriptions done via
+         * <code>node.delegate(type, fn, filter)</code> or
+         * <code>Y.delegate(type, fn, container, filter)</code>.  Like with
+         * <code>on()</code> above, this function should monitor the environment
+         * for the event being fired, and trigger subscription execution by
+         * calling <code>notifier.fire(e)</code>.</p>
+         *
+         * <p>This function receives a fourth argument, which is the filter
+         * used to identify which Node's are of interest to the subscription.
+         * The filter will be either a boolean function that accepts a target
+         * Node for each hierarchy level as the event bubbles, or a selector
+         * string.  To translate selector strings into filter functions, use
+         * <code>Y.delegate.compileFilter(filter)</code>.</p>
+         *
+         * @method delegate
+         * @param node {Node} the node the subscription is being applied to
+         * @param sub {Subscription} the object to track this subscription
+         * @param notifier {SyntheticEvent.Notifier} call notifier.fire(..) to
+         *              trigger the execution of the subscribers
+         * @param filter {String|Function} Selector string or function that
+         *              accepts an event object and returns null, a Node, or an
+         *              array of Nodes matching the criteria for processing.
+         * @since 3.2.0
+         */
+        delegate       : noop,
+
+        /**
+         * <p>Implementers SHOULD provide this method definition.</p>
+         *
+         * <p>Implementation logic for detaching subscriptions done via
+         * <code>node.delegate(type, fn, filter)</code> or
+         * <code>Y.delegate(type, fn, container, filter)</code>.  This function
+         * should clean up any subscriptions made in the
+         * <code>delegate()</code> phase.</p>
+         *
+         * @method detachDelegate
+         * @param node {Node} the node the subscription was applied to
+         * @param sub {Subscription} the object tracking this subscription
+         * @param notifier {SyntheticEvent.Notifier} the Notifier used to
+         *              trigger the execution of the subscribers
+         * @param filter {String|Function} Selector string or function that
+         *              accepts an event object and returns null, a Node, or an
+         *              array of Nodes matching the criteria for processing.
+         * @since 3.2.0
+         */
+        detachDelegate : noop,
+
+        /**
+         * Sets up the boilerplate for detaching the event and facilitating the
+         * execution of subscriber callbacks.
+         *
+         * @method _on
+         * @param args {Array} array of arguments passed to
+         *              <code>Y.on(...)</code> or <code>Y.delegate(...)</code>
+         * @param delegate {Boolean} true if called from
+         * <code>Y.delegate(...)</code>
+         * @return {EventHandle} the detach handle for this subscription
+         * @private
+         * since 3.2.0
+         */
+        _on: function (args, delegate) {
+            var handles  = [],
+                selector = args[2],
+                method   = delegate ? 'delegate' : 'on',
+                nodes, handle;
+
+            // Can't just use Y.all because it doesn't support window (yet?)
+            nodes = (isString(selector)) ? query(selector) : toArray(selector);
+
+            if (!nodes.length && isString(selector)) {
+                handle = Y.on('available', function () {
+                    Y.mix(handle, Y[method].apply(Y, args), true);
+                }, selector);
+
+                return handle;
+            }
+
+            Y.each(nodes, function (node) {
+                var subArgs = args.slice(),
+                    extra, filter;
+
+                node = Y.one(node);
+
+                if (node) {
+                    extra = this.processArgs(subArgs, delegate);
+
+                    if (delegate) {
+                        filter = subArgs.splice(3, 1)[0];
+                    }
+
+                    // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
+                    subArgs.splice(0, 4, subArgs[1], subArgs[3]);
+
+                    if (!this.preventDups || !this.getSubs(node, args,null,true)) {
+                        handle = this._getNotifier(node, subArgs, extra,filter);
+
+                        this[method](node, handle.sub, handle.notifier, filter);
+
+                        handles.push(handle);
+                    }
+                }
+            }, this);
+
+            return (handles.length === 1) ?
+                handles[0] :
+                new Y.EventHandle(handles);
+        },
+
+        /**
+         * Creates a new Notifier object for use by this event's
+         * <code>on(...)</code> or <code>delegate(...)</code> implementation.
+         *
+         * @method _getNotifier
+         * @param node {Node} the Node hosting the event
+         * @param args {Array} the subscription arguments passed to either
+         *              <code>Y.on(...)</code> or <code>Y.delegate(...)</code>
+         *              after running through <code>processArgs(args)</code> to
+         *              normalize the argument signature
+         * @param extra {any} Extra data parsed from
+         *              <code>processArgs(args)</code>
+         * @param filter {String|Function} the selector string or function
+         *              filter passed to <code>Y.delegate(...)</code> (not
+         *              present when called from <code>Y.on(...)</code>)
+         * @return {SyntheticEvent.Notifier}
+         * @private
+         * @since 3.2.0
+         */
+        _getNotifier: function (node, args, extra, filter) {
+            var dispatcher = new Y.CustomEvent(this.type, this.publishConfig),
+                handle     = dispatcher.on.apply(dispatcher, args),
+                notifier   = new Notifier(handle, this.emitFacade),
+                registry   = SyntheticEvent.getRegistry(node, this.type, true),
+                sub        = handle.sub;
+
+            handle.notifier   = notifier;
+
+            sub.node   = node;
+            sub.filter = filter;
+            sub._extra = extra;
+
+            Y.mix(dispatcher, {
+                eventDef     : this,
+                notifier     : notifier,
+                host         : node,       // I forget what this is for
+                currentTarget: node,       // for generating facades
+                target       : node,       // for generating facades
+                el           : node._node, // For category detach
+
+                _delete      : SyntheticEvent._deleteSub
+            }, true);
+
+            registry.push(handle);
+
+            return handle;
+        },
+
+        /**
+         * Removes the subscription from the Notifier registry.
+         *
+         * @method _unregisterSub
+         * @param sub {Subscription} the subscription
+         * @private
+         * @since 3.2.0
+         */
+        _unregisterSub: function (sub) {
+            var notifiers = SyntheticEvent.getRegistry(sub.node, this.type),
+                i;
+                
+            if (notifiers) {
+                for (i = notifiers.length - 1; i >= 0; --i) {
+                    if (notifiers[i].sub === sub) {
+                        notifiers.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        },
+
+        /**
+         * Removes the subscription(s) from the internal subscription dispatch
+         * mechanism.  See <code>SyntheticEvent._deleteSub</code>.
+         *
+         * @method _detach
+         * @param args {Array} The arguments passed to
+         *                  <code>node.detach(...)</code>
+         * @private
+         * @since 3.2.0
+         */
+        _detach: function (args) {
+            // Can't use Y.all because it doesn't support window (yet?)
+            // TODO: Does Y.all support window now?
+            var target = args[2],
+                els    = (isString(target)) ?
+                            query(target) : toArray(target),
+                node, i, len, handles, j;
+            
+            // (type, fn, el, context, filter?) => (type, fn, context, filter?)
+            args.splice(2, 1);
+
+            for (i = 0, len = els.length; i < len; ++i) {
+                node = Y.one(els[i]);
+
+                if (node) {
+                    handles = this.getSubs(node, args);
+
+                    if (handles) {
+                        for (j = handles.length - 1; j >= 0; --j) {
+                            handles[j].detach();
+                        }
+                    }
+                }
+            }
+        },
+
+        /**
+         * Returns the detach handles of subscriptions on a node that satisfy a
+         * search/filter function.  By default, the filter used is the
+         * <code>subMatch</code> method.
+         *
+         * @method getSubs
+         * @param node {Node} the node hosting the event
+         * @param args {Array} the array of original subscription args passed
+         *              to <code>Y.on(...)</code> (before
+         *              <code>processArgs</code>
+         * @param filter {Function} function used to identify a subscription
+         *              for inclusion in the returned array
+         * @param first {Boolean} stop after the first match (used to check for
+         *              duplicate subscriptions)
+         * @return {Array} detach handles for the matching subscriptions
+         */
+        getSubs: function (node, args, filter, first) {
+            var notifiers = SyntheticEvent.getRegistry(node, this.type),
+                handles = [],
+                i, len, handle;
+
+            if (notifiers) {
+                if (!filter) {
+                    filter = this.subMatch;
+                }
+
+                for (i = 0, len = notifiers.length; i < len; ++i) {
+                    handle = notifiers[i];
+                    if (filter.call(this, handle.sub, args)) {
+                        if (first) {
+                            return handle;
+                        } else {
+                            handles.push(notifiers[i]);
+                        }
+                    }
+                }
+            }
+
+            return handles.length && handles;
+        },
+
+        /**
+         * <p>Implementers MAY override this to define what constitutes a
+         * &quot;same&quot; subscription.  Override implementations should
+         * consider the lack of a comparator as a match, so calling
+         * <code>getSubs()</code> with no arguments will return all subs.</p>
+         *
+         * <p>Compares a set of subscription arguments against a Subscription
+         * object to determine if they match.  The default implementation
+         * compares the callback function against the second argument passed to
+         * <code>Y.on(...)</code> or <code>node.detach(...)</code> etc.</p>
+         *
+         * @method subMatch
+         * @param sub {Subscription} the existing subscription
+         * @param args {Array} the calling arguments passed to
+         *                  <code>Y.on(...)</code> etc.
+         * @return {Boolean} true if the sub can be described by the args
+         *                  present
+         * @since 3.2.0
+         */
+        subMatch: function (sub, args) {
+            // Default detach cares only about the callback matching
+            return !args[1] || sub.fn === args[1];
+        }
+    }
+}, true);
+
+Y.SyntheticEvent = SyntheticEvent;
+
+/**
+ * <p>Defines a new event in the DOM event system.  Implementers are
+ * responsible for monitoring for a scenario whereby the event is fired.  A
+ * notifier object is provided to the functions identified below.  When the
+ * criteria defining the event are met, call notifier.fire( [args] ); to
+ * execute event subscribers.</p>
+ *
+ * <p>The first parameter is the name of the event.  The second parameter is a
+ * configuration object which define the behavior of the event system when the
+ * new event is subscribed to or detached from.  The methods that should be
+ * defined in this configuration object are <code>on</code>,
+ * <code>detach</code>, <code>delegate</code>, and <code>detachDelegate</code>.
+ * You are free to define any other methods or properties needed to define your
+ * event.  Be aware, however, that since the object is used to subclass
+ * SyntheticEvent, you should avoid method names used by SyntheticEvent unless
+ * your intention is to override the default behavior.</p>
+ *
+ * <p>This is a list of properties and methods that you can or should specify
+ * in the configuration object:</p>
+ *
+ * <dl>
+ *   <dt><code>on</code></dt>
+ *       <dd><code>function (node, subscription, notifier)</code> The
+ *       implementation logic for subscription.  Any special setup you need to
+ *       do to create the environment for the event being fired--E.g. native
+ *       DOM event subscriptions.  Store subscription related objects and
+ *       state on the <code>subscription</code> object.  When the
+ *       criteria have been met to fire the synthetic event, call
+ *       <code>notifier.fire(e)</code>.  See Notifier's <code>fire()</code>
+ *       method for details about what to pass as parameters.</dd>
+ *
+ *   <dt><code>detach</code></dt>
+ *       <dd><code>function (node, subscription, notifier)</code> The
+ *       implementation logic for cleaning up a detached subscription. E.g.
+ *       detach any DOM subscriptions added in <code>on</code>.</dd>
+ *
+ *   <dt><code>delegate</code></dt>
+ *       <dd><code>function (node, subscription, notifier, filter)</code> The
+ *       implementation logic for subscription via <code>Y.delegate</code> or
+ *       <code>node.delegate</code>.  The filter is typically either a selector
+ *       string or a function.  You can use
+ *       <code>Y.delegate.compileFilter(selectorString)</code> to create a
+ *       filter function from a selector string if needed.  The filter function
+ *       expects an event object as input and should output either null, a
+ *       matching Node, or an array of matching Nodes.  Otherwise, this acts
+ *       like <code>on</code> DOM event subscriptions.  Store subscription
+ *       related objects and information on the <code>subscription</code>
+ *       object.  When the criteria have been met to fire the synthetic event,
+ *       call <code>notifier.fire(e)</code> as noted above.</dd>
+ *
+ *   <dt><code>detachDelegate</code></dt>
+ *       <dd><code>function (node, subscription, notifier)</code> The
+ *       implementation logic for cleaning up a detached delegate subscription.
+ *       E.g. detach any DOM delegate subscriptions added in
+ *       <code>delegate</code>.</dd>
+ *
+ *   <dt><code>publishConfig</code></dt>
+ *       <dd>(Object) The configuration object that will be used to instantiate
+ *       the underlying CustomEvent. See Notifier's <code>fire</code> method
+ *       for details.</dd>
+ *
+ *   <dt><code>processArgs</code></dt
+ *       <dd>
+ *          <p><code>function (argArray, fromDelegate)</code> Optional method
+ *          to extract any additional arguments from the subscription
+ *          signature.  Using this allows <code>on</code> or
+ *          <code>delegate</code> signatures like
+ *          <code>node.on(&quot;hover&quot;, overCallback,
+ *          outCallback)</code>.</p>
+ *          <p>When processing an atypical argument signature, make sure the
+ *          args array is returned to the normal signature before returning
+ *          from the function.  For example, in the &quot;hover&quot; example
+ *          above, the <code>outCallback</code> needs to be <code>splice</code>d
+ *          out of the array.  The expected signature of the args array for
+ *          <code>on()</code> subscriptions is:</p>
+ *          <pre>
+ *              <code>[type, callback, target, contextOverride, argN...]</code>
+ *          </pre>
+ *          <p>And for <code>delegate()</code>:</p>
+ *          <pre>
+ *              <code>[type, callback, target, filter, contextOverride, argN...]</code>
+ *          </pre>
+ *          <p>where <code>target</code> is the node the event is being
+ *          subscribed for.  You can see these signatures documented for
+ *          <code>Y.on()</code> and <code>Y.delegate()</code> respectively.</p>
+ *          <p>Whatever gets returned from the function will be stored on the
+ *          <code>subscription</code> object under
+ *          <code>subscription._extra</code>.</p></dd>
+ *   <dt><code>subMatch</code></dt>
+ *       <dd>
+ *           <p><code>function (sub, args)</code>  Compares a set of
+ *           subscription arguments against a Subscription object to determine
+ *           if they match.  The default implementation compares the callback
+ *           function against the second argument passed to
+ *           <code>Y.on(...)</code> or <code>node.detach(...)</code> etc.</p>
+ *       </dd>
+ * </dl>
+ *
+ * @method Event.define
+ * @param type {String} the name of the event
+ * @param config {Object} the prototype definition for the new event (see above)
+ * @param force {Boolean} override an existing event (use with caution)
+ * @static
+ * @return {SyntheticEvent} the subclass implementation instance created to
+ *              handle event subscriptions of this type
+ * @for Event
+ * @since 3.1.0
+ * @in event-synthetic
+ */
+Y.Event.define = function (type, config, force) {
+    if (!config) {
+        config = {};
+    }
+
+    var eventDef = (isObject(type)) ? type : Y.merge({ type: type }, config),
+        Impl, synth;
+
+    if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
+        Impl = function () {
+            SyntheticEvent.apply(this, arguments);
+        };
+        Y.extend(Impl, SyntheticEvent, eventDef);
+        synth = new Impl();
+
+        type = synth.type;
+
+        Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
+            eventDef: synth,
+
+            on: function () {
+                return synth._on(toArray(arguments));
+            },
+
+            delegate: function () {
+                return synth._on(toArray(arguments), true);
+            },
+
+            detach: function () {
+                return synth._detach(toArray(arguments));
+            }
+        };
+
+    }
+
+    return synth;
+};
+
+
+}, '@VERSION@' ,{requires:['node-base', 'event-custom']});
 YUI.add('event-mousewheel', function(Y) {
 
 /**
@@ -1764,189 +2439,65 @@ Y.Env.evt.plugins.mousewheel = {
 YUI.add('event-mouseenter', function(Y) {
 
 /**
- * Adds support for mouseenter/mouseleave events
+ * <p>Adds subscription and delegation support for mouseenter and mouseleave
+ * events.  Unlike mouseover and mouseout, these events aren't fired from child
+ * elements of a subscribed node.</p>
+ *
+ * <p>This avoids receiving three mouseover notifications from a setup like</p>
+ *
+ * <pre><code>div#container > p > a[href]</code></pre>
+ *
+ * <p>where</p>
+ *
+ * <pre><code>Y.one('#container').on('mouseover', callback)</code></pre>
+ *
+ * <p>When the mouse moves over the link, one mouseover event is fired from
+ * #container, then when the mouse moves over the p, another mouseover event is
+ * fired and bubbles to #container, causing a second notification, and finally
+ * when the mouse moves over the link, a third mouseover event is fired and
+ * bubbles to #container for a third notification.</p>
+ *
+ * <p>By contrast, using mouseenter instead of mouseover, the callback would be
+ * executed only once when the mouse moves over #container.</p>
+ *
  * @module event
  * @submodule event-mouseenter
  */
-var Event = Y.Event,
-    Lang = Y.Lang,
+function notify(e, notifier) {
+    var current = e.currentTarget,
+        related = e.relatedTarget;
 
-    plugins = Y.Env.evt.plugins,
-    
-    listeners = {},
-
-    eventConfig = {
-
-        on: function(type, fn, el) {
-
-            var args = Y.Array(arguments, 0, true),     
-                element = el,
-                availHandle;
-
-
-            if (Lang.isString(el)) {
-
-                //  Need to use Y.all because if el is a string it could be a 
-                //  selector that returns a NodeList
-
-                element = Y.all(el);
-
-                if (element.size() === 0) { // Not found, check using onAvailable
-
-                    availHandle = Event.onAvailable(el, function() {
-
-                        availHandle.handle = Y.on.apply(Y, args);
-
-                    }, Event, true, false);
-        
-                    return availHandle;
-
-                }
-
-            }
-            
-
-            var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
-
-                //  The name of the custom event
-                sEventName = type + ":" + Y.stamp(element) + sDOMEvent,
-
-                listener = listeners[sEventName],
-
-                domEventHandle,
-                
-                ceHandle,
-                
-                nListeners;
-
-
-            //  Bind an actual DOM event listener that will call the 
-            //  the custom event                
-            if (!listener) {
-                
-                domEventHandle = Y.on(sDOMEvent, Y.rbind(Event._fireMouseEnter, Y, sEventName), element);
-
-                //  Hook into the _delete method for the Custom Event wrapper of this
-                //  DOM Event in order to clean up the 'listeners' map and unsubscribe
-                //  the associated Custom Event listeners fired by this DOM event
-                //  listener if/when the user calls "purgeElement" OR removes all 
-                //  listeners of the Custom Event.
-
-                Y.after(function (sub) {
-
-                    if (domEventHandle.sub == sub) {
-
-                        //  Delete this event from the map of known mouseenter 
-                        //  and mouseleave listeners
-                        delete listeners[sEventName];
-
-                        Y.log("DOM event listener associated with the " + sEventName + " Custom Event removed.  Removing all " + sEventName + " listeners.", "info", "Event");
-
-                        //  Unsubscribe all listeners of the Custom Event fired 
-                        //  by this DOM event.
-                        Y.detachAll(sEventName);
-
-                    }
-
-                }, domEventHandle.evt, "_delete");
-                
-
-                listener = {};              
-                listener.handle = domEventHandle;               
-
-                listeners[sEventName] = listener;
-
-            }
-
-            nListeners = listener.count;
-
-            listener.count = nListeners ? (nListeners + 1) : 1;
-
-            args[0] = sEventName;
-
-            // Remove the element from the args
-            args.splice(2, 1);
-
-            // Subscribe to the custom event
-            ceHandle = Y.on.apply(Y, args);
-    
-            //  Hook into the detach method of the handle in order to clean up the 
-            //  'listeners' map and remove the associated DOM event handler 
-            //  responsible for firing this Custom Event if all listener for this 
-            //  event have been removed.
-
-            Y.after(function () {
-
-                listener.count = (listener.count - 1);
-
-                if (listener.count === 0) {
-                    Y.log("No more listeners for the " + sEventName + " Custom Event.  Removing its associated DOM event listener.", "info", "Event");
-                    listener.handle.detach();
-                }
-
-            }, ceHandle, "detach"); 
-    
-    
-            return ceHandle;
-
-        }
-
-    };
-    
-
-Event._fireMouseEnter = function (e, eventName) {
-
-    var relatedTarget = e.relatedTarget,
-        currentTarget = e.currentTarget;
-
-    if (currentTarget !== relatedTarget && 
-        !currentTarget.contains(relatedTarget)) {
-
-        Y.publish(eventName, {
-               contextFn: function() {
-                   return currentTarget;
-               }
-           });          
-
-        Y.fire(eventName, e);
-
+    if (current !== related && !current.contains(related)) {
+        notifier.fire(e);
     }
+}
 
-};  
+var config = {
+    proxyType: "mouseover",
 
+    on: function (node, sub, notifier) {
+        sub.onHandle = node.on(this.proxyType, notify, null, notifier);
+    },
 
-/**
- * Sets up a "mouseenter" listener&#151;a listener that is called the first time 
- * the user's mouse enters the specified element(s).
- * 
- * @event mouseenter
- * @param type {string} "mouseenter"
- * @param fn {function} The method the event invokes.
- * @param el {string|node} The element(s) to assign the listener to.
- * @param spec {string} Optional.  String representing a selector that must 
- * match the target of the event in order for the listener to be called.
- * @return {EventHandle} the detach handle
- * @for YUI
- */
-plugins.mouseenter = eventConfig;
+    detach: function (node, sub) {
+        sub.onHandle.detach();
+    },
 
-/**
-* Sets up a "mouseleave" listener&#151;a listener that is called the first time 
-* the user's mouse leaves the specified element(s).
-* 
-* @event mouseleave
-* @param type {string} "mouseleave"
-* @param fn {function} The method the event invokes.
-* @param el {string|node} The element(s) to assign the listener to.
-* @param spec {string} Optional.  String representing a selector that must 
-* match the target of the event in order for the listener to be called.
-* @return {EventHandle} the detach handle
-* @for YUI
- */
-plugins.mouseleave = eventConfig;
+    delegate: function (node, sub, notifier, filter) {
+        sub.delegateHandle =
+            Y.delegate(this.proxyType, notify, node, filter, null, notifier);
+    },
+
+    detachDelegate: function (node, sub) {
+        sub.delegateHandle.detach();
+    }
+};
+
+Y.Event.define("mouseenter", config, true);
+Y.Event.define("mouseleave", Y.merge(config, { proxyType: "mouseout" }), true);
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@' ,{requires:['event-synthetic']});
 YUI.add('event-key', function(Y) {
 
 /**
@@ -2054,99 +2605,151 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 YUI.add('event-focus', function(Y) {
 
 /**
- * Adds focus and blur event listener support.  These events normally
- * do not bubble, so this adds support for that so these events
- * can be used in event delegation scenarios.
+ * Adds bubbling and delegation support to DOM events focus and blur.
  * 
  * @module event
  * @submodule event-focus
  */
-(function() {
+var Event    = Y.Event,
+    YLang    = Y.Lang,
+    isString = YLang.isString,
+    useActivate = YLang.isFunction(
+        Y.DOM.create('<p onbeforeactivate=";">').onbeforeactivate);
 
-var UA = Y.UA,
-    Event = Y.Event,
-    plugins = Y.Env.evt.plugins,
-    ie = UA.ie,
-    bUseMutation = (UA.opera || UA.webkit),
-    eventNames = {
-        focus: (ie ? 'focusin' : (bUseMutation ? 'DOMFocusIn' : 'focus')),
-        blur: (ie ? 'focusout' : (bUseMutation ? 'DOMFocusOut' : 'blur'))
-    },
+function define(type, proxy, directEvent) {
+    var nodeDataKey = '_' + type + 'Notifiers';
 
-    //  Only need to use capture phase for Gecko since it doesn't support 
-    //  focusin, focusout, DOMFocusIn, or DOMFocusOut
-    CAPTURE_CONFIG = { capture: (UA.gecko ? true : false) },
+    Y.Event.define(type, {
 
-
-    attach = function (args, config) {
-
-        var a = Y.Array(args, 0, true),
-            el = args[2];
-
-        config.overrides = config.overrides || {};
-        config.overrides.type = args[0];
-        
-        if (el) {
+        _attach: function (el, notifier, delegate) {
             if (Y.DOM.isWindow(el)) {
-                config.capture = false;
+                return Event._attach([type, function (e) {
+                    notifier.fire(e);
+                }, el]);
+            } else {
+                return Event._attach(
+                    [proxy, this._proxy, el, this, notifier, delegate],
+                    { capture: true });
             }
-            else {
-                a[0] = eventNames[a[0]];
+        },
+
+        _proxy: function (e, notifier, delegate) {
+            var node       = e.target,
+                notifiers  = node.getData(nodeDataKey),
+                yuid       = Y.stamp(e.currentTarget._node),
+                defer      = (useActivate || e.target !== e.currentTarget),
+                sub        = notifier.handle.sub,
+                filterArgs = [node, e].concat(sub.args || []),
+                directSub;
+                
+            notifier.currentTarget = (delegate) ? node : e.currentTarget;
+            notifier.container     = (delegate) ? e.currentTarget : null;
+
+            if (!sub.filter || sub.filter.apply(node, filterArgs)) {
+                // Maintain a list to handle subscriptions from nested
+                // containers div#a>div#b>input #a.on(focus..) #b.on(focus..),
+                // use one focus or blur subscription that fires notifiers from
+                // #b then #a to emulate bubble sequence.
+                if (!notifiers) {
+                    notifiers = {};
+                    node.setData(nodeDataKey, notifiers);
+
+                    // only subscribe to the element's focus if the target is
+                    // not the current target (
+                    if (defer) {
+                        directSub = Event._attach(
+                            [directEvent, this._notify, node._node]).sub;
+                        directSub.once = true;
+                    }
+                }
+
+                if (!notifiers[yuid]) {
+                    notifiers[yuid] = [];
+                }
+
+                notifiers[yuid].push(notifier);
+
+                if (!defer) {
+                    this._notify(e);
+                }
             }
+        },
+
+        _notify: function (e, container) {
+            var node        = e.currentTarget,
+                notifiers   = node.getData(nodeDataKey),
+                              // document.get('ownerDocument') returns null
+                doc         = node.get('ownerDocument') || node,
+                target      = node,
+                nots        = [],
+                notifier, i, len;
+
+            if (notifiers) {
+                // Walk up the parent axis until the origin node, 
+                while (target && target !== doc) {
+                    nots.push.apply(nots, notifiers[Y.stamp(target)] || []);
+                    target = target.get('parentNode');
+                }
+                nots.push.apply(nots, notifiers[Y.stamp(doc)] || []);
+
+                for (i = 0, len = nots.length; i < len; ++i) {
+                    notifier = nots[i];
+                    e.currentTarget = nots[i].currentTarget;
+
+                    if (notifier.container) {
+                        e.container = notifier.container;
+                    } else {
+                        delete e.container;
+                    }
+
+                    notifier.fire(e);
+                }
+
+                // clear the notifications list (mainly for delegation)
+                node.clearData(nodeDataKey);
+            }
+        },
+
+        on: function (node, sub, notifier) {
+            sub.onHandle = this._attach(node._node, notifier);
+        },
+
+        detach: function (node, sub) {
+            sub.onHandle.detach();
+        },
+
+        delegate: function (node, sub, notifier, filter) {
+            if (isString(filter)) {
+                sub.filter = Y.delegate.compileFilter(filter);
+            }
+
+            sub.delegateHandle = this._attach(node._node, notifier, true);
+        },
+
+        detachDelegate: function (node, sub) {
+            sub.delegateHandle.detach();
         }
+    }, true);
+}
 
-        return Event._attach(a, config);
-
-    },
-    
-    eventAdapter = {
-
-        on: function () {
-            return attach(arguments, CAPTURE_CONFIG);
-        }
-
-    };
-
-
-Event._attachFocus = attach;
-Event._attachBlur = attach;
-
-/**
- * Adds a DOM focus listener.  Uses the focusin event in IE, 
- * DOMFocusIn for Opera and Webkit, and the capture phase for Gecko so that
- * the event propagates in a way that enables event delegation.
- *
- * @for YUI
- * @event focus
- * @param type {string} 'focus'
- * @param fn {function} the callback function to execute
- * @param o {string|HTMLElement|collection} the element(s) to bind
- * @param context optional context object
- * @param args 0..n additional arguments to provide to the listener.
- * @return {EventHandle} the detach handle
- */
-plugins.focus = eventAdapter;
-
-/**
- * Adds a DOM blur listener.  Uses the focusout event in IE, 
- * DOMFocusOut for Opera and Webkit, and the capture phase for Gecko so that
- * the event propagates in a way that enables event delegation.
- *
- * @for YUI
- * @event blur
- * @param type {string} 'blur'
- * @param fn {function} the callback function to execute
- * @param o {string|HTMLElement|collection} the element(s) to bind
- * @param context optional context object
- * @param args 0..n additional arguments to provide to the listener.
- * @return {EventHandle} the detach handle
- */
-plugins.blur = eventAdapter;
-
-})();
+// For IE, we need to defer to focusin rather than focus because
+// `el.focus(); doSomething();` executes el.onbeforeactivate, el.onactivate,
+// el.onfocusin, doSomething, then el.onfocus.  All others support capture
+// phase focus, which executes before doSomething.  To guarantee consistent
+// behavior for this use case, IE's direct subscriptions are made against
+// focusin so subscribers will be notified before js following el.focus() is
+// executed.
+if (useActivate) {
+    //     name     capture phase       direct subscription
+    define("focus", "beforeactivate",   "focusin");
+    define("blur",  "beforedeactivate", "focusout");
+} else {
+    define("focus", "focus", "focus");
+    define("blur",  "blur",  "blur");
+}
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@' ,{requires:['event-synthetic']});
 YUI.add('event-resize', function(Y) {
 
 /**
@@ -2213,5 +2816,5 @@ Y.Env.evt.plugins.windowresize = {
 }, '@VERSION@' ,{requires:['node-base']});
 
 
-YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});
+YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-synthetic', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});
 

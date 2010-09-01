@@ -16,11 +16,13 @@ table, tr, td
 }
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
-    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
-    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
-		
+	<!--script type="text/javascript" src="../../../build/yui/yui.js"></script-->
+    <script src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics-min.js"></script>
+    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip-min.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics-min.js"></script>
 </head>		
 <body class="yui3-skin-sam">
 		
@@ -55,30 +57,26 @@ table, tr, td
 					var expensegraphstyles = {
 						color:"#5577AF",
 						weight:"2",
-                        alpha: 0.4,
-                        padding:{top:50, bottom:50}
+                        alpha: 0.4
 					};
 
 					// Add revenue graph styles
 					var revenuegraphstyles = {
 						color:"#FF0000",
 						weight:"2",
-                        alpha: 0.4,
-                        padding:{top:50, bottom:50}
+                        alpha: 0.4
 					};
 
                     var taxgraphstyles = {
 						color:"#ff0000",
                         alpha: 0.4,
-						weight:"2",
-                        padding:{top:50, bottom:50}
+						weight:"2"
                     };
 					
                     var taxareastyles = {
                         color: "#0000ff",
                         alpha: 0.5,
-                        weight: 2,
-                        padding:{top:50, bottom:50}
+                        weight: 2
                     };
 
 					// Create bottom axis styles
@@ -92,7 +90,7 @@ table, tr, td
 							pattern:"%b %d, %y"
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"inside"
 						},
 						line:{
@@ -117,7 +115,7 @@ table, tr, td
                             }
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"outside"
 						},
 						line:{
@@ -126,8 +124,7 @@ table, tr, td
 						majorUnit:
 						{
 							count:5
-						},
-                        padding:{top:50, bottom:50}
+						}
 					};	
                     var dataProvider = mydata;
                     var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
@@ -138,7 +135,7 @@ table, tr, td
 			        numericaxis.addKey("expenses");	
                     numericaxis.addKey("taxes");
 
-                   var graphstack = new Y.GraphStack({parent:"#chart", seriesCollection:[{
+                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
                                                                                             type:"stackedarea", 
                                                                                             direction:"vertical",
                                                                                             yAxis:timeaxis, 

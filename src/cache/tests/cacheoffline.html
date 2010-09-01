@@ -48,7 +48,7 @@
             testDestructor: function() {
                 this.cache = new Y.CacheOffline();
                 this.cache.destroy();
-                ASSERT.isNull(this.cache.get("entries"), "Expected null array.");
+                ARRAYASSERT.isEmpty(this.cache.get("entries"), "Expected empty array.");
             }
         });
         
@@ -101,14 +101,62 @@
             },
 
             testRetrieve: function() {
-                this.cache = new Y.CacheOffline();
+                this.cache = new Y.CacheOffline(),
                 this.cache.add(1, "a");
                 this.cache.add("b", "c");
-                var cachedresponse = this.cache.retrieve(1).response;
-                ASSERT.areSame("a", cachedresponse, "Expected first cached response.");
 
-                cachedresponse = this.cache.retrieve("b").response;
-                ASSERT.areSame("c", cachedresponse, "Expected second cached response.");
+                var cachedentry = this.cache.retrieve(1);
+                ASSERT.areSame("a", cachedentry.response, "Expected first cached response.");
+                ASSERT.isInstanceOf(Date, cachedentry.cached, "Expected first cached Date.");
+                ASSERT.isInstanceOf(Date, cachedentry.expires, "Expected first expires Date.");
+
+                cachedentry = this.cache.retrieve("b");
+                ASSERT.areSame("c", cachedentry.response, "Expected second cached response.");
+                ASSERT.isInstanceOf(Date, cachedentry.cached, "Expected second cached Date.");
+                ASSERT.isInstanceOf(Date, cachedentry.expires, "Expected second expires Date.");
+            },
+
+            testNoExpires: function() {
+                this.cache = new Y.CacheOffline({expires:0}),
+                this.cache.add(1, "a");
+                this.cache.add("b", "c");
+
+                var cachedentry = this.cache.retrieve(1);
+                ASSERT.areSame("a", cachedentry.response, "Expected cached response.");
+                ASSERT.isInstanceOf(Date, cachedentry.cached, "Expected cached Date.");
+                ASSERT.isNull(cachedentry.expires, "Expected null expires.");
+            },
+
+            testExpiresNumber: function() {
+                this.cache = new Y.CacheOffline({expires:3000}),
+                this.cache.add(1, "a");
+
+                var cachedentry = this.cache.retrieve(1);
+                ASSERT.areSame("a", cachedentry.response, "Expected cached response.");
+                ASSERT.isInstanceOf(Date, cachedentry.expires, "Expected cached Date.");
+                
+                this.cache.set("expires", 1);
+                this.cache.add(1, "a");
+
+                this.wait(function(){
+                    cachedentry = this.cache.retrieve(1);
+                    ASSERT.isNull(cachedentry, "Expected expired data.");
+                }, 50);
+            },
+
+            testExpiresDate: function() {
+                this.cache = new Y.CacheOffline({expires:new Date(new Date().getTime() + 86400000)}),
+                this.cache.add(1, "a");
+
+                var cachedentry = this.cache.retrieve(1);
+                ASSERT.areSame("a", cachedentry.response, "Expected cached response.");
+                ASSERT.isInstanceOf(Date, cachedentry.expires, "Expected cached Date.");
+                
+                this.cache.flush();
+                this.cache.set("expires", new Date(new Date().getTime() - 86400000));
+                this.cache.add(1, "a");
+                cachedentry = this.cache.retrieve(1);
+                ASSERT.isNull(cachedentry, "Expected expired data.");
             },
 
             testNoMatch: function() {
@@ -124,6 +172,26 @@
                 this.cache.add(2, "b");
                 this.cache.flush();
                 ASSERT.areSame(0, this.cache.get("size"), "Expected empty this.cache.");
+            },
+            
+            testFlushAll: function() {
+                this.cache = new Y.CacheOffline();
+                this.cache.add(1, "a");
+                this.cache.add(2, "b");
+                
+                var cache = new Y.CacheOffline({sandbox:"another"});
+                cache.add(1, "a");
+                cache.add(2, "b");
+
+                if(window.localStorage) {
+                    ASSERT.areSame(4, localStorage.length, "Expected 4 items.");
+                }
+
+                Y.CacheOffline.flushAll();
+                
+                if(window.localStorage) {
+                    ASSERT.areSame(0, localStorage.length, "Expected empty localStorage.");
+                }
             }
         });
     

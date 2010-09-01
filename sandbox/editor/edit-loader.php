@@ -115,7 +115,8 @@ This is some <strong>other</strong> loose test.
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
-<div><hr>This is some loose test.</div>
+<hr>
+<div>This is some loose test.</div>
 <ol>
     <li class="davglass" style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
@@ -286,7 +287,8 @@ YUI(yConfig).use('editor-base', 'editor-lists', 'createlink-base', function(Y) {
 
 
     var editor = new Y.EditorBase({
-        content: Y.one('#stub').get('innerHTML')
+        content: Y.one('#stub').get('innerHTML'),
+        extracss: 'body { color: red; } p { border: 1px solid green; padding: .25em; margin: 1em; } #yui-cursor { border: 1px solid purple; }'
     });
     editor.after('nodeChange', function(e) {
         //This is the lag in IE 6 & 7 !!!

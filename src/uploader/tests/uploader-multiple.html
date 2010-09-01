@@ -1,0 +1,133 @@
+<html>
+<head>
+    <title>Multiple File Upload with Progress Tracking and a Transparent Overlay Upload Button</title>
+	<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+	<script type="text/javascript" src="../../../build/uploader/uploader.js"></script>
+	
+<style>
+
+.yui3-progressbar {
+	width:200px;
+	height:20px;
+}
+
+.yui3-progressbar .yui3-progressbar-label {
+	position:absolute;
+	font-size:11px;
+	top: 4px;
+	left: 5px;
+	z-index: 3;
+}
+
+.yui3-progressbar .yui3-progressbar-content {
+	position:relative;
+	width:200px;
+	height:20px;
+	background:url('assets/active.gif') left center no-repeat;
+	z-index: 1;
+}
+
+.yui3-progressbar .yui3-progressbar-slider {
+	position:absolute;
+	width:200px;
+	height:20px;
+	top: 0px;
+	left: 0px;
+	background:url('assets/background.gif') left center no-repeat;
+	z-index: 2;
+}
+
+</style>
+</head>
+<body>
+<h1>Multiple File Upload with Progress Tracking and a Transparent Overlay Upload Button</h1>
+<div id="uploaderContainer"> 
+	<div id="uploaderOverlay" style="position:absolute; z-index:2"></div> 
+	<div id="selectFilesLink" style="z-index:1"><a id="selectLink" href="#">Select Files</a></div> 
+</div> 
+<div id="uploadFilesLink"><a id="uploadLink" href="#">Upload Files</a></div>
+
+<div id="files">
+  <table id="filenames" style="border-width:1px; border-style:solid; padding:5px;">
+	<tr><td>Filename</td><td>File size</td><td>Percent uploaded</td></tr>
+  </table>	
+</div>
+<script>
+
+
+YUI({ debug:true, 
+	  filter:"raw",
+      gallery: 'gallery-2010.06.30-19-54'}).use('base', 'event', 'node', 'swf', 'uploader', 'gallery-progressbar', function (Y) {
+	
+var uploader;
+
+function init () {
+	
+var overlayRegion = Y.one("#selectLink").get('region');
+Y.log(overlayRegion);
+Y.one("#uploaderOverlay").set("offsetWidth", overlayRegion.width);
+Y.one("#uploaderOverlay").set("offsetHeight", overlayRegion.height);
+
+uploader = new Y.Uploader({boundingBox:"#uploaderOverlay", 
+						   swfURL:"../../../build/uploader/assets/uploader.swf",
+					       transparent: true
+						  });
+
+uploader.on("uploaderReady", setupUploader);
+uploader.on("fileselect", fileSelect);
+uploader.on("uploadprogress", updateProgress);
+uploader.on("uploadcomplete", uploadComplete);
+}
+
+Y.on("domready", init);
+
+
+var setupUploader = function (event) {
+	uploader.set("multiFiles", true);
+	uploader.set("simLimit", 3);
+	uploader.set("log", true);
+	
+	var fileFilters = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif"},
+	                   {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}); 
+	
+    uploader.set("fileFilters", fileFilters); 
+}
+
+var fileSelect = function (event) {
+	Y.log("File was selected, parsing...");
+	var fileData = event.fileList;	
+
+	for (var key in fileData) {
+		var output = "<tr><td>" + fileData[key].name + "</td><td>" + fileData[key].size + "</td><td><div id='div_" + fileData[key].id + "'></div></td></tr>\n";
+		Y.one("#filenames").append(output);
+		
+		var progressBar = new Y.ProgressBar({id:"pb_" + fileData[key].id, layout : '<div class="{labelClass}"></div><div class="{sliderClass}"></div>'});
+		progressBar.render("#div_" + fileData[key].id);
+		progressBar.set("progress", 0);
+	}
+}
+
+var updateProgress = function (event) {
+	var pb = Y.Widget.getByNode("#pb_" + event.id);
+	pb.set("progress", Math.round(100 * event.bytesLoaded / event.bytesTotal));
+}
+
+var uploadComplete = function (event) {
+	var pb = Y.Widget.getByNode("#pb_" + event.id);
+	pb.set("progress", 100);
+}
+
+var uploadFile = function (event) {
+	uploader.uploadAll("http://www.yswfblog.com/upload/upload_simple.php");
+}
+
+Y.one("#uploadFilesLink").on("click", uploadFile);
+
+
+
+});
+
+</script>
+
+</body>
+</html>

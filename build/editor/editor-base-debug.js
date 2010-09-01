@@ -36,6 +36,7 @@ YUI.add('editor-base', function(Y) {
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
             frame.addTarget(this);
+
             this.frame = frame;
 
             this.publish('nodeChange', {
@@ -43,7 +44,20 @@ YUI.add('editor-base', function(Y) {
                 bubbles: true,
                 defaultFn: this._defNodeChangeFn
             });
+            
+            this.plug(Y.Plugin.EditorPara);
         },
+        destructor: function() {
+            this.frame.destroy();
+
+            this.detachAll();
+        },
+        /**
+        * Copy certain styles from one node instance to another (used for new paragraph creation mainly)
+        * @method copyStyles
+        * @param {Node} from The Node instance to copy the styles from 
+        * @param {Node} to The Node instance to copy the styles to
+        */
         copyStyles: function(from, to) {
             var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
                 newStyles = {};
@@ -56,14 +70,12 @@ YUI.add('editor-base', function(Y) {
             }
             to.setStyles(newStyles);
         },
-        _fixFirstPara: function() {
-            var inst = this.getInstance(), sel;
-            inst.one('body').setContent('<p>&nbsp;</p>');
-            sel = new inst.Selection();
-            try {
-                sel.selectNode(inst.one('body > p').get('firstChild'));
-            } catch (er) {}
-        },
+        /**
+        * Holder for the selection bookmark in IE.
+        * @property _lastBookmark
+        * @private
+        */
+        _lastBookmark: null,
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -71,8 +83,14 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _defNodeChangeFn: function(e) {
-            Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
-            var inst = this.getInstance();
+            var startTime = (new Date()).getTime();
+            //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
+            var inst = this.getInstance(), sel;
+
+            if (Y.UA.ie) {
+    	        sel = inst.config.doc.selection.createRange();
+                this._lastBookmark = sel.getBookmark();
+            }
 
             /*
             * @TODO
@@ -83,24 +101,27 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    var cont = inst.config.doc.body.innerHTML;
-                    if (cont && cont.toLowerCase() == '<br>') {
-                        this._fixFirstPara();
+                    inst.Selection.cleanCursor();
+                    break;
+                case 'enter':
+                    if (Y.UA.webkit) {
+                        //Webkit doesn't support shift+enter as a BR, this fixes that.
+                        if (e.changedEvent.shiftKey) {
+                            this.execCommand('insertbr');
+                            e.changedEvent.preventDefault();
+                        }
                     }
                     break;
-                case 'backspace-up':
-                case 'delete-up':
-                    var ps = inst.all('body > p'), br, p, sel, item;
-                    if (ps.size() < 2) {
-                        item = inst.one('body');
-                        if (ps.item(0)) {
-                            item = ps.item(0);
-                        }
-                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                            this._fixFirstPara();
-                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                            e.changedEvent.halt();
-                        }
+                case 'tab':
+                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
+                        e.changedEvent.preventDefault();
+
+                        Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
+                        var sel = new inst.Selection();
+                        sel.setCursor();
+                        var cur = sel.getCursor();
+                        cur.insert(EditorBase.TABKEY, 'before');
+                        sel.focusCursor();
                     }
                     break;
                 case 'enter-up':
@@ -125,72 +146,70 @@ YUI.add('editor-base', function(Y) {
                             }
                         }
                     }
-                    //TODO
-                    //inst.Selection.filterBlocks();
-                    break;
-                case 'tab':
-                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        Y.log('Overriding TAB key to insert HTML', 'info', 'editor');
-                        this.execCommand('inserthtml', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-                        e.changedEvent.halt();
-                    }
                     break;
             }
 
-            var changed = this.getDomPath(e.changedNode),
+            var changed = this.getDomPath(e.changedNode, false),
                 cmds = {}, family, fsize, classes = [],
                 fColor = '', bColor = '';
 
             if (e.commands) {
                 cmds = e.commands;
             }
-
-            changed.each(function(n) {
-                var tag = n.get('tagName').toLowerCase(),
-                    cmd = EditorBase.TAG2CMD[tag],
-                    el = Y.Node.getDOMNode(n);
+            
+            Y.each(changed, function(n) {
+                var el = inst.Node.getDOMNode(n),
+                    tag = el.tagName.toLowerCase(),
+                    cmd = EditorBase.TAG2CMD[tag];
 
                 if (cmd) {
                     cmds[cmd] = 1;
                 }
 
                 //Bold and Italic styles
-                var s = el.style;
-                if (s.fontWeight.toLowerCase() == 'bold') {
+                var s = el.currentStyle || el.style;
+
+                if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
                 }
-                if (s.fontStyle.toLowerCase() == 'italic') {
+                if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
                 }
-                if (s.textDecoration.toLowerCase() == 'underline') {
+                if (s.textDecoration == 'underline') {
                     cmds.underline = 1;
                 }
-                if (s.textDecoration.toLowerCase() == 'line-through') {
+                if (s.textDecoration == 'line-through') {
                     cmds.strikethrough = 1;
                 }
-
-                var family2 = n.getStyle('fontFamily').split(',')[0].toLowerCase();
-                if (family2) {
-                    family = family2;
+                
+                if (s.fontFamily) {
+                    var family2 = s.fontFamily.split(',')[0].toLowerCase();
+                    if (family2) {
+                        family = family2;
+                    }
+                    if (family) {
+                        family = family.replace(/'/g, '').replace(/"/g, '');
+                    }
                 }
-                fsize = n.getStyle('fontSize');
+                fsize = s.fontSize;
 
-                var cls = n.get('className').split(' ');
+                var cls = el.className.split(' ');
+
                 Y.each(cls, function(v) {
                     if (v !== '' && (v.substr(0, 4) !== 'yui_')) {
                         classes.push(v);
                     }
                 });
 
-                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
-                var bColor2 = EditorBase.FILTER_RGB(n.getStyle('backgroundColor'));
+                fColor = EditorBase.FILTER_RGB(s.color);
+                var bColor2 = EditorBase.FILTER_RGB(s.backgroundColor);
                 if (bColor2 !== 'transparent') {
                     bColor = bColor2;
                 }
                 
             });
             
-            e.dompath = changed;
+            e.dompath = inst.all(changed);
             e.classNames = classes;
             e.commands = cmds;
 
@@ -207,17 +226,48 @@ YUI.add('editor-base', function(Y) {
             if (!e.backgroundColor) {
                 e.backgroundColor = bColor;
             }
+
+            var endTime = (new Date()).getTime();
+            Y.log('_defNodeChangeTimer 2: ' + (endTime - startTime) + 'ms', 'info', 'selection');
         },
         /**
         * Walk the dom tree from this node up to body, returning a reversed array of parents.
         * @method getDomPath
         * @param {Node} node The Node to start from 
         */
-        getDomPath: function(node) {
-            
-			var domPath = [],
+        getDomPath: function(node, nodeList) {
+			var domPath = [], domNode,
                 inst = this.frame.getInstance();
 
+            domNode = inst.Node.getDOMNode(node);
+            //return inst.all(domNode);
+
+            while (domNode !== null) {
+                
+                if ((domNode === inst.config.doc.documentElement) || (domNode === inst.config.doc) || !domNode.tagName) {
+                    domNode = null;
+                    break;
+                }
+                
+                if (!inst.DOM.inDoc(domNode)) {
+                    domNode = null;
+                    break;
+                }
+                
+                //Check to see if we get el.nodeName and nodeType
+                if (domNode.nodeName && domNode.nodeType && (domNode.nodeType == 1)) {
+                    domPath.push(domNode);
+                }
+
+                if (domNode == inst.config.doc.body) {
+                    domNode = null;
+                    break;
+                }
+
+                domNode = domNode.parentNode;
+            }
+
+            /*{{{ Using Node 
             while (node !== null) {
                 if (node.test('html') || node.test('doc') || !node.get('tagName')) {
                     node = null;
@@ -239,11 +289,17 @@ YUI.add('editor-base', function(Y) {
 
                 node = node.get('parentNode');
             }
+            }}}*/
+
             if (domPath.length === 0) {
                 domPath[0] = inst.config.doc.body;
             }
-            
-            return inst.all(domPath.reverse());
+
+            if (nodeList) {
+                return inst.all(domPath.reverse());
+            } else {
+                return domPath.reverse();
+            }
 
         },
         /**
@@ -253,11 +309,55 @@ YUI.add('editor-base', function(Y) {
         */
         _afterFrameReady: function() {
             var inst = this.frame.getInstance();
-            this.frame.on('mousedown', Y.bind(this._onFrameMouseDown, this));
-            this.frame.on('keyup', Y.bind(this._onFrameKeyUp, this));
-            this.frame.on('keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('keypress', Y.bind(this._onFrameKeyPress, this));
+            
+            this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
+            this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
+            /*
+            this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+            this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
+            this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+            */
+            //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
+
+
+            this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
+
+            if (Y.UA.ie) {
+                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+                this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
+            } else {
+                this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+                this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+            }
+
             inst.Selection.filter();
+            this.fire('ready');
+        },
+        /**
+        * Moves the cached selection bookmark back so IE can place the cursor in the right place.
+        * @method _onFrameActivate
+        * @private
+        */
+        _onFrameActivate: function() {
+            if (this._lastBookmark) {
+                Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
+                var inst = this.getInstance(),
+                    sel = inst.config.doc.selection.createRange(),
+                    bk = sel.moveToBookmark(this._lastBookmark);
+
+                sel.collapse(true);
+                sel.select();
+                this._lastBookmark = null;
+            }
+        },
+        /**
+        * Fires nodeChange event
+        * @method _onFrameMouseUp
+        * @private
+        */
+        _onFrameMouseUp: function(e) {
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mouseup', changedEvent: e.frameEvent  });
         },
         /**
         * Fires nodeChange event
@@ -265,7 +365,63 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameMouseDown: function(e) {
-            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mousedown', changedEvent: e  });
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mousedown', changedEvent: e.frameEvent  });
+        },
+        /**
+        * Caches a copy of the selection for key events. Only creating the selection on keydown
+        * @property _currentSelection
+        * @private
+        */
+        _currentSelection: null,
+        _currentSelectionTimer: null,
+        _currentSelectionClear: null,
+        /**
+        * Fires nodeChange event
+        * @method _onFrameKeyDown
+        * @private
+        */
+        _onFrameKeyDown: function(e) {
+            if (!this._currentSelection) {
+                if (this._currentSelectionTimer) {
+                    this._currentSelectionTimer.cancel();
+                }
+                this._currentSelectionTimer = Y.later(850, this, function() {
+                    this._currentSelectionClear = true;
+                });
+                var inst = this.frame.getInstance(),
+                    sel = new inst.Selection(e);
+
+                this._currentSelection = sel;
+            } else {
+                var sel = this._currentSelection;
+            }
+                var inst = this.frame.getInstance(),
+                    sel = new inst.Selection();
+
+                this._currentSelection = sel;
+
+            if (sel && sel.anchorNode) {
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e.frameEvent });
+                if (EditorBase.NC_KEYS[e.keyCode]) {
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e.frameEvent });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-down', changedEvent: e.frameEvent });
+                }
+            }
+        },
+        /**
+        * Fires nodeChange event
+        * @method _onFrameKeyPress
+        * @private
+        */
+        _onFrameKeyPress: function(e) {
+            var sel = this._currentSelection;
+
+            if (sel && sel.anchorNode) {
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keypress', changedEvent: e.frameEvent });
+                if (EditorBase.NC_KEYS[e.keyCode]) {
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-press', changedEvent: e.frameEvent });
+                }
+            }
         },
         /**
         * Fires nodeChange event for keyup on specific keys
@@ -273,42 +429,16 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var inst = this.frame.getInstance(),
-                sel = new inst.Selection();
-            
-            if (sel.anchorNode) {
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
+            var sel = this._currentSelection;
+
+            if (sel && sel.anchorNode) {
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e  });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e.frameEvent  });
                 }
             }
-        },
-        /**
-        * Fires nodeChange event
-        * @method _onFrameKeyDown
-        * @private
-        */
-        _onFrameKeyDown: function(e) {
-            var inst = this.frame.getInstance(),
-                sel = new inst.Selection();
-
-            if (sel.anchorNode) {
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e });
-                if (EditorBase.NC_KEYS[e.keyCode]) {
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e });
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-down', changedEvent: e });
-                }
-            }
-        },
-        _onFrameKeyPress: function(e) {
-            var inst = this.frame.getInstance(),
-                sel = new inst.Selection();
-
-            if (sel.anchorNode) {
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keypress', changedEvent: e });
-                if (EditorBase.NC_KEYS[e.keyCode]) {
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-press', changedEvent: e });
-                }
+            if (this._currentSelectionClear) {
+                this._currentSelectionClear = this._currentSelection = null;
             }
         },
         /**
@@ -354,8 +484,6 @@ YUI.add('editor-base', function(Y) {
         getInstance: function() {
             return this.frame.getInstance();
         },
-        destructor: function() {
-        },
         /**
         * Renders the Y.Frame to the passed node.
         * @method render
@@ -371,11 +499,12 @@ YUI.add('editor-base', function(Y) {
         /**
         * Focus the contentWindow of the iframe
         * @method focus
+        * @param {Function} fn Callback function to execute after focus happens
         * @return {EditorBase}
         * @chainable
         */
-        focus: function() {
-            this.frame.focus();
+        focus: function(fn) {
+            this.frame.focus(fn);
             return this;
         },
         /**
@@ -404,14 +533,24 @@ YUI.add('editor-base', function(Y) {
         * @return {String} The filtered content of the Editor
         */
         getContent: function() {
-            var html = this.getInstance().Selection.unfilter();
+            var html = '', inst = this.getInstance();
+            if (inst && inst.Selection) {
+                html = inst.Selection.unfilter();
+            }
             //Removing the _yuid from the objects in IE
             html = html.replace(/ _yuid="([^>]*)"/g, '');
             return html;
         }
     }, {
         /**
-        * @method filter_rgb
+        * @static
+        * @property TABKEY
+        * @description The HTML markup to use for the tabkey
+        */
+        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+        /**
+        * @static
+        * @method FILTER_RGB
         * @param String css The CSS string containing rgb(#,#,#);
         * @description Converts an RGB color string to a hex color, example: rgb(0, 255, 0) converts to #00ff00
         * @return String
@@ -435,6 +574,11 @@ YUI.add('editor-base', function(Y) {
             }
             return css;
         },        
+        /**
+        * @static
+        * @property TAG2CMD
+        * @description A hash table of tags to their execcomand's
+        */
         TAG2CMD: {
             'b': 'bold',
             'strong': 'bold',
@@ -475,7 +619,7 @@ YUI.add('editor-base', function(Y) {
         * @property USE
         * @type Array
         */
-        USE: ['substitute', 'node','selector-css3', 'selection', 'stylesheet'],
+        USE: ['substitute', 'node', 'selector-css3', 'selection', 'stylesheet'],
         /**
         * The Class Name: editorBase
         * @static
@@ -562,8 +706,15 @@ YUI.add('editor-base', function(Y) {
     * @type {Event.Custom}
     */
 
+    /**
+    * @event ready
+    * @description Fired after the frame is ready.
+    * @param {Event.Facade} event An Event Facade object.
+    * @type {Event.Custom}
+    */
 
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
+
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});

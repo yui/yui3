@@ -254,4 +254,4 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
 Y.namespace("Plugin").WidgetAnim = WidgetAnim;
 
 
-}, '@VERSION@' ,{requires:['plugin', 'anim-base']});
+}, '@VERSION@' ,{requires:['plugin', 'anim-base', 'widget']});

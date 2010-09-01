@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html id="ht">
     <head>
         <title>Touch/Gesture Events</title>
         
@@ -28,9 +28,12 @@
         <script src="../../../../build/yui/yui.js"></script>
 
     </head>
-    <body>
+
+    <body id="bd">
+
         <div id="testNode"></div>
         <div id="testNode2"></div>
+
         <script>
             YUI({filter:"raw", combine:false}).use("event-gestures", function(Y) {
 
@@ -38,52 +41,63 @@
                     div2 = Y.Node.one("#testNode2");
 
                 var flickHandler = function(e) {
-                    div.append("<div>flick, e:" + [e.velocity, e.distance, e.button] + "</div>");                    
+                    div.append("<div>flick, e:" + [e.flick.velocity, e.flick.distance, e.flick.button] + "</div>");
                 };
 
                 var moveStartHandler = function(e) {
-                    var target = e.target;
+                    //Y.log("MoveStart: " + e.target + ", " + e.currentTarget);
 
-                    target.set("innerHTML", "");
-                    target.append("<div>movestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    e.target.set("innerHTML", "");
+                    e.target.append("<div>gesturemovestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveHandler = function(e) {
-                    e.target.append("<div>move, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    Y.log("Move: " + e.target + ", " + e.currentTarget);
+
+                    e.target.append("<div>gesturemove, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveEndHandler = function(e) {
-                    e.target.append("<div>moveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    Y.log("MoveEnd: " + e.target + ", " + e.currentTarget);
+
+                    e.target.append("<div>gesturemoveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
-                /* Waiting on synth event infrastructure to support this properly */
                 var flickCfg = {
                     minDistance:20,
-                    minVelocity:0,
+                    minVelocity:0.3
                 };
 
-                /* Waiting on synth event infrastructure to support this properly */
                 var moveStartCfg = {
                     minDistance: 10,
                     minTime: 5000,
-                    button:0
+                    button:1,
+                    preventDefault:true
                 };
 
                 var moveStartCfg2 = {
                     minDistance: 10,
                     minTime: -1, // must move at least 10 pixels
-                    button:0
+                    button:2,
+                    preventDefault: function(e) {
+                        var prevent = false;
+                        if (e.target === div2) {
+                            prevent = true;
+                        }
+                        Y.log("prevent:" + prevent);
+                        return prevent;
+                    }
                 };
 
                 div.on("flick", flickHandler, flickCfg);
 
-                div.on("movestart", moveStartHandler, moveStartCfg);
-                div.on("move", moveHandler);
-                div.on("moveend", moveEndHandler);
+                div.on("gesturemovestart", moveStartHandler, moveStartCfg);
+                div.on("gesturemove", moveHandler);
+                div.on("gesturemoveend", moveEndHandler);
 
-                div2.on("movestart", moveStartHandler, moveStartCfg2);
-                div2.on("move", moveHandler);
-                div2.on("moveend", moveEndHandler);
+                div2.on("gesturemovestart", moveStartHandler, moveStartCfg2);
+                div2.on("gesturemove", moveHandler);
+                div2.on("gesturemoveend", moveEndHandler);
 
                 div.addClass("active");
             });

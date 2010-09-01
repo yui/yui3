@@ -19,11 +19,6 @@ YUI.add('dd-drag', function(Y) {
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
-        //MOUSE_UP = 'mouseup',
-        //MOUSE_DOWN = 'mousedown',
-        MOUSE_UP = 'moveend',
-        MOUSE_DOWN = 'movestart',
-        DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
@@ -200,6 +195,13 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Drag.NAME = 'drag';
+    
+    /**
+    * This property defaults to "mousedown", but when drag-gestures is loaded, it is changed to "gesturemovestart"
+    * @static
+    * @property START_EVENT
+    */
+    Drag.START_EVENT = 'mousedown';
 
     Drag.ATTRS = {
         /**
@@ -414,6 +416,14 @@ YUI.add('dd-drag', function(Y) {
                 this.addTarget(t);
                 return t;
             }
+        },
+        /**
+        * @attribute haltDown
+        * @description Should the mousedown event be halted. Default: true
+        * @type Boolean
+        */
+        haltDown: {
+            value: true
         }
     };
 
@@ -736,15 +746,23 @@ YUI.add('dd-drag', function(Y) {
         */
         _defMouseDownFn: function(e) {
             var ev = e.ev;
+
             this._dragThreshMet = false;
             this._ev_md = ev;
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                //return false;
+                return false;
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
-                ev.halt();
+                if (this.get('haltDown')) {
+                    Y.log('Halting MouseDown', 'info', 'drag');
+                    ev.halt();
+                } else {
+                    Y.log('Preventing Default on MouseDown', 'info', 'drag');
+                    ev.preventDefault();
+                }
+                
                 this._setStartPosition([ev.pageX, ev.pageY]);
 
                 DDM.activeDrag = this;
@@ -845,7 +863,7 @@ YUI.add('dd-drag', function(Y) {
         * @description The method passed to setTimeout to determine if the clickTimeThreshold was met.
         */
         _timeoutCheck: function() {
-            if (!this.get('lock') && !this._dragThreshMet) {
+            if (!this.get('lock') && !this._dragThreshMet && this._ev_md) {
                 this._fromTimeout = this._dragThreshMet = true;
                 this.start();
                 this._alignNode([this._ev_md.pageX, this._ev_md.pageY], true);
@@ -956,16 +974,11 @@ YUI.add('dd-drag', function(Y) {
             this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
-                minDistance: this.get('clickPixelThresh'),
-                minTime: this.get('clickTimeThresh')
-            });
-            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
-            node.on(DRAG_START, Y.bind(this._fixDragStart, this));
-            node.on('move', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
-            //Should not need this, _handleMouseUp calls this..
-            //node.on('moveend', Y.bind(DDM._end, DDM));
-            
+
+            node.addClass(DDM.CSS_PREFIX + '-draggable');
+            node.on(Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this));
+            node.on('mouseup', Y.bind(this._handleMouseUp, this));
+            node.on('dragstart', Y.bind(this._fixDragStart, this));
         },
         /**
         * @private
@@ -1030,8 +1043,9 @@ YUI.add('dd-drag', function(Y) {
             if (this._clickTimeout) {
                 this._clickTimeout.cancel();
             }
-            this._dragThreshMet = false;
-            this._fromTimeout = false;
+            this._dragThreshMet = this._fromTimeout = false;
+            this._ev_md = null;
+
             if (!this.get('lock') && this.get(DRAGGING)) {
                 this.fire(EV_END, {
                     pageX: this.lastXY[0],

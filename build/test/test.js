@@ -123,6 +123,7 @@ YUI.add('test', function(Y) {
         this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
+
         
     Y.namespace("Test");
     
@@ -199,6 +200,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     /*
      * Runs test suites and test cases, providing events to allowing for the
@@ -658,12 +660,15 @@ YUI.add('test', function(Y) {
              */
             _handleTestObjectComplete : function (node) {
                 if (Y.Lang.isObject(node.testObject)){
-                    node.parent.results.passed += node.results.passed;
-                    node.parent.results.failed += node.results.failed;
-                    node.parent.results.total += node.results.total;                
-                    node.parent.results.ignored += node.results.ignored;       
-                    //node.parent.results.duration += node.results.duration;
-                    node.parent.results[node.testObject.name] = node.results;
+                
+                    if (node.parent){
+                        node.parent.results.passed += node.results.passed;
+                        node.parent.results.failed += node.results.failed;
+                        node.parent.results.total += node.results.total;                
+                        node.parent.results.ignored += node.results.ignored;       
+                        //node.parent.results.duration += node.results.duration;
+                        node.parent.results[node.testObject.name] = node.results;
+                    }
                 
                     if (node.testObject instanceof Y.Test.Suite){
                         node.testObject.tearDown();
@@ -700,6 +705,8 @@ YUI.add('test', function(Y) {
                         this._handleTestObjectComplete(this._cur);
                         this._cur = this._cur.parent;
                     }
+
+                    this._handleTestObjectComplete(this._cur);               
                     
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
@@ -710,7 +717,6 @@ YUI.add('test', function(Y) {
                         this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
                         this._cur = null;
                     } else {
-                        this._handleTestObjectComplete(this._cur);               
                         this._cur = this._cur.next;                
                     }
                 }
@@ -1191,6 +1197,7 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
+
   
     /**
      * The Assert object provides functions to test JavaScript values against
@@ -1887,6 +1894,7 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
+
    
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
@@ -2209,6 +2217,7 @@ YUI.add('test', function(Y) {
         
     };
 
+
     /**
      * The ObjectAssert object provides functions to test JavaScript objects
      * for a variety of cases.
@@ -2228,7 +2237,9 @@ YUI.add('test', function(Y) {
         },
         
         /**
-         * Asserts that an object has a property with the given name.
+         * Asserts that an object has a property with the given name. The property may exist either
+         * on the object instance or in its prototype chain. The same as testing 
+         * "property" in object.
          * @param {String} propertyName The name of the property to test.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2237,13 +2248,15 @@ YUI.add('test', function(Y) {
          */    
         hasKey: function (propertyName, object, message) {
             Y.Assert._increment();               
-            if (!Y.Object.hasKey(object, propertyName)){
+            if (!(propertyName in object)){
                 Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
         },
         
         /**
-         * Asserts that an object has all properties of a reference object.
+         * Asserts that an object has all properties of a reference object. The properties may exist either
+         * on the object instance or in its prototype chain. The same as testing 
+         * "property" in object.
          * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2253,7 +2266,7 @@ YUI.add('test', function(Y) {
         hasKeys: function (properties, object, message) {
             Y.Assert._increment();  
             for (var i=0; i < properties.length; i++){
-                if (!Y.Object.hasKey(object, properties[i])){
+                if (!(properties[i] in object)){
                     Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
                 }      
             }
@@ -2309,6 +2322,7 @@ YUI.add('test', function(Y) {
 
         }     
     };
+
 
     
     /**
@@ -2394,6 +2408,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     Y.namespace("Test.Format");
     
@@ -2622,6 +2637,7 @@ YUI.add('test', function(Y) {
         
 
 
+
     Y.namespace("Coverage.Format");
     
     /**
@@ -2656,6 +2672,7 @@ YUI.add('test', function(Y) {
 
 
   
+
 
     Y.namespace("Test");
     
@@ -2822,12 +2839,15 @@ YUI.add('test', function(Y) {
         }
     
     };
+
     /**
      * Creates a new mock object.
      * @class Mock
      * @constructor
      * @param {Object} template (Optional) An object whose methods
-     *      should be stubbed out on the mock object.
+     *      should be stubbed out on the mock object. This object
+     *      is used as the prototype of the mock object so instanceof
+     *      works correctly.
      */
     Y.Mock = function(template){
     
@@ -2966,6 +2986,20 @@ YUI.add('test', function(Y) {
         }
     };
 
+    /**
+     * Defines a custom mock validator for a particular argument.
+     * @param {Function} method The method to run on the argument. This should
+     *      throw an assertion error if the value is invalid.
+     * @param {Array} originalArgs The first few arguments to pass in
+     *      to the method. The value to test and failure message are
+     *      always the last two arguments passed into method.
+     * @param {String} message The message to display if validation fails. If
+     *      not specified, the default assertion error message is displayed.
+     * @return {void}
+     * @namespace Mock
+     * @constructor Value
+     * @static
+     */ 
     Y.Mock.Value = function(method, originalArgs, message){
         if (this instanceof Y.Mock.Value){
             this.verify = function(value){
@@ -2979,12 +3013,60 @@ YUI.add('test', function(Y) {
         }
     };
     
+    /**
+     * Mock argument validator that accepts any value as valid.
+     * @namespace Mock.Value
+     * @property Any
+     * @type Function
+     * @static
+     */ 
     Y.Mock.Value.Any        = Y.Mock.Value(function(){});
+
+    /**
+     * Mock argument validator that accepts only Boolean values as valid.
+     * @namespace Mock.Value
+     * @property Boolean
+     * @type Function
+     * @static
+     */ 
     Y.Mock.Value.Boolean    = Y.Mock.Value(Y.Assert.isBoolean);
+
+    /**
+     * Mock argument validator that accepts only numeric values as valid.
+     * @namespace Mock.Value
+     * @property Number
+     * @type Function
+     * @static
+     */ 
     Y.Mock.Value.Number     = Y.Mock.Value(Y.Assert.isNumber);
+
+    /**
+     * Mock argument validator that accepts only String values as valid.
+     * @namespace Mock.Value
+     * @property String
+     * @type Function
+     * @static
+     */ 
     Y.Mock.Value.String     = Y.Mock.Value(Y.Assert.isString);
+
+    /**
+     * Mock argument validator that accepts only non-null objects values as valid.
+     * @namespace Mock.Value
+     * @property Object
+     * @type Function
+     * @static
+     */ 
     Y.Mock.Value.Object     = Y.Mock.Value(Y.Assert.isObject);
+    
+    /**
+     * Mock argument validator that accepts onlyfunctions as valid.
+     * @namespace Mock.Value
+     * @property Function
+     * @type Function
+     * @static
+     */ 
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
+
 /*Stub for future compatibility*/
 if (typeof YUITest == "undefined" || !YUITest) {
     YUITest = {
@@ -2995,4 +3077,5 @@ if (typeof YUITest == "undefined" || !YUITest) {
 }
 
 
-}, '@VERSION@' ,{requires:['substitute','event-base']});
+
+}, '@VERSION@' ,{requires:['substitute','event-base','json-stringify']});

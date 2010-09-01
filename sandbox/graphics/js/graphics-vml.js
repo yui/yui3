@@ -1,4 +1,5 @@
 var VMLGraphics = function(config) {
+    
     this.initializer.apply(this, arguments);
 };
 
@@ -53,7 +54,6 @@ VMLGraphics.prototype = {
             this._fillColor = color;
             this._fill = 1;
         }
-
         return this;
     },
 
@@ -139,13 +139,33 @@ VMLGraphics.prototype = {
      */
     clear: function() {
         this._path = '';
+        this._removeChildren(this._vml);
+    },
+
+    /**
+     * @private
+     */
+    _removeChildren: function(node)
+    {
+        if(node.hasChildNodes())
+        {
+            var child;
+            while(node.firstChild)
+            {
+                child = node.firstChild;
+                this._removeChildren(child);
+                node.removeChild(child);
+            }
+        }
     },
 
     /**
      * Draws a bezier curve
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._path += ' c ' + cp1x + ", " + cp1y + ", " + cp2x + ", " + cp2y + ", " + x + ", " + y;
+        this._shape = "shape";
+        this._path += ' c ' + Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y;
+        this._trackSize(x, y);
     },
 
     /**
@@ -164,7 +184,7 @@ VMLGraphics.prototype = {
         this._y = y - r;
         this._shape = "oval";
         //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
-        this._drawVML();
+        this._draw();
 	},
 
     /**
@@ -177,7 +197,7 @@ VMLGraphics.prototype = {
         this._y = y;
         this._shape = "oval";
         //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
-        this._drawVML();
+        this._draw();
     },
 
     /**
@@ -193,13 +213,7 @@ VMLGraphics.prototype = {
         this.lineTo(x + w, y + h);
         this.lineTo(x, y + h);
         this.lineTo(x, y);
-        this._drawVML();
-    },
-
-    getShape: function(config)
-    {
-
-
+        this._draw();
     },
 
     /**
@@ -219,13 +233,49 @@ VMLGraphics.prototype = {
         this.quadraticCurveTo(x + w, y, x + w - ew, y);
         this.lineTo(x + ew, y);
         this.quadraticCurveTo(x, y, x, y + eh);
-        this._drawVML();
+        this._draw();
 	},
 
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    {
+        this._drawingComplete = false;
+        this._width = radius;
+        this._height = radius;
+        yRadius = yRadius || radius;
+        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
+        this._width = radius * 2;
+        this._height = this._width;
+        this._shape = "shape";
+        this._draw();
+    },
+
+    /**
+     * @private
+     * @description Generates a path string for a wedge shape
+     */
+    _getWedgePath: function(config)
+    {
+        var x = config.x,
+            y = config.y,
+            startAngle = config.startAngle,
+            arc = config.arc,
+            radius = config.radius,
+            yRadius = config.yRadius || radius,
+            path;  
+        if(Math.abs(arc) > 360)
+        {
+            arc = 360;
+        }
+        startAngle *= 65535;
+        arc *= 65536;
+        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + radius + " " + startAngle + " " + arc;
+        return path;
+    },
+    
     end: function() {
         if(this._shape)
         {
-            this._drawVML();
+            this._draw();
         }
         this._initProps();
     },
@@ -262,7 +312,7 @@ VMLGraphics.prototype = {
         this._shape = "shape";
         this._path += ' l ';
         for (i = 0; i < len; ++i) {
-            this._path += ' ' + args[i][0] + ', ' + args[i][1];
+            this._path += ' ' + Math.round(args[i][0]) + ', ' + Math.round(args[i][1]);
 
             this._trackSize.apply(this, args[i]);
         }
@@ -272,7 +322,7 @@ VMLGraphics.prototype = {
      * Moves the current drawing position to specified x and y coordinates.
      */
     moveTo: function(x, y) {
-        this._path += ' m ' + x + ', ' + y;
+        this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
     },
 
     /**
@@ -283,13 +333,19 @@ VMLGraphics.prototype = {
         this._vml.style.height = h + 'px';
         this._vml.coordSize = w + ' ' + h;
     },
-    
+   
+    setPosition: function(x, y)
+    {
+        this._vml.style.left = x + "px";
+        this._vml.style.top = y + "px";
+    },
+
     /**
      * @private
      */
     render: function(node) {
-        var w = node.offsetWidth,
-            h = node.offsetHeight;
+        var w = node.offsetWidth || 0,
+            h = node.offsetHeight || 0;
         node = node || Y.config.doc.body;
         node.appendChild(this._vml);
         this.setSize(w, h);
@@ -353,13 +409,12 @@ VMLGraphics.prototype = {
      * @private 
      * Completes a vml shape
      */
-    _drawVML: function()
+    _draw: function()
     {
         var shape = this._createGraphicNode(this._shape),
             w = this._width,
             h = this._height,
             fillProps = this._fillProps;
-        
         if(this._path)
         {
             if(this._fill || this._fillProps)
@@ -476,6 +531,157 @@ VMLGraphics.prototype = {
     {
         return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
     
+    },
+    
+    _getNodeShapeType: function(type)
+    {
+        var shape = "shape";
+        if(this._typeConversionHash.hasOwnProperty(type))
+        {
+            shape = this._typeConversionHash[type];
+        }
+        return shape;
+    },
+
+    _typeConversionHash: {
+        circle: "oval",
+        ellipse: "oval",
+        rect: "rect"
+    },
+    
+    /**
+     * Returns a shape.
+     */
+    getShape: function(config) {
+        var shape,
+            node,
+            type,
+            fill = config.fill,
+            border = config.border,
+            fillnode,
+            w = config.width,
+            h = config.height, 
+            path;
+        if(config.node)
+        {
+            node = config.node;
+            type = config.type || config.shape;
+        }
+        else
+        {
+            this.clear();
+            type = config.shape || "shape";
+            node = this._createGraphicNode(this._getNodeShapeType(type));
+            if(type === "wedge")
+            {
+                path = this._getWedgePath(config.props);
+                if(fill)
+                {
+                    path += ' x';
+                }
+                if(border)
+                {
+                    path += ' e';
+                }
+                node.path = path;
+            }
+        }
+        this.setPosition(0, 0);
+        if(border && border.weight && border.weight > 0)
+        {
+            node.strokecolor = border.color || "#000000";
+            node.strokeweight = border.weight || 1;
+            node.stroked = true;
+            w -= border.weight;
+            h -= border.weight;
+        }
+        else
+        {
+            node.stroked = false;
+        }
+        this.setSize(w, h);
+        node.style.width = w + "px";
+        node.style.height = h + "px";
+        node.filled = true;
+        if(fill.type === "linear" || fill.type === "radial")
+        {
+            this.beginGradientFill(fill);
+            node.appendChild(this._getFill());
+        }
+        else if(fill.type === "bitmap")
+        {
+            this.beginBitmapFill(fill);
+            node.appendChild(this._getFill());
+        }
+        else
+        {
+            if(!fill.color)
+            {
+                node.filled = false;
+            }
+            else
+            {
+                if(config.fillnode)
+                {
+                    this._removeChildren(config.fillnode);
+                }
+                fillnode = this._createGraphicNode("fill");
+                fillnode.setAttribute("type", "solid");
+                fill.alpha = fill.alpha || 1;                
+                fillnode.setAttribute("color", fill.color);
+                fillnode.setAttribute("opacity", fill.alpha);
+                node.appendChild(fillnode);
+            }
+        }
+        node.style.display = "block";
+        node.style.position = "absolute";
+        if(!config.node)
+        {
+            this._vml.appendChild(node);
+        }
+        shape = {
+            width:w,
+            height:h,
+            fill:fill,
+            node:node,
+            fillnode:fillnode,
+            border:border
+        };
+        return shape; 
+    },
+   
+    /**
+     * @description Updates an existing shape with new properties.
+     */
+    updateShape: function(shape, config)
+    {
+        if(config.fill)
+        {
+            shape.fill = Y.merge(shape.fill, config.fill);
+        }
+        if(config.border)
+        {
+            shape.border = Y.merge(shape.border, config.border);
+        }
+        if(config.width)
+        {
+            shape.width = config.width;
+        }
+        if(config.height)
+        {
+            shape.height = config.height;
+        }
+        if(config.shape !== shape.type)
+        {
+            config.node = null;
+            config.fillnode = null;
+        }
+        return this.getShape(shape);
+    },
+
+    addChild: function(child)
+    {
+        this._vml.appendChild(child);
     }
 };
 

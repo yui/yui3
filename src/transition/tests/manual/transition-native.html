@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head> 
+<style> 
+#demo {
+    background:#ccc;
+    width:200px;
+    height:200px;
+    margin-top:200px;
+    overflow: hidden;
+    position:relative;
+    -webkit-transition-property: width, height, top, left, opacity;
+    -webkit-transition-duration: 1s;
+}
+</style> 
+
+</head>
+<body> 
+<div id="demo">this is a demo</div> 
+
+<script type="text/javascript"> 
+    var node = document.getElementById('demo'),
+        computed = getComputedStyle(node, ''); 
+
+    node.addEventListener('webkitTransitionEnd', function(e) {
+        console.log(e.propertyName);
+        console.log(e.elapsedTime);
+        console.log(node.style[e.propertyName]);
+    });
+
+    document.onclick = function() {
+        var w = parseFloat(computed.width) + 100;
+        console.log(w);
+        node.style.width = w + 'px'; 
+    };
+ 
+</script> 
+</body></html> 

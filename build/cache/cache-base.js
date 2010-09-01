@@ -7,6 +7,7 @@ YUI.add('cache-base', function(Y) {
  * @module cache
  */
 var LANG = Y.Lang,
+    isDate = Y.Lang.isDate,
 
 /**
  * Base class for the YUI Cache utility.
@@ -72,9 +73,20 @@ Y.mix(Cache, {
         * @type Boolean
         */
         uniqueKeys: {
-            value: false,
-            validator: function(value) {
-                return (LANG.isBoolean(value));
+            value: false
+        },
+
+        /**
+        * @attribute expires
+        * @description Absolute Date when data expires or
+        * relative number of milliseconds. Zero disables expiration.
+        * @type Date | Number
+        * @default 0
+        */
+        expires: {
+            value: 0,
+            validator: function(v) {
+                return Y.Lang.isDate(v) || (Y.Lang.isNumber(v) && v >= 0);
             }
         },
 
@@ -167,7 +179,7 @@ Y.extend(Cache, Y.Base, {
     * @private
     */
     destructor: function() {
-        this._entries = null;
+        this._entries = [];
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -273,7 +285,10 @@ Y.extend(Cache, Y.Base, {
      * @protected
      */
     _isMatch: function(request, entry) {
-        return (request === entry.request);
+        if(!entry.expires || new Date() < entry.expires) {
+            return (request === entry.request);
+        }
+        return false;
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -284,7 +299,7 @@ Y.extend(Cache, Y.Base, {
 
     /**
      * Adds a new entry to the cache of the format
-     * {request:request, response:response}.
+     * {request:request, response:response, cached:cached, expires:expires}.
      * If cache is full, evicts the stalest entry before adding the new one.
      *
      * @method add
@@ -292,9 +307,16 @@ Y.extend(Cache, Y.Base, {
      * @param response {Object} Response value.
      */
     add: function(request, response) {
-        if(this.get("entries") && ((this.get("max") === null) || this.get("max") > 0) &&
+        var expires = this.get("expires");
+        if(this.get("initialized") && ((this.get("max") === null) || this.get("max") > 0) &&
                 (LANG.isValue(request) || LANG.isNull(request) || LANG.isUndefined(request))) {
-            this.fire("add", {entry: {request:request, response:response, cached: new Date()}});
+            this.fire("add", {entry: {
+                request:request,
+                response:response,
+                cached: new Date(),
+                expires: isDate(expires) ? expires :
+            (expires ? new Date(new Date().getTime() + this.get("expires")) : null)
+            }});
         }
         else {
         }

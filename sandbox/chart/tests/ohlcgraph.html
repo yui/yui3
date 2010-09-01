@@ -16,11 +16,13 @@ table, tr, td
 }
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
-    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
-    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
-		
+	<!--script type="text/javascript" src="../../../build/yui/yui.js"></script-->
+    <script src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics-min.js"></script>
+    <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip-min.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics-min.js"></script>
 </head>		
 <body class="yui3-skin-sam">
 		
@@ -56,8 +58,7 @@ table, tr, td
 						color:"#5577AF",
 						marker:{fillColor:"#5577AF", fillAlpha:0.2, width:6, height:6},
 						weight:"2",
-						showMarkers:true,
-                        padding:{left:50, right:50}
+						showMarkers:true
 					};
 
 					// Add revenue graph styles
@@ -65,22 +66,19 @@ table, tr, td
 						color:"#FF0000",
 						marker:{fillcolor:"#ff0000", fillAlpha:0.2},
 						weight:"2",
-						showMarkers:true,
-                        padding:{left:50, right:50}
+						showMarkers:true
 					};
 
                     var taxgraphstyles = {
 						color:"#ff0000",
 						marker:{fillColor:"#ff0000", width:6, height:6},
 						weight:"2",
-						showMarkers:false,
-                        padding:{left:50, right:50}
+						showMarkers:false
                     };
 				
                     var taxareastyles = {
                         color: "#0000ff",
-                        alpha: 0.5,
-                        padding:{left:50, right:50}
+                        alpha: 0.5
                     };
 					// Create bottom axis styles
 					var bottomaxisstyles = {
@@ -93,7 +91,7 @@ table, tr, td
 							pattern:"%b %d, %y"
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"inside"
 						},
 						line:{
@@ -102,8 +100,7 @@ table, tr, td
 						majorUnit:
 						{
 							count:5
-						},
-                        padding:{left:50, right:50}
+						}
                     };	
                     
 					var leftaxisstyles = {
@@ -119,7 +116,7 @@ table, tr, td
                             }
 						},
 						majorTicks:{
-							color:"#ff0000",
+							color:"#BDD7EB",
                             display:"outside"
 						},
 						line:{
@@ -147,7 +144,7 @@ table, tr, td
                                                         yKey:"taxes",
                                                         styles:taxgraphstyles});
 
-                   var graphstack = new Y.GraphStack({parent:"#chart", seriesCollection:[{
+                   var graph = new Y.Graph({parent:"#chart", seriesCollection:[{
                                                                                             type:"area",
                                                                                             xAxis:timeaxis,
                                                                                             yAxis:numericaxis,
@@ -161,7 +158,7 @@ table, tr, td
                                                                                             yAxis:numericaxis,
                                                                                             xKey:"day",
                                                                                             yKey:"acme",
-                                                                                            styles:{marker:{width:12},padding:{left:50, right:50}}
+                                                                                            styles:{marker:{width:12}}
                                                                                         }
                                                                                      ]});
 

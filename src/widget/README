@@ -10,6 +10,16 @@ It provides the following pieces of core functionality:
 * Consistent class-name generation support
 * Plugin support
 
+3.2.0
+
+* Minimized widget dependencies from the complete node, base rollups,
+  to only the node and base submodules widget actually uses
+
+* Fixed issue in UI_EVENTS handling, where removing the last listener for
+  a ui event, didn't clear out the _delegates hash even though the handler
+  was detached (for example,  in tabview, if you remove all tabs, and then 
+  add a new tab, clicking on the new tab didn't work.)
+
 3.1.1
 
 * Fixed ticket #2528758 : using widget's DOM event facade ends with error during destroy

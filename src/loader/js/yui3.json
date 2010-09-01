@@ -18,9 +18,7 @@
                 ]
             }, 
             "anim-easing": {
-                "requires": [
-                    "anim-base"
-                ]
+                "requires": []
             }, 
             "anim-node-plugin": {
                 "requires": [
@@ -306,37 +304,6 @@
             }
         }
     }, 
-    "datatable": {
-        "submodules": {
-            "column": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "columnset": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "datatable-base": {
-                "requires": [
-                    "columnset", 
-                    "rowset", 
-                    "widget"
-                ]
-            }, 
-            "row": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "rowset": {
-                "requires": [
-                    "base"
-                ]
-            }
-        }
-    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
@@ -445,6 +412,32 @@
         "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
+        "plugins": {
+            "dd-drop-plugin": {
+                "requires": [
+                    "dd-drop"
+                ]
+            }, 
+            "dd-gestures": {
+                "condition": {
+                    "test": "dd-gestures-test.js", 
+                    "trigger": "dd-drag"
+                }, 
+                "requires": [
+                    "dd-drag", 
+                    "event-move"
+                ]
+            }, 
+            "dd-plugin": {
+                "optional": [
+                    "dd-constrain", 
+                    "dd-proxy"
+                ], 
+                "requires": [
+                    "dd-drag"
+                ]
+            }
+        }, 
         "submodules": {
             "dd-constrain": {
                 "requires": [
@@ -461,7 +454,8 @@
                 "requires": [
                     "node", 
                     "base", 
-                    "yui-throttle"
+                    "yui-throttle", 
+                    "classnamemanager"
                 ]
             }, 
             "dd-ddm-drop": {
@@ -470,38 +464,20 @@
                 ]
             }, 
             "dd-delegate": {
-                "optional": [
-                    "dd-drop-plugin"
-                ], 
                 "requires": [
                     "dd-drag", 
+                    "dd-drop-plugin", 
                     "event-mouseenter"
                 ]
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base", 
-                    "event-synthetic", 
-                    "event-gestures"
+                    "dd-ddm-base"
                 ]
             }, 
             "dd-drop": {
                 "requires": [
                     "dd-ddm-drop"
-                ]
-            }, 
-            "dd-drop-plugin": {
-                "requires": [
-                    "dd-drop"
-                ]
-            }, 
-            "dd-plugin": {
-                "optional": [
-                    "dd-constrain", 
-                    "dd-proxy"
-                ], 
-                "requires": [
-                    "dd-drag"
                 ]
             }, 
             "dd-proxy": {
@@ -518,6 +494,15 @@
     }, 
     "dom": {
         "plugins": {
+            "dom-style-ie": {
+                "condition": {
+                    "trigger": "dom-style", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "dom-style"
+                ]
+            }, 
             "selector-css3": {
                 "requires": [
                     "selector-css2"
@@ -578,7 +563,14 @@
                     "base", 
                     "frame", 
                     "node", 
-                    "exec-command"
+                    "exec-command", 
+                    "selection", 
+                    "editor-para"
+                ]
+            }, 
+            "editor-bidi": {
+                "requires": [
+                    "editor-base"
                 ]
             }, 
             "editor-lists": {
@@ -586,7 +578,7 @@
                     "editor-base"
                 ]
             }, 
-            "editor-tab": {
+            "editor-para": {
                 "requires": [
                     "editor-base"
                 ]
@@ -614,11 +606,6 @@
     "event": {
         "expound": "node-base", 
         "plugins": {
-            "event-synthetic": {
-                "requires": [
-                    "node-base"
-                ]
-            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -639,27 +626,33 @@
             }, 
             "event-focus": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-key": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mouseenter": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
+                ]
+            }, 
+            "event-synthetic": {
+                "requires": [
+                    "node-base", 
+                    "event-custom"
                 ]
             }
         }
@@ -702,7 +695,25 @@
             "event-base"
         ]
     }, 
+    "event-valuechange": {
+        "requires": [
+            "event-focus", 
+            "event-synthetic"
+        ]
+    }, 
     "history": {
+        "plugins": {
+            "history-hash-ie": {
+                "condition": {
+                    "test": "history-hash-ie-test.js", 
+                    "trigger": "history-hash"
+                }, 
+                "requires": [
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "history-base": {
                 "after": [
@@ -722,14 +733,10 @@
                     "yui-later"
                 ]
             }, 
-            "history-hash-ie": {
-                "requires": [
-                    "history-base", 
-                    "history-hash", 
-                    "node-base"
-                ]
-            }, 
             "history-html5": {
+                "optional": [
+                    "json"
+                ], 
                 "requires": [
                     "event-base", 
                     "history-base", 
@@ -808,19 +815,17 @@
         }
     }, 
     "jsonp": {
-        "submodules": {
-            "jsonp-base": {
-                "requires": [
-                    "get", 
-                    "oop"
-                ]
-            }, 
+        "plugins": {
             "jsonp-url": {
                 "requires": [
-                    "jsonp-base"
+                    "jsonp"
                 ]
             }
-        }
+        }, 
+        "requires": [
+            "get", 
+            "oop"
+        ]
     }, 
     "loader": {
         "requires": [
@@ -858,6 +863,17 @@
                 "requires": [
                     "node-style", 
                     "node-pluginhost"
+                ]
+            }, 
+            "transition": {
+                "requires": [
+                    "transition-native", 
+                    "node-style"
+                ]
+            }, 
+            "transition-native": {
+                "requires": [
+                    "node-base"
                 ]
             }
         }, 
@@ -898,6 +914,15 @@
                 ]
             }
         }
+    }, 
+    "node-flick": {
+        "requires": [
+            "classnamemanager", 
+            "transition", 
+            "event-flick", 
+            "plugin"
+        ], 
+        "skinnable": true
     }, 
     "node-focusmanager": {
         "requires": [
@@ -987,6 +1012,37 @@
             "event-custom"
         ]
     }, 
+    "scrollview": {
+        "plugins": {
+            "scrollview-base": {
+                "path": "scrollview/scrollview-base-min.js", 
+                "requires": [
+                    "widget", 
+                    "event-gestures", 
+                    "transition"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-paginator": {
+                "path": "scrollview/scrollview-paginator-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }, 
+            "scrollview-scrollbars": {
+                "path": "scrollview/scrollview-scrollbars-min.js", 
+                "requires": [
+                    "plugin"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "scrollview-base", 
+            "scrollview-scrollbars"
+        ]
+    }, 
     "slider": {
         "submodules": {
             "clickable-rail": {
@@ -1050,29 +1106,28 @@
     "swfdetect": {}, 
     "tabview": {
         "plugins": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager", 
+                    "skin-sam-tabview"
+                ]
+            }, 
             "tabview-plugin": {
                 "requires": [
                     "tabview-base"
-                ], 
-                "skinnable": true
+                ]
             }
         }, 
         "requires": [
             "widget", 
             "widget-parent", 
             "widget-child", 
-            "tabview-base"
+            "tabview-base", 
+            "node-pluginhost", 
+            "node-focusmanager"
         ], 
-        "skinnable": true, 
-        "submodules": {
-            "tabview-base": {
-                "requires": [
-                    "node-event-delegate", 
-                    "node-focusmanager", 
-                    "classnamemanager"
-                ]
-            }
-        }
+        "skinnable": true
     }, 
     "test": {
         "requires": [
@@ -1083,21 +1138,51 @@
         ], 
         "skinnable": true
     }, 
-    "value-change": {
+    "transition": {
+        "submodules": {
+            "transition-native": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
+            "transition-timer": {
+                "requires": [
+                    "transition-native", 
+                    "node-style"
+                ]
+            }
+        }
+    }, 
+    "uploader": {
         "requires": [
-            "event-focus", 
-            "event-synthetic"
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
         ]
     }, 
     "widget": {
         "plugins": {
-            "widget-child": {}, 
-            "widget-parent": {
+            "widget-child": {
                 "requires": [
-                    "arraylist"
+                    "base-build", 
+                    "widget"
                 ]
             }, 
-            "widget-position": {}, 
+            "widget-parent": {
+                "requires": [
+                    "base-build", 
+                    "arraylist", 
+                    "widget"
+                ]
+            }, 
+            "widget-position": {
+                "requires": [
+                    "base-build", 
+                    "node-screen", 
+                    "widget"
+                ]
+            }, 
             "widget-position-align": {
                 "requires": [
                     "widget-position"
@@ -1109,9 +1194,18 @@
                 ]
             }, 
             "widget-stack": {
+                "requires": [
+                    "base-build", 
+                    "widget"
+                ], 
                 "skinnable": true
             }, 
-            "widget-stdmod": {}
+            "widget-stdmod": {
+                "requires": [
+                    "base-build", 
+                    "widget"
+                ]
+            }
         }, 
         "skinnable": true, 
         "submodules": {
@@ -1119,8 +1213,11 @@
                 "requires": [
                     "attribute", 
                     "event-focus", 
-                    "base", 
-                    "node", 
+                    "base-base", 
+                    "base-pluginhost", 
+                    "node-base", 
+                    "node-style", 
+                    "node-event-delegate", 
                     "classnamemanager"
                 ]
             }, 
@@ -1134,7 +1231,8 @@
     "widget-anim": {
         "requires": [
             "plugin", 
-            "anim-base"
+            "anim-base", 
+            "widget"
         ]
     }, 
     "widget-locale": {
@@ -1145,17 +1243,8 @@
     }, 
     "yql": {
         "requires": [
-            "jsonp"
+            "jsonp", 
+            "jsonp-url"
         ]
-    }, 
-    "yui": {
-        "submodules": {
-            "get": {}, 
-            "intl-base": {}, 
-            "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
-        }
     }
 }

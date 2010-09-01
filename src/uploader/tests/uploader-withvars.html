@@ -1,0 +1,109 @@
+<html>
+<head>
+    <title>Uploader Example: Single File Upload with GET and POST Vars Submission and Server Data Return</title>
+	<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+	<script type="text/javascript" src="../../../build/uploader/uploader.js"></script>
+
+	<style type="text/css">
+		.uploadButton a {
+			display:block;
+			width:100px;
+			height:40px;
+			text-decoration: none;
+		}
+
+		.uploadButton a {
+			background: url("assets/uploadFileButton.png") 0 0 no-repeat;
+		}
+
+	    .uploadButton a:visited {
+			background-position: 0 0;
+		}
+
+	    .uploadButton a:hover {	
+			background-position: 0 -40px;
+		}
+
+	    .uploadButton a:active {
+			background-position: 0 -80px;
+		}
+	</style>
+
+</head>
+<body>
+<h1>Uploader Example: Single File Upload with GET and POST Vars Submission and Server Data Return</h1>
+
+<div id="selectButton" style="width:100px;height:40px"></div> 
+<div class="uploadButton"><a href="#" id="uploadButtonLink"></a></div>
+
+<div id="filename">
+File selected:
+</div>
+<div id="percent">
+Percent uploaded:
+</div>
+<div>Sending via GET: foo='bar', foo1='bar1'</div>
+<div>Sending via POST: bar='bazz', bar1='bazz1'</div>
+<div id="result">Data returned from the server:</div>
+
+<script>
+
+YUI({ debug:true, filter:"raw" }).use('base', 'event', 'node', 'swf', 'uploader', function (Y) {
+
+var uploader = new Y.Uploader({boundingBox:"#selectButton", 
+							   swfURL:"../../../build/uploader/assets/uploader.swf",
+							   buttonSkin:"assets/selectFileButton.png",
+							   transparent: false});	
+
+uploader.on("uploaderReady", setupUploader);
+uploader.on("fileselect", fileSelect);
+uploader.on("uploadprogress", updateProgress);
+uploader.on("uploadcomplete", uploadComplete);
+uploader.on("uploadcompletedata", uploadCompleteData);
+
+Y.one("#uploadButtonLink").on("click", uploadFile);
+
+
+function setupUploader (event) {
+	uploader.set("multiFiles", false);
+	uploader.set("log", true);
+	
+	var fileFilters = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif"},
+	                   {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}); 
+	
+    uploader.set("fileFilters", fileFilters);
+}
+
+
+function fileSelect (event) {
+	var fileData = event.fileList;	
+
+	for (var key in fileData) {
+		var output = "File selected: " + fileData[key].name;
+		Y.one("#filename").setContent(output);
+	}
+}
+
+function updateProgress (event) {
+	Y.one("#percent").setContent("Percent uploaded: " + Math.round((100 * event.bytesLoaded / event.bytesTotal)) + "%");
+}
+
+function uploadComplete (event) {
+	Y.one("#percent").setContent("Upload complete!");
+}
+
+function uploadCompleteData (event) {
+	Y.one("#result").setContent("Data returned from the server:<br>" + event.data);
+}
+
+function uploadFile (event) {
+	uploader.uploadAll("http://www.yswfblog.com/upload/upload.php?foo=bar&foo1=bar1", "POST", {bar:"bazz", bar1:"bazz1"});
+}
+
+
+});
+
+</script>
+
+</body>
+</html>

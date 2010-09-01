@@ -627,6 +627,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Y.DOM.addClass(node, 'foo');
             Y.DOM.replaceClass('foo', 'foo');
             Assert.isTrue(Y.DOM.hasClass(node, 'foo'));
+
+            node = Y.Node.create('<div></div>');
+            node.addClass('foo bar baz');
+            Assert.areEqual('foo bar baz', node._node.className);
         },
 
         test_toggle: function() {
@@ -1101,6 +1105,19 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node = Y.DOM.byId('_funky:id{$400}');
             Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).one(h2)");
+
+            node = Y.one(1);
+            Assert.isNull(node, "Y.one(1)");
+
+            node = Y.one(true);
+            Assert.isNull(node, "Y.one(true)");
+
+            node = Y.one(false);
+            Assert.isNull(node, "Y.one(false)");
+
+            node = Y.one(0);
+            Assert.isNull(node, "Y.one(0)");
+
         },
         test_all: function() {
             var node = Y.DOM.byId('test:colon');
@@ -1116,6 +1133,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node = Y.one('body');
             ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
                 "Y.all(Y.one('body'))");
+
+            node = Y.one('win');
+            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
+                "Y.all(Y.one('win'))");
+
+/* comparision fails in webkit, so using alert test below
+            Assert.areEqual(window, Y.all(window)._nodes[0], 
+                "Y.all(window)");
+*/
+
+            Assert.isNotUndefined(Y.all(window)._nodes[0].alert,
+                "Y.all(window)");
 
         },
 
@@ -1315,6 +1344,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Assert.areEqual(width, node.get('offsetWidth'),
                 "node.get('offsetWidth')");
 
+        },
+
+        test_select: function() {
+            var select = Y.Node.create('<select>');
+            Assert.areEqual('', select.get('value'));
         }
 
     })); 

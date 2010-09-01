@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>yui&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>yui&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
                  &gt; Get 
@@ -1123,7 +1123,9 @@ data that is supplied to the callback when the script(s) are
 loaded.
 </dd>
 <dt>insertBefore</dt>
-<dd>node or node id that will become the new node's nextSibling</dd>
+<dd>node or node id that will become the new node's nextSibling.  If this
+is not specified, nodes will be inserted before a base tag should it exist.
+Otherwise, the nodes will be appended to the end of the document head.</dd>
 </dl>
 <dt>charset</dt>
 <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
@@ -1216,14 +1218,20 @@ loaded.
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -1233,6 +1241,10 @@ loaded.
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -1242,7 +1254,7 @@ loaded.
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -1277,9 +1289,12 @@ loaded.
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
+                                <li class=""><a href="features.js.html" title="features.js">features.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
                                 <li class=""><a href="intl-base.js.html" title="intl-base.js">intl-base.js</a></li>
+                                <li class=""><a href="load-tests.js.html" title="load-tests.js">load-tests.js</a></li>
                                 <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
+                                <li class=""><a href="rls.js.html" title="rls.js">rls.js</a></li>
                                 <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
                                 <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>

@@ -160,7 +160,7 @@ Y.extend(Comparison, Y.PerformanceReport, {
         var resultNode = Y.one('#' + this._testNameIdMap[resultData.name]),
             groupNode  = resultNode && resultNode.one('.groupId-' + this._groupNameIdMap[group.name]),
             median     = resultData.median,
-            medianDev  = median !== '' ? '±' + resultData.mediandev : '';
+            medianDev  = median !== '' ? '&plusmn;' + resultData.mediandev : '';
 
         if (!resultNode || !groupNode) {
             Y.log('Result node or group node not found.', 'warn', 'performance-report-comparison');

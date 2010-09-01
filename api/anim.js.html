@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>anim&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>anim&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_anim.html" title="anim">anim</a>
                 
@@ -165,8 +165,17 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">DEFAULT_SETTER</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">unit</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">unit</span> <span class="o">=</span> <span class="nx">unit</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-        <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">att</span><span class="p">,</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">,</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">),</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">to</span><span class="p">)</span> <span class="o">-</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">),</span> <span class="nx">duration</span><span class="p">)</span> <span class="o">+</span> <span class="nx">unit</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">,</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">),</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">to</span><span class="p">)</span> <span class="o">-</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">),</span> <span class="nx">duration</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span> <span class="o">||</span> <span class="nx">att</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">unit</span> <span class="o">=</span> <span class="nx">unit</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">att</span><span class="p">,</span> <span class="nx">val</span> <span class="o">+</span> <span class="nx">unit</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">att</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">att</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">att</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
@@ -175,8 +184,19 @@
 <span class="cm">     * @property DEFAULT_GETTER</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">DEFAULT_GETTER</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">prop</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">DEFAULT_GETTER</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span> <span class="o">||</span> <span class="nx">att</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">att</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">att</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="nx">att</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">att</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
@@ -374,6 +394,7 @@
                 <span class="nx">_running</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">pause</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
         <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">_stopTimer</span><span class="p">();</span>
     <span class="p">};</span>
 
@@ -456,6 +477,7 @@
         <span class="cm">/**</span>
 <span class="cm">         * Stops the animation and resets its time.</span>
 <span class="cm">         * @method stop</span>
+<span class="cm">         * @param {Boolean} finish If true, the animation will move to the last frame</span>
 <span class="cm">         * @chainable</span>
 <span class="cm">         */</span>    
         <span class="nx">stop</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">finish</span><span class="p">)</span> <span class="p">{</span>
@@ -496,6 +518,8 @@
         <span class="nx">_resume</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
             <span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">START_TIME</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ELAPSED_TIME</span><span class="p">));</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">_startTimer</span><span class="p">();</span>
 
             <span class="cm">/**</span>
 <span class="cm">            * @event resume</span>
@@ -543,9 +567,14 @@
                 <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
                 <span class="nx">easing</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span>
                 <span class="nx">lastFrame</span> <span class="o">=</span> <span class="nx">d</span><span class="p">,</span>
+                <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
                 <span class="nx">attribute</span><span class="p">,</span>
                 <span class="nx">setter</span><span class="p">,</span>
                 <span class="nx">i</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&gt;=</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">reverse</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">t</span> <span class="o">=</span> <span class="nx">d</span> <span class="o">-</span> <span class="nx">t</span><span class="p">;</span>
@@ -558,7 +587,7 @@
                     <span class="nx">setter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;set&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">?</span>
                             <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">set</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">DEFAULT_SETTER</span><span class="p">;</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">setter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                         <span class="nx">setter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">lastFrame</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
@@ -703,14 +732,20 @@
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
@@ -720,6 +755,10 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
@@ -729,7 +768,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
-                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>

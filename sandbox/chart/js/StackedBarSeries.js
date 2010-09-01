@@ -23,29 +23,33 @@ StackedBarSeries.ATTRS = {
 };
 
 Y.extend(StackedBarSeries, Y.CartesianSeries, {
+    /**
+     * @private
+     */
+    renderUI: function()
+    {
+        this._setNode();
+    },
+    
+    bindUI: function()
+    {
+        Y.delegate("mouseover", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+        Y.delegate("mouseout", Y.bind(this._markerEventHandler, this), this.get("node"), ".yui3-seriesmarker");
+    },
+    
     drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
+        var style = this._mergeStyles(this.get("styles"), {}),
             w = style.width,
             h = style.height,
-            fillColor = style.fillColor,
-            alpha = style.fillAlpha,
-            fillType = style.fillType || "solid",
-            borderWidth = style.borderWidth,
-            borderColor = style.borderColor,
-            borderAlpha = style.borderAlpha || 1,
-            colors = style.colors,
-            alphas = style.alpha || [],
-            ratios = style.ratios || [],
-            rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -60,8 +64,11 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
             positiveBaseValues,
             useOrigin = order === 0,
             node = Y.Node.one(this._parentNode).get("parentNode"),
-            left;
+            left,
+            marker,
+            bb;
         totalHeight = len * h;
+        this._createMarkerCache();
         if(totalHeight > node.offsetHeight)
         {
             ratio = this.height/totalHeight;
@@ -123,44 +130,62 @@ Y.extend(StackedBarSeries, Y.CartesianSeries, {
                 }
             }
             top -= h/2;        
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, alpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
+            style.width = w;
+            style.height = h;
+            marker = this.getMarker.apply(this, [{index:i, styles:style}]);
+            bb = marker.get("boundingBox");
+            bb.setStyle("position", "absolute");
+            bb.setStyle("left", left + "px");
+            bb.setStyle("top", top + "px");
         }
+        this._clearMarkerCache();
  	},
     
-    drawMarker: function(graphic, func, left, top, w, h)
+    /**
+     * @private
+     * Resizes and positions markers based on a mouse interaction.
+     */
+    _markerEventHandler: function(e)
     {
-        graphic.drawRect(left, top, w, h);
+        var type = e.type,
+            marker = Y.Widget.getByNode(e.currentTarget),
+            ycoords = this.get("ycoords"),
+            i = marker.get("index") || Y.Array.indexOf(this.get("markers"), marker),
+            h = marker.get("height");
+        switch(type)
+        {
+            case "mouseout" :
+                marker.set("state", "off");
+            break;
+            case "mouseover" :
+                marker.set("state", "over");
+            break;
+            case "mouseup" :
+                marker.set("state", "over");
+            break;
+            case "mousedown" :
+                marker.set("state", "down");
+            break;
+        }
+        marker.get("boundingBox").setStyle("top", (ycoords[i] - h/2) + "px");    
     },
 	
-	_getDefaultStyles: function()
+	/**
+	 * @private
+	 */
+    _getDefaultStyles: function()
     {
         return {
-            marker: {
-                fillColor: "#000000",
-                fillAlpha: 1,
-                borderColor:"#ff0000",
-                borderWidth:0,
-                borderAlpha:1,
-                colors:[],
-                alpha:[],
-                ratios:[],
-                rotation:0,
-                width:6,
-                height:6
+            fill: {
+                alpha: "1",
+                colors: [],
+                alphas: [],
+                ratios: [],
+                rotation: 0
             },
+            width: 6,
+            height: 6,
+            shape: "rect",
             padding:{
                 top: 0,
                 left: 0,

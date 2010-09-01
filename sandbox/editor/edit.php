@@ -15,11 +15,16 @@
             top: 100px;
             left: 100px;
         }
+        #test iframe {
+            border: 1px solid blue;
+        }
         #test {
             height: 260px;
             width: 550px;
             border-top: 3px solid red;
             float: left;
+            padding: 5px;
+            _background-color: orange; 
         }
         #test1 button {
             background-color: #ccc;
@@ -31,7 +36,7 @@
             display: none;
         }
         #smilies {
-            width: 180px;
+            width: 175px;
             height: 260px;
             border-top: 3px solid red;
             border-left: 3px solid red;
@@ -107,9 +112,64 @@
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
+<!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+Above the HR
+<hr size="1">
+<?php //include('mail.php'); ?>
 </div>
+    <!---div><br></div>
+    <ul>
+        <li style="font-family: courier new">Item #1</li>
+        <li>Item #1</li>
+        <li>Item #1</li>
+    </ul>
+    <p>This is a test..</p>
+    <div style="font-family: ; font-size: ;"><br>
+        <div style="font-family: times new roman, new york, times, serif; font-size: 12pt;">
+            <font size="2" face="Tahoma">
+            <hr size="1">
+            <b><span style="font-weight:bold;">From:</span></b> yahoo-account-services-us@cc.yahoo-inc.com<br>
+            <b><span style="font-weight: bold;">To:</span></b> hb.stone@yahoo.com<br>
+            <b><span style="font-weight: bold;">Cc:</span></b> <br>
+            <b><span style="font-weight: bold;">Sent:</span></b> 2010-07-09 14:19:12<br>
+            <b><span style="font-weight: bold;">Subject:</span></b> Verify this email address<br>
+            </font><br>
+            <div id=yiv759936264>
+                <div style="direction:ltr;">
+                    <img src="https://s.yimg.com/lq/i/brand/purplelogo/base/us.gif" vspace="10" hspace="20">
+                    <hr noshade width="95%"> <br><br> 
+                    <table border="0" width="735">
+                        <tbody>
+                            <tr>
+                                <td width="10%">&nbsp;</td>
+                                <td width="80%">  <font size="+1" color="#631266" face="Arial">  <b>Verify this email address</b>  </font>  <br>  </td>
+                                <td width="10%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr noshade width="95%">
+                    <table width="750"> 
+                        <tbody>
+                            <tr>
+                                <td width="2.5%">&nbsp;</td>
+                                <td>  <font face="Arial" size="-3"></font>  </td>
+                            </tr>
+                            <tr>
+                                <td width="2.5%">&nbsp;</td>
+                                <td>  <font face="Arial" size="-3"><p>Copyright © 2010 Yahoo! Inc. All rights reserved.<a rel="nofollow" target="_blank" href='http://docs.yahoo.com/info/copyright/copyright.html'>Copyright/IP Policy</a> | <a rel="nofollow" target="_blank" href='http://docs.yahoo.com/info/terms/'>Terms of Service</a></p>  <p>NOTICE: We collect personal information on this site. To learn more about how we use your information, see our <a rel="nofollow" target="_blank" href='http://privacy.yahoo.com/'>Privacy Policy</a>.</p><br>  </font>  </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><br><br>
+        </div>
+    </div>
+</div-->
 <!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
@@ -118,45 +178,31 @@ This is some <strong>other</strong> loose test.
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
-<div><hr>This is some loose test.</div>
-<ol>
-    <li class="davglass" style="font-family: courier new">Item #1</li>
-    <li>Item #1</li>
-    <li><a href="http://yuilibrary.com/">Item #1</a></li>
-</ol>
-<p>This is <span style="font-family: Courier New">another</span> test.</p>
-This is some more loose test.
-<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
-This is some more loose test.
-<style>
-del {
-    background-color: yellow;
-    font-weight: bold;
-    color: black;
-}
-.foo {
-    text-decoration: underline overline;
-}
-</style>
-This is some more loose test.
+<hr>
+<p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
+<ul>
 </div-->
 
-<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script>
+<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script-->
 
 
-<script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/lists.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/editor-base.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/frame.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/exec-command.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/selection.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/lists.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/editor-para.js?bust=<?php echo(time()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
+    //debug: false,
+    //filter: 'RAW',
     debug: true,
-    filter: 'DEBUG',
+    filter: 'debug',
     allowRollup: false,
     logExclude: {
         'yui': true,
@@ -166,13 +212,12 @@ var yConfig = {
         augment: true,
         get: true,
         loader: true,
-        Selector: true//,
-        //frame: true
+        Selector: true
     },
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-tab', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
@@ -206,9 +251,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     }, '#test1 > div', 'button');
 
     Y.delegate('change', function(e) {
-        //console.log(e);
         var cmd = e.currentTarget.get('id'),
             val = e.currentTarget.get('value');
+        
         editor.frame.focus();
         var ex_return = editor.execCommand(cmd, val);
     }, '#test1 > div', 'select');
@@ -237,9 +282,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     s_cont.delegate('click', function(e) {
         var img = e.currentTarget, inst = editor.getInstance();
         editor.focus();
-        editor.execCommand('inserthtml', '<span><span>&nbsp;<img src="' + img.get('src') + '">&nbsp;</span>' + inst.Selection.CURSOR + '</span>');
-        var sel = new inst.Selection();
-        sel.focusCursor();
+        editor.execCommand('insertandfocus', '<span>:)</span>');
+        /*
+        editor.focus(function() {
+            editor.execCommand('insertandfocus', '<span>:)</span>');
+        });
+        e.halt();
+        */
     }, 'img');
     
     var buttons = Y.all('#test1 button');
@@ -262,21 +311,25 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             var fname = e.fontFamily,
             size = e.fontSize;
             f_options.item(0).set('selected', true);
-            f_options.each(function(v) {
-                var val = v.get('value').toLowerCase();
-                if (val === fname.toLowerCase()) {
-                    v.set('selected', true);
-                }
-            });
+            if (fname) {
+                f_options.each(function(v) {
+                    var val = v.get('value').toLowerCase();
+                    if (val === fname.toLowerCase()) {
+                        v.set('selected', true);
+                    }
+                });
+            }
             s_options.item(0).set('selected', true);
-            size = size.replace('px', '');
-            s_options.each(function(v) {
-                var val = v.get('value').toLowerCase(),
-                    txt = v.get('text');
-                if (size === txt) {
-                    v.set('selected', true);
-                }
-            });
+            if (size) {
+                size = size.replace('px', '');
+                s_options.each(function(v) {
+                    var val = v.get('value').toLowerCase(),
+                        txt = v.get('text');
+                    if (size === txt) {
+                        v.set('selected', true);
+                    }
+                });
+            }
         }
     };
 
@@ -300,13 +353,19 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
-        extracss: 'body { color: red; }'
+        extracss: 'body { color: red; } p { border: 1px solid green; padding: .25em; margin: 1em; } #yui-cursor { border: 1px solid purple; }'
     });
     editor.after('nodeChange', function(e) {
-        if (e.changedType !== 'execcommand') {
-            updateButtons(e);
+        //console.log('changedType: ' + e.changedType);
+        //if (e.changedType !== 'execcommand') {
+        switch (e.changedType) {
+            case 'keyup':
+            case 'mouseup':
+                updateButtons(e);
+                break;
         }
         
+        /*
         if (e.changedType === 'keyup') {
             if (e.changedNode) {
                 var txt = e.changedNode.get('text');
@@ -318,11 +377,49 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 });
             }
         }
+        */
         
     });
-    //Disabled for IE testing..
+
     //editor.plug(Y.Plugin.EditorLists);
-    editor.plug(Y.Plugin.EditorTab);
+    //editor.plug(Y.Plugin.EditorBidi);
+
+    //Disabled for IE testing..
+    //editor.plug(Y.Plugin.EditorTab);
+    editor.after('dom:paste', function(e) {
+        console.log('DOM Paste');
+        /*
+        var inst = editor.getInstance();
+        Y.later(100, null, function() {
+            var div = inst.one('p > div');
+            if (div) {
+                div.setAttribute('style', '');
+            }
+        });
+        */
+        /*
+        console.log(e);
+        e.frameEvent.preventDefault();
+        if (e.clipboardData.data) {
+            console.log(e.clipboardData.data);
+            editor.execCommand('paste');
+            //editor.execCommand('insertandfocus', e.clipboardData.data);
+        }
+        */
+    });
+
+    editor.on('dom:keydown', function(e) {
+        if (e.keyCode === 13) {
+            if (e.ctrlKey) {
+                console.log('Control Pressed');
+                editor.execCommand('insertbr');
+                e.frameEvent.halt();
+            } else {
+                //console.log('Not Pressed');
+            }
+            //console.log(e);
+        }
+    });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
 
@@ -335,8 +432,67 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             }
         });
     });
+    //editor.on('dom:focus', function() {console.log("Focus called");});
+    //editor.on('dom:blur', function() {console.log("Blur called");});
+    /*   
+    editor.on('nodeChange', function(e) {
+        if (Y.UA.ie) {
+            
+            var inst = this.getInstance(),
+    	    sel = inst.config.doc.selection.createRange();
+
+            editor._lastBookmark = sel.getBookmark();
+
+            //console.log(e.changedType + ' :: ' + editor._lastBookmark);
+            
+        }
+    });
+    
+    editor.frame.on('dom:focus', function() {
+        var inst = this.getInstance(), sel, cur;
+
+        console.log("Focus called");
+
+        if (editor._lastBookmark) {
+        } else {
+            sel = new inst.Selection();
+            cur = sel.getCursor();
+
+            if (cur && cur.size()) {
+                sel.focusCursor(true, false);
+            }
+        }
+    });
+
+    editor.frame.on('dom:activate', function(e) {
+        var inst = this.getInstance(), sel, cur;
+        console.log('activate called');
+            sel = inst.config.doc.selection.createRange();
+            console.log('focus: ' + editor._lastBookmark);
+            var bk = sel.moveToBookmark(editor._lastBookmark);
+            sel.collapse(true);
+            sel.select();
+            console.log('Move: ' + bk);
+            editor._lastBookmark = null;
+
+
+    });
+    editor.frame.on('dom:focusout', function(e) {
+        console.log('focusout called');
+    });
+    editor.frame.on('dom:blur', function(e) {
+        console.log("Blur called");
+        if (!Y.UA.ie) {
+            var inst = this.getInstance(),
+                sel = new inst.Selection();
+            sel.setCursor();
+        }
+    });
+    */
+
+    
     /*
-    editor.on('frame:keyup', function(e) {
+    editor.on('dom:keyup', function(e) {
         var inst = this.getInstance(),
             sel = new inst.Selection();
 
@@ -366,6 +522,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     Y.on('click', function(e) {
         editor.focus(true);
     }, '#focusEditor');
+
+    Y.on('click', function(e) {
+        Y.one('#test1').setStyle('display', 'block');
+        editor.render('#test');
+    }, '#showEditor');
 
 });
 

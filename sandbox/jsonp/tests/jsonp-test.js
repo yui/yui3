@@ -8,7 +8,7 @@ suite.add(new Y.Test.Case({
 
         Y.config.win.globalFunction = function (json) {
             self.resume(function () {
-                delete Y.config.win.globalFunction;
+                Y.config.win.globalFunction = undefined;
                 Y.Assert.isObject(json);
             });
         };
@@ -24,7 +24,7 @@ suite.add(new Y.Test.Case({
     "callback function as second arg should be success handler": function () {
         var self = this;
 
-        Y.jsonp("server/service.php", function (json) {
+        Y.jsonp("server/service.php?callback={callback}", function (json) {
             self.resume(function () {
                 Y.Assert.isObject(json);
             });
@@ -38,14 +38,14 @@ suite.add(new Y.Test.Case({
 
         Y.config.win.globalFunction = function (json) {
             self.resume(function () {
-                delete Y.config.win.globalFunction;
+                Y.config.win.globalFunction = undefined;
                 Y.Assert.fail("inline function should not be used");
             });
         };
 
         Y.jsonp("server/service.php?callback=globalFunction", function (data) {
             self.resume(function () {
-                delete Y.config.win.globalFunction;
+                Y.config.win.globalFunction = undefined;
                 Y.Assert.isObject(data);
             });
         });
@@ -60,7 +60,7 @@ suite.add(new Y.Test.Case({
     "success handler in callback object should execute": function () {
         var self = this;
 
-        Y.jsonp("server/service.php", {
+        Y.jsonp("server/service.php?callback={callback}", {
             on: {
                 success: function (json) {
                     self.resume(function () {
@@ -78,7 +78,7 @@ suite.add(new Y.Test.Case({
 
         Y.config.win.globalFunction = function (json) {
             self.resume(function () {
-                delete Y.config.win.globalFunction;
+                Y.config.win.globalFunction = undefined;
                 Y.Assert.fail("inline function should not be used");
             });
         };
@@ -87,7 +87,7 @@ suite.add(new Y.Test.Case({
             on: {
                 success: function (data) {
                     self.resume(function () {
-                        delete Y.config.win.globalFunction;
+                        Y.config.win.globalFunction = undefined;
                         Y.Assert.isObject(data);
                     });
                 }
@@ -113,7 +113,7 @@ suite.add(new Y.Test.Case({
                         func: {
                             tion: function (json) {
                                 self.resume(function () {
-                                    delete Y.config.win.deeply;
+                                    Y.config.win.deeply = undefined;
                                     Y.Assert.isObject(json);
                                 });
                             }
@@ -123,7 +123,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?callback=deeply[2]nested["global"].func["tion"]');
+        Y.jsonp('server/service.php?callback=deeply[2].nested["global"].func["tion"]');
 
         self.wait(300);
     },
@@ -164,7 +164,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?callback=deeply[2]nested["global"].func["tion"]');
+        Y.jsonp('server/service.php?callback=deeply[2].nested["global"].func["tion"]');
         self.wait(300);
     },
 
@@ -204,7 +204,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?callback=deeply[2]nested["global"].func["tion"]', function (data) {
+        Y.jsonp('server/service.php?callback=deeply[2].nested["global"].func["tion"]', function (data) {
             self.resume(function () {
                 delete Y.deeply;
                 Y.Assert.isObject(data);
@@ -236,7 +236,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?callback=deeply[2]nested["global"].func["tion"]', {
+        Y.jsonp('server/service.php?callback=deeply[2].nested["global"].func["tion"]', {
             on: {
                 success: function (data) {
                     self.resume(function () {

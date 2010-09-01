@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>gallerycss</title>
+    <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script src="../../build/dump/dump-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script type="text/javascript" charset="utf-8">                                                                                                                 
+
+        YUI({
+            // fetchCSS: 'force',
+            // fetchCSS: false,
+            filter: 'debug',
+            // core: ['get', 'dump', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'],
+            combine: true,
+            onProgress: function(e) {
+                this.log('LOAD: ' + e.name);
+            }
+            // bootstrap: false
+            // gallerybase: '../../gallerybuild/'
+        // }).use('dump', 'gallery-port', 'gallery-treeview', function(Y) {
+        // }).use('node', 'base', 'gallery-port', 'gallery-treeview', function(Y) {
+        }).use('gallerycss-treeview', function(Y) {
+            console.log('BASE: ' + Y.Base);
+            console.log('tv: ' + Y.apm.TreeView);
+        });                                                                                                                                 
+        // console.log(A.Widget);                                                                                                                                  
+    </script>     
+<body>
+</body>
+</html>

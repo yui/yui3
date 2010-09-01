@@ -1,0 +1,198 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+/*Supplemental: CSS for the YUI distribution*/
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+.yui3-tooltip {
+    position:absolute;
+}
+
+.yui3-tooltip-content {
+    color: #000;
+    padding: 2px 5px;
+    border-color: #aeae9e;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #edeeee;
+}
+
+.yui3-tooltip-hidden {
+    visibility:hidden;
+}
+
+.yui3-tooltip-content {
+    font-size: 9px;
+    font-weight:bold;
+}
+
+.yui3-tooltip-content strong {
+    font-size:9px;
+    font-weight:bold;
+}
+
+#mychart {
+    padding:10px 10px 10px 10px;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.2/build/cssfonts/fonts-min.css">
+<!-- BEGIN EXAMPLE CODE -->	
+</head>		
+<body class="yui3-skin-sam">
+<h3>Multiple Series</h3>
+<div id="mychart"></div>
+<script type="text/javascript" src="http://yui.yahooapis.com/3.1.2/build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../graphics/build/dom/dom-min.js"></script>
+<script type="text/javascript" src="../../graphics/build/node/node-min.js"></script>
+<script type="text/javascript" src="../../graphics/build/graphics/graphics-min.js"></script>
+<script type="text/javascript" src="../../tooltip/build/tooltip/tooltip-min.js"></script>
+<script type="text/javascript" src="../build/infographics/infographics-min.js"></script>
+<script type="text/javascript">            
+YUI().use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', "console", "test", function (Y) 
+{ 
+    Y.namespace("example.test");
+    
+    Y.example.test.ChartTest = new Y.Test.Case({
+        name: "Chart Tests",
+
+        setUp: function() {
+            var myDataValues = [ 
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
+                {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
+                {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
+                {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+                {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
+            ];
+            var mychart = new Y.CartesianChart({dataProvider:myDataValues, seriesKeys:["values", "revenue"]});
+            mychart.render("#mychart");
+            this.chart = mychart;
+        },
+
+        tearDown: function() {
+            this.chart.destroy();
+        },
+
+        //Test to ensure that all items in the series collection are of the correct type.
+        testGetSeries: function()
+        {
+            var sc = this.chart.get("seriesCollection"),
+                i = 0,
+                l = sc.length,
+                series,
+                assert = Y.Assert;
+            for(; i < l; ++i)
+            {
+                series = sc[i];
+                assert.isInstanceOf(Y.CartesianSeries, series);
+            }
+        },
+
+        //Test to ensure the series axes are numeric and the category axis is of type category
+        testGetAxesByKey: function()
+        {
+            var category = this.chart.getAxisByKey("category"),
+                values = this.chart.getAxisByKey("values"),
+                expenses = this.chart.getAxisByKey("expenses"),
+                revenue = this.chart.getAxisByKey("revenue"),
+                assert = Y.Assert;
+            assert.isInstanceOf(Y.CategoryAxis, category.get("axis"));
+            assert.isInstanceOf(Y.NumericAxis, values.get("axis"));
+        },
+
+        //Test to ensure that getCategoryAxis returns a category axis
+        testGetCategoryAxis: function()
+        {
+            var category = this.chart.getCategoryAxis(),
+                assert = Y.Assert;
+            assert.isInstanceOf(Y.CategoryAxis, category.get("axis"));
+        },
+        
+        //Test that the graph attribute is of type Graph
+        testGetGraph: function()
+        {
+            Y.Assert.isInstanceOf(Y.Graph, this.chart.get("graph"));
+        },
+        
+        //Test to ensure that the axes hash contains AxisRenderer instances
+        testGetAxes: function()
+        {
+            var assert = Y.Assert,
+                axes = this.chart.get("axes"),
+                i;
+            for(i in axes)
+            {
+                if(axes.hasOwnProperty(i))
+                {
+                    assert.isInstanceOf(Y.AxisRenderer, axes[i]);
+                }
+            }
+        },
+
+        //Test axes data classes
+        testRemoveKey: function()
+        {
+            var assert = Y.Assert,
+                xAxis = this.chart.getCategoryAxis().get("axis"),
+                yAxis = this.chart.getAxisByKey("values").get("axis"),
+                keys,
+                l,
+                i;
+            xAxis.on("axisUpdate", Y.bind(function(e) {
+                l = xAxis.get("keyCollection").length || 0;
+                assert.areEqual(0, 0, "The value should be zero");
+            }, this));
+            yAxis.on("axisUpdate", Y.bind(function(e) {
+                keys = yAxis.get("keyCollection");
+                assert.areEqual(1, keys.length, "The length should be 1");
+                assert.areEqual(Y.Array.indexOf(keys, "revenue"), -1, "The key revenue should be removed");
+            }));
+            xAxis.removeKey("category");
+            yAxis.removeKey("revenue");
+        },
+
+        testAddKey: function()
+        {       
+            var assert = Y.Assert,
+                yAxis = this.chart.getAxisByKey("values").get("axis"),
+                keys,
+                pattern = [3700, 9100, 1100, 1900],
+                testarray,
+                i = 0;
+                l = 4;
+            yAxis.on("axisUpdate", Y.bind(function(e) {
+                keys = yAxis.get("keyCollection");
+                testarray = yAxis.getDataByKey("expenses");
+                assert.areEqual(3, keys.length);
+                assert.areEqual(Y.Array.indexOf(keys, "expenses"), 2);
+                for(; i < l; ++i)
+                {
+                    assert.areEqual(pattern[i], testarray[i]);
+                }
+            }, this));
+
+            yAxis.addKey("expenses");
+        }
+    });
+
+    Y.example.test.ExampleSuite = new Y.Test.Suite("Example Suite");
+    Y.example.test.ExampleSuite.add(Y.example.test.ChartTest);
+
+    //create the console
+    var r = new Y.Console({
+        newestOnTop : false,
+        style: 'block' // to anchor in the example content
+    });
+    
+    r.render('#testLogger');
+    
+    Y.Test.Runner.add(Y.example.test.ExampleSuite);
+
+    //run the tests
+    Y.Test.Runner.run();
+    });
+</script>
+</body>
+</html>

@@ -12,13 +12,10 @@
 YUI({
     filter: 'raw',
     modules: {
-        'jsonp': {
-            fullpath: '../../../build/jsonp/jsonp.js',
-            requires: ['get','oop'],
-        },
         'jsonp-test': {
             fullpath: 'testsuite.js',
-            requires: ['jsonp','test']
+            requires: ['jsonp-url','test']
+            //requires: ['jsonp','test']
         }
     },
     useBrowserConsole: false
@@ -26,7 +23,7 @@ YUI({
 
     new Y.Console({
         style: 'block',
-        width: 'inherit',
+        //width: 'inherit',
         entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
             '<pre class="{entry_content_class}">{message}</pre>'+
         '</div>',

@@ -36,8 +36,10 @@ YUI.add('history-base', function(Y) {
 var Lang      = Y.Lang,
     Obj       = Y.Object,
     GlobalEnv = YUI.namespace('Env.History'),
+    YArray    = Y.Array,
 
-    docMode   = Y.config.doc.documentMode,
+    doc       = Y.config.doc,
+    docMode   = doc.documentMode,
     win       = Y.config.win,
 
     DEFAULT_OPTIONS = {merge: true},
@@ -118,7 +120,7 @@ HistoryBase.SRC_REPLACE = SRC_REPLACE;
 
 // All HTML5-capable browsers except Gecko 2+ (Firefox 4+) correctly return
 // true for 'onpopstate' in win. In order to support Gecko 2, we fall back to a
-// UA sniff for now. (current as of Firefox 4.0b1)
+// UA sniff for now. (current as of Firefox 4.0b2)
 HistoryBase.html5 = !!(win.history && win.history.pushState &&
         win.history.replaceState && ('onpopstate' in win || Y.UA.gecko >= 2));
 
@@ -134,11 +136,14 @@ HistoryBase.html5 = !!(win.history && win.history.pushState &&
  * @static
  */
 
+// Most browsers that support hashchange expose it on the window. Opera 10.6+
+// exposes it on the document (but you can still attach to it on the window).
+//
 // IE8 supports the hashchange event, but only in IE8 Standards
 // Mode. However, IE8 in IE7 compatibility mode still defines the
 // event but never fires it, so we can't just detect the event. We also can't
 // just UA sniff for IE8, since other browsers support this event as well.
-HistoryBase.nativeHashChange = 'onhashchange' in win &&
+HistoryBase.nativeHashChange = ('onhashchange' in win || 'onhashchange' in doc) &&
         (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {
@@ -153,7 +158,33 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _init: function (config) {
-        var initialState = config && config.initialState;
+        var initialState;
+
+        /**
+         * Configuration object provided by the user on instantiation, or an
+         * empty object if one wasn't provided.
+         *
+         * @property _config
+         * @type Object
+         * @default {}
+         * @protected
+         */
+        config = this._config = config || {};
+
+        /**
+         * Resolved initial state: a merge of the user-supplied initial state
+         * (if any) and any initial state provided by a subclass. This may
+         * differ from <code>_config.initialState</code>. If neither the config
+         * nor a subclass supplies an initial state, this property will be
+         * <code>null</code>.
+         *
+         * @property _initialState
+         * @type Object|null
+         * @default {}
+         * @protected
+         */
+        initialState = this._initialState = this._initialState ||
+                config.initialState || null;
 
         /**
          * Fired when the state changes. To be notified of all state changes
@@ -244,7 +275,7 @@ Y.mix(HistoryBase.prototype, {
      * @chainable
      */
     add: function () {
-        var args = Y.Array(arguments, 0, true);
+        var args = YArray(arguments, 0, true);
         args.unshift(SRC_ADD);
         return this._change.apply(this, args);
     },
@@ -302,7 +333,7 @@ Y.mix(HistoryBase.prototype, {
      * @chainable
      */
     replace: function () {
-        var args = Y.Array(arguments, 0, true);
+        var args = YArray(arguments, 0, true);
         args.unshift(SRC_REPLACE);
         return this._change.apply(this, args);
     },
@@ -612,18 +643,19 @@ YUI.add('history-hash', function(Y) {
  *   documentation for details.
  */
 
-var HistoryBase    = Y.HistoryBase,
-    Lang           = Y.Lang,
-    Obj            = Y.Object,
-    GlobalEnv      = YUI.namespace('Env.HistoryHash'),
+var HistoryBase = Y.HistoryBase,
+    Lang        = Y.Lang,
+    YArray      = Y.Array,
+    GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
-    SRC_HASH       = 'hash',
+    SRC_HASH    = 'hash',
 
     hashNotifiers,
     oldHash,
     oldUrl,
-    win            = Y.config.win,
-    location       = win.location;
+    win             = Y.config.win,
+    location        = win.location,
+    useHistoryHTML5 = Y.config.useHistoryHTML5;
 
 function HistoryHash() {
     HistoryHash.superclass.constructor.apply(this, arguments);
@@ -632,16 +664,20 @@ function HistoryHash() {
 Y.extend(HistoryHash, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
-        // Use the bookmarked state as the initialState if no initialState was
-        // specified.
+        var bookmarkedState = HistoryHash.parseHash();
+
+        // If an initialState was provided, merge the bookmarked state into it
+        // (the bookmarked state wins).
         config = config || {};
-        config.initialState = config.initialState || HistoryHash.parseHash();
+
+        this._initialState = config.initialState ?
+                Y.merge(config.initialState, bookmarkedState) : bookmarkedState;
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
 
-        HistoryHash.superclass._init.call(this, config);
+        HistoryHash.superclass._init.apply(this, arguments);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -736,7 +772,7 @@ Y.extend(HistoryHash, HistoryBase, {
         var encode = HistoryHash.encode,
             hash   = [];
 
-        Obj.each(params, function (value, key) {
+        Y.Object.each(params, function (value, key) {
             if (Lang.isValue(value)) {
                 hash.push(encode(key) + '=' + encode(value));
             }
@@ -890,7 +926,6 @@ Y.extend(HistoryHash, HistoryBase, {
 });
 
 // -- Synthetic hashchange Event -----------------------------------------------
-hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
 
 // TODO: YUIDoc currently doesn't provide a good way to document synthetic DOM
 // events. For now, we're just documenting the hashchange event on the YUI
@@ -946,26 +981,31 @@ hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
  *   </dd>
  * </dl>
  * @for YUI
+ * @since 3.2.0
  */
+
+hashNotifiers = GlobalEnv._notifiers;
+
+if (!hashNotifiers) {
+    hashNotifiers = GlobalEnv._notifiers = [];
+}
+
 Y.Event.define('hashchange', {
     on: function (node, subscriber, notifier) {
-        // Ignore this subscriber if the node is anything other than the
+        // Ignore this subscription if the node is anything other than the
         // window or document body, since those are the only elements that
         // should support the hashchange event. Note that the body could also be
         // a frameset, but that's okay since framesets support hashchange too.
-        if ((node.compareTo(win) || node.compareTo(Y.config.doc.body)) &&
-                !Obj.owns(hashNotifiers, notifier.key)) {
-
-            hashNotifiers[notifier.key] = notifier;
+        if (node.compareTo(win) || node.compareTo(Y.config.doc.body)) {
+            hashNotifiers.push(notifier);
         }
     },
 
     detach: function (node, subscriber, notifier) {
-        // TODO: Is it safe to use hasSubs()? It's not marked private/protected,
-        // but also not documented. Also, subscriber counts don't seem to be
-        // updated after detach().
-        if (!notifier.hasSubs()) {
-            delete hashNotifiers[notifier.key];
+        var index = YArray.indexOf(hashNotifiers, notifier);
+
+        if (index !== -1) {
+            hashNotifiers.splice(index, 1);
         }
     }
 });
@@ -979,8 +1019,11 @@ if (HistoryBase.nativeHashChange) {
         var newHash = HistoryHash.getHash(),
             newUrl  = HistoryHash.getUrl();
 
-        Obj.each(hashNotifiers, function (notifier) {
+        // Iterate over a copy of the hashNotifiers array since a subscriber
+        // could detach during iteration and cause the array to be re-indexed.
+        YArray.each(hashNotifiers.concat(), function (notifier) {
             notifier.fire({
+                _event : e,
                 oldHash: oldHash,
                 oldUrl : oldUrl,
                 newHash: newHash,
@@ -1017,7 +1060,7 @@ if (HistoryBase.nativeHashChange) {
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                Obj.each(hashNotifiers, function (notifier) {
+                YArray.each(hashNotifiers, function (notifier) {
                     notifier.fire({
                         oldHash: oldHash,
                         oldUrl : oldUrl,
@@ -1035,11 +1078,9 @@ if (HistoryBase.nativeHashChange) {
 
 Y.HistoryHash = HistoryHash;
 
-// Only point Y.History at HistoryHash if it doesn't already exist and if the
-// current browser doesn't support HTML5 history, or if the HistoryHTML5 class
-// is not present. The history-hash module is always loaded after history-html5
-// if history-html5 is loaded, so this check doesn't introduce a race condition.
-if (!Y.History && (!HistoryBase.html5 || !Y.HistoryHTML5)) {
+// HistoryHash will never win over HistoryHTML5 unless useHistoryHTML5 is false.
+if (useHistoryHTML5 === false || (!Y.History && useHistoryHTML5 !== true &&
+        (!HistoryBase.html5 || !Y.HistoryHTML5))) {
     Y.History = HistoryHash;
 }
 
@@ -1168,7 +1209,7 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
 }
 
 
-}, '@VERSION@' ,{requires:['history-base', 'history-hash', 'node-base']});
+}, '@VERSION@' ,{requires:['history-hash', 'node-base']});
 YUI.add('history-html5', function(Y) {
 
 /**
@@ -1214,16 +1255,39 @@ YUI.add('history-html5', function(Y) {
  * @class HistoryHTML5
  * @extends HistoryBase
  * @constructor
- * @param {Object} config (optional) Configuration object. See the HistoryBase
- *   documentation for details.
+ * @param {Object} config (optional) Configuration object. The following
+ *   <code>HistoryHTML5</code>-specific properties are supported in addition to
+ *   those supported by <code>HistoryBase</code>:
+ *
+ * <dl>
+ *   <dt><strong>enableSessionFallback (Boolean)</strong></dt>
+ *   <dd>
+ *     <p>
+ *     Set this to <code>true</code> to store the most recent history state in
+ *     sessionStorage in order to seamlessly restore the previous state (if any)
+ *     when <code>HistoryHTML5</code> is instantiated after a
+ *     <code>window.onpopstate</code> event has already fired.
+ *     </p>
+ *
+ *     <p>
+ *     By default, this setting is <code>false</code>.
+ *     </p>
+ *   </dd>
+ * </dl>
  */
 
-var HistoryBase = Y.HistoryBase,
-    doc         = Y.config.doc,
-    win         = Y.config.win,
+var HistoryBase     = Y.HistoryBase,
+    doc             = Y.config.doc,
+    win             = Y.config.win,
+    sessionStorage,
+    useHistoryHTML5 = Y.config.useHistoryHTML5,
 
-    SRC_POPSTATE = 'popstate',
-    SRC_REPLACE  = HistoryBase.SRC_REPLACE;
+    JSON = Y.JSON || win.JSON, // prefer YUI JSON, but fall back to native
+
+    ENABLE_FALLBACK = 'enableSessionFallback',
+    SESSION_KEY     = 'YUI_HistoryHTML5_state',
+    SRC_POPSTATE    = 'popstate',
+    SRC_REPLACE     = HistoryBase.SRC_REPLACE;
 
 function HistoryHTML5() {
     HistoryHTML5.superclass.constructor.apply(this, arguments);
@@ -1231,12 +1295,78 @@ function HistoryHTML5() {
 
 Y.extend(HistoryHTML5, HistoryBase, {
     // -- Initialization -------------------------------------------------------
-    _init: function () {
+    _init: function (config) {
         Y.on('popstate', this._onPopState, win, this);
+
         HistoryHTML5.superclass._init.apply(this, arguments);
+
+        // If window.onload has already fired and the sessionStorage fallback is
+        // enabled, try to restore the last state from sessionStorage. This
+        // works around a shortcoming of the HTML5 history API: it's impossible
+        // to get the current state if the popstate event fires before you've
+        // subscribed to it. Since popstate fires immediately after onload,
+        // the last state may be lost if you return to a page from another page.
+        if (config && config[ENABLE_FALLBACK] && YUI.Env.windowLoaded) {
+            // Gecko will throw an error if you attempt to reference
+            // sessionStorage on a page served from a file:// URL, so we have to
+            // be careful here.
+            //
+            // See http://yuilibrary.com/projects/yui3/ticket/2529165
+            try {
+                sessionStorage = win.sessionStorage;
+            } catch (ex) {}
+
+            this._loadSessionState();
+        }
     },
 
     // -- Protected Methods ----------------------------------------------------
+
+    /**
+     * Returns a string unique to the current URL pathname that's suitable for
+     * use as a session storage key.
+     *
+     * @method _getSessionKey
+     * @return {String}
+     * @protected
+     */
+    _getSessionKey: function () {
+        return SESSION_KEY + '_' + win.location.pathname;
+    },
+
+    /**
+     * Attempts to load a state entry stored in session storage.
+     *
+     * @method _loadSessionState
+     * @protected
+     */
+    _loadSessionState: function () {
+        var lastState = JSON && sessionStorage &&
+                sessionStorage[this._getSessionKey()];
+
+        if (lastState) {
+            try {
+                this._resolveChanges(SRC_POPSTATE, JSON.parse(lastState) || null);
+            } catch (ex) {}
+        }
+    },
+
+    /**
+     * Stores the specified state entry in session storage if the
+     * <code>enableSessionFallback</code> config property is <code>true</code>
+     * and either <code>Y.JSON</code> or native JSON support is available and
+     * session storage is supported.
+     *
+     * @method _storeSessionState
+     * @param {mixed} state State to store. May be any type serializable to
+     *   JSON.
+     * @protected
+     */
+    _storeSessionState: function (state) {
+        if (this._config[ENABLE_FALLBACK] && JSON && sessionStorage) {
+            sessionStorage[this._getSessionKey()] = JSON.stringify(state || null);
+        }
+    },
 
     /**
      * Overrides HistoryBase's <code>_storeState()</code> and pushes or replaces
@@ -1255,6 +1385,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
             );
         }
 
+        this._storeSessionState(newState);
         HistoryHTML5.superclass._storeState.apply(this, arguments);
     },
 
@@ -1268,7 +1399,10 @@ Y.extend(HistoryHTML5, HistoryBase, {
      * @protected
      */
     _onPopState: function (e) {
-        this._resolveChanges(SRC_POPSTATE, e._event.state || {});
+        var state = e._event.state;
+
+        this._storeSessionState(state);
+        this._resolveChanges(SRC_POPSTATE, state || null);
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
@@ -1292,14 +1426,40 @@ if (!Y.Node.DOM_EVENTS.popstate) {
 
 Y.HistoryHTML5 = HistoryHTML5;
 
-// Only point Y.History at HistoryHTML5 if it doesn't already exist and if the
-// current browser supports HTML5 history.
-if (!Y.History && HistoryBase.html5) {
+/**
+ * <p>
+ * If <code>true</code>, the <code>Y.History</code> alias will always point to
+ * <code>Y.HistoryHTML5</code> when the history-html5 module is loaded, even if
+ * the current browser doesn't support HTML5 history.
+ * </p>
+ *
+ * <p>
+ * If <code>false</code>, the <code>Y.History</code> alias will always point to
+ * <code>Y.HistoryHash</code> when the history-hash module is loaded, even if
+ * the current browser supports HTML5 history.
+ * </p>
+ *
+ * <p>
+ * If neither <code>true</code> nor <code>false</code>, the
+ * <code>Y.History</code> alias will point to the best available history adapter
+ * that the browser supports. This is the default behavior.
+ * </p>
+ *
+ * @property useHistoryHTML5
+ * @type boolean
+ * @for config
+ * @since 3.2.0
+ */
+
+// HistoryHTML5 will always win over HistoryHash unless useHistoryHTML5 is false
+// or HTML5 history is not supported.
+if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
+        HistoryBase.html5)) {
     Y.History = HistoryHTML5;
 }
 
 
-}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base']});
+}, '@VERSION@' ,{optional:['json'], requires:['event-base', 'history-base', 'node-base']});
 
 
 YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie', 'history-html5']});

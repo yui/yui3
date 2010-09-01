@@ -106,7 +106,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description The PREFIX to attach to all DD CSS class names
         * @type {String}
         */
-        CSS_PREFIX: 'yui3-dd',
+        CSS_PREFIX: Y.ClassNameManager.getClassName('dd'),
         _activateTargets: function() {},        
         /**
         * @private
@@ -161,11 +161,10 @@ YUI.add('dd-ddm-base', function(Y) {
         _setupListeners: function() {
             this._createPG();
             this._active = true;
-            //var doc = Y.one(Y.config.doc);
-            //doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            //doc.on('mouseup', Y.bind(this._end, this));
-            //doc.on('move', Y.bind(this._move, this));
-            //doc.on('moveend', Y.bind(this._end, this));
+
+            var doc = Y.one(Y.config.doc);
+            doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
         * @private
@@ -349,7 +348,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node', 'base', 'yui-throttle'], skinnable:false});
+}, '@VERSION@' ,{requires:['node', 'base', 'yui-throttle', 'classnamemanager'], skinnable:false});
 YUI.add('dd-ddm', function(Y) {
 
 
@@ -455,17 +454,11 @@ YUI.add('dd-ddm', function(Y) {
                 width: '5px'
             });
             pg.set('id', Y.stamp(pg));
-            pg.addClass('yui3-dd-shim');
-            if (bd.get('firstChild')) {
-                bd.insertBefore(pg, bd.get('firstChild'));
-            } else {
-                bd.appendChild(pg);
-            }
+            pg.addClass(Y.DD.DDM.CSS_PREFIX + '-shim');
+            bd.prepend(pg);
             this._pg = pg;
-            //this._pg.on('mouseup', Y.bind(this._end, this));
-            //this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            this._pg.on('move', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            this._pg.on('moveend', Y.bind(this._end, this));
+            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on('mouseup', Y.bind(this._end, this));
             
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));
@@ -662,7 +655,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                         if (drop && drop.shim) {
                             if ((dMode == this.INTERSECT) && this._noShim) {
                                 r = ((aRegion) ? aRegion : this.activeDrag.get('node'));
-                                return drop.get('node').intersect(r).inRegion;
+                                return drop.get('node').intersect(r, drop.region).inRegion;
                             } else {
                                 if (this._noShim) {
                                     node = drop.get('node');
@@ -910,11 +903,6 @@ YUI.add('dd-drag', function(Y) {
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
-        //MOUSE_UP = 'mouseup',
-        //MOUSE_DOWN = 'mousedown',
-        MOUSE_UP = 'moveend',
-        MOUSE_DOWN = 'movestart',
-        DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
@@ -1091,6 +1079,13 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Drag.NAME = 'drag';
+    
+    /**
+    * This property defaults to "mousedown", but when drag-gestures is loaded, it is changed to "gesturemovestart"
+    * @static
+    * @property START_EVENT
+    */
+    Drag.START_EVENT = 'mousedown';
 
     Drag.ATTRS = {
         /**
@@ -1304,6 +1299,14 @@ YUI.add('dd-drag', function(Y) {
                 this.addTarget(t);
                 return t;
             }
+        },
+        /**
+        * @attribute haltDown
+        * @description Should the mousedown event be halted. Default: true
+        * @type Boolean
+        */
+        haltDown: {
+            value: true
         }
     };
 
@@ -1626,15 +1629,21 @@ YUI.add('dd-drag', function(Y) {
         */
         _defMouseDownFn: function(e) {
             var ev = e.ev;
+
             this._dragThreshMet = false;
             this._ev_md = ev;
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                //return false;
+                return false;
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
-                ev.halt();
+                if (this.get('haltDown')) {
+                    ev.halt();
+                } else {
+                    ev.preventDefault();
+                }
+                
                 this._setStartPosition([ev.pageX, ev.pageY]);
 
                 DDM.activeDrag = this;
@@ -1735,7 +1744,7 @@ YUI.add('dd-drag', function(Y) {
         * @description The method passed to setTimeout to determine if the clickTimeThreshold was met.
         */
         _timeoutCheck: function() {
-            if (!this.get('lock') && !this._dragThreshMet) {
+            if (!this.get('lock') && !this._dragThreshMet && this._ev_md) {
                 this._fromTimeout = this._dragThreshMet = true;
                 this.start();
                 this._alignNode([this._ev_md.pageX, this._ev_md.pageY], true);
@@ -1846,16 +1855,11 @@ YUI.add('dd-drag', function(Y) {
             this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
-                minDistance: this.get('clickPixelThresh'),
-                minTime: this.get('clickTimeThresh')
-            });
-            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
-            node.on(DRAG_START, Y.bind(this._fixDragStart, this));
-            node.on('move', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
-            //Should not need this, _handleMouseUp calls this..
-            //node.on('moveend', Y.bind(DDM._end, DDM));
-            
+
+            node.addClass(DDM.CSS_PREFIX + '-draggable');
+            node.on(Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this));
+            node.on('mouseup', Y.bind(this._handleMouseUp, this));
+            node.on('dragstart', Y.bind(this._fixDragStart, this));
         },
         /**
         * @private
@@ -1920,8 +1924,9 @@ YUI.add('dd-drag', function(Y) {
             if (this._clickTimeout) {
                 this._clickTimeout.cancel();
             }
-            this._dragThreshMet = false;
-            this._fromTimeout = false;
+            this._dragThreshMet = this._fromTimeout = false;
+            this._ev_md = null;
+
             if (!this.get('lock') && this.get(DRAGGING)) {
                 this.fire(EV_END, {
                     pageX: this.lastXY[0],
@@ -2091,7 +2096,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base','event-synthetic', 'event-gestures'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
 
 
@@ -2171,6 +2176,11 @@ YUI.add('dd-proxy', function(Y) {
         borderStyle: {
             value: '1px solid #808080'
         },
+        /**
+        * @attribute cloneNode
+        * @description Should the node be cloned into the proxy for you. Default: false
+        * @type Boolean
+        */
         cloneNode: {
             value: false
         }
@@ -2241,10 +2251,10 @@ YUI.add('dd-proxy', function(Y) {
             var host = this.get(HOST),
                 n = host.get(NODE),
                 c = n.cloneNode(true);
-            c.set('id', '');
-            c.setStyle('position', 'absolute');
+
             delete c._yuid;
-            Y.stamp(c);
+            c.setAttribute('id', Y.guid());
+            c.setStyle('position', 'absolute');
             n.get('parentNode').appendChild(c);
             host.set(DRAG_NODE, c);
             return c;
@@ -2279,8 +2289,8 @@ YUI.add('dd-proxy', function(Y) {
                     left: '-999px'
                 });
 
-                b.insertBefore(p, b.get('firstChild'));
-                p.set('id', Y.stamp(p));
+                b.prepend(p);
+                p.set('id', Y.guid());
                 p.addClass(DDM.CSS_PREFIX + '-proxy');
                 DDM._proxy = p;
             }
@@ -2295,12 +2305,6 @@ YUI.add('dd-proxy', function(Y) {
         */
         _setFrame: function(drag) {
             var n = drag.get(NODE), d = drag.get(DRAG_NODE), ah, cur = 'auto';
-            if (drag.proxy.get('resizeFrame')) {
-                DDM._proxy.setStyles({
-                    height: n.get('offsetHeight') + 'px',
-                    width: n.get('offsetWidth') + 'px'
-                });
-            }
             
             ah = DDM.activeDrag.get('activeHandle');
             if (ah) {
@@ -2319,6 +2323,13 @@ YUI.add('dd-proxy', function(Y) {
 
             if (drag.proxy.get('cloneNode')) {
                 d = drag.proxy.clone();
+            }
+
+            if (drag.proxy.get('resizeFrame')) {
+                d.setStyles({
+                    height: n.get('offsetHeight') + 'px',
+                    width: n.get('offsetWidth') + 'px'
+                });
             }
 
             if (drag.proxy.get('positionProxy')) {
@@ -2559,7 +2570,7 @@ YUI.add('dd-constrain', function(Y) {
                         this.resetCache();
                     }
                 } else if (Y.Lang.isObject(con)) {
-                    region = con;
+                    region = Y.clone(con);
                 }
             }
             if (!con || !region) {
@@ -2651,7 +2662,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         align: function() {
             var host = this.get(HOST),
-                _xy = host.actXY,
+                _xy = [host.actXY[0], host.actXY[1]],
                 r = this.getRegion(true);
 
             if (this.get('stickX')) {
@@ -3212,52 +3223,6 @@ YUI.add('dd-scroll', function(Y) {
 
 
 }, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});
-YUI.add('dd-plugin', function(Y) {
-
-
-       /**
-        * Simple Drag plugin that can be attached to a Node via the plug method.
-        * @module dd
-        * @submodule dd-plugin
-        */
-       /**
-        * Simple Drag plugin that can be attached to a Node via the plug method.
-        * @class Drag
-        * @extends DD.Drag
-        * @constructor
-        * @namespace Plugin
-        */
-
-
-        var Drag = function(config) {
-            config.node = ((Y.Widget && config.host instanceof Y.Widget) ? config.host.get('boundingBox') : config.host);
-            Drag.superclass.constructor.call(this, config);
-        };
-        
-        /**
-        * @property NAME
-        * @description dd-plugin
-        * @type {String}
-        */
-        Drag.NAME = "dd-plugin";
-
-        /**
-        * @property NS
-        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
-        * @type {String}
-        */
-        Drag.NS = "dd";
-
-
-        Y.extend(Drag, Y.DD.Drag);
-        Y.namespace('Plugin');
-        Y.Plugin.Drag = Drag;
-
-
-
-
-
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
 YUI.add('dd-drop', function(Y) {
 
 
@@ -3560,7 +3525,7 @@ YUI.add('dd-drop', function(Y) {
             DDM._unregTarget(this);
             if (this.shim && (this.shim !== this.get(NODE))) {
                 this.shim.detachAll();
-                this.shim.get('parentNode').removeChild(this.shim);
+                this.shim.remove();
                 this.shim = null;
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop');
@@ -3806,51 +3771,6 @@ YUI.add('dd-drop', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
-YUI.add('dd-drop-plugin', function(Y) {
-
-
-       /**
-        * Simple Drop plugin that can be attached to a Node via the plug method.
-        * @module dd
-        * @submodule dd-drop-plugin
-        */
-       /**
-        * Simple Drop plugin that can be attached to a Node via the plug method.
-        * @class Drop
-        * @extends DD.Drop
-        * @constructor
-        * @namespace Plugin
-        */
-
-
-        var Drop = function(config) {
-            config.node = config.host;
-            Drop.superclass.constructor.apply(this, arguments);
-        };
-        
-        /**
-        * @property NAME
-        * @description dd-drop-plugin
-        * @type {String}
-        */
-        Drop.NAME = "dd-drop-plugin";
-        /**
-        * @property NS
-        * @description The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;
-        * @type {String}
-        */
-        Drop.NS = "drop";
-
-
-        Y.extend(Drop, Y.DD.Drop);
-        Y.namespace('Plugin');
-        Y.Plugin.Drop = Drop;
-
-
-
-
-
-}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 YUI.add('dd-delegate', function(Y) {
 
 
@@ -3896,6 +3816,12 @@ YUI.add('dd-delegate', function(Y) {
         _shimState: null,
         /**
         * @private
+        * @property _handles
+        * @description Array of event handles to be destroyed
+        */
+        _handles: null,
+        /**
+        * @private
         * @method _onNodeChange
         * @description Listens to the nodeChange event and sets the dragNode on the temp dd instance.
         * @param {Event} e The Event.
@@ -3927,7 +3853,7 @@ YUI.add('dd-delegate', function(Y) {
         _delMouseDown: function(e) {
             var tar = e.currentTarget,
                 dd = this.dd;
-
+            
             if (tar.test(this.get(NODES)) && !tar.test(this.get('invalid'))) {
                 this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
@@ -3939,6 +3865,7 @@ YUI.add('dd-delegate', function(Y) {
                     dd.set('dragNode', tar);
                 }
                 dd._prep();
+                
                 dd.fire('drag:mouseDown', { ev: e });
             }
         },
@@ -3961,11 +3888,10 @@ YUI.add('dd-delegate', function(Y) {
         _onMouseLeave: function(e) {
             Y.DD.DDM._noShim = this._shimState;
         },
-        _handles: null,
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
-            var conf = this.get('dragConfig') || {},
+            var conf = Y.clone(this.get('dragConfig') || {}),
                 cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);
@@ -3982,7 +3908,7 @@ YUI.add('dd-delegate', function(Y) {
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
 
             //Attach the delegate to the container
-            this._handles.push(Y.delegate('mousedown', Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
+            this._handles.push(Y.delegate(Y.DD.Drag.START_EVENT, Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
 
             this._handles.push(Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont));
 
@@ -4178,5 +4104,5 @@ YUI.add('dd-delegate', function(Y) {
 }, '@VERSION@' ,{optional:['dd-drop-plugin'], requires:['dd-drag', 'event-mouseenter'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-scroll', 'dd-delegate'], skinnable:false});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-drop', 'dd-scroll', 'dd-delegate'], skinnable:false});
 

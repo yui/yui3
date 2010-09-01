@@ -30,6 +30,7 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
+    YArray = Y.Array,
 
     _wildType = Y.cached(function(type) {
         return type.replace(/(.*)(:)(.*)/, "*$2$3");
@@ -139,7 +140,11 @@ ET.prototype = {
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
-        handle.sub.once = true;
+        handle.each(function(hand) {
+            if (hand.sub) {
+                hand.sub.once = true;
+            }
+        });
         return handle;
     },
 
@@ -173,15 +178,15 @@ ET.prototype = {
 
             f = fn; 
             c = context; 
-            args = Y.Array(arguments, 0, true);
-            ret = {};
+            args = YArray(arguments, 0, true);
+            ret = [];
 
             if (L.isArray(type)) {
                 isArr = true;
-            } else {
-                after = type._after;
-                delete type._after;
             }
+
+            after = type._after;
+            delete type._after;
 
             Y.each(type, function(v, k) {
 
@@ -190,11 +195,13 @@ ET.prototype = {
                     c = v.context || c;
                 }
 
-                args[0] = (isArr) ? v : ((after) ? AFTER_PREFIX + k : k);
+                var nv = (after) ? AFTER_PREFIX : '';
+
+                args[0] = nv + ((isArr) ? v : k);
                 args[1] = f;
                 args[2] = c;
 
-                ret[k] = this.on.apply(this, args); 
+                ret.push(this.on.apply(this, args));
 
             }, this);
 
@@ -208,7 +215,7 @@ ET.prototype = {
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             args.splice(2, 0, Node.getDOMNode(this));
             // Y.log("Node detected, redirecting with these args: " + args);
             return Y.on.apply(Y, args);
@@ -219,7 +226,7 @@ ET.prototype = {
         if (this instanceof YUI) {
 
             adapt = Y.Env.evt.plugins[type];
-            args  = Y.Array(arguments, 0, true);
+            args  = YArray(arguments, 0, true);
             args[0] = shorttype;
 
             if (Node) {
@@ -251,7 +258,7 @@ ET.prototype = {
 
         if (!handle) {
             ce = this._yuievt.events[type] || this.publish(type);
-            handle = ce._on(fn, context, (arguments.length > 3) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
+            handle = ce._on(fn, context, (arguments.length > 3) ? YArray(arguments, 3, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -352,7 +359,7 @@ ET.prototype = {
             return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             args[2] = Node.getDOMNode(this);
             Y.detach.apply(Y, args);
             return this;
@@ -362,7 +369,7 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
-            args = Y.Array(arguments, 0, true);
+            args = YArray(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
                 adapt.detach.apply(Y, args);
@@ -586,7 +593,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
             ce, ret, pre = this._yuievt.config.prefix, ce2,
-            args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
+            args = (typeIncluded) ? YArray(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
 
@@ -668,11 +675,16 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     after: function(type, fn) {
 
-        var a = Y.Array(arguments, 0, true);
+        var a = YArray(arguments, 0, true);
 
         switch (L.type(type)) {
             case 'function':
                 return Y.Do.after.apply(Y.Do, arguments);
+            case 'array':
+            //     YArray.each(a[0], function(v) {
+            //         v = AFTER_PREFIX + v;
+            //     });
+            //     break;
             case 'object':
                 a[0]._after = true;
                 break;
@@ -729,7 +741,6 @@ Y.Global = YUI.Env.globalEvents;
 // @TODO implement a global namespace function on Y.Global?
 
 })();
-
 
 /**
  * <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
@@ -791,15 +802,8 @@ Y.Global = YUI.Env.globalEvents;
  * alias for <code>on</code>.
  *
  * @method on 
- * @param type** event type (this parameter does not apply for function events)
+ * @param type event type (this parameter does not apply for function events)
  * @param fn the callback
- * @param target** a descriptor for the target (applies to custom events only).
- * For function events, this is the object that contains the function to
- * execute.
- * @param extra** 0..n Extra information a particular event may need.  These
- * will be documented with the event.  In the case of function events, this
- * is the name of the function to execute on the host.  In the case of
- * delegate listeners, this is the event delegation specification.
  * @param context optionally change the value of 'this' in the callback
  * @param args* 0..n additional arguments to pass to the callback.
  * @return the event target or a detach handle per 'chain' config
@@ -811,15 +815,8 @@ Y.Global = YUI.Env.globalEvents;
   * the listener is immediately detached when executed.
   * @see on
   * @method once
-  * @param type** event type (this parameter does not apply for function events)
+  * @param type event type (this parameter does not apply for function events)
   * @param fn the callback
-  * @param target** a descriptor for the target (applies to custom events only).
-  * For function events, this is the object that contains the function to
-  * execute.
-  * @param extra** 0..n Extra information a particular event may need.  These
-  * will be documented with the event.  In the case of function events, this
-  * is the name of the function to execute on the host.  In the case of
-  * delegate listeners, this is the event delegation specification.
   * @param context optionally change the value of 'this' in the callback
   * @param args* 0..n additional arguments to pass to the callback.
   * @return the event target or a detach handle per 'chain' config
@@ -836,13 +833,6 @@ Y.Global = YUI.Env.globalEvents;
  * @method after
  * @param type event type (this parameter does not apply for function events)
  * @param fn the callback
- * @param target a descriptor for the target (applies to custom events only).
- * For function events, this is the object that contains the function to
- * execute.
- * @param extra 0..n Extra information a particular event may need.  These
- * will be documented with the event.  In the case of function events, this
- * is the name of the function to execute on the host.  In the case of
- * delegate listeners, this is the event delegation specification.
  * @param context optionally change the value of 'this' in the callback
  * @param args* 0..n additional arguments to pass to the callback.
  * @return the event target or a detach handle per 'chain' config

@@ -15,7 +15,11 @@
     INNER_HTML = 'innerHTML',
     FONT_FAMILY = 'fontFamily';
 
-    Y.Selection = function() {
+    if (Y.UA.ie) {
+        textContent = 'nodeValue';
+    }
+
+    Y.Selection = function(domEvent) {
         var sel, par, ieNode, nodes, rng, i;
 
         if (Y.config.win.getSelection) {
@@ -26,25 +30,29 @@
         this._selection = sel;
         
         if (sel.pasteHTML) {
-            textContent = 'nodeValue';
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
-
             if (this.isCollapsed) {
                 this.anchorNode = this.focusNode = Y.one(sel.parentElement());
-                
-                par = sel.parentElement();
-                nodes = par.childNodes;
-                rng = sel.duplicate();
 
-                for (i = 0; i < nodes.length; i++) {
-                    rng.select(nodes[i]);
-                    if (rng.inRange(sel)) {
-                       ieNode = nodes[i]; 
+                if (domEvent) {
+                    ieNode = Y.config.doc.elementFromPoint(domEvent.clientX, domEvent.clientY);
+                }
+                
+                if (!ieNode) {
+                    par = sel.parentElement();
+                    nodes = par.childNodes;
+                    rng = sel.duplicate();
+
+                    for (i = 0; i < nodes.length; i++) {
+                        //This causes IE to not allow a selection on a doubleclick
+                        //rng.select(nodes[i]);
+                        if (rng.inRange(sel)) {
+                           ieNode = nodes[i]; 
+                        }
                     }
                 }
 
                 this.ieNode = ieNode;
-                
                 
                 if (ieNode) {
                     if (ieNode.nodeType !== 3) {
@@ -77,7 +85,11 @@
         if (Y.Lang.isString(sel.text)) {
             this.text = sel.text;
         } else {
-            this.text = sel.toString();
+            if (sel.toString) {
+                this.text = sel.toString();
+            } else {
+                this.text = '';
+            }
         }
     };
     
@@ -88,18 +100,39 @@
     * @static
     * @method filter
     */
-    Y.Selection.filter = function() {
+    Y.Selection.filter = function(blocks) {
+        var startTime = (new Date()).getTime();
+        Y.log('Filtering nodes', 'info', 'selection');
+
         var nodes = Y.all(Y.Selection.ALL),
             baseNodes = Y.all('strong,em'),
+            doc = Y.config.doc,
+            hrs = doc.getElementsByTagName('hr'),
+            classNames = {}, cssString = '',
             ls;
 
-        Y.log('Filtering nodes', 'info', 'selection');
+        var startTime1 = (new Date()).getTime();
         nodes.each(function(n) {
+            var raw = Y.Node.getDOMNode(n);
+            if (raw.style[FONT_FAMILY]) {
+                classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
+                n.addClass(n._yuid);
+                raw.style[FONT_FAMILY] = 'inherit';
+
+                raw.removeAttribute('face');
+                if (raw.getAttribute('style') === '') {
+                    raw.removeAttribute('style');
+                }
+                //This is for IE
+                if (raw.getAttribute('style')) {
+                    if (raw.getAttribute('style').toLowerCase() === 'font-family: ') {
+                        raw.removeAttribute('style');
+                    }
+                }
+            }
+            /*
             if (n.getStyle(FONT_FAMILY)) {
-                var sheet = new Y.StyleSheet('editor');
-                sheet.set('.' + n._yuid, {
-                    fontFamily: n.getStyle(FONT_FAMILY)
-                });
+                classNames['.' + n._yuid] = n.getStyle(FONT_FAMILY);
                 n.addClass(n._yuid);
                 n.removeAttribute('face');
                 n.setStyle(FONT_FAMILY, '');
@@ -111,7 +144,28 @@
                     n.removeAttribute('style');
                 }
             }
+            */
         });
+        var endTime1 = (new Date()).getTime();
+        Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'selection');
+
+        Y.each(hrs, function(hr) {
+            var el = doc.createElement('div');
+                el.className = 'hr yui-non';
+                el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
+                el.setAttribute('readonly', true);
+                el.setAttribute('contenteditable', false); //Keep it from being Edited
+                if (hr.parentNode) {
+                    hr.parentNode.replaceChild(el, hr);
+                }
+
+        });
+
+        Y.each(classNames, function(v, k) {
+            cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';
+        });
+        Y.StyleSheet(cssString, 'editor');
+
         
         //Not sure about this one?
         baseNodes.each(function(n, k) {
@@ -131,8 +185,12 @@
                 v.remove();
             }
         });
-
-        Y.Selection.filterBlocks();
+        
+        if (blocks) {
+            Y.Selection.filterBlocks();
+        }
+        var endTime = (new Date()).getTime();
+        Y.log('Filter Timer: ' + (endTime - startTime) + 'ms', 'info', 'selection');
     };
 
     /**
@@ -141,15 +199,22 @@
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
-        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, sel;
+        var startTime = (new Date()).getTime();
+        Y.log('RAW filter blocks', 'info', 'selection');
+        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
+            sel, single, br, divs, spans, c, s;
+
         if (childs) {
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
                 if (!node.test(Y.Selection.BLOCKS)) {
                     doit = true;
                     if (childs[i].nodeType == 3) {
-                        if (childs[i].textContent == '\n') {
+                        c = childs[i][textContent].match(Y.Selection.REG_CHAR);
+                        s = childs[i][textContent].match(Y.Selection.REG_NON);
+                        if (c === null && s) {
                             doit = false;
+                            
                         }
                     }
                     if (doit) {
@@ -164,8 +229,85 @@
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
         }
+
+        single = Y.all('p');
+        if (single.size() === 1) {
+            Y.log('Only One Paragragh, focus it..', 'info', 'selection');
+            br = single.item(0).all('br');
+            if (br.size() === 1) {
+                br.item(0).remove();
+                var html = single.item(0).get('innerHTML');
+                if (html == '' || html == ' ') {
+                    single.set('innerHTML', Y.Selection.CURSOR);
+                    sel = new Y.Selection();
+                    sel.focusCursor(true, true);
+                }
+            }
+        } else {
+            single.each(function(p) {
+                var html = p.get('innerHTML');
+                if (html === '') {
+                    Y.log('Empty Paragraph Tag Found, Removing It', 'info', 'selection');
+                    p.remove();
+                }
+            });
+        }
+        
+        if (!Y.UA.ie) {
+            divs = Y.all('div, p');
+            divs.each(function(d) {
+                if (d.hasClass('yui-non')) {
+                    return;
+                }
+                var html = d.get('innerHTML');
+                if (html === '') {
+                    //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                    d.remove();
+                } else {
+                    //Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                    if (d.get('childNodes').size() == 1) {
+                        //Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                        if (d.ancestor('p')) {
+                            //Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                            d.replace(d.get('firstChild'));
+                        }
+                    }
+                }
+            });
+
+            spans = Y.all('.Apple-style-span, .apple-style-span');
+            Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
+            spans.each(function(s) {
+                s.setAttribute('style', '');
+            });
+        }
+
+
+        var endTime = (new Date()).getTime();
+        Y.log('FilterBlocks Timer: ' + (endTime - startTime) + 'ms', 'info', 'selection');
     };
 
+    /**
+    * Regular Expression to determine if a string has a character in it
+    * @static
+    * @property REG_CHAR
+    */   
+    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_]/gi;
+
+    /**
+    * Regular Expression to determine if a string has a non-character in it
+    * @static
+    * @property REG_NON
+    */
+    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+
+
+    /**
+    * Wraps an array of elements in a Block level tag
+    * @static
+    * @private
+    * @method _wrapBlock
+    */
     Y.Selection._wrapBlock = function(wrapped) {
         if (wrapped) {
             var newChild = Y.Node.create('<p></p>'),
@@ -254,7 +396,13 @@
     * @return {String} The string of text
     */
     Y.Selection.getText = function(node) {
-        return node.get('innerHTML').replace(Y.Selection.STRIP_HTML, '');
+        var t = node.get('innerHTML').replace(Y.Selection.STRIP_HTML, ''),
+            c = t.match(Y.Selection.REG_CHAR),
+            s = t.match(Y.Selection.REG_NON);
+            if (c === null && s) {
+                t = '';
+            }
+        return t;
     };
 
     /**
@@ -290,9 +438,56 @@
     */
     Y.Selection.DEFAULT_TAG = 'span';
 
+    /**
+    * The id of the outer cursor wrapper
+    * @static
+    * @property DEFAULT_TAG
+    */
     Y.Selection.CURID = 'yui-cursor';
 
-    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '">&nbsp;</span>';
+    /**
+    * The id used to wrap the inner space of the cursor position
+    * @static
+    * @property CUR_WRAPID
+    */
+    Y.Selection.CUR_WRAPID = 'yui-cursor-wrapper';
+
+    /**
+    * The default HTML used to focus the cursor..
+    * @static
+    * @property CURSOR
+    */
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+
+    /**
+    * Called from Editor keydown to remove the "extra" space before the cursor.
+    * @static
+    * @method cleanCursor
+    */
+    Y.Selection.cleanCursor = function() {
+        /*
+        var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
+        if (cur) {
+            cur.id = '';
+            if (cur.innerHTML == '&nbsp;' || cur.innerHTML == '<br>') {
+                if (cur.parentNode) {
+                    cur.parentNode.removeChild(cur);
+                }
+            }
+        }
+        */
+        
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        if (cur.size) {
+            cur.each(function(c) {
+                var html = c.get('innerHTML');
+                if (html == '&nbsp' || html == '<br>') {
+                    c.remove();
+                }
+            });
+        }
+        
+    };
 
     Y.Selection.prototype = {
         /**
@@ -390,7 +585,7 @@
             Y.config.doc.execCommand('fontname', null, Y.Selection.TMP);
             var nodes = Y.all(Y.Selection.ALL),
                 items = [];
-
+            
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY, Y.Selection.TMP)) {
                     n.setStyle(FONT_FAMILY, '');
@@ -398,7 +593,9 @@
                     if (n.getAttribute('style') === '') {
                         n.removeAttribute('style');
                     }
-                    items.push(Y.Node.getDOMNode(nodes.item(k)));
+                    if (!n.test('body')) {
+                        items.push(Y.Node.getDOMNode(nodes.item(k)));
+                    }
                 }
             });
             return Y.all(items);
@@ -425,16 +622,18 @@
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
-                if (node && node.test('body')) {
-                    b = Y.Node.create('<span></span>');
-                    node.append(b);
-                    node = b;
-                }
+            if (node && node.test('body')) {
+                b = Y.Node.create('<span></span>');
+                node.append(b);
+                node = b;
+            }
 
             
             if (range.pasteHTML) {
                 newNode = Y.Node.create(html);
-                range.pasteHTML('<span id="rte-insert"></span>');
+                try {
+                    range.pasteHTML('<span id="rte-insert"></span>');
+                } catch (e) {}
                 inHTML = Y.one('#rte-insert');
                 if (inHTML) {
                     inHTML.set('id', '');
@@ -450,17 +649,40 @@
                 //TODO using Y.Node.create here throws warnings & strips first white space character
                 //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
                 //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
-                inHTML = node.get(textContent);
-                txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
-                txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
-                
-                node.replace(txt, node);
-                newNode = Y.Node.create(html);
-                txt.insert(newNode, 'after');
-                if (txt2 && txt2.get('length')) {
-                    newNode.insert(cur, 'after');
-                    cur.insert(txt2, 'after');
-                    this.selectNode(cur, collapse);
+                if (offset > 0) {
+                    inHTML = node.get(textContent);
+
+                    txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
+                    txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
+
+                    node.replace(txt, node);
+                    newNode = Y.Node.create(html);
+                    if (newNode.get('nodeType') === 11) {
+                        b = Y.Node.create('<span></span>');
+                        b.append(newNode);
+                        newNode = b;
+                    }
+                    txt.insert(newNode, 'after');
+                    //if (txt2 && txt2.get('length')) {
+                    if (txt2) {
+                        newNode.insert(cur, 'after');
+                        cur.insert(txt2, 'after');
+                        this.selectNode(cur, collapse);
+                    }
+                } else {
+                    if (node.get('nodeType') === 3) {
+                        node = node.get('parentNode');
+                    }
+                    newNode = Y.Node.create(html);
+                    html = node.get('innerHTML').replace(/\n/gi, '');
+                    if (html == '' || html == '<br>') {
+                        node.append(newNode);
+                    } else {
+                        node.insert(newNode, 'before');
+                    }
+                    if (node.get('firstChild').test('br')) {
+                        node.get('firstChild').remove();
+                    }
                 }
             }
             return newNode;
@@ -584,7 +806,7 @@
                 if (collapse) {
                     try {
                         this._selection.collapse(node, end);
-                    } catch (e) {
+                    } catch (err) {
                         this._selection.collapse(node, 0);
                     }
                 }
@@ -592,11 +814,13 @@
                 if (node.nodeType === 3) {
                     node = node.parentNode;
                 }
-                range.moveToElementText(node);
-                range.select();
+                try {
+                    range.moveToElementText(node);
+                } catch(e) {}
                 if (collapse) {
                     range.collapse(((end) ? false : true));
                 }
+                range.select();
             }
             return this;
         },
@@ -606,6 +830,7 @@
         * @return {Node}
         */
         setCursor: function() {
+            this.removeCursor(false);
             return this.insertContent(Y.Selection.CURSOR);
         },
         /**
@@ -614,19 +839,43 @@
         * @return {Node}
         */
         getCursor: function() {
-            return Y.one('#' + Y.Selection.CURID);
+            return Y.all('#' + Y.Selection.CURID);
+        },
+        /**
+        * Remove the cursor placeholder from the DOM.
+        * @method removeCursor
+        * @param {Boolean} keep Setting this to true will keep the node, but remove the unique parts that make it the cursor.
+        * @return {Node}
+        */
+        removeCursor: function(keep) {
+            var cur = this.getCursor();
+            if (cur) {
+                if (keep) {
+                    cur.removeAttribute('id');
+                    cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                } else {
+                    cur.remove();
+                }
+            }
+            return cur;
         },
         /**
         * Gets a stored cursor and focuses it for editing, must be called sometime after setCursor
         * @method focusCursor
         * @return {Node}
         */
-        focusCursor: function() {
-            var cur = this.getCursor();
+        focusCursor: function(collapse, end) {
+            if (collapse !== false) {
+                collapse = true;
+            }
+            if (end !== false) {
+                end = true;
+            }
+            var cur = this.removeCursor(true);
             if (cur) {
-                cur.removeAttribute('id');
-                cur.set('innerHTML', '&nbsp;&nbsp;');
-                this.selectNode(cur, true, true);
+                cur.each(function(c) {
+                    this.selectNode(c, collapse, end);
+                }, this);
             }
         },
         /**

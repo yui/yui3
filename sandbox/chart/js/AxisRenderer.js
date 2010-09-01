@@ -1,8 +1,105 @@
 /**
  * Renders an axis.
  */
-Y.AxisRenderer = Y.Base.create("axisrenderer", Y.Widget, [Y.Renderer], {
-	/**
+function AxisRenderer(config)
+{
+    AxisRenderer.superclass.constructor.apply(this, arguments);
+}
+
+AxisRenderer.NAME = "axisRenderer";
+
+AxisRenderer.ATTRS = {
+        edgeOffset: {
+            value: 0
+        },
+
+        /**
+         * The graphic in which the axis line and ticks will be rendered.
+         */
+        graphic: {
+            value: null
+        },
+        
+        /**
+         * Reference to the <code>Axis</code> instance used for assigning 
+         * <code>AxisRenderer</code>.
+         */
+        axis: {
+            
+            value: null,
+
+            validator: function(value)
+            {
+                return value !== this.get("axis");
+            }
+        },
+
+        /**
+         * Contains the contents of the axis. 
+         */
+        node: {
+            value: null
+        },
+
+        /**
+         * Direction of the axis.
+         */
+        position: {
+            value: "bottom",
+
+            validator: function(val)
+            {
+                return ((val !== this.get("position")) && (val === "bottom" || val === "top" || val === "left" || val === "right"));
+            }
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the top of the axis.
+         */
+        topTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the bottom of the axis.
+         */
+        bottomTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the left of the axis.
+         */
+        leftTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Distance determined by the tick styles used to calculate the distance between the axis
+         * line in relation to the right side of the axis.
+         */
+        rightTickOffset: {
+            value: 0
+        },
+
+        /**
+         * Indicates whether the axis overlaps the graph. If an axis is the inner most axis on a given
+         * position and the tick position is inside or cross, the axis will need to overlap the graph.
+         */
+        overlapGraph: {
+            value:true,
+
+            validator: function(val)
+            {
+                return Y.Lang.isBoolean(val);
+            }
+        }
+    };
+    Y.extend(AxisRenderer, Y.Renderer, {    
+    /**
      * @private
      * @description Triggered by a change in the axis attribute. Removes any old axis listeners and sets up listeners for the new axis.
      */
@@ -160,99 +257,13 @@ Y.AxisRenderer = Y.Base.create("axisrenderer", Y.Widget, [Y.Renderer], {
             left: "0px",
             width: "100px",
             height: "100px",
+            label: {
+                rotation: 0
+            },
             hideOverlappingLabelTicks: false
         };
     }
 
-}, {
-    NAME: "axisRenderer",
-
-    ATTRS:
-    {
-        /**
-         * The graphic in which the axis line and ticks will be rendered.
-         */
-        graphic: {
-            value: null
-        },
-        
-        /**
-         * Reference to the <code>Axis</code> instance used for assigning 
-         * <code>AxisRenderer</code>.
-         */
-        axis: {
-            
-            value: null,
-
-            validator: function(value)
-            {
-                return value !== this.get("axis");
-            }
-        },
-
-        /**
-         * Contains the contents of the axis. 
-         */
-        node: {
-            value: null
-        },
-
-        /**
-         * Direction of the axis.
-         */
-        position: {
-            value: "bottom",
-
-            validator: function(val)
-            {
-                return ((val !== this.get("position")) && (val === "bottom" || val === "top" || val === "left" || val === "right"));
-            }
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the top of the axis.
-         */
-        topTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the bottom of the axis.
-         */
-        bottomTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the left of the axis.
-         */
-        leftTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Distance determined by the tick styles used to calculate the distance between the axis
-         * line in relation to the right side of the axis.
-         */
-        rightTickOffset: {
-            value: 0
-        },
-
-        /**
-         * Indicates whether the axis overlaps the graph. If an axis is the inner most axis on a given
-         * position and the tick position is inside or cross, the axis will need to overlap the graph.
-         */
-        overlapGraph: {
-            value:true,
-
-            validator: function(val)
-            {
-                return Y.Lang.isBoolean(val);
-            }
-        }
-    }
 });
-        
+
+Y.AxisRenderer = AxisRenderer;        

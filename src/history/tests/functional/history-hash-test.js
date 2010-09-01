@@ -21,9 +21,94 @@ Y.Test.Runner.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            'onhashchange should be case-sensitive (except in IE8+)': Y.UA.ie >= 8,
-            'onhashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8
+            'hashchange should be case-sensitive (except in IE8+)': Y.UA.ie >= 8,
+            'hashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8
         }
+    },
+
+    // -- onhashchange ---------------------------------------------------------
+    'synthetic hashchange event should fire when the hash changes': function () {
+        var changed;
+
+        Y.once('hashchange', function (e) {
+            changed = true;
+
+            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+
+            Y.ObjectAssert.ownsKeys([
+                'oldHash',
+                'oldUrl',
+                'newHash',
+                'newUrl'
+            ], e, 'Event facade is missing one or more properties');
+
+            if (Y.HistoryBase.nativeHashChange) {
+                Y.ObjectAssert.ownsKey('_event', e, 'Event facade is missing the _event property');
+            }
+        }, win);
+
+        Y.HistoryHash.setHash('#foo=bar');
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed, "Synthetic hashchange event wasn't fired.");
+        }, 50);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2528444
+    'hashchange should be case-sensitive (except in IE8+)': function () {
+        var changed;
+
+        Y.once('hashchange', function () {
+            changed = true;
+            Y.Assert.areSame('a=b', Y.HistoryHash.getHash());
+        }, win);
+
+        Y.HistoryHash.setHash('#a=b');
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed, "Synthetic hashchange event wasn't fired.");
+
+            changed = false;
+
+            Y.once('hashchange', function () {
+                changed = true;
+                Y.Assert.areSame('a=B', Y.HistoryHash.getHash());
+            }, win);
+
+            Y.HistoryHash.setHash('#a=B');
+
+            this.wait(function () {
+                Y.Assert.isTrue(changed, "Synthetic hashchange event wasn't fired.");
+            }, 50);
+        }, 50);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2528444
+    'hashchange should NOT be case-sensitive in IE8+': function () {
+        var changed;
+
+        Y.once('hashchange', function () {
+            changed = true;
+            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+        }, win);
+
+        Y.HistoryHash.setHash('#foo=bar');
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed);
+
+            changed = false;
+
+            Y.once('hashchange', function () {
+                changed = true;
+            }, win);
+
+            Y.HistoryHash.setHash('#foo=baR');
+
+            this.wait(function () {
+                Y.Assert.isFalse(changed, "Synthetic hashchange event was fired when it shouldn't have been.");
+            }, 50);
+        }, 50);
     },
 
     // -- Static Properties and Methods ----------------------------------------
@@ -112,6 +197,21 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame('#!withprefix', location.hash);
     },
 
+    // -- Constructor ----------------------------------------------------------
+    'bookmarked state should be merged into initialState': function () {
+        Y.HistoryHash.setHash('a=aardvark&b=bumblebee');
+
+        this.wait(function () {
+            var h     = new Y.HistoryHash({initialState: {b: 'blowfish', c: 'cheetah'}}),
+                state = h.get();
+
+            Y.Assert.areSame(3, Obj.size(state));
+            Y.Assert.areSame('aardvark', state.a);
+            Y.Assert.areSame('bumblebee', state.b);
+            Y.Assert.areSame('cheetah', state.c);
+        }, 50);
+    },
+
     // -- Instance Methods -----------------------------------------------------
     'add() should change the hash': function () {
         Y.HistoryHash.setHash('');
@@ -126,66 +226,6 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.Assert.areSame('aardvark', this.history.get('a'));
         Y.Assert.areSame('boomerang', this.history.get('b'));
-    },
-
-    // -- Bug Tests ------------------------------------------------------------
-
-    // http://yuilibrary.com/projects/yui3/ticket/2528444
-    'onhashchange should be case-sensitive (except in IE8+)': function () {
-        var changed;
-
-        Y.once('hashchange', function () {
-            changed = true;
-            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
-        }, win);
-
-        Y.HistoryHash.setHash('#foo=bar');
-
-        this.wait(function () {
-            Y.Assert.isTrue(changed);
-
-            changed = false;
-
-            Y.once('hashchange', function () {
-                changed = true;
-                Y.Assert.areSame('foo=baR', Y.HistoryHash.getHash());
-            }, win);
-
-            Y.HistoryHash.setHash('#foo=baR');
-
-            this.wait(function () {
-                Y.Assert.isTrue(changed);
-            }, 50);
-        }, 50);
-    },
-
-    // http://yuilibrary.com/projects/yui3/ticket/2528444
-    'onhashchange should NOT be case-sensitive in IE8+': function () {
-        var changed;
-
-        Y.once('hashchange', function () {
-            changed = true;
-            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
-        }, win);
-
-        Y.HistoryHash.setHash('#foo=bar');
-
-        this.wait(function () {
-            Y.Assert.isTrue(changed);
-
-            changed = false;
-
-            Y.once('hashchange', function () {
-                changed = true;
-                Y.Assert.fail();
-            }, win);
-
-            Y.HistoryHash.setHash('#foo=baR');
-
-            this.wait(function () {
-                Y.Assert.isFalse(changed);
-            }, 50);
-        }, 50);
     }
 }));
 

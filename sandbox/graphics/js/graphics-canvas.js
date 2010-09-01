@@ -10,7 +10,6 @@ Graphic.prototype = {
         this._initProps();
     },
 
-
     /** 
      *Specifies a bitmap fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
@@ -24,6 +23,7 @@ Graphic.prototype = {
         this._fillY = !isNaN(config.ty) ? config.ty : NaN;
         this._fillType =  'bitmap';
         this._bitmapFill = context.createPattern(bitmap, repeat);
+        return this;
     },
 
     /**
@@ -42,7 +42,6 @@ Graphic.prototype = {
             this._fillColor = color;
             this._fillType = 'solid';
         }
-
         return this;
     },
 
@@ -77,131 +76,7 @@ Graphic.prototype = {
             colors[i] = color;
         }
         this._context.beginPath();
-    },
-   
-    /**
-     * Clears the graphics object.
-     */
-    clear: function() {
-        this._initProps();
-        this._canvas.width = this._canvas.width;
-    },
-
-    /**
-     * Draws a bezier curve
-     */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-        this._drawingComplete = false;
-    },
-
-    /**
-     * Draws a quadratic curve
-     */
-    quadraticCurveTo: function(controlX, controlY, anchorX, anchorY) {
-        this._context.quadraticCurveTo(controlX, controlY, anchorX, anchorY);
-        this._drawingComplete = false;
-    },
-
-    /**
-     * Draws a circle
-     */
-	drawCircle: function(x, y, radius) {
-        var context = this._context,
-            startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180;
-        this._drawingComplete = false;
-        this._trackPos(x, y);
-        this._trackSize(radius * 2, radius * 2);
-        context.beginPath();
-        context.arc(x, y, radius, startAngle, endAngle, false);
-        this._drawShape();
-    },
-
-    /**
-     * Draws an ellipse
-     */
-	drawEllipse: function(x, y, w, h) {
-        var context = this._context,
-            l = 8,
-            theta = -(45/180) * Math.PI,
-            angle = 0,
-            angleMid,
-            radius = w/2,
-            yRadius = h/2,
-            i = 0,
-            centerX = x + radius,
-            centerY = y + yRadius,
-            ax, ay, bx, by, cx, cy;
-        this._drawingComplete = false;
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        context.beginPath();
-        ax = centerX + Math.cos(0) * radius;
-        ay = centerY + Math.sin(0) * yRadius;
-        context.moveTo(ax, ay);
-        
-        for(; i < l; i++)
-        {
-            angle += theta;
-            angleMid = angle - (theta / 2);
-            bx = centerX + Math.cos(angle) * radius;
-            by = centerY + Math.sin(angle) * yRadius;
-            cx = centerX + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
-            cy = centerY + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-            context.quadraticCurveTo(cx, cy, bx, by);
-        }
-        this._drawShape();
-	},
-
-    /**
-     * Draws a rectangle
-     */
-    drawRect: function(x, y, w, h) {
-        this._drawingComplete = false;
-        this._context.beginPath();
-        this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._drawShape();
-    },
-
-    /**
-     * Draws a rectangle with rounded corners
-     */
-    drawRoundRect: function(x, y, w, h, ew, eh) {
-        var ctx = this._context;
-        this._drawingComplete = false;
-        ctx.beginPath();
-        ctx.moveTo(x, y + eh);
-        ctx.lineTo(x, y + h - eh);
-        ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
-        ctx.lineTo(x + w - ew, y + h);
-        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-        ctx.lineTo(x + w, y + eh);
-        ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
-        ctx.lineTo(x + ew, y);
-        ctx.quadraticCurveTo(x, y, x, y + eh);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._drawShape();
-    },
-
-    /**
-     * Ends a drawing
-     */
-    end: function() {
-        this._drawShape();
-        this._initProps();
-    },
-    
-    /**
-     * @private
-     * Not implemented
-     * Specifies a gradient to use for the stroke when drawing lines.
-     */
-    lineGradientStyle: function() {
-        Y.log('lineGradientStyle not implemented', 'warn', 'graphics-canvas');
+        return this;
     },
 
     /**
@@ -237,11 +112,12 @@ Graphic.prototype = {
         if (caps === 'butt') {
             caps = 'none';
         }
-
+        
         if (context.lineCap) { // FF errors when trying to set
             //context.lineCap = caps;
         }
         this._drawingComplete = false;
+        return this;
     },
 
     /**
@@ -257,10 +133,11 @@ Graphic.prototype = {
 
         for (i = 0, len = args.length; i < len; ++i) {
             context.lineTo(args[i][0], args[i][1]);
-
+            this._updateShapeProps.apply(this, args[i]);
             this._trackSize.apply(this, args[i]);
         }
         this._drawingComplete = false;
+        return this;
     },
 
     /**
@@ -269,7 +146,263 @@ Graphic.prototype = {
     moveTo: function(x, y) {
         this._context.moveTo(x, y);
         this._trackPos(x, y);
+        this._updateShapeProps(x, y);
         this._drawingComplete = false;
+        return this;
+    },
+   
+    /**
+     * Clears the graphics object.
+     */
+    clear: function() {
+        this._initProps();
+        this._canvas.width = this._canvas.width;
+        this._canvas.height = this._canvas.height;
+        return this;
+    },
+
+    /**
+     * Draws a bezier curve
+     */
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
+        this._context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
+        this._drawingComplete = false;
+        this._updateShapeProps(x, y);
+        this._trackSize(x, y);
+        this._trackPos(x, y);
+        return this;
+    },
+
+    /**
+     * Draws a quadratic curve
+     */
+    quadraticCurveTo: function(controlX, controlY, anchorX, anchorY) {
+        this._context.quadraticCurveTo(controlX, controlY, anchorX, anchorY);
+        this._drawingComplete = false;
+        this._updateShapeProps(anchorX, anchorY);
+        return this;
+    },
+
+    /**
+     * Draws a circle
+     */
+	drawCircle: function(x, y, radius) {
+        var context = this._context,
+            startAngle = 0,
+            endAngle = 2 * Math.PI;
+        this._shape = {
+            x:x - radius,
+            y:y - radius,
+            w:radius * 2,
+            h:radius * 2
+        };
+        this._drawingComplete = false;
+        this._trackPos(x, y);
+        this._trackSize(radius * 2, radius * 2);
+        context.beginPath();
+        context.arc(x, y, radius, startAngle, endAngle, false);
+        this._draw();
+        return this;
+    },
+
+    /**
+     * Draws an ellipse
+     */
+	drawEllipse: function(x, y, w, h) {
+        this._shape = {
+            x:x,
+            y:y,
+            w:w,
+            h:h
+        };
+        if(this._stroke && this._context.lineWidth > 0)
+        {
+            w -= this._context.lineWidth * 2;
+            h -= this._context.lineWidth * 2;
+            x += this._context.lineWidth;
+            y += this._context.lineWidth;
+        }
+        var context = this._context,
+            l = 8,
+            theta = -(45/180) * Math.PI,
+            angle = 0,
+            angleMid,
+            radius = w/2,
+            yRadius = h/2,
+            i = 0,
+            centerX = x + radius,
+            centerY = y + yRadius,
+            ax, ay, bx, by, cx, cy;
+        this._drawingComplete = false;
+        this._trackPos(x, y);
+        this._trackSize(x + w, y + h);
+
+        context.beginPath();
+        ax = centerX + Math.cos(0) * radius;
+        ay = centerY + Math.sin(0) * yRadius;
+        context.moveTo(ax, ay);
+        
+        for(; i < l; i++)
+        {
+            angle += theta;
+            angleMid = angle - (theta / 2);
+            bx = centerX + Math.cos(angle) * radius;
+            by = centerY + Math.sin(angle) * yRadius;
+            cx = centerX + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
+            cy = centerY + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
+            context.quadraticCurveTo(cx, cy, bx, by);
+        }
+        this._draw();
+        return this;
+	},
+
+    /**
+     * Draws a rectangle
+     */
+    drawRect: function(x, y, w, h) {
+        var ctx = this._context;
+        this._shape = {
+            x:x,
+            y:y,
+            w:w,
+            h:h
+        };
+        this._drawingComplete = false;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + w, y);
+        ctx.lineTo(x + w, y + h);
+        ctx.lineTo(x, y + h);
+        ctx.lineTo(x, y);
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+        this._draw();
+        return this;
+    },
+
+    /**
+     * Draws a rectangle with rounded corners
+     */
+    drawRoundRect: function(x, y, w, h, ew, eh) {
+        this._shape = {
+            x:x,
+            y:y,
+            w:w,
+            h:h
+        };
+        var ctx = this._context;
+        this._drawingComplete = false;
+        ctx.beginPath();
+        ctx.moveTo(x, y + eh);
+        ctx.lineTo(x, y + h - eh);
+        ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
+        ctx.lineTo(x + w - ew, y + h);
+        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+        ctx.lineTo(x + w, y + eh);
+        ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
+        ctx.lineTo(x + ew, y);
+        ctx.quadraticCurveTo(x, y, x, y + eh);
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+        this._draw();
+        return this;
+    },
+
+    /**
+     * @private
+     * Draws a wedge.
+     * 
+     * @param x				x component of the wedge's center point
+     * @param y				y component of the wedge's center point
+     * @param startAngle	starting angle in degrees
+     * @param arc			sweep of the wedge. Negative values draw clockwise.
+     * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param yRadius		[optional] y radius for wedge.
+     */
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    {
+        var segs,
+            segAngle,
+            theta,
+            angle,
+            angleMid,
+            ax,
+            ay,
+            bx,
+            by,
+            cx,
+            cy,
+            i = 0;
+
+        this._drawingComplete = false;
+        // move to x,y position
+        this.moveTo(x, y);
+        
+        yRadius = yRadius || radius;
+        
+        // limit sweep to reasonable numbers
+        if(Math.abs(arc) > 360)
+        {
+            arc = 360;
+        }
+        
+        // First we calculate how many segments are needed
+        // for a smooth arc.
+        segs = Math.ceil(Math.abs(arc) / 45);
+        
+        // Now calculate the sweep of each segment.
+        segAngle = arc / segs;
+        
+        // The math requires radians rather than degrees. To convert from degrees
+        // use the formula (degrees/180)*Math.PI to get radians.
+        theta = -(segAngle / 180) * Math.PI;
+        
+        // convert angle startAngle to radians
+        angle = -(startAngle / 180) * Math.PI;
+        
+        // draw the curve in segments no larger than 45 degrees.
+        if(segs > 0)
+        {
+            // draw a line from the center to the start of the curve
+            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
+            ay = y + Math.sin(-startAngle / 180 * Math.PI) * yRadius;
+            this.lineTo(ax, ay);
+            // Loop for drawing curve segments
+            for(; i < segs; ++i)
+            {
+                angle += theta;
+                angleMid = angle - (theta / 2);
+                bx = x + Math.cos(angle) * radius;
+                by = y + Math.sin(angle) * yRadius;
+                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
+                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
+                this.quadraticCurveTo(cx, cy, bx, by);
+            }
+            // close the wedge by drawing a line to the center
+            this.lineTo(x, y);
+        }
+        this._trackPos(x, y);
+        this._trackSize(radius, radius);
+        this._draw();
+    },
+
+    /**
+     * Ends a drawing
+     */
+    end: function() {
+        this._draw();
+        this._initProps();
+        return this;
+    },
+    
+    /**
+     * @private
+     * Not implemented
+     * Specifies a gradient to use for the stroke when drawing lines.
+     */
+    lineGradientStyle: function() {
+        Y.log('lineGradientStyle not implemented', 'warn', 'graphics-canvas');
+        return this;
     },
 
     /**
@@ -279,8 +412,21 @@ Graphic.prototype = {
     {
         this._node.style.width = w + "px";
         this._node.style.height = h + "px";
+        this._canvas.style.top = "0px";
+        this._canvas.style.left = "0px";
         this._canvas.width = w;
         this._canvas.height = h;
+    },
+
+    getWidth: function()
+    {
+        return this._canvas.offsetWidth;
+    },
+
+    setPosition: function(x, y)
+    {
+        this._node.style.left = x + "px";
+        this._node.style.top = y + "px";
     },
 
     /**
@@ -299,6 +445,8 @@ Graphic.prototype = {
         this._node.appendChild(this._canvas);
         this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
         this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
+        this._canvas.style.position = "absolute";
+
         return this;
     },
 
@@ -318,7 +466,7 @@ Graphic.prototype = {
 
         this._width = 0;
         this._height = 0;
-
+        //this._shape = null;
         this._x = 0;
         this._y = 0;
         this._fillType = null;
@@ -361,10 +509,10 @@ Graphic.prototype = {
         var prop = '_' + type,
             colors = this[prop + 'Colors'],
             ratios = this[prop + 'Ratios'],
-            x = !isNaN(this._fillX) ? this._fillX : this._x,
-            y = !isNaN(this._fillY) ? this._fillY : this._y,
-            w = this._fillWidth || (this._width - x),
-            h = this._fillHeight || (this._height - y),
+            x = !isNaN(this._fillX) ? this._fillX : this._shape.x,
+            y = !isNaN(this._fillY) ? this._fillY : this._shape.y,
+            w = this._fillWidth || (this._shape.w),
+            h = this._fillHeight || (this._shape.h),
             ctx = this._context,
             r = this[prop + 'Rotation'],
             i,
@@ -432,16 +580,17 @@ Graphic.prototype = {
             ratios = this[prop + "Ratios"],
             i,
             l,
-            w = this._fillWidth || this._width,
-            x = !isNaN(this._fillX) ? this._fillX : this._x,
-            y = !isNaN(this._fillY) ? this._fillY : this._y,
+            w = this._fillWidth || this._shape.w,
+            h = this._fillHeight || this._shape.h,
+            x = !isNaN(this._fillX) ? this._fillX : this._shape.x,
+            y = !isNaN(this._fillY) ? this._fillY : this._shape.y,
             color,
             ratio,
             def,
             grad,
             ctx = this._context;
-            x += this._fillWidth/2;
-            y += this._fillHeight/2;
+            x += w/2;
+            y += h/2;
         grad = ctx.createRadialGradient(x, y, 1, x, y, w/2);
         l = colors.length;
         def = 0;
@@ -457,9 +606,9 @@ Graphic.prototype = {
      * @private
      * Completes a shape or drawing
      */
-    _drawShape: function()
+    _draw: function()
     {
-        if(this._drawingComplete)
+        if(this._drawingComplete || !this._shape)
         {
             return;
         }
@@ -482,6 +631,7 @@ Graphic.prototype = {
             context.strokeStyle = this._strokeStyle;
             context.stroke();
         }
+        //this._shape = null;
         this._drawingComplete = true;
     },
 
@@ -534,7 +684,6 @@ Graphic.prototype = {
      */
     _createGraphic: function(config) {
         var graphic = Y.config.doc.createElement('canvas');
-
         // no size until drawn on
         graphic.width = 600;
         graphic.height = 600;
@@ -574,6 +723,128 @@ Graphic.prototype = {
         if (y > this._y) {
             this._y = y;
         }
+    },
+
+    /**
+     * @private
+     * Updates the position and size of the current drawing
+     */
+    _updateShapeProps: function(x, y)
+    {
+        var w,h;
+        if(!this._shape)
+        {
+            this._shape = {};
+        }
+        if(!this._shape.x)
+        {
+            this._shape.x = x;
+        }
+        else
+        {
+            this._shape.x = Math.min(this._shape.x, x);
+        }
+        if(!this._shape.y)
+        {
+            this._shape.y = y;
+        }
+        else
+        {
+            this._shape.y = Math.min(this._shape.y, y);
+        }
+        w = Math.abs(x - this._shape.x);
+        if(!this._shape.w)
+        {
+            this._shape.w = w;
+        }
+        else
+        {
+            this._shape.w = Math.max(w, this._shape.w);
+        }
+        h = Math.abs(y - this._shape.y);
+        if(!this._shape.h)
+        {
+            this._shape.h = h;
+        }
+        else
+        {
+            this._shape.h = Math.max(h, this._shape.h);
+        }
+    },
+
+    getShape: function(config)
+    {
+        var shape,
+            node,
+            type = config.shape || config.type,
+            fill = config.fill,
+            border = config.border,
+            w = config.width,
+            h = config.height;  
+        this.clear();
+        this.setPosition(0, 0);
+        this.setSize(w, h);
+        if(border && border.weight && border.weight > 0)
+        {
+            border.color = border.color || "#000";
+            border.alpha = border.alpha || 1;
+            this.lineStyle(border.weight, border.color, border.alpha);
+        }
+        if(fill.type === "radial" || fill.type === "linear")
+        {
+            this.beginGradientFill(fill);
+        }
+        else if(fill.type === "bitmap")
+        {
+            this.beginBitmapFill(fill);
+        }   
+        else
+        {
+            this.beginFill(fill.color, fill.alpha);
+        }
+        switch(type)
+        {
+            case "circle" :
+                this.drawEllipse(0, 0, w, h);
+            break;
+            case "rect" :
+                this.drawRect(0, 0, w, h);
+            break;
+        }
+        shape = {
+            type:type,
+            width:w,
+            height:h,
+            fill:fill,
+            node:this._node,
+            border:border
+        };
+        return shape;
+    },
+
+    updateShape: function(shape, config)
+    {
+        if(config.fill)
+        {
+            shape.fill = Y.merge(shape.fill, config.fill);
+        }
+        if(config.border)
+        {
+            shape.border = Y.merge(shape.border, config.border);
+        }
+        if(config.width)
+        {
+            shape.width = config.width;
+        }
+        if(config.height)
+        {
+            shape.height = config.height;
+        }
+        if(config.shape !== shape.type)
+        {
+            shape.type = config.shape;
+        }
+        return this.getShape(shape);
     }
 };
 

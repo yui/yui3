@@ -1,7 +1,7 @@
 YUI.add('createlink-base', function(Y) {
 
     /**
-     * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
+     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @module editor
      * @submodule createlink-base
      */     
@@ -49,13 +49,16 @@ YUI.add('createlink-base', function(Y) {
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);
 
             if (url) {
+
                 this.get('host')._execCommand(cmd, url);
                 sel = new inst.Selection();
                 out = sel.getSelected();
                 if (!sel.isCollapsed && out.size()) {
                     //We have a selection
                     a = out.item(0).one('a');
-                    out.item(0).replace(a);
+                    if (a) {
+                        out.item(0).replace(a);
+                    }
                 } else {
                     //No selection, insert a new node..
                     this.get('host').execCommand('inserthtml', '<a href="' + url + '">' + url + '</a>');
@@ -67,4 +70,4 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});

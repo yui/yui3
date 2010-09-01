@@ -37,6 +37,9 @@ YUI.add('json-parse', function(Y) {
 
 
 // All internals kept private for security reasons
+function fromGlobal(ref) {
+    return (Y.config.win || this || {})[ref];
+}
 
 
     /**
@@ -46,7 +49,9 @@ YUI.add('json-parse', function(Y) {
      * @type {Object}
      * @private
      */
-var _JSON  = (Y.config.win || {}).JSON,
+var _JSON  = fromGlobal('JSON'),
+    // Create an indirect reference to eval to allow for minification
+    _eval  = fromGlobal('eval'),
     Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
     useNative = !!Native,
 
@@ -178,7 +183,7 @@ var _JSON  = (Y.config.win || {}).JSON,
 
             // Eval the text into a JavaScript data structure, apply any
             // reviver function, and return
-            return _revive( eval('(' + s + ')'), reviver );
+            return _revive( _eval('(' + s + ')'), reviver );
         }
 
         throw new SyntaxError('JSON.parse');
@@ -464,6 +469,7 @@ Y.mix(Y.namespace('JSON'),{
      * @method dateToString
      * @param d {Date} The Date to serialize
      * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
+     * @deprecated Use a replacer function
      * @static
      */
     dateToString : function (d) {

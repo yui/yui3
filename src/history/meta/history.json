@@ -1,5 +1,19 @@
 {
     "history": {
+        "plugins": {
+            "history-hash-ie": {
+                "condition": {
+                    "trigger": "history-hash",
+                    "test": "history-hash-ie-test.js"
+                },
+
+                "requires": [
+                    "history-hash",
+                    "node-base"
+                ]
+            }
+        },
+
         "submodules": {
             "history-base": {
                 "after": [
@@ -23,15 +37,11 @@
                 ]
             },
 
-            "history-hash-ie": {
-                "requires": [
-                    "history-base",
-                    "history-hash",
-                    "node-base"
-                ]
-            },
-
             "history-html5": {
+                "optional": [
+                    "json"
+                ],
+
                 "requires": [
                     "event-base",
                     "history-base",
