@@ -4,7 +4,7 @@
             "get": {}, 
             "yui-base": {}, 
             "rls": {
-                requires: ['features']
+                "requires": ["features"]
             }, 
             "features": {}, 
             "yui-later": {}, 

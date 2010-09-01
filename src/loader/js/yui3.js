@@ -1260,6 +1260,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp", 
             "jsonp-url"
         ]
+    }, 
+    "yui": {
+        "submodules": {
+            "features": {}, 
+            "get": {}, 
+            "intl-base": {}, 
+            "rls": {
+                "requires": [
+                    "features"
+                ]
+            }, 
+            "yui-base": {}, 
+            "yui-later": {}, 
+            "yui-log": {}, 
+            "yui-throttle": {}
+        }
     }
 };
-YUI.Env[Y.version].md5 = 'b0aaecb8410c7f03ea32e34fa0d6be91';
+YUI.Env[Y.version].md5 = '331192353a439d3a413cc7e558ea345c';

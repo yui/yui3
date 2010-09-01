@@ -1246,5 +1246,21 @@
             "jsonp", 
             "jsonp-url"
         ]
+    }, 
+    "yui": {
+        "submodules": {
+            "features": {}, 
+            "get": {}, 
+            "intl-base": {}, 
+            "rls": {
+                "requires": [
+                    "features"
+                ]
+            }, 
+            "yui-base": {}, 
+            "yui-later": {}, 
+            "yui-log": {}, 
+            "yui-throttle": {}
+        }
     }
 }
