@@ -732,7 +732,7 @@ proto = {
             // server side loader service
             Y.Get.script(Y._rls(args), {
                 onEnd: function(o) {
-                    handleLoader(o.data);
+                    handleLoader(o);
                 }, 
                 data: args
             });
@@ -3777,25 +3777,17 @@ YUI.add('yui-later', function(Y) {
     later = function(when, o, fn, data, periodic) {
         when = when || 0; 
 
-        var m = fn, f = m, id, d;
+        var m = fn, f, id;
 
-        if (o) {
-            if (L.isString(fn)) {
-                m = o[fn];
-            }
-
-            if(!Y.Lang.isUndefined(data)) {
-                d = Y.Array(data);
-            }
-
-            f = function() {
-                if (d) {
-                    m.apply(o, d) ;
-                } else {
-                    m.call(o);
-                }
-            };
+        if (o && L.isString(fn)) {
+            m = o[fn];
         }
+
+        f = !L.isUndefined(data) ? function() {
+            m.apply(o, Y.Array(data));
+        } : function() {
+            m.call(o);
+        };
 
         id = (periodic) ? setInterval(f, when) : setTimeout(f, when);
 

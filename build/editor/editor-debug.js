@@ -749,7 +749,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
 YUI.add('selection', function(Y) {
 
     /**
@@ -905,7 +905,7 @@ YUI.add('selection', function(Y) {
 
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
-                el.className = 'hr';
+                el.className = 'hr yui-non';
                 el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
                 el.setAttribute('readonly', true);
                 el.setAttribute('contenteditable', false); //Keep it from being Edited
@@ -1010,6 +1010,9 @@ YUI.add('selection', function(Y) {
         if (!Y.UA.ie) {
             divs = Y.all('div, p');
             divs.each(function(d) {
+                if (d.hasClass('yui-non')) {
+                    return;
+                }
                 var html = d.get('innerHTML');
                 if (html === '') {
                     //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
@@ -1637,7 +1640,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('exec-command', function(Y) {
 
 
@@ -1959,7 +1962,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -2030,7 +2033,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -2104,7 +2107,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-base', function(Y) {
 
 
@@ -2151,6 +2154,10 @@ YUI.add('editor-base', function(Y) {
                 bubbles: true,
                 defaultFn: this._defNodeChangeFn
             });
+
+            if (Y.Plugin.EditorPara) {
+                //this.plug(Y.Plugin.EditorPara);
+            }
         },
         destructor: function() {
             this.frame.destroy();
@@ -2822,7 +2829,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -2996,7 +3003,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -3079,102 +3086,13 @@ YUI.add('editor-bidi', function(Y) {
             this._checkForChange();
             this.firstEvent = false;
         },
-        /**
-        * Utility method to create an empty paragraph when the document is empty.
-        * @private
-        * @method _fixFirstPara
-        */
-        _fixFirstPara: function() {
-            var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
-            sel = new inst.Selection();
-            sel.focusCursor(true, false);
-        },
-        /**
-        * nodeChange handler to handle fixing an empty document.
-        * @private
-        * @method _onNodeChange
-        */
-        _onNodeChange: function(e) {
-            var host = this.get(HOST), inst = host.getInstance();
-
-            switch (e.changedType) {
-                case 'keydown':
-                    if (inst.config.doc.childNodes.length < 2) {
-                        var cont = inst.config.doc.body.innerHTML;
-                        if (cont && cont.length < 5 && cont.toLowerCase() == '<br>') {
-                            this._fixFirstPara();
-                        }
-                    }
-                    break;
-                case 'backspace-up':
-                case 'delete-up':
-                    var ps = inst.all(FIRST_P), br, item;
-                    if (ps.size() < 2) {
-                        item = inst.one(BODY);
-                        if (ps.item(0)) {
-                            item = ps.item(0);
-                        }
-                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                            this._fixFirstPara();
-                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                            e.changedEvent.halt();
-                        }
-                    }
-                    break;
-            }
-            
-        },
-        /**
-        * Performs a block element filter when the Editor is first ready
-        * @private
-        * @method _afterEditorReady
-        */
-        _afterEditorReady: function() {
-            var host = this.get(HOST), inst = host.getInstance();
-            if (inst) {
-                inst.Selection.filterBlocks();
-            }
-        },
-        /**
-        * Performs a block element filter when the Editor after an content change
-        * @private
-        * @method _afterContentChange
-        */
-        _afterContentChange: function() {
-            var host = this.get(HOST), inst = host.getInstance();
-            if (inst && inst.Selection) {
-                inst.Selection.filterBlocks();
-            }
-        },
-        /**
-        * Performs block/paste filtering after paste.
-        * @private
-        * @method _afterPaste
-        */
-        _afterPaste: function() {
-            var host = this.get(HOST), inst = host.getInstance(),
-                sel = new inst.Selection();
-
-            sel.setCursor();
-            
-            Y.later(50, host, function() {
-                inst.Selection.filterBlocks();
-                sel.focusCursor(true, true);
-            });
-            
-        },
         initializer: function() {
             var host = this.get(HOST);
 
             this.firstEvent = true;
             
             host.after(NODE_CHANGE, Y.bind(this._afterNodeChange, this));
-            host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.after('dom:mouseup', Y.bind(this._afterMouseUp, this));
-            host.after('ready', Y.bind(this._afterEditorReady, this));
-            host.after('contentChange', Y.bind(this._afterContentChange, this));
-            host.after('dom:paste', Y.bind(this._afterPaste, this));
         }
     }, {
         /**
@@ -3360,8 +3278,151 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+YUI.add('editor-para', function(Y) {
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base']});
+
+    /**
+     * Plugin for Editor to paragraph auto wrapping and correction.
+     * @module editor
+     * @submodule editor-para
+     */     
+    /**
+     * Plugin for Editor to paragraph auto wrapping and correction.
+     * @class Plugin.EditorPara
+     * @extends Base
+     * @constructor
+     */
+
+
+    var EditorPara = function() {
+        EditorPara.superclass.constructor.apply(this, arguments);
+    }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange',
+    FIRST_P = BODY + ' > p';
+
+    Y.extend(EditorPara, Y.Base, {
+        /**
+        * Utility method to create an empty paragraph when the document is empty.
+        * @private
+        * @method _fixFirstPara
+        */
+        _fixFirstPara: function() {
+            var host = this.get(HOST), inst = host.getInstance(), sel;
+            inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
+            sel = new inst.Selection();
+            sel.focusCursor(true, false);
+        },
+        /**
+        * nodeChange handler to handle fixing an empty document.
+        * @private
+        * @method _onNodeChange
+        */
+        _onNodeChange: function(e) {
+            var host = this.get(HOST), inst = host.getInstance();
+
+            switch (e.changedType) {
+                case 'keydown':
+                    if (inst.config.doc.childNodes.length < 2) {
+                        var cont = inst.config.doc.body.innerHTML;
+                        if (cont && cont.length < 5 && cont.toLowerCase() == '<br>') {
+                            this._fixFirstPara();
+                        }
+                    }
+                    break;
+                case 'backspace-up':
+                case 'delete-up':
+                    var ps = inst.all(FIRST_P), br, item;
+                    if (ps.size() < 2) {
+                        item = inst.one(BODY);
+                        if (ps.item(0)) {
+                            item = ps.item(0);
+                        }
+                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
+                            this._fixFirstPara();
+                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
+                            e.changedEvent.halt();
+                        }
+                    }
+                    break;
+            }
+            
+        },
+        /**
+        * Performs a block element filter when the Editor is first ready
+        * @private
+        * @method _afterEditorReady
+        */
+        _afterEditorReady: function() {
+            var host = this.get(HOST), inst = host.getInstance();
+            if (inst) {
+                inst.Selection.filterBlocks();
+            }
+        },
+        /**
+        * Performs a block element filter when the Editor after an content change
+        * @private
+        * @method _afterContentChange
+        */
+        _afterContentChange: function() {
+            var host = this.get(HOST), inst = host.getInstance();
+            if (inst && inst.Selection) {
+                inst.Selection.filterBlocks();
+            }
+        },
+        /**
+        * Performs block/paste filtering after paste.
+        * @private
+        * @method _afterPaste
+        */
+        _afterPaste: function() {
+            var host = this.get(HOST), inst = host.getInstance(),
+                sel = new inst.Selection();
+
+            sel.setCursor();
+            
+            Y.later(50, host, function() {
+                inst.Selection.filterBlocks();
+                sel.focusCursor(true, true);
+            });
+            
+        },
+        initializer: function() {
+            var host = this.get(HOST);
+
+            host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
+            host.after('ready', Y.bind(this._afterEditorReady, this));
+            host.after('contentChange', Y.bind(this._afterContentChange, this));
+            host.after('dom:paste', Y.bind(this._afterPaste, this));
+        }
+    }, {
+        /**
+        * editorBidi
+        * @static
+        * @property NAME
+        */
+        NAME: 'editorPara',
+        /**
+        * editorBidi
+        * @static
+        * @property NS
+        */
+        NS: 'editorPara',
+        ATTRS: {
+            host: {
+                value: false
+            }
+        }
+    });
+    
+    Y.namespace('Plugin');
+    
+    Y.Plugin.EditorPara = EditorPara;
+
+
+
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+
+
+YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});
 

@@ -115,7 +115,7 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
-<p>Above the HR</p>
+Above the HR
 <hr size="1">
 <?php //include('mail.php'); ?>
 </div>
@@ -195,6 +195,7 @@ This is some <strong>other</strong> loose test.
 <script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/editor-para.js?bust=<?php echo(time()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -216,7 +217,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {

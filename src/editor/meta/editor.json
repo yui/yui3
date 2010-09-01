@@ -15,7 +15,8 @@
                     "frame",
                     "node",
                     "exec-command",
-                    "selection"
+                    "selection",
+                    "editor-para"
                 ]
             },
             "selection": {
@@ -34,6 +35,11 @@
                 ]
             },
             "editor-bidi": {
+                "requires": [
+                    "editor-base"
+                ]
+            },
+            "editor-para": {
                 "requires": [
                     "editor-base"
                 ]

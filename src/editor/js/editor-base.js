@@ -42,6 +42,10 @@
                 bubbles: true,
                 defaultFn: this._defNodeChangeFn
             });
+
+            if (Y.Plugin.EditorPara) {
+                //this.plug(Y.Plugin.EditorPara);
+            }
         },
         destructor: function() {
             this.frame.destroy();

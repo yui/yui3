@@ -44,6 +44,10 @@ YUI.add('editor-base', function(Y) {
                 bubbles: true,
                 defaultFn: this._defNodeChangeFn
             });
+
+            if (Y.Plugin.EditorPara) {
+                //this.plug(Y.Plugin.EditorPara);
+            }
         },
         destructor: function() {
             this.frame.destroy();
@@ -715,4 +719,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});

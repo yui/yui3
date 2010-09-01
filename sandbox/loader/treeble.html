@@ -1,0 +1,438 @@
+<!DOCTYPE html public '-//w3c//dtd html 4.01//en' http://www.w3.org/tr/html4/strict.dtd'>
+<html>
+<head>
+	<title>YUI 3 Treeble Example</title>
+	<meta http-equiv=content-type content="text/html; charset=utf-8">
+
+<!--
+
+	<script src="http://yui.yahooapis.com/3.1.1/build/yui/yui-debug.js"></script>
+	<script src="../../build/yui/yui-debug.js"></script>
+    -->
+	<script src="http://github.com/yui/yui3/raw/master/build/yui/yui-debug.js"></script>
+	<script src="gallery-treeble-min.js"></script>
+	<script src="gallery-paginator-min.js"></script>
+    
+
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.1/build/cssreset/reset-min.css">
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.1/build/cssbase/base-min.css" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/gallery-paginator.css" />
+
+	<style type="text/css">
+	body
+	{
+		margin: 8px;
+	}
+
+	#treeble td.treeble-nub
+	{
+		border-right-color: transparent;
+	}
+
+	#treeble .row-toggle a.treeble-collapse-nub
+	{
+		padding:0 8px;
+		height:14px;
+		margin-left:2px;
+		*display:inline-block;
+	}
+
+	#treeble .row-closed a.treeble-collapse-nub
+	{
+		background:url(assets/closed.png) no-repeat;
+	}
+	#treeble .row-open a.treeble-collapse-nub
+	{
+		background:url(assets/open.png) no-repeat;
+	}
+
+	#treeble td .treeble-depth-1
+	{
+		padding-left: 15px;
+	}
+	#treeble td .treeble-depth-2
+	{
+		padding-left: 30px;
+	}
+	#treeble td .treeble-depth-3
+	{
+		padding-left: 45px;
+	}
+
+	table
+	{
+		border: 1px solid #7F7F7F;
+	}
+	th
+	{
+		border-color: #BBBBBB;
+		background-color: #D8D8DA;
+	}
+	td
+	{
+		border-color: #CBCBCB;
+		border-top-width : 0;
+		border-bottom-width : 0;
+	}
+	tr.odd
+	{
+		background-color: #EDF5FF;
+	}
+
+	.pg-rpp-label
+	{
+		padding-left: 2em;
+	}
+	</style>
+</head>
+<body class="yui3-skin-sam">
+
+<script type="text/javascript">
+YUI({
+	// filter: 'debug',
+    gallery: 'gallery-2010.08.18-17-12'
+}).use('gallery-treeble', 'gallery-paginator', function(Y)
+{
+	// column configuration
+
+	var columns =
+	[
+		{
+			formatter: function(elCell, oRecord, oColumn, oData)
+			{
+				elCell.addClass('treeble-nub');
+				if (oRecord.kiddies)
+				{
+					var path  = oRecord._yui_node_path;
+					var open  = ds.isOpen(path);
+					var clazz = open ? 'row-open' : 'row-closed';
+
+					elCell.addClass('row-toggle');
+					elCell.replaceClass(/row-(open|closed)/, clazz);
+					elCell.set('innerHTML', '<a class="treeble-collapse-nub" href="javascript:void(0);"></a>');
+
+					elCell.on('click', function()
+					{
+						toggleRow(path);
+					});
+				}
+			}
+		},
+		{
+			key: 'title',
+			label: 'Title',
+			formatter: function(elCell, oRecord, oColumn, oData)
+			{
+				var depth_class = 'treeble-depth-'+oRecord._yui_node_depth;
+				elCell.set('innerHTML', '<span class="'+depth_class+'">'+oData+'</span>');
+			}
+		},
+		{ key: 'year', label: 'Year' },
+		{ key: 'quantity', label: 'Quantity' }
+	];
+
+	// raw data
+
+	var data =
+	[
+		{title:"Fantasy",
+			kiddies:
+			[
+				{year:"1898-1963", title:"C.S. Lewis",
+					kiddies:
+					[
+						{year:"1950-1956", title:"Narnia",
+							kiddies:
+							[
+								{year:1950, quantity:10, title:"The Lion, the Witch and the Wardrobe"},
+								{year:1951, quantity:5, title:"Prince Caspian: The Return to Narnia"},
+								{year:1952, quantity:2, title:"The Voyage of the Dawn Treader"},
+								{year:1953, quantity:6, title:"The Silver Chair"},
+								{year:1954, quantity:9, title:"The Horse and His Boy"},
+								{year:1955, quantity:4, title:"The Magician's Nephew"},
+								{year:1956, quantity:8, title:"The Last Battle"}
+							]},
+						{year:"1938-1945", title:"Space Trilogy",
+							kiddies:
+							[
+								{year:1938, quantity:10, title:"Out of the Silent Planet"},
+								{year:1943, quantity:5, title:"Perelandra"},
+								{year:1945, quantity:2, title:"That Hideous Strength"}
+							]}
+					]},
+				{year:"1946-", title:"Philip Pullman",
+					kiddies:
+					[
+						{year:"1995-2000", title:"His Dark Materials",
+							kiddies:
+							[
+								{year:1995, quantity:7, title:"Northern Lights"},
+								{year:1997, quantity:5, title:"The Subtle Knife"},
+								{year:2000, quantity:8, title:"The Amber Spyglass"}
+							]}
+					]},
+				{year:"1892-1973", title:"J. R. R. Tolkien",
+					kiddies:
+					[
+						{year:1937, quantity:5, title:"The Hobbit"},
+						{year:"1937-1949", title:"The Lord of the Rings",
+							kiddies:
+							[
+								{year:1955, quantity:12, title:"The Fellowship of the Ring"},
+								{year:1955, quantity:0, title:"The Two Towers"},
+								{year:1955, quantity:8, title:"The Return of the King"}
+							]}
+					]}
+			]},
+		{title:"Science Fiction",
+			kiddies:
+			[
+				{year:"1928-1982", title:"Philip K. Dick",
+					kiddies:
+					[
+						{year:1966, quantity:5, title:"Do Androids Dream of Electric Sheep?"}
+					]},
+				{year:"1907-1988", title:"Robert A. Heinlein",
+					kiddies:
+					[
+						{year:1959, quantity:4, title:"Starship Troopers"},
+						{year:1961, quantity:7, title:"Stranger in a Strange Land"},
+						{year:1966, quantity:3, title:"The Moon Is a Harsh Mistress"}
+					]},
+				{year:"1912-2000", title:"A. E. van Vogt",
+					kiddies:
+					[
+						{year:1946, quantity:3, title:"Slan"},
+						{year:1950, quantity:5, title:"The Voyage of the Space Beagle"},
+						{year:1970, quantity:8, title:"Quest for the Future"}
+					]}
+			]},
+		{title:"Science",
+			kiddies:
+			[
+				{year:"1809-1882", title:"Charles Robert Darwin",
+					kiddies:
+					[
+						{year:1859, quantity:5, title:"On the Origin of Species by Means of Natural Selection, or the Preservation of Favoured Races in the Struggle for Life"},
+						{year:1881, quantity:2, title:"The Formation of Vegetable Mould through the Action of Worms"}
+					]},
+				{year:"1879-1955", title:"Albert Einstein",
+					kiddies:
+					[
+						{year:1905, quantity:8, title:"On a Heuristic Viewpoint Concerning the Production and Transformation of Light"},
+						{year:1905, quantity:5, title:"On the Electrodynamics of Moving Bodies"},
+						{year:1917, quantity:7, title:"Kosmologische Betrachtungen zur allgemeinen Relativit&auml;tstheorie"},
+						{year:1935, quantity:3, title:"Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?"}
+					]},
+				{year:"1564-1642", title:"Galileo Galilei",
+					kiddies:
+					[
+						{year:1610, quantity:5, title:"Sidereus Nuncius"},
+						{year:1615, quantity:2, title:"Letter to the Grand Duchess Christina"},
+						{year:1632, quantity:6, title:"Dialogo sopra i due massimi sistemi del mondo"}
+					]},
+				{year:"1643-1727", title:"Isaac Newton",
+					kiddies:
+					[
+						{year:1671, quantity:7, title:"Method of Fluxions"},
+						{year:1687, quantity:4, title:"Philosophi&aelig; Naturalis Principia Mathematica"},
+						{year:1704, quantity:3, title:"Opticks"},
+						{year:1701-25, quantity:13, title:"Reports as Master of the Mint"}
+					]}
+			]},
+		{title:"Xenobiology"}
+	];
+
+	// treeble config to be set on root datasource
+
+	var schema =
+	{
+		resultFields:
+		[
+			"id","quantity","year","title",
+			{key: 'kiddies', parser: 'treebledatasource'}
+		]
+	};
+
+	var schema_plugin_config =
+	{
+		fn:  Y.Plugin.DataSourceArraySchema,
+		cfg: {schema:schema}
+	};
+
+	var treeble_config =
+	{
+		generateRequest:        function() { },
+		schemaPluginConfig:     schema_plugin_config,
+		childNodesKey:          'kiddies',
+		totalRecordsReturnExpr: '.meta.totalRecords'
+	};
+
+	// root data source
+
+	var root            = new Y.DataSource.Local({source: data});
+	root.treeble_config = treeble_config;
+	root.plug(schema_plugin_config);
+
+	// TreebleDataSource
+
+	var ds = new Y.TreebleDataSource(
+	{
+		root:             root,
+		paginateChildren: false,
+		uniqueIdKey:      'title'	// normally, it would a database row id, but title happens to be unique in this example
+	});
+
+	// Paginator
+
+	var pg = new Y.Paginator(
+	{
+		totalRecords: 1,
+		rowsPerPage: 1,
+		rowsPerPageOptions: [1,2,5,10,25,50],
+		template: '{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} <span class="pg-rpp-label">Rows per page:</span> {RowsPerPageDropdown}'
+	});
+	pg.render('#pg');
+
+	function updatePaginator(state)
+	{
+		this.setPage(state.page, true);
+		this.setRowsPerPage(state.rowsPerPage, true);
+		this.setTotalRecords(state.totalRecords, true);
+		reloadTable();
+	}
+	pg.on('changeRequest', updatePaginator, pg);
+
+	// table
+
+	var container = Y.one('#treeble');
+	function renderTable(response)
+	{
+//		var t = new Date();
+
+		var s = '<table>';
+
+		s += '<tr>';
+		for (var i=0; i<columns.length; i++)
+		{
+			s += '<th>';
+			s += columns[i].label || '&nbsp;';
+			s += '</th>';
+		}
+		s += '</tr>';
+
+		var hasFormatters = false;
+
+		var data = response.results;
+		for (var i=0; i<data.length; i++)
+		{
+			s += '<tr';
+			if (i % 2)
+			{
+				s += ' class="odd"';
+			}
+			s += '>';
+
+			for (var j=0; j<columns.length; j++)
+			{
+				s += '<td>';
+
+				var key   = columns[j].key;
+				var value = null;
+				if (columns[j].formatter)
+				{
+					hasFormatters = true;
+				}
+				else
+				{
+					value = data[i][ key ];
+				}
+				s += !Y.Lang.isUndefined(value) && value !== null ? value : '&nbsp;';
+				s += '</td>';
+			}
+			s += '</tr>';
+		}
+
+		s += '</table>';
+
+		container.set('innerHTML', s);
+
+		if (hasFormatters)
+		{
+			var rows = container.all('tr');
+			var cells;
+			for (var i=0; i<data.length; i++)
+			{
+				cells = null;
+				for (var j=0; j<columns.length; j++)
+				{
+					if (columns[j].formatter)
+					{
+						if (!cells)
+						{
+							cells = rows.item(i+1).all('td');
+						}
+						var key = columns[j].key;
+						columns[j].formatter(cells.item(j), data[i], columns[j], data[i][ key ]);
+					}
+				}
+			}
+		}
+
+		pg.setTotalRecords(response.meta.totalRecords);
+
+//		Y.log('render: ' + ((new Date()).getTime() - t.getTime()), 'warn');
+	}
+
+	function reloadTable()
+	{
+		var callback =
+		{
+			success: function(e)
+			{
+				renderTable(e.response);
+			},
+			error: function()
+			{
+				alert('error');
+			}
+		};
+
+		ds.sendRequest(
+		{
+			request:
+			{
+				startIndex:  pg.getStartIndex(),
+				resultCount: pg.getRowsPerPage(),
+				extra:       window.treeble_request_extra
+			},
+			callback: callback
+		});
+	}
+
+	function toggleRow(path)
+	{
+//		var t = new Date();
+
+		ds.toggle(path, {}, reloadTable);
+
+//		Y.log('toggle: ' + ((new Date()).getTime() - t.getTime()), 'warn');
+	}
+
+	reloadTable();
+});
+</script>
+
+<h1><a href="http://yuilibrary.com/gallery/show/treeble">YUI 3 Treeble</a> Example</h1>
+
+<div id="treeble"></div>
+<div id="pg"></div>
+<p><a href="pg_all.html">I want to paginate all nodes instead</a></p>
+<p><a href="yuidoc">Show me the documentation</a></p>
+<p><a href="/yui2/treeble/index.html">Show me the YUI 2 example</a></p>
+
+</body>
+</html>
+
+
