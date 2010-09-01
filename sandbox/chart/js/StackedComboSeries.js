@@ -10,7 +10,7 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [], {
         this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
-            this.drawStackedFill();
+            this.drawFill.apply(this, this._getStackedClosingPoints());
         }
         if(this.get("showLines")) 
         {
