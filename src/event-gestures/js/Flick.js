@@ -63,6 +63,9 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * <dt>preventDefault (defaults to true)</dt>
  * <dd>Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be 
  * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.</dd>
+ * <dt>axis (no default)</dt>
+ * <dd>Can be set to "x" or "y" if you want to constrain the flick velocity and distance to a single axis. If not
+ * defined, the axis along which the maximum distance was covered is used.</dd>
  * </dl>
  * @return {EventHandle} the detach handle
  */
