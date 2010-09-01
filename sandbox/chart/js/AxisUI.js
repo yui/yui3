@@ -82,7 +82,6 @@ Y.mix(Y.AxisRenderer.prototype, {
         {
             return;
         }
-        //majorUnitDistance = uiLength/(len - 1);
         this._createLabelCache();
         ui.set("maxLabelSize", 0);
         for(; i < len; ++i)
@@ -102,6 +101,7 @@ Y.mix(Y.AxisRenderer.prototype, {
         {
             ui.offsetNodeForTick(this.get("node"));
         }
+        this.fire("axisRendered");
     },
 
     /**

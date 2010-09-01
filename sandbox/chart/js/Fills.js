@@ -19,101 +19,33 @@ function Fills(cfg)
 }
 
 Fills.prototype = {
-    /**
-     * @private
-     */
-    _defaults: null,
-
-    /**
-	 * @protected
-	 */
-	drawFill: function()
-	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords").concat(),
-			ycoords = this.get("ycoords").concat(),
-			len = xcoords.length,
-			firstX = xcoords[0],
-			firstY = ycoords[0],
-			lastX = firstX,
-            lastY = firstY,
-            lastValidX = lastX,
-			lastValidY = lastY,
-			nextX,
-			nextY,
-			i,
-			styles = this.get("area"),
-			graphic = this.get("graphic"),
-            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
-        graphic.beginFill(color, styles.alpha);
-        graphic.moveTo(lastX, lastY);
-        for(i = 1; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
-			if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
-            graphic.lineTo(nextX, nextY);
-			lastX = lastValidX = nextX;
-			lastY = lastValidY = nextY;
-        }
-        if(this.get("direction") === "vertical")
-        {
-            graphic.lineTo(this._leftOrigin, lastY);
-            graphic.lineTo(this._leftOrigin, firstY);
-        }
-        else
-        {
-            graphic.lineTo(lastX, this._bottomOrigin);
-            graphic.lineTo(firstX, this._bottomOrigin);
-        }
-        graphic.lineTo(firstX, firstY);
-        graphic.end();
-	},
-
 	/**
 	 * @private
 	 */
-	drawStackedFill: function()
+	drawFill: function(xcoords, ycoords)
 	{
-        if(this.get("xcoords").length < 1) 
+        if(xcoords.length < 1) 
 		{
 			return;
 		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-            allXCoords,
-            allYCoords,
-            len = xcoords.length,
+        var len = xcoords.length,
 			firstX = xcoords[0],
 			firstY = ycoords[0],
             lastValidX = firstX,
 			lastValidY = firstY,
 			nextX,
 			nextY,
-			i = 0,
+			i = 1,
 			styles = this.get("area"),
 			graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"));
-        allXCoords = this._getAllStackedCoordinates("xcoords");
-        allYCoords = this._getAllStackedCoordinates("ycoords");
-        firstX = allXCoords[0];
-        firstY = allYCoords[0];
-        len = allXCoords.length;
         graphic.clear();
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
-        for(i = 1; i < len; i = ++i)
+        for(; i < len; i = ++i)
 		{
-			nextX = allXCoords[i];
-			nextY = allYCoords[i];
+			nextX = xcoords[i];
+			nextY = ycoords[i];
 			if(isNaN(nextY))
 			{
 				lastValidX = nextX;
@@ -262,6 +194,81 @@ Fills.prototype = {
         graphic.end();
 	},
     
+    /**
+     * @private
+     */
+    _defaults: null,
+
+    _getClosingPoints: function()
+    {
+        var xcoords = this.get("xcoords").concat(),
+            ycoords = this.get("ycoords").concat();
+        if(this.get("direction") === "vertical")
+        {
+            xcoords.push(this._leftOrigin);
+            xcoords.push(this._leftOrigin);
+            ycoords.push(ycoords[ycoords.length - 1]);
+            ycoords.push(ycoords[0]);
+        }
+        else
+        {
+            xcoords.push(xcoords[xcoords.length - 1]);
+            xcoords.push(xcoords[0]);
+            ycoords.push(this._bottomOrigin);
+            ycoords.push(this._bottomOrigin);
+        }
+        xcoords.push(xcoords[0]);
+        ycoords.push(ycoords[0]);
+        return [xcoords, ycoords];
+    },
+
+    /**
+     * @private
+     * Concatenates coordinate array with the correct coordinates for closing an area stack.
+     */
+    _getStackedClosingPoints: function()
+    {
+        var order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            direction = this.get("direction"),
+            seriesCollection = graph.seriesTypes[type],
+            prevXCoords,
+            prevYCoords,
+            allXCoords = this.get("xcoords").concat(),
+            allYCoords = this.get("ycoords").concat(),
+            firstX = allXCoords[0],
+            firstY = allYCoords[0];
+        
+        if(order > 0)
+        {
+            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
+            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
+            allXCoords = allXCoords.concat(prevXCoords.concat().reverse());
+            allYCoords = allYCoords.concat(prevYCoords.concat().reverse());
+            allXCoords.push(allXCoords[0]);
+            allYCoords.push(allYCoords[0]);
+        }
+        else
+        {
+            if(direction === "vertical")
+            {
+                allXCoords.push(this._leftOrigin);
+                allXCoords.push(this._leftOrigin);
+                allYCoords.push(allYCoords[allYCoords.length-1]);
+                allYCoords.push(firstY);
+            }
+            else
+            {
+                allXCoords.push(allXCoords[allXCoords.length-1]);
+                allXCoords.push(firstX);
+                allYCoords.push(this._bottomOrigin);
+                allYCoords.push(this._bottomOrigin);
+            }
+        }
+        return [allXCoords, allYCoords];
+    },
+
     _getAreaDefaults: function()
     {
         return {

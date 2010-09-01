@@ -24,7 +24,7 @@ Y.extend(StackedAreaSeries, Y.AreaSeries, {
 	drawSeries: function()
     {
         this.get("graphic").clear();
-        this.drawStackedFill();
+        this.drawFill.apply(this, this._getStackedClosingPoints());
     }
 });
 

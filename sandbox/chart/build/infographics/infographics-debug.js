@@ -429,30 +429,31 @@ Y.extend(BaseAxis, Y.Base,
 			removedKeys = {},
 			keys = this.get("keys"),
 			event = {},
-            keyCollection = this.get("keyCollection");
-        if(keyCollection.indexOf(value) > -1)
+            keyCollection = this.get("keyCollection"),
+            i = Y.Array.indexOf(keyCollection, value);
+        if(keyCollection && keyCollection.length > 0 && i > -1)
         {
-            keyCollection.splice(keyCollection.indexOf(value), 1);
+            keyCollection.splice(i, 1);
         }
-		removedKeys[value] = keys[value].concat();
-		for(key in keys)
-		{
-			if(keys.hasOwnProperty(key))
-			{
-				if(key == value) 
-				{
-					continue;
-				}
-				oldKey = keys[key];
-				newData = newData.concat(oldKey);
-				newKeys[key] = oldKey;
-			}
-		}
-		keys = newKeys;
-		this._data = newData;
-		this._updateMinAndMax();
-		event.keysRemoved = removedKeys;
-		this.fire("axisUpdate", event);
+        removedKeys[value] = keys[value].concat();
+        for(key in keys)
+        {
+            if(keys.hasOwnProperty(key))
+            {
+                if(key == value) 
+                {
+                    continue;
+                }
+                oldKey = keys[key];
+                newData = newData.concat(oldKey);
+                newKeys[key] = oldKey;
+            }
+        }
+        keys = newKeys;
+        this._data = newData;
+        this._updateMinAndMax();
+        event.keysRemoved = removedKeys;
+        this.fire("axisUpdate", event);
 	},
 
 	/**
@@ -1749,101 +1750,33 @@ function Fills(cfg)
 }
 
 Fills.prototype = {
-    /**
-     * @private
-     */
-    _defaults: null,
-
-    /**
-	 * @protected
-	 */
-	drawFill: function()
-	{
-        if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var xcoords = this.get("xcoords").concat(),
-			ycoords = this.get("ycoords").concat(),
-			len = xcoords.length,
-			firstX = xcoords[0],
-			firstY = ycoords[0],
-			lastX = firstX,
-            lastY = firstY,
-            lastValidX = lastX,
-			lastValidY = lastY,
-			nextX,
-			nextY,
-			i,
-			styles = this.get("area"),
-			graphic = this.get("graphic"),
-            color = styles.color || this._getDefaultColor(this.get("graphOrder"));
-        graphic.beginFill(color, styles.alpha);
-        graphic.moveTo(lastX, lastY);
-        for(i = 1; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
-			if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
-            graphic.lineTo(nextX, nextY);
-			lastX = lastValidX = nextX;
-			lastY = lastValidY = nextY;
-        }
-        if(this.get("direction") === "vertical")
-        {
-            graphic.lineTo(this._leftOrigin, lastY);
-            graphic.lineTo(this._leftOrigin, firstY);
-        }
-        else
-        {
-            graphic.lineTo(lastX, this._bottomOrigin);
-            graphic.lineTo(firstX, this._bottomOrigin);
-        }
-        graphic.lineTo(firstX, firstY);
-        graphic.end();
-	},
-
 	/**
 	 * @private
 	 */
-	drawStackedFill: function()
+	drawFill: function(xcoords, ycoords)
 	{
-        if(this.get("xcoords").length < 1) 
+        if(xcoords.length < 1) 
 		{
 			return;
 		}
-        var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
-            allXCoords,
-            allYCoords,
-            len = xcoords.length,
+        var len = xcoords.length,
 			firstX = xcoords[0],
 			firstY = ycoords[0],
             lastValidX = firstX,
 			lastValidY = firstY,
 			nextX,
 			nextY,
-			i = 0,
+			i = 1,
 			styles = this.get("area"),
 			graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"));
-        allXCoords = this._getAllStackedCoordinates("xcoords");
-        allYCoords = this._getAllStackedCoordinates("ycoords");
-        firstX = allXCoords[0];
-        firstY = allYCoords[0];
-        len = allXCoords.length;
         graphic.clear();
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
-        for(i = 1; i < len; i = ++i)
+        for(; i < len; i = ++i)
 		{
-			nextX = allXCoords[i];
-			nextY = allYCoords[i];
+			nextX = xcoords[i];
+			nextY = ycoords[i];
 			if(isNaN(nextY))
 			{
 				lastValidX = nextX;
@@ -1992,6 +1925,81 @@ Fills.prototype = {
         graphic.end();
 	},
     
+    /**
+     * @private
+     */
+    _defaults: null,
+
+    _getClosingPoints: function()
+    {
+        var xcoords = this.get("xcoords").concat(),
+            ycoords = this.get("ycoords").concat();
+        if(this.get("direction") === "vertical")
+        {
+            xcoords.push(this._leftOrigin);
+            xcoords.push(this._leftOrigin);
+            ycoords.push(ycoords[ycoords.length - 1]);
+            ycoords.push(ycoords[0]);
+        }
+        else
+        {
+            xcoords.push(xcoords[xcoords.length - 1]);
+            xcoords.push(xcoords[0]);
+            ycoords.push(this._bottomOrigin);
+            ycoords.push(this._bottomOrigin);
+        }
+        xcoords.push(xcoords[0]);
+        ycoords.push(ycoords[0]);
+        return [xcoords, ycoords];
+    },
+
+    /**
+     * @private
+     * Concatenates coordinate array with the correct coordinates for closing an area stack.
+     */
+    _getStackedClosingPoints: function()
+    {
+        var order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            direction = this.get("direction"),
+            seriesCollection = graph.seriesTypes[type],
+            prevXCoords,
+            prevYCoords,
+            allXCoords = this.get("xcoords").concat(),
+            allYCoords = this.get("ycoords").concat(),
+            firstX = allXCoords[0],
+            firstY = allYCoords[0];
+        
+        if(order > 0)
+        {
+            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
+            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
+            allXCoords = allXCoords.concat(prevXCoords.concat().reverse());
+            allYCoords = allYCoords.concat(prevYCoords.concat().reverse());
+            allXCoords.push(allXCoords[0]);
+            allYCoords.push(allYCoords[0]);
+        }
+        else
+        {
+            if(direction === "vertical")
+            {
+                allXCoords.push(this._leftOrigin);
+                allXCoords.push(this._leftOrigin);
+                allYCoords.push(allYCoords[allYCoords.length-1]);
+                allYCoords.push(firstY);
+            }
+            else
+            {
+                allXCoords.push(allXCoords[allXCoords.length-1]);
+                allXCoords.push(firstX);
+                allYCoords.push(this._bottomOrigin);
+                allYCoords.push(this._bottomOrigin);
+            }
+        }
+        return [allXCoords, allYCoords];
+    },
+
     _getAreaDefaults: function()
     {
         return {
@@ -3046,59 +3054,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 
     /**
      * @private
-     * Concatenates coordinate array with the correct coordinates for closing an area stack.
-     */
-    _getAllStackedCoordinates: function(coords)
-    {
-        var order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            direction = this.get("direction"),
-            seriesCollection = graph.seriesTypes[type],
-            prevCoords,
-            allCoords = this.get(coords).concat(),
-            first = allCoords[0];
-        
-        if(order > 0)
-        {
-            prevCoords = seriesCollection[order - 1].get(coords).concat();
-            allCoords = allCoords.concat(prevCoords.concat().reverse());
-            allCoords.push(allCoords[0]);
-        }
-        else
-        {
-            if(direction === "vertical")
-            {
-                if(coords === "xcoords")
-                {
-                    allCoords.push(this._leftOrigin);
-                    allCoords.push(this._leftOrigin);
-                }
-                else
-                {
-                    allCoords.push(allCoords[allCoords.length-1]);
-                    allCoords.push(first);
-                }
-            }
-            else
-            {
-                if(coords === "xcoords")
-                {
-                    allCoords.push(allCoords[allCoords.length-1]);
-                    allCoords.push(first);
-                }
-                else
-                {
-                    allCoords.push(this._bottomOrigin);
-                    allCoords.push(this._bottomOrigin);
-                }
-            }
-        }
-        return allCoords;
-    },
-
-    /**
-     * @private
      * @description Creates a marker based on its style properties.
      */
     getMarker: function(config)
@@ -3744,7 +3699,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 	drawSeries: function()
     {
         this.get("graphic").clear();
-        this.drawFill();
+        this.drawFill.apply(this, this._getClosingPoints());
     }
 },
 {
@@ -3807,7 +3762,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
-            this.drawFill();
+            this.drawFill.apply(this, this._getClosingPoints());
         }
         if(this.get("showLines")) 
         {
@@ -3884,7 +3839,7 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [], {
         this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
-            this.drawStackedFill();
+            this.drawFill.apply(this, this._getStackedClosingPoints());
         }
         if(this.get("showLines")) 
         {
@@ -4328,7 +4283,7 @@ Y.extend(StackedAreaSeries, Y.AreaSeries, {
 	drawSeries: function()
     {
         this.get("graphic").clear();
-        this.drawStackedFill();
+        this.drawFill.apply(this, this._getStackedClosingPoints());
     }
 });
 
@@ -4760,15 +4715,60 @@ Graph.ATTRS = {
 
 Y.extend(Graph, Y.Base, {
     /**
+     * Hash of arrays containing series mapped to a series type.
+     */
+    seriesTypes: null,
+
+    /**
+     * Returns a series instance based on an index.
+     */
+    getSeriesByIndex: function(val)
+    {
+        var col = this._seriesCollection,
+            series;
+        if(col && col.length > val)
+        {
+            series = col[val];
+        }
+        return series;
+    },
+
+    /**
+     * Returns a series instance based on a key value.
+     */
+    getSeriesByKey: function(val)
+    {
+        var obj = this._seriesDictionary,
+            series;
+        if(obj && obj.hasOwnProperty(val))
+        {
+            series = obj[val];
+        }
+        return series;
+    },
+
+    /**
+     * Adds dispatcher to collection
+     */
+    addDispatcher: function(val)
+    {
+        if(!this._dispatchers)
+        {
+            this._dispatchers = [];
+        }
+        this._dispatchers.push(val);
+    },
+
+    /**
      * @private 
      * @description Collection of series to be displayed in the graph.
      */
     _seriesCollection: null,
-
+    
     /**
-     * Hash of arrays containing series mapped to a series type.
+     * @private
      */
-    seriesTypes: null,
+    _seriesDictionary: null,
 
     /**
      * @private
@@ -4783,10 +4783,15 @@ Y.extend(Graph, Y.Base, {
         }	
         var len = val.length,
             i = 0,
-            series;
+            series,
+            seriesKey;
         if(!this._seriesCollection)
         {
             this._seriesCollection = [];
+        }
+        if(!this._seriesDictionary)
+        {
+            this._seriesDictionary = {};
         }
         if(!this.seriesTypes)
         {
@@ -4805,7 +4810,10 @@ Y.extend(Graph, Y.Base, {
         len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
         {
-            this._seriesCollection[i].render(this.get("parent"));
+            series = this._seriesCollection[i];
+            seriesKey = series.get("direction") == "horizontal" ? "yKey" : "xKey";
+            this._seriesDictionary[series.get(seriesKey)] = series;
+            series.render(this.get("parent"));
         }
     },
 
@@ -4834,6 +4842,8 @@ Y.extend(Graph, Y.Base, {
         series.set("graphOrder", graphSeriesLength);
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
+        this.addDispatcher(series);
+        series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         this.fire("seriesAdded", series);
     },
 
@@ -4856,6 +4866,8 @@ Y.extend(Graph, Y.Base, {
         seriesData.graphOrder = seriesCollection.length;
         seriesType = this._getSeries(seriesData.type);
         series = new seriesType(seriesData);
+        this.addDispatcher(series);
+        series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
     },
@@ -4939,8 +4951,29 @@ Y.extend(Graph, Y.Base, {
             break;
         }
         return seriesClass;
-    }
+    },
 
+    /**
+     * @private
+     */
+    _dispatchers: null,
+
+    /**
+     * @private
+     */
+    _drawingCompleteHandler: function(e)
+    {
+        var series = e.currentTarget,
+            index = Y.Array.indexOf(this._dispatchers, series);
+        if(index > -1)
+        {
+            this._dispatchers.splice(index, 1);
+        }
+        if(this._dispatchers.length < 1)
+        {
+            this.fire("chartRendered");
+        }
+    }
 });
 
 Y.Graph = Graph;
@@ -6192,7 +6225,6 @@ Y.mix(Y.AxisRenderer.prototype, {
         {
             return;
         }
-        //majorUnitDistance = uiLength/(len - 1);
         this._createLabelCache();
         ui.set("maxLabelSize", 0);
         for(; i < len; ++i)
@@ -6212,6 +6244,7 @@ Y.mix(Y.AxisRenderer.prototype, {
         {
             ui.offsetNodeForTick(this.get("node"));
         }
+        this.fire("axisRendered");
     },
 
     /**
@@ -6436,10 +6469,10 @@ CartesianChart.ATTRS = {
     /**
      * Data used to generate the chart.
      */
-    dataValues: {
+    dataProvider: {
         getter: function()
         {
-            return this._dataValues;
+            return this._dataProvider;
         },
 
         setter: function(val)
@@ -6578,12 +6611,73 @@ CartesianChart.ATTRS = {
         value: "category"
     },
 
+    seriesKeys: {
+        value: null    
+    },
+
     showAreaFill: {
         value: null
     }
 };
 
 Y.extend(CartesianChart, Y.Widget, {
+    /**
+     * Returns a series instance by index
+     */
+    getSeriesByIndex: function(val)
+    {
+        var series, 
+            graph = this.get("graph");
+        if(graph)
+        {
+            series = graph.getSeriesByIndex(val);
+        }
+        return series;
+    },
+
+    /**
+     * Returns a series instance by key value.
+     */
+    getSeriesByKey: function(val)
+    {
+        var series, 
+            graph = this.get("graph");
+        if(graph)
+        {
+            series = graph.getSeriesByKey(val);
+        }
+        return series;
+    },
+
+    /**
+     * Returns axis by key reference
+     */
+    getAxisByKey: function(val)
+    {
+        var axis,
+            axes = this.get("axes");
+        if(axes.hasOwnProperty(val))
+        {
+            axis = axes[val];
+        }
+        return axis;
+    },
+
+    /**
+     * Returns the category axis for the chart.
+     */
+    getCategoryAxis: function()
+    {
+        var axis,
+            key = this.get("categoryKey"),
+            axes = this.get("axes");
+        if(axes.hasOwnProperty(key))
+        {
+            axis = axes[key];
+        }
+        return axis;
+    },
+
     /**
      * @private
      */
@@ -6597,7 +6691,7 @@ Y.extend(CartesianChart, Y.Widget, {
     /**
      * @private
      */
-    _dataValues: null,
+    _dataProvider: null,
 
     /**
      * @private
@@ -6622,10 +6716,10 @@ Y.extend(CartesianChart, Y.Widget, {
                 }
                 dp[i] = hash; 
             }
-            this._dataValues = dp;
+            this._dataProvider = dp;
             return;
         }
-        this._dataValues = val;
+        this._dataProvider = val;
     },
 
     /**
@@ -6739,7 +6833,7 @@ Y.extend(CartesianChart, Y.Widget, {
                 dh = hash[i];
                 pos = dh.position;
                 dataClass = this._getDataClass(dh.type);
-                config = {dataProvider:this.get("dataValues"), keys:dh.keys};
+                config = {dataProvider:this.get("dataProvider"), keys:dh.keys};
                 if(dh.hasOwnProperty("roundingUnit"))
                 {
                     config.roundingUnit = dh.roundingUnit;
@@ -6855,7 +6949,12 @@ Y.extend(CartesianChart, Y.Widget, {
     {
         var seriesCollection = this.get("seriesCollection");
         this._parseSeriesAxes(seriesCollection);
-        this.set("graph", new Y.Graph({parent:this.get("graphContainer"), seriesCollection:seriesCollection}));
+        this.set("graph", new Y.Graph({parent:this.get("graphContainer")}));
+        this.get("graph").on("chartRendered", Y.bind(function(e) {
+            this.fire("chartRendered");
+        }, this));
+        this.get("graph").set("seriesCollection", seriesCollection);
+        this._seriesCollection = this.get("graph").get("seriesCollection");
     },
 
     /**
@@ -6914,7 +7013,6 @@ Y.extend(CartesianChart, Y.Widget, {
         bcc.setAttribute("style", tblstyles);
         brc.setAttribute("style", tblstyles);
 
-
         tr.id = "topRow";
         mr.id = "midRow";
         br.id = "bottomRow";
@@ -6931,7 +7029,6 @@ Y.extend(CartesianChart, Y.Widget, {
         br.appendChild(blc);
         br.appendChild(bcc);
         br.appendChild(brc);
-        
         
         ta.setAttribute("style", "position:relative;width:800px;");
         ta.setAttribute("id", "topAxesContainer");
@@ -6961,9 +7058,9 @@ Y.extend(CartesianChart, Y.Widget, {
     _getDefaultAxes: function()
     {
         var catKey = this.get("categoryKey"),
-            seriesKeys = [], 
+            seriesKeys = this.get("seriesKeys") || [], 
             i, 
-            dv = this.get("dataValues")[0],
+            dv = this.get("dataProvider")[0],
             direction = this.get("direction"),
             seriesPosition,
             categoryPosition,
@@ -6978,11 +7075,18 @@ Y.extend(CartesianChart, Y.Widget, {
             seriesPosition = "left";
             categoryPosition = "bottom";
         }
-        for(i in dv)
+        if(seriesKeys.length < 1)
         {
-            if(i != catKey)
+            for(i in dv)
             {
-                seriesKeys.push(i);
+                if(i != catKey)
+                {
+                    seriesKeys.push(i);
+                }
+            }
+            if(seriesKeys.length > 0)
+            {
+                this.set("seriesKeys", seriesKeys);
             }
         }
         return {

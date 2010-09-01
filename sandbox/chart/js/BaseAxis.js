@@ -427,30 +427,31 @@ Y.extend(BaseAxis, Y.Base,
 			removedKeys = {},
 			keys = this.get("keys"),
 			event = {},
-            keyCollection = this.get("keyCollection");
-        if(keyCollection.indexOf(value) > -1)
+            keyCollection = this.get("keyCollection"),
+            i = Y.Array.indexOf(keyCollection, value);
+        if(keyCollection && keyCollection.length > 0 && i > -1)
         {
-            keyCollection.splice(keyCollection.indexOf(value), 1);
+            keyCollection.splice(i, 1);
         }
-		removedKeys[value] = keys[value].concat();
-		for(key in keys)
-		{
-			if(keys.hasOwnProperty(key))
-			{
-				if(key == value) 
-				{
-					continue;
-				}
-				oldKey = keys[key];
-				newData = newData.concat(oldKey);
-				newKeys[key] = oldKey;
-			}
-		}
-		keys = newKeys;
-		this._data = newData;
-		this._updateMinAndMax();
-		event.keysRemoved = removedKeys;
-		this.fire("axisUpdate", event);
+        removedKeys[value] = keys[value].concat();
+        for(key in keys)
+        {
+            if(keys.hasOwnProperty(key))
+            {
+                if(key == value) 
+                {
+                    continue;
+                }
+                oldKey = keys[key];
+                newData = newData.concat(oldKey);
+                newKeys[key] = oldKey;
+            }
+        }
+        keys = newKeys;
+        this._data = newData;
+        this._updateMinAndMax();
+        event.keysRemoved = removedKeys;
+        this.fire("axisUpdate", event);
 	},
 
 	/**
