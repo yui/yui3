@@ -1,14 +1,7 @@
 YUI.add('transition-native', function(Y) {
 
-/*
-* The Native Transition Utility provides an API wrapper for CSS transitions.
-* It is also the base module for the timer-based transition module.
-* @module transition
-*/
-
-/*
-* Provides the base Transition class.  The "transition" method is added to Node,
-* and is how Transition should be used.
+/**
+* Provides the transition method for Node.
 *
 * @module transition
 * @submodule transition-native
