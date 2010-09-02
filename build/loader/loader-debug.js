@@ -2366,21 +2366,29 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset"
-        ], 
-        "path": "cssgrids/grids-min.css", 
-        "requires": [
+            "cssreset", 
             "cssfonts"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
-    "cssgrids-context": {
+    "cssgrids-context-deprecated": {
         "optional": [
             "cssreset-context"
         ], 
-        "path": "cssgrids/grids-context-min.css", 
+        "path": "cssgrids-deprecated/grids-context-min.css", 
         "requires": [
             "cssfonts-context"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-deprecated": {
+        "optional": [
+            "cssreset"
+        ], 
+        "path": "cssgrids-deprecated/grids-min.css", 
+        "requires": [
+            "cssfonts"
         ], 
         "type": "css"
     }, 
@@ -3454,7 +3462,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '331192353a439d3a413cc7e558ea345c';
+YUI.Env[Y.version].md5 = 'eef930e983dcf433c78baf3bd96ef4e0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
