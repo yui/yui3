@@ -14,7 +14,7 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.08.25-19-45',
+            GALLERY_VERSION = 'gallery-2010.09.01-19-12',
             // GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
             TNT_VERSION     = '3',
@@ -2749,7 +2749,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection"
+                    "selection", 
+                    "editor-para"
                 ]
             }, 
             "editor-bidi": {
@@ -2758,6 +2759,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-para": {
                 "requires": [
                     "editor-base"
                 ]
@@ -3430,9 +3436,25 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp", 
             "jsonp-url"
         ]
+    }, 
+    "yui": {
+        "submodules": {
+            "features": {}, 
+            "get": {}, 
+            "intl-base": {}, 
+            "rls": {
+                "requires": [
+                    "features"
+                ]
+            }, 
+            "yui-base": {}, 
+            "yui-later": {}, 
+            "yui-log": {}, 
+            "yui-throttle": {}
+        }
     }
 };
-YUI.Env[Y.version].md5 = '503dbdf98b671df8f52177363e74b6a3';
+YUI.Env[Y.version].md5 = '331192353a439d3a413cc7e558ea345c';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

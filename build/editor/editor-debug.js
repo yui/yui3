@@ -1428,11 +1428,14 @@ YUI.add('selection', function(Y) {
                         node = node.get('parentNode');
                     }
                     newNode = Y.Node.create(html);
-                    html = node.get('innerHTML');
+                    html = node.get('innerHTML').replace(/\n/gi, '');
                     if (html == '' || html == '<br>') {
                         node.append(newNode);
                     } else {
                         node.insert(newNode, 'before');
+                    }
+                    if (node.get('firstChild').test('br')) {
+                        node.get('firstChild').remove();
                     }
                 }
             }
@@ -2037,7 +2040,7 @@ YUI.add('editor-tab', function(Y) {
 YUI.add('createlink-base', function(Y) {
 
     /**
-     * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
+     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @module editor
      * @submodule createlink-base
      */     
@@ -2154,10 +2157,8 @@ YUI.add('editor-base', function(Y) {
                 bubbles: true,
                 defaultFn: this._defNodeChangeFn
             });
-
-            if (Y.Plugin.EditorPara) {
-                //this.plug(Y.Plugin.EditorPara);
-            }
+            
+            this.plug(Y.Plugin.EditorPara);
         },
         destructor: function() {
             this.frame.destroy();

@@ -4,7 +4,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
-            this.drawFill();
+            this.drawFill.apply(this, this._getClosingPoints());
         }
         if(this.get("showLines")) 
         {

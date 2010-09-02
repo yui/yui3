@@ -573,7 +573,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection"
+                    "selection", 
+                    "editor-para"
                 ]
             }, 
             "editor-bidi": {
@@ -582,6 +583,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-para": {
                 "requires": [
                     "editor-base"
                 ]
@@ -1254,6 +1260,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp", 
             "jsonp-url"
         ]
+    }, 
+    "yui": {
+        "submodules": {
+            "features": {}, 
+            "get": {}, 
+            "intl-base": {}, 
+            "rls": {
+                "requires": [
+                    "features"
+                ]
+            }, 
+            "yui-base": {}, 
+            "yui-later": {}, 
+            "yui-log": {}, 
+            "yui-throttle": {}
+        }
     }
 };
-YUI.Env[Y.version].md5 = '503dbdf98b671df8f52177363e74b6a3';
+YUI.Env[Y.version].md5 = '331192353a439d3a413cc7e558ea345c';

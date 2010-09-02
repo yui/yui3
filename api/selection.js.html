@@ -723,11 +723,14 @@
                         <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
-                    <span class="nx">html</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
+                    <span class="nx">html</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\n/gi</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="o">||</span> <span class="nx">html</span> <span class="o">==</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                         <span class="nx">node</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="s1">&#39;before&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">).</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;br&#39;</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
