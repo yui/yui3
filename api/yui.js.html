@@ -1390,7 +1390,8 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Alternative console log function for use in environments without</span>
-<span class="cm"> * a supported native console.</span>
+<span class="cm"> * a supported native console.  The function is executed in the</span>
+<span class="cm"> * YUI instance context.</span>
 <span class="cm"> * @since 3.1.0</span>
 <span class="cm"> * @property logFn</span>
 <span class="cm"> * @type Function</span>
@@ -1399,7 +1400,8 @@
 <span class="cm">/**</span>
 <span class="cm"> * A callback to execute when Y.error is called.  It receives the</span>
 <span class="cm"> * error message and an javascript error object if Y.error was</span>
-<span class="cm"> * executed because a javascript error was caught.</span>
+<span class="cm"> * executed because a javascript error was caught.  The function</span>
+<span class="cm"> * is executed in the YUI instance context.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @since 3.2.0</span>
 <span class="cm"> * @property errorFn</span>

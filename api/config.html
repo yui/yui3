@@ -241,7 +241,8 @@ For dynamic loading.
                                         <div class="description" property="yui:description">
                                             A callback to execute when Y.error is called.  It receives the
 error message and an javascript error object if Y.error was
-executed because a javascript error was caught.
+executed because a javascript error was caught.  The function
+is executed in the YUI instance context.
                                         </div>
                                     </div>
      
@@ -502,7 +503,8 @@ all sources are logged if not on this list.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Alternative console log function for use in environments without
-a supported native console.
+a supported native console.  The function is executed in the
+YUI instance context.
                                         </div>
                                     </div>
      
