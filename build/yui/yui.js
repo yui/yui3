@@ -1320,7 +1320,8 @@ proto = {
 
 /**
  * Alternative console log function for use in environments without
- * a supported native console.
+ * a supported native console.  The function is executed in the
+ * YUI instance context.
  * @since 3.1.0
  * @property logFn
  * @type Function
@@ -1329,7 +1330,8 @@ proto = {
 /**
  * A callback to execute when Y.error is called.  It receives the
  * error message and an javascript error object if Y.error was
- * executed because a javascript error was caught.
+ * executed because a javascript error was caught.  The function
+ * is executed in the YUI instance context.
  *
  * @since 3.2.0
  * @property errorFn
@@ -3650,7 +3652,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
-                    c.logFn(msg, cat, src);
+                    c.logFn.call(Y, msg, cat, src);
                 } else if (typeof console != UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
