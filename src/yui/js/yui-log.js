@@ -55,7 +55,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
-                    c.logFn(msg, cat, src);
+                    c.logFn.call(Y, msg, cat, src);
                 } else if (typeof console != UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
