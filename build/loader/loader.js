@@ -1161,10 +1161,12 @@ Y.Loader.prototype = {
                     d.push(o[i]);
                     hash[o[i]] = true;
                     m = info[o[i]];
-                    add = this.getRequires(m);
-                    intl = intl || (m.expanded_map && (INTL in m.expanded_map));
-                    for (j=0; j<add.length; j++) {
-                        d.push(add[j]);
+                    if (m) {
+                        add = this.getRequires(m);
+                        intl = intl || (m.expanded_map && (INTL in m.expanded_map));
+                        for (j=0; j<add.length; j++) {
+                            d.push(add[j]);
+                        }
                     }
                 }
             }
