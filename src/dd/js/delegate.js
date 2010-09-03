@@ -67,7 +67,6 @@
             this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
             this.dd._unprep();
             this.dd.set('node', _tmpNode);
-            this.dd._fixIEMouseUp();
         },
         /**
         * @private
