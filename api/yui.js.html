@@ -781,7 +781,7 @@
             <span class="c1">// server side loader service</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span><span class="p">.</span><span class="nx">script</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_rls</span><span class="p">(</span><span class="nx">args</span><span class="p">),</span> <span class="p">{</span>
                 <span class="nx">onEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">handleLoader</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                    <span class="nx">handleLoader</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
                 <span class="p">},</span> 
                 <span class="nx">data</span><span class="o">:</span> <span class="nx">args</span>
             <span class="p">});</span>
@@ -1390,7 +1390,8 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Alternative console log function for use in environments without</span>
-<span class="cm"> * a supported native console.</span>
+<span class="cm"> * a supported native console.  The function is executed in the</span>
+<span class="cm"> * YUI instance context.</span>
 <span class="cm"> * @since 3.1.0</span>
 <span class="cm"> * @property logFn</span>
 <span class="cm"> * @type Function</span>
@@ -1399,7 +1400,8 @@
 <span class="cm">/**</span>
 <span class="cm"> * A callback to execute when Y.error is called.  It receives the</span>
 <span class="cm"> * error message and an javascript error object if Y.error was</span>
-<span class="cm"> * executed because a javascript error was caught.</span>
+<span class="cm"> * executed because a javascript error was caught.  The function</span>
+<span class="cm"> * is executed in the YUI instance context.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @since 3.2.0</span>
 <span class="cm"> * @property errorFn</span>

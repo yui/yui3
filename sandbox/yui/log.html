@@ -6,7 +6,10 @@
     <body>
         <script type="text/javascript">
             YUI({
-                filter: 'debug'
+                filter: 'debug',
+                logFn: function() {
+                    console.log('logFn:' + this.id);
+                }
             // }).use('event-custom-base', function(Y) {
             }).use('event-custom', function(Y) {
 

@@ -339,7 +339,6 @@ proto = {
         Y._attach(['yui-base']);
         Y._attach(core);
 
-        // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
 
     /**
@@ -460,7 +459,6 @@ proto = {
                     }
                 }
 
-                // Y.log('attaching ' + name, 'info', 'yui');
 
                 if (mod.fn) {
                     try {
@@ -610,7 +608,6 @@ proto = {
 
                 Y._loading = false;
 
-                // Y.log('Use complete: ' + data);
 
                 if (data) {
                     origMissing = missing.concat();
@@ -626,10 +623,6 @@ proto = {
                 }
 
                 if (redo && data) {
-                    // Y.log('redo r: ' + r);
-                    // Y.log('redo data: ' + data);
-                    // Y.log('redo missing: ' + missing);
-                    Y.log('redo args: ' + args);
                     
                     // newData = data.concat();
                     // newData = args.concat();
@@ -638,7 +631,6 @@ proto = {
                     // newData = missing.concat();
 
                     newData.push(function() {
-                        Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
                             notify(response);
                         }
@@ -666,7 +658,6 @@ proto = {
             return Y;
         }
 
-        // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
@@ -681,13 +672,11 @@ proto = {
             args = Y.Object.keys(mods);
         }
 
-        // Y.log('before loader requirements: ' + args, 'info', 'yui');
         
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (boot && !star && Y.Loader && args.length) {
 
-            // Y.log('checking dependences with loader', 'info', 'yui');
 
             loader = getLoader(Y);
             loader.require(args);
@@ -699,26 +688,20 @@ proto = {
             // YUI.Env.loaders[Y.config._sig] = loader;
         }
 
-        // Y.log('after loader requirements: ' + args, 'info', 'yui');
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
         process(args);
 
-        // Y.log('args: ' + args , 'info', 'yui');
-        // Y.log('requires: ' + r, 'info', 'yui');
         len = missing.length;
 
         if (len) {
             missing = Y.Object.keys(YArray.hash(missing));
             len = missing.length;
-            Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         }
 
         // dynamic load
         if (boot && len && Y.Loader) {
-            // Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
-            Y.log('Using Loader', 'info', 'yui');
             Y._loading = true;
             // loader = new Y.Loader(config);
             loader = getLoader(Y);
@@ -733,7 +716,7 @@ proto = {
             // server side loader service
             Y.Get.script(Y._rls(args), {
                 onEnd: function(o) {
-                    handleLoader(o.data);
+                    handleLoader(o);
                 }, 
                 data: args
             });
@@ -753,11 +736,9 @@ proto = {
             };
 
             if (G_ENV._bootstrapping) {
-Y.log('Waiting for loader: ' + Y.id, 'info', 'yui');
                 queue.add(handleBoot);
             } else {
                 G_ENV._bootstrapping = true;
-Y.log('Fetching loader: ' + Y.id + ", " + config.base + config.loaderPath, 'info', 'yui');
                 Y.Get.script(config.base + config.loaderPath, {
                     onEnd: handleBoot 
                 });
@@ -766,9 +747,7 @@ Y.log('Fetching loader: ' + Y.id + ", " + config.base + config.loaderPath, 'info
         } else {
             if (len) {
                 Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
-Y.log('This instance is not provisioned to fetch missing modules: ' + missing, 'log', 'yui');
             }
-            Y.log('Attaching available dependencies.', 'info', 'yui');
             ret = Y._attach(args);
             if (ret) {
                 handleLoader();
@@ -1342,7 +1321,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * Alternative console log function for use in environments without
- * a supported native console.
+ * a supported native console.  The function is executed in the
+ * YUI instance context.
  * @since 3.1.0
  * @property logFn
  * @type Function
@@ -1351,7 +1331,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 /**
  * A callback to execute when Y.error is called.  It receives the
  * error message and an javascript error object if Y.error was
- * executed because a javascript error was caught.
+ * executed because a javascript error was caught.  The function
+ * is executed in the YUI instance context.
  *
  * @since 3.2.0
  * @property errorFn
@@ -2817,7 +2798,6 @@ Y.Get = function() {
      * @private
      */
     _fail = function(id, msg) {
-        Y.log("get failure: " + msg, "warn", "get");
 
         var q = queues[id], sc;
         if (q.timer) {
@@ -2841,7 +2821,6 @@ Y.Get = function() {
      * @private
      */
     _finish = function(id) {
-        // Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id], msg, sc;
         if (q.timer) {
             // q.timer.cancel();
@@ -2871,7 +2850,6 @@ Y.Get = function() {
      * @private
      */
     _timeout = function(id) {
-        Y.log("Timeout " + id, "info", "get");
         var q = queues[id], sc;
         if (q.onTimeout) {
             sc = q.context || q;
@@ -2890,12 +2868,10 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-        // Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
         var q = queues[id], msg, w, d, h, n, url, s,
             insertBefore;
 
         if (q.timer) {
-            // Y.log('cancel timer');
             // q.timer.cancel();
             clearTimeout(q.timer);
         }
@@ -2933,14 +2909,11 @@ Y.Get = function() {
         // if the url is undefined, this is probably a trailing comma problem in IE
         if (!url) {
             q.url.shift(); 
-            Y.log('skipping empty url');
             return _next(id);
         }
 
-        Y.log("attempting to load " + url, "info", "get");
 
         if (q.timeout) {
-            // Y.log('create timer');
             // q.timer = L.later(q.timeout, q, _timeout, id);
             q.timer = setTimeout(function() { 
                 _timeout(id);
@@ -2967,14 +2940,12 @@ Y.Get = function() {
         if (insertBefore) {
             s = _get(insertBefore, id);
             if (s) {
-                Y.log('inserting before: ' + insertBefore, 'info', 'get');
                 s.parentNode.insertBefore(n, s);
             }
         } else {
             h.appendChild(n);
         }
         
-        // Y.log("Appending node: " + url, "info", "get");
 
         // FireFox does not support the onload event for link nodes, so there is
         // no way to make the css requests synchronous. This means that the css 
@@ -3082,7 +3053,6 @@ Y.Get = function() {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
-                    // Y.log(id + " onreadstatechange " + url, "info", "get");
                     n.onreadystatechange = null;
                     f(id, url);
                 }
@@ -3093,7 +3063,6 @@ Y.Get = function() {
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
-                    // Y.log(id + " DOM2 onload " + url, "info", "get");
                     f(id, url);
                 });
             } 
@@ -3103,7 +3072,6 @@ Y.Get = function() {
         // nodes.
         } else { 
             n.onload = function() {
-                // Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
             };
 
@@ -3187,7 +3155,6 @@ Y.Get = function() {
          * @private
          */
         _finalize: function(id) {
-            Y.log(id + " finalized ", "info", "get");
             setTimeout(function() {
                 _finish(id);
             }, 0);
@@ -3204,7 +3171,6 @@ Y.Get = function() {
             var id = (L.isString(o)) ? o : o.tId,
                 q = queues[id];
             if (q) {
-                Y.log("Aborting " + id, "info", "get");
                 q.aborted = true;
             }
         }, 
@@ -3312,15 +3278,10 @@ Y.Get = function() {
          * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.5.2/build/event/event-min.js"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;onSuccess: function(o) &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the context");
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.data); // foo
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.nodes.length === 2) // true
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// o.purge(); // optionally remove the script nodes immediately
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;onFailure: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction failed");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;onTimeout: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction timed out");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;data: "foo",
          * &nbsp;&nbsp;&nbsp;&nbsp;timeout: 10000, // 10 second timeout
@@ -3385,7 +3346,6 @@ Y.Get = function() {
          * <pre>
          * &nbsp;&nbsp;Y.Get.css(
          * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css",
-         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;insertBefore: 'custom-styles' // nodes will be inserted before the specified node
          * &nbsp;&nbsp;&#125;);
          * </pre>
@@ -3435,7 +3395,6 @@ Y.mix(Y.namespace("Features"), {
             feature = cat_o && cat_o[name];
 
         if (!feature) {
-            Y.log('Feature test ' + cat + ', ' + name + ' not found');
         } else {
 
             result = feature.result;
@@ -3694,7 +3653,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
-                    c.logFn(msg, cat, src);
+                    c.logFn.call(Y, msg, cat, src);
                 } else if (typeof console != UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
@@ -3942,12 +3901,10 @@ YUI.add('oop', function(Y) {
             Y.Object.each(sProto, function(v, k) {
                 replacements[k] = function() {
 
-// Y.log('sequestered function "' + k + '" executed.  Initializing EventTarget');
 // overwrite the prototype with all of the sequestered functions,
 // but only if it hasn't been overridden
                     for (var i in sequestered) {
                         if (sequestered.hasOwnProperty(i) && (this[i] === replacements[i])) {
-                            // Y.log('... restoring ' + k);
                             this[i] = sequestered[i];
                         }
                     }
@@ -3960,7 +3917,6 @@ YUI.add('oop', function(Y) {
                 };
 
                 if ((!wl || (k in wl)) && (ov || !(k in this))) {
-                    // Y.log('augment: ' + k);
                     if (L.isFunction(v)) {
                         // sequester the function
                         sequestered[k] = v;
@@ -3969,7 +3925,6 @@ YUI.add('oop', function(Y) {
 // restore all sequestered functions and exectue the constructor.
                         this[k] = replacements[k];
                     } else {
-                        // Y.log('augment() applying non-function: ' + k);
                         this[k] = v;
                     }
                 }
@@ -4557,7 +4512,6 @@ Y.DOM = {
                 ret.appendChild(nodes[i]); 
             }
         } // else inline with log for minification
-        else { Y.log('unable to convert ' + nodes + ' to fragment', 'warn', 'dom'); }
         return ret;
     },
 
@@ -4962,7 +4916,6 @@ Y.DOM = {
             if (options && options.length && val === '') {
                 // TODO: implement multipe select
                 if (node.multiple) {
-                    Y.log('multiple select normalization not implemented', 'warn', 'DOM');
                 } else {
                     val = Y.DOM.getValue(options[node.selectedIndex]);
                 }
@@ -5031,7 +4984,6 @@ Y.mix(Y.DOM, {
      * @param {String} newClassName the class name that will be replacing the old class name
      */
     replaceClass: function(node, oldC, newC) {
-        //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
         removeClass(node, oldC); // remove first in case oldC === newC
         addClass(node, newC);
     },
@@ -5475,7 +5427,6 @@ Y.mix(Y_DOM, {
      */
     winHeight: function(node) {
         var h = Y_DOM._getWinSize(node).height;
-        Y.log('winHeight returning ' + h, 'info', 'dom-screen');
         return h;
     },
 
@@ -5486,7 +5437,6 @@ Y.mix(Y_DOM, {
      */
     winWidth: function(node) {
         var w = Y_DOM._getWinSize(node).width;
-        Y.log('winWidth returning ' + w, 'info', 'dom-screen');
         return w;
     },
 
@@ -5497,7 +5447,6 @@ Y.mix(Y_DOM, {
      */
     docHeight:  function(node) {
         var h = Y_DOM._getDocSize(node).height;
-        Y.log('docHeight returning ' + h, 'info', 'dom-screen');
         return Math.max(h, Y_DOM._getWinSize(node).height);
     },
 
@@ -5508,7 +5457,6 @@ Y.mix(Y_DOM, {
      */
     docWidth:  function(node) {
         var w = Y_DOM._getDocSize(node).width;
-        Y.log('docWidth returning ' + w, 'info', 'dom-screen');
         return Math.max(w, Y_DOM._getWinSize(node).width);
     },
 
@@ -5747,9 +5695,7 @@ Y.mix(Y_DOM, {
                 }
             }
           
-            Y.log('setXY setting position to ' + xy, 'info', 'dom-screen');
         } else {
-            Y.log('setXY failed to set ' + node + ' to ' + xy, 'info', 'dom-screen');
         }
     },
 
@@ -6144,7 +6090,6 @@ var Selector = {
             }
         }
 
-        Y.log('query: ' + selector + ' returning: ' + ret.length, 'info', 'Selector');
         return (firstOnly) ? (ret[0] || null) : ret;
 
     },
@@ -6179,10 +6124,8 @@ var Selector = {
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true to try brute query
         }
         try {
-            //Y.log('trying native query with: ' + selector, 'info', 'selector-native');
             return root['querySelector' + (one ? '' : 'All')](selector);
         } catch(e) { // fallback to brute if available
-            //Y.log('native query error; reverting to brute query with: ' + selector, 'info', 'selector-native');
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true
         }
     },
@@ -6198,8 +6141,6 @@ var Selector = {
                 }
             }
         } else {
-            Y.log('invalid filter input (nodes: ' + nodes +
-                    ', selector: ' + selector + ')', 'warn', 'Selector');
         }
 
         return ret;
@@ -6667,7 +6608,6 @@ var PARENT_NODE = 'parentNode',
             } while (found && selector.length);
 
             if (!found || selector.length) { // not fully parsed
-                Y.log('query: ' + query + ' contains unsupported token in: ' + selector, 'warn', 'Selector');
                 tokens = [];
             }
             return tokens;
@@ -6791,7 +6731,6 @@ Y.Do = {
      * @static
      */
     before: function(fn, obj, sFn, c) {
-        // Y.log('Do before: ' + sFn, 'info', 'event');
         var f = fn, a;
         if (c) {
             a = [fn, c].concat(Y.Array(arguments, 4, true));
@@ -6925,7 +6864,6 @@ Y.Do.Method.prototype.register = function (sid, fn, when) {
  * @param when {string} when to execute the function
  */
 Y.Do.Method.prototype._delete = function (sid) {
-    // Y.log('Y.Do._delete: ' + sid, 'info', 'Event');
     delete this.before[sid];
     delete this.after[sid];
 };
@@ -7117,7 +7055,6 @@ Y.EventHandle.prototype = {
     detach: function() {
         var evt = this.evt, detached = 0, i;
         if (evt) {
-            // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
             if (Y.Lang.isArray(evt)) {
                 for (i=0; i<evt.length; i++) {
                     detached += evt[i].detach();
@@ -7469,7 +7406,6 @@ Y.CustomEvent.prototype = {
      * @deprecated use on
      */
     subscribe: function(fn, context) {
-        Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
@@ -7584,7 +7520,6 @@ Y.CustomEvent.prototype = {
      */
     log: function(msg, cat) {
         if (!this.silent) {
-            Y.log(this.id + ': ' + msg, cat || "info", "event");
         }
     },
 
@@ -7642,7 +7577,6 @@ Y.CustomEvent.prototype = {
 
     // Requires the event-custom-complex module for full funcitonality.
     fireComplex: function(args) {
-        Y.log('Missing event-custom-complex needed to emit a facade for: ' + this.type);
         args[0] = args[0] || {};
         return this.fireSimple(args);
     },
@@ -7938,7 +7872,6 @@ var L = Y.Lang,
         if (i > -1) {
             after = true;
             t = t.substr(AFTER_PREFIX.length);
-            // Y.log(t);
         }
 
         i = t.indexOf(CATEGORY_DELIMITER);
@@ -7957,7 +7890,6 @@ var L = Y.Lang,
 
     ET = function(opts) {
 
-        // Y.log('EventTarget constructor executed: ' + this._yuid);
 
         var o = (L.isObject(opts)) ? opts : {};
 
@@ -8083,7 +8015,6 @@ ET.prototype = {
         if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
             args = YArray(arguments, 0, true);
             args.splice(2, 0, Node.getDOMNode(this));
-            // Y.log("Node detected, redirecting with these args: " + args);
             return Y.on.apply(Y, args);
         }
 
@@ -8114,7 +8045,6 @@ ET.prototype = {
 
             // check for the existance of an event adaptor
             if (adapt) {
-                Y.log('Using adaptor for ' + shorttype + ', ' + n, 'info', 'event');
                 handle = adapt.on.apply(Y, args);
             } else if ((!type) || domevent) {
                 handle = Y.Event._attach(args);
@@ -8143,7 +8073,6 @@ ET.prototype = {
      * @deprecated use on
      */
     subscribe: function() {
-        Y.log('EventTarget subscribe() is deprecated, use on()', 'warn', 'deprecated');
         return this.on.apply(this, arguments);
     },
 
@@ -8263,7 +8192,6 @@ ET.prototype = {
      * @deprecated use detach
      */
     unsubscribe: function() {
-Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecated');
         return this.detach.apply(this, arguments);
     },
     
@@ -8287,7 +8215,6 @@ Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecat
      * @deprecated use detachAll
      */
     unsubscribeAll: function() {
-Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
         return this.detachAll.apply(this, arguments);
     },
 
@@ -8420,7 +8347,6 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         var monitorevt, ce = this.getEvent(type);
         if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
             monitorevt = type + '_' + what;
-            // Y.log('monitoring: ' + monitorevt);
             o.monitored = what;
             this.fire.call(this, monitorevt, o);
         }
@@ -9195,7 +9121,6 @@ shouldIterate = function(o) {
     try {
         return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !o.alert);
     } catch(ex) {
-        Y.log("collection check failure", "warn", "event");
         return false;
     }
 
@@ -9353,7 +9278,6 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
 
             var a = Y.Array(id), i, availHandle;
 
-            // Y.log('onAvailable registered for: ' + id);
 
             for (i=0; i<a.length; i=i+1) {
                 _avail.push({ 
@@ -9523,7 +9447,6 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
 
             if (!fn || !fn.call) {
 // throw new TypeError(type + " attach call failed, callback undefined");
-Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
@@ -9575,9 +9498,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // Not found = defer adding the event until the element is available
                 } else {
 
-                    // Y.log(el + ' not found');
                     ret = this.onAvailable(el, function() {
-                        // Y.log('lazy attach: ' + args);
                         
                         ret.handle = Event._attach(args, conf);
 
@@ -9590,7 +9511,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             // Element should be an html element or node
             if (!el) {
-                Y.log("unable to attach event " + type, "warn", "event");
                 return false;
             }
 
@@ -9774,7 +9694,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */
         _load: function(e) {
             if (!_loadComplete) {
-                // Y.log('Load Complete', 'info', 'event');
                 _loadComplete = true;
 
                 // Just in case DOMReady did not go off for some reason
@@ -9814,7 +9733,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             this.locked = true;
 
-            // Y.log.debug("poll");
             // keep trying until after the page is loaded.  We need to 
             // check the page load state prior to trying to bind the 
             // elements so that we can be certain all elements have been 
@@ -9857,11 +9775,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
-                        // Y.log('avail: ' + el);
                         executeItem(el, item);
                         _avail[i] = null;
                     } else {
-                        // Y.log('NOT avail: ' + el);
                         notAvail.push(item);
                     }
                 }
@@ -10635,7 +10551,6 @@ Y_Node.addMethod = function(name, fn, context) {
             return ret;
         };
     } else {
-        Y.log('unable to add method: ' + name, 'warn', 'Node');
     }
 };
 
@@ -10713,7 +10628,6 @@ Y_Node.one = function(node) {
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  */
 Y_Node.get = function() {
-    Y.log('Y.get is deprecated, use Y.one', 'warn', 'deprecated');
     return Y_Node.one.apply(Y_Node, arguments);
 };
 
@@ -11127,7 +11041,6 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     query: function(selector) {
-        Y.log('query() is deprecated, use one()', 'warn', 'deprecated');
         return this.one(selector);
     },
 
@@ -11153,7 +11066,6 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     queryAll: function(selector) {
-        Y.log('queryAll() is deprecated, use all()', 'warn', 'deprecated');
         return this.all(selector);
     },
 
@@ -11277,7 +11189,6 @@ Y.mix(Y_Node.prototype, {
      */
     each: function(fn, context) {
         context = context || this;
-        Y.log('each is deprecated on Node', 'warn', 'deprecated');
         return fn.call(context, this);
     },
 
@@ -11290,7 +11201,6 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        Y.log('item is deprecated on Node', 'warn', 'deprecated');
         return this;
     },
 
@@ -11301,7 +11211,6 @@ Y.mix(Y_Node.prototype, {
      * @return {Int} The number of items in the Node. 
      */
     size: function() {
-        Y.log('size is deprecated on Node', 'warn', 'deprecated');
         return this._node ? 1 : 0;
     },
 
@@ -11353,7 +11262,6 @@ Y.mix(Y_Node.prototype, {
             }
             Y_DOM.addHTML(node, content, where);
         } else  {
-            Y.log('unable to insert content ' + content, 'warn', 'node');
         }
         return this;
     },
@@ -11560,7 +11468,6 @@ NodeList.each = function(instance, fn, context) {
     if (nodes && nodes.length) {
         Y.Array.each(nodes, fn, context || instance);
     } else {
-        Y.log('no nodes bound to ' + this, 'warn', 'NodeList');
     }
 };
 
@@ -11590,7 +11497,6 @@ NodeList.addMethod = function(name, fn, context) {
             return ret.length ? ret : this;
         };
     } else {
-        Y.log('unable to add method: ' + name + ' to NodeList', 'warn', 'node');
     }
 };
 
@@ -12090,7 +11996,6 @@ Y.Array.each([
      'select'
 ], function(method) {
     Y.Node.prototype[method] = function(arg1, arg2, arg3) {
-    Y.log('adding: ' + method, 'info', 'node');
         var ret = this.invoke(method, arg1, arg2, arg3);
         return ret;
     };
@@ -12276,7 +12181,6 @@ Y.Node.ATTRS.type = {
             try { // IE errors when changing the type from "hidden'
                 this._node.type = val;
             } catch (e) {
-                Y.log('error setting type: ' + val, 'info', 'node');
             }
         }
         return val;
@@ -12504,7 +12408,6 @@ Y.Node.ATTRS.scrollLeft = {
                 Y.DOM._getWin(node).scrollTo(val, Y.DOM.docScrollY(node)); // scroll window if win or doc
             }
         } else {
-            Y.log('unable to set scrollLeft for ' + node, 'error', 'Node');
         }
     }
 };
@@ -12524,7 +12427,6 @@ Y.Node.ATTRS.scrollTop = {
                 Y.DOM._getWin(node).scrollTo(Y.DOM.docScrollX(node), val); // scroll window if win or doc
             }
         } else {
-            Y.log('unable to set scrollTop for ' + node, 'error', 'Node');
         }
     }
 };
@@ -12838,7 +12740,6 @@ function delegate(type, fn, el, filter) {
 
     if (!handle) {
         if (!type || !fn || !el || !filter) {
-            Y.log("delegate requires type, callback, parent, & filter", "warn");
             return;
         }
 
@@ -13690,7 +13591,6 @@ YUI.add('io-base', function(Y) {
         //QueryString module to the YUI instance's 'use' method.
         if (Y.Lang.isObject(c.data) && Y.QueryString) {
             c.data = Y.QueryString.stringify(c.data);
-            Y.log('Configuration property "data" is an object. The serialized value is: ' + c.data, 'info', 'io');
         }
 
         if (c.form) {
@@ -13713,7 +13613,6 @@ YUI.add('io-base', function(Y) {
 
         if (c.data && m === 'GET') {
             uri = _concat(uri, c.data);
-            Y.log('HTTP GET with configuration data.  The querystring is: ' + uri, 'info', 'io');
         }
 
         if (c.data && m === 'POST') {
@@ -13779,7 +13678,6 @@ YUI.add('io-base', function(Y) {
         // initialize timeout polling.
         if (c.timeout) {
             _startTimeout(o, c.timeout);
-            Y.log('Configuration timeout set to: ' + c.timeout, 'info', 'io');
         }
 
         return {
@@ -14067,13 +13965,13 @@ Y.JSON.useNativeParse = useNative;
 }, '@VERSION@' );
 YUI.add('transition-native', function(Y) {
 
-/**
+/*
 * The Native Transition Utility provides an API wrapper for CSS transitions.
 * It is also the base module for the timer-based transition module.
 * @module transition
 */
 
-/**
+/*
 * Provides the base Transition class.  The "transition" method is added to Node,
 * and is how Transition should be used.
 *
@@ -14081,7 +13979,7 @@ YUI.add('transition-native', function(Y) {
 * @submodule transition-native
 */
 
-/**
+/*
  * A class for constructing transition instances.
  * Adds the "transition" method to Node.
  * @class Transition
@@ -14144,7 +14042,7 @@ Y.Node.DOM_EVENTS[TRANSITION_END] = 1;
 
 Transition.NAME = 'transition';
 
-Transition.DEFAULT_EASING = 'ease-in-out';
+Transition.DEFAULT_EASING = 'ease';
 Transition.DEFAULT_DURATION = 0.5;
 Transition.DEFAULT_DELAY = 0;
 
@@ -14250,7 +14148,7 @@ Transition.prototype = {
         }
     },
 
-    /**
+    /*
      * Starts or an animation.
      * @method run
      * @chainable
@@ -14417,24 +14315,28 @@ Y.Transition = Transition;
 Y.TransitionNative = Transition; // TODO: remove
 
 /** 
-    Animate one or more css properties to a given value. Requires the "transition" module.
-    <pre>example usage:
-        Y.one('#demo').transition({
-            duration: 1, // seconds
-            easing: 'ease-out',
-            height: '10px',
-            width: '10px',
-            opacity: { // per property duration and/or easing
-                value: 0,
-                duration: 2,
-                easing: 'ease-in'
-            }
-        });
-    </pre>
-    @for Node
-    @method transition
-    @param {Object} An object containing one or more style properties, a duration and an easing.
-    @chainable
+ *   Animate one or more css properties to a given value. Requires the "transition" module.
+ *   <pre>example usage:
+ *       Y.one('#demo').transition({
+ *           duration: 1, // in seconds, default is 0.5
+ *           easing: 'ease-out', // default is 'ease'
+ *           height: '10px',
+ *           width: '10px',
+
+ *           delay: '1', // delay start for 1 second, default is 0
+ *           opacity: { // per property
+ *               value: 0,
+ *               duration: 2,
+ *               delay: 2,
+ *               easing: 'ease-in'
+ *           }
+ *       });
+ *   </pre>
+ *   @for Node
+ *   @method transition
+ *   @param {Object} config An object containing one or more style properties, a duration and an easing.
+ *   @param {Function} callback A function to run after the transition has completed. 
+ *   @chainable
 */
 Y.Node.prototype.transition = function(config, callback) {
     var anim = this._transition;
@@ -14449,7 +14351,31 @@ Y.Node.prototype.transition = function(config, callback) {
     return this;
 };
 
+/** 
+ *   Animate one or more css properties to a given value. Requires the "transition" module.
+ *   <pre>example usage:
+ *       Y.all('.demo').transition({
+ *           duration: 1, // in seconds, default is 0.5
+ *           easing: 'ease-out', // default is 'ease'
+ *           height: '10px',
+ *           width: '10px',
 
+ *           delay: '1', // delay start for 1 second, default is 0
+ *           opacity: { // per property
+ *               value: 0,
+ *               duration: 2,
+ *               delay: 2,
+ *               easing: 'ease-in'
+ *           }
+ *       });
+ *   </pre>
+ *   @for NodeList
+ *   @method transition
+ *   @param {Object} config An object containing one or more style properties, a duration and an easing.
+ *   @param {Function} callback A function to run after the transition has completed. The callback fires
+ *       once per item in the NodeList.
+ *   @chainable
+*/
 Y.NodeList.prototype.transition = function(config, callback) {
     this.each(function(node) {
         node.transition(config, callback);
@@ -14462,12 +14388,12 @@ Y.NodeList.prototype.transition = function(config, callback) {
 }, '@VERSION@' ,{requires:['node-base']});
 YUI.add('transition-timer', function(Y) {
 
-/**
+/*
 * The Transition Utility provides an API for creating advanced transitions.
 * @module transition
 */
 
-/**
+/*
 * Provides the base Transition class, for animating numeric properties.
 *
 * @module transition
@@ -14635,7 +14561,7 @@ Y.mix(Transition.prototype, {
 
 Y.mix(Y.Transition, {
     _runtimeAttrs: {},
-    /**
+    /*
      * Regex of properties that should use the default unit.
      *
      * @property RE_DEFAULT_UNIT
@@ -14643,7 +14569,7 @@ Y.mix(Y.Transition, {
      */
     RE_DEFAULT_UNIT: /^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i,
 
-    /**
+    /*
      * The default unit to use with properties that pass the RE_DEFAULT_UNIT test.
      *
      * @property DEFAULT_UNIT
@@ -14651,7 +14577,7 @@ Y.mix(Y.Transition, {
      */
     DEFAULT_UNIT: 'px',
 
-    /**
+    /*
      * Time in milliseconds passed to setInterval for frame processing 
      *
      * @property intervalTime
@@ -14660,7 +14586,7 @@ Y.mix(Y.Transition, {
      */
     intervalTime: 20,
 
-    /**
+    /*
      * Bucket for custom getters and setters
      *
      * @property behaviors
@@ -14674,7 +14600,7 @@ Y.mix(Y.Transition, {
         }
     },
 
-    /**
+    /*
      * The default setter to use when setting object properties.
      *
      * @property DEFAULT_SETTER
@@ -14699,7 +14625,7 @@ Y.mix(Y.Transition, {
         }
     },
 
-    /**
+    /*
      * The default getter to use when getting object properties.
      *
      * @property DEFAULT_GETTER
@@ -14731,7 +14657,7 @@ Y.mix(Y.Transition, {
         Transition._timer = null;
     },
 
-    /**
+    /*
      * Called per Interval to handle each animation frame.
      * @method _runFrame
      * @private
@@ -15150,7 +15076,6 @@ if (Y.UA.ie && Y.UA.ie < 9) {
                 try { // make sure its in the document
                     val = node[FILTERS]('alpha')[OPACITY];
                 } catch(err) {
-                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
                 }
             }
             return val / 100;
@@ -15186,7 +15111,6 @@ try {
             if (isNaN(floatVal) || floatVal >= 0) {
                 style.height = val;
             } else {
-                Y.log('invalid style value for height: ' + val, 'warn', 'dom-style');
             }
         }
     };
@@ -15197,7 +15121,6 @@ try {
             if (isNaN(floatVal) || floatVal >= 0) {
                 style.width = val;
             } else {
-                Y.log('invalid style value for width: ' + val, 'warn', 'dom-style');
             }
         }
     };
@@ -15232,3 +15155,11 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 }, '@VERSION@' ,{requires:['dom-style']});
+YUI.add('simpleyui', function(Y) {
+
+// empty
+
+
+
+}, '@VERSION@' ,{use:['yui','oop','dom','event-custom-base','event-base','pluginhost','node','event-delegate','io-base','json-parse','transition','selector-css3','dom-style-ie']});
+var Y = YUI().use('*');

@@ -14,7 +14,7 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.08.25-19-45',
+            GALLERY_VERSION = 'gallery-2010.09.01-19-12',
             // GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
             TNT_VERSION     = '3',
@@ -1161,10 +1161,12 @@ Y.Loader.prototype = {
                     d.push(o[i]);
                     hash[o[i]] = true;
                     m = info[o[i]];
-                    add = this.getRequires(m);
-                    intl = intl || (m.expanded_map && (INTL in m.expanded_map));
-                    for (j=0; j<add.length; j++) {
-                        d.push(add[j]);
+                    if (m) {
+                        add = this.getRequires(m);
+                        intl = intl || (m.expanded_map && (INTL in m.expanded_map));
+                        for (j=0; j<add.length; j++) {
+                            d.push(add[j]);
+                        }
                     }
                 }
             }

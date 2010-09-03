@@ -663,11 +663,14 @@ YUI.add('selection', function(Y) {
                         node = node.get('parentNode');
                     }
                     newNode = Y.Node.create(html);
-                    html = node.get('innerHTML');
+                    html = node.get('innerHTML').replace(/\n/gi, '');
                     if (html == '' || html == '<br>') {
                         node.append(newNode);
                     } else {
                         node.insert(newNode, 'before');
+                    }
+                    if (node.get('firstChild').test('br')) {
+                        node.get('firstChild').remove();
                     }
                 }
             }

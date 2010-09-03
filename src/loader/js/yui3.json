@@ -183,21 +183,29 @@
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset"
-        ], 
-        "path": "cssgrids/grids-min.css", 
-        "requires": [
+            "cssreset", 
             "cssfonts"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
-    "cssgrids-context": {
+    "cssgrids-context-deprecated": {
         "optional": [
             "cssreset-context"
         ], 
-        "path": "cssgrids/grids-context-min.css", 
+        "path": "cssgrids-deprecated/grids-context-min.css", 
         "requires": [
             "cssfonts-context"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-deprecated": {
+        "optional": [
+            "cssreset"
+        ], 
+        "path": "cssgrids-deprecated/grids-min.css", 
+        "requires": [
+            "cssfonts"
         ], 
         "type": "css"
     }, 
@@ -564,7 +572,8 @@
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection"
+                    "selection", 
+                    "editor-para"
                 ]
             }, 
             "editor-bidi": {
@@ -573,6 +582,11 @@
                 ]
             }, 
             "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-para": {
                 "requires": [
                     "editor-base"
                 ]
@@ -1240,5 +1254,21 @@
             "jsonp", 
             "jsonp-url"
         ]
+    }, 
+    "yui": {
+        "submodules": {
+            "features": {}, 
+            "get": {}, 
+            "intl-base": {}, 
+            "rls": {
+                "requires": [
+                    "features"
+                ]
+            }, 
+            "yui-base": {}, 
+            "yui-later": {}, 
+            "yui-log": {}, 
+            "yui-throttle": {}
+        }
     }
 }

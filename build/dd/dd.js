@@ -348,7 +348,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node', 'base', 'yui-throttle', 'classnamemanager'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node', 'base', 'yui-throttle', 'classnamemanager']});
 YUI.add('dd-ddm', function(Y) {
 
 
@@ -469,7 +469,7 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base', 'event-resize'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base', 'event-resize']});
 YUI.add('dd-ddm-drop', function(Y) {
 
 
@@ -880,7 +880,7 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
 YUI.add('dd-drag', function(Y) {
 
 
@@ -1414,6 +1414,7 @@ YUI.add('dd-drag', function(Y) {
             });
             
             this.publish(EV_END, {
+                defaultFn: this._defEndFn,
                 preventedFn: this._prevEndFn,
                 queuable: false,
                 emitFacade: true,
@@ -1943,10 +1944,19 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @private
+        * @method _defEndFn
+        * @description Handler for fixing the selection in IE
+        */
+        _defEndFn: function(e) {
+            this._fixIEMouseUp();
+        },
+        /**
+        * @private
         * @method _prevEndFn
         * @description Handler for preventing the drag:end event. It will reset the node back to it's start position
         */
         _prevEndFn: function(e) {
+            this._fixIEMouseUp();
             //Bug #1852577
             this.get(DRAG_NODE).setXY(this.nodeXY);
         },
@@ -2096,7 +2106,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
 YUI.add('dd-proxy', function(Y) {
 
 
@@ -2344,7 +2354,7 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm', 'dd-drag']});
 YUI.add('dd-constrain', function(Y) {
 
 
@@ -2795,7 +2805,7 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-drag']});
 YUI.add('dd-scroll', function(Y) {
 
 
@@ -3222,7 +3232,7 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false, optional:['dd-proxy']});
 YUI.add('dd-drop', function(Y) {
 
 
@@ -3770,7 +3780,7 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
 YUI.add('dd-delegate', function(Y) {
 
 
@@ -3842,7 +3852,6 @@ YUI.add('dd-delegate', function(Y) {
             this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
             this.dd._unprep();
             this.dd.set('node', _tmpNode);
-            this.dd._fixIEMouseUp();
         },
         /**
         * @private
@@ -4101,7 +4110,7 @@ YUI.add('dd-delegate', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-drop-plugin'], requires:['dd-drag', 'event-mouseenter'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-drag', 'event-mouseenter'], skinnable:false, optional:['dd-drop-plugin']});
 
 
 YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-drop', 'dd-scroll', 'dd-delegate'], skinnable:false});

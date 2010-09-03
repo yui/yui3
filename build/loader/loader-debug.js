@@ -14,7 +14,7 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.08.25-19-45',
+            GALLERY_VERSION = 'gallery-2010.09.01-19-12',
             // GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
             TNT_VERSION     = '3',
@@ -1167,10 +1167,12 @@ Y.Loader.prototype = {
                     d.push(o[i]);
                     hash[o[i]] = true;
                     m = info[o[i]];
-                    add = this.getRequires(m);
-                    intl = intl || (m.expanded_map && (INTL in m.expanded_map));
-                    for (j=0; j<add.length; j++) {
-                        d.push(add[j]);
+                    if (m) {
+                        add = this.getRequires(m);
+                        intl = intl || (m.expanded_map && (INTL in m.expanded_map));
+                        for (j=0; j<add.length; j++) {
+                            d.push(add[j]);
+                        }
                     }
                 }
             }
@@ -2366,21 +2368,29 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "cssgrids": {
         "optional": [
-            "cssreset"
-        ], 
-        "path": "cssgrids/grids-min.css", 
-        "requires": [
+            "cssreset", 
             "cssfonts"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
-    "cssgrids-context": {
+    "cssgrids-context-deprecated": {
         "optional": [
             "cssreset-context"
         ], 
-        "path": "cssgrids/grids-context-min.css", 
+        "path": "cssgrids-deprecated/grids-context-min.css", 
         "requires": [
             "cssfonts-context"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-deprecated": {
+        "optional": [
+            "cssreset"
+        ], 
+        "path": "cssgrids-deprecated/grids-min.css", 
+        "requires": [
+            "cssfonts"
         ], 
         "type": "css"
     }, 
@@ -2749,7 +2759,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection"
+                    "selection", 
+                    "editor-para"
                 ]
             }, 
             "editor-bidi": {
@@ -2758,6 +2769,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-para": {
                 "requires": [
                     "editor-base"
                 ]
@@ -3430,9 +3446,25 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp", 
             "jsonp-url"
         ]
+    }, 
+    "yui": {
+        "submodules": {
+            "features": {}, 
+            "get": {}, 
+            "intl-base": {}, 
+            "rls": {
+                "requires": [
+                    "features"
+                ]
+            }, 
+            "yui-base": {}, 
+            "yui-later": {}, 
+            "yui-log": {}, 
+            "yui-throttle": {}
+        }
     }
 };
-YUI.Env[Y.version].md5 = '503dbdf98b671df8f52177363e74b6a3';
+YUI.Env[Y.version].md5 = 'eef930e983dcf433c78baf3bd96ef4e0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

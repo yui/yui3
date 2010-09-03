@@ -1,9 +1,9 @@
 {
-    "cssgrids-context": {
+    "cssgrids-context-deprecated": {
         "optional": [
             "cssreset-context"
         ], 
-        "path": "cssgrids/grids-context-min.css", 
+        "path": "cssgrids-deprecated/grids-context-min.css", 
         "requires": [
             "cssfonts-context"
         ], 
