@@ -35,7 +35,15 @@
 }
 
 #mychart {
+    margin:10px 10px 10px 10px;
     padding:10px 10px 10px 10px;
+    min-height:350px;
+}
+.code {
+    margin: 10px; 10px; 10px; 10px;
+    border: 1px solid #000;
+    height: 400px;
+    overflow: auto;
 }
 </style>
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.2/build/cssfonts/fonts-min.css">
@@ -44,16 +52,131 @@
 <body class="yui3-skin-sam">
 <h3>Label Rotation</h3>
 <div id="mychart"></div>
+<h3 style="margin-left:10px">Code Snippet</h3>
+<div class="code">
 <pre>
+        var myDataValues = [ 
+            {date:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
+            {date:"5/2/2010", values:50, expenses:9100, revenue:100}, 
+            {date:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
+            {date:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+            {date:"5/5/2010", values:5000, expenses:5000, revenue:2650}
+        ];
+        
+        var mychart = new Y.Chart({dataProvider:myDataValues, 
+                                            axes:{
+                                                financials:{
+                                                    keys:["revenue", "expenses"],
+                                                    position:"left",
+                                                    type:"numeric",
+                                                    roundMinAndMax:true,
+                                                    roundingUnit:500,
+                                                    styles:{
+                                                        majorTicks:{
+                                                            display:"inside",
+                                                            length:3,
+                                                            color:"#333"
+                                                        },
+                                                        line:{color:"#333"},
+                                                        label:
+                                                        {
+                                                            margin:{right:5}
+                                                        },
+                                                        majorUnit:{count:5},
+                                                    }
+                                                },
+                                                dateRange:{
+                                                    keys:["date"],
+                                                    position:"bottom",
+                                                    type:"time",
+                                                    styles:{
+                                                        majorTicks:{
+                                                            display:"outside",
+                                                            length:3,
+                                                            color:"#333"
+                                                        },
+                                                        line:{color:"#333"},
+                                                        label: {
+                                                            rotation:-63
+                                                        },
+                                                        margin:{top:5},
+                                                        majorUnit:{count:10}
+                                                    }
+                                                }
+                                            },
+                                            seriesCollection: [
+                                             {
+                                                    type:"combo",
+                                                    xAxis:"dateRange",
+                                                    yAxis:"financials",
+                                                    xKey:"date",
+                                                    yKey:"revenue",
+                                                    xDisplayName:"Date",
+                                                    yDisplayName:"Deductions",
+                                                    marker: {
+                                                        fill: {
+                                                            color: "#6600cc"
+                                                        },
+                                                        border: {
+                                                            weight: 0
+                                                        },
+                                                        width:8,
+                                                        height:8,
+                                                        over: {
+                                                            fill: {
+                                                                color: "#cc66cc"
+                                                            },
+                                                            border: {
+                                                                color: "#6600cc",
+                                                                weight: 1
+                                                            },
+                                                            width: 11,
+                                                            height: 11
+                                                        }
+                                                    },
+                                                    line: {color: "#cc33cc"}
+                                                },
+                                                {
+                                                    type:"combo",
+                                                    xAxis:"dateRange",
+                                                    yAxis:"financials",
+                                                    xKey:"date",
+                                                    yKey:"expenses",
+                                                    marker:{
+                                                        fill: {
+                                                            color:"#006633" 
+                                                        },
+                                                        border: {
+                                                            weight: 0
+                                                        },
+                                                        width:8, 
+                                                        height:8,
+                                                        over: {
+                                                            border: {
+                                                                weight:"1",
+                                                                color: "#006633"
+                                                            },
+                                                            fill: {
+                                                                color: "#00ff66"
+                                                            },
+                                                            width: 11,
+                                                            height: 11
+                                                        }
+                                                    },
+                                                    line: {
+                                                        color: "#00ff66"
+                                                    }
+                                                }
+                                            ],
+                                            render:"#mychart"});
 </pre>
+</div>
 <script type="text/javascript" src="http://yui.yahooapis.com/3.1.2/build/yui/yui-min.js"></script>
-<script type="text/javascript" src="../../graphics/build/dom/dom.js"></script>
-<script type="text/javascript" src="../../graphics/build/node/node.js"></script>
 <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
 <script type="text/javascript" src="../../tooltip/build/tooltip/tooltip.js"></script>
 <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 <script type="text/javascript">            
-    YUI().use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', function (Y) 
+    YUI().use('infographics', function (Y) 
     { 
         var myDataValues = [ 
             {date:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
@@ -63,7 +186,7 @@
             {date:"5/5/2010", values:5000, expenses:5000, revenue:2650}
         ];
         
-        var mychart = new Y.CartesianChart({dataProvider:myDataValues, 
+        var mychart = new Y.Chart({dataProvider:myDataValues, 
                                             axes:{
                                                 financials:{
                                                     keys:["revenue", "expenses"],

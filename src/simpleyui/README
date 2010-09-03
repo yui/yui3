@@ -1,19 +1,19 @@
-Quick YUI
+Simple YUI
 
-    The quickyui.js file is a rollup of commonly used YUI modules delivered with a global Y instance 
+    The simpleyui.js file is a rollup of commonly used YUI modules delivered with a global Y instance 
 	to which all included functionality is attached.
 	
 	The intended usage of this file is to provide the simplest possible starting point for using YUI 3.
 	It supports the following usage pattern:
 	
-	<script src="http://yui.yahooapis.com/3.2.0/build/quickyui/quickyui.js"></script>
+	<script src="http://yui.yahooapis.com/3.2.0/build/simpleyui/simpleyui.js"></script>
 	<script>
 		Y.one("#foo").on("click", function(e) {
 			//handle click
 		});
 	</script>
 	
-    Quick YUI bundles the following modules:
+    Simple YUI bundles the following modules:
 
 		yui
 		oop
