@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <script src="../../build/yui/yui.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        YUI({filter:"raw"}).use('loader', function(Y) {
+
+            // Bug 1: moduleInfo modified for 2nd instance. skin-sam-widget no longer exists
+
+            var l1 = new Y.Loader({
+                require:["widget"]    
+            });
+            
+            l1.require(["widget"]);
+            l1.calculate();
+
+            console.log("l1.moduleInfo['skin-sam-widget'] exists");
+            console.log(l1.moduleInfo["skin-sam-widget"]);
+            console.log(l1.sorted);
+
+            var l2 = new Y.Loader({
+                require:["widget"]    
+            });
+
+            l2.require(["widget"]);
+            l2.calculate();
+
+            console.log("l2.moduleInfo['skin-sam-widget'] missing");
+            console.log(l2.moduleInfo["skin-sam-widget"]);
+            console.log(l2.sorted);
+
+            // Bug 2: force doesn't seem to be forcing yui (as discussed this morning)
+            
+            var l3 = new Y.Loader({
+                require:["oop"],
+                force:["yui"]    
+            });
+
+            l3.require(["yui", "oop"]);
+            l3.force = ["yui"];
+
+            l3.calculate();
+
+            console.log("l3 sorted (missing yui)");
+            console.log(l3.sorted);
+
+        });
+    </script>
+</body>
+</html>
