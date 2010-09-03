@@ -2203,7 +2203,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "anim-easing": {
-                "requires": []
+                "requires": [
+                    "anim-base"
+                ]
             }, 
             "anim-node-plugin": {
                 "requires": [
@@ -3464,7 +3466,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'eef930e983dcf433c78baf3bd96ef4e0';
+YUI.Env[Y.version].md5 = 'cb1db98536fb15d179c178aab4be9340';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
