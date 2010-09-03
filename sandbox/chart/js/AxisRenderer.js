@@ -244,7 +244,7 @@ AxisRenderer.ATTRS = {
             },
             majorUnit: {
                 determinant:"count",
-                count:5,
+                count:11,
                 distance:75
             },
             padding: {
@@ -258,7 +258,13 @@ AxisRenderer.ATTRS = {
             width: "100px",
             height: "100px",
             label: {
-                rotation: 0
+                rotation: 0,
+                margin: {
+                    top:4,
+                    right:4,
+                    bottom:4,
+                    left:4
+                }
             },
             hideOverlappingLabelTicks: false
         };

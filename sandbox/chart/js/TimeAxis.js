@@ -126,7 +126,7 @@ Y.extend(TimeAxis, Y.BaseAxis, {
         this.fire("dataChange");
     },
     
-    getFormattedLabel: function(val, format)
+    _defaultLabelFunction: function(val, format)
     {
         return Y.DataType.Date.format(Y.DataType.Date.parse(val), {format:format});
     }
