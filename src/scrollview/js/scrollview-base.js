@@ -263,6 +263,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._nativeBody.onselectstart = this._selectstart;
     },
 
+    _preventStart : false,
+
+    _preventMove : true,
+    
+    _preventEnd : true,
+
     /**
      * gesturemovestart event handler
      *
@@ -274,7 +280,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         var bb = this._bb;
 
-        e.preventDefault();
+        if (this._preventStart) {
+            e.preventDefault();
+        }
 
         this._killTimer();
 
@@ -325,7 +333,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMove: function(e) {
 
-        e.preventDefault();
+        if (this._preventMove) {
+            e.preventDefault();
+        }
 
         this._isDragging = true;
         this._moveEndClientY = e.clientY;
@@ -350,7 +360,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMoveEnd: function(e) {
 
-        e.preventDefault();
+        if (this._preventEnd) {
+            e.preventDefault();
+        }
 
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
