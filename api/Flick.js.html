@@ -109,7 +109,7 @@
 <span class="cm"> * &lt;dd&gt;The minimum distance between start and end points, which would qualify the gesture as a flick.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;dt&gt;minVelocity (in pixels/ms, defaults to 0)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;The minimum velocity which would qualify the gesture as a flick.&lt;/dd&gt;</span>
-<span class="cm"> * &lt;dt&gt;preventDefault (defaults to true)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dt&gt;preventDefault (defaults to false)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be </span>
 <span class="cm"> * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;dt&gt;axis (no default)&lt;/dt&gt;</span>
@@ -163,8 +163,6 @@
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">PREVENT_DEFAULT</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">params</span><span class="p">[</span><span class="nx">PREVENT_DEFAULT</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">PREVENT_DEFAULT</span><span class="p">;</span>
         <span class="p">}</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;flick, processArgs : minDistance =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minDistance</span> <span class="o">+</span> <span class="s2">&quot;, minVelocity =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minVelocity</span> <span class="o">+</span> <span class="s2">&quot;, preventDefault = &quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
     <span class="p">},</span>
@@ -281,7 +279,7 @@
 
     <span class="nx">MIN_VELOCITY</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="nx">MIN_DISTANCE</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">true</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">false</span>
 <span class="p">});</span>
 </pre></div>
 
