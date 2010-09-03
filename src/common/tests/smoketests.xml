@@ -24,7 +24,7 @@
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-synthetic.html</url>
-        <url>event/tests/focusblur.html</url>
+        <!--url>event/tests/focusblur.html</url-->
         <url>history/tests/functional/history-base.html</url>
         <url>history/tests/functional/history-hash.html</url>
         <url>history/tests/functional/history-html5.html</url>
