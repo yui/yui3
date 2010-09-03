@@ -261,6 +261,22 @@ BaseAxis.ATTRS = {
             return this._keyCollection;
         },
         readOnly: true
+    },
+
+    labelFunction: {
+        getter: function()
+        {
+            if(this._labelFunction)
+            {
+                return this._labelFunction;
+            }
+            return this._defaultLabelFunction;
+        },
+
+        setter: function(val)
+        {
+            this._labelFunction = val;
+        }
     }
 };
 
@@ -598,8 +614,7 @@ Y.extend(BaseAxis, Y.Base,
         {
             units = (len/majorUnit.distance) + 1;
         }
-        
-        return Math.min(units, this._data.length);
+        return units; 
     },
 
     getMajorUnitDistance: function(len, uiLen, majorUnit)
@@ -626,10 +641,12 @@ Y.extend(BaseAxis, Y.Base,
         var min = this.get("minimum"),
             max = this.get("maximum"),
             val = (pos/len * (max - min)) + min;
-        return this.getFormattedLabel(val, format);
+        return this.get("labelFunction")(val, format);
     },
 
-    getFormattedLabel: function(val, format)
+    _labelFunction: this._defaultLabelFunction,
+    
+    _defaultLabelFunction: function(val, format)
     {
         return val;
     }

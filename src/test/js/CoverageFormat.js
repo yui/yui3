@@ -1,6 +1,13 @@
 
 
     Y.namespace("Coverage.Format");
+
+    /**
+     * Contains specific formatting options for coverage information.
+     * @namespace Coverage
+     * @class Format
+     * @static
+     */
     
     /**
      * Returns the coverage report in JSON format. This is the straight
@@ -8,7 +15,7 @@
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method JSON
-     * @namespace Coverage.Format
+     * @static
      */
     Y.Coverage.Format.JSON = function(coverage){
         return Y.JSON.stringify(coverage);
@@ -22,7 +29,7 @@
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method XdebugJSON
-     * @namespace Coverage.Format
+     * @static
      */
     Y.Coverage.Format.XdebugJSON = function(coverage){
         var report = {};
