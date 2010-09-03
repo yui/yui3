@@ -1349,6 +1349,15 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         test_select: function() {
             var select = Y.Node.create('<select>');
             Assert.areEqual('', select.get('value'));
+        },
+
+        test_destroy: function() {
+            var node = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>');
+                nodes = node.all('em, strong');
+
+            node.destroy();
+            Assert.isNull(node._node);
+
         }
 
     })); 
