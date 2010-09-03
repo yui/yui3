@@ -1,5 +1,9 @@
-release 3.2.0 PR1
-- adds transition methods to Node for basic CSS property animations
+release 3.2.0
+- adds transition method to Node/NodeList for CSS property animations
+- #2528895 :checked pseudo-class doesn't work on input on IE
+- #2529035 Input Widget fails to render in IE8
+- #2528536 Hard to summarize.
+- #2529079 Y.all( window ) returns an empty NodeList
 
 release 3.1.1
 #2528740 - Node.setContent doesn't accept falsey numbers in 3.1.0 

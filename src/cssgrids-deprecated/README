@@ -1,6 +1,13 @@
-*** NOTE: This module is deprecated and has been replaced by cssgrids. 
+*** NOTE: This module is deprecated and has been replaced by cssgrids.
 
-**** version 3.2.0 PR1 ***	
+This is the prior implementation of CSS Grids that has been deprecated.
+The interface of the new implementation is not backwards compatible with
+this implementation so it being included in the YUI 3 distribution on a
+temporary basis to ease migration.  
+
+This module will be removed at a later date.
+
+**** version 3.2.0 ***	
   * moved to cssgrids-deprecated
 
 **** version 3.0.0 ***	

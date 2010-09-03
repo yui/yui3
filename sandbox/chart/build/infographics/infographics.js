@@ -263,6 +263,22 @@ BaseAxis.ATTRS = {
             return this._keyCollection;
         },
         readOnly: true
+    },
+
+    labelFunction: {
+        getter: function()
+        {
+            if(this._labelFunction)
+            {
+                return this._labelFunction;
+            }
+            return this._defaultLabelFunction;
+        },
+
+        setter: function(val)
+        {
+            this._labelFunction = val;
+        }
     }
 };
 
@@ -600,8 +616,7 @@ Y.extend(BaseAxis, Y.Base,
         {
             units = (len/majorUnit.distance) + 1;
         }
-        
-        return Math.min(units, this._data.length);
+        return units; 
     },
 
     getMajorUnitDistance: function(len, uiLen, majorUnit)
@@ -628,10 +643,12 @@ Y.extend(BaseAxis, Y.Base,
         var min = this.get("minimum"),
             max = this.get("maximum"),
             val = (pos/len * (max - min)) + min;
-        return this.getFormattedLabel(val, format);
+        return this.get("labelFunction")(val, format);
     },
 
-    getFormattedLabel: function(val, format)
+    _labelFunction: this._defaultLabelFunction,
+    
+    _defaultLabelFunction: function(val, format)
     {
         return val;
     }
@@ -815,7 +832,7 @@ Y.extend(NumericAxis, Y.BaseAxis,
 		return Math.round(decimalPlaces * number) / decimalPlaces;
 	},
     
-    getFormattedLabel: function(val, format)
+    _defaultLabelFunction: function(val, format)
     {
         return Y.DataType.Number.format(val, format);
     }
@@ -1043,7 +1060,7 @@ Y.extend(TimeAxis, Y.BaseAxis, {
         this.fire("dataChange");
     },
     
-    getFormattedLabel: function(val, format)
+    _defaultLabelFunction: function(val, format)
     {
         return Y.DataType.Date.format(Y.DataType.Date.parse(val), {format:format});
     }
@@ -5223,7 +5240,7 @@ AxisRenderer.ATTRS = {
             },
             majorUnit: {
                 determinant:"count",
-                count:5,
+                count:11,
                 distance:75
             },
             padding: {
@@ -5237,7 +5254,13 @@ AxisRenderer.ATTRS = {
             width: "100px",
             height: "100px",
             label: {
-                rotation: 0
+                rotation: 0,
+                margin: {
+                    top:4,
+                    right:4,
+                    bottom:4,
+                    left:4
+                }
             },
             hideOverlappingLabelTicks: false
         };
@@ -7131,12 +7154,14 @@ Y.extend(CartesianChart, Y.Widget, {
             marker = Y.Widget.getByNode(node),
             index = marker.get("index"),
             series = marker.get("series"),
+            xAxis = series.get("xAxis"),
+            yAxis = series.get("yAxis"),
             xKey = series.get("xKey"),
             yKey = series.get("yKey"),
             msg = series.get("xDisplayName") + 
-            ": " + series.get("xAxis").getKeyValueAt(xKey, index) + 
+            ": " + xAxis.get("labelFunction")(xAxis.getKeyValueAt(xKey, index)) + 
             "<br/>" + series.get("yDisplayName") + 
-            ": " + series.get("yAxis").getKeyValueAt(yKey, index);
+            ": " + yAxis.get("labelFunction")(yAxis.getKeyValueAt(yKey, index));
             if (node) {
                 this.setTriggerContent(msg);
             }
@@ -7157,6 +7182,14 @@ Y.extend(CartesianChart, Y.Widget, {
 });
 
 Y.CartesianChart = CartesianChart;
+function Chart(cfg)
+{
+    if(cfg.type != "pie")
+    {
+        return new Y.CartesianChart(cfg);
+    }
+}
+Y.Chart = Chart;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['dom', 'datatype', 'event-custom', 'event-mouseenter', 'widget', 'widget-position', 'widget-stack', 'tooltip', 'graphics']});

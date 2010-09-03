@@ -8,7 +8,7 @@
      */
     Y.Test.Runner = (function(){
     
-        /**
+        /* (intentionally not documented)
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
          * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
@@ -18,42 +18,42 @@
          */
         function TestNode(testObject){
         
-            /**
+            /* (intentionally not documented)
              * The TestSuite, TestCase, or test function represented by this node.
              * @type Variant
              * @property testObject
              */
             this.testObject = testObject;
             
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's first child.
              * @type TestNode
              * @property firstChild
              */        
             this.firstChild = null;
             
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's last child.
              * @type TestNode
              * @property lastChild
              */        
             this.lastChild = null;
             
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's parent.
              * @type TestNode
              * @property parent
              */        
             this.parent = null; 
        
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's next sibling.
              * @type TestNode
              * @property next
              */        
             this.next = null;
             
-            /**
+            /* (intentionally not documented)
              * Test results for this test object.
              * @type object
              * @property results
@@ -79,7 +79,7 @@
         
         TestNode.prototype = {
         
-            /**
+            /* (intentionally not documented)
              * Appends a new test object (TestSuite, TestCase, or test function name) as a child
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.

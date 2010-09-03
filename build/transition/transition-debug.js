@@ -3,8 +3,8 @@ YUI.add('transition-native', function(Y) {
 /**
 * Provides the transition method for Node.
 *
-* @module transition
-* @submodule transition-native
+* @module node
+* @submodule transition
 */
 
 /*

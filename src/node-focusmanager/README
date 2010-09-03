@@ -4,8 +4,11 @@ Focus Manager
     * Fixed an issue that prevented arrow keys from working properly in form
       input fields and textareas inside a focused node. [Bug #2529041]
 
+3.1.2
+    * No changes.
+
 3.1.1
-    * No changes
+    * No changes.
 
 3.1.0
     * Updated the "refresh" method so that it will set up event listeners if

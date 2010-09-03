@@ -2,6 +2,13 @@ YUI Test Framework
 Module Name: "test"
 Documentation: http://developer.yahoo.com/yui/3/test
 
+3.2.0
+
+    * Fixed issue where top-level test suite objects didn't go through proper lifecycle
+    * Made Y.Test.Runner a singleton (only one instance exists per page regardless of Y objects).
+    * Reverted ObjectAssert.hasKey() to also check for prototype property.
+    * Fixed API documentation bugs.
+
 3.1.1
     * No changes
 

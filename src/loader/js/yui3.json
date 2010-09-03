@@ -18,7 +18,9 @@
                 ]
             }, 
             "anim-easing": {
-                "requires": []
+                "requires": [
+                    "anim-base"
+                ]
             }, 
             "anim-node-plugin": {
                 "requires": [
