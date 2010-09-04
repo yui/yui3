@@ -1,11 +1,11 @@
 /**
 * Provides the transition method for Node.
+* @see Node
 *
-* @module node
-* @submodule transition
+* @module transition
 */
 
-/*
+/**
  * A class for constructing transition instances.
  * Adds the "transition" method to Node.
  * @class Transition
