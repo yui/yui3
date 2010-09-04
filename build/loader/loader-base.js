@@ -207,6 +207,7 @@ var NOT_FOUND       = {},
     VERSION         = Y.version,
     ROOT_LANG       = "",
     YObject         = Y.Object,
+    oeach           = YObject.each,
     YArray          = Y.Array,
     _queue          = GLOBAL_ENV._loaderQueue,
     META            = GLOBAL_ENV[VERSION],
@@ -215,7 +216,6 @@ var NOT_FOUND       = {},
     ON_PAGE         = GLOBAL_ENV.mods,
     modulekey,
     cache,
-
     _path           = function(dir, file, type, nomin) {
                         var path = dir + '/' + file;
                         if (!nomin) {
@@ -534,25 +534,28 @@ Y.Loader = function(o) {
     self.config = o;
     self._internal = true;
 
+
     cache = GLOBAL_ENV._renderedMods;
 
     if (cache) {
-        self.moduleInfo = Y.merge(cache);
+        oeach(cache, function(v, k) {
+            self.moduleInfo[k] = Y.merge(v);
+        });
+
         cache = GLOBAL_ENV._conditions;
-        self.conditions = Y.merge(cache);
+        
+        oeach(cache, function(v, k) {
+            self.conditions[k] = Y.merge(v);
+        });
 
     } else {
-        // YObject.each(defaults, function(v, k) {
-        //     self.addModule(v, k);
-        // });
-        YObject.each(defaults, self.addModule, self);
+        oeach(defaults, self.addModule, self);
     }
 
     if (!GLOBAL_ENV._renderedMods) {
         GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
         GLOBAL_ENV._conditions = Y.merge(self.conditions);
     }
-
 
     self._inspectPage();
 
@@ -650,7 +653,7 @@ Y.Loader.prototype = {
     },
 
    _inspectPage: function() {
-       YObject.each(ON_PAGE, function(v, k) {
+       oeach(ON_PAGE, function(v, k) {
            if (v.details) {
                var m = this.moduleInfo[k],
                    req = v.details.requires,
@@ -738,7 +741,7 @@ Y.Loader.prototype = {
 
                     } else if (i == 'modules') {
                         // add a hash of module definitions
-                        YObject.each(val, self.addModule, self);
+                        oeach(val, self.addModule, self);
                     } else if (i == 'gallery') {
                         this.groups.gallery.update(val);
                     } else if (i == 'yui2' || i == '2in3') {
@@ -845,14 +848,14 @@ Y.Loader.prototype = {
         self.groups[name] = o;
 
         if (o.patterns) {
-            YObject.each(o.patterns, function(v, k) {
+            oeach(o.patterns, function(v, k) {
                 v.group = name;
                 self.patterns[k] = v;
             });
         }
 
         if (mods) {
-            YObject.each(mods, function(v, k) {
+            oeach(mods, function(v, k) {
                 v.group = name;
                 self.addModule(v, k);
             }, self);
@@ -1175,7 +1178,7 @@ Y.Loader.prototype = {
         cond = this.conditions[name];
 
         if (cond) {
-            YObject.each(cond, function(def, condmod) {
+            oeach(cond, function(def, condmod) {
 
                 if (!hash[condmod]) {
                     go = def && ((def.ua && Y.UA[def.ua]) || 
@@ -1395,7 +1398,7 @@ Y.Loader.prototype = {
         // the setup phase is over, all modules have been created
         self.dirty = false;
 
-        YObject.each(r, function(v, name) {
+        oeach(r, function(v, name) {
             if (!done[name]) {
                 done[name] = true;
                 m = self.getModule(name);
@@ -1533,14 +1536,14 @@ Y.Loader.prototype = {
     _onSuccess: function() {
         var skipped = Y.merge(this.skipped), fn;
 
-        YObject.each(skipped, function(k) {
+        oeach(skipped, function(k) {
             delete this.inserted[k];
         }, this);
 
         this.skipped = {};
 
         // Y.mix(this.loaded, this.inserted);
-        YObject.each(this.inserted, function(v, k) {
+        oeach(this.inserted, function(v, k) {
             Y.mix(this.loaded, this.getProvides(k));
         }, this);
 

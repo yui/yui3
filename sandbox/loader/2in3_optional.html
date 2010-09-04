@@ -1,0 +1,20 @@
+<script type="text/javascript" charset="utf-8" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../build/loader/loader-debug.js"></script>
+<script type="text/javascript">
+Y = YUI({
+    
+    // Loader will fail if loadOptional is true
+    loadOptional: true,
+    
+    combine: false,
+    filter: 'debug'
+    
+}).use('yui2-slider', function (Y) {
+    
+    Y.log('ATTACHED MODULES: ' + Y.Object.keys(Y.Env._attached).sort().join(', '));
+
+    console.log(Y);
+    
+});
+</script>
+

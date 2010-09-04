@@ -24,7 +24,7 @@
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-synthetic.html</url>
-        <url>event/tests/focusblur.html</url>
+        <!--url>event/tests/focusblur.html</url-->
         <url>history/tests/functional/history-base.html</url>
         <url>history/tests/functional/history-hash.html</url>
         <url>history/tests/functional/history-html5.html</url>
@@ -32,7 +32,7 @@
         <url>json/tests/json.html</url>
         <url>jsonp/tests/jsonp.html</url>
         <url>node/tests/node.html</url>
-        <url>node-focusmanager/tests/focusmanager.html</url>
+        <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>pluginhost/tests/plugins.html</url>
         <url>slider/tests/slider.html</url>
         <url>widget/tests/widget.html</url>

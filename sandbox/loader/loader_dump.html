@@ -16,19 +16,34 @@
 <textarea id="loadermeta"></textarea>
 
 <script>
-YUI({base: '../../build/'}).use('json', 'node', function(Y) {
+YUI().use('json', 'node', function(Y) {
     var t = Y.Node.get("#loadermeta");
     var l = new Y.Loader({
         base:'../../build/',
-        allowRollup:true,
-        require:["dom-base", "dom-style", "dom-screen", "selector", "selector-native"],
+        // allowRollup:true,
+        // require:["dom-base", "dom-style", "dom-screen", "selector", "selector-native"],
+        require:["yui", "widget"]
         // force: ["dom", "dom-base", "dom-style", "dom-screen", "selector", "selector-native"],
         // ignoreRegistered: true,
-        combo:false
+        // combo:false
     });
-    // console.log(l.sorted);
     l.force = Y.Object.keys(l.moduleInfo);
     l.calculate();
+    console.log(l.sorted);
+    t.set("value", Y.JSON.stringify(l.sorted));
+
+    var l = new Y.Loader({
+        base:'../../build/',
+        // allowRollup:true,
+        // require:["dom-base", "dom-style", "dom-screen", "selector", "selector-native"],
+        require:["yui", "widget"]
+        // force: ["dom", "dom-base", "dom-style", "dom-screen", "selector", "selector-native"],
+        // ignoreRegistered: true,
+        // combo:false
+    });
+    l.force = Y.Object.keys(l.moduleInfo);
+    l.calculate();
+    console.log(l.sorted);
     t.set("value", Y.JSON.stringify(l.sorted));
 });
 </script>
