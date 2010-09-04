@@ -32,7 +32,7 @@
         <url>json/tests/json.html</url>
         <url>jsonp/tests/jsonp.html</url>
         <url>node/tests/node.html</url>
-        <url>node-focusmanager/tests/focusmanager.html</url>
+        <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>pluginhost/tests/plugins.html</url>
         <url>slider/tests/slider.html</url>
         <url>widget/tests/widget.html</url>

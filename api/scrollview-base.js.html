@@ -312,6 +312,12 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_selectstart</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="nx">_preventStart</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+    <span class="nx">_preventMove</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    
+    <span class="nx">_preventEnd</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * gesturemovestart event handler</span>
 <span class="cm">     *</span>
@@ -323,7 +329,9 @@
 
         <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">;</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventStart</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
 
@@ -374,7 +382,9 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventMove</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
@@ -399,7 +409,9 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMoveEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventEnd</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="p">}</span>
 
         <span class="kd">var</span> <span class="nx">minY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">,</span>
             <span class="nx">maxY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">,</span>
