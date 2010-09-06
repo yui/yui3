@@ -2,17 +2,17 @@ YUI.add('transition-native', function(Y) {
 
 /**
 * Provides the transition method for Node.
-* @see Node
+* Transition has no API of its own, but adds the transition method to Node.
 *
 * @module transition
+* @see Node
 */
 
-/**
+/*
  * A class for constructing transition instances.
  * Adds the "transition" method to Node.
  * @class Transition
  * @constructor
- * @see Node 
  */
 
 var TRANSITION = '-webkit-transition',
