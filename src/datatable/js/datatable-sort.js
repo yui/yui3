@@ -104,6 +104,10 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         var dt = this.get("host");
         dt.get("recordset").plug(RecordsetSort, {dt: dt});
         
+        dt.on("addHeaderTh", Y.bind(function(e){
+            this._beforeGetThNodeMarkup(e.value, e.column);
+        }, this));
+        
         //TODO: Don't use hrefs - use tab/arrow/enter
         this.doBefore("_getThNodeMarkup", this._beforeGetThNodeMarkup);
 

@@ -533,7 +533,12 @@ Y.extend(DTBase, Y.Widget, {
 
     // Initialization
     initializer: function() {
-        this.publish("addTr", {defaultFn: BIND("_defAddTrFn", this), queuable:true});
+        this.publish("addTr", {defaultFn: BIND("_defAddTrFn", this), queuable:false});
+        this.publish("addTd", {defaultFn: BIND("_defAddTdFn", this), queuable:false});
+        
+        this.publish("addHeaderTr", {defaultFn: BIND("_defAddHeaderTrFn", this), queuable:false});
+        this.publish("addHeaderTh", {defaultFn: BIND("_defAddHeaderThFn", this), queuable:false});
+
 
         // This set of custom events pass through DOM event facades
         //TODO: are the default functions necessary?
@@ -772,17 +777,7 @@ Y.extend(DTBase, Y.Widget, {
 
         // Iterate tree to add rows
         for(; i<len; ++i) {
-            tr = this._createHeaderTr(tree[i]);
-
-            // Set FIRST/LAST class
-            if(i === 0) {
-                tr.addClass(CLASS_FIRST);
-            }
-            if(i === (len-1)) {
-                tr.addClass(CLASS_LAST);
-            }
-
-            theadNode.appendChild(tr);
+            this.fire("addHeaderTr", {columns:tree[i]});//this._createHeaderTr(tree[i]);
         }
 
         //TODO
@@ -792,10 +787,37 @@ Y.extend(DTBase, Y.Widget, {
         //this._createColumnHelpers();
     },
 
-    _createHeaderTr: function(record) {
-        var tr = NODE.create(this._getHeaderTrMarkup(record));
-        this._createThNodes(record, tr);
-        this.fire("addHeaderTr", {record: record, tr: tr});
+    _defAddHeaderTrFn: function(e) {
+        var columns = e.columns,
+            tr = this._createHeaderTr(columns),
+            theadNode = this._theadNode,
+            index = e.index,
+            len = theadNode.get("children").get("length");
+
+        // Set FIRST/LAST class
+        if(index === 0) {
+            tr.addClass(CLASS_FIRST);
+        }
+        if(index === (len-1)) {
+            tr.addClass(CLASS_LAST);
+        }
+
+        theadNode.appendChild(tr);
+
+    },
+    
+    _createHeaderTr: function(columns) {
+        var tr = NODE.create(this._getHeaderTrMarkup(columns)),
+            i = 0,
+            len = columns.length,
+            ths = [],
+            column,
+            o;
+
+        for(; i<len; ++i) {
+            column = columns[i];
+            this.fire("addHeaderTh", {column:column, tr:tr, value:column.get("label")});
+        }
         return tr;
     },
 
@@ -803,22 +825,11 @@ Y.extend(DTBase, Y.Widget, {
         return Y.substitute(this.get("trTemplate"), {});
     },
 
-    _createThNodes: function(treeRow, tr) {
-        var i = 0,
-            len = treeRow.length,
-            ths = [],
-            column,
-            o;
-
-        for(; i<len; ++i) {
-            column = treeRow[i];
-            ths.push(this._getThNodeMarkup({value:column.get("label")}, column));
+    _defAddHeaderThFn: function(e) {
+            var column = e.column,
+                tr = e.tr;
+            tr.appendChild(NODE.create(this._getThNodeMarkup({value:e.value}, column)));
             //column._set("thNode", thNode);
-        }
-
-        //TODO fire an event with node to append so that you can access the node via a listener
-
-        tr.appendChild(NODE.create(ths.join("")));
     },
 
     _getThNodeMarkup: function(o, column) {
@@ -848,23 +859,27 @@ Y.extend(DTBase, Y.Widget, {
         var tbodyNode = this._tbodyNode,
             i = 0,//TODOthis.get("state.offsetIndex"),
             len = 3,//TODOthis.get("state.pageLength"),
-            record,
-            tr,
-            nextSibling;
+            record;
 
         // Iterate recordset to use existing or add new tr
         for(; i<len; ++i) {
-            record = rs.getRecord(i);
-            tr = tbodyNode.one("#"+record.get("id")) || this._createBodyTr(record);
-            nextSibling = tbodyNode.get("children").item(i) || null;
-            tbodyNode.insertBefore(tr, nextSibling);
+            this.fire("addTr", {record:rs.getRecord(i), index:i});//this._createBodyTr(record);
         }
+    },
+
+    _defAddTrFn: function(e) {
+        var record = e.record,
+            index = e.index,
+            tbodyNode = this._tbodyNode,
+            nextSibling = tbodyNode.get("children").item(index) || null,
+            tr = tbodyNode.one("#"+record.get("id")) || this._createBodyTr(record);
+        tbodyNode.insertBefore(tr, nextSibling);
+        return tr;
     },
 
     _createBodyTr: function(record) {
         var tr = NODE.create(this._getDataTrMarkup(record));
         this._createTdNodes(record, tr);
-        this.fire("addDataTr", {record: record, tr: tr}); //on and after are the same state here bc there is no def fn
         return tr;
     },
 
@@ -1014,6 +1029,10 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     initializer: function(config) {
         var dt = this.get("host");
         dt.get("recordset").plug(RecordsetSort, {dt: dt});
+        
+        dt.on("addHeaderTh", Y.bind(function(e){
+            this._beforeGetThNodeMarkup(e.value, e.column);
+        }, this));
         
         //TODO: Don't use hrefs - use tab/arrow/enter
         this.doBefore("_getThNodeMarkup", this._beforeGetThNodeMarkup);
