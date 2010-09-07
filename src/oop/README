@@ -1,6 +1,9 @@
 YUI OOP Utilities
     Provides inheritance and object modification utilities
 
+3.2.0
+  * No change
+
 3.1.1
   * clone passes functions through
 
