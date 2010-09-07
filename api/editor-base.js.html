@@ -203,9 +203,8 @@
                 <span class="nx">cmds</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">commands</span><span class="p">;</span>
             <span class="p">}</span>
             
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">changed</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">n</span><span class="p">),</span>
-                    <span class="nx">tag</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">tagName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">(),</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">changed</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">tag</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">tagName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">(),</span>
                     <span class="nx">cmd</span> <span class="o">=</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">TAG2CMD</span><span class="p">[</span><span class="nx">tag</span><span class="p">];</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">cmd</span><span class="p">)</span> <span class="p">{</span>
@@ -228,8 +227,9 @@
                     <span class="nx">cmds</span><span class="p">.</span><span class="nx">strikethrough</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
                 <span class="p">}</span>
                 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">fontFamily</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="kd">var</span> <span class="nx">family2</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">fontFamily</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">();</span>
+                <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;fontFamily&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">family2</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;fontFamily&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">();</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">family2</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">family</span> <span class="o">=</span> <span class="nx">family2</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -237,7 +237,8 @@
                         <span class="nx">family</span> <span class="o">=</span> <span class="nx">family</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&#39;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-                <span class="nx">fsize</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">fontSize</span><span class="p">;</span>
+
+                <span class="nx">fsize</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;fontSize&#39;</span><span class="p">);</span>
 
                 <span class="kd">var</span> <span class="nx">cls</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">className</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
 
