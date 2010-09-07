@@ -190,7 +190,7 @@ VC = {
  * </p>
  *
  * <code><pre>
- * YUI().use('value-change', function (Y) {
+ * YUI().use('event-valuechange', function (Y) {
  * &nbsp;&nbsp;Y.one('input').on('valueChange', function (e) {
  * &nbsp;&nbsp;&nbsp;&nbsp;// Handle valueChange events on the first input element on the page.
  * &nbsp;&nbsp;});
