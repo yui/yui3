@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>yui&nbsp; <span class="subtitle">3.2.0pr3</span></h3>
+        <h3>yui&nbsp; <span class="subtitle">3.2.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
                  &gt; YUI 
@@ -2893,13 +2893,13 @@ reports IME and multi-stroke input more reliably than <code>oninput</code> or
 the various key events across browsers.
 </p>
 <p>
-This event is provided by the <code>value-change</code> module.
+This event is provided by the <code>event-valuechange</code> module.
 </p>
 <p>
 <strong>Usage example:</strong>
 </p>
 <code><pre>
-YUI().use('value-change', function (Y) {
+YUI().use('event-valuechange', function (Y) {
 &nbsp;&nbsp;Y.one('input').on('valueChange', function (e) {
 &nbsp;&nbsp;&nbsp;&nbsp;// Handle valueChange events on the first input element on the page.
 &nbsp;&nbsp;});
