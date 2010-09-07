@@ -182,7 +182,7 @@ VC = {
  * </p>
  *
  * <p>
- * This event is provided by the <code>value-change</code> module.
+ * This event is provided by the <code>event-valuechange</code> module.
  * </p>
  *
  * <p>
