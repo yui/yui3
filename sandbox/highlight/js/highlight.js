@@ -253,30 +253,32 @@ Highlight = Y.Highlight = {
      * @static
      */
     words: function (haystack, needles, options) {
-        var replacement = Highlight._WORD_REPLACE,
+        var caseSensitive,
+            replacement = Highlight._WORD_REPLACE,
             words;
 
         if (!options) {
             options = EMPTY_OBJECT;
         }
 
+        caseSensitive = !!options.caseSensitive;
+
         // Convert the needles array to a hash for faster lookups.
         needles = YArray.hash(
             YArray.test(needles) ? needles : WordBreak.getUniqueWords(needles, {
-                ignoreCase: !options.caseSensitive
+                ignoreCase: !caseSensitive
             })
         );
 
         // Split the haystack into an array of words, including punctuation and
         // whitespace so we can rebuild the string later.
         words = WordBreak.getWords(haystack, {
-            ignoreCase        : !options.caseSensitive,
             includePunctuation: true,
             includeWhitespace : true
         });
 
         return YArray.map(words, function (word) {
-            return needles.hasOwnProperty(word) ?
+            return needles.hasOwnProperty(caseSensitive ? word : word.toLowerCase()) ?
                 replacement.replace('$1', Escape.html(word)) :
                 Escape.html(word);
         }).join('');
