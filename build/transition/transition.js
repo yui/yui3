@@ -5,14 +5,8 @@ YUI.add('transition-native', function(Y) {
 * Transition has no API of its own, but adds the transition method to Node.
 *
 * @module transition
+* @requires node
 */
-
-/**
- * A class for constructing transition instances.
- * Adds the "transition" method to Node.
- * @class Transition
- * @constructor
- */
 
 var TRANSITION = '-webkit-transition',
     TRANSITION_PROPERTY_CAMEL = 'WebkitTransition',
@@ -24,6 +18,13 @@ var TRANSITION = '-webkit-transition',
     TRANSFORM_CAMEL = 'WebkitTransform',
 
     EMPTY_OBJ = {},
+
+/**
+ * A class for constructing transition instances.
+ * Adds the "transition" method to Node.
+ * @class Transition
+ * @constructor
+ */
 
 Transition = function() {
     this.init.apply(this, arguments);
@@ -177,7 +178,6 @@ Transition.prototype = {
 
     /**
      * Starts or an animation.
-     * @for Transition
      * @method run
      * @chainable
      * @private
@@ -349,10 +349,11 @@ Y.TransitionNative = Transition; // TODO: remove
  *       Y.one('#demo').transition({
  *           duration: 1, // in seconds, default is 0.5
  *           easing: 'ease-out', // default is 'ease'
+ *           delay: '1', // delay start for 1 second, default is 0
+ *
  *           height: '10px',
  *           width: '10px',
-
- *           delay: '1', // delay start for 1 second, default is 0
+ *
  *           opacity: { // per property
  *               value: 0,
  *               duration: 2,
@@ -386,10 +387,11 @@ Y.Node.prototype.transition = function(config, callback) {
  *       Y.all('.demo').transition({
  *           duration: 1, // in seconds, default is 0.5
  *           easing: 'ease-out', // default is 'ease'
+ *           delay: '1', // delay start for 1 second, default is 0
+ *
  *           height: '10px',
  *           width: '10px',
-
- *           delay: '1', // delay start for 1 second, default is 0
+ *
  *           opacity: { // per property
  *               value: 0,
  *               duration: 2,
