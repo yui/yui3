@@ -157,11 +157,30 @@ filtersSuite.add(new Y.Test.Case({
     },
 
     'charMatch() should be case-insensitive': function () {
-        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.charMatch('f', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['Foo', 'foo'],
+            Filters.charMatch('f', ['Foo', 'foo'])
+        );
     },
 
     'charMatchCase() should be case-sensitive': function () {
-        ArrayAssert.itemsAreSame(['foo'], Filters.charMatchCase('f', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['foo'],
+            Filters.charMatchCase('f', ['Foo', 'foo'])
+        );
+    },
+
+    'charMatchFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['fóó', 'föö', 'foo'],
+            Filters.charMatchFold('o', ['fóó', 'föö', 'foo', 'bar'])
+        );
+
+        // Accent-folded matches are always case-insensitive.
+        ArrayAssert.itemsAreSame(
+            ['FÓÓ', 'FÖÖ', 'FOO'],
+            Filters.charMatchFold('o', ['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])
+        );
     },
 
     // -- phraseMatch() --------------------------------------------------------
@@ -190,11 +209,30 @@ filtersSuite.add(new Y.Test.Case({
     },
 
     'phraseMatch() should be case-insensitive': function () {
-        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.phraseMatch('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['Foo', 'foo'],
+            Filters.phraseMatch('foo', ['Foo', 'foo'])
+        );
     },
 
     'phraseMatchCase() should be case-sensitive': function () {
-        ArrayAssert.itemsAreSame(['foo'], Filters.phraseMatchCase('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['foo'],
+            Filters.phraseMatchCase('foo', ['Foo', 'foo'])
+        );
+    },
+
+    'phraseMatchFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['fóó', 'föö', 'foo'],
+            Filters.phraseMatchFold('foo', ['fóó', 'föö', 'foo', 'bar'])
+        );
+
+        // Accent-folded matches are always case-insensitive.
+        ArrayAssert.itemsAreSame(
+            ['FÓÓ', 'FÖÖ', 'FOO'],
+            Filters.phraseMatchFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])
+        );
     },
 
     // -- startsWith() ---------------------------------------------------------
@@ -208,11 +246,30 @@ filtersSuite.add(new Y.Test.Case({
     },
 
     'startsWith() should be case-insensitive': function () {
-        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.startsWith('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['Foo', 'foo'],
+            Filters.startsWith('foo', ['Foo', 'foo'])
+        );
     },
 
     'startsWithCase() should be case-sensitive': function () {
-        ArrayAssert.itemsAreSame(['foo'], Filters.startsWithCase('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['foo'],
+            Filters.startsWithCase('foo', ['Foo', 'foo'])
+        );
+    },
+
+    'startsWithFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['fóó', 'föö', 'foo'],
+            Filters.startsWithFold('foo', ['fóó', 'föö', 'foo', 'barfoo'])
+        );
+
+        // Accent-folded matches are always case-insensitive.
+        ArrayAssert.itemsAreSame(
+            ['FÓÓ', 'FÖÖ', 'FOO'],
+            Filters.startsWithFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])
+        );
     },
 
     // -- wordMatch() ----------------------------------------------------------
@@ -231,11 +288,30 @@ filtersSuite.add(new Y.Test.Case({
     },
 
     'wordMatch() should be case-insensitive': function () {
-        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.wordMatch('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['Foo', 'foo'],
+            Filters.wordMatch('foo', ['Foo', 'foo'])
+        );
     },
 
     'wordMatchCase() should be case-sensitive': function () {
-        ArrayAssert.itemsAreSame(['foo'], Filters.wordMatchCase('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(
+            ['foo'],
+            Filters.wordMatchCase('foo', ['Foo', 'foo'])
+        );
+    },
+
+    'wordMatchFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['fóó', 'föö', 'foo'],
+            Filters.wordMatchFold('foo', ['fóó', 'föö', 'foo', 'barfoo'])
+        );
+
+        // Accent-folded matches are always case-insensitive.
+        ArrayAssert.itemsAreSame(
+            ['FÓÓ', 'FÖÖ', 'FOO'],
+            Filters.wordMatchFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])
+        );
     }
 }));
 
