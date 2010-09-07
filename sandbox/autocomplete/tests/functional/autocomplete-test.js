@@ -1,6 +1,9 @@
 YUI.add('autocomplete-test', function (Y) {
 
-var AutoComplete = Y.AutoComplete,
+var Assert      = Y.Assert,
+    ArrayAssert = Y.ArrayAssert,
+
+    AutoComplete = Y.AutoComplete,
     Filters      = AutoComplete.Filters,
 
     suite,
@@ -35,10 +38,10 @@ baseSuite.add(new Y.Test.Case({
 
     'Initializer should accept an inputNode': function () {
         var ac = new AutoComplete({inputNode: this.inputNode});
-        Y.Assert.areSame(this.inputNode, ac.get('inputNode'));
+        Assert.areSame(this.inputNode, ac.get('inputNode'));
 
         ac = new AutoComplete({inputNode: '#ac'});
-        Y.Assert.areSame(this.inputNode, ac.get('inputNode'));
+        Assert.areSame(this.inputNode, ac.get('inputNode'));
     },
 
     'Initializer should require an inputNode': function () {
@@ -48,7 +51,7 @@ baseSuite.add(new Y.Test.Case({
 
     'Browser autocomplete should be off by default': function () {
         var ac = new AutoComplete({inputNode: this.inputNode});
-        Y.Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
+        Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
     },
 
     'Browser autocomplete should be turned on when enabled': function () {
@@ -57,7 +60,7 @@ baseSuite.add(new Y.Test.Case({
             allowBrowserAutocomplete: true
         });
 
-        Y.Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
+        Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
     }
 }));
 
@@ -83,25 +86,25 @@ baseSuite.add(new Y.Test.Case({
     'dataSource should only accept dataSource-like objects and null': function () {
         var ds = {sendRequest: function () {}};
 
-        Y.Assert.isUndefined(this.ac.get('dataSource'));
+        Assert.isUndefined(this.ac.get('dataSource'));
 
         this.ac.set('dataSource', {});
-        Y.Assert.isUndefined(this.ac.get('dataSource'));
+        Assert.isUndefined(this.ac.get('dataSource'));
 
         this.ac.set('dataSource', ds);
-        Y.Assert.areSame(ds, this.ac.get('dataSource'));
+        Assert.areSame(ds, this.ac.get('dataSource'));
 
         this.ac.set('dataSource', null);
-        Y.Assert.isNull(this.ac.get('dataSource'));
+        Assert.isNull(this.ac.get('dataSource'));
     },
 
     'inputNode should be writable only on init': function () {
         this.ac.set('inputNode', Y.Node.create('<input>'));
-        Y.Assert.areSame(this.inputNode, this.ac.get('inputNode'));
+        Assert.areSame(this.inputNode, this.ac.get('inputNode'));
     },
 
     'requestTemplate should be encodeURIComponent by default': function () {
-        Y.Assert.areSame(encodeURIComponent, this.ac.get('requestTemplate'));
+        Assert.areSame(encodeURIComponent, this.ac.get('requestTemplate'));
     },
 
     'requestTemplate should accept a custom template function': function () {
@@ -110,14 +113,14 @@ baseSuite.add(new Y.Test.Case({
         };
 
         this.ac.set('requestTemplate', fn);
-        Y.Assert.areSame(this.ac.get('requestTemplate'), fn);
-        Y.Assert.areSame('query: foo', this.ac.get('requestTemplate')('foo'));
+        Assert.areSame(this.ac.get('requestTemplate'), fn);
+        Assert.areSame('query: foo', this.ac.get('requestTemplate')('foo'));
     },
 
     'requestTemplate should generate a template function when set to a string': function () {
         this.ac.set('requestTemplate', 'foo');
-        Y.Assert.isFunction(this.ac.get('requestTemplate'));
-        Y.Assert.areSame('foo', this.ac.get('requestTemplate')());
+        Assert.isFunction(this.ac.get('requestTemplate'));
+        Assert.areSame('foo', this.ac.get('requestTemplate')());
     },
 
     'requestTemplate function should replace {query} with the URI-encoded query': function () {
@@ -126,13 +129,13 @@ baseSuite.add(new Y.Test.Case({
         this.ac.set('requestTemplate', '/ac?q={query}&a=aardvark');
         rt = this.ac.get('requestTemplate');
 
-        Y.Assert.areSame('/ac?q=foo&a=aardvark', rt('foo'));
-        Y.Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
+        Assert.areSame('/ac?q=foo&a=aardvark', rt('foo'));
+        Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
     'requestTemplate function should replace \\{query} with the literal string {query}': function () {
         this.ac.set('requestTemplate', 'foo\\{query}bar');
-        Y.Assert.areSame('foo{query}bar', this.ac.get('requestTemplate')('test'));
+        Assert.areSame('foo{query}bar', this.ac.get('requestTemplate')('test'));
     }
 }));
 
@@ -145,94 +148,94 @@ filtersSuite.add(new Y.Test.Case({
 
     // -- charMatch() ----------------------------------------------------------
     'charMatch() should match all characters in the query, in any order': function () {
-        Y.ArrayAssert.isEmpty(Filters.charMatch('abc', ['foo', 'bar', 'baz']));
+        ArrayAssert.isEmpty(Filters.charMatch('abc', ['foo', 'bar', 'baz']));
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['cab', 'taxi cab'],
             Filters.charMatch('abc', ['foo', 'cab', 'bar', 'taxi cab'])
         );
     },
 
     'charMatch() should be case-insensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.charMatch('f', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.charMatch('f', ['Foo', 'foo']));
     },
 
     'charMatchCase() should be case-sensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['foo'], Filters.charMatchCase('f', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['foo'], Filters.charMatchCase('f', ['Foo', 'foo']));
     },
 
     // -- phraseMatch() --------------------------------------------------------
     'phraseMatch() should match the complete query as a phrase': function () {
-        Y.ArrayAssert.isEmpty(Filters.phraseMatch('foo baz', ['foo', 'bar', 'foo bar']));
+        ArrayAssert.isEmpty(Filters.phraseMatch('foo baz', ['foo', 'bar', 'foo bar']));
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['foo bar'],
             Filters.phraseMatch('foo bar', ['foo', 'bar', 'foo bar'])
         );
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['xxfoo barxx'],
             Filters.phraseMatch('foo bar', ['foo', 'bar', 'xxfoo barxx'])
         );
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['foo barxx'],
             Filters.phraseMatch('foo bar', ['foo', 'bar', 'foo barxx'])
         );
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['xxfoo bar'],
             Filters.phraseMatch('foo bar', ['foo', 'bar', 'xxfoo bar'])
         );
     },
 
     'phraseMatch() should be case-insensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.phraseMatch('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.phraseMatch('foo', ['Foo', 'foo']));
     },
 
     'phraseMatchCase() should be case-sensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['foo'], Filters.phraseMatchCase('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['foo'], Filters.phraseMatchCase('foo', ['Foo', 'foo']));
     },
 
     // -- startsWith() ---------------------------------------------------------
     'startsWith() should match the complete query at the start of a result': function () {
-        Y.ArrayAssert.isEmpty(Filters.startsWith('foo', ['xx foo', 'bar', 'xx foo bar']));
+        ArrayAssert.isEmpty(Filters.startsWith('foo', ['xx foo', 'bar', 'xx foo bar']));
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['foo', 'foo bar'],
             Filters.startsWith('foo', ['foo', 'bar', 'foo bar'])
         );
     },
 
     'startsWith() should be case-insensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.startsWith('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.startsWith('foo', ['Foo', 'foo']));
     },
 
     'startsWithCase() should be case-sensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['foo'], Filters.startsWithCase('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['foo'], Filters.startsWithCase('foo', ['Foo', 'foo']));
     },
 
     // -- wordMatch() ----------------------------------------------------------
     'wordMatch() should match results that contain all words in the query in any order': function () {
-        Y.ArrayAssert.isEmpty(Filters.wordMatch('foo bar baz', ['foo', 'bar', 'baz']));
+        ArrayAssert.isEmpty(Filters.wordMatch('foo bar baz', ['foo', 'bar', 'baz']));
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['foo bar baz'],
             Filters.wordMatch('baz foo bar', ['foo', 'bar', 'foo bar baz', 'foobar baz'])
         );
 
-        Y.ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreSame(
             ['foo', 'foo bar baz'],
             Filters.wordMatch('foo', ['foo', 'bar', 'foo bar baz', 'foobar baz'])
         );
     },
 
     'wordMatch() should be case-insensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.wordMatch('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['Foo', 'foo'], Filters.wordMatch('foo', ['Foo', 'foo']));
     },
 
     'wordMatchCase() should be case-sensitive': function () {
-        Y.ArrayAssert.itemsAreSame(['foo'], Filters.wordMatchCase('foo', ['Foo', 'foo']));
+        ArrayAssert.itemsAreSame(['foo'], Filters.wordMatchCase('foo', ['Foo', 'foo']));
     }
 }));
 
