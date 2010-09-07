@@ -3,10 +3,9 @@
 * Transition has no API of its own, but adds the transition method to Node.
 *
 * @module transition
-* @see Node
 */
 
-/*
+/**
  * A class for constructing transition instances.
  * Adds the "transition" method to Node.
  * @class Transition
@@ -174,10 +173,12 @@ Transition.prototype = {
         }
     },
 
-    /*
+    /**
      * Starts or an animation.
+     * @for Transition
      * @method run
      * @chainable
+     * @private
      */    
     run: function(callback) {
         var anim = this;
