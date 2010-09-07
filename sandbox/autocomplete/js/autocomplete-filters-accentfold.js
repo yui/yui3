@@ -1,5 +1,26 @@
 YUI.add('autocomplete-filters-accentfold', function (Y) {
 
+/**
+ * <p>
+ * Provides pre-built accent-folding result matching filters for AutoComplete.
+ * </p>
+ *
+ * <p>
+ * These filters are similar to the ones provided by the
+ * <code>autocomplete-filters</code> module, but use accent-aware comparisons.
+ * For example, "resume" and "résumé" will be considered equal when using the
+ * accent-folding filters.
+ * </p>
+ *
+ * @module autocomplete
+ * @submodule autocomplete-filters-accentfold
+ */
+
+/**
+ * @class AutoComplete.Filters
+ * @static
+ */
+
 var AccentFold = Y.Unicode.AccentFold,
     WordBreak  = Y.Unicode.WordBreak,
     YArray     = Y.Array,
