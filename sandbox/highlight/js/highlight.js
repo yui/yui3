@@ -179,7 +179,7 @@ Highlight = Y.Highlight = {
      */
     allCase: function (haystack, needles, options) {
         return Highlight.all(haystack, needles,
-                Y.merge(options || EMPTY_OBJECT, {preserveCase: true}));
+                Y.merge(options || EMPTY_OBJECT, {caseSensitive: true}));
     },
 
     /**
