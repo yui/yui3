@@ -191,8 +191,8 @@ del {
 </style>
 </div>
 
-<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -201,6 +201,7 @@ del {
 <script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/lists.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
@@ -222,7 +223,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-tab', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-tab', 'editor-bidi', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
@@ -248,6 +249,12 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 break;
             case 'forecolor':
                 val = 'red';
+                break;
+            case 'bidi':
+                inst = editor.frame.getInstance();
+                sel = new inst.Selection();
+                dir = sel.focusNode.getComputedStyle('direction');
+                val = dir=="rtl" ? "ltr":"rtl";
                 break;
         }
         editor.frame.focus();
