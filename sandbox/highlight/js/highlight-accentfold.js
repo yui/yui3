@@ -3,7 +3,6 @@ YUI.add('highlight-accentfold', function (Y) {
 var Unicode    = Y.Unicode,
     AccentFold = Unicode.AccentFold,
     Escape     = Y.Escape,
-    WordBreak  = Unicode.WordBreak,
     YArray     = Y.Array,
 
     EMPTY_OBJECT = {},
