@@ -104,23 +104,27 @@ AccentFold = Unicode.AccentFold = {
     },
 
     /**
-     * Accent-folds the specified string and returns a copy in which common
-     * accented letters have been converted to their closest non-accented,
-     * lowercase forms.
+     * Accent-folds the specified string or array of strings and returns a copy
+     * in which common accented letters have been converted to their closest
+     * non-accented, lowercase forms.
      *
      * @method fold
-     * @param {String} string String to be folded.
-     * @return {String} Folded string.
+     * @param {String|Array} input String or array of strings to be folded.
+     * @return {String|Array} Folded string or array of string.
      * @static
      */
-    fold: function (string) {
-        string = string.toLowerCase();
+    fold: function (input) {
+        if (YArray.test(input)) {
+            return YArray.map(input, AccentFold.fold);
+        }
+
+        input = input.toLowerCase();
 
         Y.Object.each(FoldData, function (regex, letter) {
-            string = string.replace(regex, letter);
+            input = input.replace(regex, letter);
         });
 
-        return string;
+        return input;
     }
 };
 
