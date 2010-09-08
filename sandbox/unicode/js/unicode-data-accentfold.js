@@ -9,33 +9,38 @@ YUI.add('unicode-data-accentfold', function (Y) {
 // Whenever possible, accent folding should be done on the server, where it's
 // possible to use tools that are both more complete and more performant. It
 // should only be done on the client as an absolute last resort.
+//
+// The following tool was very helpful in creating these mappings:
+// http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:toNFKD%3D/^a/:]&abb=on
+
 Y.namespace('Unicode.Data').AccentFold = {
-    a: /[à-åāăąǎǟǡǻȁȃȧḁẚạảấầẩẫậắằẳẵặ]/gi,
-    b: /[ḃḅḇ]/gi,
-    c: /[çćĉċčḉ]/gi,
-    d: /[ďḋḍḏḑḓ]/gi,
-    e: /[è-ëēĕėęěȅȇȩḕḗḙḛḝẹẻẽếềểễệ]/gi,
-    f: /ḟ/gi,
-    g: /[ĝğġģǧǵḡ]/gi,
-    h: /[ĥȟḣḥḧḩḫẖℎ]/gi,
-    i: /[ì-ïĩīĭįǐȉȋḭḯỉị]/gi,
-    j: /[ĵǰ]/gi,
-    k: /[ķǩḱḳḵ]/gi,
-    l: /[ĺļľŀḷḹḻḽ]/gi,
-    m: /[ḿṁṃ]/gi,
-    n: /[ñńņňǹṅṇṉṋ]/gi,
-    o: /[ò-öōŏőơǒǫǭȍȏȫȭȯȱṍṏṑṓọỏốồổỗộớờởỡợ]/gi,
-    p: /[ṕṗ]/gi,
-    q: /ʠ/gi,
-    r: /[ŕŗřȑȓṙṛṝṟ]/gi,
-    s: /[śŝşšșṡṣṥṧṩ]/gi,
-    t: /[ţťțṫṭṯṱẗ]/gi,
-    u: /[ù-üũūŭůűųưǔǖǘǚǜȕȗṳṵṷṹṻụủứừửữự]/gi,
-    v: /[ṽṿ]/gi,
-    w: /[ŵẁẃẅẇẉẘ]/gi,
-    x: /[ẋẍ]/gi,
-    y: /[ýÿŷȳẏẙỳỵỷỹ]/gi,
-    z: /[źżžẑẓẕ]/gi
+    a:  /[ªà-åāăąǎǟǡǻȁȃȧᵃḁẚạảấầẩẫậắằẳẵặⓐａ]/gi,
+    ae: /[æǣǽӕ]/gi, // http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:name%3D/\b(AE|A+IE)\b/:]&abb=on
+    b:  /[ḃḅḇ]/gi,
+    c:  /[çćĉċčḉ]/gi,
+    d:  /[ďḋḍḏḑḓ]/gi,
+    e:  /[è-ëēĕėęěȅȇȩḕḗḙḛḝẹẻẽếềểễệ]/gi,
+    f:  /ḟ/gi,
+    g:  /[ĝğġģǧǵḡ]/gi,
+    h:  /[ĥȟḣḥḧḩḫẖℎ]/gi,
+    i:  /[ì-ïĩīĭįǐȉȋḭḯỉị]/gi,
+    j:  /[ĵǰ]/gi,
+    k:  /[ķǩḱḳḵ]/gi,
+    l:  /[ĺļľŀḷḹḻḽ]/gi,
+    m:  /[ḿṁṃ]/gi,
+    n:  /[ñńņňǹṅṇṉṋ]/gi,
+    o:  /[ò-öōŏőơǒǫǭȍȏȫȭȯȱṍṏṑṓọỏốồổỗộớờởỡợ]/gi,
+    p:  /[ṕṗ]/gi,
+    q:  /ʠ/gi,
+    r:  /[ŕŗřȑȓṙṛṝṟ]/gi,
+    s:  /[śŝşšșṡṣṥṧṩ]/gi,
+    t:  /[ţťțṫṭṯṱẗ]/gi,
+    u:  /[ù-üũūŭůűųưǔǖǘǚǜȕȗṳṵṷṹṻụủứừửữự]/gi,
+    v:  /[ṽṿ]/gi,
+    w:  /[ŵẁẃẅẇẉẘ]/gi,
+    x:  /[ẋẍ]/gi,
+    y:  /[ýÿŷȳẏẙỳỵỷỹ]/gi,
+    z:  /[źżžẑẓẕ]/gi
 };
 
 }, '@VERSION@');
