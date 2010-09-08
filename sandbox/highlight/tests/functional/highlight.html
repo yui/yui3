@@ -15,6 +15,7 @@
 <script src="../../../unicode/js/unicode-wordbreak.js"></script>
 <script src="../../../escape/js/escape.js"></script>
 <script src="../../js/highlight.js"></script>
+<script src="../../js/highlight-accentfold.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -32,7 +33,7 @@ var Y = YUI({
 
         'highlight-test': {
             fullpath: 'highlight-test.js',
-            requires: ['highlight', 'test']
+            requires: ['highlight', 'highlight-accentfold', 'test']
         }
     },
     useBrowserConsole: false

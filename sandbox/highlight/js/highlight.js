@@ -149,11 +149,12 @@ Highlight = Y.Highlight = {
         }
 
         if (options.startsWith) {
+            // TODO: document options.replacer
             regex       = Highlight._START_REGEX;
-            replacement = Highlight._START_REPLACE;
+            replacement = options.replacer || Highlight._START_REPLACE;
         } else {
             regex       = Highlight._REGEX;
-            replacement = Highlight._REPLACE;
+            replacement = options.replacer || Highlight._REPLACE;
         }
 
         return haystack.replace(
@@ -254,6 +255,7 @@ Highlight = Y.Highlight = {
      */
     words: function (haystack, needles, options) {
         var caseSensitive,
+            mapper,
             replacement = Highlight._WORD_REPLACE,
             words;
 
@@ -263,12 +265,23 @@ Highlight = Y.Highlight = {
 
         caseSensitive = !!options.caseSensitive;
 
-        // Convert the needles array to a hash for faster lookups.
+        // Convert needles to a hash for faster lookups.
         needles = YArray.hash(
             YArray.test(needles) ? needles : WordBreak.getUniqueWords(needles, {
                 ignoreCase: !caseSensitive
             })
         );
+
+        // The default word mapping function can be overridden with a custom
+        // one. This is used to implement accent-folded highlighting in the
+        // highlight-accentfold module.
+        mapper = options.mapper || function (word, needles) {
+            if (needles.hasOwnProperty(caseSensitive ? word : word.toLowerCase())) {
+                return replacement.replace('$1', Escape.html(word));
+            }
+
+            return Escape.html(word);
+        };
 
         // Split the haystack into an array of words, including punctuation and
         // whitespace so we can rebuild the string later.
@@ -278,9 +291,7 @@ Highlight = Y.Highlight = {
         });
 
         return YArray.map(words, function (word) {
-            return needles.hasOwnProperty(caseSensitive ? word : word.toLowerCase()) ?
-                replacement.replace('$1', Escape.html(word)) :
-                Escape.html(word);
+            return mapper(word, needles);
         }).join('');
     },
 
