@@ -1,5 +1,3 @@
-YUI.add('autocomplete-filters', function (Y) {
-
 /**
  * Provides pre-built result matching filters for AutoComplete.
  *
@@ -169,8 +167,4 @@ Filters = Y.mix(Y.namespace('AutoComplete.Filters'), {
     wordMatchCase: function (query, results) {
         return Filters.wordMatch(query, results, true);
     }
-});
-
-}, '@VERSION@', {
-    requires: ['autocomplete-base', 'collection', 'unicode-wordbreak']
 });

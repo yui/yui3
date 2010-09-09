@@ -2,9 +2,9 @@
  * Binds an AutoComplete instance to a Node instance.
  *
  * @module autocomplete
+ * @submodule autocomplete-plugin
  * @class Plugin.AutoComplete
  * @extends AutoComplete
- * @submodule autocomplete-plugin
  */
 
 function AutoCompletePlugin(config) {

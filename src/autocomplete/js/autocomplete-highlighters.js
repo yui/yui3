@@ -1,5 +1,3 @@
-YUI.add('autocomplete-highlighters', function (Y) {
-
 /**
  * Provides pre-built result highlighters for AutoComplete.
  *
@@ -154,8 +152,4 @@ Highlighters = Y.mix(Y.namespace('AutoComplete.Highlighters'), {
     wordMatchCase: function (query, results) {
         return Highlighters.wordMatch(query, results, true);
     }
-});
-
-}, '@VERSION@', {
-    requires: ['autocomplete-base', 'collection', 'highlight']
 });

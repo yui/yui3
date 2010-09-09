@@ -1,5 +1,3 @@
-YUI.add('autocomplete-filters-accentfold', function (Y) {
-
 /**
  * <p>
  * Provides pre-built accent-folding result matching filters for AutoComplete.
@@ -24,9 +22,9 @@ YUI.add('autocomplete-filters-accentfold', function (Y) {
 var AccentFold = Y.Unicode.AccentFold,
     WordBreak  = Y.Unicode.WordBreak,
     YArray     = Y.Array,
-    YObject    = Y.Object,
+    YObject    = Y.Object;
 
-Filters = Y.mix(Y.namespace('AutoComplete.Filters'), {
+Y.mix(Y.namespace('AutoComplete.Filters'), {
     /**
      * Accent folding version of <code>charMatch()</code>.
      *
@@ -101,11 +99,4 @@ Filters = Y.mix(Y.namespace('AutoComplete.Filters'), {
             });
         });
     }
-});
-
-}, '@VERSION@', {
-    requires: [
-        'autocomplete-base', 'collection', 'unicode-accentfold',
-        'unicode-wordbreak'
-    ]
 });

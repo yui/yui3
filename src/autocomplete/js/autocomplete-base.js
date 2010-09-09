@@ -1,5 +1,3 @@
-YUI.add('autocomplete-base', function (Y) {
-
 /**
  * Provides automatic input completion or suggestions for text input fields and
  * textareas.
@@ -9,19 +7,10 @@ YUI.add('autocomplete-base', function (Y) {
  */
 
 /**
- * Provides basic autocomplete logic for an existing text input field or
- * textarea. This module is the lowest-level building block for an autocomplete
- * implementation and doesn't provide a UI layer (see
- * <code>autocomplete-widget</code> for that).
+ * Provides basic autocomplete logic for a text input field or textarea.
  *
  * @module autocomplete
  * @submodule autocomplete-base
- */
-
-/**
- * The AutoComplete class provides basic autocomplete logic for a text input
- * field or textarea.
- *
  * @class AutoComplete
  * @extends Base
  * @constructor
@@ -542,8 +531,4 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
             }
         }
     }
-});
-
-}, '@VERSION@', {
-    requires: ['base-base', 'event-valuechange', 'node-base']
 });

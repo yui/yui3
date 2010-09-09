@@ -1,5 +1,3 @@
-YUI.add('autocomplete-highlighters-accentfold', function (Y) {
-
 /**
  * <p>
  * Provides pre-built accent-folding result highlighters for AutoComplete.
@@ -22,9 +20,9 @@ YUI.add('autocomplete-highlighters-accentfold', function (Y) {
  */
 
 var Highlight = Y.Highlight,
-    YArray    = Y.Array,
+    YArray    = Y.Array;
 
-Highlighters = Y.mix(Y.namespace('AutoComplete.Highlighters'), {
+Y.mix(Y.namespace('AutoComplete.Highlighters'), {
     /**
      * Accent-folding version of <code>charMatch()</code>.
      *
@@ -88,8 +86,4 @@ Highlighters = Y.mix(Y.namespace('AutoComplete.Highlighters'), {
             return Highlight.wordsFold(result, query);
         });
     }
-});
-
-}, '@VERSION@', {
-    requires: ['autocomplete-base', 'collection', 'highlight-accentfold']
 });
