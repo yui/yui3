@@ -1,5 +1,3 @@
-YUI.add('escape', function (Y) {
-
 /**
  * Provides utility methods for escaping strings.
  *
@@ -9,7 +7,7 @@ YUI.add('escape', function (Y) {
  * @since 3.3.0
  */
 
-var Escape = Y.Escape = {
+var Escape = {
     /**
      * Returns a copy of the specified string with special HTML characters
      * escaped. The following characters will be converted to their
@@ -44,10 +42,10 @@ var Escape = Y.Escape = {
      * @static
      */
     regex: function (string) {
-        return string.replace(/[-#$^*()+[\]{}|\\,.?\s]/g, '\\$&');
+        return string.replace(/[\-#$\^*()+\[\]{}|\\,.?\s]/g, '\\$&');
     }
 };
 
 Escape.regexp = Escape.regex;
 
-}, '@VERSION@');
+Y.Escape = Escape;
