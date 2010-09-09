@@ -2,6 +2,11 @@ YUI Test Framework
 Module Name: "test"
 Documentation: http://developer.yahoo.com/yui/3/test
 
+3.3.0
+
+    * Added output for ignored tests to console. (trac# 2529195)
+
+
 3.2.0
 
     * Fixed issue where top-level test suite objects didn't go through proper lifecycle
