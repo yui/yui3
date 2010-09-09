@@ -1,5 +1,3 @@
-YUI.add('unicode-data-accentfold', function (Y) {
-
 /**
  * <p>
  * An imperfect, incomplete reverse mapping of ASCII characters to
@@ -66,5 +64,3 @@ Y.namespace('Unicode.Data').AccentFold = {
     y:  /[ýÿŷȳʸẏẙỳỵỷỹⓨｙ]/gi,
     z:  /[źżžᶻẑẓẕⓩｚ]/gi
 };
-
-}, '@VERSION@');

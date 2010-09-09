@@ -1,5 +1,3 @@
-YUI.add('unicode-wordbreak', function (Y) {
-
 /**
  * Provides utility methods for splitting strings on word breaks and determining
  * whether a character represents a word boundary, using the algorithm defined
@@ -55,7 +53,7 @@ EMPTY_STRING = '',
 PUNCTUATION  = new RegExp('^' + WBData.punctuation + '$'),
 WHITESPACE   = /\s/,
 
-WordBreak = Unicode.WordBreak = {
+WordBreak = {
     // -- Public Static Methods ------------------------------------------------
     getWords: function (string, options) {
         var i     = 0,
@@ -226,7 +224,4 @@ WordBreak = Unicode.WordBreak = {
     }
 };
 
-}, '@VERSION@', {
-    requires: ['collection', 'unicode-data-wordbreak'],
-    optional: ['unicode-data-wordbreak-complete']
-});
+Unicode.WordBreak = WordBreak;

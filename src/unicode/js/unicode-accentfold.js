@@ -1,4 +1,9 @@
-YUI.add('unicode-accentfold', function (Y) {
+/**
+ * Unicode utilities.
+ *
+ * @module unicode
+ * @since 3.3.0
+ */
 
 /**
  * <p>
@@ -32,7 +37,7 @@ var YArray   = Y.Array,
     Unicode  = Y.Unicode,
     FoldData = Unicode.Data.AccentFold,
 
-AccentFold = Unicode.AccentFold = {
+AccentFold = {
     // -- Public Static Methods ------------------------------------------------
 
     /**
@@ -128,6 +133,4 @@ AccentFold = Unicode.AccentFold = {
     }
 };
 
-}, '@VERSION@', {
-    requires: ['collection', 'unicode-data-accentfold']
-});
+Unicode.AccentFold = AccentFold;
