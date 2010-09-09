@@ -339,6 +339,7 @@ highlightSuite.add(new Y.Test.Case({
         );
     },
 
+    // -- charMatchCase() ------------------------------------------------------
     'charMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">f</b>oo'],
@@ -346,18 +347,18 @@ highlightSuite.add(new Y.Test.Case({
         );
     },
 
-    // 'charMatchFold() should match accent-folded characters': function () {
-    //     ArrayAssert.itemsAreSame(
-    //         ['fóó', 'föö', 'foo'],
-    //         Filters.charMatchFold('o', ['fóó', 'föö', 'foo', 'bar'])
-    //     );
-    //
-    //     // Accent-folded matches are always case-insensitive.
-    //     ArrayAssert.itemsAreSame(
-    //         ['FÓÓ', 'FÖÖ', 'FOO'],
-    //         Filters.charMatchFold('o', ['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])
-    //     );
-    // },
+    // -- charMatchFold() ------------------------------------------------------
+    'charMatchFold() should highlight accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['f<b class="yui3-highlight">ó</b><b class="yui3-highlight">ó</b>', 'f<b class="yui3-highlight">o</b><b class="yui3-highlight">o</b>', 'bar'],
+            Hi.charMatchFold('o', ['fóó', 'foo', 'bar'])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['f<b class="yui3-highlight">o</b><b class="yui3-highlight">o</b>', 'f<b class="yui3-highlight">o</b><b class="yui3-highlight">o</b>', 'bar'],
+            Hi.charMatchFold('ö', ['foo', 'foo', 'bar'])
+        );
+    },
 
     // -- phraseMatch() --------------------------------------------------------
     'phraseMatch() should highlight the complete query as a phrase': function () {
@@ -389,6 +390,7 @@ highlightSuite.add(new Y.Test.Case({
         );
     },
 
+    // -- phraseMatchCase() ----------------------------------------------------
     'phraseMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">foo</b>'],
@@ -396,18 +398,18 @@ highlightSuite.add(new Y.Test.Case({
         );
     },
 
-    // 'phraseMatchFold() should match accent-folded characters': function () {
-    //     ArrayAssert.itemsAreSame(
-    //         ['fóó', 'föö', 'foo'],
-    //         Filters.phraseMatchFold('foo', ['fóó', 'föö', 'foo', 'bar'])
-    //     );
-    //
-    //     // Accent-folded matches are always case-insensitive.
-    //     ArrayAssert.itemsAreSame(
-    //         ['FÓÓ', 'FÖÖ', 'FOO'],
-    //         Filters.phraseMatchFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])
-    //     );
-    // },
+    // -- phraseMatchFold() ----------------------------------------------------
+    'phraseMatchFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">fóó</b>bar', 'bar<b class="yui3-highlight">foo</b>', 'bar'],
+            Hi.phraseMatchFold('foo', ['fóóbar', 'barfoo', 'bar'])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">foo</b>bar', 'bar<b class="yui3-highlight">foo</b>', 'bar'],
+            Hi.phraseMatchFold('föö', ['foobar', 'barfoo', 'bar'])
+        );
+    },
 
     // -- startsWith() ---------------------------------------------------------
     'startsWith() should highlight the complete query at the start of a result': function () {
@@ -429,6 +431,7 @@ highlightSuite.add(new Y.Test.Case({
         );
     },
 
+    // -- startsWithCase() -----------------------------------------------------
     'startsWithCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">foo</b>'],
@@ -436,18 +439,18 @@ highlightSuite.add(new Y.Test.Case({
         );
     },
 
-    // 'startsWithFold() should match accent-folded characters': function () {
-    //     ArrayAssert.itemsAreSame(
-    //         ['fóó', 'föö', 'foo'],
-    //         Filters.startsWithFold('foo', ['fóó', 'föö', 'foo', 'barfoo'])
-    //     );
-    //
-    //     // Accent-folded matches are always case-insensitive.
-    //     ArrayAssert.itemsAreSame(
-    //         ['FÓÓ', 'FÖÖ', 'FOO'],
-    //         Filters.startsWithFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])
-    //     );
-    // },
+    // -- startsWithFold() -----------------------------------------------------
+    'startsWithFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">fóó</b>', 'barfoo', 'bar'],
+            Hi.startsWithFold('foo', ['fóó', 'barfoo', 'bar'])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">foo</b>', 'barfoo', 'bar'],
+            Hi.startsWithFold('föö', ['foo', 'barfoo', 'bar'])
+        );
+    },
 
     // -- wordMatch() ----------------------------------------------------------
     'wordMatch() should highlight complete words in the query': function () {
@@ -469,25 +472,25 @@ highlightSuite.add(new Y.Test.Case({
         );
     },
 
+    // -- wordMatchCase() ------------------------------------------------------
     'wordMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">foo</b>'],
             Hi.wordMatchCase('foo', ['Foo', 'foo'])
         );
-    }
+    },
 
-    // 'wordMatchFold() should match accent-folded characters': function () {
-    //     ArrayAssert.itemsAreSame(
-    //         ['fóó', 'föö', 'foo'],
-    //         Filters.wordMatchFold('foo', ['fóó', 'föö', 'foo', 'barfoo'])
-    //     );
-    //
-    //     // Accent-folded matches are always case-insensitive.
-    //     ArrayAssert.itemsAreSame(
-    //         ['FÓÓ', 'FÖÖ', 'FOO'],
-    //         Filters.wordMatchFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])
-    //     );
-    // }
+    'wordMatchFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">fóó</b>', '<b class="yui3-highlight">foo</b>', 'barfoo'],
+            Hi.wordMatchFold('foo', ['fóó', 'foo', 'barfoo'])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">foo</b>', '<b class="yui3-highlight">fóó</b>', 'barfoo'],
+            Hi.wordMatchFold('föö', ['foo', 'fóó', 'barfoo'])
+        );
+    }
 }));
 
 suite.add(baseSuite);
@@ -496,7 +499,10 @@ suite.add(highlightSuite);
 
 Y.Test.Runner.add(suite);
 
-}, '@VERSION@', {requires: [
-    'autocomplete-base', 'autocomplete-filters',
-    'autocomplete-filters-accentfold', 'autocomplete-highlighters', 'node', 'test'
-]});
+}, '@VERSION@', {
+    requires: [
+        'autocomplete-base', 'autocomplete-filters',
+        'autocomplete-filters-accentfold', 'autocomplete-highlighters',
+        'autocomplete-highlighters-accentfold', 'node', 'test'
+    ]
+});

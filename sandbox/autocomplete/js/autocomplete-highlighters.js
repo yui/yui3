@@ -12,7 +12,7 @@ YUI.add('autocomplete-highlighters', function (Y) {
 var YArray    = Y.Array,
     Highlight = Y.Highlight,
 
-Highlighters = {
+Highlighters = Y.mix(Y.namespace('AutoComplete.Highlighters'), {
     // -- Public Methods -------------------------------------------------------
 
     /**
@@ -154,9 +154,7 @@ Highlighters = {
     wordMatchCase: function (query, results) {
         return Highlighters.wordMatch(query, results, true);
     }
-};
-
-Y.AutoComplete.Highlighters = Highlighters;
+});
 
 }, '@VERSION@', {
     requires: ['autocomplete-base', 'collection', 'highlight']
