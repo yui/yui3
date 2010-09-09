@@ -1,9 +1,18 @@
-YUI.add('highlight-accentfold', function (Y) {
+/**
+ * Adds accent-folding highlighters to <code>Y.Highlight</code>.
+ *
+ * @module highlight
+ * @submodule highlight-accentfold
+ */
+
+/**
+ * @class Highlight
+ * @static
+ */
 
 var Unicode    = Y.Unicode,
     AccentFold = Unicode.AccentFold,
     Escape     = Y.Escape,
-    YArray     = Y.Array,
 
     EMPTY_OBJECT = {},
 
@@ -125,8 +134,4 @@ Highlight = Y.mix(Y.Highlight, {
             }
         });
     }
-});
-
-}, '@VERSION@', {
-    requires: ['highlight', 'unicode-accentfold']
 });

@@ -1,4 +1,12 @@
 /**
+ * Provides methods for highlighting strings within other strings by wrapping
+ * them in HTML.
+ *
+ * @module highlight
+ * @since 3.3.0
+ */
+
+/**
  * <p>
  * Provides methods for highlighting strings within other strings by wrapping
  * them in HTML.
@@ -15,11 +23,10 @@
  * </p>
  *
  * @module highlight
+ * @submodule highlight-base
  * @class Highlight
  * @static
- * @since 3.3.0
  */
-YUI.add('highlight', function (Y) {
 
 var YArray    = Y.Array,
     Escape    = Y.Escape,
@@ -28,7 +35,7 @@ var YArray    = Y.Array,
     DEFAULT_REPLACE = '<b class="yui3-highlight">$1</b>',
     EMPTY_OBJECT    = {},
 
-Highlight = Y.Highlight = {
+Highlight = {
     // -- Protected Static Properties ------------------------------------------
 
     /**
@@ -315,6 +322,4 @@ Highlight = Y.Highlight = {
     }
 };
 
-}, '@VERSION@', {
-    requires: ['collection', 'escape', 'unicode-wordbreak']
-});
+Y.Highlight = Highlight;
