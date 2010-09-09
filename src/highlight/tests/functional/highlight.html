@@ -9,13 +9,6 @@
 <div id="log"></div>
 
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../../unicode/js/unicode-data-accentfold.js"></script>
-<script src="../../../unicode/js/unicode-accentfold.js"></script>
-<script src="../../../unicode/js/unicode-data-wordbreak.js"></script>
-<script src="../../../unicode/js/unicode-wordbreak.js"></script>
-<script src="../../../escape/js/escape.js"></script>
-<script src="../../js/highlight.js"></script>
-<script src="../../js/highlight-accentfold.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -33,7 +26,7 @@ var Y = YUI({
 
         'highlight-test': {
             fullpath: 'highlight-test.js',
-            requires: ['highlight', 'highlight-accentfold', 'test']
+            requires: ['highlight', 'test']
         }
     },
     useBrowserConsole: false

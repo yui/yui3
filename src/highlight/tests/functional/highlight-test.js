@@ -244,4 +244,4 @@ suite.add(new Y.Test.Case({
 
 Y.Test.Runner.add(suite);
 
-}, '@VERSION@', {requires:['highlight', 'highlight-accentfold', 'test']});
+}, '@VERSION@', {requires:['highlight', 'test']});

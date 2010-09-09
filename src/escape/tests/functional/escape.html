@@ -9,7 +9,6 @@
 <div id="log"></div>
 
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../js/escape.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -26,7 +25,8 @@ var Y = YUI({
         },
 
         'escape-test': {
-            fullpath: 'escape-test.js'
+            fullpath: 'escape-test.js',
+            requires: ['escape', 'test']
         }
     },
     useBrowserConsole: false
