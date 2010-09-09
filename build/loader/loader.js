@@ -2218,6 +2218,54 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "autocomplete": {
+        "plugins": {
+            "autocomplete-filters": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "unicode-wordbreak"
+                ]
+            }, 
+            "autocomplete-filters-accentfold": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "unicode-accentfold", 
+                    "unicode-wordbreak"
+                ]
+            }, 
+            "autocomplete-highlighters": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "highlight-base"
+                ]
+            }, 
+            "autocomplete-highlighters-accentfold": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "highlight-accentfold"
+                ]
+            }, 
+            "autocomplete-plugin": {
+                "requires": [
+                    "autocomplete-base", 
+                    "node-pluginhost"
+                ]
+            }
+        }, 
+        "submodules": {
+            "autocomplete-base": {
+                "requires": [
+                    "base-base", 
+                    "event-valuechange", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
     "base": {
         "submodules": {
             "base-base": {
@@ -2773,6 +2821,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "escape": {}, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -2870,6 +2919,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-focus", 
             "event-synthetic"
         ]
+    }, 
+    "highlight": {
+        "submodules": {
+            "highlight-accentfold": {
+                "requires": [
+                    "highlight-base", 
+                    "unicode-accentfold"
+                ]
+            }, 
+            "highlight-base": {
+                "requires": [
+                    "collection", 
+                    "escape", 
+                    "unicode-wordbreak"
+                ]
+            }
+        }
     }, 
     "history": {
         "plugins": {
@@ -3328,6 +3394,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "unicode": {
+        "submodules": {
+            "unicode-accentfold": {
+                "requires": [
+                    "collection", 
+                    "unicode-data-accentfold"
+                ]
+            }, 
+            "unicode-data-accentfold": {}, 
+            "unicode-data-wordbreak": {}, 
+            "unicode-wordbreak": {
+                "requires": [
+                    "collection", 
+                    "unicode-data-wordbreak"
+                ]
+            }
+        }
+    }, 
     "uploader": {
         "requires": [
             "event-custom", 
@@ -3439,7 +3523,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'cb1db98536fb15d179c178aab4be9340';
+YUI.Env[Y.version].md5 = 'd1e508fbc6907c32448266f75916c03d';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -58,14 +58,13 @@
         </div>
 
     </div>
-	<!-- YUI3 Core //-->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-	<!-- Initialization process //-->
-	<script type="text/javascript">
+	<script src="../../../build/yui/yui.js"></script>
+	<script src="window-focus.js"></script>
+	<script>
 		YUI({
             filter: 'raw',
 	        logExclude: { Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
-		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
+		}).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
 			
             var suite = new Y.Test.Suite("Delegate");
 
@@ -153,19 +152,24 @@
                     var count = 0,
                         handle;
 
-                    handle = Y.delegate('focus', function (e) {
-                        count++;
-                    }, '#mod1', function (target, e) {
-                        return target.get('tagName').toLowerCase() === 'a';
-                    });
+                    if (Y.isWindowInFocus()) {
+                        handle = Y.delegate('focus', function (e) {
+                            count++;
+                        }, '#mod1', function (target, e) {
+                            return target.get('tagName').toLowerCase() === 'a';
+                        });
 
-					Y.one('#spanwithinlink').focus();
-					Y.one('#fakeimage').focus();
-					Y.one('#secondlink').focus();
+                        Y.one('#spanwithinlink').focus();
+                        Y.one('#fakeimage').focus();
+                        Y.one('#secondlink').focus();
 
-					Y.Assert.areSame(1, count);
+                        Y.Assert.areSame(1, count);
 
-                    handle.detach();
+                        handle.detach();
+                    } else {
+                        Y.log("Window is not focused.  Can't properly test.",
+                            "warn", "TestRunner");
+                    }
                 },
 
 				test_document_as_container: function () {
@@ -555,14 +559,19 @@
                     var count = 0,
                         handle;
 
-                    handle = Y.one('body').delegate('focus', function (e) {
-                        e.preventDefault();
-                        count++;
-                    }, '#firstlink');
+                    if (Y.isWindowInFocus()) {
+                        handle = Y.one('body').delegate('focus', function (e) {
+                            e.preventDefault();
+                            count++;
+                        }, '#firstlink');
 
-                    Y.one('#firstlink').focus();
+                        Y.one('#firstlink').focus();
 
-                    Y.Assert.areSame(1, count);
+                        Y.Assert.areSame(1, count);
+                    } else {
+                        Y.log("Window is not focused.  Can't properly test.",
+                            "warn", "TestRunner");
+                    }
                 }
             }));
 

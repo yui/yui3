@@ -1,0 +1,1 @@
+YUI.add("escape",function(B){var A={html:function(C){return C.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#x27;").replace(/\//g,"&#x2F;");},regex:function(C){return C.replace(/[\-#$\^*()+\[\]{}|\\,.?\s]/g,"\\$&");}};A.regexp=A.regex;B.Escape=A;},"@VERSION@");

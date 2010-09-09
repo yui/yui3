@@ -60,6 +60,54 @@
             }
         }
     }, 
+    "autocomplete": {
+        "plugins": {
+            "autocomplete-filters": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "unicode-wordbreak"
+                ]
+            }, 
+            "autocomplete-filters-accentfold": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "unicode-accentfold", 
+                    "unicode-wordbreak"
+                ]
+            }, 
+            "autocomplete-highlighters": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "highlight-base"
+                ]
+            }, 
+            "autocomplete-highlighters-accentfold": {
+                "requires": [
+                    "autocomplete-base", 
+                    "collection", 
+                    "highlight-accentfold"
+                ]
+            }, 
+            "autocomplete-plugin": {
+                "requires": [
+                    "autocomplete-base", 
+                    "node-pluginhost"
+                ]
+            }
+        }, 
+        "submodules": {
+            "autocomplete-base": {
+                "requires": [
+                    "base-base", 
+                    "event-valuechange", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
     "base": {
         "submodules": {
             "base-base": {
@@ -613,6 +661,7 @@
             }
         }
     }, 
+    "escape": {}, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -710,6 +759,23 @@
             "event-focus", 
             "event-synthetic"
         ]
+    }, 
+    "highlight": {
+        "submodules": {
+            "highlight-accentfold": {
+                "requires": [
+                    "highlight-base", 
+                    "unicode-accentfold"
+                ]
+            }, 
+            "highlight-base": {
+                "requires": [
+                    "collection", 
+                    "escape", 
+                    "unicode-wordbreak"
+                ]
+            }
+        }
     }, 
     "history": {
         "plugins": {
@@ -1159,6 +1225,24 @@
                 "requires": [
                     "transition-native", 
                     "node-style"
+                ]
+            }
+        }
+    }, 
+    "unicode": {
+        "submodules": {
+            "unicode-accentfold": {
+                "requires": [
+                    "collection", 
+                    "unicode-data-accentfold"
+                ]
+            }, 
+            "unicode-data-accentfold": {}, 
+            "unicode-data-wordbreak": {}, 
+            "unicode-wordbreak": {
+                "requires": [
+                    "collection", 
+                    "unicode-data-wordbreak"
                 ]
             }
         }
