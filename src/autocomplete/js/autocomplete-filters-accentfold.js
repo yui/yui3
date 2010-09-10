@@ -15,7 +15,7 @@
  */
 
 /**
- * @class AutoComplete.Filters
+ * @class AutoCompleteFilters
  * @static
  */
 
@@ -24,7 +24,7 @@ var AccentFold = Y.Unicode.AccentFold,
     YArray     = Y.Array,
     YObject    = Y.Object;
 
-Y.mix(Y.namespace('AutoComplete.Filters'), {
+Y.mix(Y.namespace('AutoCompleteFilters'), {
     /**
      * Accent folding version of <code>charMatch()</code>.
      *

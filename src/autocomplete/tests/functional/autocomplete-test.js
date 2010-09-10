@@ -3,9 +3,9 @@ YUI.add('autocomplete-test', function (Y) {
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
 
-    AutoComplete = Y.AutoComplete,
-    Filters      = AutoComplete.Filters,
-    Hi           = AutoComplete.Highlighters,
+    ACBase  = Y.AutoCompleteBase,
+    Filters = Y.AutoCompleteFilters,
+    Hi      = Y.AutoCompleteHighlighters,
 
     suite,
     baseSuite,
@@ -39,25 +39,25 @@ baseSuite.add(new Y.Test.Case({
     },
 
     'Initializer should accept an inputNode': function () {
-        var ac = new AutoComplete({inputNode: this.inputNode});
+        var ac = new ACBase({inputNode: this.inputNode});
         Assert.areSame(this.inputNode, ac.get('inputNode'));
 
-        ac = new AutoComplete({inputNode: '#ac'});
+        ac = new ACBase({inputNode: '#ac'});
         Assert.areSame(this.inputNode, ac.get('inputNode'));
     },
 
     'Initializer should require an inputNode': function () {
         // Should fail.
-        var ac = new AutoComplete();
+        var ac = new ACBase();
     },
 
     'Browser autocomplete should be off by default': function () {
-        var ac = new AutoComplete({inputNode: this.inputNode});
+        var ac = new ACBase({inputNode: this.inputNode});
         Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
     },
 
     'Browser autocomplete should be turned on when enabled': function () {
-        var ac = new AutoComplete({
+        var ac = new ACBase({
             inputNode: this.inputNode,
             allowBrowserAutocomplete: true
         });
@@ -74,7 +74,7 @@ baseSuite.add(new Y.Test.Case({
         this.inputNode = Y.Node.create('<input id="ac" type="text">');
         Y.one(Y.config.doc.body).append(this.inputNode);
 
-        this.ac = new AutoComplete({inputNode: this.inputNode});
+        this.ac = new ACBase({inputNode: this.inputNode});
     },
 
     tearDown: function () {

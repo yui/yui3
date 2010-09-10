@@ -11,22 +11,21 @@
  *
  * @module autocomplete
  * @submodule autocomplete-base
- * @class AutoComplete
+ * @class AutoCompleteBase
  * @extends Base
  * @constructor
  * @param {Object} config configuration object
  */
 
-// -- Shorthand & Private Variables --------------------------------------------
 var Lang       = Y.Lang,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
 
-    AC                 = 'autocomplete',
     ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
     DATA_SOURCE        = 'dataSource',
     INPUT_NODE         = 'inputNode',
     MIN_QUERY_LENGTH   = 'minQueryLength',
+    NAME               = 'autocompleteBase',
     QUERY              = 'query',
     QUERY_DELAY        = 'queryDelay',
     REQUEST_TEMPLATE   = 'requestTemplate',
@@ -38,12 +37,11 @@ var Lang       = Y.Lang,
     EVT_RESULTS        = 'results',
     EVT_VALUE_CHANGE   = VALUE_CHANGE;
 
-// Constructor
-function AutoComplete() {
-    AutoComplete.superclass.constructor.apply(this, arguments);
+function AutoCompleteBase() {
+    AutoCompleteBase.superclass.constructor.apply(this, arguments);
 }
 
-Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
+Y.AutoCompleteBase = Y.extend(AutoCompleteBase, Y.Base, {
     // -- Public Prototype Methods ---------------------------------------------
     initializer: function (config) {
         var input = this.get(INPUT_NODE);
@@ -53,7 +51,7 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
         }
 
         if (input.get('nodeName').toLowerCase() === 'input') {
-            input.setAttribute(AC, this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+            input.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
         }
 
         /**
@@ -141,13 +139,10 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 
         // Attach events.
         this._events = [
-            // Note that we're listening to the valueChange event from the
-            // value-change module here, not our own valueChange event (which
-            // just wraps this one for convenience).
-
-            // NOTE: bind is currently necessary because synthetic events don't
-            // respect context params.
-            input.on(VALUE_CHANGE, Y.bind(this._onValueChange, this))
+            // We're listening to the valueChange event from the
+            // event-valuechange module here, not our own valueChange event
+            // (which just wraps this one for convenience).
+            input.on(VALUE_CHANGE, this._onValueChange, this)
         ];
     },
 
@@ -244,7 +239,7 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
             query = this._parseValue(value),
             that;
 
-        Y.log('valueChange: new: "' + value + '"; old: "' + e.prevVal + '"', 'info', AC);
+        Y.log('valueChange: new: "' + value + '"; old: "' + e.prevVal + '"', 'info', NAME);
 
         this.fire(EVT_VALUE_CHANGE, {
             newVal : value,
@@ -287,10 +282,10 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 
         this._set(QUERY, query);
 
-        Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', AC);
+        Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', NAME);
 
         if (dataSource) {
-            Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', AC);
+            Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', NAME);
 
             dataSource.sendRequest({
                 request: this.get(REQUEST_TEMPLATE)(query),
@@ -313,7 +308,7 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
      * @static
      * @final
      */
-    NAME: AC,
+    NAME: NAME,
 
     /**
      * Attribute definitions for this component.
@@ -454,6 +449,12 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
          * "\{query}".
          * </p>
          *
+         * <p>
+         * While <code>requestTemplate</code> can be set to either a function or
+         * a string, it will always be returned as a function that accepts a
+         * query argument and returns a string.
+         * </p>
+         *
          * @attribute requestTemplate
          * @type Function|String
          * @default encodeURIComponent
@@ -476,9 +477,6 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
                 };
             },
 
-            // Note: While the requestTemplate can be set to either a function
-            // or a string, it will always be returned as a function that
-            // accepts a query and returns a string.
             value: encodeURIComponent
         },
 
@@ -502,10 +500,7 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
          * @default []
          */
         resultFilters: {
-            validator: function (value) {
-                return Lang.isArray(value);
-            },
-
+            validator: Lang.isArray,
             value: []
         },
 

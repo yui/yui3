@@ -61,13 +61,6 @@
 
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../../unicode/js/unicode-data-wordbreak.js"></script>
-<script src="../../../unicode/js/unicode-wordbreak.js"></script>
-<script src="../../../escape/js/escape.js"></script>
-<script src="../../../highlight/js/highlight.js"></script>
-<script src="../../js/autocomplete-base.js"></script>
-<script src="../../js/autocomplete-filters.js"></script>
-<script src="../../js/autocomplete-highlighters.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -102,7 +95,7 @@ var dataSourceLocal = new Y.DataSource.Local({
         source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
     }),
 
-    autoComplete = new Y.AutoComplete({inputNode: '#ac'});
+    autoComplete = new Y.AutoCompleteBase({inputNode: '#ac'});
 
 dataSourceRemote.plug({
     fn: Y.Plugin.DataSourceJSONSchema,
@@ -125,7 +118,7 @@ var filtersDiv      = Y.one('#filters>div'),
     highlightersDiv = Y.one('#highlighters>div');
 
 // Create filter checkboxes.
-Y.Object.each(Y.AutoComplete.Filters, function (filter, name) {
+Y.Object.each(Y.AutoCompleteFilters, function (filter, name) {
     if (name.indexOf('_') === 0) {
         return;
     }
@@ -137,7 +130,7 @@ Y.Object.each(Y.AutoComplete.Filters, function (filter, name) {
 });
 
 // Create highlighter radio buttons.
-Y.Object.each(Y.AutoComplete.Highlighters, function (highlighter, name) {
+Y.Object.each(Y.AutoCompleteHighlighters, function (highlighter, name) {
     if (name.indexOf('_') === 0) {
         return;
     }
@@ -189,7 +182,7 @@ function setFilters() {
     });
 
     Y.Array.each(filterNames, function (name) {
-        filters.push(Y.AutoComplete.Filters[name]);
+        filters.push(Y.AutoCompleteFilters[name]);
     });
 
     autoComplete.set('resultFilters', filters);
@@ -202,7 +195,7 @@ function setHighlighter() {
         if (input.get('checked')) {
             name = input.get('value');
             autoComplete.set('resultHighlighter', name === 'none' ? null :
-                    Y.AutoComplete.Highlighters[name]);
+                    Y.AutoCompleteHighlighters[name]);
             return true;
         }
     });

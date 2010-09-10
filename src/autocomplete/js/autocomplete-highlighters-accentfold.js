@@ -15,14 +15,14 @@
  */
 
 /**
- * @class AutoComplete.Highlighters
+ * @class AutoCompleteHighlighters
  * @static
  */
 
 var Highlight = Y.Highlight,
     YArray    = Y.Array;
 
-Y.mix(Y.namespace('AutoComplete.Highlighters'), {
+Y.mix(Y.namespace('AutoCompleteHighlighters'), {
     /**
      * Accent-folding version of <code>charMatch()</code>.
      *
