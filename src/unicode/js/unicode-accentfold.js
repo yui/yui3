@@ -115,11 +115,11 @@ AccentFold = {
      *
      * @method fold
      * @param {String|Array} input String or array of strings to be folded.
-     * @return {String|Array} Folded string or array of string.
+     * @return {String|Array} Folded string or array of strings.
      * @static
      */
     fold: function (input) {
-        if (YArray.test(input)) {
+        if (Y.Lang.isArray(input)) {
             return YArray.map(input, AccentFold.fold);
         }
 

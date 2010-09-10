@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>test&nbsp; <span class="subtitle">3.2.0</span></h3>
+        <h3>test&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_test.html" title="test">test</a>
                 
@@ -362,8 +362,11 @@
                         <span class="k">break</span><span class="p">;</span>
                         
                     <span class="k">case</span> <span class="k">this</span><span class="p">.</span><span class="nx">COMPLETE_EVENT</span><span class="o">:</span>
-                        <span class="nx">message</span> <span class="o">=</span> <span class="s2">&quot;Testing completed at &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">toString</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.\nPassed:&quot;</span> <span class="o">+</span> 
-                            <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">passed</span> <span class="o">+</span> <span class="s2">&quot; Failed:&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot; Total:&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">total</span><span class="p">;</span>
+                        <span class="nx">message</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span><span class="p">(</span><span class="s2">&quot;Testing completed at &quot;</span> <span class="o">+</span>
+                            <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">toString</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.\n&quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;Passed:{passed} Failed:{failed} &quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;Total:{total} ({ignored} ignored)&quot;</span><span class="p">,</span>
+                            <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">);</span>
                         <span class="nx">messageType</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">;</span>
                         <span class="k">break</span><span class="p">;</span>
                         
@@ -388,8 +391,11 @@
                         <span class="k">break</span><span class="p">;</span>
                         
                     <span class="k">case</span> <span class="k">this</span><span class="p">.</span><span class="nx">TEST_SUITE_COMPLETE_EVENT</span><span class="o">:</span>
-                        <span class="nx">message</span> <span class="o">=</span> <span class="s2">&quot;Test suite \&quot;&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">testSuite</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\&quot; completed.\nPassed:&quot;</span> <span class="o">+</span> 
-                            <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">passed</span> <span class="o">+</span> <span class="s2">&quot; Failed:&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot; Total:&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">total</span><span class="p">;</span>
+                        <span class="nx">message</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span><span class="p">(</span><span class="s2">&quot;Test suite \&quot;&quot;</span> <span class="o">+</span>
+                            <span class="nx">event</span><span class="p">.</span><span class="nx">testSuite</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\&quot; completed&quot;</span> <span class="o">+</span> <span class="s2">&quot;.\n&quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;Passed:{passed} Failed:{failed} &quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;Total:{total} ({ignored} ignored)&quot;</span><span class="p">,</span>
+                            <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">);</span>
                         <span class="nx">messageType</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">;</span>
                         <span class="k">break</span><span class="p">;</span>
                         
@@ -399,8 +405,11 @@
                         <span class="k">break</span><span class="p">;</span>
                         
                     <span class="k">case</span> <span class="k">this</span><span class="p">.</span><span class="nx">TEST_CASE_COMPLETE_EVENT</span><span class="o">:</span>
-                        <span class="nx">message</span> <span class="o">=</span> <span class="s2">&quot;Test case \&quot;&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">testCase</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\&quot; completed.\nPassed:&quot;</span> <span class="o">+</span> 
-                            <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">passed</span> <span class="o">+</span> <span class="s2">&quot; Failed:&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot; Total:&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">total</span><span class="p">;</span>
+                        <span class="nx">message</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span><span class="p">(</span><span class="s2">&quot;Test case \&quot;&quot;</span> <span class="o">+</span>
+                            <span class="nx">event</span><span class="p">.</span><span class="nx">testCase</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\&quot; completed.\n&quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;Passed:{passed} Failed:{failed} &quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;Total:{total} ({ignored} ignored)&quot;</span><span class="p">,</span>
+                            <span class="nx">event</span><span class="p">.</span><span class="nx">results</span><span class="p">);</span>
                         <span class="nx">messageType</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">;</span>
                         <span class="k">break</span><span class="p">;</span>
                     <span class="k">default</span><span class="o">:</span>

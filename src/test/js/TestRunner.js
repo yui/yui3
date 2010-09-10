@@ -313,8 +313,11 @@
                         break;
                         
                     case this.COMPLETE_EVENT:
-                        message = "Testing completed at " + (new Date()).toString() + ".\nPassed:" + 
-                            event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                        message = Y.substitute("Testing completed at " +
+                            (new Date()).toString() + ".\n" +
+                            "Passed:{passed} Failed:{failed} " +
+                            "Total:{total} ({ignored} ignored)",
+                            event.results);
                         messageType = "info";
                         break;
                         
@@ -339,8 +342,11 @@
                         break;
                         
                     case this.TEST_SUITE_COMPLETE_EVENT:
-                        message = "Test suite \"" + event.testSuite.name + "\" completed.\nPassed:" + 
-                            event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                        message = Y.substitute("Test suite \"" +
+                            event.testSuite.name + "\" completed" + ".\n" +
+                            "Passed:{passed} Failed:{failed} " +
+                            "Total:{total} ({ignored} ignored)",
+                            event.results);
                         messageType = "info";
                         break;
                         
@@ -350,8 +356,11 @@
                         break;
                         
                     case this.TEST_CASE_COMPLETE_EVENT:
-                        message = "Test case \"" + event.testCase.name + "\" completed.\nPassed:" + 
-                            event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                        message = Y.substitute("Test case \"" +
+                            event.testCase.name + "\" completed.\n" +
+                            "Passed:{passed} Failed:{failed} " +
+                            "Total:{total} ({ignored} ignored)",
+                            event.results);
                         messageType = "info";
                         break;
                     default:
