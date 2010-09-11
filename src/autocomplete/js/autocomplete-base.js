@@ -1,12 +1,4 @@
 /**
- * Provides automatic input completion or suggestions for text input fields and
- * textareas.
- *
- * @module autocomplete
- * @since 3.3.0
- */
-
-/**
  * <p>
  * Extension that provides core autocomplete logic for a text input field or
  * textarea.
@@ -38,9 +30,6 @@
  * @module autocomplete
  * @submodule autocomplete-base
  * @class AutoCompleteBase
- * @extends Base
- * @constructor
- * @param {Object} config configuration object
  */
 
 var Lang       = Y.Lang,

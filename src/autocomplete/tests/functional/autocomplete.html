@@ -10,7 +10,7 @@
 
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../js/autocomplete-widget.js"></script>
+<!-- <script src="../../js/autocomplete-widget.js"></script> -->
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -29,9 +29,9 @@ var Y = YUI({
         'autocomplete-test': {
             fullpath: 'autocomplete-test.js',
             requires: [
-                'autocomplete-base', 'autocomplete-filters',
+                'autocomplete', 'autocomplete-filters',
                 'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-                'autocomplete-highlighters-accentfold', 'autocomplete-widget', 'test'
+                'autocomplete-highlighters-accentfold', 'test'
             ]
         }
     },

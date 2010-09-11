@@ -1,17 +1,37 @@
 {
     "autocomplete": {
         "plugins": {
+            "autocomplete-plugin": {
+                "requires": [
+                    "autocomplete",
+                    "node-pluginhost"
+                ]
+            }
+        },
+
+        "requires": [
+            "autocomplete-base",
+            "base-build"
+        ]
+    },
+
+    "autocomplete-base": {
+        "path": "autocomplete/autocomplete-base-min.js",
+
+        "plugins": {
 			"autocomplete-filters": {
+                "path": "autocomplete/autocomplete-filters-min.js",
+
 				"requires": [
-					"autocomplete-base",
 					"collection",
 					"unicode-wordbreak"
 				]
 			},
 
             "autocomplete-filters-accentfold": {
+                "path": "autocomplete/autocomplete-filters-accentfold-min.js",
+
                 "requires": [
-                    "autocomplete-base",
                     "collection",
                     "unicode-accentfold",
                     "unicode-wordbreak"
@@ -19,45 +39,27 @@
             },
 
 			"autocomplete-highlighters": {
+                "path": "autocomplete/autocomplete-highlighters-min.js",
+
 				"requires": [
-					"autocomplete-base",
 					"collection",
 					"highlight-base"
 				]
 			},
 
 			"autocomplete-highlighters-accentfold": {
+                "path": "autocomplete/autocomplete-highlighters-accentfold-min.js",
+
 				"requires": [
-					"autocomplete-base",
 					"collection",
 					"highlight-accentfold"
 				]
-			},
-
-            "autocomplete-plugin": {
-                "requires": [
-                    "autocomplete-base",
-                    "node-pluginhost"
-                ]
-            }
+			}
         },
 
-        "submodules": {
-            "autocomplete-base": {
-                "requires": [
-                    "base-base",
-                    "event-valuechange",
-                    "node-base"
-                ]
-            },
-
-            "autocomplete-widget": {
-                "requires": [
-                    "autocomplete-base",
-                    "base-build",
-                    "widget"
-                ]
-            }
-        }
+        "requires": [
+            "event-valuechange",
+            "node-base"
+        ]
     }
 }

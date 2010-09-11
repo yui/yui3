@@ -1,18 +1,22 @@
 /*global YUI*/
 /*jslint browser: true, onevar: true, undef: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */
 
-YUI.add('autocomplete-widget', function (Y) {
+YUI.add('autocomplete-list', function (Y) {
 
 /**
- * Basic AutoComplete widget.
+ * Basic AutoComplete dropdown list widget.
  *
  * @module autocomplete
- * @submodule autocomplete-widget
+ * @submodule autocomplete-list
+ * @class AutoCompleteList
+ * @extends Widget
+ * @uses AutoCompleteBase
+ * @constructor
+ * @param {Object} config Configuration object.
  */
 
-var AutoCompleteBase = Y.AutoCompleteBase,
-    Node             = Y.Node,
-    YArray           = Y.Array,
+var Node   = Y.Node,
+    YArray = Y.Array,
 
     getClassName = Y.ClassNameManager.getClassName,
 
@@ -21,18 +25,9 @@ var AutoCompleteBase = Y.AutoCompleteBase,
     INPUT_NODE   = 'inputNode',
     NAME         = 'autocomplete',
     TRAY         = 'tray',
-    TRAY_NODE    = 'trayNode',
+    TRAY_NODE    = 'trayNode';
 
-/**
- * Basic AutoComplete widget.
- *
- * @class AutoComplete
- * @extends Widget
- * @constructor
- * @param {Object} config Configuration object.
- * @since 3.3.0
- */
-AutoComplete = Y.Base.create(NAME, Y.Widget, [AutoCompleteBase], {
+Y.AutoCompleteList = Y.Base.create(NAME, Y.Widget, [Y.AutoCompleteBase], {
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
         this._events = [];
@@ -137,8 +132,6 @@ AutoComplete = Y.Base.create(NAME, Y.Widget, [AutoCompleteBase], {
         trayNode: getClassName(NAME, TRAY)
     }
 });
-
-Y.AutoComplete = AutoComplete;
 
 }, '@VERSION@', {
     requires: ['autocomplete-base', 'base-build', 'widget']
