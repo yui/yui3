@@ -417,7 +417,7 @@ AutoCompleteBase.prototype = {
     },
 
     _unbindInput: function (inputNode) {
-        while (this._inputEvents.length) {
+        while (this._inputEvents && this._inputEvents.length) {
             this._inputEvents.pop().detach();
         }
     },
