@@ -57,11 +57,30 @@ var Lang       = Y.Lang,
     RESULT_HIGHLIGHTER = 'resultHighlighter',
     VALUE_CHANGE       = 'valueChange',
 
+    EVT_CLEAR          = 'clear',
     EVT_QUERY          = QUERY,
     EVT_RESULTS        = 'results',
     EVT_VALUE_CHANGE   = VALUE_CHANGE;
 
 function AutoCompleteBase() {
+    /**
+     * Fires after the contents of the input field have been completely cleared.
+     *
+     * @event clear
+     * @param {EventFacade} e Event facade with the following additional
+     *   properties:
+     *
+     * <dl>
+     *   <dt>prevVal (String)</dt>
+     *   <dd>
+     *     Value of the input node before it was cleared.
+     *   </dd>
+     * </dl>
+     */
+    this.publish(EVT_CLEAR, {
+        preventable: false
+    });
+
     /**
      * Fires when the contents of the input field have changed and the input
      * value meets the criteria necessary to generate an autocomplete query.
@@ -360,7 +379,7 @@ AutoCompleteBase.prototype = {
     // -- Protected Prototype Methods ------------------------------------------
     _bindInput: function (inputNode) {
         if (!inputNode) {
-            Y.error('No input node specified.');
+            Y.error('No inputNode specified.');
         }
 
         if (inputNode.get('nodeName').toLowerCase() === 'input') {
@@ -489,6 +508,12 @@ AutoCompleteBase.prototype = {
             } else {
                 fire();
             }
+        }
+
+        if (!value.length) {
+            this.fire(EVT_CLEAR, {
+                prevVal: e.prevVal
+            });
         }
     },
 
