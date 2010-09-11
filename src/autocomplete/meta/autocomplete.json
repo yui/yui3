@@ -49,6 +49,14 @@
                     "event-valuechange",
                     "node-base"
                 ]
+            },
+
+            "autocomplete-widget": {
+                "requires": [
+                    "autocomplete-base",
+                    "base-build",
+                    "widget"
+                ]
             }
         }
     }

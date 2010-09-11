@@ -61,10 +61,12 @@
 
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
+<script src="../../js/autocomplete-widget.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
     filters: {
+        'autocompleteBase': 'debug',
         'autocomplete': 'debug'
     },
     useBrowserConsole: false
@@ -72,6 +74,7 @@ var Y = YUI({
     'autocomplete-base',
     'autocomplete-filters',
     'autocomplete-highlighters',
+    'autocomplete-widget',
     'console-filters',
     'datasource-get',
     'datasource-jsonschema',
@@ -95,7 +98,7 @@ var dataSourceLocal = new Y.DataSource.Local({
         source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
     }),
 
-    autoComplete = new Y.AutoCompleteBase({inputNode: '#ac'});
+    autoComplete = new Y.AutoComplete({inputNode: '#ac'});
 
 dataSourceRemote.plug({
     fn: Y.Plugin.DataSourceJSONSchema,
