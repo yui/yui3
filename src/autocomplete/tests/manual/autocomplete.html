@@ -37,15 +37,17 @@
             <input type="radio" id="ds-local" name="ds" value="local" checked="checked">
             <label for="ds-local">Local</label>
 
-            <input type="radio" id="ds-remote" name="ds" value="remote">
-            <label for="ds-remote">Remote (JSONP)</label>
+            <input type="radio" id="ds-flickr" name="ds" value="flickr">
+            <label for="ds-flickr">Remote (Flickr)</label>
+
+            <input type="radio" id="ds-search" name="ds" value="search">
+            <label for="ds-search">Remote (Y! Search)</label>
         </div>
     </fieldset>
 
     <fieldset id="filters">
       <legend>Result Filters</legend>
-      <div>
-      </div>
+      <div></div>
     </fieldset>
 
     <fieldset id="highlighters">
@@ -63,10 +65,18 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script src="../../js/autocomplete-list.js"></script>
 <script>
+
+// Note: if you're viewing source to learn how to use AutoComplete, you should
+// be aware that this is a much more complex example than you'd ever be likely
+// to implement in a real-world use case, since this manual test page tries to
+// cover the majority of AutoComplete's available functionality.
+//
+// Please don't let this scare you off!
+
 var Y = YUI({
     filter: 'raw',
     filters: {
-        'autocompleteBase': 'debug',
+        'autocomplete-base': 'debug',
         'autocomplete': 'debug'
     },
     useBrowserConsole: false
@@ -75,32 +85,53 @@ var Y = YUI({
     'autocomplete-filters',
     'autocomplete-highlighters',
     'autocomplete-list',
-    'console-filters',
+    'console',
     'datasource-get',
     'datasource-jsonschema',
     'datasource-local',
     'dump',
     'event-delegate',
-    function (Y) {
+function (Y) {
 
 // -- Console setup ------------------------------------------------------------
 new Y.Console({
     height: '400px',
     width: '35%'
-}).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
+}).render('#log');
 
 // -- AutoComplete setup -------------------------------------------------------
-var dataSourceLocal = new Y.DataSource.Local({
-        source: ExampleData.arrayStates
-    }),
+var autoComplete = new Y.AutoCompleteList({srcNode: '#ac'}),
 
-    dataSourceRemote = new Y.DataSource.Get({
+    dataSourceFlickr = new Y.DataSource.Get({
         source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
     }),
 
-    autoComplete = new Y.AutoCompleteList({render: true, srcNode: '#ac'});
+    dataSourceLocal = new Y.DataSource.Local({
+        source: ExampleData.arrayStates
+    }),
 
-dataSourceRemote.plug({
+    dataSourceSearch = new Y.DataSource.Get({
+        source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
+    });
+
+// For easier debugging.
+Y.autoComplete = autoComplete;
+
+autoComplete.on('results', function (e) {
+    Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete');
+});
+
+// -- DataSource config --------------------------------------------------------
+dataSourceFlickr.plug({
+    fn: Y.Plugin.DataSourceJSONSchema,
+    cfg: {
+        schema: {
+            resultListLocator: 'query.results.photo'
+        }
+    }
+});
+
+dataSourceSearch.plug({
     fn: Y.Plugin.DataSourceJSONSchema,
     cfg: {
         schema: {
@@ -108,13 +139,6 @@ dataSourceRemote.plug({
         }
     }
 });
-
-autoComplete.on('results', function (e) {
-    Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete');
-});
-
-// For easier debugging.
-Y.autoComplete = autoComplete;
 
 // -- UI stuff -----------------------------------------------------------------
 var filtersDiv      = Y.one('#filters>div'),
@@ -155,8 +179,12 @@ Y.delegate('click', function (e) {
         useLocal();
         break;
 
-    case 'remote':
-        useRemote();
+    case 'flickr':
+        useFlickr();
+        break;
+
+    case 'search':
+        useSearch();
         break;
     }
 }, '#data-sources', 'input[type="radio"]');
@@ -171,9 +199,16 @@ useLocal();
 setFilters();
 setHighlighter();
 
+autoComplete.render();
 autoComplete.get('inputNode').focus();
 
 // -- UI functions -------------------------------------------------------------
+function flickrFormatter(query, results) {
+    return Y.Array.map(results, function (result) {
+        return result.title;
+    });
+}
+
 function setFilters() {
     var filters     = [],
         filterNames = [];
@@ -209,23 +244,51 @@ function useLocal() {
     Y.log('using local data source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
-    autoComplete.set('dataSource', dataSourceLocal);
-    autoComplete.set('requestTemplate', function (q) { return q; });
+
+    autoComplete.setAttrs({
+        dataSource         : dataSourceLocal,
+        requestTemplate    : function (q) { return q; },
+        resultFilterLocator: null,
+        resultFormatter    : null
+    });
 }
 
 function useNone() {
     Y.log('using no data source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
-    autoComplete.set('dataSource', null);
+
+    autoComplete.setAttrs({
+        dataSource: null,
+        resultFilterLocator: null,
+        resultFormatter: null
+    });
 }
 
-function useRemote() {
-    Y.log('using remote data source', 'info', 'autocomplete');
+function useFlickr() {
+    Y.log('using remote Flickr data source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
-    autoComplete.set('dataSource', dataSourceRemote);
-    autoComplete.set('requestTemplate', 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'));
+
+    autoComplete.setAttrs({
+        dataSource         : dataSourceFlickr,
+        requestTemplate    : 'q=' + encodeURIComponent('select * from flickr.photos.search where text="') + '{query}' + encodeURIComponent('"'),
+        resultFilterLocator: 'title',
+        resultFormatter    : flickrFormatter
+    });
+}
+
+function useSearch() {
+    Y.log('using remote Y! Search data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        dataSource         : dataSourceSearch,
+        requestTemplate    : 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'),
+        resultFilterLocator: null,
+        resultFormatter    : null
+    });
 }
 
 });

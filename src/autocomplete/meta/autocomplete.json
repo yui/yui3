@@ -62,5 +62,17 @@
             "event-valuechange",
             "node-base"
         ]
+    },
+
+    "autocomplete-list": {
+        "path": "../src/autocomplete/autocomplete-list.js",
+
+        "requires": [
+            "autocomplete-base",
+            "base-build",
+            "widget"
+        ],
+
+        "skinnable": true
     }
 }
