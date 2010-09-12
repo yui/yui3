@@ -41,24 +41,31 @@
  * @class AutoCompleteBase
  */
 
-var Lang       = Y.Lang,
+var Lang   = Y.Lang,
+    YArray = Y.Array,
+
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
 
-    ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
-    DATA_SOURCE        = 'dataSource',
-    MIN_QUERY_LENGTH   = 'minQueryLength',
-    QUERY              = 'query',
-    QUERY_DELAY        = 'queryDelay',
-    REQUEST_TEMPLATE   = 'requestTemplate',
-    RESULT_FILTERS     = 'resultFilters',
-    RESULT_HIGHLIGHTER = 'resultHighlighter',
-    VALUE_CHANGE       = 'valueChange',
+    ALLOW_BROWSER_AC      = 'allowBrowserAutocomplete',
+    DATA_SOURCE           = 'dataSource',
+    INPUT_NODE            = 'inputNode',
+    MIN_QUERY_LENGTH      = 'minQueryLength',
+    QUERY                 = 'query',
+    QUERY_DELAY           = 'queryDelay',
+    REQUEST_TEMPLATE      = 'requestTemplate',
+    RESULT_FILTERS        = 'resultFilters',
+    RESULT_FILTER_LOCATOR = 'resultFilterLocator',
+    RESULT_HIGHLIGHTER    = 'resultHighlighter',
+    RESULT_FORMATTER      = 'resultFormatter',
+    RESULTS               = 'results',
+    RESULTS_RAW           = 'resultsRaw',
+    VALUE_CHANGE          = 'valueChange',
 
-    EVT_CLEAR          = 'clear',
-    EVT_QUERY          = QUERY,
-    EVT_RESULTS        = 'results',
-    EVT_VALUE_CHANGE   = VALUE_CHANGE;
+    EVT_CLEAR        = 'clear',
+    EVT_QUERY        = QUERY,
+    EVT_RESULTS      = RESULTS,
+    EVT_VALUE_CHANGE = VALUE_CHANGE;
 
 function AutoCompleteBase() {
     /**
@@ -74,9 +81,12 @@ function AutoCompleteBase() {
      *     Value of the input node before it was cleared.
      *   </dd>
      * </dl>
+     *
+     * @preventable _defClearFn
      */
     this.publish(EVT_CLEAR, {
-        preventable: false
+        defaultFn: this._defClearFn,
+        queueable: true
     });
 
     /**
@@ -133,8 +143,11 @@ function AutoCompleteBase() {
      *     Normalized and filtered result data returned from the DataSource.
      *   </dd>
      * </dl>
+     *
+     * @preventable _defResultsFn
      */
     this.publish(EVT_RESULTS, {
+        defaultFn: this._defResultsFn,
         queueable: true
     });
 
@@ -159,7 +172,8 @@ function AutoCompleteBase() {
      * </dl>
      */
     this.publish(EVT_VALUE_CHANGE, {
-        preventable: false
+        preventable: false,
+        queueable: true
     });
 }
 
@@ -175,7 +189,6 @@ AutoCompleteBase.ATTRS = {
      * @writeonce
      */
     allowBrowserAutocomplete: {
-        validator: Lang.isBoolean,
         value: false,
         writeOnce: 'initOnly'
     },
@@ -296,7 +309,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * While <code>requestTemplate</code> can be set to either a function or
+     * While <code>requestTemplate</code> may be set to either a function or
      * a string, it will always be returned as a function that accepts a
      * query argument and returns a string.
      * </p>
@@ -328,12 +341,55 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * <p>
+     * Filter locator that should be used to extract a filterable string from a
+     * non-string result item, so that <code>resultFilters</code> (which assume
+     * that results are string) can be used to filter non-string results.
+     * </p>
+     *
+     * <p>
+     * By default, no filter locator is applied, and all results are assumed to
+     * be strings.
+     * </p>
+     *
+     * <p>
+     * The locator may be either a function (which will receive the raw result
+     * as an argument and must return a string) or a string representing an
+     * object path, such as "foo.bar.baz" (which would return the value of
+     * <code>result.foo.bar.baz</code>).
+     * </p>
+     *
+     * <p>
+     * While <code>resultFilterLocator</code> may be set to either a function or
+     * a string, it will always be returned as a function that accepts a result
+     * argument and returns a string.
+     * </p>
+     *
+     * @attribute resultFilterLocator
+     * @type Function|String|null
+     */
+    resultFilterLocator: {
+        setter: function (locator) {
+            if (locator === null || isFunction(locator)) {
+                return locator;
+            }
+
+            locator = locator.toString().split('.');
+
+            return function (result) {
+                return Y.Object.getValue(result, locator);
+            };
+        }
+    },
+
+    /**
+     * <p>
      * Array of local result filter functions. If provided, each filter
      * will be called with two arguments when results are received: the
-     * query and the results received from the DataSource. Each filter is
-     * expected to return a filtered or modified version of those results,
-     * which will then be passed on to subsequent filters, to the
-     * <code>resultHighlighter</code> function (if set), and finally to
+     * query and an array of results received from the DataSource. Each filter
+     * is expected to return a filtered or modified version of those results,
+     * which will then be passed on to subsequent filters, then the
+     * <code>resultHighlighter</code> function (if set), then the
+     * <code>resultFormatter</code> function (if set), and finally to
      * subscribers to the <code>results</code> event.
      * </p>
      *
@@ -352,11 +408,31 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * <p>
+     * Function which will be used to format results. If provided, this function
+     * will be called with two arguments after results have been received,
+     * filtered, and highlighted: the query and an array of filtered
+     * results. The formatter is expected to return a modified version of the
+     * results array with any desired custom formatting applied.
+     * </p>
+     *
+     * <p>
+     * If no DataSource is set, the formatter will not be called.
+     * </p>
+     *
+     * @attribute resultFormatter
+     * @type Function|null
+     */
+    resultFormatter: {
+        validator: '_functionValidator'
+    },
+
+    /**
+     * <p>
      * Function which will be used to highlight results. If provided, this
      * function will be called with two arguments after results have been
-     * received and filtered: the query and the filtered results. The
+     * received and filtered: the query and an array of filtered results. The
      * highlighter is expected to return a modified version of the results
-     * with the query highlighted in some form.
+     * array with the query highlighted in some form.
      * </p>
      *
      * <p>
@@ -367,9 +443,34 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultHighlighter: {
-        validator: function (value) {
-            return isFunction(value) || value === null;
-        }
+        validator: '_functionValidator'
+    },
+
+    /**
+     * Current formatted results, or an empty array if there are no results.
+     *
+     * @attribute results
+     * @type Array
+     * @default []
+     * @readonly
+     */
+    results: {
+        readOnly: true,
+        value: []
+    },
+
+    /**
+     * Current raw (unformatted) results, or an empty array if there are no
+     * results.
+     *
+     * @attribute resultsRaw
+     * @type Array
+     * @default []
+     * @readonly
+     */
+    resultsRaw: {
+        readOnly: true,
+        value: []
     }
 };
 
@@ -401,6 +502,18 @@ AutoCompleteBase.prototype = {
             // (which just wraps this one for convenience).
             inputNode.on(VALUE_CHANGE, this._onValueChange, this)
         ];
+    },
+
+    /**
+     * Returns <code>true</code> if <i>value</i> is either a function or
+     * <code>null</code>.
+     *
+     * @method _functionValidator
+     * @param {Function|null} value Value to validate.
+     * @protected
+     */
+    _functionValidator: function (value) {
+        return isFunction(value) || value === null;
     },
 
     /**
@@ -454,47 +567,92 @@ AutoCompleteBase.prototype = {
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-     * Handles DataSource responses and fires the <code>results</code> event if
-     * there appear to be results.
+     * Handles DataSource responses and fires the <code>results</code> event.
      *
      * @method _onResponse
      * @param {EventFacade} e
      * @protected
      */
     _onResponse: function (e) {
-        var filters,
+        var facade,
+            filters,
+            formatter,
             highlighter,
             i,
             len,
-            query,
-            results = e && e.response && e.response.results;
+            locator,
+            locatorMap,
+            query = e && e.callback && e.callback.query,
+            results,
+            resultsRaw,
+            unfiltered;
 
-        if (results) {
-            query = e.callback.query;
-
-            // Ignore stale responses that aren't for the current query.
-            if (query === this.get(QUERY)) {
-                filters     = this.get(RESULT_FILTERS) || [];
-                highlighter = this.get(RESULT_HIGHLIGHTER);
-
-                if (highlighter) {
-                    // The highlighter is treated just like a filter except that
-                    // it's always called last. Concat is used to ensure that
-                    // the original filters array isn't touched.
-                    filters = filters.concat([highlighter]);
-                }
-
-                for (i = 0, len = filters.length; i < len; ++i) {
-                    results = filters[i](query, results);
-                }
-
-                this.fire(EVT_RESULTS, {
-                    data   : e.data,
-                    query  : query,
-                    results: results
-                });
-            }
+        // Ignore stale responses that aren't for the current query.
+        if (!query || query !== this.get(QUERY)) {
+            return;
         }
+
+        facade = {
+            data      : e.data,
+            query     : query,
+            results   : [],
+            resultsRaw: []
+        };
+
+        unfiltered = e.response && e.response.results;
+
+        if (unfiltered) {
+            filters     = (this.get(RESULT_FILTERS) || []).concat(); // get a copy
+            formatter   = this.get(RESULT_FORMATTER);
+            highlighter = this.get(RESULT_HIGHLIGHTER);
+            locator     = this.get(RESULT_FILTER_LOCATOR);
+
+            if (locator) {
+                // In order to allow filtering based on locator queries, we have
+                // to create a mapping of "located" results to original results
+                // so we can sync up the original results later without
+                // requiring the filters to do extra work.
+                resultsRaw = YArray.map(unfiltered, locator);
+                locatorMap = YArray.hash(resultsRaw, unfiltered);
+            } else {
+                resultsRaw = unfiltered;
+            }
+
+            for (i = 0, len = filters.length; i < len; ++i) {
+                resultsRaw = filters[i](query, resultsRaw);
+
+                if (!resultsRaw || !resultsRaw.length) {
+                    break;
+                }
+            }
+
+            if (locator) {
+                // Sync up the original results with the filtered, "located"
+                // results.
+                results = [];
+
+                for (i = 0, len = resultsRaw.length; i < len; ++i) {
+                    results.push(locatorMap[resultsRaw[i]]);
+                }
+
+                resultsRaw = results;
+            }
+
+            results = resultsRaw;
+
+            if (formatter) {
+                results = formatter(query, results);
+            }
+
+            if (highlighter) {
+                results = highlighter(query, results);
+            }
+
+            facade.results    = results;
+            facade.resultsRaw = resultsRaw;
+        }
+
+        this.fire(EVT_RESULTS, facade);
     },
 
     /**
@@ -537,6 +695,14 @@ AutoCompleteBase.prototype = {
             } else {
                 fire();
             }
+        } else {
+            clearTimeout(this._delay);
+
+            // Empty query.
+            this.fire(EVT_QUERY, {
+                inputValue: value,
+                query     : null
+            });
         }
 
         if (!value.length) {
@@ -547,6 +713,17 @@ AutoCompleteBase.prototype = {
     },
 
     // -- Protected Default Event Handlers -------------------------------------
+
+    /**
+     * Default <code>clear</code> event handler. Sets the <code>results</code>
+     * property to an empty array.
+     *
+     * @method _defClearFn
+     * @protected
+     */
+    _defClearFn: function () {
+        this._set(RESULTS, []);
+    },
 
     /**
      * Default <code>query</code> event handler. Sets the <code>query</code>
@@ -564,7 +741,7 @@ AutoCompleteBase.prototype = {
 
         Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocompleteBase');
 
-        if (dataSource) {
+        if (query && dataSource) {
             Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', 'autocompleteBase');
 
             dataSource.sendRequest({
@@ -572,10 +749,22 @@ AutoCompleteBase.prototype = {
                 callback: {
                     query  : query,
                     success: Y.bind(this._onResponse, this)
-                    // TODO: handle failures here, or should the implementer rely on DataSource events for that?
                 }
             });
         }
+    },
+
+    /**
+     * Default <code>results</code> event handler. Sets the <code>results</code>
+     * and <code>resultsRaw</code> properties to the latest results.
+     *
+     * @method _defResultsFn
+     * @param {EventFacade} e
+     * @protected
+     */
+    _defResultsFn: function (e) {
+        this._set(RESULTS, e[RESULTS]);
+        this._set(RESULTS_RAW, e[RESULTS_RAW]);
     }
 };
 
