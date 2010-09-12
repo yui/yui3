@@ -4,6 +4,16 @@
  * textarea.
  * </p>
  *
+ * @module autocomplete
+ * @submodule autocomplete-base
+ */
+
+/**
+ * <p>
+ * Extension that provides core autocomplete logic for a text input field or
+ * textarea.
+ * </p>
+ *
  * <p>
  * This extension cannot be instantiated directly, since it doesn't provide an
  * actual implementation. It provides the core logic used by the
@@ -15,20 +25,19 @@
  * YUI().use('autocomplete-base', 'base', function (Y) {
  * &nbsp;&nbsp;var MyAutoComplete = Y.Base.create('myAutocomplete', Y.Base, [Y.AutoComplete], {
  * &nbsp;&nbsp;&nbsp;&nbsp;initializer: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._bindInput(this.get('inputNode'));
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._bindInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._syncInput();
  * &nbsp;&nbsp;&nbsp;&nbsp;},
  * &nbsp;
  * &nbsp;&nbsp;&nbsp;&nbsp;destructor: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._unbindInput(this.get('inputNode'));
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._unbindInput();
  * &nbsp;&nbsp;&nbsp;&nbsp;}
  * &nbsp;&nbsp;});
  * &nbsp;
- * &nbsp;&nbsp;// ...
+ * &nbsp;&nbsp;// ... custom implementation code ...
  * });
  * </pre>
  *
- * @module autocomplete
- * @submodule autocomplete-base
  * @class AutoCompleteBase
  */
 
@@ -364,16 +373,27 @@ AutoCompleteBase.ATTRS = {
     }
 };
 
+// Because nobody wants to type ".yui3-autocomplete-blah" a hundred times.
+AutoCompleteBase.CSS_PREFIX = 'ac';
+
 AutoCompleteBase.prototype = {
     // -- Protected Prototype Methods ------------------------------------------
-    _bindInput: function (inputNode) {
+
+    /**
+     * Attaches <code>inputNode</code> event listeners.
+     *
+     * @method _bindInput
+     * @protected
+     */
+    _bindInput: function () {
+        var inputNode = this.get(INPUT_NODE);
+
         if (!inputNode) {
             Y.error('No inputNode specified.');
         }
 
-        if (inputNode.get('nodeName').toLowerCase() === 'input') {
-            inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
-        }
+        // Unbind first, just in case.
+        this._unbindInput();
 
         this._inputEvents = [
             // We're listening to the valueChange event from the
@@ -405,7 +425,27 @@ AutoCompleteBase.prototype = {
         return value;
     },
 
-    _unbindInput: function (inputNode) {
+    /**
+     * Synchronizes the state of the <code>inputNode</code>.
+     *
+     * @method _syncInput
+     * @protected
+     */
+    _syncInput: function () {
+        var inputNode = this.get(INPUT_NODE);
+
+        if (inputNode.get('nodeName').toLowerCase() === 'input') {
+            inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+        }
+    },
+
+    /**
+     * Detaches <code>inputNode</code> event listeners.
+     *
+     * @method _unbindInput
+     * @protected
+     */
+    _unbindInput: function () {
         while (this._inputEvents && this._inputEvents.length) {
             this._inputEvents.pop().detach();
         }

@@ -13,10 +13,11 @@
 
 Y.AutoComplete = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
     initializer: function () {
-        this._bindInput(this.get('inputNode'));
+        this._bindInput();
+        this._syncInput();
     },
 
     destructor: function () {
-        this._unbindInput(this.get('inputNode'));
+        this._unbindInput();
     }
 });
