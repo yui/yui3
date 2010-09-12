@@ -23,7 +23,7 @@
                 "path": "autocomplete/autocomplete-filters-min.js",
 
 				"requires": [
-					"collection",
+					"array-extras",
 					"unicode-wordbreak"
 				]
 			},
@@ -32,7 +32,7 @@
                 "path": "autocomplete/autocomplete-filters-accentfold-min.js",
 
                 "requires": [
-                    "collection",
+                    "array-extras",
                     "unicode-accentfold",
                     "unicode-wordbreak"
                 ]
@@ -42,7 +42,7 @@
                 "path": "autocomplete/autocomplete-highlighters-min.js",
 
 				"requires": [
-					"collection",
+					"array-extras",
 					"highlight-base"
 				]
 			},
@@ -51,13 +51,14 @@
                 "path": "autocomplete/autocomplete-highlighters-accentfold-min.js",
 
 				"requires": [
-					"collection",
+					"array-extras",
 					"highlight-accentfold"
 				]
 			}
         },
 
         "requires": [
+            "array-extras",
             "event-valuechange",
             "node-base"
         ]
