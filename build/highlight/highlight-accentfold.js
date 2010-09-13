@@ -43,7 +43,7 @@ Highlight = Y.mix(Y.Highlight, {
      * @static
      */
     allFold: function (haystack, needles, options) {
-        var replacement,
+        var template = Highlight._TEMPLATE,
             result   = [],
             startPos = 0;
 
@@ -58,20 +58,22 @@ Highlight = Y.mix(Y.Highlight, {
             // I've chosen to take the pragmatic route and just not do it at
             // all. This is one of many reasons why accent folding is best done
             // on the server.
-            replacer: function (substring, foldedNeedle, pos) {
-                var len = foldedNeedle.length;
+            replacer: function (match, p1, foldedNeedle, pos) {
+                var len;
+
+                // Ignore matches inside HTML entities.
+                if (p1 && !(/\s/).test(foldedNeedle)) {
+                    return match;
+                }
+
+                len = foldedNeedle.length;
 
                 result.push(haystack.substring(startPos, pos) +
-                        replacement.replace('$1', haystack.substr(pos, len)));
+                        template.replace(/\{s\}/g, haystack.substr(pos, len)));
 
                 startPos = pos + len;
             }
         }, options || EMPTY_OBJECT);
-
-        // Respect the replacement template constants defined by the base
-        // highlight module.
-        replacement = options.startsWith ? Highlight._START_REPLACE :
-                Highlight._REPLACE;
 
         // Run the highlighter on the folded strings. We don't care about the
         // output; our replacer function will build the canonical highlighted
@@ -115,12 +117,12 @@ Highlight = Y.mix(Y.Highlight, {
      * @static
      */
     wordsFold: function (haystack, needles) {
-        var replacement = Highlight._WORD_REPLACE;
+        var template = Highlight._TEMPLATE;
 
         return Highlight.words(haystack, AccentFold.fold(needles), {
             mapper: function (word, needles) {
                 if (needles.hasOwnProperty(AccentFold.fold(word))) {
-                    return replacement.replace('$1', Escape.html(word));
+                    return template.replace(/\{s\}/g, Escape.html(word));
                 }
 
                 return Escape.html(word);

@@ -36,16 +36,31 @@ var YArray    = Y.Array,
 
     isArray = Y.Lang.isArray,
 
-    DEFAULT_REPLACE = '<b class="yui3-highlight">$1</b>',
-    EMPTY_OBJECT    = {},
+    EMPTY_OBJECT = {},
+
+    // Regex string that captures zero or one unclosed HTML entities. Used in
+    // the static regex template properties below. The entity matching is
+    // intentionally loose here, since there's a world of complexity involved in
+    // doing strict matching for this use case.
+    UNCLOSED_ENTITY = '(&[^;\\s]*)?',
 
 Highlight = {
     // -- Protected Static Properties ------------------------------------------
 
     /**
+     * <p>
      * Regular expression template for highlighting a match that occurs anywhere
      * in a string. The placeholder <code>%needles</code> will be replaced with
      * a list of needles to match, joined by <code>|</code> characters.
+     * </p>
+     *
+     * <p>
+     * This regex should have two capturing subpatterns: the first should match
+     * an unclosed HTML entity (e.g. "&amp" without a ";" at the end) 0 or 1
+     * times; the second should contain the <code>%needles</code> placeholder.
+     * The first subpattern match is used to emulate a negative lookbehind
+     * assertion, in order to prevent highlighting inside HTML entities.
+     * </p>
      *
      * @property _REGEX
      * @type {String}
@@ -53,25 +68,37 @@ Highlight = {
      * @static
      * @final
      */
-    _REGEX: '(%needles)',
+    _REGEX: UNCLOSED_ENTITY + '(%needles)',
 
     /**
-     * Replacement template for matches. Use regex match placeholders to insert
-     * matched values.
+     * Regex replacer function or string for normal matches.
      *
-     * @property _REPLACE
-     * @type {String}
+     * @property _REPLACER
+     * @type {Function|String}
      * @protected
      * @static
      * @final
      */
-    _REPLACE: DEFAULT_REPLACE,
+    _REPLACER: function (match, p1, p2) {
+         // Mimicking a negative lookbehind assertion to prevent matches inside
+         // HTML entities. Hat tip to Steven Levithan for the technique:
+         // http://blog.stevenlevithan.com/archives/mimic-lookbehind-javascript
+         return p1 && !(/\s/).test(p2) ? match :
+                    Highlight._TEMPLATE.replace(/\{s\}/g, p2);
+     },
 
     /**
+     * <p>
      * Regular expression template for highlighting start-of-string matches
      * (i.e., only matches that occur at the beginning of a string). The
      * placeholder <code>%needles</code> will be replaced with a list of needles
      * to match, joined by <code>|</code> characters.
+     * </p>
+     *
+     * <p>
+     * See <code>_REGEX</code> for a description of the capturing subpatterns
+     * this regex should contain.
+     * </p>
      *
      * @property _START_REGEX
      * @type {String}
@@ -79,31 +106,21 @@ Highlight = {
      * @static
      * @final
      */
-    _START_REGEX: '^(%needles)',
+    _START_REGEX: '^' + UNCLOSED_ENTITY + '(%needles)',
 
     /**
-     * Replacement template for start-of-string matches. Use regex match
-     * placeholders to insert matched values.
+     * Highlight template which will be used as a replacement for matched
+     * substrings. The placeholder <code>{s}</code> will be replaced with the
+     * matched substring.
      *
-     * @property _START_REPLACE
+     * @property _TEMPLATE
      * @type {String}
+     * @default '<b class="yui3-highlight">{s}</b>'
      * @protected
      * @static
      * @final
      */
-    _START_REPLACE: DEFAULT_REPLACE,
-
-    /**
-     * Replacement template for word matches. Use regex match placeholders to
-     * insert matched values.
-     *
-     * @property _WORD_REPLACE
-     * @type {String}
-     * @protected
-     * @static
-     * @final
-     */
-    _WORD_REPLACE: DEFAULT_REPLACE,
+    _TEMPLATE: '<b class="yui3-highlight">{s}</b>',
 
     // -- Public Static Methods ------------------------------------------------
 
@@ -139,14 +156,15 @@ Highlight = {
      * @static
      */
     all: function (haystack, needles, options) {
-        var i, len, regex, replacement;
+        var i, len, regex, replacer;
 
         if (!options) {
             options = EMPTY_OBJECT;
         }
 
-        // Escape HTML characters in the haystack to prevent HTML injection.
-        haystack = Escape.html(haystack);
+        // TODO: document options.replacer
+        regex    = options.startsWith ? Highlight._START_REGEX : Highlight._REGEX;
+        replacer = options.replacer || Highlight._REPLACER;
 
         // Create a local copy of needles so we can safely modify it in the next
         // step.
@@ -159,21 +177,15 @@ Highlight = {
             needles[i] = Escape.regex(Escape.html(needles[i]));
         }
 
-        if (options.startsWith) {
-            // TODO: document options.replacer
-            regex       = Highlight._START_REGEX;
-            replacement = options.replacer || Highlight._START_REPLACE;
-        } else {
-            regex       = Highlight._REGEX;
-            replacement = options.replacer || Highlight._REPLACE;
-        }
+        // Escape HTML characters in the haystack to prevent HTML injection.
+        haystack = Escape.html(haystack);
 
         return haystack.replace(
             new RegExp(
                 regex.replace('%needles', needles.join('|')),
                 options.caseSensitive ? 'g' : 'gi'
             ),
-            replacement
+            replacer
         );
     },
 
@@ -267,7 +279,7 @@ Highlight = {
     words: function (haystack, needles, options) {
         var caseSensitive,
             mapper,
-            replacement = Highlight._WORD_REPLACE,
+            template = Highlight._TEMPLATE,
             words;
 
         if (!options) {
@@ -288,7 +300,7 @@ Highlight = {
         // highlight-accentfold module.
         mapper = options.mapper || function (word, needles) {
             if (needles.hasOwnProperty(caseSensitive ? word : word.toLowerCase())) {
-                return replacement.replace('$1', Escape.html(word));
+                return template.replace(/\{s\}/g, Escape.html(word));
             }
 
             return Escape.html(word);
@@ -375,7 +387,7 @@ Highlight = Y.mix(Y.Highlight, {
      * @static
      */
     allFold: function (haystack, needles, options) {
-        var replacement,
+        var template = Highlight._TEMPLATE,
             result   = [],
             startPos = 0;
 
@@ -390,20 +402,22 @@ Highlight = Y.mix(Y.Highlight, {
             // I've chosen to take the pragmatic route and just not do it at
             // all. This is one of many reasons why accent folding is best done
             // on the server.
-            replacer: function (substring, foldedNeedle, pos) {
-                var len = foldedNeedle.length;
+            replacer: function (match, p1, foldedNeedle, pos) {
+                var len;
+
+                // Ignore matches inside HTML entities.
+                if (p1 && !(/\s/).test(foldedNeedle)) {
+                    return match;
+                }
+
+                len = foldedNeedle.length;
 
                 result.push(haystack.substring(startPos, pos) +
-                        replacement.replace('$1', haystack.substr(pos, len)));
+                        template.replace(/\{s\}/g, haystack.substr(pos, len)));
 
                 startPos = pos + len;
             }
         }, options || EMPTY_OBJECT);
-
-        // Respect the replacement template constants defined by the base
-        // highlight module.
-        replacement = options.startsWith ? Highlight._START_REPLACE :
-                Highlight._REPLACE;
 
         // Run the highlighter on the folded strings. We don't care about the
         // output; our replacer function will build the canonical highlighted
@@ -447,12 +461,12 @@ Highlight = Y.mix(Y.Highlight, {
      * @static
      */
     wordsFold: function (haystack, needles) {
-        var replacement = Highlight._WORD_REPLACE;
+        var template = Highlight._TEMPLATE;
 
         return Highlight.words(haystack, AccentFold.fold(needles), {
             mapper: function (word, needles) {
                 if (needles.hasOwnProperty(AccentFold.fold(word))) {
-                    return replacement.replace('$1', Escape.html(word));
+                    return template.replace(/\{s\}/g, Escape.html(word));
                 }
 
                 return Escape.html(word);
