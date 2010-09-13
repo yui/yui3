@@ -602,7 +602,7 @@ AutoCompleteBase.prototype = {
         unfiltered = e.response && e.response.results;
 
         if (unfiltered) {
-            filters     = (this.get(RESULT_FILTERS) || []).concat(); // get a copy
+            filters     = this.get(RESULT_FILTERS);
             formatter   = this.get(RESULT_FORMATTER);
             highlighter = this.get(RESULT_HIGHLIGHTER);
             locator     = this.get(RESULT_FILTER_LOCATOR);
@@ -671,7 +671,7 @@ AutoCompleteBase.prototype = {
             query = this._parseValue(value),
             that;
 
-        Y.log('valueChange: new: "' + value + '"; old: "' + e.prevVal + '"', 'info', 'autocompleteBase');
+        Y.log('valueChange: new: "' + value + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
 
         this.fire(EVT_VALUE_CHANGE, {
             newVal : value,
@@ -739,10 +739,10 @@ AutoCompleteBase.prototype = {
 
         this._set(QUERY, query);
 
-        Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocompleteBase');
+        Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
 
         if (query && dataSource) {
-            Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', 'autocompleteBase');
+            Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', 'autocomplete-base');
 
             dataSource.sendRequest({
                 request: this.get(REQUEST_TEMPLATE)(query),
@@ -763,6 +763,9 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defResultsFn: function (e) {
+        Y.log('raw results: ' + Y.dump(e.resultsRaw), 'info', 'autocomplete-base');
+        Y.log('formatted results: ' + Y.dump(e.results), 'info', 'autocomplete-base');
+
         this._set(RESULTS, e[RESULTS]);
         this._set(RESULTS_RAW, e[RESULTS_RAW]);
     }
