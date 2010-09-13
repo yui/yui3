@@ -138,4 +138,4 @@ AccentFold = {
 Unicode.AccentFold = AccentFold;
 
 
-}, '@VERSION@' ,{requires:['collection', 'unicode-data-accentfold']});
+}, '@VERSION@' ,{requires:['array-extras', 'unicode-data-accentfold']});

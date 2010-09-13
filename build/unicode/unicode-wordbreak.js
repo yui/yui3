@@ -13,8 +13,7 @@ YUI.add('unicode-wordbreak', function(Y) {
  * @static
  */
 
-var YArray  = Y.Array,
-    Unicode = Y.Unicode,
+var Unicode = Y.Unicode,
     WBData  = Unicode.Data.WordBreak,
 
 // Constants representing code point classifications.
@@ -107,7 +106,7 @@ WordBreak = {
     },
 
     getUniqueWords: function (string, options) {
-        return YArray.unique(WordBreak.getWords(string, options));
+        return Y.Array.unique(WordBreak.getWords(string, options));
     },
 
     isWordBoundary: function (string, index) {
@@ -229,4 +228,4 @@ WordBreak = {
 Unicode.WordBreak = WordBreak;
 
 
-}, '@VERSION@' ,{requires:['collection', 'unicode-data-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'unicode-data-wordbreak']});

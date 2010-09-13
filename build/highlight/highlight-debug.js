@@ -34,6 +34,8 @@ var YArray    = Y.Array,
     Escape    = Y.Escape,
     WordBreak = Y.Unicode.WordBreak,
 
+    isArray = Y.Lang.isArray,
+
     DEFAULT_REPLACE = '<b class="yui3-highlight">$1</b>',
     EMPTY_OBJECT    = {},
 
@@ -148,7 +150,7 @@ Highlight = {
 
         // Create a local copy of needles so we can safely modify it in the next
         // step.
-        needles = YArray.test(needles) ? needles.concat() : [needles];
+        needles = isArray(needles) ? needles.concat() : [needles];
 
         // Escape HTML characters and special regular expression characters in
         // the needles so they can be used in a regex and matched against the
@@ -276,7 +278,7 @@ Highlight = {
 
         // Convert needles to a hash for faster lookups.
         needles = YArray.hash(
-            YArray.test(needles) ? needles : WordBreak.getUniqueWords(needles, {
+            isArray(needles) ? needles : WordBreak.getUniqueWords(needles, {
                 ignoreCase: !caseSensitive
             })
         );
@@ -327,7 +329,7 @@ Highlight = {
 Y.Highlight = Highlight;
 
 
-}, '@VERSION@' ,{requires:['collection', 'escape', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'escape', 'unicode-wordbreak']});
 YUI.add('highlight-accentfold', function(Y) {
 
 /**

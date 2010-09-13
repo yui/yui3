@@ -781,7 +781,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "highlight-base": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "escape", 
                     "unicode-wordbreak"
                 ]
@@ -1249,7 +1249,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "unicode-accentfold": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "unicode-data-accentfold"
                 ]
             }, 
@@ -1257,7 +1257,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "unicode-data-wordbreak": {}, 
             "unicode-wordbreak": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "unicode-data-wordbreak"
                 ]
             }
@@ -1374,7 +1374,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'd1e508fbc6907c32448266f75916c03d';
+YUI.Env[Y.version].md5 = 'ff61015f7f9ab843c4417fa854b03a4b';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

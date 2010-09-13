@@ -770,7 +770,7 @@
             }, 
             "highlight-base": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "escape", 
                     "unicode-wordbreak"
                 ]
@@ -1233,7 +1233,7 @@
         "submodules": {
             "unicode-accentfold": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "unicode-data-accentfold"
                 ]
             }, 
@@ -1241,7 +1241,7 @@
             "unicode-data-wordbreak": {}, 
             "unicode-wordbreak": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "unicode-data-wordbreak"
                 ]
             }
