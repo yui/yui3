@@ -30,6 +30,31 @@ suite.add(new Y.Test.Case({
         );
     },
 
+    'all() should not highlight matches inside HTML entities': function () {
+        Assert.areSame(
+            '&amp;',
+            Hi.all('&', 'amp')
+        );
+
+        Assert.areSame(
+            '&#x2F;<b class="yui3-highlight">m</b>&amp;<b class="yui3-highlight">m</b>&#x2F;',
+            Hi.all('/m&m/', ['a', 'm', 'x'])
+        );
+    },
+
+    'all() should highlight complete HTML entities when part of a match': function () {
+        Assert.areSame(
+            '<b class="yui3-highlight">&amp;</b>',
+            Hi.all('&', '&')
+        );
+
+        Assert.areSame(
+            'foo <b class="yui3-highlight">&amp;</b> bar',
+            Hi.all('foo & bar', '&')
+        );
+
+    },
+
     'all() should be case-insensitive by default': function () {
         Assert.areSame(
             'f<b class="yui3-highlight">oo</b> <b class="yui3-highlight">BA</b>R <b class="yui3-highlight">ba</b>z',
@@ -154,6 +179,18 @@ suite.add(new Y.Test.Case({
         Assert.areSame(
             '&lt;foo&gt; &amp; &lt;<b class="yui3-highlight">bar</b>&gt;',
             Hi.words('<foo> & <bar>', 'bar')
+        );
+    },
+
+    'words() should not highlight matches inside HTML entities': function () {
+        Assert.areSame(
+            '&amp;',
+            Hi.words('&', 'amp')
+        );
+
+        Assert.areSame(
+            '&#x2F;<b class="yui3-highlight">m</b>&amp;<b class="yui3-highlight">m</b>&#x2F;',
+            Hi.words('/m&m/', ['a', 'm', 'x'])
         );
     },
 
