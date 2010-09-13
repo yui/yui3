@@ -3,9 +3,18 @@ var LANG = Y.Lang,
     GETCLASSNAME = Y.ClassNameManager.getClassName,
     BIND = Y.bind,
 
-    DATATABLE = "basedatatable",
+    DATATABLE = "datatable",
+    
+    FOCUS = "focus",
+    KEYDOWN = "keydown",
+    MOUSEOVER = "mouseover",
+    MOUSEOUT = "mouseout",
+    MOUSEUP = "mouseup",
+    MOUSEDOWN = "mousedown",
+    CLICK = "click",
+    DOUBLECLICK = "doubleclick",
 
-    CLASS_HEADER = GETCLASSNAME(DATATABLE, "header"),
+    CLASS_COLUMNS = GETCLASSNAME(DATATABLE, "columns"),
     CLASS_DATA = GETCLASSNAME(DATATABLE, "data"),
     CLASS_MSG = GETCLASSNAME(DATATABLE, "msg"),
     CLASS_LINER = GETCLASSNAME(DATATABLE, "liner"),
@@ -26,7 +35,7 @@ function DTBase(config) {
  * used as an event prefix, to generate class names etc. (set to the
  * class name in camel case).
  */
-DTBase.NAME = "baseDataTable";
+DTBase.NAME = "dataTable";
 
 /*
  * The attribute configuration for the widget. This defines the core user facing state of the widget
@@ -107,18 +116,19 @@ Y.extend(DTBase, Y.Widget, {
 
     // Initialization
     initializer: function() {
+        // Custom events that broadcast DOM updates
+        this.publish("addTheadTr", {defaultFn: BIND("_defAddTheadTrFn", this), queuable:false});
+        this.publish("addTheadTh", {defaultFn: BIND("_defAddTheadThFn", this), queuable:false});
+
         this.publish("addTr", {defaultFn: BIND("_defAddTrFn", this), queuable:false});
         this.publish("addTd", {defaultFn: BIND("_defAddTdFn", this), queuable:false});
-        
-        this.publish("addHeaderTr", {defaultFn: BIND("_defAddHeaderTrFn", this), queuable:false});
-        this.publish("addHeaderTh", {defaultFn: BIND("_defAddHeaderThFn", this), queuable:false});
 
-
-        // This set of custom events pass through DOM event facades
-        //TODO: are the default functions necessary?
-        this.publish("theadCellClick", {emitFacade:false, defaultFn: BIND("_defTheadCellClickFn", this), queuable:true});
-        this.publish("theadRowClick", {emitFacade:false, defaultFn: BIND("_defTheadRowClickFn", this), queuable:true});
-        this.publish("theadClick", {emitFacade:false, defaultFn: BIND("_defTheadClickFn", this), queuable:true});
+        // Custom events that broadcast DOM interactions
+        // Simply pass through DOM event facades
+        //TODO: do we need queuable=true?
+        this.publish("theadCellClick", {emitFacade:false});
+        this.publish("theadRowClick", {emitFacade:false});
+        this.publish("theadClick", {emitFacade:false});
     },
 
     // Destruction
@@ -171,7 +181,7 @@ Y.extend(DTBase, Y.Widget, {
 
     _createTheadNode: function(tableNode) {
         if(tableNode) {
-            this._theadNode = tableNode.insertBefore(NODE.create("<thead class='"+CLASS_HEADER+"'></thead>"), this._colgroupNode.next());
+            this._theadNode = tableNode.insertBefore(NODE.create("<thead class='"+CLASS_COLUMNS+"'></thead>"), this._colgroupNode.next());
             return this._theadNode;
         }
     },
@@ -193,60 +203,65 @@ Y.extend(DTBase, Y.Widget, {
 
     // Events
     bindUI: function() {
-        var theadNode = this._theadNode,
-            tbodyNode = this._tbodyNode,
-            msgNode = this._msgNode,
-            contentBox = this.get("contentBox");
+        var tableNode = this._tableNode,
+            contentBox = this.get("contentBox"),
+            theadFilter = "thead."+CLASS_COLUMNS+">tr>th",
+            tbodyFilter ="tbody."+CLASS_DATA+">tr>td",
+            msgFilter = "tbody."+CLASS_MSG+">tr>td";
+            
+            
 
-        this._tableNode.delegate("click", BIND(this._onTheadClick, this), "thead."+CLASS_HEADER+">tr>th");
-        this._tableNode.delegate("click", BIND(this._onTbodyClick, this), "tbody."+CLASS_DATA+">tr>td");
-        this._tableNode.delegate("click", BIND(this._onMsgClick, this), "tbody."+CLASS_MSG+">tr>td");
-
-/*
-        // Set up DOM events for THEAD
-        theadNode.on("focus", BIND("_onTheadFocus", this));
-        theadNode.on("keydown", BIND("_onTheadKeydown", this));
-        theadNode.on("mouseover", BIND("_onTableMouseover", this));
-        theadNode.on("mouseout", BIND("_onTableMouseout", this));
-        theadNode.on("mousedown", BIND("_onTableMousedown", this));
-        theadNode.on("mouseup", BIND("_onTableMouseup", this));
-        theadNode.on("click", BIND("_onTheadClick", this));
+        // DOM event delegation for THEAD
+        tableNode.delegate(FOCUS, BIND(this._onTheadFocus, this), theadFilter);
+        tableNode.delegate(KEYDOWN, BIND(this._onTheadKeydown, this), theadFilter);
+        tableNode.delegate(MOUSEOVER, BIND(this._onTheadMouseover, this), theadFilter);
+        tableNode.delegate(MOUSEOUT, BIND(this._onTheadMouseout, this), theadFilter);
+        tableNode.delegate(MOUSEUP, BIND(this._onTheadMouseup, this), theadFilter);
+        tableNode.delegate(MOUSEDOWN, BIND(this._onTheadMousedown, this), theadFilter);
+        tableNode.delegate(CLICK, BIND(this._onTheadClick, this), theadFilter);
         // Since we can't listen for click and dblclick on the same element...
-        // Attach dblclick separately to contentBox
-        // theadNode.on("dblclick", BIND("_onTableDblclick", this));
+        contentBox.delegate(DOUBLECLICK, BIND(this._onTheadDoubleclick, this), theadFilter);
 
-        // Set up DOM events for TBODY
-        tbodyNode.on("focus", BIND("this._onTbodyFocus", this));
-        tbodyNode.on("mouseover", BIND("_onTableMouseover", this));
-        tbodyNode.on("mouseout", BIND("_onTableMouseout", this));
-        tbodyNode.on("mousedown", BIND("_onTableMousedown", this));
-        tbodyNode.on("mouseup", BIND("_onTableMouseup", this));
-        tbodyNode.on("keydown", BIND("_onTbodyKeydown", this));
-        tbodyNode.on("keypress", BIND("_onTableKeypress", this));
-        tbodyNode.on("click", BIND("_onTbodyClick", this));
+        // DOM event delegation for TBODY
+        tableNode.delegate(FOCUS, BIND(this._onTbodyFocus, this), tbodyFilter);
+        tableNode.delegate(KEYDOWN, BIND(this._onTbodyKeydown, this), tbodyFilter);
+        tableNode.delegate(MOUSEOVER, BIND(this._onTbodyMouseover, this), tbodyFilter);
+        tableNode.delegate(MOUSEOUT, BIND(this._onTbodyMouseout, this), tbodyFilter);
+        tableNode.delegate(MOUSEUP, BIND(this._onTbodyMouseup, this), tbodyFilter);
+        tableNode.delegate(MOUSEDOWN, BIND(this._onTbodyMousedown, this), tbodyFilter);
+        tableNode.delegate("click", BIND(this._onTbodyClick, this), tbodyFilter);
         // Since we can't listen for click and dblclick on the same element...
-        // Attach dblick separately to contentBox
-        // tbodyNode.on("dblclick", BIND("_onTableDblclick", this));
+        contentBox.delegate(DOUBLECLICK, BIND(this._onTbodyDoubleclick, this), tbodyFilter);
 
-        contentBox.on("focus", BIND("_onTableFocus", this));
-        contentBox.on("dblclick", BIND("_onTableDblclick", this));
+        // DOM event delegation for MSG TBODY
+        tableNode.delegate(FOCUS, BIND(this._onMsgFocus, this), msgFilter);
+        tableNode.delegate(KEYDOWN, BIND(this._onMsgKeydown, this), msgFilter);
+        tableNode.delegate(MOUSEOVER, BIND(this._onMsgMouseover, this), msgFilter);
+        tableNode.delegate(MOUSEOUT, BIND(this._onMsgMouseout, this), msgFilter);
+        tableNode.delegate(MOUSEUP, BIND(this._onMsgMouseup, this), msgFilter);
+        tableNode.delegate(MOUSEDOWN, BIND(this._onMsgMousedown, this), msgFilter);
+        tableNode.delegate("click", BIND(this._onMsgClick, this), msgFilter);
+        // Since we can't listen for click and dblclick on the same element...
+        contentBox.delegate(DOUBLECLICK, BIND(this._onMsgDoubleclick, this), msgFilter);
 
-        // Set up DOM events for msg node
-        msgNode.on("focus", BIND("_onTbodyFocus", this));
-        msgNode.on("mouseover", BIND("_onTableMouseover", this));
-        msgNode.on("mouseout", BIND("_onTableMouseout", this));
-        msgNode.on("mousedown", BIND("_onTableMousedown", this));
-        msgNode.on("mouseup", BIND("_onTableMouseup", this));
-        msgNode.on("keydown", BIND("_onTbodyKeydown", this));
-        msgNode.on("keypress", BIND("_onTableKeypress", this));
-        msgNode.on("click", BIND("_onTbodyClick", this));
-*/
     },
 
     _onTheadFocus: function() {
     },
 
     _onTheadKeydown: function() {
+    },
+
+    _onTheadMouseover: function() {
+    },
+
+    _onTheadMouseout: function() {
+    },
+
+    _onTheadMouseup: function() {
+    },
+
+    _onTheadMousedown: function() {
     },
 
     // e.currentTarget holds the clicked element
@@ -256,6 +271,8 @@ Y.extend(DTBase, Y.Widget, {
         this.fire("theadClick", e);
     },
 
+    _onTheadDoubleclick: function() {
+    },
 
     _onTbodyFocus: function() {
     },
@@ -263,35 +280,47 @@ Y.extend(DTBase, Y.Widget, {
     _onTbodyKeydown: function() {
     },
 
-    _onTbodyClick: function() {
+    _onTbodyMouseover: function() {
     },
 
-
-    _onTableMouseover: function() {
+    _onTbodyMouseout: function() {
     },
 
-    _onTableMouseout: function() {
+    _onTbodyMouseup: function() {
     },
 
-    _onTableMousedown: function() {
+    _onTbodyMousedown: function() {
     },
 
-    _onTableMouseup: function() {
+    _onTbodyClick: function(e) {
     },
 
-    _onTableKeypress: function() {
+    _onTbodyDoubleclick: function() {
     },
 
-    _onTableFocus: function() {
+    _onMsgFocus: function() {
     },
 
-    _onTableDblclick: function() {
+    _onMsgKeydown: function() {
     },
 
-    _defTheadCellClickFn: function() {
-
+    _onMsgMouseover: function() {
     },
 
+    _onMsgMouseout: function() {
+    },
+
+    _onMsgMouseup: function() {
+    },
+
+    _onMsgMousedown: function() {
+    },
+
+    _onMsgClick: function(e) {
+    },
+
+    _onMsgDoubleclick: function() {
+    },
 
     syncUI: function() {
         /*
@@ -302,9 +331,9 @@ Y.extend(DTBase, Y.Widget, {
          */
         // STRINGS
         this._uiSetStrings(this.get("strings"));
-        // HEADER ROWS
+        // THEAD ROWS
         this._uiSetColumnset(this.get("columnset"));
-        // DATA RECORDS
+        // DATA ROWS
         this._uiSetRecordset(this.get("recordset"));
     },
 
@@ -335,78 +364,83 @@ Y.extend(DTBase, Y.Widget, {
         this._captionNode.set("innerHTML", val);
     },
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // THEAD FUNCTIONALITY
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    
     _afterColumnsetChange: function (e) {
         this._uiSetColumnset(e.newVal);
     },
 
     _uiSetColumnset: function(cs) {
-        //TODO
-        // this._removeHeaderRows();
-
         var tree = cs.get("tree"),
             theadNode = this._theadNode,
-            tr,
             i = 0,
-            len = tree.length;
+            len = tree.length,
+            tr,
+            columns;
+            
+        while(theadNode.get("firstChild")) {
+            theadNode.removeChild(theadNode.get("firstChild"));
+        }
+        
+        //TODO: move thead off dom
 
         // Iterate tree to add rows
         for(; i<len; ++i) {
-            this.fire("addHeaderTr", {columns:tree[i]});//this._createHeaderTr(tree[i]);
+            columns = tree[i];
+            tr = NODE.create(this._getTheadTrMarkup(columns));
+            
+            // Set FIRST/LAST class
+            if(i === 0) {
+                tr.addClass(CLASS_FIRST);
+            }
+            if(i === len-1) {
+                tr.addClass(CLASS_LAST);
+            }
+            
+            this.fire("addTheadTr", {columns:columns, thead:theadNode, tr:tr});
         }
-
-        //TODO
-        //this._setHeaderFirstLastClasses();
 
         // Column helpers needs _theadNode to exist
         //this._createColumnHelpers();
-    },
 
-    _defAddHeaderTrFn: function(e) {
+        
+        //TODO: move thead on dom
+
+     },
+
+    _defAddTheadTrFn: function(e) {
         var columns = e.columns,
-            tr = this._createHeaderTr(columns),
-            theadNode = this._theadNode,
-            index = e.index,
-            len = theadNode.get("children").get("length");
-
-        // Set FIRST/LAST class
-        if(index === 0) {
-            tr.addClass(CLASS_FIRST);
-        }
-        if(index === (len-1)) {
-            tr.addClass(CLASS_LAST);
-        }
-
-        theadNode.appendChild(tr);
-
-    },
-    
-    _createHeaderTr: function(columns) {
-        var tr = NODE.create(this._getHeaderTrMarkup(columns)),
+            thead = e.thead,
+            tr = e.tr,
             i = 0,
             len = columns.length,
-            ths = [],
             column,
-            o;
+            th;
 
         for(; i<len; ++i) {
             column = columns[i];
-            this.fire("addHeaderTh", {column:column, tr:tr, value:column.get("label")});
+            th = NODE.create(this._getTheadThMarkup({value:column.get("label")}, column));
+            this.fire("addTheadTh", {column:column, tr:tr, th:th});
         }
-        return tr;
-    },
 
-    _getHeaderTrMarkup: function(record) {
+       thead.appendChild(tr);
+    },
+    
+    _getTheadTrMarkup: function(record) {
         return Y.substitute(this.get("trTemplate"), {});
     },
 
-    _defAddHeaderThFn: function(e) {
-            var column = e.column,
-                tr = e.tr;
-            tr.appendChild(NODE.create(this._getThNodeMarkup({value:e.value}, column)));
+    _defAddTheadThFn: function(e) {
+            e.tr.appendChild(e.th);
             //column._set("thNode", thNode);
     },
 
-    _getThNodeMarkup: function(o, column) {
+    _getTheadThMarkup: function(o, column) {
         o.column = column;
         o.id = column.get("id");//TODO: validate 1 column ID per document
         o.value = Y.substitute(this.get("thValueTemplate"), o);
@@ -430,10 +464,8 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     _uiSetRecordset: function(rs) {
-        var tbodyNode = this._tbodyNode,
-            i = 0,//TODOthis.get("state.offsetIndex"),
-            len = 3,//TODOthis.get("state.pageLength"),
-            record;
+        var i = 0,//TODOthis.get("state.offsetIndex"),
+            len = 3;//TODOthis.get("state.pageLength"),;
 
         // Iterate recordset to use existing or add new tr
         for(; i<len; ++i) {

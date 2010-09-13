@@ -1,58 +1,58 @@
 /* foundational CSS */
 
 /* mask */
-.yui3-skin-sam .yui3-basedatatable-mask {
+.yui3-skin-sam .yui3-datatable-mask {
     position:absolute;
     z-index:9500;
 }
 
 /* scrollable */
-.yui3-basedatatable-tmp {
+.yui3-datatable-tmp {
     position:absolute;
     left:-9000px;
 }
 
-.yui3-basedatatable-scrollable .yui3-basedatatable-bd {
+.yui3-datatable-scrollable .yui3-datatable-bd {
     overflow:auto;
 }
-.yui3-basedatatable-scrollable .yui3-basedatatable-hd {
+.yui3-datatable-scrollable .yui3-datatable-hd {
     overflow:hidden;
     position:relative; /* for ie overflow bug http://rowanw.com/bugs/overflow_relative.htm */
 } 
 
-.yui3-basedatatable-scrollable .yui3-basedatatable-bd thead tr,
-.yui3-basedatatable-scrollable .yui3-basedatatable-bd thead th {
+.yui3-datatable-scrollable .yui3-datatable-bd thead tr,
+.yui3-datatable-scrollable .yui3-datatable-bd thead th {
     position:absolute;
     left:-1500px;
 }
 
-.yui3-basedatatable-scrollable tbody {
+.yui3-datatable-scrollable tbody {
     -moz-outline:none;
 }
 
 /* sortable columns */
 
-.yui3-skin-sam thead .yui3-basedatatable-sortable {
+.yui3-skin-sam thead .yui3-datatable-sortable {
     cursor:pointer;
 }
 
 /* draggable columns */
-.yui3-skin-sam thead .yui3-basedatatable-draggable {
+.yui3-skin-sam thead .yui3-datatable-draggable {
     cursor: move;
 }
-.yui3-basedatatable-coltarget {
+.yui3-datatable-coltarget {
     position: absolute;
     z-index: 999;
 }
 
 /* resizeable columns */
-.yui3-basedatatable-hd {
+.yui3-datatable-hd {
     zoom:1; 
 }
-th.yui3-basedatatable-resizeable .yui3-basedatatable-resizerliner {
+th.yui3-datatable-resizeable .yui3-datatable-resizerliner {
     position:relative;
 }
-.yui3-basedatatable-resizer {
+.yui3-datatable-resizer {
     position:absolute;
     right:0;
     bottom:0;
@@ -61,7 +61,7 @@ th.yui3-basedatatable-resizeable .yui3-basedatatable-resizerliner {
     cursor:col-resize;
     background-color:#CCC;opacity:0;filter: alpha(opacity=0); /* Bug 1952811: IE transparency z-index */
 }
-.yui3-basedatatable-resizerproxy {
+.yui3-datatable-resizerproxy {
     visibility:hidden;
     position:absolute;
     z-index:9000;
@@ -69,9 +69,9 @@ th.yui3-basedatatable-resizeable .yui3-basedatatable-resizerliner {
 }
 
 /* hidden columns */
-th.yui3-basedatatable-hidden .yui3-basedatatable-liner, 
-td.yui3-basedatatable-hidden .yui3-basedatatable-liner,
-th.yui3-basedatatable-hidden .yui3-basedatatable-resizer {
+th.yui3-datatable-hidden .yui3-datatable-liner, 
+td.yui3-datatable-hidden .yui3-datatable-liner,
+th.yui3-datatable-hidden .yui3-datatable-resizer {
     /*TODO: document change from 2.5.2 to 2.6
     margin:0;
     padding:0;
@@ -82,6 +82,6 @@ th.yui3-basedatatable-hidden .yui3-basedatatable-resizer {
 }
 
 /* editing */
-.yui3-basedatatable-editor, .yui3-basedatatable-editor-shim {
+.yui3-datatable-editor, .yui3-datatable-editor-shim {
     position:absolute;z-index:9000;
 }

@@ -11,6 +11,7 @@ var //getClassName = Y.ClassNameManager.getClassName,
     //CLASS_DESC = getClassName(DATATABLE, "desc"),
     CLASS_SORTABLE = Y.ClassNameManager.getClassName("datatable", "sortable"),
 
+    //TODO: Don't use hrefs - use tab/arrow/enter
     TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
 
 
@@ -106,15 +107,15 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         var dt = this.get("host");
         dt.get("recordset").plug(RecordsetSort, {dt: dt});
         
-        dt.on("addHeaderTh", Y.bind(function(e){
-            this._beforeGetThNodeMarkup(e.value, e.column);
-        }, this));
+        // Wrap link around TH value
+        this.doBefore("_getTheadThMarkup", this._beforeGetTheadThMarkup);
         
-        //TODO: Don't use hrefs - use tab/arrow/enter
-        this.doBefore("_getThNodeMarkup", this._beforeGetThNodeMarkup);
+        // Add class
+        dt.on("addTheadTh", function(e) {
+           e.th.addClass(CLASS_SORTABLE);
+        });
 
         // Attach click handlers
-        //TODO: use delegation on sortable class rather than theadcellclick event
         dt.on("theadCellClick", this._onEventSortColumn);
 
         // Attach UI hooks
@@ -130,14 +131,21 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         
         //TODO
         //add Column sortFn ATTR
+        
+        // Update UI after the fact (plug-then-render case)
+        if(dt.get("rendered")) {
+            dt._uiSetColumnset(dt.get("columnset"));
+        }
     },
 
-    _beforeGetThNodeMarkup: function(o, column) {
+    _beforeGetTheadThMarkup: function(o, column) {
         if(column.get("sortable")) {
-            o.link_class = "foo";
-            o.link_title = "bar";
-            o.link_href = "bat";
-            o.value = Y.substitute(this.thLinkTemplate, o);
+            o.value = Y.substitute(this.thLinkTemplate, {
+                link_class: "foo",
+                link_title: "bar",
+                link_href: "bat",
+                value: o.value
+            });
         }
     },
 
@@ -151,8 +159,10 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
                 prevSortedBy.field === field &&
                 prevSortedBy.dir === ASC) ? DESC : ASC,
             sorter = column.get("sortFn");
-        this.get("recordset").sort.sort(field, dir === DESC, sorter);
-        this.set("sortedBy", {field: field, dir: dir});
+        if(column.get("sortable")) {
+            this.get("recordset").sort.sort(field, dir === DESC, sorter);
+            this.set("sortedBy", {field: field, dir: dir});
+        }
     }
 });
 
