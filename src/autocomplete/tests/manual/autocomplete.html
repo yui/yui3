@@ -3,7 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title>AutoComplete manual test</title>
+    <!-- <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css">
+    <link rel="stylesheet" href="../../../../build/cssbase/base-min.css"> -->
     <link rel="stylesheet" href="../assets/test-console.css">
+    <!-- for design iteration -->
+    <link rel="stylesheet" href="../../../autocomplete-list/assets/autocomplete-list-core.css">
+    <link rel="stylesheet" href="../../../autocomplete-list/assets/skins/sam/autocomplete-list-skin.css">
     <style>
     body { width: 60%; }
 
@@ -14,7 +19,6 @@
 
     fieldset label { margin-right: 0.5em; }
 
-    #ac-input { width: 17em; }
     #log { margin-top: 4em; }
 
     .flickr {
@@ -30,6 +34,10 @@
         height: 32px;
         margin: 0 4px;
         width: 32px;
+    }
+
+    .yui3-aclist {
+        width: 300px;
     }
     </style>
 </head>
@@ -78,7 +86,6 @@
 
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../js/autocomplete-list.js"></script>
 <script>
 
 // Note: if you're viewing source to learn how to use AutoComplete, you should
@@ -91,12 +98,18 @@
 var Y = YUI({
     filter: 'raw',
     filters: {
+        'autocomplete': 'debug',
         'autocomplete-base': 'debug',
-        'autocomplete': 'debug'
+        'autocomplete-list': 'debug'
     },
-    useBrowserConsole: false
+
+    useBrowserConsole: false,
+
+    // For design iteration.
+    ignore: [
+        'skin-sam-autocomplete-list'
+    ]
 }).use(
-    'autocomplete-base',
     'autocomplete-filters',
     'autocomplete-highlighters',
     'autocomplete-list',

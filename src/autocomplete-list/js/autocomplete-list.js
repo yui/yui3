@@ -1,5 +1,3 @@
-YUI.add('autocomplete-list', function (Y) {
-
 /**
  * AutoComplete dropdown list widget.
  *
@@ -274,7 +272,7 @@ ACList = Y.Base.create('autocompleteList', Y.Widget, [Y.AutoCompleteBase], {
         }
     },
 
-    CSS_PREFIX: Y.ClassNameManager.getClassName('ac'),
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist'),
 
     HTML_PARSER: {
         // Using functions here to allow subclasses to override CSS_PREFIX if
@@ -282,7 +280,7 @@ ACList = Y.Base.create('autocompleteList', Y.Widget, [Y.AutoCompleteBase], {
         // AutoCompleteList widget.
 
         inputNode: function (srcNode) {
-            // Finds the first input element with class "yui3-ac-input", or
+            // Finds the first input element with class "yui3-aclist-input", or
             // falls back to the first text input element if one with that class
             // isn't found.
             return srcNode.one('input.' + this.getClassName(INPUT) +
@@ -302,7 +300,3 @@ ACList = Y.Base.create('autocompleteList', Y.Widget, [Y.AutoCompleteBase], {
 });
 
 Y.AutoCompleteList = ACList;
-
-}, '@VERSION@', {
-    requires: ['autocomplete-base', 'base-build', 'widget']
-});

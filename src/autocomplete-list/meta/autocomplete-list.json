@@ -1,0 +1,10 @@
+{
+    "autocomplete-list": {
+        "requires": [
+            "autocomplete-base",
+            "widget"
+        ],
+
+        "skinnable": true
+    }
+}
