@@ -1358,6 +1358,14 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.destroy();
             Assert.isNull(node._node);
 
+        },
+
+        test_prependFrag: function() {
+            var html = '<link id="dyn-link-1" href="#"><link id="dyn-link-2" href="#">';
+            Y.one('head').prepend(html);
+            //Y.one('head').prepend(Y.Node.create(html));
+            Assert.isNotNull(document.getElementById('dyn-link-1'));
+            Assert.isNotNull(document.getElementById('dyn-link-2'));
         }
 
     })); 
