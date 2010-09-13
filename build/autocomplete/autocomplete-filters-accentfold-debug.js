@@ -104,4 +104,4 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'collection', 'unicode-accentfold', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'unicode-accentfold', 'unicode-wordbreak']});

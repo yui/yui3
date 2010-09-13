@@ -91,4 +91,4 @@ Y.mix(Y.namespace('AutoCompleteHighlighters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'collection', 'highlight-accentfold']});
+}, '@VERSION@' ,{requires:['array-extras', 'highlight-accentfold']});

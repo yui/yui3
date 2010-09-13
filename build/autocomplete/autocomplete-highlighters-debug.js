@@ -157,4 +157,4 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'collection', 'highlight-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'highlight-base']});
