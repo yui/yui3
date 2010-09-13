@@ -16,6 +16,21 @@
 
     #ac-input { width: 17em; }
     #log { margin-top: 4em; }
+
+    .flickr {
+        color: inherit;
+        display: block;
+        height: 32px;
+        padding: 2px;
+        text-decoration: none;
+    }
+
+    .flickr img {
+        float: left;
+        height: 32px;
+        margin: 0 4px;
+        width: 32px;
+    }
     </style>
 </head>
 <body class="yui3-skin-sam">
@@ -85,19 +100,20 @@ var Y = YUI({
     'autocomplete-filters',
     'autocomplete-highlighters',
     'autocomplete-list',
-    'console',
+    'console-filters',
     'datasource-get',
     'datasource-jsonschema',
     'datasource-local',
     'dump',
     'event-delegate',
+    'substitute',
 function (Y) {
 
 // -- Console setup ------------------------------------------------------------
 new Y.Console({
     height: '400px',
     width: '35%'
-}).render('#log');
+}).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
 // -- AutoComplete setup -------------------------------------------------------
 var autoComplete = new Y.AutoCompleteList({srcNode: '#ac'}),
@@ -115,11 +131,7 @@ var autoComplete = new Y.AutoCompleteList({srcNode: '#ac'}),
     });
 
 // For easier debugging.
-Y.autoComplete = autoComplete;
-
-autoComplete.on('results', function (e) {
-    Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete');
-});
+Y.ac = autoComplete;
 
 // -- DataSource config --------------------------------------------------------
 dataSourceFlickr.plug({
@@ -151,7 +163,7 @@ Y.Object.each(Y.AutoCompleteFilters, function (filter, name) {
     }
 
     filtersDiv.append(
-        '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'startsWith' ? ' checked="checked"' : '') + '>' +
+        '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'phraseMatch' ? ' checked="checked"' : '') + '>' +
         '<label for="filter_' + name + '">' + name + '</label>'
     );
 });
@@ -205,7 +217,13 @@ autoComplete.get('inputNode').focus();
 // -- UI functions -------------------------------------------------------------
 function flickrFormatter(query, results) {
     return Y.Array.map(results, function (result) {
-        return result.title;
+        var imgUrl  = Y.substitute('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result),
+            linkUrl = Y.substitute('http://www.flickr.com/photos/{owner}/{id}', result);
+
+        return '<a href="' + linkUrl + '" class="flickr">' +
+                 '<img src="' + imgUrl + '" alt="thumbnail">' +
+                 '<span class="title">' + result.title + '</span>' +
+               '</a>';
     });
 }
 
@@ -272,7 +290,7 @@ function useFlickr() {
 
     autoComplete.setAttrs({
         dataSource         : dataSourceFlickr,
-        requestTemplate    : 'q=' + encodeURIComponent('select * from flickr.photos.search where text="') + '{query}' + encodeURIComponent('"'),
+        requestTemplate    : 'q=' + encodeURIComponent('select * from flickr.photos.search where tags="') + '{query}' + encodeURIComponent('"'),
         resultFilterLocator: 'title',
         resultFormatter    : flickrFormatter
     });
