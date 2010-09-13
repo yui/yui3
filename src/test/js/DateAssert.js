@@ -5,6 +5,7 @@
      * for a variety of cases.
      *
      * @class DateAssert
+     * @namespace
      * @static
      */
      

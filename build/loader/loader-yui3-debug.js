@@ -69,6 +69,64 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "autocomplete": {
+        "plugins": {
+            "autocomplete-plugin": {
+                "requires": [
+                    "autocomplete", 
+                    "node-pluginhost"
+                ]
+            }
+        }, 
+        "submodules": {
+            "autocomplete-base": {
+                "plugins": {
+                    "autocomplete-filters": {
+                        "path": "autocomplete/autocomplete-filters-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "unicode-wordbreak"
+                        ]
+                    }, 
+                    "autocomplete-filters-accentfold": {
+                        "path": "autocomplete/autocomplete-filters-accentfold-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "unicode-accentfold", 
+                            "unicode-wordbreak"
+                        ]
+                    }, 
+                    "autocomplete-highlighters": {
+                        "path": "autocomplete/autocomplete-highlighters-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "highlight-base"
+                        ]
+                    }, 
+                    "autocomplete-highlighters-accentfold": {
+                        "path": "autocomplete/autocomplete-highlighters-accentfold-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "highlight-accentfold"
+                        ]
+                    }
+                }, 
+                "requires": [
+                    "array-extras", 
+                    "base-build", 
+                    "event-valuechange", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
+    "autocomplete-list": {
+        "requires": [
+            "autocomplete-base", 
+            "widget"
+        ], 
+        "skinnable": true
+    }, 
     "base": {
         "submodules": {
             "base-base": {
@@ -624,6 +682,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "escape": {}, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -721,6 +780,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-focus", 
             "event-synthetic"
         ]
+    }, 
+    "highlight": {
+        "submodules": {
+            "highlight-accentfold": {
+                "requires": [
+                    "highlight-base", 
+                    "unicode-accentfold"
+                ]
+            }, 
+            "highlight-base": {
+                "requires": [
+                    "array-extras", 
+                    "escape", 
+                    "unicode-wordbreak"
+                ]
+            }
+        }
     }, 
     "history": {
         "plugins": {
@@ -1179,6 +1255,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "unicode": {
+        "submodules": {
+            "unicode-accentfold": {
+                "requires": [
+                    "array-extras", 
+                    "unicode-data-accentfold"
+                ]
+            }, 
+            "unicode-data-accentfold": {}, 
+            "unicode-data-wordbreak": {}, 
+            "unicode-wordbreak": {
+                "requires": [
+                    "array-extras", 
+                    "unicode-data-wordbreak"
+                ]
+            }
+        }
+    }, 
     "uploader": {
         "requires": [
             "event-custom", 
@@ -1290,7 +1384,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'cb1db98536fb15d179c178aab4be9340';
+YUI.Env[Y.version].md5 = '7f641258fa3f797e5d24d375b0234718';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

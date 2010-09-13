@@ -1,0 +1,22 @@
+{
+    "unicode": {
+        "submodules": {
+            "unicode-accentfold": {
+                "requires": [
+                    "array-extras",
+                    "unicode-data-accentfold"
+                ]
+            },
+
+            "unicode-data-accentfold": {},
+            "unicode-data-wordbreak": {},
+
+            "unicode-wordbreak": {
+                "requires": [
+                    "array-extras",
+                    "unicode-data-wordbreak"
+                ]
+            }
+        }
+    }
+}

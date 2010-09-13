@@ -191,10 +191,7 @@ del {
 </style>
 </div>
 
-<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-
-
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>

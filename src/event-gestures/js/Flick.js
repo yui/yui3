@@ -4,7 +4,7 @@
  * to build input device agnostic components which behave the same in response to either touch or mouse based  
  * interaction.
  *
- * <p>Documentation for events added by this module can be found in the event document for the <a href="YUI.html#events">YUI</event> global.</p>
+ * <p>Documentation for events added by this module can be found in the event document for the <a href="YUI.html#events">YUI</a> global.</p>
  *
  * @module event-gestures
  */
