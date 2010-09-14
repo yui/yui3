@@ -1,25 +1,16 @@
 {
     "autocomplete": {
-        "plugins": {
-            "autocomplete-plugin": {
-                "requires": [
-                    "autocomplete",
-                    "node-pluginhost"
-                ]
-            }
-        },
-
         "submodules": {
             "autocomplete-base": {
                 "plugins": {
-        			"autocomplete-filters": {
+                    "autocomplete-filters": {
                         "path": "autocomplete/autocomplete-filters-min.js",
 
-        				"requires": [
-        					"array-extras",
-        					"unicode-wordbreak"
-        				]
-        			},
+                        "requires": [
+                            "array-extras",
+                            "unicode-wordbreak"
+                        ]
+                    },
 
                     "autocomplete-filters-accentfold": {
                         "path": "autocomplete/autocomplete-filters-accentfold-min.js",
@@ -31,31 +22,43 @@
                         ]
                     },
 
-        			"autocomplete-highlighters": {
+                    "autocomplete-highlighters": {
                         "path": "autocomplete/autocomplete-highlighters-min.js",
 
-        				"requires": [
-        					"array-extras",
-        					"highlight-base"
-        				]
-        			},
+                        "requires": [
+                            "array-extras",
+                            "highlight-base"
+                        ]
+                    },
 
-        			"autocomplete-highlighters-accentfold": {
+                    "autocomplete-highlighters-accentfold": {
                         "path": "autocomplete/autocomplete-highlighters-accentfold-min.js",
 
-        				"requires": [
-        					"array-extras",
-        					"highlight-accentfold"
-        				]
-        			}
+                        "requires": [
+                            "array-extras",
+                            "highlight-accentfold"
+                        ]
+                    }
                 },
 
                 "requires": [
                     "array-extras",
-                    "base-build",
                     "event-valuechange",
                     "node-base"
                 ]
+            },
+
+            "autocomplete-list": {
+                "requires": [
+                    "autocomplete-base",
+                    "event-mouseenter",
+                    "widget",
+                    "widget-position",
+                    "widget-position-align",
+                    "widget-stack"
+                ],
+
+                "skinnable": true
             }
         }
     }

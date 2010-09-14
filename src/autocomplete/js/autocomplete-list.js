@@ -1,7 +1,8 @@
 /**
- * AutoComplete dropdown list widget.
+ * Traditional autocomplete dropdown list widget, just like Mom used to make.
  *
- * @module autocomplete-list
+ * @module autocomplete
+ * @submodule autocomplete-list
  * @class AutoCompleteList
  * @extends Widget
  * @uses AutoCompleteBase
@@ -10,12 +11,19 @@
  * @uses WidgetStack
  * @constructor
  * @param {Object} config Configuration object.
- * @since 3.3.0
  */
 
 var Node   = Y.Node,
     YArray = Y.Array,
 
+    // keyCode constants.
+    // KEY_DOWN  = 40,
+    // KEY_ENTER = 13,
+    // KEY_ESC   = 27,
+    KEY_TAB   = 9,
+    // KEY_UP    = 38,
+
+    // String shorthand.
     INPUT_NODE = 'inputNode',
     VISIBLE    = 'visible',
     WIDTH      = 'width',
@@ -28,7 +36,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 ], {
     // -- Prototype Properties -------------------------------------------------
     CONTENT_TEMPLATE: '<ul/>',
-    ITEM_TEMPLATE: '<li role="option"/>',
+    ITEM_TEMPLATE: '<li/>',
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
@@ -49,7 +57,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     destructor: function () {
-        this._unbindInput();
+        this.unbindInput();
 
         while (this._events.length) {
             this._events.pop().detach();
@@ -84,9 +92,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      *
      * @method hide
      * @see show
+     * @chainable
      */
     hide: function () {
-        this.set(VISIBLE, false);
+        return this.set(VISIBLE, false);
     },
 
     /**
@@ -94,9 +103,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      *
      * @method show
      * @see hide
+     * @chainable
      */
     show: function () {
-        this.set(VISIBLE, true);
+        return this.set(VISIBLE, true);
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -121,6 +131,26 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+     * Binds <code>inputNode</code> events, in addition to those already bound
+     * by <code>AutoCompleteBase</code>'s public <code>bindInput()</code>
+     * method.
+     *
+     * @method _bindInput
+     * @protected
+     */
+    _bindInput: function () {
+        var inputNode = this._inputNode;
+
+        // Call AutoCompleteBase's bind method first.
+        this.bindInput();
+
+        this._events.concat([
+            inputNode.on('blur', this._onInputBlur, this),
+            inputNode.on('keydown', this._onInputKeyDown, this)
+        ]);
+    },
+
+    /**
      * Binds list events.
      *
      * @method _bindList
@@ -128,7 +158,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._events.concat([
-            this._inputNode.after('blur', this._afterInputBlur, this),
+            this.after('mouseenter', this._afterMouseEnter, this),
+            this.after('mouseleave', this._afterMouseLeave, this),
 
             this.after('resultsChange', this._afterResultsChange, this),
             this.after('visibleChange', this._afterVisibleChange, this)
@@ -142,7 +173,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _clear: function () {
-        this._contentBox.setContent('');
+        this._contentBox.get('children').remove(true);
     },
 
     /**
@@ -155,16 +186,20 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _createItemNode: function (content) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
-        itemNode.append(content).addClass(this.getClassName('item'));
-        return itemNode.set('id', Y.stamp(itemNode));
+
+        return itemNode.append(content).setAttrs({
+            id  : Y.stamp(itemNode),
+            role: 'option'
+        }).addClass(this.getClassName('item'));
     },
 
     /**
-     * Synchronizes the results displayed in the tray with those in the
-     * <i>results</i> argument.
+     * Synchronizes the results displayed in the list with those in the
+     * <i>results</i> argument, or with the <code>results</code> attribute if an
+     * argument is not provided.
      *
      * @method _syncResults
-     * @param {Array} results Results.
+     * @param {Array} results (optional) Results.
      * @protected
      */
     _syncResults: function (results) {
@@ -199,19 +234,54 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-     * Handles <code>inputNode</code> blur events.
+     * Handles <code>inputNode</code> <code>blur</code> events.
      *
-     * @method _afterInputBlur
+     * @method _onInputBlur
      * @param {EventTarget} e
      * @protected
      */
-    _afterInputBlur: function () {
-        // Hide the list when neither the input node nor the list has focus.
-        Y.later(20, this, function () {
-            if (!this.get('focused')) {
-                this.hide();
-            }
-        });
+    _onInputBlur: function (e) {
+        // Hide the list on inputNode blur events, unless the mouse is currently
+        // over the list (which indicates that the user is probably interacting
+        // with it) or the tab key was pressed.
+        if (this._mouseOverList && this._lastInputKey !== KEY_TAB) {
+            this._inputNode.focus();
+        } else {
+            this.hide();
+        }
+    },
+
+    /**
+     * Handles <code>inputNode</code> key events.
+     *
+     * @method _onInputKeyDown
+     * @param {EventTarget} e
+     * @protected
+     */
+    _onInputKeyDown: function (e) {
+        this._lastInputKey = e.keyCode;
+    },
+
+    /**
+     * Handles <code>mouseenter</code> events.
+     *
+     * @method _afterMouseEnter
+     * @param {EventTarget} e
+     * @protected
+     */
+    _afterMouseEnter: function () {
+        this._mouseOverList = true;
+    },
+
+    /**
+     * Handles <code>mouseleave</code> events.
+     *
+     * @method _afterMouseLeave
+     * @param {EventTarget} e
+     * @protected
+     */
+    _afterMouseLeave: function () {
+        this._mouseOverList = false;
     },
 
     /**
@@ -253,3 +323,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 });
 
 Y.AutoCompleteList = List;
+
+/**
+ * Alias for <a href="AutoCompleteList.html"><code>AutoCompleteList</code></a>.
+ * See that class for API docs.
+ *
+ * @class AutoComplete
+ */
+
+Y.AutoComplete = List;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <property environment="env" />
+    <description>Rollup build file for AutoComplete</description>
     <property file="autocomplete.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />

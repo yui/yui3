@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="../../../../build/cssbase/base-min.css"> -->
     <link rel="stylesheet" href="../assets/test-console.css">
     <!-- for design iteration -->
-    <!-- <link rel="stylesheet" href="../../../autocomplete-list/assets/autocomplete-list-base-core.css">
-    <link rel="stylesheet" href="../../../autocomplete-list/assets/skins/sam/autocomplete-list-base-skin.css"> -->
+    <link rel="stylesheet" href="../../assets/autocomplete-list-core.css">
+    <link rel="stylesheet" href="../../assets/skins/sam/autocomplete-list-skin.css">
     <style>
     body { width: 60%; }
 
@@ -96,23 +96,23 @@
 <script>
 var Y = YUI({
     filter: 'raw',
-    // filters: {
-    //     'autocomplete': 'debug',
-    //     'autocomplete-base': 'debug',
-        // 'autocomplete-list': 'debug',
-        // 'autocomplete-tray': 'debug'
-    // },
+    filters: {
+        'autocomplete': 'debug',
+        'autocomplete-base': 'debug',
+        'autocomplete-list': 'debug'
+    },
 
     useBrowserConsole: false,
 
     // For design iteration.
     ignore: [
-        // 'skin-sam-autocomplete-list'
+        'skin-sam-autocomplete',
+        'skin-sam-autocomplete-list'
     ]
 }).use(
+    'autocomplete',
     'autocomplete-filters',
     'autocomplete-highlighters',
-    'autocomplete-list',
     'console-filters',
     'datasource-get',
     'datasource-jsonschema',
