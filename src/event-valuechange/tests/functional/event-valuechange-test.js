@@ -104,6 +104,26 @@ suite.add(new Y.Test.Case({
         }, 60);
     },
 
+    'valueChange should not report stale changes that occurred while a node was not focused': function () {
+        var fired = false;
+
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'foo');
+
+        this.textInput.on('valueChange', function (e) {
+            fired = true;
+        });
+
+        this.textInput.simulate('blur');
+        this.textInput.set('value', 'bar');
+        this.textInput.simulate('focus');
+        this.textInput.simulate('mousedown');
+
+        this.wait(function () {
+            Assert.isFalse(fired);
+        }, 60);
+    },
+
     'valueChange should start polling on keyup for IME keystrokes': function () {
         var fired = false;
 
