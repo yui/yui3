@@ -2302,7 +2302,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "autocomplete-list": {
         "requires": [
             "autocomplete-base", 
-            "widget"
+            "widget", 
+            "widget-position", 
+            "widget-position-align", 
+            "widget-stack"
         ], 
         "skinnable": true
     }, 
@@ -3563,7 +3566,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '7f641258fa3f797e5d24d375b0234718';
+YUI.Env[Y.version].md5 = 'b0475d1d9b2bf468dd561145bb8b6d3c';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

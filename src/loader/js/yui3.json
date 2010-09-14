@@ -114,7 +114,10 @@
     "autocomplete-list": {
         "requires": [
             "autocomplete-base", 
-            "widget"
+            "widget", 
+            "widget-position", 
+            "widget-position-align", 
+            "widget-stack"
         ], 
         "skinnable": true
     }, 
