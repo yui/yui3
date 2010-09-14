@@ -1,1 +1,10 @@
-.yui3-aclist-hidden { display: none; }
+.yui3-aclist { position: absolute; }
+.yui3-aclist-hidden { visibility: hidden; }
+
+.yui3-aclist-content {
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.yui3-aclist-item { padding: 2px 5px; }

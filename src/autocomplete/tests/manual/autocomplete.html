@@ -1,24 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!--
+    Note: if you're viewing source to learn how to use AutoComplete, you should
+    be aware that this is a much more complex example than you'd ever be likely
+    to implement in a real-world use case, since this manual test page tries to
+    cover the majority of AutoComplete's available functionality.
+
+    Please don't let this scare you off!
+    -->
     <meta charset="utf-8">
     <title>AutoComplete manual test</title>
     <!-- <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css">
     <link rel="stylesheet" href="../../../../build/cssbase/base-min.css"> -->
     <link rel="stylesheet" href="../assets/test-console.css">
     <!-- for design iteration -->
-    <link rel="stylesheet" href="../../../autocomplete-list/assets/autocomplete-list-core.css">
-    <link rel="stylesheet" href="../../../autocomplete-list/assets/skins/sam/autocomplete-list-skin.css">
+    <!-- <link rel="stylesheet" href="../../../autocomplete-list/assets/autocomplete-list-base-core.css">
+    <link rel="stylesheet" href="../../../autocomplete-list/assets/skins/sam/autocomplete-list-base-skin.css"> -->
     <style>
     body { width: 60%; }
 
     fieldset {
         border: 1px solid #afafaf;
-        margin-bottom: 1em;
+        margin-top: 1em;
     }
 
     fieldset label { margin-right: 0.5em; }
 
+    #ac-input { width: 300px; }
     #log { margin-top: 4em; }
 
     .flickr {
@@ -36,9 +45,6 @@
         width: 32px;
     }
 
-    .yui3-aclist {
-        width: 300px;
-    }
     </style>
 </head>
 <body class="yui3-skin-sam">
@@ -49,6 +55,7 @@
     <div id="ac">
         <label for="ac-input">Type things here! Try the name of a US state.</label><br>
         <input type="text" id="ac-input">
+        <div id="ac-list"></div>
     </div>
 
     <fieldset id="data-sources">
@@ -87,27 +94,20 @@
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-
-// Note: if you're viewing source to learn how to use AutoComplete, you should
-// be aware that this is a much more complex example than you'd ever be likely
-// to implement in a real-world use case, since this manual test page tries to
-// cover the majority of AutoComplete's available functionality.
-//
-// Please don't let this scare you off!
-
 var Y = YUI({
     filter: 'raw',
-    filters: {
-        'autocomplete': 'debug',
-        'autocomplete-base': 'debug',
-        'autocomplete-list': 'debug'
-    },
+    // filters: {
+    //     'autocomplete': 'debug',
+    //     'autocomplete-base': 'debug',
+        // 'autocomplete-list': 'debug',
+        // 'autocomplete-tray': 'debug'
+    // },
 
     useBrowserConsole: false,
 
     // For design iteration.
     ignore: [
-        'skin-sam-autocomplete-list'
+        // 'skin-sam-autocomplete-list'
     ]
 }).use(
     'autocomplete-filters',
@@ -129,7 +129,10 @@ new Y.Console({
 }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
 // -- AutoComplete setup -------------------------------------------------------
-var autoComplete = new Y.AutoCompleteList({srcNode: '#ac'}),
+var autoComplete = new Y.AutoCompleteList({
+        boundingBox: '#ac-list',
+        inputNode: '#ac-input'
+    }),
 
     dataSourceFlickr = new Y.DataSource.Get({
         source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
