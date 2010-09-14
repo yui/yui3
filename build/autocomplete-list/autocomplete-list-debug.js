@@ -3,28 +3,51 @@ YUI.add('autocomplete-list', function(Y) {
 /**
  * AutoComplete dropdown list widget.
  *
- * @module autocomplete
- * @submodule autocomplete-list
+ * @module autocomplete-list
  * @class AutoCompleteList
  * @extends Widget
  * @uses AutoCompleteBase
+ * @uses WidgetPosition
+ * @uses WidgetPositionAlign
+ * @uses WidgetStack
  * @constructor
  * @param {Object} config Configuration object.
+ * @since 3.3.0
  */
 
 var Node   = Y.Node,
     YArray = Y.Array,
 
-    INPUT        = 'input',
-    INPUT_NODE   = 'inputNode',
-    TRAY         = 'tray',
-    TRAY_NODE    = 'trayNode',
-    TRAY_VISIBLE = 'trayVisible',
+    INPUT_NODE = 'inputNode',
+    VISIBLE    = 'visible',
+    WIDTH      = 'width',
 
-ACList = Y.Base.create('autocompleteList', Y.Widget, [Y.AutoCompleteBase], {
+List = Y.Base.create('autocompleteList', Y.Widget, [
+    Y.AutoCompleteBase,
+    Y.WidgetPosition,
+    Y.WidgetPositionAlign,
+    Y.WidgetStack
+], {
+    // -- Prototype Properties -------------------------------------------------
+    CONTENT_TEMPLATE: '<ul/>',
+    ITEM_TEMPLATE: '<li role="option"/>',
+
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
-        this._events = [];
+        this._inputNode = this.get(INPUT_NODE);
+        this._events    = [];
+
+        if (!this._inputNode) {
+            Y.error('No inputNode specified.');
+        }
+
+        if (!this.get('align.node')) {
+            this.set('align.node', this._inputNode);
+        }
+
+        if (!this.get(WIDTH)) {
+            this.set(WIDTH, this._inputNode.get('clientWidth'));
+        }
     },
 
     destructor: function () {
@@ -37,194 +60,161 @@ ACList = Y.Base.create('autocompleteList', Y.Widget, [Y.AutoCompleteBase], {
 
     bindUI: function () {
         this._bindInput();
-        this._bindTray();
+        this._bindList();
     },
 
     renderUI: function () {
-        this._contentBox = this.get('contentBox');
+        // See http://www.w3.org/WAI/PF/aria/roles#combobox for ARIA details.
+        this._contentBox = this.get('contentBox').set('role', 'listbox');
 
-        this._renderInput();
-        this._renderTray();
+        this._inputNode.addClass(this.getClassName('input')).setAttrs({
+            'aria-autocomplete': 'list',
+            'aria-owns': this._contentBox.get('id'),
+            role: 'combobox'
+        });
     },
 
     syncUI: function () {
-        this._syncInput();
-        this._syncTray();
+        this._syncResults();
+        this._syncVisibility();
     },
 
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
-     * Hides the result tray.
+     * Hides the list.
      *
-     * @method hideTray
-     * @see showTray
+     * @method hide
+     * @see show
      */
-    hideTray: function () {
-        this.set(TRAY_VISIBLE, false);
+    hide: function () {
+        this.set(VISIBLE, false);
     },
 
     /**
-     * Shows the result tray.
+     * Shows the list.
      *
-     * @method showTray
-     * @see hideTray
+     * @method show
+     * @see hide
      */
-    showTray: function () {
-        this.set(TRAY_VISIBLE, true);
+    show: function () {
+        this.set(VISIBLE, true);
     },
 
     // -- Protected Prototype Methods ------------------------------------------
 
     /**
-     * Appends the specified <i>result</i> (which should be an HTML string) to
-     * the tray inside a new result node.
+     * Appends the specified result <i>items</i> to the list inside a new item
+     * node.
      *
-     * @method _addResult
-     * @param {String} result Result.
+     * @method _add
+     * @param {Array|Node|HTMLElement|String} items Result item or array of
+     *   result items.
      * @protected
      */
-    _addResult: function (result) {
-        var resultNode = Node.create(ACList.HTML_TEMPLATE.resultNode.replace(
-                '{result}', result));
+    _add: function (items) {
+        var itemNodes = [];
 
-        resultNode.addClass(this.getClassName('result')).setAttrs({
-            id  : Y.stamp(resultNode),
-            role: 'option'
-        });
+        YArray.each(Y.Lang.isArray(items) ? items : [items], function (item) {
+            itemNodes.push(this._createItemNode(item));
+        }, this);
 
-        this._trayNode.append(resultNode);
+        this._contentBox.append(itemNodes);
     },
 
     /**
-     * Attaches tray-related events.
+     * Binds list events.
      *
-     * @method _bindTray
+     * @method _bindList
      * @protected
      */
-    _bindTray: function () {
+    _bindList: function () {
         this._events.concat([
+            this._inputNode.after('blur', this._afterInputBlur, this),
+
             this.after('resultsChange', this._afterResultsChange, this),
-            this.after('trayVisibleChange', this._afterTrayVisibleChange, this)
+            this.after('visibleChange', this._afterVisibleChange, this)
         ]);
     },
 
     /**
      * Clears the contents of the tray.
      *
-     * @method _clearTray
+     * @method _clear
      * @protected
      */
-    _clearTray: function () {
-        this._trayNode.setContent('');
+    _clear: function () {
+        this._contentBox.setContent('');
     },
 
     /**
-     * Renders the input node.
+     * Creates an item node with the specified <i>content</i>.
      *
-     * @method _renderInput
+     * @method _createItemNode
+     * @param {Node|HTMLElement|String} content
      * @protected
+     * @returns {Node} Item node.
      */
-    _renderInput: function () {
-        var input = this.get(INPUT_NODE);
-
-        if (!input) {
-            input = Node.create(ACList.HTML_TEMPLATE[INPUT_NODE]);
-            this._contentBox.appendChild(input);
-            this.set(INPUT_NODE, input);
-        }
-
-        input.addClass(this.getClassName(INPUT));
-    
-        // See http://www.w3.org/WAI/PF/aria/roles#combobox
-        input.setAttrs({
-            'aria-autocomplete': 'list',
-            role: 'combobox'
-        });
-
-        this._inputNode = input;
-    },
-
-    /**
-     * Renders the tray.
-     *
-     * @method _renderTray
-     * @protected
-     */
-    _renderTray: function () {
-        var id,
-            tray = this.get(TRAY_NODE);
-
-        if (!tray) {
-            tray = Node.create(ACList.HTML_TEMPLATE[TRAY_NODE]);
-            this._contentBox.appendChild(tray);
-            this.set(TRAY_NODE, tray);
-        }
-
-        tray.addClass(this.getClassName(TRAY));
-
-        // The tray needs an id so we can set up an ARIA relationship between it
-        // and the inputNode.
-        if (!(id = tray.get('id'))) {
-            tray.set('id', id = Y.stamp(tray));
-        }
-
-        // See http://www.w3.org/WAI/PF/aria/roles#combobox
-        tray.set('role', 'listbox');
-        this._inputNode.set('aria-owns', id);
-
-        this._trayNode = tray;
-    },
-
-    /**
-     * Synchronizes the tray's UI state with the current state of the model.
-     *
-     * @method _syncTray
-     * @protected
-     */
-    _syncTray: function () {
-        this._syncTrayVisibility();
-        this._syncTrayResults();
+    _createItemNode: function (content) {
+        var itemNode = Node.create(this.ITEM_TEMPLATE);
+        itemNode.append(content).addClass(this.getClassName('item'));
+        return itemNode.set('id', Y.stamp(itemNode));
     },
 
     /**
      * Synchronizes the results displayed in the tray with those in the
-     * <i>results</i> argument, or with those in the <code>results</code>
-     * attribute if an argument is not provided.
+     * <i>results</i> argument.
      *
-     * @method _syncTrayResults
-     * @param {Array} results (optional) Results.
+     * @method _syncResults
+     * @param {Array} results Results.
      * @protected
      */
-    _syncTrayResults: function (results) {
+    _syncResults: function (results) {
         if (!results) {
             results = this.get('results');
         }
 
-        this._clearTray();
-        YArray.each(results, this._addResult, this);
+        this._clear();
+
+        if (results.length) {
+            this._add(results);
+        }
     },
 
     /**
      * Synchronizes the visibility of the tray with the <i>visible</i> argument,
-     * or with the <code>trayVisible</code> attribute if an argument is not
+     * or with the <code>visible</code> attribute if an argument is not
      * provided.
      *
-     * @method _syncTrayVisibility
+     * @method _syncVisibility
      * @param {Boolean} visible (optional) Visibility.
      * @protected
      */
-    _syncTrayVisibility: function (visible) {
+    _syncVisibility: function (visible) {
         if (visible === undefined) {
-            visible = this.get(TRAY_VISIBLE);
+            visible = this.get(VISIBLE);
         }
 
-        this._trayNode.toggleClass(this.getClassName('hidden'), !visible);
-        this._trayNode.set('aria-hidden', !visible);
-        this._inputNode.set('aria-expanded', visible);
+        this._contentBox.set('aria-hidden', !visible);
     },
 
     // -- Protected Event Handlers ---------------------------------------------
+
+    /**
+     * Handles <code>inputNode</code> blur events.
+     *
+     * @method _afterInputBlur
+     * @param {EventTarget} e
+     * @protected
+     */
+    _afterInputBlur: function () {
+        // Hide the list when neither the input node nor the list has focus.
+        Y.later(20, this, function () {
+            if (!this.get('focused')) {
+                this.hide();
+            }
+        });
+    },
 
     /**
      * Handles <code>resultsChange</code> events.
@@ -234,74 +224,37 @@ ACList = Y.Base.create('autocompleteList', Y.Widget, [Y.AutoCompleteBase], {
      * @protected
      */
     _afterResultsChange: function (e) {
-        this._syncTrayResults(e.newVal);
-        this.set(TRAY_VISIBLE, !!e.newVal.length);
+        this._syncResults(e.newVal);
+        this.set(VISIBLE, !!e.newVal.length);
     },
 
     /**
-     * Handles <code>trayVisibleChange</code> events.
+     * Handles <code>visibleChange</code> events.
      *
-     * @method _trayVisibleChange
+     * @method _afterVisibleChange
      * @param {EventFacade} e
      * @protected
      */
-    _afterTrayVisibleChange: function (e) {
-        this._syncTrayVisibility(!!e.newVal);
+    _afterVisibleChange: function (e) {
+        this._syncVisibility(!!e.newVal);
     }
 }, {
     ATTRS: {
-        /**
-         * Tray node in which results will be displayed.
-         *
-         * @attribute trayNode
-         * @type Node|HTMLElement|String
-         * @writeonce
-         */
-        trayNode: {
-            setter: Y.one,
-            writeOnce: 'initOnly'
+        align: {
+            value: {
+                points: ['tl', 'bl']
+            }
         },
 
-        /**
-         * Whether or not the tray is currently visible.
-         *
-         * @attribute trayVisible
-         * @type Boolean
-         * @default false
-         */
-        trayVisible: {
+        visible: {
             value: false
         }
     },
 
-    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist'),
-
-    HTML_PARSER: {
-        // Using functions here to allow subclasses to override CSS_PREFIX if
-        // desired, since the default prefix is not specific to the
-        // AutoCompleteList widget.
-
-        inputNode: function (srcNode) {
-            // Finds the first input element with class "yui3-aclist-input", or
-            // falls back to the first text input element if one with that class
-            // isn't found.
-            return srcNode.one('input.' + this.getClassName(INPUT) +
-                    ',input[type=text]');
-        },
-
-        trayNode : function (srcNode) {
-            return srcNode.one('.' + this.getClassName(TRAY));
-        }
-    },
-
-    HTML_TEMPLATE: {
-        inputNode : '<input type="text">',
-        resultNode: '<li>{result}</li>',
-        trayNode  : '<ul/>'
-    }
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
 });
 
-Y.AutoCompleteList = ACList;
+Y.AutoCompleteList = List;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'widget']});
+}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
