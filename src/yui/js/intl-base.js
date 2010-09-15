@@ -1,5 +1,6 @@
-/** 
- * The Intl utility provides a central location for managing sets of localized resources (strings and formatting patterns).
+/**
+ * The Intl utility provides a central location for managing sets of
+ * localized resources (strings and formatting patterns).
  *
  * @class Intl
  * @uses EventTarget
@@ -8,7 +9,7 @@
 
 var SPLIT_REGEX = /[, ]/;
 
-Y.mix(Y.namespace("Intl"), {
+Y.mix(Y.namespace('Intl'), {
 
  /**
     * Returns the language among those available that
@@ -19,9 +20,9 @@ Y.mix(Y.namespace("Intl"), {
     * Extended language ranges are not supported.
     *
     * @method lookupBestLang
-    * @param {String[] | String} preferredLanguages The list of preferred languages
-    * in descending preference order, represented as BCP 47 language
-    * tags. A string array or a comma-separated list.
+    * @param {String[] | String} preferredLanguages The list of preferred
+    * languages in descending preference order, represented as BCP 47
+    * language tags. A string array or a comma-separated list.
     * @param {String[]} availableLanguages The list of languages
     * that the application supports, represented as BCP 47 language
     * tags.
@@ -30,15 +31,17 @@ Y.mix(Y.namespace("Intl"), {
     * preferred language list, or "".
     * @since 3.1.0
     */
-    lookupBestLang : function (preferredLanguages, availableLanguages) {
+    lookupBestLang: function(preferredLanguages, availableLanguages) {
 
         var i, language, result, index;
 
-        // check whether the list of available languages contains language; if so return it
+        // check whether the list of available languages contains language;
+        // if so return it
         function scan(language) {
             var i;
             for (i = 0; i < availableLanguages.length; i += 1) {
-                if (language.toLowerCase() === availableLanguages[i].toLowerCase()) {
+                if (language.toLowerCase() ===
+                            availableLanguages[i].toLowerCase()) {
                     return availableLanguages[i];
                 }
             }
@@ -50,7 +53,7 @@ Y.mix(Y.namespace("Intl"), {
 
         for (i = 0; i < preferredLanguages.length; i += 1) {
             language = preferredLanguages[i];
-            if (!language || language === "*") {
+            if (!language || language === '*') {
                 continue;
             }
             // check the fallback sequence for one language
@@ -59,11 +62,12 @@ Y.mix(Y.namespace("Intl"), {
                 if (result) {
                     return result;
                 } else {
-                    index = language.lastIndexOf("-");
+                    index = language.lastIndexOf('-');
                     if (index >= 0) {
                         language = language.substring(0, index);
-                        // one-character subtags get cut along with the following subtag
-                        if (index >= 2 && language.charAt(index - 2) === "-") {
+                        // one-character subtags get cut along with the
+                        // following subtag
+                        if (index >= 2 && language.charAt(index - 2) === '-') {
                             language = language.substring(0, index - 2);
                         }
                     } else {
@@ -74,6 +78,6 @@ Y.mix(Y.namespace("Intl"), {
             }
         }
 
-        return "";
+        return '';
     }
 });

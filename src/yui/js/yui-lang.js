@@ -1,6 +1,7 @@
 /**
- * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * The YUI module contains the components required for building the YUI
+ * seed file.  This includes the script loading mechanism, a simple queue,
+ * and the core utilities for the library.
  * @module yui
  * @submodule yui-base
  */
@@ -10,51 +11,51 @@
  * @class Lang
  * @static
  */
-Y.Lang    = Y.Lang || {};
+Y.Lang = Y.Lang || {};
 
-var L     = Y.Lang, 
+var L = Y.Lang,
 
-ARRAY     = 'array',
-BOOLEAN   = 'boolean',
-DATE      = 'date',
-ERROR     = 'error',
-FUNCTION  = 'function',
-NUMBER    = 'number',
-NULL      = 'null',
-OBJECT    = 'object',
-REGEX     = 'regexp',
-STRING    = 'string',
-TOSTRING  = Object.prototype.toString,
+ARRAY = 'array',
+BOOLEAN = 'boolean',
+DATE = 'date',
+ERROR = 'error',
+FUNCTION = 'function',
+NUMBER = 'number',
+NULL = 'null',
+OBJECT = 'object',
+REGEX = 'regexp',
+STRING = 'string',
+TOSTRING = Object.prototype.toString,
 UNDEFINED = 'undefined',
 
-TYPES     = {
-    'undefined'         : UNDEFINED,
-    'number'            : NUMBER,
-    'boolean'           : BOOLEAN,
-    'string'            : STRING,
+TYPES = {
+    'undefined' : UNDEFINED,
+    'number' : NUMBER,
+    'boolean' : BOOLEAN,
+    'string' : STRING,
     '[object Function]' : FUNCTION,
-    '[object RegExp]'   : REGEX,
-    '[object Array]'    : ARRAY,
-    '[object Date]'     : DATE,
-    '[object Error]'    : ERROR 
+    '[object RegExp]' : REGEX,
+    '[object Array]' : ARRAY,
+    '[object Date]' : DATE,
+    '[object Error]' : ERROR
 },
 
 TRIMREGEX = /^\s+|\s+$/g,
 EMPTYSTRING = '',
-SUBREGEX  = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
+SUBREGEX = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
 
 /**
  * Determines whether or not the provided item is an array.
  * Returns false for array-like collections such as the
  * function arguments collection or HTMLElement collection
- * will return false.  You can use @see Array.test if you 
+ * will return false.  You can use @see Array.test if you
  * want to
  * @method isArray
  * @static
- * @param o The object to test
- * @return {boolean} true if o is an array
+ * @param o The object to test.
+ * @return {boolean} true if o is an array.
  */
-L.isArray = function(o) { 
+L.isArray = function(o) {
     return L.type(o) === ARRAY;
 };
 
@@ -62,8 +63,8 @@ L.isArray = function(o) {
  * Determines whether or not the provided item is a boolean
  * @method isBoolean
  * @static
- * @param o The object to test
- * @return {boolean} true if o is a boolean
+ * @param o The object to test.
+ * @return {boolean} true if o is a boolean.
  */
 L.isBoolean = function(o) {
     return typeof o === BOOLEAN;
@@ -84,19 +85,19 @@ L.isBoolean = function(o) {
  *
  * @method isFunction
  * @static
- * @param o The object to test
- * @return {boolean} true if o is a function
+ * @param o The object to test.
+ * @return {boolean} true if o is a function.
  */
 L.isFunction = function(o) {
     return L.type(o) === FUNCTION;
 };
-    
+
 /**
  * Determines whether or not the supplied item is a date instance
  * @method isDate
  * @static
- * @param o The object to test
- * @return {boolean} true if o is a date
+ * @param o The object to test.
+ * @return {boolean} true if o is a date.
  */
 L.isDate = function(o) {
     // return o instanceof Date;
@@ -107,84 +108,85 @@ L.isDate = function(o) {
  * Determines whether or not the provided item is null
  * @method isNull
  * @static
- * @param o The object to test
- * @return {boolean} true if o is null
+ * @param o The object to test.
+ * @return {boolean} true if o is null.
  */
 L.isNull = function(o) {
     return o === null;
 };
-    
+
 /**
  * Determines whether or not the provided item is a legal number
  * @method isNumber
  * @static
- * @param o The object to test
- * @return {boolean} true if o is a number
+ * @param o The object to test.
+ * @return {boolean} true if o is a number.
  */
 L.isNumber = function(o) {
     return typeof o === NUMBER && isFinite(o);
 };
-  
+
 /**
  * Determines whether or not the provided item is of type object
  * or function
  * @method isObject
  * @static
- * @param o The object to test
- * @param failfn {boolean} fail if the input is a function
- * @return {boolean} true if o is an object
- */  
+ * @param o The object to test.
+ * @param failfn {boolean} fail if the input is a function.
+ * @return {boolean} true if o is an object.
+ */
 L.isObject = function(o, failfn) {
     var t = typeof o;
-    return (o && (t === OBJECT || (!failfn && (t === FUNCTION || L.isFunction(o))))) || false;
+    return (o && (t === OBJECT ||
+        (!failfn && (t === FUNCTION || L.isFunction(o))))) || false;
 };
-    
+
 /**
  * Determines whether or not the provided item is a string
  * @method isString
  * @static
- * @param o The object to test
- * @return {boolean} true if o is a string
+ * @param o The object to test.
+ * @return {boolean} true if o is a string.
  */
 L.isString = function(o) {
     return typeof o === STRING;
 };
-    
+
 /**
  * Determines whether or not the provided item is undefined
  * @method isUndefined
  * @static
- * @param o The object to test
- * @return {boolean} true if o is undefined
+ * @param o The object to test.
+ * @return {boolean} true if o is undefined.
  */
 L.isUndefined = function(o) {
     return typeof o === UNDEFINED;
 };
 
 /**
- * Returns a string without any leading or trailing whitespace.  If 
+ * Returns a string without any leading or trailing whitespace.  If
  * the input is not a string, the input will be returned untouched.
  * @method trim
  * @static
- * @param s {string} the string to trim
- * @return {string} the trimmed string
+ * @param s {string} the string to trim.
+ * @return {string} the trimmed string.
  */
-L.trim = function(s){
+L.trim = function(s) {
     try {
         return s.replace(TRIMREGEX, EMPTYSTRING);
-    } catch(e) {
+    } catch (e) {
         return s;
     }
 };
 
 /**
  * A convenience method for detecting a legitimate non-null value.
- * Returns false for null/undefined/NaN, true for other values, 
+ * Returns false for null/undefined/NaN, true for other values,
  * including 0/false/''
  * @method isValue
  * @static
- * @param o The item to test
- * @return {boolean} true if it is not null/undefined/NaN || false
+ * @param o The item to test.
+ * @return {boolean} true if it is not null/undefined/NaN || false.
  */
 L.isValue = function(o) {
     var t = L.type(o);
@@ -206,11 +208,11 @@ L.isValue = function(o) {
  *    Y.type() reports object, which could be a good thing --
  *    but it actually caused the logic in Y.Lang.isObject to fail.
  * @method type
- * @param o the item to test
- * @return {string} the detected type
+ * @param o the item to test.
+ * @return {string} the detected type.
  */
-L.type = function (o) {
-    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
+L.type = function(o) {
+    return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 /**
@@ -219,9 +221,10 @@ L.type = function (o) {
  * coersion, or formats
  * @method sub
  * @since 3.2.0
+ * @return {string} the substitute result.
  */
-L.sub = function (s, o) {
-    return ((s.replace) ? s.replace(SUBREGEX, function (match, key) {
+L.sub = function(s, o) {
+    return ((s.replace) ? s.replace(SUBREGEX, function(match, key) {
         return (!L.isUndefined(o[key])) ? o[key] : match;
     }) : s);
 };

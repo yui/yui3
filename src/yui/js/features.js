@@ -1,6 +1,6 @@
 var tests = {};
 
-Y.mix(Y.namespace("Features"), {
+Y.mix(Y.namespace('Features'), {
 
     tests: tests,
 
@@ -10,13 +10,14 @@ Y.mix(Y.namespace("Features"), {
     },
 
     all: function(cat, args) {
-        var cat_o   = tests[cat],
+        var cat_o = tests[cat],
             // results = {};
             result = '';
         if (cat_o) {
             Y.Object.each(cat_o, function(v, k) {
                 // results[k] = Y.Features.test(cat, k, args);
-                result += k + ':' + (Y.Features.test(cat, k, args) ? 1 : 0) + ';';
+                result += k + ':' +
+                       (Y.Features.test(cat, k, args) ? 1 : 0) + ';';
             });
         }
 
@@ -26,7 +27,7 @@ Y.mix(Y.namespace("Features"), {
     test: function(cat, name, args) {
 
         var result, ua, test,
-            cat_o   = tests[cat],
+            cat_o = tests[cat],
             feature = cat_o && cat_o[name];
 
         if (!feature) {
