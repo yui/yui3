@@ -115,7 +115,7 @@ if (GLOBAL_ENV.DOMReady) {
 (function() {
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event
  * @submodule event-base
@@ -140,7 +140,7 @@ var whitelist = {
     altKey          : 1,
     // "button"          : 1, // we supply
     // "bubbles"         : 1, // needed?
-    // "cancelable"      : 1, // needed? 
+    // "cancelable"      : 1, // needed?
     // "charCode"        : 1, // we supply
     cancelBubble    : 1,
     // "currentTarget"   : 1, // we supply
@@ -224,7 +224,7 @@ var whitelist = {
             if (n && 3 == n.nodeType) {
                 n = n.parentNode;
             }
-        } catch(e) { 
+        } catch(e) {
             return null;
         }
 
@@ -257,12 +257,12 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     //////////////////////////////////////////////////////
 
     if (('clientX' in e) && (!x) && (0 !== x)) {
-        x = e.clientX; 
+        x = e.clientX;
         y = e.clientY;
 
         if (ua.ie) {
-            x += (de.scrollLeft || b.scrollLeft || 0);
-            y += (de.scrollTop  || b.scrollTop  || 0);
+            x += (de.scrollLeft || (b && b.scrollLeft) || 0);
+            y += (de.scrollTop  || (b && b.scrollTop)  || 0);
         }
     }
 
@@ -406,7 +406,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * Prevents the event's default behavior
      * @method preventDefault
      * @param returnValue {string} sets the returnValue of the event to this value
-     * (rather than the default false value).  This can be used to add a customized 
+     * (rather than the default false value).  This can be used to add a customized
      * confirmation query to the beforeunload event).
      */
     this.preventDefault = function(returnValue) {
