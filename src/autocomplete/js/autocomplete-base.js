@@ -73,7 +73,6 @@ var Lang   = Y.Lang,
     RESULT_HIGHLIGHTER    = 'resultHighlighter',
     RESULT_FORMATTER      = 'resultFormatter',
     RESULTS               = 'results',
-    RESULTS_RAW           = 'resultsRaw',
     VALUE_CHANGE          = 'valueChange',
 
     EVT_CLEAR        = 'clear',
@@ -152,9 +151,30 @@ function AutoCompleteBase() {
      *     Query that generated these results.
      *   </dd>
      *
-     *   <dt>results (Array|Object)</dt>
+     *   <dt>results (Array)</dt>
      *   <dd>
-     *     Normalized and filtered result data returned from the DataSource.
+     *     Array of filtered, formatted, and highlighted results. Each item in
+     *     the array is an object with the following properties:
+     *
+     *     <dl>
+     *       <dt>display (Node|HTMLElement|String)</dt>
+     *       <dd>
+     *         Formatted result HTML suitable for display to the user.
+     *       </dd>
+     *
+     *       <dt>raw (mixed)</dt>
+     *       <dd>
+     *         Raw, unformatted result in whatever form it was provided by the
+     *         DataSource.
+     *       </dd>
+     *
+     *       <dt>text (String)</dt>
+     *       <dd>
+     *         Plain text version of the result, suitable for being inserted
+     *         into the value of a text input field or textarea when the result
+     *         is selected by a user.
+     *       </dd>
+     *     </dl>
      *   </dd>
      * </dl>
      *
@@ -461,7 +481,7 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
-     * Current formatted results, or an empty array if there are no results.
+     * Current results, or an empty array if there are no results.
      *
      * @attribute results
      * @type Array
@@ -469,20 +489,6 @@ AutoCompleteBase.ATTRS = {
      * @readonly
      */
     results: {
-        readOnly: true,
-        value: []
-    },
-
-    /**
-     * Current raw (unformatted) results, or an empty array if there are no
-     * results.
-     *
-     * @attribute resultsRaw
-     * @type Array
-     * @default []
-     * @readonly
-     */
-    resultsRaw: {
         readOnly: true,
         value: []
     }
@@ -556,6 +562,111 @@ AutoCompleteBase.prototype = {
     },
 
     /**
+     * Parses result responses, performs filtering and highlighting, and fires
+     * the <code>results</code> event.
+     *
+     * @method _parseResponse
+     * @param {String} query Query that generated these results.
+     * @param {Object} response Response containing results.
+     * @param {Object} data Raw response data.
+     * @protected
+     */
+    _parseResponse: function (query, response, data) {
+        var facade = {
+                data   : data,
+                query  : query,
+                results: []
+            },
+
+            // Filtered result arrays representing different formats. These will
+            // be unrolled into the final array of result objects as properties.
+            formatted,   // HTML, Nodes, widgets, whatever
+            raw,         // whatever format came back in the response
+            unformatted, // plain text (ideally)
+
+            // Unfiltered raw results, fresh from the response.
+            unfiltered = response && response.results,
+
+            // Final array of result objects.
+            results = [],
+
+            // Other stuff.
+            filters,
+            formatter,
+            highlighter,
+            i,
+            len,
+            locator,
+            locatorMap;
+
+        if (unfiltered) {
+            filters     = this.get(RESULT_FILTERS);
+            formatter   = this.get(RESULT_FORMATTER);
+            highlighter = this.get(RESULT_HIGHLIGHTER);
+            locator     = this.get(RESULT_FILTER_LOCATOR);
+
+            if (locator) {
+                // In order to allow filtering based on locator queries, we have
+                // to create a mapping of "located" results to original results
+                // so we can sync up the original results later without
+                // requiring the filters to do extra work.
+                raw        = YArray.map(unfiltered, locator);
+                locatorMap = YArray.hash(raw, unfiltered);
+            } else {
+                raw = unfiltered;
+            }
+
+            // Run the raw results through all configured result filters.
+            for (i = 0, len = filters.length; i < len; ++i) {
+                raw = filters[i](query, raw);
+
+                if (!raw || !raw.length) {
+                    break;
+                }
+            }
+
+            if (locator) {
+                // Sync up the original results with the filtered, "located"
+                // results.
+                unformatted = [];
+
+                for (i = 0, len = raw.length; i < len; ++i) {
+                    unformatted.push(locatorMap[raw[i]]);
+                }
+
+                raw = unformatted;
+            } else {
+                unformatted = [].concat(raw); // copy
+            }
+
+            // Run the unformatted results through the configured highlighter
+            // (if any) to produce the first stage of formatted results.
+            formatted = highlighter ? highlighter(query, unformatted) :
+                    [].concat(unformatted);
+
+            // Run the highlighted results through the configured formatter (if
+            // any) to produce the final formatted results.
+            if (formatter) {
+                formatted = formatter(query, formatted, unformatted);
+            }
+
+            // Finally, unroll all the result arrays into a single array of
+            // result objects.
+            for (i = 0, len = formatted.length; i < len; ++i) {
+                results.push({
+                    display: formatted[i],
+                    raw    : raw[i],
+                    text   : unformatted[i]
+                });
+            }
+
+            facade.results = results;
+        }
+
+        this.fire(EVT_RESULTS, facade);
+    },
+
+    /**
      * <p>
      * Returns the query portion of the specified input value, or
      * <code>null</code> if there is no suitable query within the input value.
@@ -587,85 +698,12 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _onResponse: function (e) {
-        var facade,
-            filters,
-            formatter,
-            highlighter,
-            i,
-            len,
-            locator,
-            locatorMap,
-            query = e && e.callback && e.callback.query,
-            results,
-            resultsRaw,
-            unfiltered;
+        var query = e && e.callback && e.callback.query;
 
         // Ignore stale responses that aren't for the current query.
-        if (!query || query !== this.get(QUERY)) {
-            return;
+        if (query && query === this.get(QUERY)) {
+            this._parseResponse(query, e.response, e.data);
         }
-
-        facade = {
-            data      : e.data,
-            query     : query,
-            results   : [],
-            resultsRaw: []
-        };
-
-        unfiltered = e.response && e.response.results;
-
-        if (unfiltered) {
-            filters     = this.get(RESULT_FILTERS);
-            formatter   = this.get(RESULT_FORMATTER);
-            highlighter = this.get(RESULT_HIGHLIGHTER);
-            locator     = this.get(RESULT_FILTER_LOCATOR);
-
-            if (locator) {
-                // In order to allow filtering based on locator queries, we have
-                // to create a mapping of "located" results to original results
-                // so we can sync up the original results later without
-                // requiring the filters to do extra work.
-                resultsRaw = YArray.map(unfiltered, locator);
-                locatorMap = YArray.hash(resultsRaw, unfiltered);
-            } else {
-                resultsRaw = unfiltered;
-            }
-
-            for (i = 0, len = filters.length; i < len; ++i) {
-                resultsRaw = filters[i](query, resultsRaw);
-
-                if (!resultsRaw || !resultsRaw.length) {
-                    break;
-                }
-            }
-
-            if (locator) {
-                // Sync up the original results with the filtered, "located"
-                // results.
-                results = [];
-
-                for (i = 0, len = resultsRaw.length; i < len; ++i) {
-                    results.push(locatorMap[resultsRaw[i]]);
-                }
-
-                resultsRaw = results;
-            }
-
-            results = resultsRaw;
-
-            if (formatter) {
-                results = formatter(query, results);
-            }
-
-            if (highlighter) {
-                results = highlighter(query, results);
-            }
-
-            facade.results    = results;
-            facade.resultsRaw = resultsRaw;
-        }
-
-        this.fire(EVT_RESULTS, facade);
     },
 
     /**
@@ -776,11 +814,8 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defResultsFn: function (e) {
-        Y.log('raw results: ' + Y.dump(e.resultsRaw), 'info', 'autocomplete-base');
-        Y.log('formatted results: ' + Y.dump(e.results), 'info', 'autocomplete-base');
-
+        Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete-base');
         this._set(RESULTS, e[RESULTS]);
-        this._set(RESULTS_RAW, e[RESULTS_RAW]);
     }
 };
 
