@@ -3,6 +3,14 @@ function Recordset(config) {
 }
 
 /**
+ * TODO: make recordsetChangedEvent fire through bubbling of other events 
+ * TODO: figure out what object to send through recordsetChangedEvent when recordset is emptied
+ * TODO: finish updateRecord to make it work with indices, specific records, arrays
+ * TODO: update getRecord to return array of records
+ * TODO: Implement methods: hasRecord(), reverseRecords(), sortRecords(), toString(), getLength()
+ */
+
+/**
  * Class name.
  *
  * @property NAME
@@ -242,6 +250,16 @@ Y.extend(Recordset, Y.Base, {
 
 	},
 	
+	/**
+     * Deletes one or more Records to the RecordSet at the given index. If index is null,
+     * then deletes a single Record from the end of the RecordSet.
+     *
+     * @method deleteRecord
+     * @param index {Number} (optional) Index at which to remove the record(s) from
+     * @param range {Number} (optional) Number of records to remove (including the one at the index)
+     * @return {object} An object literal with two properties: "data" which contains the removed set {Y.Record or Y.Recordset} and "index" which contains the index where the Y.Record(s) were removed from
+     * @public
+     */
 	empty: function() {
 		this.set('records').value = [];
 		this._recordsetEmptied();
