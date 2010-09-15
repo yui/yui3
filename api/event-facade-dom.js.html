@@ -50,7 +50,7 @@
                         <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM </span>
+<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM</span>
 <span class="cm"> * events.</span>
 <span class="cm"> * @module event</span>
 <span class="cm"> * @submodule event-base</span>
@@ -75,7 +75,7 @@
 <span class="cm">    altKey          : 1,</span>
 <span class="cm">    // &quot;button&quot;          : 1, // we supply</span>
 <span class="cm">    // &quot;bubbles&quot;         : 1, // needed?</span>
-<span class="cm">    // &quot;cancelable&quot;      : 1, // needed? </span>
+<span class="cm">    // &quot;cancelable&quot;      : 1, // needed?</span>
 <span class="cm">    // &quot;charCode&quot;        : 1, // we supply</span>
 <span class="cm">    cancelBubble    : 1,</span>
 <span class="cm">    // &quot;currentTarget&quot;   : 1, // we supply</span>
@@ -159,7 +159,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="mi">3</span> <span class="o">==</span> <span class="nx">n</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
             <span class="p">}</span>
-        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -192,12 +192,12 @@
     <span class="c1">//////////////////////////////////////////////////////</span>
 
     <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;clientX&#39;</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">x</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="mi">0</span> <span class="o">!==</span> <span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span> 
+        <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
         <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">ua</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">x</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">de</span><span class="p">.</span><span class="nx">scrollLeft</span> <span class="o">||</span> <span class="nx">b</span><span class="p">.</span><span class="nx">scrollLeft</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
-            <span class="nx">y</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">de</span><span class="p">.</span><span class="nx">scrollTop</span>  <span class="o">||</span> <span class="nx">b</span><span class="p">.</span><span class="nx">scrollTop</span>  <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="nx">x</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">de</span><span class="p">.</span><span class="nx">scrollLeft</span> <span class="o">||</span> <span class="p">(</span><span class="nx">b</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">scrollLeft</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="nx">y</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">de</span><span class="p">.</span><span class="nx">scrollTop</span>  <span class="o">||</span> <span class="p">(</span><span class="nx">b</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">)</span>  <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
@@ -341,7 +341,7 @@
 <span class="cm">     * Prevents the event&#39;s default behavior</span>
 <span class="cm">     * @method preventDefault</span>
 <span class="cm">     * @param returnValue {string} sets the returnValue of the event to this value</span>
-<span class="cm">     * (rather than the default false value).  This can be used to add a customized </span>
+<span class="cm">     * (rather than the default false value).  This can be used to add a customized</span>
 <span class="cm">     * confirmation query to the beforeunload event).</span>
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">preventDefault</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">returnValue</span><span class="p">)</span> <span class="p">{</span>
