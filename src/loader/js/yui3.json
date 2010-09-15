@@ -61,14 +61,6 @@
         }
     }, 
     "autocomplete": {
-        "plugins": {
-            "autocomplete-plugin": {
-                "requires": [
-                    "autocomplete", 
-                    "node-pluginhost"
-                ]
-            }
-        }, 
         "submodules": {
             "autocomplete-base": {
                 "plugins": {
@@ -104,22 +96,21 @@
                 }, 
                 "requires": [
                     "array-extras", 
-                    "base-build", 
                     "event-valuechange", 
                     "node-base"
                 ]
+            }, 
+            "autocomplete-list": {
+                "requires": [
+                    "autocomplete-base", 
+                    "widget", 
+                    "widget-position", 
+                    "widget-position-align", 
+                    "widget-stack"
+                ], 
+                "skinnable": true
             }
         }
-    }, 
-    "autocomplete-list": {
-        "requires": [
-            "autocomplete-base", 
-            "widget", 
-            "widget-position", 
-            "widget-position-align", 
-            "widget-stack"
-        ], 
-        "skinnable": true
     }, 
     "base": {
         "submodules": {
