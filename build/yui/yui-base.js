@@ -666,7 +666,7 @@ proto = {
 
 
         // The last argument supplied to use can be a load complete callback
-        if (typeof callback === 'function') {
+        if (Y.Lang.isFunction(callback)) {
             args.pop();
         } else {
             callback = null;
