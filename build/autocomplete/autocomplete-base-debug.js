@@ -1,10 +1,17 @@
 YUI.add('autocomplete-base', function(Y) {
 
 /**
- * <p>
- * Extension that provides core autocomplete logic for a text input field or
- * textarea.
- * </p>
+ * Provides automatic input completion or suggestions for text input fields and
+ * textareas.
+ *
+ * @module autocomplete
+ * @since 3.3.0
+ */
+
+/**
+ * <code>Y.Base</code> extension that provides core autocomplete logic (but no
+ * UI implementation) for a text input field or textarea. Must be mixed into a
+ * <code>Y.Base</code>-derived class to be useful.
  *
  * @module autocomplete
  * @submodule autocomplete-base
@@ -12,27 +19,34 @@ YUI.add('autocomplete-base', function(Y) {
 
 /**
  * <p>
- * Extension that provides core autocomplete logic for a text input field or
- * textarea.
+ * Extension that provides core autocomplete logic (but no UI implementation)
+ * for a text input field or textarea.
+ * </p>
+ *
+ * <p>
+ * The <code>AutoCompleteBase</code> class provides events and attributes that
+ * abstract away core autocomplete logic and configuration, but does not provide
+ * a widget implementation or suggestion UI. For a prepackaged autocomplete
+ * widget, see <code>AutoCompleteList</code>.
  * </p>
  *
  * <p>
  * This extension cannot be instantiated directly, since it doesn't provide an
- * actual implementation. It provides the core logic used by the
- * <code>AutoComplete</code> class, and you can mix it into a custom class as
- * follows if you'd like to create a customized autocomplete implementation:
+ * actual implementation. It's intended to be mixed into a
+ * <code>Base</code>-based class or widget, as illustrated in the following
+ * example:
  * </p>
  *
  * <pre>
  * YUI().use('autocomplete-base', 'base', function (Y) {
  * &nbsp;&nbsp;var MyAutoComplete = Y.Base.create('myAutocomplete', Y.Base, [Y.AutoComplete], {
  * &nbsp;&nbsp;&nbsp;&nbsp;initializer: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._bindInput();
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._syncInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.bindInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.syncInput();
  * &nbsp;&nbsp;&nbsp;&nbsp;},
  * &nbsp;
  * &nbsp;&nbsp;&nbsp;&nbsp;destructor: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._unbindInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.unbindInput();
  * &nbsp;&nbsp;&nbsp;&nbsp;}
  * &nbsp;&nbsp;});
  * &nbsp;
@@ -49,20 +63,19 @@ var Lang   = Y.Lang,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
 
-    ALLOW_BROWSER_AC      = 'allowBrowserAutocomplete',
-    DATA_SOURCE           = 'dataSource',
-    INPUT_NODE            = 'inputNode',
-    MIN_QUERY_LENGTH      = 'minQueryLength',
-    QUERY                 = 'query',
-    QUERY_DELAY           = 'queryDelay',
-    REQUEST_TEMPLATE      = 'requestTemplate',
-    RESULT_FILTERS        = 'resultFilters',
-    RESULT_FILTER_LOCATOR = 'resultFilterLocator',
-    RESULT_HIGHLIGHTER    = 'resultHighlighter',
-    RESULT_FORMATTER      = 'resultFormatter',
-    RESULTS               = 'results',
-    RESULTS_RAW           = 'resultsRaw',
-    VALUE_CHANGE          = 'valueChange',
+    ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
+    DATA_SOURCE        = 'dataSource',
+    INPUT_NODE         = 'inputNode',
+    MIN_QUERY_LENGTH   = 'minQueryLength',
+    QUERY              = 'query',
+    QUERY_DELAY        = 'queryDelay',
+    REQUEST_TEMPLATE   = 'requestTemplate',
+    RESULT_FILTERS     = 'resultFilters',
+    RESULT_FORMATTER   = 'resultFormatter',
+    RESULT_HIGHLIGHTER = 'resultHighlighter',
+    RESULT_LOCATOR     = 'resultLocator',
+    RESULTS            = 'results',
+    VALUE_CHANGE       = 'valueChange',
 
     EVT_CLEAR        = 'clear',
     EVT_QUERY        = QUERY,
@@ -140,9 +153,30 @@ function AutoCompleteBase() {
      *     Query that generated these results.
      *   </dd>
      *
-     *   <dt>results (Array|Object)</dt>
+     *   <dt>results (Array)</dt>
      *   <dd>
-     *     Normalized and filtered result data returned from the DataSource.
+     *     Array of filtered, formatted, and highlighted results. Each item in
+     *     the array is an object with the following properties:
+     *
+     *     <dl>
+     *       <dt>display (Node|HTMLElement|String)</dt>
+     *       <dd>
+     *         Formatted result HTML suitable for display to the user.
+     *       </dd>
+     *
+     *       <dt>raw (mixed)</dt>
+     *       <dd>
+     *         Raw, unformatted result in whatever form it was provided by the
+     *         DataSource.
+     *       </dd>
+     *
+     *       <dt>text (String)</dt>
+     *       <dd>
+     *         Plain text version of the result, suitable for being inserted
+     *         into the value of a text input field or textarea when the result
+     *         is selected by a user.
+     *       </dd>
+     *     </dl>
      *   </dd>
      * </dl>
      *
@@ -343,53 +377,15 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * <p>
-     * Filter locator that should be used to extract a filterable string from a
-     * non-string result item, so that <code>resultFilters</code> (which assume
-     * that results are string) can be used to filter non-string results.
-     * </p>
-     *
-     * <p>
-     * By default, no filter locator is applied, and all results are assumed to
-     * be strings.
-     * </p>
-     *
-     * <p>
-     * The locator may be either a function (which will receive the raw result
-     * as an argument and must return a string) or a string representing an
-     * object path, such as "foo.bar.baz" (which would return the value of
-     * <code>result.foo.bar.baz</code>).
-     * </p>
-     *
-     * <p>
-     * While <code>resultFilterLocator</code> may be set to either a function or
-     * a string, it will always be returned as a function that accepts a result
-     * argument and returns a string.
-     * </p>
-     *
-     * @attribute resultFilterLocator
-     * @type Function|String|null
-     */
-    resultFilterLocator: {
-        setter: function (locator) {
-            if (locator === null || isFunction(locator)) {
-                return locator;
-            }
-
-            locator = locator.toString().split('.');
-
-            return function (result) {
-                return Y.Object.getValue(result, locator);
-            };
-        }
-    },
-
-    /**
-     * <p>
      * Array of local result filter functions. If provided, each filter
-     * will be called with two arguments when results are received: the
-     * query and an array of results received from the DataSource. Each filter
-     * is expected to return a filtered or modified version of those results,
-     * which will then be passed on to subsequent filters, then the
+     * will be called with two arguments when results are received: the query
+     * and an array of results (as returned by the <code>resultLocator</code>,
+     * if one is set).
+     * </p>
+     *
+     * <p>
+     * Each filter is expected to return a filtered or modified version of the
+     * results, which will then be passed on to subsequent filters, then the
      * <code>resultHighlighter</code> function (if set), then the
      * <code>resultFormatter</code> function (if set), and finally to
      * subscribers to the <code>results</code> event.
@@ -411,10 +407,11 @@ AutoCompleteBase.ATTRS = {
     /**
      * <p>
      * Function which will be used to format results. If provided, this function
-     * will be called with two arguments after results have been received,
-     * filtered, and highlighted: the query and an array of filtered
-     * results. The formatter is expected to return a modified version of the
-     * results array with any desired custom formatting applied.
+     * will be called with four arguments after results have been received and
+     * filtered: the query, an array of raw results, an array of highlighted
+     * results, and an array of plain text results. The formatter is expected to
+     * return a modified copy of the results array with any desired custom
+     * formatting applied.
      * </p>
      *
      * <p>
@@ -449,7 +446,52 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
-     * Current formatted results, or an empty array if there are no results.
+     * <p>
+     * Locator that should be used to extract a plain text string from a
+     * non-string result item. This value will be fed to any defined filters,
+     * and will typically also be the value that ends up being inserted into a
+     * text input field or textarea when the user of an autocomplete widget
+     * implementation selects a result.
+     * </p>
+     *
+     * <p>
+     * By default, no locator is applied, and all results are assumed to be
+     * plain text strings. If all results are already plain text strings, you
+     * don't need to define a locator.
+     * </p>
+     *
+     * <p>
+     * The locator may be either a function (which will receive the raw result
+     * as an argument and must return a string) or a string representing an
+     * object path, such as "foo.bar.baz" (which would return the value of
+     * <code>result.foo.bar.baz</code> if the result is an object).
+     * </p>
+     *
+     * <p>
+     * While <code>resultLocator</code> may be set to either a function or a
+     * string, it will always be returned as a function that accepts a result
+     * argument and returns a string.
+     * </p>
+     *
+     * @attribute resultLocator
+     * @type Function|String|null
+     */
+    resultLocator: {
+        setter: function (locator) {
+            if (locator === null || isFunction(locator)) {
+                return locator;
+            }
+
+            locator = locator.toString().split('.');
+
+            return function (result) {
+                return Y.Object.getValue(result, locator);
+            };
+        }
+    },
+
+    /**
+     * Current results, or an empty array if there are no results.
      *
      * @attribute results
      * @type Array
@@ -459,20 +501,6 @@ AutoCompleteBase.ATTRS = {
     results: {
         readOnly: true,
         value: []
-    },
-
-    /**
-     * Current raw (unformatted) results, or an empty array if there are no
-     * results.
-     *
-     * @attribute resultsRaw
-     * @type Array
-     * @default []
-     * @readonly
-     */
-    resultsRaw: {
-        readOnly: true,
-        value: []
     }
 };
 
@@ -480,15 +508,14 @@ AutoCompleteBase.ATTRS = {
 AutoCompleteBase.CSS_PREFIX = 'ac';
 
 AutoCompleteBase.prototype = {
-    // -- Protected Prototype Methods ------------------------------------------
+    // -- Public Lifecycle Methods ---------------------------------------------
 
     /**
      * Attaches <code>inputNode</code> event listeners.
      *
-     * @method _bindInput
-     * @protected
+     * @method bindInput
      */
-    _bindInput: function () {
+    bindInput: function () {
         var inputNode = this.get(INPUT_NODE);
 
         if (!inputNode) {
@@ -496,7 +523,7 @@ AutoCompleteBase.prototype = {
         }
 
         // Unbind first, just in case.
-        this._unbindInput();
+        this.unbindInput();
 
         this._inputEvents = [
             // We're listening to the valueChange event from the
@@ -505,6 +532,32 @@ AutoCompleteBase.prototype = {
             inputNode.on(VALUE_CHANGE, this._onValueChange, this)
         ];
     },
+
+    /**
+     * Synchronizes the UI state of the <code>inputNode</code>.
+     *
+     * @method syncInput
+     */
+    syncInput: function () {
+        var inputNode = this.get(INPUT_NODE);
+
+        if (inputNode.get('nodeName').toLowerCase() === 'input') {
+            inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+        }
+    },
+
+    /**
+     * Detaches <code>inputNode</code> event listeners.
+     *
+     * @method unbindInput
+     */
+    unbindInput: function () {
+        while (this._inputEvents && this._inputEvents.length) {
+            this._inputEvents.pop().detach();
+        }
+    },
+
+    // -- Protected Prototype Methods ------------------------------------------
 
     /**
      * Returns <code>true</code> if <i>value</i> is either a function or
@@ -516,6 +569,110 @@ AutoCompleteBase.prototype = {
      */
     _functionValidator: function (value) {
         return isFunction(value) || value === null;
+    },
+
+    /**
+     * Parses result responses, performs filtering and highlighting, and fires
+     * the <code>results</code> event.
+     *
+     * @method _parseResponse
+     * @param {String} query Query that generated these results.
+     * @param {Object} response Response containing results.
+     * @param {Object} data Raw response data.
+     * @protected
+     */
+    _parseResponse: function (query, response, data) {
+        var facade = {
+                data   : data,
+                query  : query,
+                results: []
+            },
+
+            // Filtered result arrays representing different formats. These will
+            // be unrolled into the final array of result objects as properties.
+            formatted,   // HTML, Nodes, whatever
+            raw,         // whatever format came back in the response
+            unformatted, // plain text (ideally)
+
+            // Unfiltered raw results, fresh from the response.
+            unfiltered = response && response.results,
+
+            // Final array of result objects.
+            results = [],
+
+            // Other stuff.
+            filters,
+            formatter,
+            highlighter,
+            i,
+            len,
+            locator,
+            locatorMap;
+
+        if (unfiltered) {
+            filters     = this.get(RESULT_FILTERS);
+            formatter   = this.get(RESULT_FORMATTER);
+            highlighter = this.get(RESULT_HIGHLIGHTER);
+            locator     = this.get(RESULT_LOCATOR);
+
+            if (locator) {
+                // In order to allow filtering based on locator queries, we have
+                // to create a mapping of "located" results to original results
+                // so we can sync up the original results later without
+                // requiring the filters to do extra work.
+                raw        = YArray.map(unfiltered, locator);
+                locatorMap = YArray.hash(raw, unfiltered);
+            } else {
+                raw = unfiltered;
+            }
+
+            // Run the raw results through all configured result filters.
+            for (i = 0, len = filters.length; i < len; ++i) {
+                raw = filters[i](query, raw);
+
+                if (!raw || !raw.length) {
+                    break;
+                }
+            }
+
+            if (locator) {
+                // Sync up the original results with the filtered, "located"
+                // results.
+                unformatted = raw;
+                raw = [];
+
+                for (i = 0, len = unformatted.length; i < len; ++i) {
+                    raw.push(locatorMap[unformatted[i]]);
+                }
+            } else {
+                unformatted = [].concat(raw); // copy
+            }
+
+            // Run the unformatted results through the configured highlighter
+            // (if any) to produce the first stage of formatted results.
+            formatted = highlighter ? highlighter(query, unformatted) :
+                    [].concat(unformatted);
+
+            // Run the highlighted results through the configured formatter (if
+            // any) to produce the final formatted results.
+            if (formatter) {
+                formatted = formatter(query, raw, formatted, unformatted);
+            }
+
+            // Finally, unroll all the result arrays into a single array of
+            // result objects.
+            for (i = 0, len = formatted.length; i < len; ++i) {
+                results.push({
+                    display: formatted[i],
+                    raw    : raw[i],
+                    text   : unformatted[i]
+                });
+            }
+
+            facade.results = results;
+        }
+
+        this.fire(EVT_RESULTS, facade);
     },
 
     /**
@@ -540,32 +697,6 @@ AutoCompleteBase.prototype = {
         return value;
     },
 
-    /**
-     * Synchronizes the state of the <code>inputNode</code>.
-     *
-     * @method _syncInput
-     * @protected
-     */
-    _syncInput: function () {
-        var inputNode = this.get(INPUT_NODE);
-
-        if (inputNode.get('nodeName').toLowerCase() === 'input') {
-            inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
-        }
-    },
-
-    /**
-     * Detaches <code>inputNode</code> event listeners.
-     *
-     * @method _unbindInput
-     * @protected
-     */
-    _unbindInput: function () {
-        while (this._inputEvents && this._inputEvents.length) {
-            this._inputEvents.pop().detach();
-        }
-    },
-
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
@@ -576,85 +707,12 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _onResponse: function (e) {
-        var facade,
-            filters,
-            formatter,
-            highlighter,
-            i,
-            len,
-            locator,
-            locatorMap,
-            query = e && e.callback && e.callback.query,
-            results,
-            resultsRaw,
-            unfiltered;
+        var query = e && e.callback && e.callback.query;
 
         // Ignore stale responses that aren't for the current query.
-        if (!query || query !== this.get(QUERY)) {
-            return;
+        if (query && query === this.get(QUERY)) {
+            this._parseResponse(query, e.response, e.data);
         }
-
-        facade = {
-            data      : e.data,
-            query     : query,
-            results   : [],
-            resultsRaw: []
-        };
-
-        unfiltered = e.response && e.response.results;
-
-        if (unfiltered) {
-            filters     = this.get(RESULT_FILTERS);
-            formatter   = this.get(RESULT_FORMATTER);
-            highlighter = this.get(RESULT_HIGHLIGHTER);
-            locator     = this.get(RESULT_FILTER_LOCATOR);
-
-            if (locator) {
-                // In order to allow filtering based on locator queries, we have
-                // to create a mapping of "located" results to original results
-                // so we can sync up the original results later without
-                // requiring the filters to do extra work.
-                resultsRaw = YArray.map(unfiltered, locator);
-                locatorMap = YArray.hash(resultsRaw, unfiltered);
-            } else {
-                resultsRaw = unfiltered;
-            }
-
-            for (i = 0, len = filters.length; i < len; ++i) {
-                resultsRaw = filters[i](query, resultsRaw);
-
-                if (!resultsRaw || !resultsRaw.length) {
-                    break;
-                }
-            }
-
-            if (locator) {
-                // Sync up the original results with the filtered, "located"
-                // results.
-                results = [];
-
-                for (i = 0, len = resultsRaw.length; i < len; ++i) {
-                    results.push(locatorMap[resultsRaw[i]]);
-                }
-
-                resultsRaw = results;
-            }
-
-            results = resultsRaw;
-
-            if (formatter) {
-                results = formatter(query, results);
-            }
-
-            if (highlighter) {
-                results = highlighter(query, results);
-            }
-
-            facade.results    = results;
-            facade.resultsRaw = resultsRaw;
-        }
-
-        this.fire(EVT_RESULTS, facade);
     },
 
     /**
@@ -765,38 +823,12 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defResultsFn: function (e) {
-        Y.log('raw results: ' + Y.dump(e.resultsRaw), 'info', 'autocomplete-base');
-        Y.log('formatted results: ' + Y.dump(e.results), 'info', 'autocomplete-base');
-
+        Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete-base');
         this._set(RESULTS, e[RESULTS]);
-        this._set(RESULTS_RAW, e[RESULTS_RAW]);
     }
 };
 
 Y.AutoCompleteBase = AutoCompleteBase;
-/**
- * Provides automatic input completion or suggestions for text input fields and
- * textareas.
- *
- * @module autocomplete
- * @class AutoComplete
- * @extends Base
- * @uses AutoCompleteBase
- * @constructor
- * @param {Object} config Configuration object.
- * @since 3.3.0
- */
-
-Y.AutoComplete = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
-    initializer: function () {
-        this._bindInput();
-        this._syncInput();
-    },
-
-    destructor: function () {
-        this._unbindInput();
-    }
-});
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'event-valuechange', 'node-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'event-valuechange', 'node-base']});
