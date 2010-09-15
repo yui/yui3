@@ -73,12 +73,12 @@ var Lang   = Y.Lang,
     RESULT_HIGHLIGHTER = 'resultHighlighter',
     RESULT_LOCATOR     = 'resultLocator',
     RESULTS            = 'results',
+    VALUE              = 'value',
     VALUE_CHANGE       = 'valueChange',
 
-    EVT_CLEAR        = 'clear',
-    EVT_QUERY        = QUERY,
-    EVT_RESULTS      = RESULTS,
-    EVT_VALUE_CHANGE = VALUE_CHANGE;
+    EVT_CLEAR   = 'clear',
+    EVT_QUERY   = QUERY,
+    EVT_RESULTS = RESULTS;
 
 function AutoCompleteBase() {
     /**
@@ -182,31 +182,6 @@ function AutoCompleteBase() {
      */
     this.publish(EVT_RESULTS, {
         defaultFn: this._defResultsFn,
-        queueable: true
-    });
-
-    /**
-     * Fires after the input node's value changes, and before the
-     * <code>query</code> event.
-     *
-     * @event valueChange
-     * @param {EventFacade} e Event facade with the following additional
-     *   properties:
-     *
-     * <dl>
-     *   <dt>newVal (String)</dt>
-     *   <dd>
-     *     Value of the input node after the change.
-     *   </dd>
-     *
-     *   <dt>prevVal (String)</dt>
-     *   <dd>
-     *     Value of the input node prior to the change.
-     *   </dd>
-     * </dl>
-     */
-    this.publish(EVT_VALUE_CHANGE, {
-        preventable: false,
         queueable: true
     });
 }
@@ -499,11 +474,26 @@ AutoCompleteBase.ATTRS = {
     results: {
         readOnly: true,
         value: []
+    },
+
+    /**
+     * Current value of the input node.
+     *
+     * @attribute value
+     * @type String
+     * @default ''
+     */
+    value: {
+        // Why duplicate this._inputNode.get('value')? Because we need a
+        // reliable way to track the source of value changes. We want to perform
+        // completion when the user changes the value, but not when we change
+        // the value.
+        value: ''
     }
 };
 
-// Because nobody wants to type ".yui3-autocomplete-blah" a hundred times.
 AutoCompleteBase.CSS_PREFIX = 'ac';
+AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 AutoCompleteBase.prototype = {
     // -- Public Lifecycle Methods ---------------------------------------------
@@ -524,10 +514,12 @@ AutoCompleteBase.prototype = {
         this.unbindInput();
 
         this._inputEvents = [
-            // We're listening to the valueChange event from the
-            // event-valuechange module here, not our own valueChange event
-            // (which just wraps this one for convenience).
-            inputNode.on(VALUE_CHANGE, this._onValueChange, this)
+            // This is the valueChange event on the inputNode provided by the
+            // event-valuechange module, not our own valueChange.
+            inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
+
+            // And here's our own valueChange event.
+            this.after(VALUE_CHANGE, this._afterValueChange, this)
         ];
     },
 
@@ -542,6 +534,8 @@ AutoCompleteBase.prototype = {
         if (inputNode.get('nodeName').toLowerCase() === 'input') {
             inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
         }
+
+        this.set(VALUE, inputNode.get(VALUE));
     },
 
     /**
@@ -697,6 +691,51 @@ AutoCompleteBase.prototype = {
 
     // -- Protected Event Handlers ---------------------------------------------
 
+    _afterValueChange: function (e) {
+        var delay,
+            fire,
+            newVal = e.newVal,
+            query,
+            that;
+
+        // Don't query on value changes that didn't come from the user.
+        if (e.src !== AutoCompleteBase.UI_SRC) {
+            this._inputNode.set(VALUE, newVal);
+            return;
+        }
+
+        Y.log('valueChange: new: "' + newVal + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
+
+        query = this._parseValue(newVal);
+
+        if (query.length >= this.get(MIN_QUERY_LENGTH)) {
+            delay = this.get(QUERY_DELAY);
+            that  = this;
+
+            fire = function () {
+                that.fire(EVT_QUERY, {
+                    inputValue: newVal,
+                    query     : query
+                });
+            };
+
+            if (delay) {
+                clearTimeout(this._delay);
+                this._delay = setTimeout(fire, delay);
+            } else {
+                fire();
+            }
+        } else {
+            clearTimeout(this._delay);
+        }
+
+        if (!newVal.length) {
+            this.fire(EVT_CLEAR, {
+                prevVal: e.prevVal
+            });
+        }
+    },
+
     /**
      * Handles DataSource responses and fires the <code>results</code> event.
      *
@@ -722,52 +761,16 @@ AutoCompleteBase.prototype = {
      * @param {EventFacade} e
      * @protected
      */
-    _onValueChange: function (e) {
-        var delay,
-            fire,
-            value = e.newVal,
-            query = this._parseValue(value),
-            that;
+    _onInputValueChange: function (e) {
+        var newVal = e.newVal;
 
-        Y.log('valueChange: new: "' + value + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
-
-        this.fire(EVT_VALUE_CHANGE, {
-            newVal : value,
-            prevVal: e.prevVal
-        });
-
-        if (query.length >= this.get(MIN_QUERY_LENGTH)) {
-            delay = this.get(QUERY_DELAY);
-            that  = this;
-
-            fire = function () {
-                that.fire(EVT_QUERY, {
-                    inputValue: value,
-                    query     : query
-                });
-            };
-
-            if (delay) {
-                clearTimeout(this._delay);
-                this._delay = setTimeout(fire, delay);
-            } else {
-                fire();
-            }
-        } else {
-            clearTimeout(this._delay);
-
-            // Empty query.
-            this.fire(EVT_QUERY, {
-                inputValue: value,
-                query     : null
-            });
+        // Don't query if the internal value is the same as the new value
+        // reported by valueChange.
+        if (newVal === this.get(VALUE)) {
+            return;
         }
 
-        if (!value.length) {
-            this.fire(EVT_CLEAR, {
-                prevVal: e.prevVal
-            });
-        }
+        this.set(VALUE, newVal, {src: AutoCompleteBase.UI_SRC});
     },
 
     // -- Protected Default Event Handlers -------------------------------------
