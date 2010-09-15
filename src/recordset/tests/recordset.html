@@ -17,7 +17,8 @@
         logInclude:{"TestRunner":true},
         useConsole: true
     }).use("console", "test", "dump", "recordset", function(Y) {
-        
+	
+
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
@@ -27,13 +28,190 @@
             Y.Test.Runner.run();
         }, BTNRUN);
         var myConsole = new Y.Console().render();
-        
+		
 
         var testBasic = new Y.Test.Case({
-            name: "Basic Tests",
-        
-            testSomething: function() {
-            }
+            name: "API Tests",
+			initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+
+		    //---------------------------------------------
+		    // Setup and tear down
+		    //---------------------------------------------
+
+		    setUp : function () {
+		        
+				//create recordset
+				this.rs = new Y.Recordset({records:this.initialData});
+
+				//Some Ways to access recordset properties
+				//Y.log(rs.getRecord(0).getValue('a'));
+		        //Y.log(rs.get('records').length);
+		    },
+
+		    tearDown : function () {
+		        delete this.rs;
+		    },
+		
+		    //---------------------------------------------
+		    // Event Helpers
+		    //---------------------------------------------
+        	
+			recordsetChangedEventTest: function() {
+				this.rs.on('recordsetChangedEvent', function(e) {
+					Y.Assert.areEqual(e, i);
+				});
+			},
+			
+			recordsetEmptiedEventTest: function() {
+				var flag = false;
+				this.rs.on('recordsetEmptiedEvent', function() {
+					flag = true;
+					Y.Assert.isTrue(flag);
+				});
+				
+			},
+			
+			recordsetUpdatedEventTest: function(newRecord, testIndex) {
+				var iD = this.initialData;
+				this.rs.on('recordsetUpdatedEvent', function(e) {
+					Y.Assert.areEqual(iD[testIndex], e.oldRecord.getValue(), "Old record values match up");
+					Y.Assert.areEqual(newRecord.getValue(), e.newRecord.getValue(), "New record values match up");
+					delete iD;
+				});
+			},
+			//---------------------------------------------
+		    // Add Records
+		    //---------------------------------------------
+
+            testAddSingleRecordToEnd: function() {
+				var recToAdd = {a:'8', b:'9', c:'10'};
+				retval = this.rs.addRecord(recToAdd);
+				
+				//Test Recordset Length
+				Y.Assert.areEqual(4, this.rs.get('records').length, "Array lengths not equal.");
+				//Assert on last object
+				
+				//This is indirectly checking to make sure that the record that got added has the identical data as the object literal that was passed in.
+				Y.Assert.areEqual(recToAdd, this.rs.getRecord(3).getValue());
+				this.recordsetChangedEventTest();
+				
+            },
+
+			testAddSingleRecordToIndex: function() {
+				var recToAdd, i;
+				recToAdd = {a:'8', b:'9', c:'10'};
+				i = 2;
+				
+				retval = this.rs.addRecord(recToAdd,i);
+				Y.Assert.areEqual(recToAdd, this.rs.getRecord(i).getValue());
+				this.recordsetChangedEventTest();
+				
+
+				
+			},
+			
+			testAddMultipleRecordsToEnd: function() {
+				var recsToAdd = [{a:'11', b:'22', c:'33'}, {a:'44', b:'55', c:'66'}];
+				retval = this.rs.addRecord(recsToAdd);
+				
+				//Assertions with recordset
+				Y.Assert.areEqual(recsToAdd[0], this.rs.getRecord(3).getValue());
+				Y.Assert.areEqual(recsToAdd[1], this.rs.getRecord(4).getValue());
+				
+				this.recordsetChangedEventTest();
+				
+			},
+			
+			testAddMultipleRecordsToIndex: function() {
+				var recsToAdd, i;
+				recsToAdd = [{a:'11', b:'22', c:'33'}, {a:'44', b:'55', c:'66'}];
+				i = 1;
+				
+				retval = this.rs.addRecord(recsToAdd, i);
+				
+				//Assertions with recordset
+				Y.Assert.areEqual(recsToAdd[0], this.rs.getRecord(1).getValue());
+				Y.Assert.areEqual(recsToAdd[1], this.rs.getRecord(2).getValue());
+				
+				this.recordsetChangedEventTest();
+			},
+			
+			//---------------------------------------------
+		    // Delete Records
+		    //---------------------------------------------
+		
+			testDeleteSingleRecordFromEnd: function() {
+				this.recordsetChangedEventTest();
+				
+				retval = this.rs.deleteRecord(2);
+				Y.Assert.areEqual(this.initialData[2], retval.data.getValue());
+				Y.Assert.areEqual(2, retval.index);
+			}, 
+			
+			testDeleteSingleRecordFromIndex: function() {
+				this.recordsetChangedEventTest();
+				
+				retval = this.rs.deleteRecord(1);
+				Y.Assert.areEqual(this.initialData[1], retval.data.getValue());
+				Y.Assert.areEqual(1, retval.index);
+			},
+			
+			testDeleteRangeOfRecords: function() {
+				//Delete 2 records from index 1
+				this.recordsetChangedEventTest();
+				
+				retval = this.rs.deleteRecord(1,2);
+				Y.Assert.areEqual(this.initialData[1], retval.data[0].getValue());
+				Y.Assert.areEqual(this.initialData[2], retval.data[1].getValue());
+				Y.Assert.areEqual(1, retval.index);
+			},
+			
+			//---------------------------------------------
+		    // Empty Recordset
+		    //---------------------------------------------
+			
+			testEmptyRecordSet: function() {
+				
+				this.recordsetEmptiedEventTest();
+				this.rs.empty();
+				Y.Assert.areEqual(0, this.rs.get('records').length);
+				
+			},
+			
+			//---------------------------------------------
+		    // GetValuesByKey
+		    //---------------------------------------------
+		
+			testGetValuesByKey: function() {
+				var key, retval, i;
+				key = 'a';
+				retval = this.rs.getValuesByKey(key);
+				
+				for (i=0; i < this.initialData.length; i++) {
+					Y.Assert.areEqual(this.initialData[i][key], retval[i]);
+				}
+			},
+			
+			testGetValuesByKeyWithInvalidKey: function() {
+				var key = 'd';
+				retval = this.rs.getValuesByKey(key);
+				
+				for (i=0; i < this.initialData.length; i++) {
+					Y.Assert.isUndefined(retval[i]);
+				}
+			},
+			
+			testUpdateRecord: function() {
+				var newRecord, index=1;
+				
+				//Update at given index
+				newRecord = new Y.Record({a:'newA', b:'newB', c:'newC'});
+				
+				this.recordsetUpdatedEventTest(newRecord, index);
+				this.rs.updateRecord(newRecord, index);
+				Y.Assert.areEqual(newRecord.getValue(), this.rs.getRecord(index).getValue());
+			}
+			
         });
 
         var suite = new Y.Test.Suite({name:"Recordset Test Suite"});

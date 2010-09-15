@@ -40,8 +40,17 @@ Y.extend(Record, Y.Base, {
     },
     
     getValue: function(field) {
-        return this.get("data")[field];
+		if (!field) {
+        	return this.get("data");
+		}
+		else {
+			
+			//This should remain [field] instead of .field, because [field] can handle strings
+			return this.get("data")[field];
+		}
+		return null;
     }
+
 });
 
 Y.Record = Record;
