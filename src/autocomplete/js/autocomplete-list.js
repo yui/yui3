@@ -30,6 +30,7 @@ var Node   = Y.Node,
     _SELECTOR_ITEM     = '_SELECTOR_ITEM',
 
     ACTIVE_ITEM  = 'activeItem',
+    CIRCULAR     = 'circular',
     HOVERED_ITEM = 'hoveredItem',
     INPUT_NODE   = 'inputNode',
     ITEM         = 'item',
@@ -90,7 +91,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         if (!this.get(WIDTH)) {
-            this.set(WIDTH, this._inputNode.get('clientWidth'));
+            this.set(WIDTH, this._inputNode.get('offsetWidth'));
         }
     },
 
@@ -125,44 +126,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     // -- Public Prototype Methods ---------------------------------------------
-
-    activateNextItem: function () {
-        var item     = this.get(ACTIVE_ITEM),
-            selector = this[_SELECTOR_ITEM],
-            nextItem;
-
-        if (item) {
-            // Get the next item. If there isn't a next item, circle back around
-            // and get the first item.
-            nextItem = item.next(selector) ||
-                    item.get('parentNode').one(selector);
-
-            if (nextItem) {
-                this._set(ACTIVE_ITEM, nextItem);
-            }
-        }
-
-        return this;
-    },
-
-    activatePrevItem: function () {
-        var item     = this.get(ACTIVE_ITEM),
-            selector = this[_SELECTOR_ITEM],
-            prevItem;
-
-        if (item) {
-            // Get the previous item. If there isn't a previous item, circle
-            // back around and get the last item.
-            prevItem = item.previous(selector) ||
-                    item.get('parentNode').one(selector + ':last-child');
-
-            if (prevItem) {
-                this._set(ACTIVE_ITEM, prevItem);
-            }
-        }
-
-        return this;
-    },
 
     /**
      * Hides the list.
@@ -215,6 +178,60 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     // -- Protected Prototype Methods ------------------------------------------
+
+    /**
+     * Activates the next item after the currently active item. If there is no
+     * next item and the <code>circular</code> attribute is <code>true</code>,
+     * the first item in the list will be activated.
+     *
+     * @method _activateNextItem
+     * @protected
+     */
+    _activateNextItem: function () {
+        var item     = this.get(ACTIVE_ITEM),
+            selector = this[_SELECTOR_ITEM],
+            nextItem;
+
+        if (item) {
+            // Get the next item. If there isn't a next item, circle back around
+            // and get the first item.
+            nextItem = item.next(selector) ||
+                    (this.get(CIRCULAR) && item.get('parentNode').one(selector));
+
+            if (nextItem) {
+                this._set(ACTIVE_ITEM, nextItem);
+            }
+        }
+
+        return this;
+    },
+
+    /**
+     * Activates the item previous to the currently active item. If there is no
+     * previous item and the <code>circular</code> attribute is
+     * <code>true</code>, the last item in the list will be activated.
+     *
+     * @method _activatePrevItem
+     * @protected
+     */
+    _activatePrevItem: function () {
+        var item     = this.get(ACTIVE_ITEM),
+            selector = this[_SELECTOR_ITEM],
+            prevItem;
+
+        if (item) {
+            // Get the previous item. If there isn't a previous item, circle
+            // back around and get the last item.
+            prevItem = item.previous(selector) ||
+                    (this.get(CIRCULAR) && item.get('parentNode').one(selector + ':last-child'));
+
+            if (prevItem) {
+                this._set(ACTIVE_ITEM, prevItem);
+            }
+        }
+
+        return this;
+    },
 
     /**
      * Appends the specified result <i>items</i> to the list inside a new item
@@ -476,11 +493,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (this.get(VISIBLE)) {
             switch (keyCode) {
             case KEY_DOWN:
-                this.activateNextItem();
+                this._activateNextItem();
                 break;
 
             case KEY_ENTER:
-                e.preventDefault();
                 this.selectItem();
                 break;
 
@@ -488,13 +504,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
                 this.hide();
                 break;
 
-            case KEY_TAB:
-                break;
+            // case KEY_TAB:
+            //     break;
 
             case KEY_UP:
-                this.activatePrevItem();
+                this._activatePrevItem();
                 break;
+
+            default:
+                return;
             }
+
+            e.preventDefault();
         }
     },
 
@@ -506,6 +527,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onItemClick: function (e) {
+        e.preventDefault();
         this.selectItem(e.currentTarget);
     },
 
@@ -525,22 +547,51 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     }
 }, {
     ATTRS: {
+        /**
+         * Item that's currently active, if any. When the user presses enter,
+         * this is the item that will be selected.
+         *
+         * @attribute activeItem
+         * @type Node
+         * @readonly
+         */
         activeItem: {
             readOnly: true,
             value: null
         },
 
+        // The "align" attribute is documented in WidgetPositionAlign.
         align: {
             value: {
                 points: ['tl', 'bl']
             }
         },
 
+        /**
+         * If <code>true</code>, keyboard navigation will wrap around to the
+         * opposite end of the list when navigating past the first or last item.
+         *
+         * @attribute circular
+         * @type Boolean
+         * @default true
+         */
+        circular: {
+            value: true
+        },
+
+        /**
+         * Item currently being hovered over by the mouse, if any.
+         *
+         * @attribute hoveredItem
+         * @type Node|null
+         * @readonly
+         */
         hoveredItem: {
             readOnly: true,
             value: null
         },
 
+        // The "visible" attribute is documented in Widget.
         visible: {
             value: false
         }
