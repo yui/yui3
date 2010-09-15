@@ -108,13 +108,14 @@
                     <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">j</span><span class="o">&lt;</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">smod</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
 
-                        <span class="c1">// if the superseded module is loaded, we can&#39;t load the rollup</span>
-                        <span class="c1">// unless it has been forced</span>
+                        <span class="c1">// if the superseded module is loaded, we can&#39;t </span>
+                        <span class="c1">// load the rollup unless it has been forced.</span>
                         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]])</span> <span class="p">{</span>
                             <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                             <span class="k">break</span><span class="p">;</span>
-                        <span class="c1">// increment the counter if this module is required.  if we are</span>
-                        <span class="c1">// beyond the rollup threshold, we will use the rollup module</span>
+                        <span class="c1">// increment the counter if this module is required.  </span>
+                        <span class="c1">// if we are beyond the rollup threshold, we will </span>
+                        <span class="c1">// use the rollup module</span>
                         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="nx">smod</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">c</span><span class="o">++</span><span class="p">;</span>
                             <span class="c1">// Y.log(&quot;adding to thresh: &quot; + c + &quot;, &quot; + s[j]);</span>
