@@ -201,15 +201,34 @@
 				}
 			},
 			
-			testUpdateRecord: function() {
+			//---------------------------------------------
+		    // Update Records
+		    //---------------------------------------------
+		
+			testUpdateRecordAtIndex: function() {
 				var newRecord, index=1;
 				
-				//Update at given index
+				//Update record at given index with new record
 				newRecord = new Y.Record({a:'newA', b:'newB', c:'newC'});
 				
 				this.recordsetUpdatedEventTest(newRecord, index);
 				this.rs.updateRecord(newRecord, index);
 				Y.Assert.areEqual(newRecord.getValue(), this.rs.getRecord(index).getValue());
+			},
+			
+			testUpdateRecordsAtIndex: function() {
+				var newRecords = [], index=0;
+				newRecords.push(new Y.Record({a:'newA', b:'newB', c:'newC'}));
+				newRecords.push(new Y.Record({a:'newD', b:'newE', c:'newF'}));
+				
+				this.rs.updateRecord(newRecords, index);
+				
+				//check that the two elements in the recordset are the same as the ones pushed in
+				Y.Assert.areEqual(newRecords[0].getValue(), this.rs.getRecord(index).getValue());
+				Y.Assert.areEqual(newRecords[1].getValue(), this.rs.getRecord(index+1).getValue());
+				
+				//check that the next record has not been altered
+				Y.Assert.areEqual(this.initialData(index+newRecords.length), this.rs.getRecord(index+newRecords.length).getValue());
 			}
 			
         });
