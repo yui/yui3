@@ -17,16 +17,27 @@ var Node   = Y.Node,
     YArray = Y.Array,
 
     // keyCode constants.
-    // KEY_DOWN  = 40,
-    // KEY_ENTER = 13,
-    // KEY_ESC   = 27,
+    KEY_DOWN  = 40,
+    KEY_ENTER = 13,
+    KEY_ESC   = 27,
     KEY_TAB   = 9,
-    // KEY_UP    = 38,
+    KEY_UP    = 38,
 
     // String shorthand.
-    INPUT_NODE = 'inputNode',
-    VISIBLE    = 'visible',
-    WIDTH      = 'width',
+    _CLASS_ITEM        = '_CLASS_ITEM',
+    _CLASS_ITEM_ACTIVE = '_CLASS_ITEM_ACTIVE',
+    _CLASS_ITEM_HOVER  = '_CLASS_ITEM_HOVER',
+    _SELECTOR_ITEM     = '_SELECTOR_ITEM',
+
+    ACTIVE_ITEM  = 'activeItem',
+    HOVERED_ITEM = 'hoveredItem',
+    INPUT_NODE   = 'inputNode',
+    ITEM         = 'item',
+    VISIBLE      = 'visible',
+    WIDTH        = 'width',
+
+    // Event names.
+    EVT_SELECT = 'select',
 
 List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.AutoCompleteBase,
@@ -40,8 +51,35 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
-        this._inputNode = this.get(INPUT_NODE);
+        /**
+         * Fires when an autocomplete suggestion is selected from the list by
+         * a keyboard action or mouse click.
+         *
+         * @event select
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *
+         * <dl>
+         *   <dt>result (Object)</dt>
+         *   <dd>
+         *     AutoComplete result object.
+         *   </dd>
+         * </dl>
+         *
+         * @preventable _defResultsFn
+         */
+        this.publish(EVT_SELECT, {
+            defaultFn: this._defSelectFn
+        });
+
         this._events    = [];
+        this._inputNode = this.get(INPUT_NODE);
+
+        // Cache commonly used classnames and selectors for performance.
+        this[_CLASS_ITEM]        = this.getClassName(ITEM);
+        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
+        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
+        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
 
         if (!this._inputNode) {
             Y.error('No inputNode specified.');
@@ -81,11 +119,50 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     syncUI: function () {
+        this.syncInput();
         this._syncResults();
         this._syncVisibility();
     },
 
     // -- Public Prototype Methods ---------------------------------------------
+
+    activateNextItem: function () {
+        var item     = this.get(ACTIVE_ITEM),
+            selector = this[_SELECTOR_ITEM],
+            nextItem;
+
+        if (item) {
+            // Get the next item. If there isn't a next item, circle back around
+            // and get the first item.
+            nextItem = item.next(selector) ||
+                    item.get('parentNode').one(selector);
+
+            if (nextItem) {
+                this._set(ACTIVE_ITEM, nextItem);
+            }
+        }
+
+        return this;
+    },
+
+    activatePrevItem: function () {
+        var item     = this.get(ACTIVE_ITEM),
+            selector = this[_SELECTOR_ITEM],
+            prevItem;
+
+        if (item) {
+            // Get the previous item. If there isn't a previous item, circle
+            // back around and get the last item.
+            prevItem = item.previous(selector) ||
+                    item.get('parentNode').one(selector + ':last-child');
+
+            if (prevItem) {
+                this._set(ACTIVE_ITEM, prevItem);
+            }
+        }
+
+        return this;
+    },
 
     /**
      * Hides the list.
@@ -96,6 +173,34 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     hide: function () {
         return this.set(VISIBLE, false);
+    },
+
+    /**
+     * Selects the specified <i>itemNode</i>, or the current
+     * <code>activeItem</code> if <i>itemNode</i> is not specified.
+     *
+     * @method selectItem
+     * @param {Node} itemNode (optional) Item node to select.
+     * @chainable
+     */
+    selectItem: function (itemNode) {
+        if (itemNode) {
+            if (!itemNode.hasClass(this[_CLASS_ITEM])) {
+                return;
+            }
+        } else {
+            itemNode = this.get(ACTIVE_ITEM);
+
+            if (!itemNode) {
+                return;
+            }
+        }
+
+        this.fire(EVT_SELECT, {
+            result: itemNode.getData('result')
+        });
+
+        return this;
     },
 
     /**
@@ -118,16 +223,20 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @method _add
      * @param {Array|Node|HTMLElement|String} items Result item or array of
      *   result items.
+     * @returns {NodeList} Added nodes.
      * @protected
      */
     _add: function (items) {
         var itemNodes = [];
 
         YArray.each(Y.Lang.isArray(items) ? items : [items], function (item) {
-            itemNodes.push(this._createItemNode(item));
+            itemNodes.push(this._createItemNode(item.display).setData('result', item));
         }, this);
 
-        this._contentBox.append(itemNodes);
+        itemNodes = Y.all(itemNodes);
+        this._contentBox.append(itemNodes.toFrag());
+
+        return itemNodes;
     },
 
     /**
@@ -146,7 +255,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         this._events.concat([
             inputNode.on('blur', this._onInputBlur, this),
-            inputNode.on('keydown', this._onInputKeyDown, this)
+            inputNode.on(Y.UA.gecko ? 'keypress' : 'keydown', this._onInputKey, this)
         ]);
     },
 
@@ -158,11 +267,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._events.concat([
-            this.after('mouseenter', this._afterMouseEnter, this),
-            this.after('mouseleave', this._afterMouseLeave, this),
+            this.after('mouseover', this._afterMouseOver, this),
+            this.after('mouseout', this._afterMouseOut, this),
 
+            this.after('activeItemChange', this._afterActiveItemChange, this),
+            this.after('hoveredItemChange', this._afterHoveredItemChange, this),
             this.after('resultsChange', this._afterResultsChange, this),
-            this.after('visibleChange', this._afterVisibleChange, this)
+            this.after('visibleChange', this._afterVisibleChange, this),
+
+            this._contentBox.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
         ]);
     },
 
@@ -173,6 +286,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _clear: function () {
+        this._set(ACTIVE_ITEM, null);
+        this._set(HOVERED_ITEM, null);
+
         this._contentBox.get('children').remove(true);
     },
 
@@ -190,7 +306,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         return itemNode.append(content).setAttrs({
             id  : Y.stamp(itemNode),
             role: 'option'
-        }).addClass(this.getClassName('item'));
+        }).addClass(this[_CLASS_ITEM]);
     },
 
     /**
@@ -203,6 +319,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncResults: function (results) {
+        var items;
+
         if (!results) {
             results = this.get('results');
         }
@@ -210,7 +328,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._clear();
 
         if (results.length) {
-            this._add(results);
+            items = this._add(results);
+            this._set(ACTIVE_ITEM, items.item(0));
         }
     },
 
@@ -229,59 +348,76 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         this._contentBox.set('aria-hidden', !visible);
+
+        if (!visible) {
+            this._set(ACTIVE_ITEM, null);
+            this._set(HOVERED_ITEM, null);
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-     * Handles <code>inputNode</code> <code>blur</code> events.
+     * Handles <code>activeItemChange</code> events.
      *
-     * @method _onInputBlur
+     * @method _afterActiveItemChange
      * @param {EventTarget} e
      * @protected
      */
-    _onInputBlur: function (e) {
-        // Hide the list on inputNode blur events, unless the mouse is currently
-        // over the list (which indicates that the user is probably interacting
-        // with it) or the tab key was pressed.
-        if (this._mouseOverList && this._lastInputKey !== KEY_TAB) {
-            this._inputNode.focus();
-        } else {
-            this.hide();
+    _afterActiveItemChange: function (e) {
+        if (e.prevVal) {
+            e.prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
+        }
+
+        if (e.newVal) {
+            e.newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
         }
     },
 
     /**
-     * Handles <code>inputNode</code> key events.
+     * Handles <code>hoveredItemChange</code> events.
      *
-     * @method _onInputKeyDown
+     * @method _afterHoveredItemChange
      * @param {EventTarget} e
      * @protected
      */
-    _onInputKeyDown: function (e) {
-        this._lastInputKey = e.keyCode;
+    _afterHoveredItemChange: function (e) {
+        if (e.prevVal) {
+            e.prevVal.removeClass(this[_CLASS_ITEM_HOVER]);
+        }
+
+        if (e.newVal) {
+            e.newVal.addClass(this[_CLASS_ITEM_HOVER]);
+        }
     },
 
     /**
-     * Handles <code>mouseenter</code> events.
+     * Handles <code>mouseover</code> events.
      *
-     * @method _afterMouseEnter
+     * @method _afterMouseOver
      * @param {EventTarget} e
      * @protected
      */
-    _afterMouseEnter: function () {
+    _afterMouseOver: function (e) {
+        var itemNode = e.domEvent.target.ancestor('.' + this[_CLASS_ITEM], true);
+
         this._mouseOverList = true;
+
+        if (itemNode) {
+            this._set(HOVERED_ITEM, itemNode);
+        }
     },
 
     /**
-     * Handles <code>mouseleave</code> events.
+     * Handles <code>mouseout</code> events.
      *
-     * @method _afterMouseLeave
+     * @method _afterMouseOut
      * @param {EventTarget} e
      * @protected
      */
-    _afterMouseLeave: function () {
+    _afterMouseOut: function () {
         this._mouseOverList = false;
+        this._set(HOVERED_ITEM, null);
     },
 
     /**
@@ -305,13 +441,104 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _afterVisibleChange: function (e) {
         this._syncVisibility(!!e.newVal);
+    },
+
+    /**
+     * Handles <code>inputNode</code> <code>blur</code> events.
+     *
+     * @method _onInputBlur
+     * @param {EventTarget} e
+     * @protected
+     */
+    _onInputBlur: function (e) {
+        // Hide the list on inputNode blur events, unless the mouse is currently
+        // over the list (which indicates that the user is probably interacting
+        // with it) or the tab key was pressed.
+        if (this._mouseOverList && this._lastInputKey !== KEY_TAB) {
+            this._inputNode.focus();
+        } else {
+            this.hide();
+        }
+    },
+
+    /**
+     * Handles <code>inputNode</code> key events.
+     *
+     * @method _onInputKey
+     * @param {EventTarget} e
+     * @protected
+     */
+    _onInputKey: function (e) {
+        var keyCode = e.keyCode;
+
+        this._lastInputKey = keyCode;
+
+        if (this.get(VISIBLE)) {
+            switch (keyCode) {
+            case KEY_DOWN:
+                this.activateNextItem();
+                break;
+
+            case KEY_ENTER:
+                e.preventDefault();
+                this.selectItem();
+                break;
+
+            case KEY_ESC:
+                this.hide();
+                break;
+
+            case KEY_TAB:
+                break;
+
+            case KEY_UP:
+                this.activatePrevItem();
+                break;
+            }
+        }
+    },
+
+    /**
+     * Delegated event handler for item <code>click</code> events.
+     *
+     * @method _onItemClick
+     * @param {EventTarget} e
+     * @protected
+     */
+    _onItemClick: function (e) {
+        this.selectItem(e.currentTarget);
+    },
+
+    // -- Protected Default Event Handlers -------------------------------------
+
+    /**
+     * Default <code>select</code> event handler.
+     *
+     * @method _defSelectFn
+     * @param {EventTarget} e
+     * @protected
+     */
+    _defSelectFn: function (e) {
+        // TODO: support query delimiters, typeahead completion, etc.
+        this.hide();
+        this._inputNode.set('value', e.result.text).focus();
     }
 }, {
     ATTRS: {
+        activeItem: {
+            readOnly: true,
+            value: null
+        },
+
         align: {
             value: {
                 points: ['tl', 'bl']
             }
+        },
+
+        hoveredItem: {
+            readOnly: true,
+            value: null
         },
 
         visible: {

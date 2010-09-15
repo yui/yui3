@@ -51,7 +51,6 @@
             "autocomplete-list": {
                 "requires": [
                     "autocomplete-base",
-                    "event-mouseenter",
                     "widget",
                     "widget-position",
                     "widget-position-align",

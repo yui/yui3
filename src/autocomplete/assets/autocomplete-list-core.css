@@ -7,4 +7,11 @@
     padding: 0;
 }
 
-.yui3-aclist-item { padding: 2px 5px; }
+.yui3-aclist-item {
+    cursor: pointer;
+    padding: 2px 5px;
+}
+
+.yui3-aclist-item-active {
+    outline: #afafaf dotted thin;
+}
