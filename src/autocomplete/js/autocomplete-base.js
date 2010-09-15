@@ -61,19 +61,19 @@ var Lang   = Y.Lang,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
 
-    ALLOW_BROWSER_AC      = 'allowBrowserAutocomplete',
-    DATA_SOURCE           = 'dataSource',
-    INPUT_NODE            = 'inputNode',
-    MIN_QUERY_LENGTH      = 'minQueryLength',
-    QUERY                 = 'query',
-    QUERY_DELAY           = 'queryDelay',
-    REQUEST_TEMPLATE      = 'requestTemplate',
-    RESULT_FILTERS        = 'resultFilters',
-    RESULT_FILTER_LOCATOR = 'resultFilterLocator',
-    RESULT_HIGHLIGHTER    = 'resultHighlighter',
-    RESULT_FORMATTER      = 'resultFormatter',
-    RESULTS               = 'results',
-    VALUE_CHANGE          = 'valueChange',
+    ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
+    DATA_SOURCE        = 'dataSource',
+    INPUT_NODE         = 'inputNode',
+    MIN_QUERY_LENGTH   = 'minQueryLength',
+    QUERY              = 'query',
+    QUERY_DELAY        = 'queryDelay',
+    REQUEST_TEMPLATE   = 'requestTemplate',
+    RESULT_FILTERS     = 'resultFilters',
+    RESULT_FORMATTER   = 'resultFormatter',
+    RESULT_HIGHLIGHTER = 'resultHighlighter',
+    RESULT_LOCATOR     = 'resultLocator',
+    RESULTS            = 'results',
+    VALUE_CHANGE       = 'valueChange',
 
     EVT_CLEAR        = 'clear',
     EVT_QUERY        = QUERY,
@@ -375,53 +375,15 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * <p>
-     * Filter locator that should be used to extract a filterable string from a
-     * non-string result item, so that <code>resultFilters</code> (which assume
-     * that results are string) can be used to filter non-string results.
-     * </p>
-     *
-     * <p>
-     * By default, no filter locator is applied, and all results are assumed to
-     * be strings.
-     * </p>
-     *
-     * <p>
-     * The locator may be either a function (which will receive the raw result
-     * as an argument and must return a string) or a string representing an
-     * object path, such as "foo.bar.baz" (which would return the value of
-     * <code>result.foo.bar.baz</code>).
-     * </p>
-     *
-     * <p>
-     * While <code>resultFilterLocator</code> may be set to either a function or
-     * a string, it will always be returned as a function that accepts a result
-     * argument and returns a string.
-     * </p>
-     *
-     * @attribute resultFilterLocator
-     * @type Function|String|null
-     */
-    resultFilterLocator: {
-        setter: function (locator) {
-            if (locator === null || isFunction(locator)) {
-                return locator;
-            }
-
-            locator = locator.toString().split('.');
-
-            return function (result) {
-                return Y.Object.getValue(result, locator);
-            };
-        }
-    },
-
-    /**
-     * <p>
      * Array of local result filter functions. If provided, each filter
-     * will be called with two arguments when results are received: the
-     * query and an array of results received from the DataSource. Each filter
-     * is expected to return a filtered or modified version of those results,
-     * which will then be passed on to subsequent filters, then the
+     * will be called with two arguments when results are received: the query
+     * and an array of results (as returned by the <code>resultLocator</code>,
+     * if one is set).
+     * </p>
+     *
+     * <p>
+     * Each filter is expected to return a filtered or modified version of the
+     * results, which will then be passed on to subsequent filters, then the
      * <code>resultHighlighter</code> function (if set), then the
      * <code>resultFormatter</code> function (if set), and finally to
      * subscribers to the <code>results</code> event.
@@ -443,10 +405,11 @@ AutoCompleteBase.ATTRS = {
     /**
      * <p>
      * Function which will be used to format results. If provided, this function
-     * will be called with two arguments after results have been received,
-     * filtered, and highlighted: the query and an array of filtered
-     * results. The formatter is expected to return a modified version of the
-     * results array with any desired custom formatting applied.
+     * will be called with four arguments after results have been received and
+     * filtered: the query, an array of raw results, an array of highlighted
+     * results, and an array of plain text results. The formatter is expected to
+     * return a modified copy of the results array with any desired custom
+     * formatting applied.
      * </p>
      *
      * <p>
@@ -478,6 +441,51 @@ AutoCompleteBase.ATTRS = {
      */
     resultHighlighter: {
         validator: '_functionValidator'
+    },
+
+    /**
+     * <p>
+     * Locator that should be used to extract a plain text string from a
+     * non-string result item. This value will be fed to any defined filters,
+     * and will typically also be the value that ends up being inserted into a
+     * text input field or textarea when the user of an autocomplete widget
+     * implementation selects a result.
+     * </p>
+     *
+     * <p>
+     * By default, no locator is applied, and all results are assumed to be
+     * plain text strings. If all results are already plain text strings, you
+     * don't need to define a locator.
+     * </p>
+     *
+     * <p>
+     * The locator may be either a function (which will receive the raw result
+     * as an argument and must return a string) or a string representing an
+     * object path, such as "foo.bar.baz" (which would return the value of
+     * <code>result.foo.bar.baz</code> if the result is an object).
+     * </p>
+     *
+     * <p>
+     * While <code>resultLocator</code> may be set to either a function or a
+     * string, it will always be returned as a function that accepts a result
+     * argument and returns a string.
+     * </p>
+     *
+     * @attribute resultLocator
+     * @type Function|String|null
+     */
+    resultLocator: {
+        setter: function (locator) {
+            if (locator === null || isFunction(locator)) {
+                return locator;
+            }
+
+            locator = locator.toString().split('.');
+
+            return function (result) {
+                return Y.Object.getValue(result, locator);
+            };
+        }
     },
 
     /**
@@ -580,7 +588,7 @@ AutoCompleteBase.prototype = {
 
             // Filtered result arrays representing different formats. These will
             // be unrolled into the final array of result objects as properties.
-            formatted,   // HTML, Nodes, widgets, whatever
+            formatted,   // HTML, Nodes, whatever
             raw,         // whatever format came back in the response
             unformatted, // plain text (ideally)
 
@@ -603,7 +611,7 @@ AutoCompleteBase.prototype = {
             filters     = this.get(RESULT_FILTERS);
             formatter   = this.get(RESULT_FORMATTER);
             highlighter = this.get(RESULT_HIGHLIGHTER);
-            locator     = this.get(RESULT_FILTER_LOCATOR);
+            locator     = this.get(RESULT_LOCATOR);
 
             if (locator) {
                 // In order to allow filtering based on locator queries, we have
@@ -628,13 +636,12 @@ AutoCompleteBase.prototype = {
             if (locator) {
                 // Sync up the original results with the filtered, "located"
                 // results.
-                unformatted = [];
+                unformatted = raw;
+                raw = [];
 
-                for (i = 0, len = raw.length; i < len; ++i) {
-                    unformatted.push(locatorMap[raw[i]]);
+                for (i = 0, len = unformatted.length; i < len; ++i) {
+                    raw.push(locatorMap[unformatted[i]]);
                 }
-
-                raw = unformatted;
             } else {
                 unformatted = [].concat(raw); // copy
             }
@@ -647,7 +654,7 @@ AutoCompleteBase.prototype = {
             // Run the highlighted results through the configured formatter (if
             // any) to produce the final formatted results.
             if (formatter) {
-                formatted = formatter(query, formatted, unformatted);
+                formatted = formatter(query, raw, formatted, unformatted);
             }
 
             // Finally, unroll all the result arrays into a single array of

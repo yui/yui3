@@ -18,6 +18,13 @@
     <link rel="stylesheet" href="../../assets/autocomplete-list-core.css">
     <link rel="stylesheet" href="../../assets/skins/sam/autocomplete-list-skin.css">
     <style>
+    html {
+        background: #fff;
+        color: #333;
+        font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+        font-size: 13px;
+    }
+
     body { width: 60%; }
 
     fieldset {
@@ -27,13 +34,16 @@
 
     fieldset label { margin-right: 0.5em; }
 
-    #ac-input { width: 300px; }
+    #ac-input {
+        margin: 5px 0 10px;
+        width: 300px;
+    }
+
     #log { margin-top: 4em; }
 
     .flickr {
-        color: inherit;
-        display: block;
         height: 32px;
+        overflow: hidden;
         padding: 2px;
         text-decoration: none;
     }
@@ -44,7 +54,6 @@
         margin: 0 4px;
         width: 32px;
     }
-
     </style>
 </head>
 <body class="yui3-skin-sam">
@@ -191,7 +200,7 @@ Y.Object.each(Y.AutoCompleteHighlighters, function (highlighter, name) {
     }
 
     highlightersDiv.append(
-        '<input type="radio" class="highlighter" name="highlighter" id="highlighter_' + name + '" value="' + name + '">' +
+        '<input type="radio" class="highlighter" name="highlighter" id="highlighter_' + name + '" value="' + name + '"' + (name === 'phraseMatch' ? ' checked="checked"' : '') + '>' +
         '<label for="highlighter_' + name + '">' + name + '</label>'
     );
 });
@@ -231,15 +240,16 @@ autoComplete.render();
 autoComplete.get('inputNode').focus();
 
 // -- UI functions -------------------------------------------------------------
-function flickrFormatter(query, results) {
-    return Y.Array.map(results, function (result) {
-        var imgUrl  = Y.substitute('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result),
-            linkUrl = Y.substitute('http://www.flickr.com/photos/{owner}/{id}', result);
+function flickrFormatter(query, raw, highlighted) {
+    return Y.Array.map(raw, function (result, i) {
+        var imgUrl = Y.substitute('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result);
 
-        return '<a href="' + linkUrl + '" class="flickr">' +
+        result.linkUrl = Y.substitute('http://www.flickr.com/photos/{owner}/{id}', result);
+
+        return '<div class="flickr">' +
                  '<img src="' + imgUrl + '" alt="thumbnail">' +
-                 '<span class="title">' + result.title + '</span>' +
-               '</a>';
+                 '<span class="title">' + highlighted[i] + '</span>' +
+               '</div>';
     });
 }
 
@@ -280,10 +290,10 @@ function useLocal() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource         : dataSourceLocal,
-        requestTemplate    : function (q) { return q; },
-        resultFilterLocator: null,
-        resultFormatter    : null
+        dataSource     : dataSourceLocal,
+        requestTemplate: function (q) { return q; },
+        resultLocator  : null,
+        resultFormatter: null
     });
 }
 
@@ -293,8 +303,8 @@ function useNone() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource: null,
-        resultFilterLocator: null,
+        dataSource     : null,
+        resultLocator  : null,
         resultFormatter: null
     });
 }
@@ -305,10 +315,10 @@ function useFlickr() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource         : dataSourceFlickr,
-        requestTemplate    : 'q=' + encodeURIComponent('select * from flickr.photos.search where tags="') + '{query}' + encodeURIComponent('"'),
-        resultFilterLocator: 'title',
-        resultFormatter    : flickrFormatter
+        dataSource     : dataSourceFlickr,
+        requestTemplate: 'q=' + encodeURIComponent('select * from flickr.photos.search where tags="') + '{query}' + encodeURIComponent('"'),
+        resultLocator  : 'title',
+        resultFormatter: flickrFormatter
     });
 }
 
@@ -318,10 +328,10 @@ function useSearch() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource         : dataSourceSearch,
-        requestTemplate    : 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'),
-        resultFilterLocator: null,
-        resultFormatter    : null
+        dataSource     : dataSourceSearch,
+        requestTemplate: 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'),
+        resultLocator  : null,
+        resultFormatter: null
     });
 }
 
