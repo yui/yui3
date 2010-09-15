@@ -64,6 +64,8 @@
 
 <span class="kd">var</span> <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
 
+    <span class="nx">VALUE</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+
 <span class="c1">// Just a simple namespace to make methods overridable.</span>
 <span class="nx">VC</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1">// -- Static Constants -----------------------------------------------------</span>
@@ -160,6 +162,11 @@
         <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">);</span>
     <span class="p">},</span>
 
+    <span class="nx">_onFocus</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">);</span>
+    <span class="p">},</span>
+
     <span class="nx">_onKeyDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
     <span class="p">},</span>
@@ -180,10 +187,11 @@
         <span class="kd">var</span> <span class="nx">stamp</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
             <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
 
-        <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">);</span>
 
         <span class="nx">notifier</span><span class="p">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
             <span class="nx">blur</span>     <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onBlur</span><span class="p">,</span>
+            <span class="nx">focus</span>    <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onFocus</span><span class="p">,</span>
             <span class="nx">keydown</span>  <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyDown</span><span class="p">,</span>
             <span class="nx">keyup</span>    <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyUp</span><span class="p">,</span>
             <span class="nx">mousedown</span><span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onMouseDown</span>
