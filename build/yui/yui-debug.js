@@ -898,6 +898,20 @@ Y.log('Instance is not provisioned to fetch missing mods: ' +
             }
         }
         return uid;
+    },
+
+    /**
+     * Destroys the YUI instance
+     * @method destroy
+     * @since 3.3.0
+     */
+    destroy: function() {
+        var Y = this;
+        if (Y.Event) {
+            Y.Event._unload();
+        }
+        delete instances[Y.id];
+        delete Y.Env;
     }
 };
 
