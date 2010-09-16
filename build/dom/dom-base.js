@@ -685,7 +685,7 @@ Y.DOM = {
             }
         });
 
-        Y.DOM.creators.style = Y.DOM.creators.script;
+        Y.DOM.creators.link = Y.DOM.creators.style = Y.DOM.creators.script;
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
