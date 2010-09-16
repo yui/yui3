@@ -240,7 +240,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @method _add
      * @param {Array|Node|HTMLElement|String} items Result item or array of
      *   result items.
-     * @returns {NodeList} Added nodes.
+     * @return {NodeList} Added nodes.
      * @protected
      */
     _add: function (items) {
@@ -315,7 +315,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @method _createItemNode
      * @param {Object} result Result object.
      * @protected
-     * @returns {Node} Item node.
+     * @return {Node} Item node.
      */
     _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
@@ -331,7 +331,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * empty.
      *
      * @method _getLastItemNode
-     * @returns {Node|null}
+     * @return {Node|null}
      * @protected
      */
     _getLastItemNode: function () {
@@ -343,7 +343,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * empty.
      *
      * @method _getFirstItemNode
-     * @returns {Node|null}
+     * @return {Node|null}
      * @protected
      */
     _getFirstItemNode: function () {
