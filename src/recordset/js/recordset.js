@@ -84,20 +84,20 @@ Y.extend(Recordset, Y.Base, {
 	 * (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
      *
      * @method _recordSetUpdated
-     * @param i {Number} (optional) Index at which the modifications to the recordset were made
+     * @param idx {Number} Index at which the modifications to the recordset were made
      * @private
      */
-	_recordsetChanged: function(i) {
+	_recordsetChanged: function(idx) {
 		Y.log('recordsetChangedEvent fired');
-		this.fire('recordsetChangedEvent', i);
+		this.fire('recordsetChangedEvent', {index: idx});
 	},
 	
 	/**
      * Event that is fired whenever the a record is added to the recordset. Multiple simultaneous changes still fires this event once.
      *
      * @method _recordAdded
-	 * @param oRecord {Y.Record || Array of Y.Record} The record that was added, or an array of records added
-     * @param i {Number} (optional) Index at which the modifications to the recordset were made
+	 * @param oRecord {Array} The record that was added, or an array of records added
+     * @param i {Number} Index at which the modifications to the recordset were made
      * @private
      */
 	_recordAdded: function(oRecord, i) {
@@ -106,16 +106,16 @@ Y.extend(Recordset, Y.Base, {
 	},
 	
 	/**
-     * Event that is fired whenever the a record is deleted from the recordset. Multiple simultaneous changes still fires this event once.
+     * Event that is fired whenever the a record is removed from the recordset. Multiple simultaneous changes still fires this event once.
      *
      * @method _recordDeleted
-	 * @param oRecord {Y.Record || Array of Y.Record} The record that was deleted or an array of records deleted
-     * @param i {Number} (optional) Index at which the modifications to the recordset were made
+	 * @param oRecord {Array} An array of Y.Records that were deleted
+     * @param idx {Number} Index at which the modifications to the recordset were made
      * @private
      */
-	_recordDeleted: function(oRecord, i) {
-		this.fire('recordsetDeletedEvent', {data:oRecord, index: i});
-		Y.log('recordsetDeleted Event Fired');
+	_recordRemoved: function(oRecord, idx) {
+		this.fire('recordsetRemovedEvent', {data:oRecord, index: idx});
+		Y.log('recordsetRemoved Event Fired');
 	},
 	
 	/**
@@ -230,48 +230,38 @@ Y.extend(Recordset, Y.Base, {
 	},
 	
 	/**
-     * Deletes one or more Records to the RecordSet at the given index. If index is null,
-     * then deletes a single Record from the end of the RecordSet.
+     * Removes one or more Records to the RecordSet at the given index. If index is null,
+     * then removes a single Record from the end of the RecordSet.
      *
-     * @method deleteRecord
+     * @method remove
      * @param index {Number} (optional) Index at which to remove the record(s) from
      * @param range {Number} (optional) Number of records to remove (including the one at the index)
      * @return {object} An object literal with two properties: "data" which contains the removed set {Y.Record or Y.Recordset} and "index" which contains the index where the Y.Record(s) were removed from
      * @public
      */
-	deleteRecord: function(index, range) {
-		var i=0, delRecords=[];
+	remove: function(index, range) {
+		var remRecords=[];
 		
-		//Default is remove only the last record
+		//Default is to only remove the last record
 		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
 		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
+
+		//Remove records and store them in remRecords
+		remRecords = this.get('records').splice(index,range);
 		
-		// for ( ; i < range; i++) {
-		// 	
-		// 	//Deep clone the records that are going to be deleted, and populate the delRecords array with them
-		// 	delRecords.push(Y.clone(this.get('records')[index+i]));
-		// }
-		
-		//Remove the cloned records
-		delRecords = this.get('records').splice(index,range);
-		
-		//If there is only 1 Record object in the array, return the object. Else, return entire array
-		this._recordDeleted(delRecords, index);
+		//Fire events
+		this._recordRemoved(remRecords, index);
 		this._recordsetChanged(index);
 		
-		return ({data: delRecords, index:index});
+		return ({data: remRecords, index:index}); 
 		
 
 	},
 	
 	/**
-     * Deletes one or more Records to the RecordSet at the given index. If index is null,
-     * then deletes a single Record from the end of the RecordSet.
+     * Empties the recordset
      *
-     * @method deleteRecord
-     * @param index {Number} (optional) Index at which to remove the record(s) from
-     * @param range {Number} (optional) Number of records to remove (including the one at the index)
-     * @return {object} An object literal with two properties: "data" which contains the removed set {Y.Record or Y.Recordset} and "index" which contains the index where the Y.Record(s) were removed from
+     * @method empty
      * @public
      */
 	empty: function() {
@@ -280,9 +270,11 @@ Y.extend(Recordset, Y.Base, {
 		
 		//TODO: What index should be sent to recordSetUpdatedEvent when the recordset is emptied?
 		this._recordsetChanged(0);
+		
+		return null
 	},
 	
-	updateRecord: function(record, index) {
+	update: function(record, index, overwriteFlag) {
 		oRecord = this.getRecord(index);
 		this.get('records').splice(index,1,record);
 		

@@ -180,7 +180,7 @@
 			testDeleteSingleRecordFromEnd: function() {
 				this.recordsetChangedEventTest();
 				
-				retval = this.rs.deleteRecord(2);
+				retval = this.rs.remove(2);
 				Y.Assert.areEqual(this.initialData[2], retval.data.getValue());
 				Y.Assert.areEqual(2, retval.index);
 			}, 
@@ -188,7 +188,7 @@
 			testDeleteSingleRecordFromIndex: function() {
 				this.recordsetChangedEventTest();
 				
-				retval = this.rs.deleteRecord(1);
+				retval = this.rs.remove(1);
 				Y.Assert.areEqual(this.initialData[1], retval.data.getValue());
 				Y.Assert.areEqual(1, retval.index);
 			},
@@ -197,7 +197,7 @@
 				//Delete 2 records from index 1
 				this.recordsetChangedEventTest();
 				
-				retval = this.rs.deleteRecord(1,2);
+				retval = this.rs.remove(1,2);
 				Y.Assert.areEqual(this.initialData[1], retval.data[0].getValue());
 				Y.Assert.areEqual(this.initialData[2], retval.data[1].getValue());
 				Y.Assert.areEqual(1, retval.index);
