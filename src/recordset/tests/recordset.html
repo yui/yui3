@@ -113,7 +113,7 @@
 
             testAddSingleRecordToEnd: function() {
 				var recToAdd = {a:'8', b:'9', c:'10'};
-				retval = this.rs.addRecord(recToAdd);
+				retval = this.rs.add(recToAdd);
 				
 				//Test Recordset Length
 				Y.Assert.areEqual(4, this.rs.get('records').length, "Array lengths not equal.");
@@ -131,7 +131,7 @@
 				recToAdd = {a:'8', b:'9', c:'10'};
 				i = 2;
 				
-				retval = this.rs.addRecord(recToAdd,i);
+				retval = this.rs.add(recToAdd,i);
 				Y.Assert.areEqual(recToAdd, this.rs.getRecord(i).getValue());
 				
 				//assertion with output
@@ -145,7 +145,7 @@
 			
 			testAddMultipleRecordsToEnd: function() {
 				var recsToAdd = [{a:'11', b:'22', c:'33'}, {a:'44', b:'55', c:'66'}];
-				retval = this.rs.addRecord(recsToAdd);
+				retval = this.rs.add(recsToAdd);
 				
 				//Assertions with recordset
 				Y.Assert.areEqual(recsToAdd[0], this.rs.getRecord(3).getValue());
@@ -164,7 +164,7 @@
 				recsToAdd = [{a:'11', b:'22', c:'33'}, {a:'44', b:'55', c:'66'}];
 				i = 1;
 				
-				retval = this.rs.addRecord(recsToAdd, i);
+				retval = this.rs.add(recsToAdd, i);
 				
 				//Assertions with recordset
 				Y.Assert.areEqual(recsToAdd[0], this.rs.getRecord(1).getValue());

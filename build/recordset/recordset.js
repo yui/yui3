@@ -116,15 +116,15 @@ Y.extend(Recordset, Y.Base, {
     },
 	
 	/**
-     * Utility method called upon by addRecord() - it is used to create a new record(s) in the recordset
+     * Utility method called upon by add() - it is used to create a new record(s) in the recordset
      *
-     * @method _addRecord
+     * @method _add
      * @param aRecord {Y.Record} A Y.Record instance
      * @param index {Number} (optional) Index at which to add the record(s)
      * @return {Y.Record} A Record instance.
      * @private
      */
-	_addRecord: function(aRecord, index) {
+	_add: function(aRecord, index) {
 		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
 		this.get('records').splice(index,0,aRecord);
 		
@@ -204,7 +204,15 @@ Y.extend(Recordset, Y.Base, {
         return this.get("records")[index];
     },
 	
-	
+	/**
+     * Returns a range of records beginning at particular index
+     *
+     * @method getRecord
+     * @param index {Number} Index at which the required record resides
+	 * @param range {Number} (Optional) Number of records to retrieve. The default is 1
+     * @return {Array} An array of Y.Record instances
+     * @public
+     */
 	getRecords: function(index, range) {
 		var i=0, returnedRecords = [];
 		//Range cannot take on negative values
@@ -234,13 +242,13 @@ Y.extend(Recordset, Y.Base, {
      * Adds one or more Records to the RecordSet at the given index. If index is null,
      * then adds the Records to the end of the RecordSet.
      *
-     * @method addRecord
+     * @method add
      * @param oData {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
      * @param index {Number} (optional) Index at which to add the record(s)
      * @return {object} An object literal with two properties: "data" which contains array of Y.Record(s) and "index" which contains the index where the Y.Record(s) were added
      * @public
      */
-	addRecord: function(oData, index) {
+	add: function(oData, index) {
 		
 		var oRecord, newRecords=[], idx, i;		
 		
@@ -251,26 +259,25 @@ Y.extend(Recordset, Y.Base, {
 			
 			for(i=0; i < oData.length; i++) {
 					oRecord = new Y.Record({data:oData[i]});
-					newRecords[i] = this._addRecord(oRecord, idx);
+					newRecords[i] = this._add(oRecord, idx);
 					delete oRecord;
 					idx++;
 			}
 
 		}
-		
 		//If it is an object literal of data
 		else if (Y.Lang.isObject(oData) && !(oData instanceof Y.Record)) {
 			oRecord = new Y.Record({data:oData});
-			newRecords[0] = this._addRecord(oRecord, index);
+			newRecords[0] = this._add(oRecord, index);
 		}
 		
 		//it is an instance of Y.Record - checking explicitly here so nothing weird gets through
 		else if (oData instanceof Y.Record){
-			 newRecords[0] = this._addRecord(oRecord, index);
+			 newRecords[0] = this._add(oRecord, index);
 		}
-		
 		this._recordAdded(newRecords, index);
 		this._recordsetChanged(index);
+		
 		//return an object literal, containing array of new Y.Record instances
 		return ({data: newRecords, index:index});
 	},
