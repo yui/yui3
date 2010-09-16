@@ -1,9 +1,9 @@
-/**
+/*
 * The Transition Utility provides an API for creating advanced transitions.
 * @module transition
 */
 
-/**
+/*
 * Provides the base Transition class, for animating numeric properties.
 *
 * @module transition
@@ -171,7 +171,7 @@ Y.mix(Transition.prototype, {
 
 Y.mix(Y.Transition, {
     _runtimeAttrs: {},
-    /**
+    /*
      * Regex of properties that should use the default unit.
      *
      * @property RE_DEFAULT_UNIT
@@ -179,7 +179,7 @@ Y.mix(Y.Transition, {
      */
     RE_DEFAULT_UNIT: /^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i,
 
-    /**
+    /*
      * The default unit to use with properties that pass the RE_DEFAULT_UNIT test.
      *
      * @property DEFAULT_UNIT
@@ -187,7 +187,7 @@ Y.mix(Y.Transition, {
      */
     DEFAULT_UNIT: 'px',
 
-    /**
+    /*
      * Time in milliseconds passed to setInterval for frame processing 
      *
      * @property intervalTime
@@ -196,7 +196,7 @@ Y.mix(Y.Transition, {
      */
     intervalTime: 20,
 
-    /**
+    /*
      * Bucket for custom getters and setters
      *
      * @property behaviors
@@ -210,7 +210,7 @@ Y.mix(Y.Transition, {
         }
     },
 
-    /**
+    /*
      * The default setter to use when setting object properties.
      *
      * @property DEFAULT_SETTER
@@ -235,7 +235,7 @@ Y.mix(Y.Transition, {
         }
     },
 
-    /**
+    /*
      * The default getter to use when getting object properties.
      *
      * @property DEFAULT_GETTER
@@ -267,7 +267,7 @@ Y.mix(Y.Transition, {
         Transition._timer = null;
     },
 
-    /**
+    /*
      * Called per Interval to handle each animation frame.
      * @method _runFrame
      * @private

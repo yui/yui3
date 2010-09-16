@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>tabview&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
+        <h3>tabview&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_tabview.html" title="tabview">tabview</a>
                 
@@ -248,7 +248,9 @@
 
     <span class="nx">HTML_PARSER</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">selected</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">selectedTab</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">selectedTab</span><span class="p">))</span> <span class="o">?</span>
+                        <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
@@ -320,6 +322,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class="selected"><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-gestures&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
+        <h3>event-gestures&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-gestures.html" title="event-gestures">event-gestures</a>
                 
@@ -53,7 +53,7 @@
 <span class="cm"> * to build input device agnostic components which behave the same in response to either touch or mouse based  </span>
 <span class="cm"> * interaction.</span>
 <span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;Documentation for events added by this module can be found in the event document for the &lt;a href=&quot;YUI.html#events&quot;&gt;YUI&lt;/event&gt; global.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;Documentation for events added by this module can be found in the event document for the &lt;a href=&quot;YUI.html#events&quot;&gt;YUI&lt;/a&gt; global.&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module event-gestures</span>
 <span class="cm"> */</span>
@@ -109,7 +109,7 @@
 <span class="cm"> * &lt;dd&gt;The minimum distance between start and end points, which would qualify the gesture as a flick.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;dt&gt;minVelocity (in pixels/ms, defaults to 0)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;The minimum velocity which would qualify the gesture as a flick.&lt;/dd&gt;</span>
-<span class="cm"> * &lt;dt&gt;preventDefault (defaults to true)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dt&gt;preventDefault (defaults to false)&lt;/dt&gt;</span>
 <span class="cm"> * &lt;dd&gt;Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be </span>
 <span class="cm"> * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.&lt;/dd&gt;</span>
 <span class="cm"> * &lt;dt&gt;axis (no default)&lt;/dt&gt;</span>
@@ -163,8 +163,6 @@
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">PREVENT_DEFAULT</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">params</span><span class="p">[</span><span class="nx">PREVENT_DEFAULT</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">PREVENT_DEFAULT</span><span class="p">;</span>
         <span class="p">}</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;flick, processArgs : minDistance =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minDistance</span> <span class="o">+</span> <span class="s2">&quot;, minVelocity =&quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">minVelocity</span> <span class="o">+</span> <span class="s2">&quot;, preventDefault = &quot;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
     <span class="p">},</span>
@@ -281,7 +279,7 @@
 
     <span class="nx">MIN_VELOCITY</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="nx">MIN_DISTANCE</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">true</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">false</span>
 <span class="p">});</span>
 </pre></div>
 
@@ -350,6 +348,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

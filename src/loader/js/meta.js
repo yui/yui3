@@ -12,10 +12,10 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.09.01-19-12',
+            GALLERY_VERSION = 'gallery-2010.09.15-18-40',
             // GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
-            TNT_VERSION     = '3',
+            TNT_VERSION     = '4',
             YUI2_VERSION    = '2.8.1',
             // YUI2_ROOT       = TNT + '.' + TNT_VERSION + '/' + YUI2_VERSION + BUILD,
             COMBO_BASE      = CDN_BASE + 'combo?',
@@ -26,18 +26,18 @@ if (!YUI.Env[Y.version]) {
                               skin:      { defaultSkin: 'sam',
                                            base:        'assets/skins/',
                                            path:        'skin.css',
-                                           after:       [ 'cssreset', 
-                                                          'cssfonts', 
-                                                          'cssgrids', 
-                                                          'cssbase', 
-                                                          'cssreset-context', 
+                                           after:       [ 'cssreset',
+                                                          'cssfonts',
+                                                          'cssgrids',
+                                                          'cssbase',
+                                                          'cssreset-context',
                                                           'cssfonts-context' ] },
                               groups:    {},
                               // modules:   { / METAGEN / },
                               patterns:  {}                                     },
             groups =          META.groups,
             yui2Update =      function(tnt, yui2) {
-                                  var root = TNT + '.' + 
+                                  var root = TNT + '.' +
                                             (tnt || TNT_VERSION) + '/' + (yui2 || YUI2_VERSION) + BUILD;
                                   groups.yui2.base = CDN_BASE + root;
                                   groups.yui2.root = root;
@@ -68,7 +68,7 @@ if (!YUI.Env[Y.version]) {
             // root:      YUI2_ROOT,
             comboBase: COMBO_BASE,
             update:    yui2Update,
-            patterns:  { 
+            patterns:  {
                 'yui2-': {
                     configFn: function(me) {
                         if(/-skin|reset|fonts|grids|base/.test(me.name)) {
@@ -78,7 +78,7 @@ if (!YUI.Env[Y.version]) {
                             me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
                         }
                     }
-                } 
+                }
             }
         };
 

@@ -1,26 +1,12 @@
 YUI.add('transition-native', function(Y) {
 
 /**
-* The Native Transition Utility provides an API wrapper for CSS transitions.
-* It is also the base module for the timer-based transition module.
-* @module transition
-*/
-
-/**
-* Provides the base Transition class.  The "transition" method is added to Node,
-* and is how Transition should be used.
+* Provides the transition method for Node.
+* Transition has no API of its own, but adds the transition method to Node.
 *
 * @module transition
-* @submodule transition-native
+* @requires node
 */
-
-/**
- * A class for constructing transition instances.
- * Adds the "transition" method to Node.
- * @class Transition
- * @constructor
- * @see Node 
- */
 
 var TRANSITION = '-webkit-transition',
     TRANSITION_PROPERTY_CAMEL = 'WebkitTransition',
@@ -32,6 +18,13 @@ var TRANSITION = '-webkit-transition',
     TRANSFORM_CAMEL = 'WebkitTransform',
 
     EMPTY_OBJ = {},
+
+/**
+ * A class for constructing transition instances.
+ * Adds the "transition" method to Node.
+ * @class Transition
+ * @constructor
+ */
 
 Transition = function() {
     this.init.apply(this, arguments);
@@ -77,7 +70,7 @@ Y.Node.DOM_EVENTS[TRANSITION_END] = 1;
 
 Transition.NAME = 'transition';
 
-Transition.DEFAULT_EASING = 'ease-in-out';
+Transition.DEFAULT_EASING = 'ease';
 Transition.DEFAULT_DURATION = 0.5;
 Transition.DEFAULT_DELAY = 0;
 
@@ -187,6 +180,7 @@ Transition.prototype = {
      * Starts or an animation.
      * @method run
      * @chainable
+     * @private
      */    
     run: function(callback) {
         var anim = this;
@@ -350,24 +344,29 @@ Y.Transition = Transition;
 Y.TransitionNative = Transition; // TODO: remove
 
 /** 
-    Animate one or more css properties to a given value. Requires the "transition" module.
-    <pre>example usage:
-        Y.one('#demo').transition({
-            duration: 1, // seconds
-            easing: 'ease-out',
-            height: '10px',
-            width: '10px',
-            opacity: { // per property duration and/or easing
-                value: 0,
-                duration: 2,
-                easing: 'ease-in'
-            }
-        });
-    </pre>
-    @for Node
-    @method transition
-    @param {Object} An object containing one or more style properties, a duration and an easing.
-    @chainable
+ *   Animate one or more css properties to a given value. Requires the "transition" module.
+ *   <pre>example usage:
+ *       Y.one('#demo').transition({
+ *           duration: 1, // in seconds, default is 0.5
+ *           easing: 'ease-out', // default is 'ease'
+ *           delay: '1', // delay start for 1 second, default is 0
+ *
+ *           height: '10px',
+ *           width: '10px',
+ *
+ *           opacity: { // per property
+ *               value: 0,
+ *               duration: 2,
+ *               delay: 2,
+ *               easing: 'ease-in'
+ *           }
+ *       });
+ *   </pre>
+ *   @for Node
+ *   @method transition
+ *   @param {Object} config An object containing one or more style properties, a duration and an easing.
+ *   @param {Function} callback A function to run after the transition has completed. 
+ *   @chainable
 */
 Y.Node.prototype.transition = function(config, callback) {
     var anim = this._transition;
@@ -382,7 +381,32 @@ Y.Node.prototype.transition = function(config, callback) {
     return this;
 };
 
-
+/** 
+ *   Animate one or more css properties to a given value. Requires the "transition" module.
+ *   <pre>example usage:
+ *       Y.all('.demo').transition({
+ *           duration: 1, // in seconds, default is 0.5
+ *           easing: 'ease-out', // default is 'ease'
+ *           delay: '1', // delay start for 1 second, default is 0
+ *
+ *           height: '10px',
+ *           width: '10px',
+ *
+ *           opacity: { // per property
+ *               value: 0,
+ *               duration: 2,
+ *               delay: 2,
+ *               easing: 'ease-in'
+ *           }
+ *       });
+ *   </pre>
+ *   @for NodeList
+ *   @method transition
+ *   @param {Object} config An object containing one or more style properties, a duration and an easing.
+ *   @param {Function} callback A function to run after the transition has completed. The callback fires
+ *       once per item in the NodeList.
+ *   @chainable
+*/
 Y.NodeList.prototype.transition = function(config, callback) {
     this.each(function(node) {
         node.transition(config, callback);
@@ -395,12 +419,12 @@ Y.NodeList.prototype.transition = function(config, callback) {
 }, '@VERSION@' ,{requires:['node-base']});
 YUI.add('transition-timer', function(Y) {
 
-/**
+/*
 * The Transition Utility provides an API for creating advanced transitions.
 * @module transition
 */
 
-/**
+/*
 * Provides the base Transition class, for animating numeric properties.
 *
 * @module transition
@@ -568,7 +592,7 @@ Y.mix(Transition.prototype, {
 
 Y.mix(Y.Transition, {
     _runtimeAttrs: {},
-    /**
+    /*
      * Regex of properties that should use the default unit.
      *
      * @property RE_DEFAULT_UNIT
@@ -576,7 +600,7 @@ Y.mix(Y.Transition, {
      */
     RE_DEFAULT_UNIT: /^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i,
 
-    /**
+    /*
      * The default unit to use with properties that pass the RE_DEFAULT_UNIT test.
      *
      * @property DEFAULT_UNIT
@@ -584,7 +608,7 @@ Y.mix(Y.Transition, {
      */
     DEFAULT_UNIT: 'px',
 
-    /**
+    /*
      * Time in milliseconds passed to setInterval for frame processing 
      *
      * @property intervalTime
@@ -593,7 +617,7 @@ Y.mix(Y.Transition, {
      */
     intervalTime: 20,
 
-    /**
+    /*
      * Bucket for custom getters and setters
      *
      * @property behaviors
@@ -607,7 +631,7 @@ Y.mix(Y.Transition, {
         }
     },
 
-    /**
+    /*
      * The default setter to use when setting object properties.
      *
      * @property DEFAULT_SETTER
@@ -632,7 +656,7 @@ Y.mix(Y.Transition, {
         }
     },
 
-    /**
+    /*
      * The default getter to use when getting object properties.
      *
      * @property DEFAULT_GETTER
@@ -664,7 +688,7 @@ Y.mix(Y.Transition, {
         Transition._timer = null;
     },
 
-    /**
+    /*
      * Called per Interval to handle each animation frame.
      * @method _runFrame
      * @private

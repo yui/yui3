@@ -1,5 +1,9 @@
-version 3.2.0 PR1
-- CSS "transform" vendor prefix is optional with set/getStyle
+version 3.2.0
+- CSS "transform" vendor prefix is now optional with set/getStyle
+- #2528747 Dom references document
+- #2529112 More validation on myNode.one()
+- #2529157 inDoc causes error in IE if used on form containing input with name=id
+- #2529232 IE6/IE7 (proper) fails inDoc check for cloned nodes
 
 version 3.1.1
 - Fixed viewportRegion() information in API doc (ticket #2528756)

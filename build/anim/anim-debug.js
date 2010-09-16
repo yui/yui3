@@ -1108,17 +1108,10 @@ var Easing = {
     }
 };
 
-// mappings for native css timing functions
-Easing.ease = Easing.easeBoth;
-Easing.linear = Easing.none;
-Easing['ease-in'] = Easing.easeIn;
-Easing['ease-out'] = Easing.easeOut;
-Easing['ease-in-out'] = Easing.easeBothStrong;
-
 Y.Easing = Easing;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['anim-base']});
 YUI.add('anim-node-plugin', function(Y) {
 
 /**

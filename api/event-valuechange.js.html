@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-valuechange&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
+        <h3>event-valuechange&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-valuechange.html" title="event-valuechange">event-valuechange</a>
                 
@@ -63,6 +63,8 @@
 <span class="cm"> */</span>
 
 <span class="kd">var</span> <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+
+    <span class="nx">VALUE</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
 
 <span class="c1">// Just a simple namespace to make methods overridable.</span>
 <span class="nx">VC</span> <span class="o">=</span> <span class="p">{</span>
@@ -160,6 +162,11 @@
         <span class="nx">VC</span><span class="p">.</span><span class="nx">_stopPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">);</span>
     <span class="p">},</span>
 
+    <span class="nx">_onFocus</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">);</span>
+    <span class="p">},</span>
+
     <span class="nx">_onKeyDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">VC</span><span class="p">.</span><span class="nx">_startPolling</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
     <span class="p">},</span>
@@ -180,10 +187,11 @@
         <span class="kd">var</span> <span class="nx">stamp</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
             <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_notifiers</span><span class="p">[</span><span class="nx">stamp</span><span class="p">];</span>
 
-        <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
+        <span class="nx">VC</span><span class="p">.</span><span class="nx">_history</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">);</span>
 
         <span class="nx">notifier</span><span class="p">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
             <span class="nx">blur</span>     <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onBlur</span><span class="p">,</span>
+            <span class="nx">focus</span>    <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onFocus</span><span class="p">,</span>
             <span class="nx">keydown</span>  <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyDown</span><span class="p">,</span>
             <span class="nx">keyup</span>    <span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onKeyUp</span><span class="p">,</span>
             <span class="nx">mousedown</span><span class="o">:</span> <span class="nx">VC</span><span class="p">.</span><span class="nx">_onMouseDown</span>
@@ -231,7 +239,7 @@
 <span class="cm"> * &lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;</span>
-<span class="cm"> * This event is provided by the &lt;code&gt;value-change&lt;/code&gt; module.</span>
+<span class="cm"> * This event is provided by the &lt;code&gt;event-valuechange&lt;/code&gt; module.</span>
 <span class="cm"> * &lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;</span>
@@ -239,7 +247,7 @@
 <span class="cm"> * &lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * &lt;code&gt;&lt;pre&gt;</span>
-<span class="cm"> * YUI().use(&#39;value-change&#39;, function (Y) {</span>
+<span class="cm"> * YUI().use(&#39;event-valuechange&#39;, function (Y) {</span>
 <span class="cm"> * &amp;nbsp;&amp;nbsp;Y.one(&#39;input&#39;).on(&#39;valueChange&#39;, function (e) {</span>
 <span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// Handle valueChange events on the first input element on the page.</span>
 <span class="cm"> * &amp;nbsp;&amp;nbsp;});</span>
@@ -342,6 +350,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

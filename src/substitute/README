@@ -1,6 +1,15 @@
 YUI substitute
     A string templating utility
 
+3.2.0
+    * No change to this utility, but Y.Lang.sub was added to the YUI core.  This
+      is a lightweight version of the substitute utility that follows the same
+      templating syntax, but lacks recursive replacements, object dumping, and
+      string formatting.  The advantage is that it is very small, and available
+      in the YUI core -- perhaps the regular expression implementation will be 
+      faster than the string manipulation that happens in substitute in some
+      situations.
+
 3.1.1
     * No change
 

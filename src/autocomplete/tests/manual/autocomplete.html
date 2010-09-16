@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+    Note: if you're viewing source to learn how to use AutoComplete, you should
+    be aware that this is a much more complex example than you'd ever be likely
+    to implement in a real-world use case, since this manual test page tries to
+    cover the majority of AutoComplete's available functionality.
+
+    Please don't let this scare you off!
+    -->
+    <meta charset="utf-8">
+    <title>AutoComplete manual test</title>
+    <!-- <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css">
+    <link rel="stylesheet" href="../../../../build/cssbase/base-min.css"> -->
+    <link rel="stylesheet" href="../assets/test-console.css">
+    <!-- for design iteration -->
+    <!-- <link rel="stylesheet" href="../../assets/autocomplete-list-core.css">
+    <link rel="stylesheet" href="../../assets/skins/sam/autocomplete-list-skin.css"> -->
+    <style>
+    html {
+        background: #fff;
+        color: #333;
+        font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+        font-size: 13px;
+    }
+
+    body { width: 60%; }
+
+    fieldset {
+        border: 1px solid #afafaf;
+        margin-top: 1em;
+    }
+
+    fieldset label { margin-right: 0.5em; }
+
+    #ac-input {
+        margin: 5px 0 10px;
+        width: 300px;
+    }
+
+    #log { margin-top: 4em; }
+
+    .flickr {
+        height: 32px;
+        overflow: hidden;
+        padding: 2px;
+        text-decoration: none;
+    }
+
+    .flickr img {
+        float: left;
+        height: 32px;
+        margin: 0 4px;
+        width: 32px;
+    }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<h1>AutoComplete manual test</h1>
+
+<form id="ac-form">
+    <div id="ac">
+        <label for="ac-input">Type things here! Try the name of a US state.</label><br>
+        <input type="text" id="ac-input">
+        <div id="ac-list"></div>
+    </div>
+
+    <fieldset id="data-sources">
+        <legend>DataSource</legend>
+        <div>
+            <input type="radio" id="ds-none" name="ds" value="none">
+            <label for="ds-none">None</label>
+
+            <input type="radio" id="ds-local" name="ds" value="local" checked="checked">
+            <label for="ds-local">Local</label>
+
+            <input type="radio" id="ds-flickr" name="ds" value="flickr">
+            <label for="ds-flickr">Remote (Flickr)</label>
+
+            <input type="radio" id="ds-search" name="ds" value="search">
+            <label for="ds-search">Remote (Y! Search)</label>
+        </div>
+    </fieldset>
+
+    <fieldset id="filters">
+      <legend>Result Filters</legend>
+      <div></div>
+    </fieldset>
+
+    <fieldset id="highlighters">
+      <legend>Result Highlighters</legend>
+      <div>
+          <input type="radio" class="highlighter" name="highlighter" id="highlighter_none" value="none" checked="checked">
+          <label for="highlighter_none">None</label>
+      </div>
+    </fieldset>
+</form>
+
+<div id="log"></div>
+
+<script src="../assets/test-data.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+    filters: {
+        'autocomplete': 'debug',
+        'autocomplete-base': 'debug',
+        'autocomplete-list': 'debug'
+    },
+
+    useBrowserConsole: false,
+
+    // For design iteration.
+    ignore: [
+        // 'skin-sam-autocomplete',
+        // 'skin-sam-autocomplete-list'
+    ]
+}).use(
+    'autocomplete',
+    'autocomplete-filters',
+    'autocomplete-highlighters',
+    'console-filters',
+    'datasource-get',
+    'datasource-jsonschema',
+    'datasource-local',
+    'dump',
+    'event-delegate',
+    'substitute',
+function (Y) {
+
+Y.one('#ac-form').reset();
+
+// -- Console setup ------------------------------------------------------------
+new Y.Console({
+    height: '400px',
+    width: '35%'
+}).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
+
+// -- AutoComplete setup -------------------------------------------------------
+var autoComplete = new Y.AutoCompleteList({
+        boundingBox: '#ac-list',
+        inputNode: '#ac-input'
+    }),
+
+    dataSourceFlickr = new Y.DataSource.Get({
+        source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
+    }),
+
+    dataSourceLocal = new Y.DataSource.Local({
+        source: ExampleData.arrayStates
+    }),
+
+    dataSourceSearch = new Y.DataSource.Get({
+        source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
+    });
+
+// For easier debugging.
+Y.ac = autoComplete;
+
+// -- DataSource config --------------------------------------------------------
+dataSourceFlickr.plug({
+    fn: Y.Plugin.DataSourceJSONSchema,
+    cfg: {
+        schema: {
+            resultListLocator: 'query.results.photo'
+        }
+    }
+});
+
+dataSourceSearch.plug({
+    fn: Y.Plugin.DataSourceJSONSchema,
+    cfg: {
+        schema: {
+            resultListLocator: 'query.results.Result'
+        }
+    }
+});
+
+// -- UI stuff -----------------------------------------------------------------
+var filtersDiv      = Y.one('#filters>div'),
+    highlightersDiv = Y.one('#highlighters>div');
+
+// Create filter checkboxes.
+Y.Object.each(Y.AutoCompleteFilters, function (filter, name) {
+    if (name.indexOf('_') === 0) {
+        return;
+    }
+
+    filtersDiv.append(
+        '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'phraseMatch' ? ' checked="checked"' : '') + '>' +
+        '<label for="filter_' + name + '">' + name + '</label>'
+    );
+});
+
+// Create highlighter radio buttons.
+Y.Object.each(Y.AutoCompleteHighlighters, function (highlighter, name) {
+    if (name.indexOf('_') === 0) {
+        return;
+    }
+
+    highlightersDiv.append(
+        '<input type="radio" class="highlighter" name="highlighter" id="highlighter_' + name + '" value="' + name + '"' + (name === 'phraseMatch' ? ' checked="checked"' : '') + '>' +
+        '<label for="highlighter_' + name + '">' + name + '</label>'
+    );
+});
+
+// Handle clicks on datasource radio buttons.
+Y.delegate('click', function (e) {
+    switch (e.currentTarget.get('value')) {
+    case 'none':
+        useNone();
+        break;
+
+    case 'local':
+        useLocal();
+        break;
+
+    case 'flickr':
+        useFlickr();
+        break;
+
+    case 'search':
+        useSearch();
+        break;
+    }
+}, '#data-sources', 'input[type="radio"]');
+
+// Handle clicks on filters.
+Y.delegate('click', setFilters, '#filters', 'input[type="checkbox"]');
+
+// Handle clicks on highlighters.
+Y.delegate('click', setHighlighter, '#highlighters', 'input[type="radio"]');
+
+useLocal();
+setFilters();
+setHighlighter();
+
+autoComplete.render();
+autoComplete.get('inputNode').focus();
+
+// -- UI functions -------------------------------------------------------------
+function flickrFormatter(query, raw, highlighted) {
+    return Y.Array.map(raw, function (result, i) {
+        var imgUrl = Y.substitute('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result);
+
+        result.linkUrl = Y.substitute('http://www.flickr.com/photos/{owner}/{id}', result);
+
+        return '<div class="flickr">' +
+                 '<img src="' + imgUrl + '" alt="thumbnail">' +
+                 '<span class="title">' + highlighted[i] + '</span>' +
+               '</div>';
+    });
+}
+
+function setFilters() {
+    var filters     = [],
+        filterNames = [];
+
+    Y.all('#filters input.filter').each(function (input) {
+        if (input.get('checked')) {
+            filterNames.push(input.get('value'));
+        }
+    });
+
+    Y.Array.each(filterNames, function (name) {
+        filters.push(Y.AutoCompleteFilters[name]);
+    });
+
+    autoComplete.set('resultFilters', filters);
+}
+
+function setHighlighter() {
+    Y.all('#highlighters input.highlighter').some(function (input) {
+        var name;
+
+        if (input.get('checked')) {
+            name = input.get('value');
+            autoComplete.set('resultHighlighter', name === 'none' ? null :
+                    Y.AutoCompleteHighlighters[name]);
+            return true;
+        }
+    });
+}
+
+// -- DataSource functions -----------------------------------------------------
+function useLocal() {
+    Y.log('using local data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        dataSource     : dataSourceLocal,
+        requestTemplate: '{query}',
+        resultLocator  : null,
+        resultFormatter: null
+    });
+}
+
+function useNone() {
+    Y.log('using no data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        dataSource     : null,
+        resultLocator  : null,
+        resultFormatter: null
+    });
+}
+
+function useFlickr() {
+    Y.log('using remote Flickr data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        dataSource     : dataSourceFlickr,
+        requestTemplate: 'q=' + encodeURIComponent('select * from flickr.photos.search where tags="') + '{query}' + encodeURIComponent('"'),
+        resultLocator  : 'title',
+        resultFormatter: flickrFormatter
+    });
+}
+
+function useSearch() {
+    Y.log('using remote Y! Search data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        dataSource     : dataSourceSearch,
+        requestTemplate: 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'),
+        resultLocator  : null,
+        resultFormatter: null
+    });
+}
+
+});
+</script>
+
+</body>
+</html>

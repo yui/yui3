@@ -1,0 +1,1 @@
+YUI.add("autocomplete-plugin",function(B){var A=B.namespace("Plugin");function C(D){D=B.mix({},D,true);D.inputNode=D.host;AutoCompletePlugin.superclass.constructor.apply(this,arguments);}B.extend(C,B.AutoCompleteList,{},{NAME:"autocompleteListPlugin",NS:"aclist"});A.AutoComplete=C;A.AutoCompleteList=C;},"@VERSION@",{requires:["autocomplete-base","node-pluginhost"]});

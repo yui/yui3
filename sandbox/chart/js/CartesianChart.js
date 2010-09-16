@@ -674,12 +674,14 @@ Y.extend(CartesianChart, Y.Widget, {
             marker = Y.Widget.getByNode(node),
             index = marker.get("index"),
             series = marker.get("series"),
+            xAxis = series.get("xAxis"),
+            yAxis = series.get("yAxis"),
             xKey = series.get("xKey"),
             yKey = series.get("yKey"),
             msg = series.get("xDisplayName") + 
-            ": " + series.get("xAxis").getKeyValueAt(xKey, index) + 
+            ": " + xAxis.get("labelFunction")(xAxis.getKeyValueAt(xKey, index)) + 
             "<br/>" + series.get("yDisplayName") + 
-            ": " + series.get("yAxis").getKeyValueAt(yKey, index);
+            ": " + yAxis.get("labelFunction")(yAxis.getKeyValueAt(yKey, index));
             if (node) {
                 this.setTriggerContent(msg);
             }

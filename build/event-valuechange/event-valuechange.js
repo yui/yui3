@@ -17,6 +17,8 @@ YUI.add('event-valuechange', function(Y) {
 
 var YArray = Y.Array,
 
+    VALUE = 'value',
+
 // Just a simple namespace to make methods overridable.
 VC = {
     // -- Static Constants -----------------------------------------------------
@@ -110,6 +112,11 @@ VC = {
         VC._stopPolling(e.currentTarget);
     },
 
+    _onFocus: function (e) {
+        var node = e.currentTarget;
+        VC._history[Y.stamp(node)] = node.get(VALUE);
+    },
+
     _onKeyDown: function (e) {
         VC._startPolling(e.currentTarget, null, e);
     },
@@ -130,10 +137,11 @@ VC = {
         var stamp     = Y.stamp(node),
             notifiers = VC._notifiers[stamp];
 
-        VC._history[stamp] = node.get('value');
+        VC._history[stamp] = node.get(VALUE);
 
         notifier._handles = node.on({
             blur     : VC._onBlur,
+            focus    : VC._onFocus,
             keydown  : VC._onKeyDown,
             keyup    : VC._onKeyUp,
             mousedown: VC._onMouseDown
@@ -181,7 +189,7 @@ VC = {
  * </p>
  *
  * <p>
- * This event is provided by the <code>value-change</code> module.
+ * This event is provided by the <code>event-valuechange</code> module.
  * </p>
  *
  * <p>
@@ -189,7 +197,7 @@ VC = {
  * </p>
  *
  * <code><pre>
- * YUI().use('value-change', function (Y) {
+ * YUI().use('event-valuechange', function (Y) {
  * &nbsp;&nbsp;Y.one('input').on('valueChange', function (e) {
  * &nbsp;&nbsp;&nbsp;&nbsp;// Handle valueChange events on the first input element on the page.
  * &nbsp;&nbsp;});

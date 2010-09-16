@@ -576,7 +576,7 @@ YUI.add('selection', function(Y) {
                 items = [];
             
             nodes.each(function(n, k) {
-                if (n.getStyle(FONT_FAMILY, Y.Selection.TMP)) {
+                if (n.getStyle(FONT_FAMILY) ==  Y.Selection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
                     n.removeAttribute('face');
                     if (n.getAttribute('style') === '') {

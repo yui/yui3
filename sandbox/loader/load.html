@@ -31,9 +31,11 @@ if (typeof loadFirebugConsole == 'function') {
 }
 
 YUI({
-    filter: 'raw',
+    // filter: 'raw',
     combine: false
-}).use('event-key','widget',function(Y){
+//}).use('event-key','widget',function(Y){
+}).use('json-stringify',function(Y){
+    console.log(Y.Env._yidx);
 });
 
 

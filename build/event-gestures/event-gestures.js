@@ -6,7 +6,7 @@ YUI.add('event-flick', function(Y) {
  * to build input device agnostic components which behave the same in response to either touch or mouse based  
  * interaction.
  *
- * <p>Documentation for events added by this module can be found in the event document for the <a href="YUI.html#events">YUI</event> global.</p>
+ * <p>Documentation for events added by this module can be found in the event document for the <a href="YUI.html#events">YUI</a> global.</p>
  *
  * @module event-gestures
  */
@@ -62,7 +62,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
  * <dd>The minimum distance between start and end points, which would qualify the gesture as a flick.</dd>
  * <dt>minVelocity (in pixels/ms, defaults to 0)</dt>
  * <dd>The minimum velocity which would qualify the gesture as a flick.</dd>
- * <dt>preventDefault (defaults to true)</dt>
+ * <dt>preventDefault (defaults to false)</dt>
  * <dd>Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be 
  * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.</dd>
  * <dt>axis (no default)</dt>
@@ -116,7 +116,6 @@ Y.Event.define('flick', {
         if (!(PREVENT_DEFAULT in params)) {
             params[PREVENT_DEFAULT] = this.PREVENT_DEFAULT;
         }
-
 
         return params;
     },
@@ -233,7 +232,7 @@ Y.Event.define('flick', {
 
     MIN_VELOCITY : 0,
     MIN_DISTANCE : 0,
-    PREVENT_DEFAULT : true
+    PREVENT_DEFAULT : false
 });
 
 

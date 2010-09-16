@@ -9,9 +9,10 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            // IE doesn't simulate blur events properly, so this test fails.
+            // IE doesn't simulate blur events properly, so these tests fail.
             // Have to rely on manual testing.
-            'valueChange should stop polling on blur': Y.UA.ie && Y.UA.ie < 9
+            'valueChange should stop polling on blur': Y.UA.ie && Y.UA.ie < 9,
+            'valueChange should not report stale changes that occurred while a node was not focused': Y.UA.ie && Y.UA.ie < 9
         }
     },
 
@@ -101,6 +102,26 @@ suite.add(new Y.Test.Case({
             this.wait(function () {
                 Assert.isFalse(fired);
             }, 60);
+        }, 60);
+    },
+
+    'valueChange should not report stale changes that occurred while a node was not focused': function () {
+        var fired = false;
+
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'foo');
+
+        this.textInput.on('valueChange', function (e) {
+            fired = true;
+        });
+
+        this.textInput.simulate('blur');
+        this.textInput.set('value', 'bar');
+        this.textInput.simulate('focus');
+        this.textInput.simulate('mousedown');
+
+        this.wait(function () {
+            Assert.isFalse(fired);
         }, 60);
     },
 

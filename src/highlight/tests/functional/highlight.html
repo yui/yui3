@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+    modules: {
+        'test-console': {
+            fullpath : '../assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../assets/test-console.css',
+            type    : 'css'
+        },
+
+        'highlight-test': {
+            fullpath: 'highlight-test.js',
+            requires: ['highlight', 'test']
+        }
+    },
+    useBrowserConsole: false
+}).use('highlight-test', 'test-console', function (Y) {
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

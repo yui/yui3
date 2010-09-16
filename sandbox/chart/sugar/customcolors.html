@@ -33,13 +33,30 @@
     font-size:9px;
     font-weight:bold;
 }
+#mychart {
+    margin:10px 10px 10px 10px;
+    padding:10px 10px 10px 10px;
+    min-height:350px;
+}
+.code {
+    margin: 10px; 10px; 10px; 10px;
+    border: 1px solid #000;
+    height: 400px;
+    overflow: auto;
+}
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.2/build/cssfonts/fonts-min.css">
 </head>		
 <body class="yui3-skin-sam">
+<script type="text/javascript" src="http://yui.yahooapis.com/3.1.2/build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+<script type="text/javascript" src="../../tooltip/build/tooltip/tooltip.js"></script>
+<script type="text/javascript" src="../build/infographics/infographics.js"></script>
 <h3>Multiple Series</h3>
 <div id="mychart"></div>
+<h3 style="margin-left:10px">Code Snippet</h3>
+<div class="code">
 <pre>
         var myDataValues = [ 
             {date:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
@@ -49,7 +66,7 @@
             {date:"5/5/2010", values:5000, expenses:5000, revenue:2650}
         ];
         
-        var mychart = new Y.CartesianChart({dataProvider:myDataValues, 
+        var mychart = new Y.Chart({dataProvider:myDataValues, 
                                             axes:{
                                                 financials:{
                                                     keys:["revenue", "expenses"],
@@ -64,7 +81,7 @@
                                                         line:{color:"#333"},
                                                         rotation:0,
                                                         margin:{right:5},
-                                                        majorUnit:{count:10},
+                                                        majorUnit:{count:11},
                                                         roundingUnit:100
                                                     }
                                                 },
@@ -135,14 +152,9 @@
                                             ],
                                             render:"#mychart"});
 </pre>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.1.2/build/yui/yui-min.js"></script>
-<script type="text/javascript" src="../../graphics/build/dom/dom.js"></script>
-<script type="text/javascript" src="../../graphics/build/node/node.js"></script>
-<script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
-<script type="text/javascript" src="../../tooltip/build/tooltip/tooltip.js"></script>
-<script type="text/javascript" src="../build/infographics/infographics.js"></script>
+</div>
 <script type="text/javascript">            
-    YUI().use('dom', 'datatype', 'event-custom', "event-mouseenter", 'widget', "widget-position", "widget-stack", 'tooltip', 'graphics', 'infographics', 'cartesianchart', function (Y) 
+    YUI().use('infographics', function (Y) 
     { 
         var myDataValues = [ 
             {date:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
@@ -152,7 +164,7 @@
             {date:"5/5/2010", values:5000, expenses:5000, revenue:2650}
         ];
         
-        var mychart = new Y.CartesianChart({dataProvider:myDataValues, 
+        var mychart = new Y.Chart({dataProvider:myDataValues, 
                                             axes:{
                                                 financials:{
                                                     keys:["revenue", "expenses"],
@@ -167,7 +179,7 @@
                                                         line:{color:"#333"},
                                                         rotation:0,
                                                         margin:{right:5},
-                                                        majorUnit:{count:10},
+                                                        majorUnit:{count:11},
                                                         roundingUnit:100
                                                     }
                                                 },

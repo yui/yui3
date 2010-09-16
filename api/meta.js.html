@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -61,10 +61,10 @@
             <span class="nx">BUILD</span>           <span class="o">=</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
             <span class="nx">ROOT</span>            <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="nx">BUILD</span><span class="p">,</span>
             <span class="nx">CDN_BASE</span>        <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">base</span><span class="p">,</span>
-            <span class="nx">GALLERY_VERSION</span> <span class="o">=</span> <span class="s1">&#39;gallery-2010.09.01-19-12&#39;</span><span class="p">,</span>
+            <span class="nx">GALLERY_VERSION</span> <span class="o">=</span> <span class="s1">&#39;gallery-2010.09.15-18-40&#39;</span><span class="p">,</span>
             <span class="c1">// GALLERY_ROOT    = GALLERY_VERSION + BUILD,</span>
             <span class="nx">TNT</span>             <span class="o">=</span> <span class="s1">&#39;2in3&#39;</span><span class="p">,</span>
-            <span class="nx">TNT_VERSION</span>     <span class="o">=</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span>
+            <span class="nx">TNT_VERSION</span>     <span class="o">=</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span>
             <span class="nx">YUI2_VERSION</span>    <span class="o">=</span> <span class="s1">&#39;2.8.1&#39;</span><span class="p">,</span>
             <span class="c1">// YUI2_ROOT       = TNT + &#39;.&#39; + TNT_VERSION + &#39;/&#39; + YUI2_VERSION + BUILD,</span>
             <span class="nx">COMBO_BASE</span>      <span class="o">=</span> <span class="nx">CDN_BASE</span> <span class="o">+</span> <span class="s1">&#39;combo?&#39;</span><span class="p">,</span>
@@ -75,18 +75,18 @@
                               <span class="nx">skin</span><span class="o">:</span>      <span class="p">{</span> <span class="nx">defaultSkin</span><span class="o">:</span> <span class="s1">&#39;sam&#39;</span><span class="p">,</span>
                                            <span class="nx">base</span><span class="o">:</span>        <span class="s1">&#39;assets/skins/&#39;</span><span class="p">,</span>
                                            <span class="nx">path</span><span class="o">:</span>        <span class="s1">&#39;skin.css&#39;</span><span class="p">,</span>
-                                           <span class="nx">after</span><span class="o">:</span>       <span class="p">[</span> <span class="s1">&#39;cssreset&#39;</span><span class="p">,</span> 
-                                                          <span class="s1">&#39;cssfonts&#39;</span><span class="p">,</span> 
-                                                          <span class="s1">&#39;cssgrids&#39;</span><span class="p">,</span> 
-                                                          <span class="s1">&#39;cssbase&#39;</span><span class="p">,</span> 
-                                                          <span class="s1">&#39;cssreset-context&#39;</span><span class="p">,</span> 
+                                           <span class="nx">after</span><span class="o">:</span>       <span class="p">[</span> <span class="s1">&#39;cssreset&#39;</span><span class="p">,</span>
+                                                          <span class="s1">&#39;cssfonts&#39;</span><span class="p">,</span>
+                                                          <span class="s1">&#39;cssgrids&#39;</span><span class="p">,</span>
+                                                          <span class="s1">&#39;cssbase&#39;</span><span class="p">,</span>
+                                                          <span class="s1">&#39;cssreset-context&#39;</span><span class="p">,</span>
                                                           <span class="s1">&#39;cssfonts-context&#39;</span> <span class="p">]</span> <span class="p">},</span>
                               <span class="nx">groups</span><span class="o">:</span>    <span class="p">{},</span>
                               <span class="c1">// modules:   { / METAGEN / },</span>
                               <span class="nx">patterns</span><span class="o">:</span>  <span class="p">{}</span>                                     <span class="p">},</span>
             <span class="nx">groups</span> <span class="o">=</span>          <span class="nx">META</span><span class="p">.</span><span class="nx">groups</span><span class="p">,</span>
             <span class="nx">yui2Update</span> <span class="o">=</span>      <span class="kd">function</span><span class="p">(</span><span class="nx">tnt</span><span class="p">,</span> <span class="nx">yui2</span><span class="p">)</span> <span class="p">{</span>
-                                  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">TNT</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> 
+                                  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">TNT</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
                                             <span class="p">(</span><span class="nx">tnt</span> <span class="o">||</span> <span class="nx">TNT_VERSION</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">yui2</span> <span class="o">||</span> <span class="nx">YUI2_VERSION</span><span class="p">)</span> <span class="o">+</span> <span class="nx">BUILD</span><span class="p">;</span>
                                   <span class="nx">groups</span><span class="p">.</span><span class="nx">yui2</span><span class="p">.</span><span class="nx">base</span> <span class="o">=</span> <span class="nx">CDN_BASE</span> <span class="o">+</span> <span class="nx">root</span><span class="p">;</span>
                                   <span class="nx">groups</span><span class="p">.</span><span class="nx">yui2</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
@@ -117,7 +117,7 @@
             <span class="c1">// root:      YUI2_ROOT,</span>
             <span class="nx">comboBase</span><span class="o">:</span> <span class="nx">COMBO_BASE</span><span class="p">,</span>
             <span class="nx">update</span><span class="o">:</span>    <span class="nx">yui2Update</span><span class="p">,</span>
-            <span class="nx">patterns</span><span class="o">:</span>  <span class="p">{</span> 
+            <span class="nx">patterns</span><span class="o">:</span>  <span class="p">{</span>
                 <span class="s1">&#39;yui2-&#39;</span><span class="o">:</span> <span class="p">{</span>
                     <span class="nx">configFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">me</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span><span class="p">(</span><span class="sr">/-skin|reset|fonts|grids|base/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">me</span><span class="p">.</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
@@ -127,7 +127,7 @@
                             <span class="nx">me</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">me</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\/yui2-skin/</span><span class="p">,</span> <span class="s1">&#39;/assets/skins/sam/yui2-skin&#39;</span><span class="p">);</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
-                <span class="p">}</span> 
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">};</span>
 
@@ -204,6 +204,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

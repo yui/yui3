@@ -61,13 +61,14 @@ Y.Loader.prototype._rollup = function() {
                     for (j=0;j<s.length;j=j+1) {
                         smod = info[s[j]];
 
-                        // if the superseded module is loaded, we can't load the rollup
-                        // unless it has been forced
+                        // if the superseded module is loaded, we can't 
+                        // load the rollup unless it has been forced.
                         if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
                             roll = false;
                             break;
-                        // increment the counter if this module is required.  if we are
-                        // beyond the rollup threshold, we will use the rollup module
+                        // increment the counter if this module is required.  
+                        // if we are beyond the rollup threshold, we will 
+                        // use the rollup module
                         } else if (r[s[j]] && m.type == smod.type) {
                             c++;
                             // Y.log("adding to thresh: " + c + ", " + s[j]);

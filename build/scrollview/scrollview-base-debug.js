@@ -265,6 +265,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._nativeBody.onselectstart = this._selectstart;
     },
 
+    _preventStart : false,
+
+    _preventMove : true,
+    
+    _preventEnd : true,
+
     /**
      * gesturemovestart event handler
      *
@@ -276,7 +282,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         var bb = this._bb;
 
-        e.preventDefault();
+        if (this._preventStart) {
+            e.preventDefault();
+        }
 
         this._killTimer();
 
@@ -285,10 +293,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         this._moveStartY = e.clientY + this.get(SCROLL_Y);
         this._moveStartX = e.clientX + this.get(SCROLL_X);
-        
+
         this._moveStartTime = (new Date()).getTime();
-        this._moveStartClientY = e.clientY;
-        this._moveStartClientX = e.clientX;
+        this._moveStartClientY = this._moveEndClientY = e.clientY;
+        this._moveStartClientX = this._moveEndClientX = e.clientX;
 
         /**
          * Internal state, defines whether or not the scrollview is currently being dragged
@@ -327,7 +335,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMove: function(e) {
 
-        e.preventDefault();
+        if (this._preventMove) {
+            e.preventDefault();
+        }
 
         this._isDragging = true;
         this._moveEndClientY = e.clientY;
@@ -352,7 +362,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onGestureMoveEnd: function(e) {
 
-        e.preventDefault();
+        if (this._preventEnd) {
+            e.preventDefault();
+        }
 
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
@@ -364,7 +376,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         this._moveEvt.detach();
         this._moveEndEvt.detach();
-
+        
         /**
          * Internal state, defines whether or not the scrollview has been scrolled half it's width/height
          * 
@@ -375,6 +387,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._scrolledHalfway = false;
         this._snapToEdge = false;
         this._isDragging = false;
+
+        /**
+         * Contains the distance (postive or negative) in pixels by which the scrollview was last scrolled. This is useful when
+         * setting up click listeners on the scrollview content, which on mouse based devices are always fired, even after a
+         * drag/flick. 
+         * 
+         * <p>Touch based devices don't currently fire a click event, if the finger has been moved (beyond a threshold) so this check isn't required,
+         * if working in a purely touch based environment</p>
+         * 
+         * @property lastScrolledAmt
+         * @type Number
+         * @public
+         */
+        this.lastScrolledAmt = distance;
 
         if(this._scrollsHorizontal && Math.abs(distance) > (this.get('width')/2)) {
             this._scrolledHalfway = true;

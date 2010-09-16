@@ -199,7 +199,9 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 
     HTML_PARSER: {
         selected: function(contentBox) {
-            return this.get('boundingBox').hasClass(_classNames.selectedTab);
+            var ret = (this.get('boundingBox').hasClass(_classNames.selectedTab)) ?
+                        1 : 0;
+            return ret;
         }
     }
 

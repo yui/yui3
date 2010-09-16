@@ -155,9 +155,8 @@
                 cmds = e.commands;
             }
             
-            Y.each(changed, function(n) {
-                var el = inst.Node.getDOMNode(n),
-                    tag = el.tagName.toLowerCase(),
+            Y.each(changed, function(el) {
+                var tag = el.tagName.toLowerCase(),
                     cmd = EditorBase.TAG2CMD[tag];
 
                 if (cmd) {
@@ -180,8 +179,9 @@
                     cmds.strikethrough = 1;
                 }
                 
-                if (s.fontFamily) {
-                    var family2 = s.fontFamily.split(',')[0].toLowerCase();
+                var n = inst.one(el);
+                if (n.getStyle('fontFamily')) {
+                    var family2 = n.getStyle('fontFamily').split(',')[0].toLowerCase();
                     if (family2) {
                         family = family2;
                     }
@@ -189,7 +189,8 @@
                         family = family.replace(/'/g, '').replace(/"/g, '');
                     }
                 }
-                fsize = s.fontSize;
+
+                fsize = n.getStyle('fontSize');
 
                 var cls = el.className.split(' ');
 

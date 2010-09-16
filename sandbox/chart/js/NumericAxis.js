@@ -175,7 +175,7 @@ Y.extend(NumericAxis, Y.BaseAxis,
 		return Math.round(decimalPlaces * number) / decimalPlaces;
 	},
     
-    getFormattedLabel: function(val, format)
+    _defaultLabelFunction: function(val, format)
     {
         return Y.DataType.Number.format(val, format);
     }

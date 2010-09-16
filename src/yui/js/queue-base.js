@@ -1,6 +1,7 @@
 /**
- * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * The YUI module contains the components required for building the YUI
+ * seed file.  This includes the script loading mechanism, a simple queue,
+ * and the core utilities for the library.
  * @module yui
  * @submodule yui-base
  */
@@ -10,7 +11,8 @@
  * removed using next().
  *
  * @class Queue
- * @param item* {MIXED} 0..n items to seed the queue
+ * @constructor
+ * @param item* {MIXED} 0..n items to seed the queue.
  */
 function Queue() {
     this._init();
@@ -24,12 +26,12 @@ Queue.prototype = {
      * @method _init
      * @protected
      */
-    _init: function () {
+    _init: function() {
         /**
          * The collection of enqueued items
          *
          * @property _q
-         * @type {Array}
+         * @type Array
          * @protected
          */
         this._q = [];
@@ -39,9 +41,9 @@ Queue.prototype = {
      * Get the next item in the queue. FIFO support
      *
      * @method next
-     * @return {MIXED} the next item in the queue
+     * @return {MIXED} the next item in the queue.
      */
-    next: function () {
+    next: function() {
         return this._q.shift();
     },
 
@@ -49,9 +51,9 @@ Queue.prototype = {
      * Get the last in the queue. LIFO support
      *
      * @method last
-     * @return {MIXED} the last item in the queue
+     * @return {MIXED} the last item in the queue.
      */
-    last: function () {
+    last: function() {
         return this._q.pop();
     },
 
@@ -61,10 +63,10 @@ Queue.prototype = {
      * @method add
      * @param item* {MIXED} 0..n items
      */
-    add: function () {
-        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
+    add: function() {
+        Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
             this._q.push(fn);
-        },this);
+        }, this);
 
         return this;
     },
@@ -75,7 +77,7 @@ Queue.prototype = {
      * @method size
      * @return {Number}
      */
-    size: function () {
+    size: function() {
         return this._q.length;
     }
 };

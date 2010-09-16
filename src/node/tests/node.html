@@ -1349,6 +1349,23 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         test_select: function() {
             var select = Y.Node.create('<select>');
             Assert.areEqual('', select.get('value'));
+        },
+
+        test_destroy: function() {
+            var node = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>');
+                nodes = node.all('em, strong');
+
+            node.destroy();
+            Assert.isNull(node._node);
+
+        },
+
+        test_prependFrag: function() {
+            var html = '<link id="dyn-link-1" href="#"><link id="dyn-link-2" href="#">';
+            Y.one('head').prepend(html);
+            //Y.one('head').prepend(Y.Node.create(html));
+            Assert.isNotNull(document.getElementById('dyn-link-1'));
+            Assert.isNotNull(document.getElementById('dyn-link-2'));
         }
 
     })); 

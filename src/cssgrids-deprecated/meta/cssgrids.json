@@ -1,6 +1,6 @@
 {
-    "cssgrids": {
-        "path": "cssgrids/grids-min.css", 
+    "cssgrids-deprecated": {
+        "path": "cssgrids-deprecated/grids-min.css", 
         "optional": [
             "cssreset"
         ], 

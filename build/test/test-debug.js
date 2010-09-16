@@ -211,7 +211,7 @@ YUI.add('test', function(Y) {
      */
     Y.Test.Runner = (function(){
     
-        /**
+        /* (intentionally not documented)
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
          * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
@@ -221,42 +221,42 @@ YUI.add('test', function(Y) {
          */
         function TestNode(testObject){
         
-            /**
+            /* (intentionally not documented)
              * The TestSuite, TestCase, or test function represented by this node.
              * @type Variant
              * @property testObject
              */
             this.testObject = testObject;
             
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's first child.
              * @type TestNode
              * @property firstChild
              */        
             this.firstChild = null;
             
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's last child.
              * @type TestNode
              * @property lastChild
              */        
             this.lastChild = null;
             
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's parent.
              * @type TestNode
              * @property parent
              */        
             this.parent = null; 
        
-            /**
+            /* (intentionally not documented)
              * Pointer to this node's next sibling.
              * @type TestNode
              * @property next
              */        
             this.next = null;
             
-            /**
+            /* (intentionally not documented)
              * Test results for this test object.
              * @type object
              * @property results
@@ -282,7 +282,7 @@ YUI.add('test', function(Y) {
         
         TestNode.prototype = {
         
-            /**
+            /* (intentionally not documented)
              * Appends a new test object (TestSuite, TestCase, or test function name) as a child
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
@@ -516,8 +516,11 @@ YUI.add('test', function(Y) {
                         break;
                         
                     case this.COMPLETE_EVENT:
-                        message = "Testing completed at " + (new Date()).toString() + ".\nPassed:" + 
-                            event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                        message = Y.substitute("Testing completed at " +
+                            (new Date()).toString() + ".\n" +
+                            "Passed:{passed} Failed:{failed} " +
+                            "Total:{total} ({ignored} ignored)",
+                            event.results);
                         messageType = "info";
                         break;
                         
@@ -542,8 +545,11 @@ YUI.add('test', function(Y) {
                         break;
                         
                     case this.TEST_SUITE_COMPLETE_EVENT:
-                        message = "Test suite \"" + event.testSuite.name + "\" completed.\nPassed:" + 
-                            event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                        message = Y.substitute("Test suite \"" +
+                            event.testSuite.name + "\" completed" + ".\n" +
+                            "Passed:{passed} Failed:{failed} " +
+                            "Total:{total} ({ignored} ignored)",
+                            event.results);
                         messageType = "info";
                         break;
                         
@@ -553,8 +559,11 @@ YUI.add('test', function(Y) {
                         break;
                         
                     case this.TEST_CASE_COMPLETE_EVENT:
-                        message = "Test case \"" + event.testCase.name + "\" completed.\nPassed:" + 
-                            event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                        message = Y.substitute("Test case \"" +
+                            event.testCase.name + "\" completed.\n" +
+                            "Passed:{passed} Failed:{failed} " +
+                            "Total:{total} ({ignored} ignored)",
+                            event.results);
                         messageType = "info";
                         break;
                     default:
@@ -2330,6 +2339,7 @@ YUI.add('test', function(Y) {
      * for a variety of cases.
      *
      * @class DateAssert
+     * @namespace
      * @static
      */
      
@@ -2433,10 +2443,16 @@ YUI.add('test', function(Y) {
     }
     
     /**
+     * Contains specific formatting options for test result information.
+     * @namespace Test
+     * @class Format
+     * @static
+     */        
+    
+    /**
      * Returns test results formatted as a JSON string. Requires JSON utility.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} A JSON-formatted string of results.
-     * @namespace Test.Format
      * @method JSON
      * @static
      */
@@ -2448,7 +2464,6 @@ YUI.add('test', function(Y) {
      * Returns test results formatted as an XML string.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} An XML-formatted string of results.
-     * @namespace Test.Format
      * @method XML
      * @static
      */
@@ -2487,7 +2502,6 @@ YUI.add('test', function(Y) {
      * Returns test results formatted in JUnit XML format.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} An XML-formatted string of results.
-     * @namespace Test.Format
      * @method JUnitXML
      * @static
      */
@@ -2560,7 +2574,6 @@ YUI.add('test', function(Y) {
      * For more information, see <a href="http://testanything.org/">Test Anything Protocol</a>.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} A TAP-formatted string of results.
-     * @namespace Test.Format
      * @method TAP
      * @static
      */
@@ -2639,6 +2652,13 @@ YUI.add('test', function(Y) {
 
 
     Y.namespace("Coverage.Format");
+
+    /**
+     * Contains specific formatting options for coverage information.
+     * @namespace Coverage
+     * @class Format
+     * @static
+     */
     
     /**
      * Returns the coverage report in JSON format. This is the straight
@@ -2646,7 +2666,7 @@ YUI.add('test', function(Y) {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method JSON
-     * @namespace Coverage.Format
+     * @static
      */
     Y.Coverage.Format.JSON = function(coverage){
         return Y.JSON.stringify(coverage);
@@ -2660,7 +2680,7 @@ YUI.add('test', function(Y) {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method XdebugJSON
-     * @namespace Coverage.Format
+     * @static
      */
     Y.Coverage.Format.XdebugJSON = function(coverage){
         var report = {};

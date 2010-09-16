@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>scrollview-scrollbars&nbsp; <span class="subtitle">3.2.0pr2</span></h3>
+        <h3>scrollview-scrollbars&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a>
                 
@@ -312,6 +312,12 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_selectstart</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="nx">_preventStart</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+    <span class="nx">_preventMove</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    
+    <span class="nx">_preventEnd</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * gesturemovestart event handler</span>
 <span class="cm">     *</span>
@@ -323,7 +329,9 @@
 
         <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">;</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventStart</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
 
@@ -332,10 +340,10 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">);</span>
-        
+
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartTime</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, defines whether or not the scrollview is currently being dragged</span>
@@ -374,7 +382,9 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventMove</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
@@ -399,7 +409,9 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMoveEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventEnd</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="p">}</span>
 
         <span class="kd">var</span> <span class="nx">minY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">,</span>
             <span class="nx">maxY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">,</span>
@@ -411,7 +423,7 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEvt</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndEvt</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
-
+        
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, defines whether or not the scrollview has been scrolled half it&#39;s width/height</span>
 <span class="cm">         * </span>
@@ -422,6 +434,20 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Contains the distance (postive or negative) in pixels by which the scrollview was last scrolled. This is useful when</span>
+<span class="cm">         * setting up click listeners on the scrollview content, which on mouse based devices are always fired, even after a</span>
+<span class="cm">         * drag/flick. </span>
+<span class="cm">         * </span>
+<span class="cm">         * &lt;p&gt;Touch based devices don&#39;t currently fire a click event, if the finger has been moved (beyond a threshold) so this check isn&#39;t required,</span>
+<span class="cm">         * if working in a purely touch based environment&lt;/p&gt;</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property lastScrolledAmt</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         * @public</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastScrolledAmt</span> <span class="o">=</span> <span class="nx">distance</span><span class="p">;</span>
 
         <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -1076,6 +1102,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
