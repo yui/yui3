@@ -35,8 +35,8 @@ var Node   = Y.Node,
     ID           = 'id',
     INPUT_NODE   = 'inputNode',
     ITEM         = 'item',
-    PARENT_NODE  = 'parentNode',
     RESULT       = 'result',
+    RESULTS      = 'results',
     VISIBLE      = 'visible',
     WIDTH        = 'width',
 
@@ -363,7 +363,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var items;
 
         if (!results) {
-            results = this.get('results');
+            results = this.get(RESULTS);
         }
 
         this._clear();
@@ -516,21 +516,37 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onInputKey: function (e) {
-        var keyCode = e.keyCode;
+        var action,
+            keyCode = e.keyCode,
+            visible;
 
         this._lastInputKey = keyCode;
 
-        if (this.get(VISIBLE)) {
-            switch (keyCode) {
-            case KEY_DOWN:
-                this._activateNextItem();
-                break;
+        if (!this.get(RESULTS).length) {
+            return;
+        }
 
+        visible = this.get(VISIBLE);
+
+        if (keyCode === KEY_DOWN) {
+            action = 1;
+
+            if (!visible) {
+                this.show();
+            }
+
+            this._activateNextItem();
+        }
+
+        if (visible) {
+            switch (keyCode) {
             case KEY_ENTER:
+                action = 1;
                 this.selectItem();
                 break;
 
             case KEY_ESC:
+                action = 1;
                 this.hide();
                 break;
 
@@ -538,13 +554,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             //     break;
 
             case KEY_UP:
+                action = 1;
                 this._activatePrevItem();
                 break;
-
-            default:
-                return;
             }
+        }
 
+        if (action) {
             e.preventDefault();
         }
     },
