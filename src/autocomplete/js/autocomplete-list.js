@@ -122,6 +122,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         this._inputNode.addClass(this.getClassName('input')).setAttrs({
             'aria-autocomplete': 'list',
+            'aria-live': 'polite', // causes the screen reader to announce the value of an item when selected
             'aria-owns': this._contentBox.get(ID),
             role: 'combobox'
         });
@@ -197,19 +198,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _activateNextItem: function () {
-        var item     = this.get(ACTIVE_ITEM),
-            selector = this[_SELECTOR_ITEM],
+        var item = this.get(ACTIVE_ITEM),
             nextItem;
 
-        if (item) {
-            // Get the next item. If there isn't a next item, circle back around
-            // and get the first item.
-            nextItem = item.next(selector) ||
-                    (this.get(CIRCULAR) && item.get(PARENT_NODE).one(selector));
+        nextItem = (item && item.next(this[_SELECTOR_ITEM])) ||
+                this.get(CIRCULAR) && this._getFirstItemNode();
 
-            if (nextItem) {
-                this._set(ACTIVE_ITEM, nextItem);
-            }
+        if (nextItem) {
+            this._set(ACTIVE_ITEM, nextItem);
         }
 
         return this;
@@ -225,18 +221,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _activatePrevItem: function () {
         var item     = this.get(ACTIVE_ITEM),
-            selector = this[_SELECTOR_ITEM],
             prevItem;
 
-        if (item) {
-            // Get the previous item. If there isn't a previous item, circle
-            // back around and get the last item.
-            prevItem = item.previous(selector) ||
-                    (this.get(CIRCULAR) && item.get(PARENT_NODE).one(selector + ':last-child'));
+        prevItem = (item && item.previous(this[_SELECTOR_ITEM])) ||
+                this.get(CIRCULAR) && this._getLastItemNode();
 
-            if (prevItem) {
-                this._set(ACTIVE_ITEM, prevItem);
-            }
+        if (prevItem) {
+            this._set(ACTIVE_ITEM, prevItem);
         }
 
         return this;
@@ -256,7 +247,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var itemNodes = [];
 
         YArray.each(Y.Lang.isArray(items) ? items : [items], function (item) {
-            itemNodes.push(this._createItemNode(item.display).setData(RESULT, item));
+            itemNodes.push(this._createItemNode(item).setData(RESULT, item));
         }, this);
 
         itemNodes = Y.all(itemNodes);
@@ -322,17 +313,41 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * Creates an item node with the specified <i>content</i>.
      *
      * @method _createItemNode
-     * @param {Node|HTMLElement|String} content
+     * @param {Object} result Result object.
      * @protected
      * @returns {Node} Item node.
      */
-    _createItemNode: function (content) {
+    _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
 
-        return itemNode.append(content).setAttrs({
+        return itemNode.append(result.display).setAttrs({
             id  : Y.stamp(itemNode),
             role: 'option'
         }).addClass(this[_CLASS_ITEM]);
+    },
+
+    /**
+     * Gets the last item node in the list, or <code>null</code> if the list is
+     * empty.
+     *
+     * @method _getLastItemNode
+     * @returns {Node|null}
+     * @protected
+     */
+    _getLastItemNode: function () {
+        return this._contentBox.one(this[_SELECTOR_ITEM] + ':last-child');
+    },
+
+    /**
+     * Gets the first item node in the list, or <code>null</code> if the list is
+     * empty.
+     *
+     * @method _getFirstItemNode
+     * @returns {Node|null}
+     * @protected
+     */
+    _getFirstItemNode: function () {
+        return this._contentBox.one(this[_SELECTOR_ITEM]);
     },
 
     /**
@@ -355,7 +370,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (results.length) {
             items = this._add(results);
-            this._set(ACTIVE_ITEM, items.item(0));
         }
     },
 
