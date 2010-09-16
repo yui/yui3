@@ -82,6 +82,34 @@
 			//---------------------------------------------
 		    // Add Records
 		    //---------------------------------------------
+			
+			testGetRecords: function() {
+				var newRecord;
+				
+				//Single Record
+				newRecord = this.rs.getRecord(1);
+				Y.Assert.areEqual(newRecord.getValue(), this.initialData[1]);
+				
+				//Multiple Records
+				newRecord = this.rs.getRecords(1,2);
+				Y.Assert.areEqual(newRecord[0].getValue(), this.initialData[1]);
+				Y.Assert.areEqual(newRecord[1].getValue(), this.initialData[2]);
+				
+				var oRec = new Y.Record({a:'234'});
+				var obj = {b: '324'};
+				
+				if (obj instanceof Y.Record) {
+					// console.log(oRec);
+					// console.log(oRec.constructor.NAME);
+					// console.log(obj);
+					Y.Assert.fail();
+				}
+			},
+		
+		
+			//---------------------------------------------
+		    // Add Records
+		    //---------------------------------------------
 
             testAddSingleRecordToEnd: function() {
 				var recToAdd = {a:'8', b:'9', c:'10'};
@@ -93,6 +121,7 @@
 				
 				//This is indirectly checking to make sure that the record that got added has the identical data as the object literal that was passed in.
 				Y.Assert.areEqual(recToAdd, this.rs.getRecord(3).getValue());
+				Y.Assert.areEqual(retval.data[0].getValue(), recToAdd);
 				this.recordsetChangedEventTest();
 				
             },
@@ -104,6 +133,10 @@
 				
 				retval = this.rs.addRecord(recToAdd,i);
 				Y.Assert.areEqual(recToAdd, this.rs.getRecord(i).getValue());
+				
+				//assertion with output
+				Y.Assert.areEqual(retval.data[0].getValue(), recToAdd);
+
 				this.recordsetChangedEventTest();
 				
 
@@ -117,6 +150,10 @@
 				//Assertions with recordset
 				Y.Assert.areEqual(recsToAdd[0], this.rs.getRecord(3).getValue());
 				Y.Assert.areEqual(recsToAdd[1], this.rs.getRecord(4).getValue());
+				
+				//assertions with output
+				Y.Assert.areEqual(retval.data[0].getValue(), recsToAdd[0]);
+				Y.Assert.areEqual(retval.data[1].getValue(), recsToAdd[1]);
 				
 				this.recordsetChangedEventTest();
 				

@@ -119,18 +119,16 @@ Y.extend(Recordset, Y.Base, {
      * Utility method called upon by addRecord() - it is used to create a new record(s) in the recordset
      *
      * @method _addRecord
-     * @param aData {Object, Array} An object literal of data or an array of object literals
+     * @param aRecord {Y.Record} A Y.Record instance
      * @param index {Number} (optional) Index at which to add the record(s)
      * @return {Y.Record} A Record instance.
      * @private
      */
-	_addRecord: function(aData, index) {
-		var oRecord = new Y.Record({data:aData});
-
+	_addRecord: function(aRecord, index) {
 		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
-		this.get('records').splice(index,0,oRecord);
+		this.get('records').splice(index,0,aRecord);
 		
-		return oRecord;
+		return aRecord;
 	},
 	
 	
@@ -203,13 +201,23 @@ Y.extend(Recordset, Y.Base, {
      * Returns the record at a particular index
      *
      * @method getRecord
-     * @param index {Number} (optional) Index at which the required record resides
+     * @param index {Number} Index at which the required record resides
      * @return {Y.Record} An Y.Record instance
      * @public
      */
     getRecord: function(index) {
         return this.get("records")[index];
     },
+	
+	
+	getRecords: function(index, range) {
+		var i=0, returnedRecords = [];
+		//Range cannot take on negative values
+		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
+		
+		returnedRecords = this.get('records').splice(index, range);
+		return returnedRecords;
+	},
 	
 	/**
      * Returns a string of values for a specified key in the recordset
@@ -232,39 +240,44 @@ Y.extend(Recordset, Y.Base, {
      * then adds the Records to the end of the RecordSet.
      *
      * @method addRecord
-     * @param oData {Object, Array} An object literal of data or an array of object literals
+     * @param oData {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
      * @param index {Number} (optional) Index at which to add the record(s)
-     * @return {object} An object literal with two properties: "data" which contains {Y.Record or Y.Recordset} and "index" which contains the index where the Y.Record(s) were added
+     * @return {object} An object literal with two properties: "data" which contains array of Y.Record(s) and "index" which contains the index where the Y.Record(s) were added
      * @public
      */
 	addRecord: function(oData, index) {
 		
-		var newRecord, newRecords, idx, i;		
+		var oRecord, newRecords=[], idx, i;		
 		
-		//Passing in array for oData
+		//Passing in array of object literals for oData
 		if (Y.Lang.isArray(oData)) {
 			newRecords = [];
 			idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
 			
 			for(i=0; i < oData.length; i++) {
-					newRecord = this._addRecord(oData[i], idx);
-					newRecords.push(newRecord);
+					oRecord = new Y.Record({data:oData[i]});
+					newRecords[i] = this._addRecord(oRecord, idx);
+					delete oRecord;
 					idx++;
 			}
-			
-			this._recordAdded(newRecords, index);
-			this._recordsetChanged(index);
-			return ({data:newRecords, index:index});
+
 		}
 		
-		//If it is not an array
-		else {
-			newRecord = this._addRecord(oData, index);
-			this._recordAdded(newRecord, index);
-			this._recordsetChanged(index);
-			return ({data:newRecord, index:index});
+		//If it is an object literal of data
+		else if (Y.Lang.isObject(oData) && !(oData instanceof Y.Record)) {
+			oRecord = new Y.Record({data:oData});
+			newRecords[0] = this._addRecord(oRecord, index);
 		}
-		return null;
+		
+		//it is an instance of Y.Record - checking explicitly here so nothing weird gets through
+		else if (oData instanceof Y.Record){
+			 newRecords[0] = this._addRecord(oRecord, index);
+		}
+		
+		this._recordAdded(newRecords, index);
+		this._recordsetChanged(index);
+		//return an object literal, containing array of new Y.Record instances
+		return ({data: newRecords, index:index});
 	},
 	
 	/**
