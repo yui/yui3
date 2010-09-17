@@ -73,7 +73,50 @@ Y.extend(Recordset, Y.Base, {
 		return aRecord;
 	},
 	
+	_updateGivenArray: function(arr, index, overwriteFlag) {
+		var j=0,
+		 	rs = this,
+			oData;
+			
+		for (; j < arr.length; j++) {
+			oData = arr[j];
+			
+			//Arrays at the first index will always overwrite the one they are updating.
+			switch (j) {
+				case 0:
+					this.get('records').splice(index, 1, this._changeToRecord(oData));
+					break;
+				default:
+					this._updateGivenObject(oData, index+j, overwriteFlag);
+					break;
+			}
+		}
+	}, 
 	
+	_updateGivenObject: function(obj, index, overwriteFlag) {
+		var oRec = this._changeToRecord(obj);
+						
+		//If overwrite is set to true, splice and remove the record at current entry, otherwise just add it
+		if (overwriteFlag) {
+			this.get('records').splice(index,1,oRec);
+		}
+		else {
+			this.get('records').splice(index,0,oRec);
+		}
+	},
+	
+	//Take an object and create a record out of it, then return it
+	_changeToRecord: function(obj) {
+		var oRec;
+		if (obj instanceof Y.Record) {
+			oRec = obj;
+		}
+		else {
+			oRec = new Y.Record(obj);
+		}
+		
+		return oRec;
+	},
 	
 	//---------------------------------------------
     // Event Firing
@@ -168,7 +211,7 @@ Y.extend(Recordset, Y.Base, {
 		returnedRecords = this.get('records').splice(index, range);
 		return returnedRecords;
 	},
-	
+		
 	/**
      * Returns a string of values for a specified key in the recordset
      *
@@ -242,8 +285,8 @@ Y.extend(Recordset, Y.Base, {
 	remove: function(index, range) {
 		var remRecords=[];
 		
-		//Default is to only remove the last record
-		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
+		//Default is to only remove the last record - the length is always 1 greater than the last index
+		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length-1;
 		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
 
 		//Remove records and store them in remRecords
@@ -274,11 +317,23 @@ Y.extend(Recordset, Y.Base, {
 		return null
 	},
 	
-	update: function(record, index, overwriteFlag) {
-		oRecord = this.getRecord(index);
-		this.get('records').splice(index,1,record);
+	update: function(oData, index, overwriteFlag) {
+		 
+		//var rs = this, oRec;
 		
-		this._recordsetUpdated(oRecord, record);
+		//If passing in an array
+		if (Y.Lang.isArray(oData)) {
+			this._updateGivenArray(oData, index, overwriteFlag);			
+		}
+		
+		else if (Y.Lang.isObject(oData)) {
+			
+			//If its just an object, it will overwrite the existing one, so passing in true
+			this._updateGivenObject(oData, index, true);
+		}
+		
+		//this._recordsetUpdated(oRecord, oData);
+		//console.log(this.get('records'));
 		
 		return null;
 	}

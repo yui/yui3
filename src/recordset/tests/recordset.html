@@ -56,9 +56,9 @@
 		    // Event Helpers
 		    //---------------------------------------------
         	
-			recordsetChangedEventTest: function() {
+			recordsetChangedEventTest: function(i) {
 				this.rs.on('recordsetChangedEvent', function(e) {
-					Y.Assert.areEqual(e, i);
+					Y.Assert.areEqual(e.index, i);
 				});
 			},
 			
@@ -74,8 +74,8 @@
 			recordsetUpdatedEventTest: function(newRecord, testIndex) {
 				var iD = this.initialData;
 				this.rs.on('recordsetUpdatedEvent', function(e) {
-					Y.Assert.areEqual(iD[testIndex], e.oldRecord.getValue(), "Old record values match up");
-					Y.Assert.areEqual(newRecord.getValue(), e.newRecord.getValue(), "New record values match up");
+					Y.ObjectAssert.areEqual(iD[testIndex], e.oldRecord.getValue(), "Old record values match up");
+					Y.ObjectAssert.areEqual(newRecord.getValue(), e.newRecord.getValue(), "New record values match up");
 					delete iD;
 				});
 			},
@@ -88,12 +88,12 @@
 				
 				//Single Record
 				newRecord = this.rs.getRecord(1);
-				Y.Assert.areEqual(newRecord.getValue(), this.initialData[1]);
+				Y.ObjectAssert.areEqual(newRecord.getValue(), this.initialData[1]);
 				
 				//Multiple Records
 				newRecord = this.rs.getRecords(1,2);
-				Y.Assert.areEqual(newRecord[0].getValue(), this.initialData[1]);
-				Y.Assert.areEqual(newRecord[1].getValue(), this.initialData[2]);
+				Y.ObjectAssert.areEqual(newRecord[0].getValue(), this.initialData[1]);
+				Y.ObjectAssert.areEqual(newRecord[1].getValue(), this.initialData[2]);
 				
 				var oRec = new Y.Record({a:'234'});
 				var obj = {b: '324'};
@@ -120,24 +120,23 @@
 				//Assert on last object
 				
 				//This is indirectly checking to make sure that the record that got added has the identical data as the object literal that was passed in.
-				Y.Assert.areEqual(recToAdd, this.rs.getRecord(3).getValue());
-				Y.Assert.areEqual(retval.data[0].getValue(), recToAdd);
-				this.recordsetChangedEventTest();
+				Y.ObjectAssert.areEqual(recToAdd, this.rs.getRecord(3).getValue());
+				Y.ObjectAssert.areEqual(retval.data[0].getValue(), recToAdd);
+				this.recordsetChangedEventTest(3);
 				
             },
 
 			testAddSingleRecordToIndex: function() {
-				var recToAdd, i;
+				var recToAdd, i=2;
 				recToAdd = {a:'8', b:'9', c:'10'};
-				i = 2;
 				
 				retval = this.rs.add(recToAdd,i);
 				Y.Assert.areEqual(recToAdd, this.rs.getRecord(i).getValue());
 				
 				//assertion with output
-				Y.Assert.areEqual(retval.data[0].getValue(), recToAdd);
+				Y.ObjectAssert.areEqual(retval.data[0].getValue(), recToAdd);
 
-				this.recordsetChangedEventTest();
+				this.recordsetChangedEventTest(i);
 				
 
 				
@@ -148,14 +147,14 @@
 				retval = this.rs.add(recsToAdd);
 				
 				//Assertions with recordset
-				Y.Assert.areEqual(recsToAdd[0], this.rs.getRecord(3).getValue());
-				Y.Assert.areEqual(recsToAdd[1], this.rs.getRecord(4).getValue());
+				Y.ObjectAssert.areEqual(recsToAdd[0], this.rs.getRecord(3).getValue());
+				Y.ObjectAssert.areEqual(recsToAdd[1], this.rs.getRecord(4).getValue());
 				
 				//assertions with output
-				Y.Assert.areEqual(retval.data[0].getValue(), recsToAdd[0]);
-				Y.Assert.areEqual(retval.data[1].getValue(), recsToAdd[1]);
+				Y.ObjectAssert.areEqual(retval.data[0].getValue(), recsToAdd[0]);
+				Y.ObjectAssert.areEqual(retval.data[1].getValue(), recsToAdd[1]);
 				
-				this.recordsetChangedEventTest();
+				this.recordsetChangedEventTest(3);
 				
 			},
 			
@@ -167,10 +166,10 @@
 				retval = this.rs.add(recsToAdd, i);
 				
 				//Assertions with recordset
-				Y.Assert.areEqual(recsToAdd[0], this.rs.getRecord(1).getValue());
-				Y.Assert.areEqual(recsToAdd[1], this.rs.getRecord(2).getValue());
+				Y.ObjectAssert.areEqual(recsToAdd[0], this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(recsToAdd[1], this.rs.getRecord(2).getValue());
 				
-				this.recordsetChangedEventTest();
+				this.recordsetChangedEventTest(i);
 			},
 			
 			//---------------------------------------------
@@ -178,28 +177,28 @@
 		    //---------------------------------------------
 		
 			testDeleteSingleRecordFromEnd: function() {
-				this.recordsetChangedEventTest();
+				this.recordsetChangedEventTest(2);
 				
-				retval = this.rs.remove(2);
-				Y.Assert.areEqual(this.initialData[2], retval.data.getValue());
+				retval = this.rs.remove();
+				Y.ObjectAssert.areEqual(this.initialData[2], retval.data[0].getValue());
 				Y.Assert.areEqual(2, retval.index);
 			}, 
 			
 			testDeleteSingleRecordFromIndex: function() {
-				this.recordsetChangedEventTest();
+				this.recordsetChangedEventTest(1);
 				
 				retval = this.rs.remove(1);
-				Y.Assert.areEqual(this.initialData[1], retval.data.getValue());
+				Y.ObjectAssert.areEqual(this.initialData[1], retval.data[0].getValue());
 				Y.Assert.areEqual(1, retval.index);
 			},
 			
 			testDeleteRangeOfRecords: function() {
 				//Delete 2 records from index 1
-				this.recordsetChangedEventTest();
+				this.recordsetChangedEventTest(1);
 				
 				retval = this.rs.remove(1,2);
-				Y.Assert.areEqual(this.initialData[1], retval.data[0].getValue());
-				Y.Assert.areEqual(this.initialData[2], retval.data[1].getValue());
+				Y.ObjectAssert.areEqual(this.initialData[1], retval.data[0].getValue());
+				Y.ObjectAssert.areEqual(this.initialData[2], retval.data[1].getValue());
 				Y.Assert.areEqual(1, retval.index);
 			},
 			
@@ -209,7 +208,7 @@
 			
 			testEmptyRecordSet: function() {
 				
-				this.recordsetEmptiedEventTest();
+				this.recordsetEmptiedEventTest(0);
 				this.rs.empty();
 				Y.Assert.areEqual(0, this.rs.get('records').length);
 				
@@ -239,33 +238,48 @@
 			},
 			
 			//---------------------------------------------
-		    // Update Records
+		    // Update Records - without overwriteFlag
 		    //---------------------------------------------
 		
-			testUpdateRecordAtIndex: function() {
+			testUpdateRecordAtIndexWithoutOverwriteFlag: function() {
 				var newRecord, index=1;
 				
 				//Update record at given index with new record
 				newRecord = new Y.Record({a:'newA', b:'newB', c:'newC'});
 				
 				this.recordsetUpdatedEventTest(newRecord, index);
-				this.rs.updateRecord(newRecord, index);
-				Y.Assert.areEqual(newRecord.getValue(), this.rs.getRecord(index).getValue());
+				this.rs.update(newRecord, index);
+				Y.ObjectAssert.areEqual(newRecord.getValue(), this.rs.getRecord(index).getValue());
 			},
 			
-			testUpdateRecordsAtIndex: function() {
+			testUpdateRecordsAtIndexWithoutOverwriteFlag: function() {
 				var newRecords = [], index=0;
-				newRecords.push(new Y.Record({a:'newA', b:'newB', c:'newC'}));
-				newRecords.push(new Y.Record({a:'newD', b:'newE', c:'newF'}));
+				var a = new Y.Record({a:'newA', b:'newB', c:'newC'}),
+				 	b = new Y.Record({a:'newD', b:'newE', c:'newF'});
 				
-				this.rs.updateRecord(newRecords, index);
+				newRecords.push(a);
+				newRecords.push(b);
+				
+				this.rs.update(newRecords, index);
 				
 				//check that the two elements in the recordset are the same as the ones pushed in
-				Y.Assert.areEqual(newRecords[0].getValue(), this.rs.getRecord(index).getValue());
-				Y.Assert.areEqual(newRecords[1].getValue(), this.rs.getRecord(index+1).getValue());
+				Y.ObjectAssert.areEqual(a.getValue(), this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(b.getValue(), this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(this.initialData[1], this.rs.getRecord(2).getValue());
 				
-				//check that the next record has not been altered
-				Y.Assert.areEqual(this.initialData(index+newRecords.length), this.rs.getRecord(index+newRecords.length).getValue());
+				//3 initial records + 1 more added  (the other was just over-written)= 4 total records in recordset
+				Y.Assert.areEqual(4, this.rs.get('records').length);
+				
+				
+			},
+			
+			testUpdateRecordAtIndexWithOverwriteFlag: function() {
+				var oRec, oData, index=1;
+				
+				oRec = new Y.Record({a:'newG', b:'newH', c:'newI'});
+				this.rs.update(oRec, index, true);
+				
+				Y.ObjectAssert.areEqual(oRec.getValue(), this.rs.getRecord(1).getValue());
 			}
 			
         });

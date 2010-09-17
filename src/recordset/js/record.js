@@ -40,12 +40,10 @@ Y.extend(Record, Y.Base, {
     },
     
     getValue: function(field) {
-		if (!field) {
+		if (field === undefined) {
         	return this.get("data");
 		}
 		else {
-			
-			//This should remain [field] instead of .field, because [field] can handle strings
 			return this.get("data")[field];
 		}
 		return null;
