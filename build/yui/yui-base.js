@@ -40,9 +40,21 @@ if (typeof YUI != 'undefined') {
         } else {
             // set up the core environment
             Y._init();
+
+            // YUI.GlobalConfig is a master configuration that might span
+            // multiple contexts in a non-browser environment.  It is applied
+            // first to all instances in all contexts.
+            if (YUI.GlobalConfig) {
+                Y.applyConfig(YUI.GlobalConfig);
+            }
+
+            // YUI_Config is a page-level config.  It is applied to all instances
+            // created on the page.  This is applied after YUI.GlobalConfig, and
+            // before the instance level configuration objects.
             if (gconf) {
                 Y.applyConfig(gconf);
             }
+
             // bind the specified additional modules for this instance
             if (!l) {
                 Y._setup();
@@ -50,6 +62,9 @@ if (typeof YUI != 'undefined') {
         }
 
         if (l) {
+            // Each instance can accept one or more configuration objects.  These
+            // are applied after YUI.GlobalConfig and YUI_Config, overriding values
+            // set in those config files if there is a matching property.
             for (; i < l; i++) {
                 Y.applyConfig(args[i]);
             }

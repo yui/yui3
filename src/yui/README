@@ -20,6 +20,8 @@ The YUI Global
 
 3.3.0
 * Added a destroy method
+* Added YUI.GlobalConfig -- three stage configuration (YUI.GlobalConfig --> YUI_Config --> instance configs)
+  is helpful in non-browser environments for supplying an overarching config for the YUI container.
 
 3.2.0
 
