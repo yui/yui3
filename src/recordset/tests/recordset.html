@@ -245,7 +245,7 @@
 				var newRecord, index=1;
 				
 				//Update record at given index with new record
-				newRecord = new Y.Record({a:'newA', b:'newB', c:'newC'});
+				newRecord = new Y.Record({data:{a:'newA', b:'newB', c:'newC'}});
 				
 				this.recordsetUpdatedEventTest(newRecord, index);
 				this.rs.update(newRecord, index);
@@ -254,8 +254,8 @@
 			
 			testUpdateRecordsAtIndexWithoutOverwriteFlag: function() {
 				var newRecords = [], index=0;
-				var a = new Y.Record({a:'newA', b:'newB', c:'newC'}),
-				 	b = new Y.Record({a:'newD', b:'newE', c:'newF'});
+				var a = new Y.Record({data:{a:'newA', b:'newB', c:'newC'}}),
+				 	b = new Y.Record({data:{a:'newD', b:'newE', c:'newF'}});
 				
 				newRecords.push(a);
 				newRecords.push(b);
@@ -276,10 +276,17 @@
 			testUpdateRecordAtIndexWithOverwriteFlag: function() {
 				var oRec, oData, index=1;
 				
-				oRec = new Y.Record({a:'newG', b:'newH', c:'newI'});
+				oRec = new Y.Record({data: {a:'newG', b:'newH', c:'newI'}});
 				this.rs.update(oRec, index, true);
 				
 				Y.ObjectAssert.areEqual(oRec.getValue(), this.rs.getRecord(1).getValue());
+			},
+			
+			testUpdateRecordWithData: function() {
+				var oData = {a:'newJ', b:'newK', c:'newL'};
+				this.rs.update(oData, 2);
+				console.log(this.rs.getRecord(2).getValue());
+				Y.ObjectAssert.areEqual(oData, this.rs.getRecord(2).getValue());
 			}
 			
         });

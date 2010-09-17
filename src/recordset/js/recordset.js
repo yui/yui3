@@ -58,7 +58,7 @@ Y.extend(Recordset, Y.Base, {
     },
 	
 	/**
-     * Utility method called upon by add() - it is used to create a new record(s) in the recordset
+     * Helper method called upon by add() - it is used to create a new record(s) in the recordset
      *
      * @method _add
      * @param aRecord {Y.Record} A Y.Record instance
@@ -73,6 +73,16 @@ Y.extend(Recordset, Y.Base, {
 		return aRecord;
 	},
 	
+	
+	/**
+     * Helper method called upon by update() - it updates the recordset when an array is passed in
+     *
+     * @method _updateGivenArray
+     * @param arr {Array} An array of object literals or Y.Record instances
+     * @param index {Number} The index at which to update the records.
+     * @param overwriteFlag {boolean} (optional) A boolean to represent whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
+     * @private
+     */
 	_updateGivenArray: function(arr, index, overwriteFlag) {
 		var j=0,
 		 	rs = this,
@@ -93,6 +103,16 @@ Y.extend(Recordset, Y.Base, {
 		}
 	}, 
 	
+	
+	/**
+     * Helper method called upon by update() and _updateGivenArray() - it updates the recordset when an array is passed in
+     *
+     * @method _updateGivenObject
+     * @param obj {Object || Y.Record} Any objet literal or Y.Record instance
+     * @param index {Number} The index at which to update the records.
+     * @param overwriteFlag {boolean} (optional) A boolean to represent whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
+     * @private
+     */
 	_updateGivenObject: function(obj, index, overwriteFlag) {
 		var oRec = this._changeToRecord(obj);
 						
@@ -105,21 +125,28 @@ Y.extend(Recordset, Y.Base, {
 		}
 	},
 	
-	//Take an object and create a record out of it, then return it
+	/**
+     * Helper method - it takes an object bag and converts it to a Y.Record
+     *
+     * @method _changeToRecord
+     * @param obj {Object || Y.Record} Any objet literal or Y.Record instance
+     * @return {Y.Record} A Record instance.
+     * @private
+     */
 	_changeToRecord: function(obj) {
 		var oRec;
 		if (obj instanceof Y.Record) {
 			oRec = obj;
 		}
 		else {
-			oRec = new Y.Record(obj);
+			oRec = new Y.Record({data:obj});
 		}
 		
 		return oRec;
 	},
 	
 	//---------------------------------------------
-    // Event Firing
+    // Events
     //---------------------------------------------
 	
 	/**
@@ -317,10 +344,18 @@ Y.extend(Recordset, Y.Base, {
 		return null
 	},
 	
+	/**
+     * Updates one or more records in the recordset with new records. New records can overwrite existing records or be appended at an index.
+     *
+     * @method update
+     * @param oData {Object || Array || Y.Record}  This represents the data you want to update the record with. Can be an object literal, an array of object literals, a Y.Record instance or an array of Y.Record instances.
+     * @param index {Number} The index at which to update the records.
+     * @param overwriteFlag {boolean} (optional) Represents whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
+
+     * @public
+     */
 	update: function(oData, index, overwriteFlag) {
-		 
-		//var rs = this, oRec;
-		
+		 		
 		//If passing in an array
 		if (Y.Lang.isArray(oData)) {
 			this._updateGivenArray(oData, index, overwriteFlag);			

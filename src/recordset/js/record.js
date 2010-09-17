@@ -33,7 +33,7 @@ Y.extend(Record, Y.Base, {
         return Y.guid();
     },
 
-    initializer: function() {
+    initializer: function(data) {
     },
 
     destructor: function() {

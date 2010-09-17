@@ -35,7 +35,7 @@ Y.extend(Record, Y.Base, {
         return Y.guid();
     },
 
-    initializer: function() {
+    initializer: function(data) {
     },
 
     destructor: function() {
@@ -129,6 +129,16 @@ Y.extend(Recordset, Y.Base, {
 		return aRecord;
 	},
 	
+	
+	/**
+     * Utility method called upon by update() - it has some controller logic built in to update the recordset correctly
+     *
+     * @method _updateGivenArray
+     * @param arr {Array} An array of object literals or Y.Record instances
+     * @param index {Number} The index at which to update the records.
+     * @param overwriteFlag {boolean} (optional) A boolean to represent whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
+     * @private
+     */
 	_updateGivenArray: function(arr, index, overwriteFlag) {
 		var j=0,
 		 	rs = this,
@@ -168,7 +178,7 @@ Y.extend(Recordset, Y.Base, {
 			oRec = obj;
 		}
 		else {
-			oRec = new Y.Record(obj);
+			oRec = new Y.Record({data:obj});
 		}
 		
 		return oRec;
