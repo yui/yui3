@@ -138,7 +138,6 @@ Y.DOM = {
     /*
      * Finds the ancestor of the element.
      * @method ancestor
-     * @deprecated Use elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
@@ -684,7 +683,7 @@ Y.DOM = {
             }
         });
 
-        Y.DOM.creators.link = Y.DOM.creators.style = Y.DOM.creators.script;
+        Y.DOM.creators.col = Y.DOM.creators.link = Y.DOM.creators.style = Y.DOM.creators.script;
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -713,7 +712,7 @@ Y.DOM = {
             tfoot: creators.tbody,
             caption: creators.tbody,
             colgroup: creators.tbody,
-            col: creators.tbody,
+            //col: creators.tbody,
             optgroup: creators.option
         });
     }
