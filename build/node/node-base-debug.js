@@ -834,6 +834,7 @@ Y.mix(Y_Node.prototype, {
         this._node._yuid = null;
         this._node = null;
         this._stateProxy = null;
+        this.clearData();
     },
 
     /**
@@ -1069,14 +1070,16 @@ Y.mix(Y_Node.prototype, {
     * @method clearData
     * @description Clears stored data. 
     * @param {string} name The name of the field to clear. If no name
-    * is given, all data is cleared..
+    * is given, all data is cleared.
     * @chainable
     */
     clearData: function(name) {
-        if (this._data && arguments.length) {
-            delete this._data[name];
-        } else {
-            this._data = {};
+        if ('_data' in this) {
+            if (name) {
+                delete this._data[name];
+            } else {
+                delete this._data;
+            }
         }
 
         return this;

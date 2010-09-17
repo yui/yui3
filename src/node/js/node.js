@@ -832,6 +832,7 @@ Y.mix(Y_Node.prototype, {
         this._node._yuid = null;
         this._node = null;
         this._stateProxy = null;
+        this.clearData();
     },
 
     /**
@@ -981,8 +982,12 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     empty: function(destroy) {
-        var nodes = this.all('> *');
-        nodes.remove(destroy);
+        var nodes = this.all('*');
+        if (destroy) {
+            nodes.destroy();
+        } else {
+            
+        }
     },
 
     /**
@@ -1084,10 +1089,12 @@ Y.mix(Y_Node.prototype, {
     * @chainable
     */
     clearData: function(name) {
-        if (this._data && arguments.length) {
-            delete this._data[name];
-        } else {
-            delete this._data;
+        if (this._data) {
+            if (name) {
+                delete this._data[name];
+            } else {
+                delete this._data;
+            }
         }
 
         return this;

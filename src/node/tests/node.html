@@ -1232,6 +1232,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.clearData();
             Assert.areEqual(undefined, node.getData('baz'),
                 "node.clearData()");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData() after cleared");
         },
 
         test_appendStyle: function() {
