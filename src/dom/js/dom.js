@@ -712,7 +712,7 @@ Y.DOM = {
             tfoot: creators.tbody,
             caption: creators.tbody,
             colgroup: creators.tbody,
-            //col: creators.tbody,
+            col: creators.tbody,
             optgroup: creators.option
         });
     }
