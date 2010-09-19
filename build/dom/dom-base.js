@@ -347,7 +347,7 @@ Y.DOM = {
      * @param {String} val The value of the attribute.
      */
     setAttribute: function(el, attr, val, ieAttr) {
-        if (el && el.setAttribute) {
+        if (el && attr && el.setAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             el.setAttribute(attr, val, ieAttr);
         }
@@ -364,7 +364,7 @@ Y.DOM = {
     getAttribute: function(el, attr, ieAttr) {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
-        if (el && el.getAttribute) {
+        if (el && attr && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             ret = el.getAttribute(attr, ieAttr);
 
