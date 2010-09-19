@@ -375,7 +375,7 @@ Y.DOM = {
     },
 
     isWindow: function(obj) {
-        return obj.alert && obj.document;
+        return !!(obj && obj.alert && obj.document);
     },
 
     _fragClones: {},
