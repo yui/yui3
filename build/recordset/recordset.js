@@ -108,13 +108,16 @@ Y.extend(Recordset, Y.Base, {
     },
 
     initializer: function() {
+	
+		//set up event listener to fire events when recordset is modified in anyway
+		this._recordsetChanged();
     },
     
     destructor: function() {
     },
 	
 	/**
-     * Utility method called upon by add() - it is used to create a new record(s) in the recordset
+     * Helper method called upon by add() - it is used to create a new record(s) in the recordset
      *
      * @method _add
      * @param aRecord {Y.Record} A Y.Record instance
@@ -131,7 +134,7 @@ Y.extend(Recordset, Y.Base, {
 	
 	
 	/**
-     * Utility method called upon by update() - it has some controller logic built in to update the recordset correctly
+     * Helper method called upon by update() - it updates the recordset when an array is passed in
      *
      * @method _updateGivenArray
      * @param arr {Array} An array of object literals or Y.Record instances
@@ -140,38 +143,68 @@ Y.extend(Recordset, Y.Base, {
      * @private
      */
 	_updateGivenArray: function(arr, index, overwriteFlag) {
-		var j=0,
-		 	rs = this,
-			oData;
+		var i = 0,
+			overwrittenRecords = [],
+			newRecords = [];
 			
-		for (; j < arr.length; j++) {
-			oData = arr[j];
+		for (; i < arr.length; i++) {
+			//store everything being added into newRecords
+			newRecords[i] = this._changeToRecord(arr[i]);
 			
 			//Arrays at the first index will always overwrite the one they are updating.
-			switch (j) {
-				case 0:
-					this.get('records').splice(index, 1, this._changeToRecord(oData));
-					break;
-				default:
-					this._updateGivenObject(oData, index+j, overwriteFlag);
-					break;
+			if (i===0) {
+				//splice returns an array with 1 object, so just get the object - otherwise this will become a nested array
+				overwrittenRecords[i] = this.get('records').splice(index, 1, newRecords[i])[0];
+			}
+			else {
+				overwrittenRecords[i] = this._updateGivenObject(newRecords[i], index+i, overwriteFlag).overwritten[0];
+				//if (overwrittenRecords[i] === undefined) {
+				//	overwrittenRecords.pop();
+				//}
 			}
 		}
+		
+		return ({updated:newRecords, overwritten:overwrittenRecords});
 	}, 
 	
+	
+	/**
+     * Helper method called upon by update() and _updateGivenArray() - it updates the recordset when an array is passed in
+     *
+     * @method _updateGivenObject
+     * @param obj {Object || Y.Record} Any objet literal or Y.Record instance
+     * @param index {Number} The index at which to update the records.
+     * @param overwriteFlag {boolean} (optional) A boolean to represent whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
+     * @return {Y.Record || null} The overwritten Record instance, if it exists.
+
+     * @private
+     */
 	_updateGivenObject: function(obj, index, overwriteFlag) {
-		var oRec = this._changeToRecord(obj);
-						
+		var oRecs = [], 
+			overwrittenRecords = [];
+			
+		oRecs[0] = this._changeToRecord(obj);
+
 		//If overwrite is set to true, splice and remove the record at current entry, otherwise just add it
 		if (overwriteFlag) {
-			this.get('records').splice(index,1,oRec);
+			overwrittenRecords[0] = this.get('records').splice(index,1,oRecs[0])[0];
 		}
 		else {
-			this.get('records').splice(index,0,oRec);
+			this.get('records').splice(index,0,oRecs[0]);
 		}
+		
+		//Always returning the object in an array so it can be iterated through
+		return ({updated:oRecs, overwritten:overwrittenRecords});
 	},
 	
-	//Take an object and create a record out of it, then return it
+	/**
+     * Helper method - it takes an object bag and converts it to a Y.Record
+     *
+     * @method _changeToRecord
+     * @param obj {Object || Y.Record} Any objet literal or Y.Record instance
+     * @return {Y.Record} A Record instance.
+     * @private
+     */
 	_changeToRecord: function(obj) {
 		var oRec;
 		if (obj instanceof Y.Record) {
@@ -185,7 +218,7 @@ Y.extend(Recordset, Y.Base, {
 	},
 	
 	//---------------------------------------------
-    // Event Firing
+    // Events
     //---------------------------------------------
 	
 	/**
@@ -196,8 +229,11 @@ Y.extend(Recordset, Y.Base, {
      * @param idx {Number} Index at which the modifications to the recordset were made
      * @private
      */
-	_recordsetChanged: function(idx) {
-		this.fire('recordsetChangedEvent', {index: idx});
+	_recordsetChanged: function() {
+		
+		this.on(['recordsetUpdatedEvent', 'recordsetAddedEvent', 'recordsetRemovedEvent', 'recordsetEmptiedEvent'], function() {
+			this.fire('recordsetChangedEvent', {})
+		});
 	},
 	
 	/**
@@ -235,8 +271,18 @@ Y.extend(Recordset, Y.Base, {
 		this.fire('recordsetEmptiedEvent', {});
 	},
 	
-	_recordsetUpdated: function(oRecord, record) {
-		this.fire('recordsetUpdatedEvent', {oldRecord:oRecord, newRecord:record});
+	_recordsetUpdated: function(newRecords, delRecords, index) {
+		var e = {
+				data:
+				{
+					updated: newRecords,
+					overwritten: delRecords
+				},
+				
+				index: index
+			};
+			
+		this.fire('recordsetUpdatedEvent', e);
 	},
 	
 	//---------------------------------------------
@@ -327,7 +373,6 @@ Y.extend(Recordset, Y.Base, {
 			 newRecords[0] = this._add(oRecord, index);
 		}
 		this._recordAdded(newRecords, index);
-		this._recordsetChanged(index);
 		
 		//return an object literal, containing array of new Y.Record instances
 		return ({data: newRecords, index:index});
@@ -353,9 +398,8 @@ Y.extend(Recordset, Y.Base, {
 		//Remove records and store them in remRecords
 		remRecords = this.get('records').splice(index,range);
 		
-		//Fire events
+		//Fire event
 		this._recordRemoved(remRecords, index);
-		this._recordsetChanged(index);
 		
 		return ({data: remRecords, index:index}); 
 		
@@ -370,32 +414,33 @@ Y.extend(Recordset, Y.Base, {
      */
 	empty: function() {
 		this.set('records').value = [];
-		this._recordsetEmptied();
-		
-		//TODO: What index should be sent to recordSetUpdatedEvent when the recordset is emptied?
-		this._recordsetChanged(0);
-		
-		return null
+		this._recordsetEmptied();	
+		return null;
 	},
 	
+	/**
+     * Updates one or more records in the recordset with new records. New records can overwrite existing records or be appended at an index.
+     *
+     * @method update
+     * @param oData {Object || Array || Y.Record}  This represents the data you want to update the record with. Can be an object literal, an array of object literals, a Y.Record instance or an array of Y.Record instances.
+     * @param index {Number} The index at which to update the records.
+     * @param overwriteFlag {boolean} (optional) Represents whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
+
+     * @public
+     */
 	update: function(oData, index, overwriteFlag) {
-		 
-		//var rs = this, oRec;
+		
+		var data;
 		
 		//If passing in an array
 		if (Y.Lang.isArray(oData)) {
-			this._updateGivenArray(oData, index, overwriteFlag);			
+			data = this._updateGivenArray(oData, index, overwriteFlag);			
 		}
-		
 		else if (Y.Lang.isObject(oData)) {
-			
 			//If its just an object, it will overwrite the existing one, so passing in true
-			this._updateGivenObject(oData, index, true);
+			data = this._updateGivenObject(oData, index, true);
 		}
-		
-		//this._recordsetUpdated(oRecord, oData);
-		//console.log(this.get('records'));
-		
+		this._recordsetUpdated(data.updated, data.overwritten, index);
 		return null;
 	}
 	
