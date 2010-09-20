@@ -573,8 +573,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onItemClick: function (e) {
+        var itemNode = e.currentTarget;
+
         e.preventDefault();
-        this.selectItem(e.currentTarget);
+
+        this._set(ACTIVE_ITEM, itemNode);
+        this.selectItem(itemNode);
     },
 
     // -- Protected Default Event Handlers -------------------------------------
@@ -587,9 +591,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _defSelectFn: function (e) {
-        // TODO: support query delimiters, typeahead completion, etc.
-        this.set('value', e.result.text);
+        // TODO: support typeahead completion, etc.
         this._inputNode.focus();
+        this._updateValue(e.result.text);
         this.hide();
     }
 }, {
