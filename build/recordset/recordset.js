@@ -59,10 +59,6 @@ function Recordset(config) {
 }
 
 /**
- * TODO: make recordsetChangedEvent fire through bubbling of other events 
- * TODO: figure out what object to send through recordsetChangedEvent when recordset is emptied
- * TODO: finish updateRecord to make it work with indices, specific records, arrays
- * TODO: update getRecord to return array of records
  * TODO: Implement methods: hasRecord(), reverseRecords(), sortRecords(), toString(), getLength()
  */
 
@@ -155,12 +151,14 @@ Y.extend(Recordset, Y.Base, {
 			if (i===0) {
 				//splice returns an array with 1 object, so just get the object - otherwise this will become a nested array
 				overwrittenRecords[i] = this.get('records').splice(index, 1, newRecords[i])[0];
+				console.log(this.get('records'));
+				//console.log(overwrittenRecords[i]);
 			}
 			else {
 				overwrittenRecords[i] = this._updateGivenObject(newRecords[i], index+i, overwriteFlag).overwritten[0];
-				//if (overwrittenRecords[i] === undefined) {
-				//	overwrittenRecords.pop();
-				//}
+				if (overwrittenRecords[i] === undefined) {
+					overwrittenRecords.pop();
+				}
 			}
 		}
 		
@@ -232,7 +230,7 @@ Y.extend(Recordset, Y.Base, {
 	_recordsetChanged: function() {
 		
 		this.on(['recordsetUpdatedEvent', 'recordsetAddedEvent', 'recordsetRemovedEvent', 'recordsetEmptiedEvent'], function() {
-			this.fire('recordsetChangedEvent', {})
+			this.fire('recordsetChangedEvent', {});
 		});
 	},
 	
@@ -315,7 +313,9 @@ Y.extend(Recordset, Y.Base, {
 		//Range cannot take on negative values
 		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
 		
-		returnedRecords = this.get('records').splice(index, range);
+		for(; i<range; i++) {
+			returnedRecords.push(this.get('records')[index+i]);
+		}
 		return returnedRecords;
 	},
 		
@@ -334,6 +334,19 @@ Y.extend(Recordset, Y.Base, {
 		}
 		return retVals;
 	},
+	
+	
+	filter: function(validator) {
+		var oRecs = [], i=0, rec;
+		for (; i < this.get('records').length; i++) {
+			rec = this.getRecord(i);
+			if (validator(rec)) {
+				oRecs.push(rec);
+			}
+		}
+		return oRecs;
+	},
+	
 
     /**
      * Adds one or more Records to the RecordSet at the given index. If index is null,
@@ -357,7 +370,6 @@ Y.extend(Recordset, Y.Base, {
 			for(i=0; i < oData.length; i++) {
 					oRecord = new Y.Record({data:oData[i]});
 					newRecords[i] = this._add(oRecord, idx);
-					delete oRecord;
 					idx++;
 			}
 
@@ -442,6 +454,10 @@ Y.extend(Recordset, Y.Base, {
 		}
 		this._recordsetUpdated(data.updated, data.overwritten, index);
 		return null;
+	},
+	
+	sort: function(key, type, order) {
+		
 	}
 	
 	
