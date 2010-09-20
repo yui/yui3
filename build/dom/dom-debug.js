@@ -602,19 +602,23 @@ Y.DOM = {
     },
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
-        fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
+        fn = (typeof fn === 'string') ? Y.DOM[fn] : fn;
         var result,
-            ret = [];
+            args = Array.prototype.slice.call(arguments, 2),
+            i = 0,
+            ret;
 
         if (fn && nodes) {
-            Y.each(nodes, function(node) {
-                if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
-                    ret[ret.length] = result;
+            while ((node = nodes[i++])) {
+                result = result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc);
+                if (typeof result !== 'undefined') {
+                    (ret) || (ret = []);
+                    ret.push(result);
                 }
-            });
+            }
         }
 
-        return ret.length ? ret : nodes;
+        return (typeof ret !== 'undefined') ? ret : nodes;
     },
 
     creators: {}
