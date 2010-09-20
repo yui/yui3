@@ -283,7 +283,14 @@ Y.extend(Recordset, Y.Base, {
 		return retVals;
 	},
 	
-	
+	/**
+     * Filters the recordset according to the boolean validator function
+     *
+     * @method filter
+     * @param validator {Function}  A boolean function representing the conditional logic to filter by. 
+     * @return {Array} An array of filtered records
+     * @public
+     */
 	filter: function(validator) {
 		var oRecs = [], i=0, rec;
 		for (; i < this.get('records').length; i++) {
