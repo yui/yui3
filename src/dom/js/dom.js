@@ -615,12 +615,7 @@ Y.DOM = {
         return ret.length ? ret : nodes;
     },
 
-    creators: {},
-
-    _IESimpleCreate: function(html, doc) {
-        doc = doc || Y.config.doc;
-        return doc.createElement(html);
-    }
+    creators: {}
 };
 
 
