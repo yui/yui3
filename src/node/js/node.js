@@ -974,23 +974,6 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Clears the content of the Node and optionally destroys the 
-     * descendant nodes.
-     * @method empty
-     * @param {Boolean} destroy Whether or not to call destroy on
-     * childNodes.
-     * @chainable
-     */
-    empty: function(destroy) {
-        var nodes = this.all('*');
-        if (destroy) {
-            nodes.destroy();
-        } else {
-            
-        }
-    },
-
-    /**
      * Replaces the node's current content with the content.
      * @method setContent
      * @param {String | Y.Node | HTMLElement} content The content to insert 
@@ -1089,7 +1072,7 @@ Y.mix(Y_Node.prototype, {
     * @chainable
     */
     clearData: function(name) {
-        if (this._data) {
+        if ('_data' in this) {
             if (name) {
                 delete this._data[name];
             } else {
