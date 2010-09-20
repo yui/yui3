@@ -28,6 +28,8 @@ var DOT = '.',
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
+    _slice = Array.prototype.slice,
+
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
@@ -216,7 +218,7 @@ Y_Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Y_Node.prototype[name] = function() {
             context = context || this;
-            var args = Y.Array(arguments, 0, true),
+            var args = _slice.call(arguments),
                 ret;
 
             if (args[0] && args[0] instanceof Y_Node) {
@@ -227,7 +229,14 @@ Y_Node.addMethod = function(name, fn, context) {
                 args[1] = args[1]._node;
             }
             args.unshift(this._node);
-            ret = Y_Node.scrubVal(fn.apply(context, args), this);
+
+            ret = fn.apply(context, args);
+
+            if (ret) { // scrub truthy
+                ret = Y_Node.scrubVal(ret, this);
+            }
+
+            (typeof ret !== 'undefined') || (ret = this);
             return ret;
         };
     } else {
