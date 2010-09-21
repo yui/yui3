@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="../../../../build/cssbase/base-min.css"> -->
     <link rel="stylesheet" href="../assets/test-console.css">
     <!-- for design iteration -->
-    <link rel="stylesheet" href="../../assets/autocomplete-list-core.css">
-    <link rel="stylesheet" href="../../assets/skins/sam/autocomplete-list-skin.css">
+    <!-- <link rel="stylesheet" href="../../assets/autocomplete-list-core.css">
+    <link rel="stylesheet" href="../../assets/skins/sam/autocomplete-list-skin.css"> -->
     <style>
     html {
         background: #fff;
@@ -60,7 +60,7 @@
 
 <h1>AutoComplete manual test</h1>
 
-<form>
+<form id="ac-form">
     <div id="ac">
         <label for="ac-input">Type things here! Try the name of a US state.</label><br>
         <input type="text" id="ac-input">
@@ -115,8 +115,8 @@ var Y = YUI({
 
     // For design iteration.
     ignore: [
-        'skin-sam-autocomplete',
-        'skin-sam-autocomplete-list'
+        // 'skin-sam-autocomplete',
+        // 'skin-sam-autocomplete-list'
     ]
 }).use(
     'autocomplete',
@@ -130,6 +130,8 @@ var Y = YUI({
     'event-delegate',
     'substitute',
 function (Y) {
+
+Y.one('#ac-form').reset();
 
 // -- Console setup ------------------------------------------------------------
 new Y.Console({
@@ -291,7 +293,7 @@ function useLocal() {
 
     autoComplete.setAttrs({
         dataSource     : dataSourceLocal,
-        requestTemplate: function (q) { return q; },
+        requestTemplate: '{query}',
         resultLocator  : null,
         resultFormatter: null
     });

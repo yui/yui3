@@ -9,9 +9,10 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            // IE doesn't simulate blur events properly, so this test fails.
+            // IE doesn't simulate blur events properly, so these tests fail.
             // Have to rely on manual testing.
-            'valueChange should stop polling on blur': Y.UA.ie && Y.UA.ie < 9
+            'valueChange should stop polling on blur': Y.UA.ie && Y.UA.ie < 9,
+            'valueChange should not report stale changes that occurred while a node was not focused': Y.UA.ie && Y.UA.ie < 9
         }
     },
 

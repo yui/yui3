@@ -60,8 +60,10 @@ YUI.add('autocomplete-base', function(Y) {
 var Lang   = Y.Lang,
     YArray = Y.Array,
 
+    isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
+    trim       = Lang.trim,
 
     ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
     DATA_SOURCE        = 'dataSource',
@@ -69,22 +71,24 @@ var Lang   = Y.Lang,
     MIN_QUERY_LENGTH   = 'minQueryLength',
     QUERY              = 'query',
     QUERY_DELAY        = 'queryDelay',
+    QUERY_DELIMITER    = 'queryDelimiter',
     REQUEST_TEMPLATE   = 'requestTemplate',
     RESULT_FILTERS     = 'resultFilters',
     RESULT_FORMATTER   = 'resultFormatter',
     RESULT_HIGHLIGHTER = 'resultHighlighter',
     RESULT_LOCATOR     = 'resultLocator',
     RESULTS            = 'results',
+    VALUE              = 'value',
     VALUE_CHANGE       = 'valueChange',
 
-    EVT_CLEAR        = 'clear',
-    EVT_QUERY        = QUERY,
-    EVT_RESULTS      = RESULTS,
-    EVT_VALUE_CHANGE = VALUE_CHANGE;
+    EVT_CLEAR   = 'clear',
+    EVT_QUERY   = QUERY,
+    EVT_RESULTS = RESULTS;
 
 function AutoCompleteBase() {
     /**
-     * Fires after the contents of the input field have been completely cleared.
+     * Fires after the query has been completely cleared or no longer meets the
+     * minimum query length requirement.
      *
      * @event clear
      * @param {EventFacade} e Event facade with the following additional
@@ -93,7 +97,7 @@ function AutoCompleteBase() {
      * <dl>
      *   <dt>prevVal (String)</dt>
      *   <dd>
-     *     Value of the input node before it was cleared.
+     *     Value of the query before it was cleared.
      *   </dd>
      * </dl>
      *
@@ -184,31 +188,6 @@ function AutoCompleteBase() {
      */
     this.publish(EVT_RESULTS, {
         defaultFn: this._defResultsFn,
-        queueable: true
-    });
-
-    /**
-     * Fires after the input node's value changes, and before the
-     * <code>query</code> event.
-     *
-     * @event valueChange
-     * @param {EventFacade} e Event facade with the following additional
-     *   properties:
-     *
-     * <dl>
-     *   <dt>newVal (String)</dt>
-     *   <dd>
-     *     Value of the input node after the change.
-     *   </dd>
-     *
-     *   <dt>prevVal (String)</dt>
-     *   <dd>
-     *     Value of the input node prior to the change.
-     *   </dd>
-     * </dl>
-     */
-    this.publish(EVT_VALUE_CHANGE, {
-        preventable: false,
         queueable: true
     });
 }
@@ -331,6 +310,20 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
+     * Query delimiter string. When a delimiter is configured, the input value
+     * will be split on the delimiter, and only the portion that contains the
+     * cursor will be used in autocomplete queries and updated when the
+     * <code>query</code> attribute is modified.
+     *
+     * @attribute queryDelimiter
+     * @type String|null
+     * @default null
+     */
+    queryDelimiter: {
+        value: null
+    },
+
+    /**
      * <p>
      * DataSource request template. This can be a function that accepts a
      * query as a parameter and returns a request string, or it can be a
@@ -400,7 +393,7 @@ AutoCompleteBase.ATTRS = {
      * @default []
      */
     resultFilters: {
-        validator: Lang.isArray,
+        validator: isArray,
         value: []
     },
 
@@ -501,11 +494,26 @@ AutoCompleteBase.ATTRS = {
     results: {
         readOnly: true,
         value: []
+    },
+
+    /**
+     * Current value of the input node.
+     *
+     * @attribute value
+     * @type String
+     * @default ''
+     */
+    value: {
+        // Why duplicate this._inputNode.get('value')? Because we need a
+        // reliable way to track the source of value changes. We want to perform
+        // completion when the user changes the value, but not when we change
+        // the value.
+        value: ''
     }
 };
 
-// Because nobody wants to type ".yui3-autocomplete-blah" a hundred times.
 AutoCompleteBase.CSS_PREFIX = 'ac';
+AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 AutoCompleteBase.prototype = {
     // -- Public Lifecycle Methods ---------------------------------------------
@@ -526,10 +534,12 @@ AutoCompleteBase.prototype = {
         this.unbindInput();
 
         this._inputEvents = [
-            // We're listening to the valueChange event from the
-            // event-valuechange module here, not our own valueChange event
-            // (which just wraps this one for convenience).
-            inputNode.on(VALUE_CHANGE, this._onValueChange, this)
+            // This is the valueChange event on the inputNode provided by the
+            // event-valuechange module, not our own valueChange.
+            inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
+
+            // And here's our own valueChange event.
+            this.after(VALUE_CHANGE, this._afterValueChange, this)
         ];
     },
 
@@ -544,6 +554,8 @@ AutoCompleteBase.prototype = {
         if (inputNode.get('nodeName').toLowerCase() === 'input') {
             inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
         }
+
+        this.set(VALUE, inputNode.get(VALUE));
     },
 
     /**
@@ -682,22 +694,130 @@ AutoCompleteBase.prototype = {
      * </p>
      *
      * <p>
-     * In <code>autocomplete-base</code> this just returns the input value
-     * itself, but it can be overridden to implement more complex logic, such as
-     * adding support for query delimiters (see the
-     * <code>autocomplete-delim</code> module).
+     * If a query delimiter is defined, the query will be the delimited part of
+     * the input value that's closest to the cursor.
      * </p>
      *
      * @method _parseValue
-     * @param {String} value input value from which to extract the query
+     * @param {String} value Input value from which to extract the query.
      * @return {String|null} query
      * @protected
      */
     _parseValue: function (value) {
-        return value;
+        var delim = this.get(QUERY_DELIMITER);
+
+        if (delim) {
+            value = value.split(delim);
+            value = value[value.length - 1];
+        }
+
+        return this._trimLeft(value);
+    },
+
+    /**
+     * Utility function to trim whitespace from the left side of a string.
+     *
+     * @method _trimLeft
+     * @param {String} string String to trim.
+     * @return {String} Trimmed string.
+     * @protected
+     */
+    _trimLeft: String.prototype.trimLeft ? function (string) {
+        // Micro-optimization, since trimming occurs often in value parsing. The
+        // native method is faster than the regex in all browsers except Chrome,
+        // but it's not worth doing a Chrome-specific fork.
+        // http://jsperf.com/native-trimleft-vs-regex
+        return string.trimLeft();
+    } : function (string) {
+        return string.replace(/^\s+/, '');
+    },
+
+    /**
+     * <p>
+     * Updates the query portion of the <code>value</code> attribute.
+     * </p>
+     *
+     * <p>
+     * If a query delimiter is defined, the delimited portion of the input value
+     * closest to the cursor will be replaced with the specified <i>value</i>.
+     * </p>
+     *
+     * @method _updateValue
+     * @param {String} newVal New value.
+     * @protected
+     */
+    _updateValue: function (newVal) {
+        var delim = this.get(QUERY_DELIMITER),
+            insertDelim,
+            len,
+            prevVal;
+
+        newVal = this._trimLeft(newVal);
+
+        if (delim) {
+            insertDelim = trim(delim); // so we don't double up on spaces
+            prevVal     = YArray.map(trim(this.get(VALUE)).split(delim), trim);
+            len         = prevVal.length;
+
+            if (len > 1) {
+                prevVal[len - 1] = newVal;
+                newVal = prevVal.join(insertDelim + ' ');
+            }
+
+            newVal = newVal + insertDelim + ' ';
+        }
+
+        this.set(VALUE, newVal);
     },
 
     // -- Protected Event Handlers ---------------------------------------------
+
+    /**
+     * Handles change events for the <code>value</code> attribute.
+     *
+     * @method _afterValueChange
+     * @param {EventFacade} e
+     * @protected
+     */
+    _afterValueChange: function (e) {
+        var delay,
+            fire,
+            newVal = e.newVal,
+            query,
+            that;
+
+        // Don't query on value changes that didn't come from the user.
+        if (e.src !== AutoCompleteBase.UI_SRC) {
+            this._inputNode.set(VALUE, newVal);
+            return;
+        }
+
+        Y.log('valueChange: new: "' + newVal + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
+
+        query = this._parseValue(newVal);
+
+        if (query && query.length >= this.get(MIN_QUERY_LENGTH)) {
+            delay = this.get(QUERY_DELAY);
+            that  = this;
+
+            fire = function () {
+                that.fire(EVT_QUERY, {
+                    inputValue: newVal,
+                    query     : query
+                });
+            };
+
+            if (delay) {
+                clearTimeout(this._delay);
+                this._delay = setTimeout(fire, delay);
+            } else {
+                fire();
+            }
+        } else {
+            clearTimeout(this._delay);
+            this.fire(EVT_CLEAR);
+        }
+    },
 
     /**
      * Handles DataSource responses and fires the <code>results</code> event.
@@ -724,64 +844,29 @@ AutoCompleteBase.prototype = {
      * @param {EventFacade} e
      * @protected
      */
-    _onValueChange: function (e) {
-        var delay,
-            fire,
-            value = e.newVal,
-            query = this._parseValue(value),
-            that;
+    _onInputValueChange: function (e) {
+        var newVal = e.newVal;
 
-        Y.log('valueChange: new: "' + value + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
-
-        this.fire(EVT_VALUE_CHANGE, {
-            newVal : value,
-            prevVal: e.prevVal
-        });
-
-        if (query.length >= this.get(MIN_QUERY_LENGTH)) {
-            delay = this.get(QUERY_DELAY);
-            that  = this;
-
-            fire = function () {
-                that.fire(EVT_QUERY, {
-                    inputValue: value,
-                    query     : query
-                });
-            };
-
-            if (delay) {
-                clearTimeout(this._delay);
-                this._delay = setTimeout(fire, delay);
-            } else {
-                fire();
-            }
-        } else {
-            clearTimeout(this._delay);
-
-            // Empty query.
-            this.fire(EVT_QUERY, {
-                inputValue: value,
-                query     : null
-            });
+        // Don't query if the internal value is the same as the new value
+        // reported by valueChange.
+        if (newVal === this.get(VALUE)) {
+            return;
         }
 
-        if (!value.length) {
-            this.fire(EVT_CLEAR, {
-                prevVal: e.prevVal
-            });
-        }
+        this.set(VALUE, newVal, {src: AutoCompleteBase.UI_SRC});
     },
 
     // -- Protected Default Event Handlers -------------------------------------
 
     /**
      * Default <code>clear</code> event handler. Sets the <code>results</code>
-     * property to an empty array.
+     * property to an empty array and <code>query</code> to null.
      *
      * @method _defClearFn
      * @protected
      */
     _defClearFn: function () {
+        this._set(QUERY, null);
         this._set(RESULTS, []);
     },
 
@@ -831,4 +916,4 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'event-valuechange', 'node-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'escape', 'event-valuechange', 'node-base']});

@@ -41,6 +41,7 @@
             }
         }
     }, 
+    "arraysort": {}, 
     "async-queue": {
         "requires": [
             "event-custom"
@@ -362,6 +363,24 @@
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
+                ]
+            }
+        }
+    }, 
+    "datatable": {
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset", 
+                    "widget"
+                ], 
+                "skinnable": true
+            }, 
+            "datatable-sort": {
+                "requires": [
+                    "arraysort", 
+                    "datatable-base", 
+                    "plugin"
                 ]
             }
         }
@@ -1090,6 +1109,11 @@
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "recordset": {
+        "requires": [
+            "base"
         ]
     }, 
     "scrollview": {

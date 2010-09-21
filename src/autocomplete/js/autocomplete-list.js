@@ -32,8 +32,11 @@ var Node   = Y.Node,
     ACTIVE_ITEM  = 'activeItem',
     CIRCULAR     = 'circular',
     HOVERED_ITEM = 'hoveredItem',
+    ID           = 'id',
     INPUT_NODE   = 'inputNode',
     ITEM         = 'item',
+    RESULT       = 'result',
+    RESULTS      = 'results',
     VISIBLE      = 'visible',
     WIDTH        = 'width',
 
@@ -61,6 +64,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
          *   properties:
          *
          * <dl>
+         *   <dt>itemNode (Node)</dt>
+         *   <dd>
+         *     List item node that was selected.
+         *   </dd>
+         *
          *   <dt>result (Object)</dt>
          *   <dd>
          *     AutoComplete result object.
@@ -114,7 +122,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         this._inputNode.addClass(this.getClassName('input')).setAttrs({
             'aria-autocomplete': 'list',
-            'aria-owns': this._contentBox.get('id'),
+            'aria-live': 'polite', // causes the screen reader to announce the value of an item when selected
+            'aria-owns': this._contentBox.get(ID),
             role: 'combobox'
         });
     },
@@ -160,7 +169,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         this.fire(EVT_SELECT, {
-            result: itemNode.getData('result')
+            itemNode: itemNode,
+            result  : itemNode.getData(RESULT)
         });
 
         return this;
@@ -188,19 +198,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _activateNextItem: function () {
-        var item     = this.get(ACTIVE_ITEM),
-            selector = this[_SELECTOR_ITEM],
+        var item = this.get(ACTIVE_ITEM),
             nextItem;
 
-        if (item) {
-            // Get the next item. If there isn't a next item, circle back around
-            // and get the first item.
-            nextItem = item.next(selector) ||
-                    (this.get(CIRCULAR) && item.get('parentNode').one(selector));
+        nextItem = (item && item.next(this[_SELECTOR_ITEM])) ||
+                this.get(CIRCULAR) && this._getFirstItemNode();
 
-            if (nextItem) {
-                this._set(ACTIVE_ITEM, nextItem);
-            }
+        if (nextItem) {
+            this._set(ACTIVE_ITEM, nextItem);
         }
 
         return this;
@@ -216,18 +221,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _activatePrevItem: function () {
         var item     = this.get(ACTIVE_ITEM),
-            selector = this[_SELECTOR_ITEM],
             prevItem;
 
-        if (item) {
-            // Get the previous item. If there isn't a previous item, circle
-            // back around and get the last item.
-            prevItem = item.previous(selector) ||
-                    (this.get(CIRCULAR) && item.get('parentNode').one(selector + ':last-child'));
+        prevItem = (item && item.previous(this[_SELECTOR_ITEM])) ||
+                this.get(CIRCULAR) && this._getLastItemNode();
 
-            if (prevItem) {
-                this._set(ACTIVE_ITEM, prevItem);
-            }
+        if (prevItem) {
+            this._set(ACTIVE_ITEM, prevItem);
         }
 
         return this;
@@ -240,14 +240,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @method _add
      * @param {Array|Node|HTMLElement|String} items Result item or array of
      *   result items.
-     * @returns {NodeList} Added nodes.
+     * @return {NodeList} Added nodes.
      * @protected
      */
     _add: function (items) {
         var itemNodes = [];
 
         YArray.each(Y.Lang.isArray(items) ? items : [items], function (item) {
-            itemNodes.push(this._createItemNode(item.display).setData('result', item));
+            itemNodes.push(this._createItemNode(item).setData(RESULT, item));
         }, this);
 
         itemNodes = Y.all(itemNodes);
@@ -313,17 +313,41 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * Creates an item node with the specified <i>content</i>.
      *
      * @method _createItemNode
-     * @param {Node|HTMLElement|String} content
+     * @param {Object} result Result object.
      * @protected
-     * @returns {Node} Item node.
+     * @return {Node} Item node.
      */
-    _createItemNode: function (content) {
+    _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
 
-        return itemNode.append(content).setAttrs({
+        return itemNode.append(result.display).setAttrs({
             id  : Y.stamp(itemNode),
             role: 'option'
         }).addClass(this[_CLASS_ITEM]);
+    },
+
+    /**
+     * Gets the last item node in the list, or <code>null</code> if the list is
+     * empty.
+     *
+     * @method _getLastItemNode
+     * @return {Node|null}
+     * @protected
+     */
+    _getLastItemNode: function () {
+        return this._contentBox.one(this[_SELECTOR_ITEM] + ':last-child');
+    },
+
+    /**
+     * Gets the first item node in the list, or <code>null</code> if the list is
+     * empty.
+     *
+     * @method _getFirstItemNode
+     * @return {Node|null}
+     * @protected
+     */
+    _getFirstItemNode: function () {
+        return this._contentBox.one(this[_SELECTOR_ITEM]);
     },
 
     /**
@@ -339,14 +363,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var items;
 
         if (!results) {
-            results = this.get('results');
+            results = this.get(RESULTS);
         }
 
         this._clear();
 
         if (results.length) {
             items = this._add(results);
-            this._set(ACTIVE_ITEM, items.item(0));
         }
     },
 
@@ -382,12 +405,16 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _afterActiveItemChange: function (e) {
-        if (e.prevVal) {
-            e.prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
+        var newVal  = e.newVal,
+            prevVal = e.prevVal;
+
+        if (prevVal) {
+            prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
         }
 
-        if (e.newVal) {
-            e.newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
+        if (newVal) {
+            newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
+            this._inputNode.set('aria-activedescendant', newVal.get(ID));
         }
     },
 
@@ -399,12 +426,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _afterHoveredItemChange: function (e) {
-        if (e.prevVal) {
-            e.prevVal.removeClass(this[_CLASS_ITEM_HOVER]);
+        var newVal  = e.newVal,
+            prevVal = e.prevVal;
+
+        if (prevVal) {
+            prevVal.removeClass(this[_CLASS_ITEM_HOVER]);
         }
 
-        if (e.newVal) {
-            e.newVal.addClass(this[_CLASS_ITEM_HOVER]);
+        if (newVal) {
+            newVal.addClass(this[_CLASS_ITEM_HOVER]);
         }
     },
 
@@ -416,7 +446,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _afterMouseOver: function (e) {
-        var itemNode = e.domEvent.target.ancestor('.' + this[_CLASS_ITEM], true);
+        var itemNode = e.domEvent.target.ancestor(this[_SELECTOR_ITEM], true);
 
         this._mouseOverList = true;
 
@@ -486,21 +516,37 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onInputKey: function (e) {
-        var keyCode = e.keyCode;
+        var action,
+            keyCode = e.keyCode,
+            visible;
 
         this._lastInputKey = keyCode;
 
-        if (this.get(VISIBLE)) {
-            switch (keyCode) {
-            case KEY_DOWN:
-                this._activateNextItem();
-                break;
+        if (!this.get(RESULTS).length) {
+            return;
+        }
 
+        visible = this.get(VISIBLE);
+
+        if (keyCode === KEY_DOWN) {
+            action = 1;
+
+            if (!visible) {
+                this.show();
+            }
+
+            this._activateNextItem();
+        }
+
+        if (visible) {
+            switch (keyCode) {
             case KEY_ENTER:
+                action = 1;
                 this.selectItem();
                 break;
 
             case KEY_ESC:
+                action = 1;
                 this.hide();
                 break;
 
@@ -508,13 +554,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             //     break;
 
             case KEY_UP:
+                action = 1;
                 this._activatePrevItem();
                 break;
-
-            default:
-                return;
             }
+        }
 
+        if (action) {
             e.preventDefault();
         }
     },
@@ -527,8 +573,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onItemClick: function (e) {
+        var itemNode = e.currentTarget;
+
         e.preventDefault();
-        this.selectItem(e.currentTarget);
+
+        this._set(ACTIVE_ITEM, itemNode);
+        this.selectItem(itemNode);
     },
 
     // -- Protected Default Event Handlers -------------------------------------
@@ -541,9 +591,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _defSelectFn: function (e) {
-        // TODO: support query delimiters, typeahead completion, etc.
+        // TODO: support typeahead completion, etc.
+        this._inputNode.focus();
+        this._updateValue(e.result.text);
         this.hide();
-        this._inputNode.set('value', e.result.text).focus();
     }
 }, {
     ATTRS: {

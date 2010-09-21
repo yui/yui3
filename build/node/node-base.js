@@ -28,6 +28,8 @@ var DOT = '.',
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
+    _slice = Array.prototype.slice,
+
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
@@ -216,7 +218,7 @@ Y_Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Y_Node.prototype[name] = function() {
             context = context || this;
-            var args = Y.Array(arguments, 0, true),
+            var args = _slice.call(arguments),
                 ret;
 
             if (args[0] && args[0] instanceof Y_Node) {
@@ -227,7 +229,14 @@ Y_Node.addMethod = function(name, fn, context) {
                 args[1] = args[1]._node;
             }
             args.unshift(this._node);
-            ret = Y_Node.scrubVal(fn.apply(context, args), this);
+
+            ret = fn.apply(context, args);
+
+            if (ret) { // scrub truthy
+                ret = Y_Node.scrubVal(ret, this);
+            }
+
+            (typeof ret !== 'undefined') || (ret = this);
             return ret;
         };
     } else {
@@ -830,6 +839,7 @@ Y.mix(Y_Node.prototype, {
         this._node._yuid = null;
         this._node = null;
         this._stateProxy = null;
+        this.clearData();
     },
 
     /**
@@ -1061,14 +1071,16 @@ Y.mix(Y_Node.prototype, {
     * @method clearData
     * @description Clears stored data. 
     * @param {string} name The name of the field to clear. If no name
-    * is given, all data is cleared..
+    * is given, all data is cleared.
     * @chainable
     */
     clearData: function(name) {
-        if (this._data && arguments.length) {
-            delete this._data[name];
-        } else {
-            this._data = {};
+        if ('_data' in this) {
+            if (name) {
+                delete this._data[name];
+            } else {
+                delete this._data;
+            }
         }
 
         return this;

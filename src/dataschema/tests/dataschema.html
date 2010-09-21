@@ -110,7 +110,7 @@
                 ASSERT.areSame(2, data_out.results[2].number, "Expected last number to be parsed.");
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
             },
-            
+
             testJSONComplexLocators: function() {
                 var schema = {
                         metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
