@@ -2614,7 +2614,7 @@ var Event    = Y.Event,
     YLang    = Y.Lang,
     isString = YLang.isString,
     useActivate = YLang.isFunction(
-        Y.DOM.create('<p onbeforeactivate=";">').onbeforeactivate);
+        Y.DOM.create('<p onbeforeactivate=";"/>').onbeforeactivate);
 
 function define(type, proxy, directEvent) {
     var nodeDataKey = '_' + type + 'Notifiers';

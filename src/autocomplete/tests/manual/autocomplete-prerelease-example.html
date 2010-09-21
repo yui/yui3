@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AutoComplete prerelease example</title>
+    <style>
+    html {
+        background: #fff;
+        color: #333;
+        font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+        font-size: 13px;
+    }
+
+    #ac-input {
+        margin: 5px 0 10px;
+        width: 300px;
+    }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<h1>AutoComplete prerelease example</h1>
+
+<form id="ac-form">
+    <div id="ac">
+        <label for="ac-input">Yahoo! Search:</label><br>
+        <input type="text" id="ac-input">
+        <div id="ac-list"></div>
+    </div>
+</form>
+
+<!--
+fuji.jetpants.com provides a combo-hosted version of the latest YUI3 git master
+code, but it's for testing only. Please don't use it for production, as it is
+not a CDN and will occasionally be unavailable.
+-->
+<script src="http://fuji.jetpants.com/yui/yui3/combo?build/yui/yui-min.js&amp;build/loader/loader-min.js"></script>
+<script>
+var Y = YUI({
+    comboBase: 'http://fuji.jetpants.com/yui/yui3/combo?',
+    combine  : true,
+    root     : 'build/'
+}).use(
+    'autocomplete',
+    'autocomplete-highlighters',
+    'datasource-get',
+    'datasource-jsonschema',
+function (Y) {
+
+var autoComplete = new Y.AutoCompleteList({
+        boundingBox: '#ac-list',
+        inputNode: '#ac-input',
+        requestTemplate: 'select%20*%20from%20search.suggest%20where%20query%3D%22{query}%22',
+        resultHighlighter: Y.AutoCompleteHighlighters.phraseMatch,
+        render: true
+    }),
+
+    dataSourceSearch = new Y.DataSource.Get({
+        source: 'http://query.yahooapis.com/v1/public/yql?format=json&q='
+    });
+
+dataSourceSearch.plug({
+    fn: Y.Plugin.DataSourceJSONSchema,
+    cfg: {
+        schema: {
+            resultListLocator: 'query.results.Result'
+        }
+    }
+});
+
+autoComplete.on('select', function (e) {
+    Y.config.win.location = 'http://search.yahoo.com/search?p=' +
+            encodeURIComponent(e.result.text);
+});
+
+autoComplete.set('dataSource', dataSourceSearch);
+autoComplete.get('inputNode').focus();
+
+// For easier console tinkering.
+Y.ac = autoComplete;
+
+});
+</script>
+
+</body>
+</html>

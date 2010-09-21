@@ -10,18 +10,18 @@ var hyphenToCamel = function(property) {
     if ( !patterns.HYPHEN.test(property) ) {
         return property; // no hyphens
     }
-    
+
     if (propertyCache[property]) { // already converted
         return propertyCache[property];
     }
-   
+
     var converted = property;
 
     while( patterns.HYPHEN.exec(converted) ) {
         converted = converted.replace(RegExp.$1,
                 RegExp.$1.substr(1).toUpperCase());
     }
-    
+
     propertyCache[property] = converted;
     return converted;
     //return property.replace(/-([a-z])/gi, function(m0, m1) {return m1.toUpperCase()}) // cant use function as 2nd arg yet due to safari bug
@@ -37,13 +37,13 @@ var Dom = {
             if (typeof el === 'string') { // id
                 return document.getElementById(el);
             }
-            
-            if ('length' in el) { // array-like 
+
+            if ('length' in el) { // array-like
                 var c = [];
                 for (var i = 0, len = el.length; i < len; ++i) {
                     c[c.length] = Dom.get(el[i]);
                 }
-                
+
                 return c;
             }
 
@@ -60,18 +60,18 @@ var Dom = {
     inDocument: function(el) {
         return Dom.isAncestor(Y.config.doc.documentElement, el);
     },
-   
-    batch: function(el, method, o, override, args) {
-        el = (el && (el.tagName || el.item)) ? el : Dom.get(el); // skip get() when possible 
 
-        if (!el || !method) { 
-            return false; 
-        }  
+    batch: function(el, method, o, override, args) {
+        el = (el && (el.tagName || el.item)) ? el : Dom.get(el); // skip get() when possible
+
+        if (!el || !method) {
+            return false;
+        }
         if (args) {
             args = Y.Array(args);
         }
-        var scope = (override) ? o : window; 
-         
+        var scope = (override) ? o : window;
+
         var apply = function(el) {
             if (args) {
                 var tmp = slice.call(args);
@@ -82,16 +82,16 @@ var Dom = {
             }
         };
 
-        if (el.tagName || el.length === undefined) { // element or not array-like  
-            return apply(el); 
-        }  
+        if (el.tagName || el.length === undefined) { // element or not array-like
+            return apply(el);
+        }
 
-        var collection = []; 
-         
-        for (var i = 0, len = el.length; i < len; ++i) { 
+        var collection = [];
+
+        for (var i = 0, len = el.length; i < len; ++i) {
             collection[collection.length] = apply(el[i]);
-        } 
-        
+        }
+
         return collection;
     },
 
@@ -127,7 +127,7 @@ var Dom = {
 
     getElementsByClassName: function(className, tag, root) {
         tag = tag || '*';
-        root = (root) ? Dom.get(root) : Y.config.doc; 
+        root = (root) ? Dom.get(root) : Y.config.doc;
         var nodes = [];
         if (root) {
             nodes = Y.Selector.query(tag + '.' + className, root);
@@ -159,14 +159,14 @@ var Dom = {
 
         if (el && el.id) { // do not override existing ID
             return el.id;
-        } 
+        }
 
         var id = prefix + Dom._id_counter++;
 
         if (el) {
             el.id = id;
         }
-        
+
         return id;
     },
 
@@ -234,8 +234,8 @@ var batched = {
     setXY: YUI.DOM.setXY,
     getX: YUI.DOM.getX,
     getY: YUI.DOM.getY,
-    setX: YUI.DOM.setX, 
-    setY: YUI.DOM.setY, 
+    setX: YUI.DOM.setX,
+    setY: YUI.DOM.setY,
     getRegion: Dom._region,
     hasClass: YUI.DOM.hasClass,
     addClass: Dom._addClass,
@@ -263,9 +263,9 @@ YAHOO.util.Region = function(t, r, b, l) {
 };
 
 YAHOO.util.Region.prototype.contains = function(region) {
-    return ( region.left   >= this.left   && 
-             region.right  <= this.right  && 
-             region.top    >= this.top    && 
+    return ( region.left   >= this.left   &&
+             region.right  <= this.right  &&
+             region.top    >= this.top    &&
              region.bottom <= this.bottom    );
 
     // this.logger.debug("does " + this + " contain " + region + " ... " + ret);
@@ -280,7 +280,7 @@ YAHOO.util.Region.prototype.intersect = function(region) {
     var r = Math.min( this.right,  region.right  );
     var b = Math.min( this.bottom, region.bottom );
     var l = Math.max( this.left,   region.left   );
-    
+
     if (b >= t && r >= l) {
         return new YAHOO.util.Region(t, r, b, l);
     } else {
@@ -299,10 +299,10 @@ YAHOO.util.Region.prototype.union = function(region) {
 
 YAHOO.util.Region.prototype.toString = function() {
     return ( "Region {"    +
-             "top: "       + this.top    + 
-             ", right: "   + this.right  + 
-             ", bottom: "  + this.bottom + 
-             ", left: "    + this.left   + 
+             "top: "       + this.top    +
+             ", right: "   + this.right  +
+             ", bottom: "  + this.bottom +
+             ", left: "    + this.left   +
              "}" );
 };
 
@@ -315,10 +315,12 @@ YAHOO.util.Point = function(x, y) {
       y = x[1]; // dont blow away x yet
       x = x[0];
    }
-   
+
     this.x = this.right = this.left = this[0] = x;
     this.y = this.top = this.bottom = this[1] = y;
 };
 
 YAHOO.util.Point.prototype = new YAHOO.util.Region();
+
+YAHOO.register("dom", YAHOO.util.Dom, {version: "@VERSION@", build: "@BUILD@"});
 
