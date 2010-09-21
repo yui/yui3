@@ -4404,7 +4404,6 @@ Y.DOM = {
     /*
      * Finds the ancestor of the element.
      * @method ancestor
-     * @deprecated Use elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
@@ -4612,7 +4611,7 @@ Y.DOM = {
      * @param {String} val The value of the attribute.
      */
     setAttribute: function(el, attr, val, ieAttr) {
-        if (el && el.setAttribute) {
+        if (el && attr && el.setAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             el.setAttribute(attr, val, ieAttr);
         }
@@ -4629,7 +4628,7 @@ Y.DOM = {
     getAttribute: function(el, attr, ieAttr) {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
-        if (el && el.getAttribute) {
+        if (el && attr && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             ret = el.getAttribute(attr, ieAttr);
 
@@ -4641,7 +4640,7 @@ Y.DOM = {
     },
 
     isWindow: function(obj) {
-        return obj.alert && obj.document;
+        return !!(obj && obj.alert && obj.document);
     },
 
     _fragClones: {},
@@ -4864,27 +4863,26 @@ Y.DOM = {
     },
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
-        fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
+        fn = (typeof fn === 'string') ? Y.DOM[fn] : fn;
         var result,
-            ret = [];
+            args = Array.prototype.slice.call(arguments, 2),
+            i = 0,
+            ret;
 
         if (fn && nodes) {
-            Y.each(nodes, function(node) {
-                if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
-                    ret[ret.length] = result;
+            while ((node = nodes[i++])) {
+                result = result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc);
+                if (typeof result !== 'undefined') {
+                    (ret) || (ret = []);
+                    ret.push(result);
                 }
-            });
+            }
         }
 
-        return ret.length ? ret : nodes;
+        return (typeof ret !== 'undefined') ? ret : nodes;
     },
 
-    creators: {},
-
-    _IESimpleCreate: function(html, doc) {
-        doc = doc || Y.config.doc;
-        return doc.createElement(html);
-    }
+    creators: {}
 };
 
 
@@ -4949,7 +4947,7 @@ Y.DOM = {
             }
         });
 
-        Y.DOM.creators.style = Y.DOM.creators.script;
+        Y.DOM.creators.col = Y.DOM.creators.link = Y.DOM.creators.style = Y.DOM.creators.script;
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -10428,6 +10426,8 @@ var DOT = '.',
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
+    _slice = Array.prototype.slice,
+
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
@@ -10616,7 +10616,7 @@ Y_Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Y_Node.prototype[name] = function() {
             context = context || this;
-            var args = Y.Array(arguments, 0, true),
+            var args = _slice.call(arguments),
                 ret;
 
             if (args[0] && args[0] instanceof Y_Node) {
@@ -10627,7 +10627,14 @@ Y_Node.addMethod = function(name, fn, context) {
                 args[1] = args[1]._node;
             }
             args.unshift(this._node);
-            ret = Y_Node.scrubVal(fn.apply(context, args), this);
+
+            ret = fn.apply(context, args);
+
+            if (ret) { // scrub truthy
+                ret = Y_Node.scrubVal(ret, this);
+            }
+
+            (typeof ret !== 'undefined') || (ret = this);
             return ret;
         };
     } else {
@@ -11230,6 +11237,7 @@ Y.mix(Y_Node.prototype, {
         this._node._yuid = null;
         this._node = null;
         this._stateProxy = null;
+        this.clearData();
     },
 
     /**
@@ -11461,14 +11469,16 @@ Y.mix(Y_Node.prototype, {
     * @method clearData
     * @description Clears stored data. 
     * @param {string} name The name of the field to clear. If no name
-    * is given, all data is cleared..
+    * is given, all data is cleared.
     * @chainable
     */
     clearData: function(name) {
-        if (this._data && arguments.length) {
-            delete this._data[name];
-        } else {
-            this._data = {};
+        if ('_data' in this) {
+            if (name) {
+                delete this._data[name];
+            } else {
+                delete this._data;
+            }
         }
 
         return this;
