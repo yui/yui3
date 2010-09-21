@@ -26,11 +26,6 @@ Recordset.ATTRS = {
     records: {
         value: null,
         setter: "_setRecords"
-    },
-    
-    length: {
-        value: 0,
-        readOnly:true
     }
 };
 
@@ -40,7 +35,15 @@ Y.extend(Recordset, Y.Base, {
         var records = [];
 
         function initRecord(oneData){
-            records.push(new Y.Record({data:oneData}));
+			
+			//This part can probably get condensed a bit - very verbose.
+			if (!(oneData instanceof Y.Record)) {
+            	records.push(new Y.Record({data:oneData}));
+			}
+			
+			else {
+				records.push(oneData);
+			}
         }
 
         Y.Array.each(allData, initRecord);
@@ -95,7 +98,6 @@ Y.extend(Recordset, Y.Base, {
 			if (i===0) {
 				//splice returns an array with 1 object, so just get the object - otherwise this will become a nested array
 				overwrittenRecords[i] = this.get('records').splice(index, 1, newRecords[i])[0];
-				console.log(this.get('records'));
 				//console.log(overwrittenRecords[i]);
 			}
 			else {
@@ -266,6 +268,10 @@ Y.extend(Recordset, Y.Base, {
 		}
 		return returnedRecords;
 	},
+	
+	getLength: function() {
+		return this.get('records').length;
+	},
 		
 	/**
      * Returns a string of values for a specified key in the recordset
@@ -287,19 +293,24 @@ Y.extend(Recordset, Y.Base, {
      * Filters the recordset according to the boolean validator function
      *
      * @method filter
-     * @param validator {Function}  A boolean function representing the conditional logic to filter by. 
-     * @return {Array} An array of filtered records
+     * @param k {Function || String}  A boolean function representing the conditional logic to filter by, or the key to filter by.
+     * @param v {Value} (optional)  If 'k' was passed as a key, this represents the value the key should have. 
+     * @return {Y.Recordset} A recordset of filtered records
      * @public
      */
-	filter: function(validator) {
-		var oRecs = [], i=0, rec;
-		for (; i < this.get('records').length; i++) {
+	filter: function(k,v) {
+		var oRecs = [], i=0, rec, len;
+		len = this.get('records').length;
+		for (; i<len;i++) {
 			rec = this.getRecord(i);
-			if (validator(rec)) {
-				oRecs.push(rec);
-			}
+			
+			if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
+				(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
+					oRecs.push(rec);
+			}  
 		}
-		return oRecs;
+
+		return new this.constructor({records:oRecs});
 	},
 	
 
@@ -399,7 +410,6 @@ Y.extend(Recordset, Y.Base, {
 		
 		var data;
 		
-		//If passing in an array
 		if (Y.Lang.isArray(oData)) {
 			data = this._updateGivenArray(oData, index, overwriteFlag);			
 		}
@@ -407,15 +417,13 @@ Y.extend(Recordset, Y.Base, {
 			//If its just an object, it will overwrite the existing one, so passing in true
 			data = this._updateGivenObject(oData, index, true);
 		}
+		
+		//fire event
 		this._recordsetUpdated(data.updated, data.overwritten, index);
 		return null;
-	},
-	
-	sort: function(key, type, order) {
-		
 	}
 	
 	
 });
-
 Y.Recordset = Recordset;
+

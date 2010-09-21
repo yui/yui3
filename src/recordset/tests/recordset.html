@@ -340,7 +340,6 @@
 				newRecords.push(c);
 				
 				this.rs.on('recordsetUpdatedEvent', function(e) {
-					console.log(e.data);
 					Y.ObjectAssert.areEqual(newRecords, e.data.updated, 'Updated record is != to new record');
 					
 					for(var i=0; i < oldRecords.length; i++) {
@@ -369,7 +368,7 @@
 				
 				oldRecord = this.rs.getRecord(index);
 				this.rs.on('recordsetUpdatedEvent', function(e) {
-					//console.log(e.data);
+
 					Y.ObjectAssert.areEqual(oData, e.data.updated[0].getValue(), 'Updated record != equal to new record');
 					Y.ObjectAssert.areEqual(oldRecord, e.data.overwritten[0], 'Overwritten record != equal to old record');
 					Y.Assert.areEqual(1, e.data.overwritten.length, 'overwritten array is not of expected length');
@@ -387,18 +386,30 @@
 			testFilterByValidator: function() {
 				
 				var validator = function(item) {
-					if (item.b === 2) {
+					if (item.getValue('b') === 2) {
 						return true;
 					}
 					else {
 						return false;
 					}
 				},
-				oRecs = [];
 				oRecs = this.rs.filter(validator);
-				Y.ObjectAssert.areEqual(oRecs[0], this.rs.getRecord(0));
-				Y.ObjectAssert.areEqual(oRecs[1], this.rs.getRecord(2));
-				Y.ObjectAssert.areEqual(oRecs.length, 2);
+				console.log(oRecs);
+				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
+				Y.ObjectAssert.areEqual(oRecs.getRecord(0), this.rs.getRecord(0));
+				Y.ObjectAssert.areEqual(oRecs.getRecord(1), this.rs.getRecord(2));
+				
+				Y.Assert.areEqual(2, oRecs.getRecord(0).getValue('b'));
+				Y.Assert.areEqual(2, oRecs.getRecord(1).getValue('b'));
+				Y.ObjectAssert.areEqual(oRecs.getLength(), 2);
+				
+			},
+			
+			testFilterByKeyValue: function() {				
+				var oRecs = this.rs.filter('a', 3);
+				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
+				Y.Assert.areEqual(oRecs.getRecord(0).getValue('a'), 3);
+				Y.ObjectAssert.areEqual(oRecs.getLength(), 1);
 				
 			}
 			
