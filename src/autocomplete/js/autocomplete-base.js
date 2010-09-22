@@ -300,14 +300,14 @@ AutoCompleteBase.ATTRS = {
      *
      * @attribute queryDelay
      * @type Number
-     * @default 150
+     * @default 100
      */
     queryDelay: {
         validator: function (value) {
             return isNumber(value) && value >= 0;
         },
 
-        value: 150
+        value: 100
     },
 
     /**
