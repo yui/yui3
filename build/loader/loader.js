@@ -9,42 +9,39 @@ YUI.add('loader-base', function(Y) {
 if (!YUI.Env[Y.version]) {
 
     (function() {
-        var VERSION         = Y.version,
-            // CONFIG          = Y.config,
-            BUILD           = '/build/',
-            ROOT            = VERSION + BUILD,
-            CDN_BASE        = Y.Env.base,
+        var VERSION = Y.version,
+            BUILD = '/build/',
+            ROOT = VERSION + BUILD,
+            CDN_BASE = Y.Env.base,
             GALLERY_VERSION = 'gallery-2010.09.22-20-15',
-            // GALLERY_ROOT    = GALLERY_VERSION + BUILD,
-            TNT             = '2in3',
-            TNT_VERSION     = '4',
-            YUI2_VERSION    = '2.8.1',
-            // YUI2_ROOT       = TNT + '.' + TNT_VERSION + '/' + YUI2_VERSION + BUILD,
-            COMBO_BASE      = CDN_BASE + 'combo?',
-            META =          { version:   VERSION,
-                              root:      ROOT,
-                              base:      Y.Env.base,
+            TNT = '2in3',
+            TNT_VERSION = '4',
+            YUI2_VERSION = '2.8.1',
+            COMBO_BASE = CDN_BASE + 'combo?',
+            META = { version: VERSION,
+                              root: ROOT,
+                              base: Y.Env.base,
                               comboBase: COMBO_BASE,
-                              skin:      { defaultSkin: 'sam',
-                                           base:        'assets/skins/',
-                                           path:        'skin.css',
-                                           after:       [ 'cssreset',
+                              skin: { defaultSkin: 'sam',
+                                           base: 'assets/skins/',
+                                           path: 'skin.css',
+                                           after: ['cssreset',
                                                           'cssfonts',
                                                           'cssgrids',
                                                           'cssbase',
                                                           'cssreset-context',
-                                                          'cssfonts-context' ] },
-                              groups:    {},
-                              // modules:   { / METAGEN / },
-                              patterns:  {}                                     },
-            groups =          META.groups,
-            yui2Update =      function(tnt, yui2) {
+                                                          'cssfonts-context']},
+                              groups: {},
+                              patterns: {} },
+            groups = META.groups,
+            yui2Update = function(tnt, yui2) {
                                   var root = TNT + '.' +
-                                            (tnt || TNT_VERSION) + '/' + (yui2 || YUI2_VERSION) + BUILD;
+                                            (tnt || TNT_VERSION) + '/' +
+                                            (yui2 || YUI2_VERSION) + BUILD;
                                   groups.yui2.base = CDN_BASE + root;
                                   groups.yui2.root = root;
                               },
-            galleryUpdate =   function(tag) {
+            galleryUpdate = function(tag) {
                                   var root = (tag || GALLERY_VERSION) + BUILD;
                                   groups.gallery.base = CDN_BASE + root;
                                   groups.gallery.root = root;
@@ -53,31 +50,29 @@ if (!YUI.Env[Y.version]) {
         groups[VERSION] = {};
 
         groups.gallery = {
-            // base:      CDN_BASE + GALLERY_ROOT,
-            ext:       false,
-            combine:   true,
-            // root:      GALLERY_ROOT,
+            ext: false,
+            combine: true,
             comboBase: COMBO_BASE,
-            update:    galleryUpdate,
-            patterns:  { 'gallery-':    { },
+            update: galleryUpdate,
+            patterns: { 'gallery-': { },
                          'gallerycss-': { type: 'css' } }
         };
 
         groups.yui2 = {
-            // base:      CDN_BASE + YUI2_ROOT,
-            combine:   true,
-            ext:       false,
-            // root:      YUI2_ROOT,
+            combine: true,
+            ext: false,
             comboBase: COMBO_BASE,
-            update:    yui2Update,
-            patterns:  {
+            update: yui2Update,
+            patterns: {
                 'yui2-': {
                     configFn: function(me) {
-                        if(/-skin|reset|fonts|grids|base/.test(me.name)) {
+                        if (/-skin|reset|fonts|grids|base/.test(me.name)) {
                             me.type = 'css';
                             me.path = me.path.replace(/\.js/, '.css');
-                            // this makes skins in builds earlier than 2.6.0 work as long as combine is false
-                            me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
+                            // this makes skins in builds earlier than
+                            // 2.6.0 work as long as combine is false
+                            me.path = me.path.replace(/\/yui2-skin/,
+                                             '/assets/skins/sam/yui2-skin');
                         }
                     }
                 }
@@ -106,6 +101,45 @@ if (!YUI.Env[Y.version]) {
  * @submodule loader-base
  */
 
+
+var NOT_FOUND = {},
+    NO_REQUIREMENTS = [],
+    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
+    GLOBAL_ENV = YUI.Env,
+    GLOBAL_LOADED = GLOBAL_ENV._loaded,
+    CSS = 'css',
+    JS = 'js',
+    INTL = 'intl',
+    VERSION = Y.version,
+    ROOT_LANG = '',
+    YObject = Y.Object,
+    oeach = YObject.each,
+    YArray = Y.Array,
+    _queue = GLOBAL_ENV._loaderQueue,
+    META = GLOBAL_ENV[VERSION],
+    SKIN_PREFIX = 'skin-',
+    L = Y.Lang,
+    ON_PAGE = GLOBAL_ENV.mods,
+    modulekey,
+    cache,
+    _path = function(dir, file, type, nomin) {
+                        var path = dir + '/' + file;
+                        if (!nomin) {
+                            path += '-min';
+                        }
+                        path += '.' + (type || CSS);
+
+                        return path;
+                    };
+
+/**
+ * The component metadata is stored in Y.Env.meta.
+ * Part of the loader module.
+ * @property Env.meta
+ * @for YUI
+ */
+Y.Env.meta = META;
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -120,9 +154,9 @@ if (!YUI.Env[Y.version]) {
  * @see YUI.use for the normal use case.  The use function automatically will
  * pull in missing dependencies.
  *
- * @class Loader
  * @constructor
- * @param o an optional set of configuration options.  Valid options:
+ * @class Loader
+ * @param {object} o an optional set of configuration options.  Valid options:
  * <ul>
  *  <li>base:
  *  The base dir</li>
@@ -210,39 +244,6 @@ if (!YUI.Env[Y.version]) {
  *  going forward.</li>
  * </ul>
  */
-
-var NOT_FOUND = {},
-    NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
-    GLOBAL_ENV = YUI.Env,
-    GLOBAL_LOADED = GLOBAL_ENV._loaded,
-    CSS = 'css',
-    JS = 'js',
-    INTL = 'intl',
-    VERSION = Y.version,
-    ROOT_LANG = '',
-    YObject = Y.Object,
-    oeach = YObject.each,
-    YArray = Y.Array,
-    _queue = GLOBAL_ENV._loaderQueue,
-    META = GLOBAL_ENV[VERSION],
-    SKIN_PREFIX = 'skin-',
-    L = Y.Lang,
-    ON_PAGE = GLOBAL_ENV.mods,
-    modulekey,
-    cache,
-    _path = function(dir, file, type, nomin) {
-                        var path = dir + '/' + file;
-                        if (!nomin) {
-                            path += '-min';
-                        }
-                        path += '.' + (type || CSS);
-
-                        return path;
-                    };
-
-Y.Env.meta = META;
-
 Y.Loader = function(o) {
 
     var defaults = META.modules,
@@ -383,7 +384,7 @@ Y.Loader = function(o) {
      * Browsers:
      *    IE: 2048
      *    Other A-Grade Browsers: Higher that what is typically supported
-     *    'capable' mobile browsers: @TODO
+     *    'capable' mobile browsers:
      *
      * Servers:
      *    Apache: 8192
@@ -610,7 +611,7 @@ Y.Loader = function(o) {
      * Composed of what YUI reports to be loaded combined
      * with what has been loaded by any instance on the page
      * with the version number specified in the metadata.
-     * @propery loaded
+     * @property loaded
      * @type {string: boolean}
      */
     self.loaded = GLOBAL_LOADED[VERSION];
@@ -792,8 +793,8 @@ Y.Loader.prototype = {
      * module name is supplied, the returned skin module name is
      * specific to the module passed in.
      * @method formatSkin
-     * @param skin {string} the name of the skin.
-     * @param mod {string} optional: the name of a module to skin.
+     * @param {string} skin the name of the skin.
+     * @param {string} mod optional: the name of a module to skin.
      * @return {string} the full skin module name.
      */
     formatSkin: function(skin, mod) {
@@ -808,9 +809,9 @@ Y.Loader.prototype = {
     /**
      * Adds the skin def to the module info
      * @method _addSkin
-     * @param skin {string} the name of the skin.
-     * @param mod {string} the name of the module.
-     * @param parent {string} parent module if this is a skin of a
+     * @param {string} skin the name of the skin.
+     * @param {string} mod the name of the module.
+     * @param {string} parent parent module if this is a skin of a
      * submodule or plugin.
      * @return {string} the module name for the skin.
      * @private
@@ -833,7 +834,7 @@ Y.Loader.prototype = {
                     type: 'css',
                     after: sinf.after,
                     after_map: YArray.hash(sinf.after),
-                    path: (parent || pkg) + '/' + sinf.base + skin + 
+                    path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
                 });
@@ -855,11 +856,8 @@ Y.Loader.prototype = {
      *   <dt>modules:</dt>   <dd>the group of modules</dd>
      * </dl>
      * @method addGroup
-     * @param o An object containing the module data.
-     * @param name the module name (optional), required if not in the module
-     * data.
-     * @return {boolean} true if the module was added, false if
-     * the object passed in did not provide all required attributes.
+     * @param {object} o An object containing the module data.
+     * @param {string} name the group name.
      */
     addGroup: function(o, name) {
         var mods = o.modules,
@@ -923,10 +921,10 @@ Y.Loader.prototype = {
      *       </dd>
      * </dl>
      * @method addModule
-     * @param o An object containing the module data.
-     * @param name the module name (optional), required if not in the module
-     * data.
-     * @return the module definition or null if
+     * @param {object} o An object containing the module data.
+     * @param {string} name the module name (optional), required if not
+     * in the module data.
+     * @return {object} the module definition or null if
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
@@ -1086,7 +1084,7 @@ Y.Loader.prototype = {
     /**
      * Add a requirement for one or more module
      * @method require
-     * @param what {string[] | string*} the modules to load.
+     * @param {string[] | string*} what the modules to load.
      */
     require: function(what) {
         var a = (typeof what === 'string') ? arguments : what;
@@ -1098,7 +1096,8 @@ Y.Loader.prototype = {
      * Returns an object containing properties for all modules required
      * in order to load the requested module
      * @method getRequires
-     * @param mod The module definition from moduleInfo.
+     * @param {object}  mod The module definition from moduleInfo.
+     * @return {array} the expanded requirement list.
      */
     getRequires: function(mod) {
         if (!mod || mod._parsed) {
@@ -1265,8 +1264,8 @@ Y.Loader.prototype = {
     /**
      * Returns a hash of module names the supplied module satisfies.
      * @method getProvides
-     * @param name {string} The name of the module.
-     * @return what this module provides.
+     * @param {string} name The name of the module.
+     * @return {object} what this module provides.
      */
     getProvides: function(name) {
         var m = this.getModule(name), o, s;
@@ -1298,10 +1297,9 @@ Y.Loader.prototype = {
      * Calculates the dependency tree, the result is stored in the sorted
      * property.
      * @method calculate
-     * @param o optional options object.
-     * @param type optional argument to prune modules.
+     * @param {object} o optional options object.
+     * @param {string} type optional argument to prune modules.
      */
-
     calculate: function(o, type) {
         if (o || type || this.dirty) {
 
@@ -1415,9 +1413,9 @@ Y.Loader.prototype = {
 
     /**
      * Builds a module name for a language pack
-     * @function getLangPackName
-     * @param lang {string} the language code.
-     * @param mname {string} the module to build it for.
+     * @method getLangPackName
+     * @param {string} lang the language code.
+     * @param {string} mname the module to build it for.
      * @return {string} the language pack module name.
      */
     getLangPackName: function(lang, mname) {
@@ -1529,6 +1527,7 @@ Y.Loader.prototype = {
      * Remove superceded modules and loaded modules.  Called by
      * calculate() after we have the mega list of all dependencies
      * @method _reduce
+     * @return {object} the reduced dependency hash.
      * @private
      */
     _reduce: function(r) {
@@ -1775,8 +1774,8 @@ Y.Loader.prototype = {
      * <code>type</code> can be "js" or "css".  Both script and
      * css are inserted if type is not provided.
      * @method insert
-     * @param o optional options object.
-     * @param type {string} the type of dependency to insert.
+     * @param {object} o optional options object.
+     * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type) {
         var self = this, copy = Y.merge(this, true);
@@ -1794,7 +1793,7 @@ Y.Loader.prototype = {
      * is possible to call this if using a method other than
      * Y.register to determine when scripts are fully loaded
      * @method loadNext
-     * @param mname {string} optional the name of the module that has
+     * @param {string} mname optional the name of the module that has
      * been loaded (which is usually why it is time to load the next
      * one).
      */
@@ -2047,8 +2046,8 @@ Y.Loader.prototype = {
     /**
      * Apply filter defined for this instance to a url/path
      * method _filter
-     * @param u {string} the string to filter.
-     * @param name {string} the name of the module, if we are processing
+     * @param {string} u the string to filter.
+     * @param {string} name the name of the module, if we are processing
      * a single module as opposed to a combined url.
      * @return {string} the filtered string.
      * @private
@@ -2075,7 +2074,7 @@ Y.Loader.prototype = {
     /**
      * Generates the full url for a module
      * method _url
-     * @param path {string} the path fragment.
+     * @param {string} path the path fragment.
      * @return {string} the full url.
      * @private
      */
@@ -2107,7 +2106,7 @@ YUI.add('loader-rollup', function(Y) {
  * @private
  */
 Y.Loader.prototype._rollup = function() {
-    var i, j, m, s, rollups={}, r=this.required, roll,
+    var i, j, m, s, rollups = {}, r = this.required, roll,
         info = this.moduleInfo, rolled, c, smod;
 
     // find and cache rollup modules
@@ -2131,12 +2130,12 @@ Y.Loader.prototype._rollup = function() {
         rolled = false;
 
         // go through the rollup candidates
-        for (i in rollups) { 
+        for (i in rollups) {
             if (rollups.hasOwnProperty(i)) {
                 // there can be only one, unless forced
                 if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
-                    m = this.getModule(i); 
-                    s = m.supersedes || []; 
+                    m = this.getModule(i);
+                    s = m.supersedes || [];
                     roll = false;
 
                     // @TODO remove continue
@@ -2147,16 +2146,16 @@ Y.Loader.prototype._rollup = function() {
                     c = 0;
 
                     // check the threshold
-                    for (j=0;j<s.length;j=j+1) {
+                    for (j = 0; j < s.length; j++) {
                         smod = info[s[j]];
 
-                        // if the superseded module is loaded, we can't 
+                        // if the superseded module is loaded, we can't
                         // load the rollup unless it has been forced.
                         if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
                             roll = false;
                             break;
-                        // increment the counter if this module is required.  
-                        // if we are beyond the rollup threshold, we will 
+                        // increment the counter if this module is required.
+                        // if we are beyond the rollup threshold, we will
                         // use the rollup module
                         } else if (r[s[j]] && m.type == smod.type) {
                             c++;
