@@ -123,7 +123,6 @@ YUI.add('test', function(Y) {
         this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
-
         
     Y.namespace("Test");
     
@@ -200,7 +199,6 @@ YUI.add('test', function(Y) {
         }
         
     };
-
     
     /*
      * Runs test suites and test cases, providing events to allowing for the
@@ -1206,7 +1204,6 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
-
   
     /**
      * The Assert object provides functions to test JavaScript values against
@@ -1903,7 +1900,6 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
-
    
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
@@ -2226,7 +2222,6 @@ YUI.add('test', function(Y) {
         
     };
 
-
     /**
      * The ObjectAssert object provides functions to test JavaScript objects
      * for a variety of cases.
@@ -2332,7 +2327,6 @@ YUI.add('test', function(Y) {
         }     
     };
 
-
     
     /**
      * The DateAssert object provides functions to test JavaScript Date objects
@@ -2418,7 +2412,6 @@ YUI.add('test', function(Y) {
         }
         
     };
-
     
     Y.namespace("Test.Format");
     
@@ -2650,7 +2643,6 @@ YUI.add('test', function(Y) {
         
 
 
-
     Y.namespace("Coverage.Format");
 
     /**
@@ -2692,7 +2684,6 @@ YUI.add('test', function(Y) {
 
 
   
-
 
     Y.namespace("Test");
     
@@ -2859,7 +2850,6 @@ YUI.add('test', function(Y) {
         }
     
     };
-
     /**
      * Creates a new mock object.
      * @class Mock
@@ -2870,12 +2860,12 @@ YUI.add('test', function(Y) {
      *      works correctly.
      */
     Y.Mock = function(template){
-    
+
         //use blank object is nothing is passed in
         template = template || {};
-        
+
         var mock = null;
-        
+
         //try to create mock that keeps prototype chain intact
         try {
             mock = Y.Object(template);
@@ -2883,7 +2873,7 @@ YUI.add('test', function(Y) {
             mock = {};
             Y.log("Couldn't create mock with prototype.", "warn", "Mock");
         }
-        
+
         //create new versions of the methods so that they don't actually do anything
         Y.Object.each(template, function(name){
             if (Y.Lang.isFunction(template[name])){
@@ -2892,11 +2882,11 @@ YUI.add('test', function(Y) {
                 };
             }
         });
-        
+
         //return it
-        return mock;    
+        return mock;
     };
-        
+
     /**
      * Assigns an expectation to a mock object. This is used to create
      * methods and properties on the mock object that are monitored for
@@ -2909,7 +2899,7 @@ YUI.add('test', function(Y) {
      * @return {void}
      * @method expect
      * @static
-     */ 
+     */
     Y.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
 
         //make sure there's a place to store the expectations
@@ -2925,22 +2915,22 @@ YUI.add('test', function(Y) {
                 callCount = Y.Lang.isNumber(expectation.callCount) ? expectation.callCount : 1,
                 error = expectation.error,
                 run = expectation.run || function(){};
-                
+
             //save expectations
             mock.__expectations[name] = expectation;
             expectation.callCount = callCount;
             expectation.actualCallCount = 0;
-                
+
             //process arguments
             Y.Array.each(args, function(arg, i, array){
                 if (!(array[i] instanceof Y.Mock.Value)){
                     array[i] = Y.Mock.Value(Y.Assert.areSame, [arg], "Argument " + i + " of " + name + "() is incorrect.");
                 }
             });
-        
+
             //if the method is expected to be called
             if (callCount > 0){
-                mock[name] = function(){   
+                mock[name] = function(){
                     try {
                         expectation.actualCallCount++;
                         Y.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
@@ -2950,11 +2940,11 @@ YUI.add('test', function(Y) {
                             //} else {
                             //    Y.Assert.fail("Argument " + i + " (" + arguments[i] + ") was not expected to be used.");
                             //}
-                            
-                        }                
-    
+
+                        }
+
                         run.apply(this, arguments);
-                        
+
                         if (error){
                             throw error;
                         }
@@ -2962,11 +2952,11 @@ YUI.add('test', function(Y) {
                         //route through TestRunner for proper handling
                         Y.Test.Runner._handleError(ex);
                     }
-                    
+
                     return result;
                 };
             } else {
-            
+
                 //method should fail if called when not expected
                 mock[name] = function(){
                     try {
@@ -2974,7 +2964,7 @@ YUI.add('test', function(Y) {
                     } catch (ex){
                         //route through TestRunner for proper handling
                         Y.Test.Runner._handleError(ex);
-                    }                    
+                    }
                 };
             }
         } else if (expectation.property){
@@ -2990,14 +2980,14 @@ YUI.add('test', function(Y) {
      * @return {void}
      * @method verify
      * @static
-     */ 
-    Y.Mock.verify = function(mock /*:Object*/){    
+     */
+    Y.Mock.verify = function(mock /*:Object*/){
         try {
             Y.Object.each(mock.__expectations, function(expectation){
                 if (expectation.method) {
                     Y.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
                 } else if (expectation.property){
-                    Y.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
+                    Y.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value.");
                 }
             });
         } catch (ex){
@@ -3019,9 +3009,9 @@ YUI.add('test', function(Y) {
      * @namespace Mock
      * @constructor Value
      * @static
-     */ 
+     */
     Y.Mock.Value = function(method, originalArgs, message){
-        if (this instanceof Y.Mock.Value){
+        if (Y.instanceOf(this, Y.Mock.Value)){
             this.verify = function(value){
                 var args = [].concat(originalArgs || []);
                 args.push(value);
@@ -3032,14 +3022,14 @@ YUI.add('test', function(Y) {
             return new Y.Mock.Value(method, originalArgs, message);
         }
     };
-    
+
     /**
      * Mock argument validator that accepts any value as valid.
      * @namespace Mock.Value
      * @property Any
      * @type Function
      * @static
-     */ 
+     */
     Y.Mock.Value.Any        = Y.Mock.Value(function(){});
 
     /**
@@ -3048,7 +3038,7 @@ YUI.add('test', function(Y) {
      * @property Boolean
      * @type Function
      * @static
-     */ 
+     */
     Y.Mock.Value.Boolean    = Y.Mock.Value(Y.Assert.isBoolean);
 
     /**
@@ -3057,7 +3047,7 @@ YUI.add('test', function(Y) {
      * @property Number
      * @type Function
      * @static
-     */ 
+     */
     Y.Mock.Value.Number     = Y.Mock.Value(Y.Assert.isNumber);
 
     /**
@@ -3066,7 +3056,7 @@ YUI.add('test', function(Y) {
      * @property String
      * @type Function
      * @static
-     */ 
+     */
     Y.Mock.Value.String     = Y.Mock.Value(Y.Assert.isString);
 
     /**
@@ -3075,18 +3065,17 @@ YUI.add('test', function(Y) {
      * @property Object
      * @type Function
      * @static
-     */ 
+     */
     Y.Mock.Value.Object     = Y.Mock.Value(Y.Assert.isObject);
-    
+
     /**
      * Mock argument validator that accepts onlyfunctions as valid.
      * @namespace Mock.Value
      * @property Function
      * @type Function
      * @static
-     */ 
+     */
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
-
 /*Stub for future compatibility*/
 if (typeof YUITest == "undefined" || !YUITest) {
     YUITest = {
@@ -3095,7 +3084,6 @@ if (typeof YUITest == "undefined" || !YUITest) {
         CoverageFormat: Y.Coverage.Format
     };
 }
-
 
 
 }, '@VERSION@' ,{requires:['substitute','event-base','json-stringify']});
