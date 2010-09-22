@@ -29,17 +29,18 @@ var Node   = Y.Node,
     _CLASS_ITEM_HOVER  = '_CLASS_ITEM_HOVER',
     _SELECTOR_ITEM     = '_SELECTOR_ITEM',
 
-    ACTIVE_ITEM  = 'activeItem',
-    CIRCULAR     = 'circular',
-    HOVERED_ITEM = 'hoveredItem',
-    ID           = 'id',
-    INPUT_NODE   = 'inputNode',
-    ITEM         = 'item',
-    LIST         = 'list',
-    RESULT       = 'result',
-    RESULTS      = 'results',
-    VISIBLE      = 'visible',
-    WIDTH        = 'width',
+    ACTIVE_ITEM      = 'activeItem',
+    ALWAYS_SHOW_LIST = 'alwaysShowList',
+    CIRCULAR         = 'circular',
+    HOVERED_ITEM     = 'hoveredItem',
+    ID               = 'id',
+    INPUT_NODE       = 'inputNode',
+    ITEM             = 'item',
+    LIST             = 'list',
+    RESULT           = 'result',
+    RESULTS          = 'results',
+    VISIBLE          = 'visible',
+    WIDTH            = 'width',
 
     // Event names.
     EVT_SELECT = 'select',
@@ -140,6 +141,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             role: 'combobox'
         });
 
+        if (this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, true);
+        }
+
         this._contentBox = contentBox;
         this._listNode   = listNode;
     },
@@ -153,14 +158,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
-     * Hides the list.
+     * Hides the list, unless the <code>alwaysShowList</code> attribute is
+     * <code>true</code>.
      *
      * @method hide
      * @see show
      * @chainable
      */
     hide: function () {
-        return this.set(VISIBLE, false);
+        return this.get(ALWAYS_SHOW_LIST) ? this : this.set(VISIBLE, false);
     },
 
     /**
@@ -300,13 +306,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._events.concat([
-            this.after('mouseover', this._afterMouseOver, this),
-            this.after('mouseout', this._afterMouseOut, this),
+            this.after('mouseover', this._afterMouseOver),
+            this.after('mouseout', this._afterMouseOut),
 
-            this.after('activeItemChange', this._afterActiveItemChange, this),
-            this.after('hoveredItemChange', this._afterHoveredItemChange, this),
-            this.after('resultsChange', this._afterResultsChange, this),
-            this.after('visibleChange', this._afterVisibleChange, this),
+            this.after('activeItemChange', this._afterActiveItemChange),
+            this.after('alwaysShowListChange', this._afterAlwaysShowListChange),
+            this.after('hoveredItemChange', this._afterHoveredItemChange),
+            this.after('resultsChange', this._afterResultsChange),
+            this.after('visibleChange', this._afterVisibleChange),
 
             this._listNode.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
         ]);
@@ -403,7 +410,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncVisibility: function (visible) {
-        if (visible === undefined) {
+        if (typeof visible === 'undefined') {
             visible = this.get(VISIBLE);
         }
 
@@ -436,6 +443,17 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
             this._inputNode.set('aria-activedescendant', newVal.get(ID));
         }
+    },
+
+    /**
+     * Handles <code>alwaysShowListChange</code> events.
+     *
+     * @method _afterAlwaysShowListChange
+     * @param {EventTarget} e
+     * @protected
+     */
+    _afterAlwaysShowListChange: function (e) {
+        this.set(VISIBLE, e.newVal || this.get(RESULTS).length > 0);
     },
 
     /**
@@ -496,7 +514,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _afterResultsChange: function (e) {
         this._syncResults(e.newVal);
-        this.set(VISIBLE, !!e.newVal.length);
+
+        if (!this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, !!e.newVal.length);
+        }
     },
 
     /**
@@ -652,6 +673,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             value: {
                 points: ['tl', 'bl']
             }
+        },
+
+        /**
+         * If <code>true</code>, the list will remain visible even when there
+         * are no results to display.
+         *
+         * @attribute alwaysShowList
+         * @type Boolean
+         * @default false
+         */
+        alwaysShowList: {
+            value: false
         },
 
         /**
