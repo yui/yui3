@@ -85,16 +85,24 @@
     </fieldset>
 
     <fieldset id="filters">
-      <legend>Result Filters</legend>
-      <div></div>
+        <legend>Result Filters</legend>
+        <div></div>
     </fieldset>
 
     <fieldset id="highlighters">
-      <legend>Result Highlighters</legend>
-      <div>
-          <input type="radio" class="highlighter" name="highlighter" id="highlighter_none" value="none" checked="checked">
-          <label for="highlighter_none">None</label>
-      </div>
+        <legend>Result Highlighters</legend>
+        <div>
+            <input type="radio" class="highlighter" name="highlighter" id="highlighter_none" value="none" checked="checked">
+            <label for="highlighter_none">None</label>
+        </div>
+    </fieldset>
+
+    <fieldset id="other">
+        <legend>Other Settings</legend>
+        <div>
+            <label for="delimiter">Query delimiter:</label>
+            <input type="text" id="delimiter">
+        </div>
     </fieldset>
 </form>
 
@@ -234,6 +242,9 @@ Y.delegate('click', setFilters, '#filters', 'input[type="checkbox"]');
 // Handle clicks on highlighters.
 Y.delegate('click', setHighlighter, '#highlighters', 'input[type="radio"]');
 
+// Handle delimiter changes.
+Y.on('change', setDelimiter, '#delimiter');
+
 useLocal();
 setFilters();
 setHighlighter();
@@ -253,6 +264,10 @@ function flickrFormatter(query, raw, highlighted) {
                  '<span class="title">' + highlighted[i] + '</span>' +
                '</div>';
     });
+}
+
+function setDelimiter(e) {
+    autoComplete.set('queryDelimiter', e.target.get('value'));
 }
 
 function setFilters() {

@@ -762,6 +762,10 @@ These arguments will be added after the event object.</span>
                                                          args
                                                     
                                                 
+                                                        , 
+                                                         ce
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -787,6 +791,12 @@ notification</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  the arguments that would be passed to subscribers</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">ce</span>
+                                                        &lt;<span property="yui:type">CustomEvent</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">    the DOM event wrapper</span>
                                                         </dd>
                                                 </dl>
 
@@ -884,7 +894,8 @@ handling.</p>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Overrides the <code>_notify</code> method on the normal DOM subscription to inject the filtering logic and only proceed in the case of a match.
+                                            Overrides the <code>_notify</code> method on the normal DOM subscription to
+inject the filtering logic and only proceed in the case of a match.
                                         </div>
 
                                         <div class="description">

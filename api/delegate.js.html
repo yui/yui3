@@ -129,11 +129,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">handle</span> <span class="o">&amp;&amp;</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">container</span><span class="p">);</span> <span class="c1">// remove the filter</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">filter</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">filter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">compileFilter</span><span class="p">(</span><span class="nx">filter</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="p">{</span> <span class="nx">facade</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
             <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span>  <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
             <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">_notify</span> <span class="o">=</span> <span class="nx">delegate</span><span class="p">.</span><span class="nx">notifySub</span><span class="p">;</span>
         <span class="p">}</span>
@@ -149,7 +145,8 @@
 <span class="p">}</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Overrides the &lt;code&gt;_notify&lt;/code&gt; method on the normal DOM subscription to inject the filtering logic and only proceed in the case of a match.</span>
+<span class="cm"> * Overrides the &lt;code&gt;_notify&lt;/code&gt; method on the normal DOM subscription to</span>
+<span class="cm"> * inject the filtering logic and only proceed in the case of a match.</span>
 <span class="cm"> * </span>
 <span class="cm"> * @method delegate.notifySub</span>
 <span class="cm"> * @param thisObj {Object} default &#39;this&#39; object for the callback</span>
@@ -169,26 +166,25 @@
     <span class="p">}</span>
 
     <span class="c1">// Only notify subs if the event occurred on a targeted element</span>
-    <span class="kd">var</span> <span class="nx">e</span>             <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">delegate</span><span class="p">.</span><span class="nx">_applyFilter</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span>
-        <span class="nx">container</span>     <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
-        <span class="nx">i</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">target</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">delegate</span><span class="p">.</span><span class="nx">_applyFilter</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">),</span>
+        <span class="c1">//container     = e.currentTarget,</span>
+        <span class="nx">e</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">ret</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">currentTarget</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Support multiple matches up the the container subtree</span>
         <span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">currentTarget</span><span class="p">);</span>
 
+        <span class="c1">// The second arg is the currentTarget, but we&#39;ll be reusing this</span>
+        <span class="c1">// facade, replacing the currentTarget for each use, so it doesn&#39;t</span>
+        <span class="c1">// matter what element we seed it with.</span>
+        <span class="nx">e</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+
+        <span class="nx">e</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">ce</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+    
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">currentTarget</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">target</span> <span class="o">=</span> <span class="nx">currentTarget</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">currentTarget</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
 
-            <span class="c1">// New facade to avoid corrupting facade sent to direct subs</span>
-            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-
-            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">container</span><span class="p">;</span>
-        
-            <span class="nx">thisObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">target</span><span class="p">;</span>
-
-            <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">thisObj</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// stop further notifications</span>
                 <span class="k">break</span><span class="p">;</span>
@@ -231,26 +227,47 @@
 <span class="cm"> * @param filter {Function} boolean function to test for inclusion in event</span>
 <span class="cm"> *                  notification</span>
 <span class="cm"> * @param args {Array} the arguments that would be passed to subscribers</span>
+<span class="cm"> * @param ce   {CustomEvent} the DOM event wrapper</span>
 <span class="cm"> * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter</span>
 <span class="cm"> * @protected</span>
 <span class="cm"> */</span>
-<span class="nx">delegate</span><span class="p">.</span><span class="nx">_applyFilter</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">delegate</span><span class="p">.</span><span class="nx">_applyFilter</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">e</span>         <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="nx">container</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
-        <span class="nx">target</span>    <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+        <span class="nx">container</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="c1">// facadeless events in IE, have no e.currentTarget</span>
+        <span class="c1">//container = e.currentTarget,</span>
+        <span class="nx">target</span>    <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">srcElement</span><span class="p">,</span>
         <span class="nx">match</span>     <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="c1">// Resolve text nodes to their containing element</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">target</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+    <span class="p">}</span>
 
     <span class="c1">// passing target as the first arg rather than leaving well enough alone</span>
     <span class="c1">// making &#39;this&#39; in the filter function refer to the target.  This is to</span>
     <span class="c1">// support bound filter functions.</span>
     <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
 
-    <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// filter(target, e, extra args...) - this === target</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">args</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">match</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">filter</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">selectorTest</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">container</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">match</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// filter functions are implementer code and should receive wrappers</span>
+        <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+        <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">container</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// filter(target, e, extra args...) - this === target</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">args</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">match</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span> <span class="c1">// restore the raw DOM event</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">match</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>

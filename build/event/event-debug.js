@@ -1488,11 +1488,7 @@ function delegate(type, fn, el, filter) {
         if (!handle && container) {
             args.splice(2, 2, container); // remove the filter
 
-            if (isString(filter)) {
-                filter = Y.delegate.compileFilter(filter);
-            }
-
-            handle = Y.on.apply(Y, args);
+            handle = Y.Event._attach(args, { facade: false });
             handle.sub.filter  = filter;
             handle.sub._notify = delegate.notifySub;
         }
@@ -1508,7 +1504,8 @@ function delegate(type, fn, el, filter) {
 }
 
 /**
- * Overrides the <code>_notify</code> method on the normal DOM subscription to inject the filtering logic and only proceed in the case of a match.
+ * Overrides the <code>_notify</code> method on the normal DOM subscription to
+ * inject the filtering logic and only proceed in the case of a match.
  * 
  * @method delegate.notifySub
  * @param thisObj {Object} default 'this' object for the callback
@@ -1528,26 +1525,25 @@ delegate.notifySub = function (thisObj, args, ce) {
     }
 
     // Only notify subs if the event occurred on a targeted element
-    var e             = args[0],
-        currentTarget = delegate._applyFilter(this.filter, args),
-        container     = e.currentTarget,
-        i, ret, target;
+    var currentTarget = delegate._applyFilter(this.filter, args, ce),
+        //container     = e.currentTarget,
+        e, i, ret;
 
     if (currentTarget) {
         // Support multiple matches up the the container subtree
         currentTarget = toArray(currentTarget);
 
+        // The second arg is the currentTarget, but we'll be reusing this
+        // facade, replacing the currentTarget for each use, so it doesn't
+        // matter what element we seed it with.
+        e = args[0] = new Y.DOMEventFacade(args[0], ce.el, ce);
+
+        e.container = Y.one(ce.el);
+    
         for (i = currentTarget.length - 1; i >= 0; --i) {
-            target = currentTarget[i];
+            e.currentTarget = Y.one(currentTarget[i]);
 
-            // New facade to avoid corrupting facade sent to direct subs
-            args[0] = new Y.DOMEventFacade(e, target, ce);
-
-            args[0].container = container;
-        
-            thisObj = this.context || target;
-
-            ret = this.fn.apply(thisObj, args);
+            ret = this.fn.apply(this.context || e.currentTarget, args);
 
             if (ret === false) { // stop further notifications
                 break;
@@ -1590,26 +1586,47 @@ delegate.compileFilter = Y.cached(function (selector) {
  * @param filter {Function} boolean function to test for inclusion in event
  *                  notification
  * @param args {Array} the arguments that would be passed to subscribers
+ * @param ce   {CustomEvent} the DOM event wrapper
  * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter
  * @protected
  */
-delegate._applyFilter = function (filter, args) {
+delegate._applyFilter = function (filter, args, ce) {
     var e         = args[0],
-        container = e.currentTarget,
-        target    = e.target,
+        container = ce.el, // facadeless events in IE, have no e.currentTarget
+        //container = e.currentTarget,
+        target    = e.target || e.srcElement,
         match     = [];
+
+    // Resolve text nodes to their containing element
+    if (target.nodeType === 3) {
+        target = target.parentNode;
+    }
 
     // passing target as the first arg rather than leaving well enough alone
     // making 'this' in the filter function refer to the target.  This is to
     // support bound filter functions.
     args.unshift(target);
 
-    while (target && target !== container) {
-        // filter(target, e, extra args...) - this === target
-        if (filter.apply(target, args)) {
-            match.push(target);
+    if (isString(filter)) {
+        while (target && target !== container) {
+            if (selectorTest(target, filter, container)) {
+                match.push(target);
+            }
+            target = target.parentNode;
         }
-        args[0] = target = target.get('parentNode');
+    } else {
+        // filter functions are implementer code and should receive wrappers
+        args[0] = Y.one(target);
+        args[1] = new Y.DOMEventFacade(e, container, ce);
+        while (target && target !== container) {
+            // filter(target, e, extra args...) - this === target
+            if (filter.apply(args[0], args)) {
+                match.push(target);
+            }
+            target = target.parentNode;
+            args[0] = Y.one(target);
+        }
+        args[1] = e; // restore the raw DOM event
     }
 
     if (match.length <= 1) {
@@ -2614,7 +2631,7 @@ var Event    = Y.Event,
     YLang    = Y.Lang,
     isString = YLang.isString,
     useActivate = YLang.isFunction(
-        Y.DOM.create('<p onbeforeactivate=";">').onbeforeactivate);
+        Y.DOM.create('<p onbeforeactivate=";"/>').onbeforeactivate);
 
 function define(type, proxy, directEvent) {
     var nodeDataKey = '_' + type + 'Notifiers';

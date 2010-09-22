@@ -3,13 +3,13 @@
 /*global YUI*/
 /*global YUI_config*/
 
-var COMPAT_ARG = '~yui|2|compat~';
+var COMPAT_ARG = '~yui|2|compat~', o, L;
 
 
 if (window.YAHOO != YUI) {
 
     // get any existing YAHOO obj props
-    var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
+    o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
 
     // Make the YUI global the YAHOO global
     window.YAHOO = YUI;
@@ -26,7 +26,7 @@ Y.namespace("util", "widget", "example");
 // case/location change
 Y.env = (Y.env) ? Y.mix(Y.env, Y.Env) : Y.Env;
 Y.lang = (Y.lang) ? Y.mix(Y.lang, Y.Lang) : Y.Lang;
-Y.env.ua = Y.UA; 
+Y.env.ua = Y.UA;
 
 // support Y.register
 Y.mix(Y.env, {
@@ -37,9 +37,9 @@ Y.mix(Y.env, {
         }
 });
 
-var L = Y.lang;
+L = Y.lang;
 
-// add old lang properties 
+// add old lang properties
 Y.mix(L, {
 
     augmentObject: function(r, s) {
@@ -52,14 +52,14 @@ Y.mix(L, {
 
         return Y.mix.apply(Y, args);
     },
- 
+
     augmentProto: function(r, s) {
         var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null,
             ov = (wl), args = [r, s, ov];
         return Y.augment.apply(Y, args);
     },
 
-    // extend: Y.bind(Y.extend, Y), 
+    // extend: Y.bind(Y.extend, Y),
     extend: Y.extend,
     // merge: Y.bind(Y.merge, Y)
     merge: Y.merge
@@ -119,14 +119,14 @@ if ("undefined" != typeof YAHOO_config) {
         }
     }
 }
-    
+
 // add old registration for yahoo
 Y.register("yahoo", Y, {version: "@VERSION@", build: "@BUILD@"});
 
 if (Y.Event) {
 
     o = {
-        
+
         /**
          * Safari detection
          * @property isSafari
@@ -135,7 +135,7 @@ if (Y.Event) {
          * @deprecated use Y.Env.UA.webkit
          */
         isSafari: Y.UA.webkit,
-        
+
         /**
          * webkit version
          * @property webkit
@@ -164,9 +164,9 @@ if (Y.Event) {
             25: 9      // SHIFT-TAB (Safari provides a different key code in
                        // this case, even though the shiftKey modifier is set)
         },
-        
+
         /**
-         * IE detection 
+         * IE detection
          * @property isIE
          * @private
          * @static
@@ -195,7 +195,7 @@ if (Y.Event) {
         },
 
         /**
-         * Returns the scrollTop and scrollLeft.  Used to calculate the 
+         * Returns the scrollTop and scrollLeft.  Used to calculate the
          * pageX and pageY in Internet Explorer
          * @method _getScroll
          * @static
@@ -282,7 +282,7 @@ if (Y.Event) {
         },
 
         /**
-         * Returns the event's related target 
+         * Returns the event's related target
          * @method getRelatedTarget
          * @param {Event} ev the event
          * @return {HTMLElement} the event's relatedTarget
@@ -314,7 +314,7 @@ if (Y.Event) {
                 var t = new Date().getTime();
                 try {
                     ev.time = t;
-                } catch(ex) { 
+                } catch(ex) {
                     this.lastError = ex;
                     return t;
                 }
@@ -369,7 +369,7 @@ if (Y.Event) {
          * @method getTarget
          * @param {Event} ev the event
          * @param {boolean} resolveTextNode when set to true the target's
-         *                  parent will be returned if the target is a 
+         *                  parent will be returned if the target is a
          *                  text node.  @deprecated, the text node is
          *                  now resolved automatically
          * @return {HTMLElement} the event's target
@@ -398,7 +398,7 @@ if (Y.Event) {
         },
 
         /**
-         * We cache elements bound by id because when the unload event 
+         * We cache elements bound by id because when the unload event
          * fires, we can no longer use document.getElementById
          * @method getEl
          * @static
@@ -514,7 +514,7 @@ if (Y.Event) {
 
     /**
      * Subscriber listener sigature constant.  The FLAT type returns two
-     * parameters: the first argument passed to fire and the optional 
+     * parameters: the first argument passed to fire and the optional
      * custom object
      * @property YAHOO.util.CustomEvent.FLAT
      * @static
@@ -574,6 +574,6 @@ if (Y.Event) {
 }
 
 
-Y.register("event", Y, {version: "@VERSION@", build: "@BUILD@"});
+Y.register("event", Y.util.Event, {version: "@VERSION@", build: "@BUILD@"});
 
 
