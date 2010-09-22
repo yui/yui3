@@ -28,14 +28,17 @@ if (typeof YUI != 'undefined') {
  */
     /*global YUI*/
     /*global YUI_config*/
-    var YUI = function() {
+    var instanceOf = function(o, type) {
+            return (o && o.hasOwnProperty && (o instanceof type));
+        },
+    YUI = function() {
         var i = 0,
             Y = this,
             args = arguments,
             l = args.length,
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
-        if (!(Y instanceof YUI)) {
+        if (!(instanceOf(Y, YUI))) {
             Y = new YUI();
         } else {
             // set up the core environment
@@ -905,7 +908,17 @@ proto = {
         }
         delete instances[Y.id];
         delete Y.Env;
-    }
+        delete Y.config;
+    },
+
+    /**
+     * instanceof check for objects that works around
+     * memory leak in IE when the item tested is
+     * window/document
+     * @method instanceOf
+     * @since 3.3.0
+     */
+    instanceOf: instanceOf
 };
 
     YUI.prototype = proto;

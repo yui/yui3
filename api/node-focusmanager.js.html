@@ -876,12 +876,16 @@
 
 			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
 
-			<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span> <span class="o">&amp;&amp;</span> <span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">))</span> <span class="p">{</span>
-				<span class="k">this</span><span class="p">.</span><span class="nx">_focusNext</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">nActiveDescendant</span><span class="p">);</span>
-			<span class="p">}</span>
-			<span class="k">else</span> <span class="p">{</span>
-				<span class="k">this</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
-			<span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_focusNext</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">nActiveDescendant</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
 
 		<span class="p">}</span>
 
@@ -912,14 +916,18 @@
 				<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_lastNodeIndex</span><span class="p">;</span>
 			<span class="p">}</span>
 
-			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
+            <span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
 
-			<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span> <span class="o">&amp;&amp;</span> <span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">))</span> <span class="p">{</span>
-				<span class="k">this</span><span class="p">.</span><span class="nx">_focusPrevious</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">nActiveDescendant</span><span class="p">);</span>
-			<span class="p">}</span>
-			<span class="k">else</span> <span class="p">{</span>
-				<span class="k">this</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
-			<span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_focusPrevious</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">nActiveDescendant</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
 
 		<span class="p">}</span>
 
