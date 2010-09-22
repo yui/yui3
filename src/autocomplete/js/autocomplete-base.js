@@ -58,26 +58,16 @@
 var Lang   = Y.Lang,
     YArray = Y.Array,
 
-    isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
     trim       = Lang.trim,
 
-    ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
-    DATA_SOURCE        = 'dataSource',
-    INPUT_NODE         = 'inputNode',
-    MIN_QUERY_LENGTH   = 'minQueryLength',
-    QUERY              = 'query',
-    QUERY_DELAY        = 'queryDelay',
-    QUERY_DELIMITER    = 'queryDelimiter',
-    REQUEST_TEMPLATE   = 'requestTemplate',
-    RESULT_FILTERS     = 'resultFilters',
-    RESULT_FORMATTER   = 'resultFormatter',
-    RESULT_HIGHLIGHTER = 'resultHighlighter',
-    RESULT_LOCATOR     = 'resultLocator',
-    RESULTS            = 'results',
-    VALUE              = 'value',
-    VALUE_CHANGE       = 'valueChange',
+    INPUT_NODE      = 'inputNode',
+    QUERY           = 'query',
+    QUERY_DELIMITER = 'queryDelimiter',
+    RESULTS         = 'results',
+    VALUE           = 'value',
+    VALUE_CHANGE    = 'valueChange',
 
     EVT_CLEAR   = 'clear',
     EVT_QUERY   = QUERY,
@@ -404,7 +394,7 @@ AutoCompleteBase.ATTRS = {
      * @default []
      */
     resultFilters: {
-        validator: isArray,
+        validator: Lang.isArray,
         value: []
     },
 
@@ -563,7 +553,8 @@ AutoCompleteBase.prototype = {
         var inputNode = this.get(INPUT_NODE);
 
         if (inputNode.get('nodeName').toLowerCase() === 'input') {
-            inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+            inputNode.setAttribute('autocomplete',
+                    this.get('allowBrowserAutocomplete') ? 'on' : 'off');
         }
 
         this.set(VALUE, inputNode.get(VALUE));
@@ -634,10 +625,10 @@ AutoCompleteBase.prototype = {
             maxResults;
 
         if (unfiltered) {
-            filters     = this.get(RESULT_FILTERS);
-            formatter   = this.get(RESULT_FORMATTER);
-            highlighter = this.get(RESULT_HIGHLIGHTER);
-            locator     = this.get(RESULT_LOCATOR);
+            filters     = this.get('resultFilters');
+            formatter   = this.get('resultFormatter');
+            highlighter = this.get('resultHighlighter');
+            locator     = this.get('resultLocator');
             maxResults  = this.get('maxResults');
 
             if (locator) {
@@ -812,8 +803,8 @@ AutoCompleteBase.prototype = {
 
         query = this._parseValue(newVal);
 
-        if (query && query.length >= this.get(MIN_QUERY_LENGTH)) {
-            delay = this.get(QUERY_DELAY);
+        if (query && query.length >= this.get('minQueryLength')) {
+            delay = this.get('queryDelay');
             that  = this;
 
             fire = function () {
@@ -895,7 +886,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defQueryFn: function (e) {
-        var dataSource = this.get(DATA_SOURCE),
+        var dataSource = this.get('dataSource'),
             query      = e.query;
 
         this._set(QUERY, query);
@@ -903,10 +894,10 @@ AutoCompleteBase.prototype = {
         Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
 
         if (query && dataSource) {
-            Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', 'autocomplete-base');
+            Y.log('sendRequest: ' + this.get('requestTemplate')(query), 'info', 'autocomplete-base');
 
             dataSource.sendRequest({
-                request: this.get(REQUEST_TEMPLATE)(query),
+                request: this.get('requestTemplate')(query),
                 callback: {
                     query  : query,
                     success: Y.bind(this._onResponse, this)
