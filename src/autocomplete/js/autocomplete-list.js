@@ -387,6 +387,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (results.length) {
             items = this._add(results);
         }
+
+        if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
+            this._set(ACTIVE_ITEM, this._getFirstItemNode());
+        }
     },
 
     /**
@@ -618,6 +622,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     }
 }, {
     ATTRS: {
+        /**
+         * If <code>true</code>, the first item in the list will be activated by
+         * default when the list is initially displayed and when results change.
+         *
+         * @attribute activateFirstItem
+         * @type Boolean
+         * @default false
+         */
+        activateFirstItem: {
+            value: false
+        },
+
         /**
          * Item that's currently active, if any. When the user presses enter,
          * this is the item that will be selected.
