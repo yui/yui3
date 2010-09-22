@@ -244,6 +244,19 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
+     * Maximum number of results to return. A value of <code>0</code> or less
+     * will allow an unlimited number of results.
+     *
+     * @attribute maxResults
+     * @type Number
+     * @default 0
+     */
+    maxResults: {
+        validator: isNumber,
+        value: 0
+    },
+
+    /**
      * Minimum number of characters that must be entered before a
      * <code>query</code> event will be fired. A value of <code>0</code>
      * allows empty queries; a negative value will effectively disable all
@@ -617,13 +630,15 @@ AutoCompleteBase.prototype = {
             i,
             len,
             locator,
-            locatorMap;
+            locatorMap,
+            maxResults;
 
         if (unfiltered) {
             filters     = this.get(RESULT_FILTERS);
             formatter   = this.get(RESULT_FORMATTER);
             highlighter = this.get(RESULT_HIGHLIGHTER);
             locator     = this.get(RESULT_LOCATOR);
+            maxResults  = this.get('maxResults');
 
             if (locator) {
                 // In order to allow filtering based on locator queries, we have
@@ -671,7 +686,10 @@ AutoCompleteBase.prototype = {
 
             // Finally, unroll all the result arrays into a single array of
             // result objects.
-            for (i = 0, len = formatted.length; i < len; ++i) {
+            len = maxResults > 0 ? Math.min(maxResults, formatted.length) :
+                    formatted.length;
+
+            for (i = 0; i < len; ++i) {
                 results.push({
                     display: formatted[i],
                     raw    : raw[i],
