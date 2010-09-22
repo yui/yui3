@@ -312,9 +312,9 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * Query delimiter string. When a delimiter is configured, the input value
-     * will be split on the delimiter, and only the portion that contains the
-     * cursor will be used in autocomplete queries and updated when the
-     * <code>query</code> attribute is modified.
+     * will be split on the delimiter, and only the last portion will be used in
+     * autocomplete queries and updated when the <code>query</code> attribute is
+     * modified.
      *
      * @attribute queryDelimiter
      * @type String|null
@@ -701,8 +701,8 @@ AutoCompleteBase.prototype = {
      * </p>
      *
      * <p>
-     * If a query delimiter is defined, the query will be the delimited part of
-     * the input value that's closest to the cursor.
+     * If a query delimiter is defined, the query will be the last delimited
+     * part of of the string.
      * </p>
      *
      * @method _parseValue
@@ -730,10 +730,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _trimLeft: String.prototype.trimLeft ? function (string) {
-        // Micro-optimization, since trimming occurs often in value parsing. The
-        // native method is faster than the regex in all browsers except Chrome,
-        // but it's not worth doing a Chrome-specific fork.
-        // http://jsperf.com/native-trimleft-vs-regex
+        // Micro-optimization, since trimming occurs often in value parsing.
         return string.trimLeft();
     } : function (string) {
         return string.replace(/^\s+/, '');
@@ -745,8 +742,8 @@ AutoCompleteBase.prototype = {
      * </p>
      *
      * <p>
-     * If a query delimiter is defined, the delimited portion of the input value
-     * closest to the cursor will be replaced with the specified <i>value</i>.
+     * If a query delimiter is defined, the last delimited portion of the input
+     * value will be replaced with the specified <i>value</i>.
      * </p>
      *
      * @method _updateValue
