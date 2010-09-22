@@ -912,7 +912,7 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'escape', 'event-valuechange', 'node-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'event-valuechange', 'node-base']});
 YUI.add('autocomplete-list', function(Y) {
 
 /**
@@ -952,6 +952,7 @@ var Node   = Y.Node,
     ID           = 'id',
     INPUT_NODE   = 'inputNode',
     ITEM         = 'item',
+    LIST         = 'list',
     RESULT       = 'result',
     RESULTS      = 'results',
     VISIBLE      = 'visible',
@@ -967,8 +968,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.WidgetStack
 ], {
     // -- Prototype Properties -------------------------------------------------
-    CONTENT_TEMPLATE: '<ul/>',
     ITEM_TEMPLATE: '<li/>',
+    LIST_TEMPLATE: '<ul/>',
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
@@ -1034,15 +1035,30 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
+        var contentBox = this.get('contentBox'),
+            listNode   = this.get('listNode');
+
         // See http://www.w3.org/WAI/PF/aria/roles#combobox for ARIA details.
-        this._contentBox = this.get('contentBox').set('role', 'listbox');
+        if (!listNode) {
+            listNode = Node.create(this.LIST_TEMPLATE);
+
+            listNode.addClass(this.getClassName(LIST)).setAttrs({
+                id  : Y.stamp(listNode),
+                role: 'listbox'
+            });
+
+            contentBox.append(listNode);
+        }
 
         this._inputNode.addClass(this.getClassName('input')).setAttrs({
-            'aria-autocomplete': 'list',
+            'aria-autocomplete': LIST,
             'aria-live': 'polite', // causes the screen reader to announce the value of an item when selected
-            'aria-owns': this._contentBox.get(ID),
+            'aria-owns': listNode.get(ID),
             role: 'combobox'
         });
+
+        this._contentBox = contentBox;
+        this._listNode   = listNode;
     },
 
     syncUI: function () {
@@ -1168,7 +1184,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }, this);
 
         itemNodes = Y.all(itemNodes);
-        this._contentBox.append(itemNodes.toFrag());
+        this._listNode.append(itemNodes.toFrag());
 
         return itemNodes;
     },
@@ -1209,7 +1225,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             this.after('resultsChange', this._afterResultsChange, this),
             this.after('visibleChange', this._afterVisibleChange, this),
 
-            this._contentBox.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
+            this._listNode.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
         ]);
     },
 
@@ -1223,7 +1239,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._set(ACTIVE_ITEM, null);
         this._set(HOVERED_ITEM, null);
 
-        this._contentBox.get('children').remove(true);
+        this._listNode.get('children').remove(true);
     },
 
     /**
@@ -1237,10 +1253,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
 
-        return itemNode.append(result.display).setAttrs({
+        return itemNode.addClass(this[_CLASS_ITEM]).setAttrs({
             id  : Y.stamp(itemNode),
             role: 'option'
-        }).addClass(this[_CLASS_ITEM]);
+        }).append(result.display);
     },
 
     /**
@@ -1252,7 +1268,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _getLastItemNode: function () {
-        return this._contentBox.one(this[_SELECTOR_ITEM] + ':last-child');
+        return this._listNode.one(this[_SELECTOR_ITEM] + ':last-child');
     },
 
     /**
@@ -1264,7 +1280,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _getFirstItemNode: function () {
-        return this._contentBox.one(this[_SELECTOR_ITEM]);
+        return this._listNode.one(this[_SELECTOR_ITEM]);
     },
 
     /**
@@ -1565,7 +1581,20 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
     },
 
-    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist'),
+
+    HTML_PARSER: {
+        /**
+         * Node that will contain result items.
+         *
+         * @attribute listNode
+         * @type Node|null
+         * @readonly
+         */
+        listNode: function () {
+            return this.getClassName(LIST);
+        }
+    }
 });
 
 Y.AutoCompleteList = List;

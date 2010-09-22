@@ -1,7 +1,7 @@
 .yui3-aclist { position: absolute; }
 .yui3-aclist-hidden { visibility: hidden; }
 
-.yui3-aclist-content {
+.yui3-aclist-list {
     margin: 0;
     overflow: hidden;
     padding: 0;
