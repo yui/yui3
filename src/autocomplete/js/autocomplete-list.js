@@ -566,8 +566,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
                 this.hide();
                 break;
 
-            // case KEY_TAB:
-            //     break;
+            case KEY_TAB:
+                if (this.get('tabSelect')) {
+                    action = 1;
+                    this.selectItem();
+                }
+                break;
 
             case KEY_UP:
                 action = 1;
@@ -656,6 +660,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         hoveredItem: {
             readOnly: true,
             value: null
+        },
+
+        /**
+         * If <code>true</code>, pressing the tab key while the list is visible
+         * will select the active item, if any.
+         *
+         * @attribute tabSelect
+         * @type Boolean
+         * @default true
+         */
+        tabSelect: {
+            value: true
         },
 
         // The "visible" attribute is documented in Widget.
