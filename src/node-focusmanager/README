@@ -1,5 +1,10 @@
 Focus Manager
 
+3.3.0
+    * Fixed an issue with next/previous behavior that could cause focus to get
+      stuck at the beginning or end of a control set when the "circular"
+      attribute was set to false. [Bug #2529353]
+
 3.2.0
     * Fixed an issue that prevented arrow keys from working properly in form
       input fields and textareas inside a focused node. [Bug #2529041]
