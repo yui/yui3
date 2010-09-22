@@ -1,4 +1,4 @@
-YUI.add('recordset', function(Y) {
+YUI.add('recordset-base', function(Y) {
 
 function Record(config) {
     Record.superclass.constructor.apply(this, arguments);
@@ -92,6 +92,7 @@ Y.extend(Recordset, Y.Base, {
 
         function initRecord(oneData){
 			
+			//This part can probably get condensed a bit - very verbose.
 			if (!(oneData instanceof Y.Record)) {
             	records.push(new Y.Record({data:oneData}));
 			}
@@ -346,11 +347,11 @@ Y.extend(Recordset, Y.Base, {
      * @method filter
      * @param k {Function || String}  A boolean function representing the conditional logic to filter by, or the key to filter by.
      * @param v {Value} (optional)  If 'k' was passed as a key, this represents the value the key should have. 
-     * @return {Array} An array of filtered records
+     * @return {Y.Recordset} A recordset of filtered records
      * @public
      */
 	filter: function(k,v) {
-		var oRecs = [], i=0, rec, len, rs;
+		var oRecs = [], i=0, rec, len;
 		len = this.get('records').length;
 		for (; i<len;i++) {
 			rec = this.getRecord(i);
@@ -360,9 +361,8 @@ Y.extend(Recordset, Y.Base, {
 					oRecs.push(rec);
 			}  
 		}
-		
-		rs = new this.constructor({records:oRecs});
-		return rs;
+
+		return new this.constructor({records:oRecs});
 	},
 	
 
@@ -482,3 +482,80 @@ Y.Recordset = Recordset;
 
 
 }, '@VERSION@' ,{requires:['base','record']});
+YUI.add('recordset-sort', function(Y) {
+
+var COMPARE = Y.ArraySort.compare;
+
+function RecordsetSort(field, desc, sorter) {
+    RecordsetSort.superclass.constructor.apply(this, arguments);
+}
+
+Y.mix(RecordsetSort, {
+    NS: "sort",
+
+    NAME: "recordsetSort",
+
+    ATTRS: {
+        dt: {
+        },
+
+        defaultSorter: {
+            // value: function(recA, recB, field, desc) {
+            //     var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
+            //     if(sorted === 0) {
+            //         return COMPARE(recA.get("id"), recB.get("id"), desc);
+            //     }
+            //     else {
+            //         return sorted;
+            //     }
+            // }
+        }
+    }
+});
+
+Y.extend(RecordsetSort, Y.Plugin.Base, {
+    initializer: function(config) {
+        //this.addTarget(this.get("dt"));
+        //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
+    },
+
+    destructor: function(config) {
+    },
+
+    _defSortFn: function(e) {
+        //this.get("host").get("records").sort(function(a, b) {return (e.sorter)(a, b, e.field, e.desc);});
+    },
+
+    sort: function(field, desc, sorter) {
+        //this.fire("sort", {field:field, desc: desc, sorter: sorter|| this.get("defaultSorter")});
+    },
+
+    custom: function() {
+        alert("sort custom");
+    },
+
+    // force asc
+    asc: function() {
+        alert("sort asc");
+    },
+
+    // force desc
+    desc: function() {
+        alert("sort desc");
+    },
+
+    // force reverse
+    reverse: function() {
+        alert("sort reverse");
+    }
+});
+
+Y.namespace("Plugin").RecordsetSort = RecordsetSort;
+
+
+
+}, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
+
+
+YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort']});
+

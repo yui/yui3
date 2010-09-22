@@ -13,7 +13,7 @@
 (function() {
     YUI({
         base: "../../../build/",
-        filters: {recordset:"debug"},
+        filter: "debug",
         logInclude:{"TestRunner":true},
         useConsole: true
     }).use("console", "test", "dump", "recordset", function(Y) {
@@ -42,6 +42,7 @@
 		        
 				//create recordset
 				this.rs = new Y.Recordset({records:this.initialData});
+				this.rs.plug(Y.Plugin.RecordsetSort);
 
 				//Some Ways to access recordset properties
 				//Y.log(rs.getRecord(0).getValue('a'));
@@ -411,6 +412,11 @@
 				Y.Assert.areEqual(oRecs.getRecord(0).getValue('a'), 3);
 				Y.ObjectAssert.areEqual(oRecs.getLength(), 1);
 				
+			},
+			
+			testsort: function() {
+				this.rs.sort.custom();
+				Y.Assert.fail();
 			}
 			
         });
