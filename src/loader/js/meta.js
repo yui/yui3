@@ -12,7 +12,7 @@ if (!YUI.Env[Y.version]) {
             BUILD           = '/build/',
             ROOT            = VERSION + BUILD,
             CDN_BASE        = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.09.15-18-40',
+            GALLERY_VERSION = 'gallery-2010.09.22-20-15',
             // GALLERY_ROOT    = GALLERY_VERSION + BUILD,
             TNT             = '2in3',
             TNT_VERSION     = '4',
