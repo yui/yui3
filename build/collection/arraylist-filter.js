@@ -10,7 +10,7 @@ YUI.add('arraylist-filter', function(Y) {
  * Adds filter method to ArrayList prototype
  * @class ArrayList~filter
  */
-Y.mix( Y.ArrayList.prototype, {
+Y.mix(Y.ArrayList.prototype, {
 
     /**
      * <p>Create a new ArrayList (or augmenting class instance) from a subset
@@ -20,24 +20,24 @@ Y.mix( Y.ArrayList.prototype, {
      * <p>The validator signature is <code>validator( item )</code>.</p>
      *
      * @method filter
-     * @param validator { Function } Boolean function to determine in or out
-     * @return { ArrayList } New instance based on who passed the validator
+     * @param { Function } validator Boolean function to determine in or out.
+     * @return { ArrayList } New instance based on who passed the validator.
      */
-    filter: function ( validator ) {
+    filter: function(validator) {
         var items = [];
 
-        Y.Array.each( this._items, function ( item, i ) {
-            item = this.item( i );
+        Y.Array.each(this._items, function(item, i) {
+            item = this.item(i);
 
-            if ( validator( item ) ) {
-                items.push( item );
+            if (validator(item)) {
+                items.push(item);
             }
         }, this);
 
-        return new this.constructor( items );
+        return new this.constructor(items);
     }
 
-} );
+});
 
 
 }, '@VERSION@' ,{requires:['arraylist']});
