@@ -34,7 +34,6 @@ var Node   = Y.Node,
     CIRCULAR         = 'circular',
     HOVERED_ITEM     = 'hoveredItem',
     ID               = 'id',
-    INPUT_NODE       = 'inputNode',
     ITEM             = 'item',
     LIST             = 'list',
     RESULT           = 'result',
@@ -84,7 +83,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         });
 
         this._events    = [];
-        this._inputNode = this.get(INPUT_NODE);
+        this._inputNode = this.get('inputNode');
 
         // Cache commonly used classnames and selectors for performance.
         this[_CLASS_ITEM]        = this.getClassName(ITEM);
