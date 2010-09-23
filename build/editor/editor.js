@@ -724,7 +724,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
 YUI.add('selection', function(Y) {
 
     /**
@@ -994,10 +994,12 @@ YUI.add('selection', function(Y) {
                 }
             });
 
+            /** Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
             spans.each(function(s) {
                 s.setAttribute('style', '');
             });
+            */
         }
 
 
@@ -1174,6 +1176,11 @@ YUI.add('selection', function(Y) {
     * @property CURSOR
     */
     Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+
+    Y.Selection.hasCursor = function() {
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        return cur.size();
+    };
 
     /**
     * Called from Editor keydown to remove the "extra" space before the cursor.
@@ -1601,7 +1608,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
 YUI.add('exec-command', function(Y) {
 
 
@@ -1724,7 +1731,11 @@ YUI.add('exec-command', function(Y) {
                 */
                 inserthtml: function(cmd, html) {
                     var inst = this.getInstance();
-                    return (new inst.Selection()).insertContent(html);
+                    if (inst.Selection.hasCursor()) {
+                        return (new inst.Selection()).insertContent(html);
+                    } else {
+                        this._command('inserthtml', html);
+                    }
                 },
                 /**
                 * Inserts the provided HTML at the cursor, and focuses the cursor afterwards.
@@ -1736,10 +1747,14 @@ YUI.add('exec-command', function(Y) {
                 */
                 insertandfocus: function(cmd, html) {
                     var inst = this.getInstance(), out, sel;
-                    html += inst.Selection.CURSOR;
-                    out = this.command('inserthtml', html);
-                    sel = new inst.Selection();
-                    sel.focusCursor(true, true);
+                    if (inst.Selection.hasCursor()) {
+                        html += inst.Selection.CURSOR;
+                        out = this.command('inserthtml', html);
+                        sel = new inst.Selection();
+                        sel.focusCursor(true, true);
+                    } else {
+                        this.command('inserthtml', html);
+                    }
                     return out;
                 },
                 /**
@@ -1808,17 +1823,21 @@ YUI.add('exec-command', function(Y) {
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('color', val);
-                            n = sel.anchorNode;
+                    if (inst.Selection.hasCursor()) {
+                        if (sel.isCollapsed) {
+                            if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                                sel.anchorNode.setStyle('color', val);
+                                n = sel.anchorNode;
+                            } else {
+                                n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                                sel.focusCursor(true, true);
+                            }
+                            return n;
                         } else {
-                            n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                            return this._command(cmd, val);
                         }
-                        return n;
                     } else {
-                        return this._command(cmd, val);
+                        this._command(cmd, val);
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
@@ -1834,17 +1853,21 @@ YUI.add('exec-command', function(Y) {
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('backgroundColor', val);
-                            n = sel.anchorNode;
+                    if (inst.Selection.hasCursor()) {
+                        if (sel.isCollapsed) {
+                            if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                                sel.anchorNode.setStyle('backgroundColor', val);
+                                n = sel.anchorNode;
+                            } else {
+                                n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                                sel.focusCursor(true, true);
+                            }
+                            return n;
                         } else {
-                            n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                            return this._command(cmd, val);
                         }
-                        return n;
                     } else {
-                        return this._command(cmd, val);
+                        this._command(cmd, val);
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
@@ -1869,7 +1892,8 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The font name to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontname: function(cmd, val) {
+                //Removed from commands list, so the default is executed..
+                fontname_enh: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
 
@@ -1894,7 +1918,8 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The font size to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontsize: function(cmd, val) {
+                //Removed from commands list, so the default is executed..
+                fontsize_enh: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n, prev;
 
@@ -1920,7 +1945,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['frame']});
+}, '@VERSION@' ,{requires:['frame'], skinnable:false});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -1990,7 +2015,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -2063,7 +2088,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
 
@@ -2266,10 +2291,12 @@ YUI.add('editor-base', function(Y) {
                     }
                 });
 
-                fColor = EditorBase.FILTER_RGB(s.color);
+                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
                 var bColor2 = EditorBase.FILTER_RGB(s.backgroundColor);
                 if (bColor2 !== 'transparent') {
-                    bColor = bColor2;
+                    if (bColor2 !== '') {
+                        bColor = bColor2;
+                    }
                 }
                 
             });
@@ -2779,7 +2806,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -2947,7 +2974,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -3222,7 +3249,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
 YUI.add('editor-para', function(Y) {
 
 
@@ -3323,11 +3350,8 @@ YUI.add('editor-para', function(Y) {
             var host = this.get(HOST), inst = host.getInstance(),
                 sel = new inst.Selection();
 
-            sel.setCursor();
-            
             Y.later(50, host, function() {
                 inst.Selection.filterBlocks();
-                sel.focusCursor(true, true);
             });
             
         },
@@ -3337,17 +3361,19 @@ YUI.add('editor-para', function(Y) {
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
             host.after('contentChange', Y.bind(this._afterContentChange, this));
-            host.after('dom:paste', Y.bind(this._afterPaste, this));
+            if (Y.Env.webkit) {
+                host.after('dom:paste', Y.bind(this._afterPaste, this));
+            }
         }
     }, {
         /**
-        * editorBidi
+        * editorPara
         * @static
         * @property NAME
         */
         NAME: 'editorPara',
         /**
-        * editorBidi
+        * editorPara
         * @static
         * @property NS
         */
@@ -3365,7 +3391,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});

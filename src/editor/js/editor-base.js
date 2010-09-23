@@ -200,10 +200,12 @@
                     }
                 });
 
-                fColor = EditorBase.FILTER_RGB(s.color);
+                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
                 var bColor2 = EditorBase.FILTER_RGB(s.backgroundColor);
                 if (bColor2 !== 'transparent') {
-                    bColor = bColor2;
+                    if (bColor2 !== '') {
+                        bColor = bColor2;
+                    }
                 }
                 
             });

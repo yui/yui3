@@ -202,10 +202,12 @@ YUI.add('editor-base', function(Y) {
                     }
                 });
 
-                fColor = EditorBase.FILTER_RGB(s.color);
+                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
                 var bColor2 = EditorBase.FILTER_RGB(s.backgroundColor);
                 if (bColor2 !== 'transparent') {
-                    bColor = bColor2;
+                    if (bColor2 !== '') {
+                        bColor = bColor2;
+                    }
                 }
                 
             });
@@ -718,4 +720,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});

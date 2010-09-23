@@ -261,25 +261,27 @@
                 }
                 var html = d.get('innerHTML');
                 if (html === '') {
-                    //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                    Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
                     d.remove();
                 } else {
-                    //Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                    Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
                     if (d.get('childNodes').size() == 1) {
-                        //Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                        Y.log('This Div/P only has one Child Node', 'info', 'selection');
                         if (d.ancestor('p')) {
-                            //Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                            Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
                             d.replace(d.get('firstChild'));
                         }
                     }
                 }
             });
 
+            /** Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
             Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
             spans.each(function(s) {
                 s.setAttribute('style', '');
             });
+            */
         }
 
 
@@ -458,6 +460,12 @@
     * @property CURSOR
     */
     Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+
+    Y.Selection.hasCursor = function() {
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        Y.log('Has Cursor: ' + cur.size(), 'info', 'selection');
+        return cur.size();
+    };
 
     /**
     * Called from Editor keydown to remove the "extra" space before the cursor.

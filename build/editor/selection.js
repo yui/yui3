@@ -267,10 +267,12 @@ YUI.add('selection', function(Y) {
                 }
             });
 
+            /** Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
             spans.each(function(s) {
                 s.setAttribute('style', '');
             });
+            */
         }
 
 
@@ -447,6 +449,11 @@ YUI.add('selection', function(Y) {
     * @property CURSOR
     */
     Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+
+    Y.Selection.hasCursor = function() {
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        return cur.size();
+    };
 
     /**
     * Called from Editor keydown to remove the "extra" space before the cursor.
@@ -874,4 +881,4 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
