@@ -220,7 +220,8 @@ var yConfig = {
 YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
 
-    Y.delegate('click', function(e) {
+    Y.delegate('mousedown', function(e) {
+        e.halt();
         e.target.toggleClass('selected');
         var cmd = e.target.get('innerHTML').toLowerCase(),
             val = '';
@@ -245,18 +246,26 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
                 val = '#0000FF';
                 break;
         }
-        editor.frame.focus();
-        var ex_return = editor.execCommand(cmd, val);
-        //console.info('Return: ', cmd, ' :: ', ex_return);
+        editor.focus(function() {
+            editor.execCommand(cmd, val);
+        });
     }, '#test1 > div', 'button');
 
-    Y.delegate('change', function(e) {
+    Y.on('change', function(e) {
         var cmd = e.currentTarget.get('id'),
             val = e.currentTarget.get('value');
         
         editor.frame.focus();
         var ex_return = editor.execCommand(cmd, val);
-    }, '#test1 > div', 'select');
+    }, '#fontsize');
+
+    Y.on('change', function(e) {
+        var cmd = e.currentTarget.get('id'),
+            val = e.currentTarget.get('value');
+        
+        editor.frame.focus();
+        var ex_return = editor.execCommand(cmd, val);
+    }, '#fontname');
 
 
     var smilies = [
