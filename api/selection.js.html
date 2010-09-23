@@ -310,25 +310,27 @@
                 <span class="p">}</span>
                 <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c1">//Y.log(&#39;Empty DIV/P Tag Found, Removing It&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Empty DIV/P Tag Found, Removing It&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
                     <span class="nx">d</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="c1">//Y.log(&#39;DIVS/PS Count: &#39; + d.get(&#39;childNodes&#39;).size(), &#39;info&#39;, &#39;selection&#39;);</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;DIVS/PS Count: &#39;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">(),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="c1">//Y.log(&#39;This Div/P only has one Child Node&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;This Div/P only has one Child Node&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
-                            <span class="c1">//Y.log(&#39;This Div/P is a child of a paragraph, remove it..&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;This Div/P is a child of a paragraph, remove it..&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
                             <span class="nx">d</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">});</span>
 
-            <span class="nx">spans</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;.Apple-style-span, .apple-style-span&#39;</span><span class="p">);</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Apple Spans found: &#39;</span> <span class="o">+</span> <span class="nx">spans</span><span class="p">.</span><span class="nx">size</span><span class="p">(),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-            <span class="nx">spans</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">s</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-            <span class="p">});</span>
+            <span class="cm">/** Removed this, as it was causing Pasting to be funky in Safari</span>
+<span class="cm">            spans = Y.all(&#39;.Apple-style-span, .apple-style-span&#39;);</span>
+<span class="cm">            Y.log(&#39;Apple Spans found: &#39; + spans.size(), &#39;info&#39;, &#39;selection&#39;);</span>
+<span class="cm">            spans.each(function(s) {</span>
+<span class="cm">                s.setAttribute(&#39;style&#39;, &#39;&#39;);</span>
+<span class="cm">            });</span>
+<span class="cm">            */</span>
         <span class="p">}</span>
 
 
@@ -507,6 +509,12 @@
 <span class="cm">    * @property CURSOR</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">=</span> <span class="s1">&#39;&lt;span id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURID</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;span id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CUR_WRAPID</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/span&gt;&#39;</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">hasCursor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CUR_WRAPID</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Has Cursor: &#39;</span> <span class="o">+</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">size</span><span class="p">(),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">cur</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+    <span class="p">};</span>
 
     <span class="cm">/**</span>
 <span class="cm">    * Called from Editor keydown to remove the &quot;extra&quot; space before the cursor.</span>
