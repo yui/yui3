@@ -281,8 +281,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     });
     s_cont.delegate('click', function(e) {
         var img = e.currentTarget, inst = editor.getInstance();
-        editor.focus();
-        editor.execCommand('insertandfocus', '<span>:)</span>');
+        editor.focus(function() {
+            editor.execCommand('insertandfocus', '<span>:)</span>');
+        });
         /*
         editor.focus(function() {
             editor.execCommand('insertandfocus', '<span>:)</span>');

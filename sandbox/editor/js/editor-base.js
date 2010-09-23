@@ -145,6 +145,7 @@ YUI.add('editor-base', function(Y) {
                             }
                         }
                     }
+                    inst.Selection.filterBlocks();
                     break;
             }
 
