@@ -144,6 +144,7 @@
                             }
                         }
                     }
+                    inst.Selection.filterBlocks();
                     break;
             }
 
