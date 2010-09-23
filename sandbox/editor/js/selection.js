@@ -462,6 +462,12 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
 
+    Y.Selection.hasCursor = function() {
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        Y.log('Has Cursor: ' + cur.size(), 'info', 'selection');
+        return cur.size();
+    };
+
     /**
     * Called from Editor keydown to remove the "extra" space before the cursor.
     * @static
