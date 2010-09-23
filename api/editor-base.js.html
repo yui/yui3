@@ -192,6 +192,7 @@
                             <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
+                    <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span><span class="p">();</span>
                     <span class="k">break</span><span class="p">;</span>
             <span class="p">}</span>
 
@@ -248,10 +249,12 @@
                     <span class="p">}</span>
                 <span class="p">});</span>
 
-                <span class="nx">fColor</span> <span class="o">=</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">FILTER_RGB</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
+                <span class="nx">fColor</span> <span class="o">=</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">FILTER_RGB</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">));</span>
                 <span class="kd">var</span> <span class="nx">bColor2</span> <span class="o">=</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">FILTER_RGB</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">backgroundColor</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">bColor2</span> <span class="o">!==</span> <span class="s1">&#39;transparent&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">bColor</span> <span class="o">=</span> <span class="nx">bColor2</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">bColor2</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">bColor</span> <span class="o">=</span> <span class="nx">bColor2</span><span class="p">;</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
                 
             <span class="p">});</span>

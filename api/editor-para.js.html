@@ -143,11 +143,8 @@
             <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span> <span class="nx">inst</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
                 <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
 
-            <span class="nx">sel</span><span class="p">.</span><span class="nx">setCursor</span><span class="p">();</span>
-            
             <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="nx">host</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span><span class="p">();</span>
-                <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="p">});</span>
             
         <span class="p">},</span>
@@ -157,17 +154,19 @@
             <span class="nx">host</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">NODE_CHANGE</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onNodeChange</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             <span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterEditorReady</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             <span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;contentChange&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterContentChange</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
-            <span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;dom:paste&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterPaste</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">webkit</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;dom:paste&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterPaste</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> <span class="p">{</span>
         <span class="cm">/**</span>
-<span class="cm">        * editorBidi</span>
+<span class="cm">        * editorPara</span>
 <span class="cm">        * @static</span>
 <span class="cm">        * @property NAME</span>
 <span class="cm">        */</span>
         <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;editorPara&#39;</span><span class="p">,</span>
         <span class="cm">/**</span>
-<span class="cm">        * editorBidi</span>
+<span class="cm">        * editorPara</span>
 <span class="cm">        * @static</span>
 <span class="cm">        * @property NS</span>
 <span class="cm">        */</span>
