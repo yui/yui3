@@ -120,7 +120,11 @@ YUI.add('exec-command', function(Y) {
                 */
                 inserthtml: function(cmd, html) {
                     var inst = this.getInstance();
-                    return (new inst.Selection()).insertContent(html);
+                    if (inst.Selection.hasCursor()) {
+                        return (new inst.Selection()).insertContent(html);
+                    } else {
+                        this._command('inserthtml', html);
+                    }
                 },
                 /**
                 * Inserts the provided HTML at the cursor, and focuses the cursor afterwards.
@@ -132,10 +136,14 @@ YUI.add('exec-command', function(Y) {
                 */
                 insertandfocus: function(cmd, html) {
                     var inst = this.getInstance(), out, sel;
-                    html += inst.Selection.CURSOR;
-                    out = this.command('inserthtml', html);
-                    sel = new inst.Selection();
-                    sel.focusCursor(true, true);
+                    if (inst.Selection.hasCursor()) {
+                        html += inst.Selection.CURSOR;
+                        out = this.command('inserthtml', html);
+                        sel = new inst.Selection();
+                        sel.focusCursor(true, true);
+                    } else {
+                        this.command('inserthtml', html);
+                    }
                     return out;
                 },
                 /**
@@ -204,17 +212,21 @@ YUI.add('exec-command', function(Y) {
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('color', val);
-                            n = sel.anchorNode;
+                    if (inst.Selection.hasCursor()) {
+                        if (sel.isCollapsed) {
+                            if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                                sel.anchorNode.setStyle('color', val);
+                                n = sel.anchorNode;
+                            } else {
+                                n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                                sel.focusCursor(true, true);
+                            }
+                            return n;
                         } else {
-                            n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                            return this._command(cmd, val);
                         }
-                        return n;
                     } else {
-                        return this._command(cmd, val);
+                        this._command(cmd, val);
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
@@ -230,17 +242,21 @@ YUI.add('exec-command', function(Y) {
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('backgroundColor', val);
-                            n = sel.anchorNode;
+                    if (inst.Selection.hasCursor()) {
+                        if (sel.isCollapsed) {
+                            if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                                sel.anchorNode.setStyle('backgroundColor', val);
+                                n = sel.anchorNode;
+                            } else {
+                                n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                                sel.focusCursor(true, true);
+                            }
+                            return n;
                         } else {
-                            n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                            return this._command(cmd, val);
                         }
-                        return n;
                     } else {
-                        return this._command(cmd, val);
+                        this._command(cmd, val);
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
@@ -265,7 +281,8 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The font name to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontname: function(cmd, val) {
+                //Removed from commands list, so the default is executed..
+                fontname_enh: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
 
@@ -290,7 +307,8 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The font size to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontsize: function(cmd, val) {
+                //Removed from commands list, so the default is executed..
+                fontsize_enh: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n, prev;
 
@@ -316,4 +334,4 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['frame']});
+}, '@VERSION@' ,{requires:['frame'], skinnable:false});

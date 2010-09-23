@@ -97,11 +97,8 @@ YUI.add('editor-para', function(Y) {
             var host = this.get(HOST), inst = host.getInstance(),
                 sel = new inst.Selection();
 
-            sel.setCursor();
-            
             Y.later(50, host, function() {
                 inst.Selection.filterBlocks();
-                sel.focusCursor(true, true);
             });
             
         },
@@ -111,17 +108,19 @@ YUI.add('editor-para', function(Y) {
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
             host.after('contentChange', Y.bind(this._afterContentChange, this));
-            host.after('dom:paste', Y.bind(this._afterPaste, this));
+            if (Y.Env.webkit) {
+                host.after('dom:paste', Y.bind(this._afterPaste, this));
+            }
         }
     }, {
         /**
-        * editorBidi
+        * editorPara
         * @static
         * @property NAME
         */
         NAME: 'editorPara',
         /**
-        * editorBidi
+        * editorPara
         * @static
         * @property NS
         */

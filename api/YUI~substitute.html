@@ -95,18 +95,22 @@
                                                          f
                                                     
                                                 
+                                                        , 
+                                                         recurse
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Does variable substitution on a string. It scans through the string 
-looking for expressions enclosed in { } braces. If an expression 
+                                            Does variable substitution on a string. It scans through the string
+looking for expressions enclosed in { } braces. If an expression
 is found, it is used a key on the object.  If there is a space in
 the key, the first word is used for the key and the rest is provided
 to an optional function to be used to programatically determine the
-value (the extra information might be used for this decision). If 
+value (the extra information might be used for this decision). If
 the value for the key in the object, or what is returned from the
-function has a string value, number value, or object value, it is 
+function has a string value, number value, or object value, it is
 substituted for the bracket expression and it repeats.  If this
 value is an object, it uses the Object's toString() if this has
 been overridden, otherwise it does a shallow dump of the key/value
@@ -124,22 +128,30 @@ in the YUI module.
                                                         <code><span property="yui:name">s</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The string that will be modified.</span>
+                                                        <span property="yui:description"> The string that will be modified.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object containing the replacement values</span>
+                                                        <span property="yui:description"> An object containing the replacement values.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  An optional function that can be used to
+                                                        <span property="yui:description"> An optional function that can be used to
 process each match.  It receives the key,
 value, and any extra metadata included with
 the key inside of the braces.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">recurse</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> if true, the replacement will be recursive,
+letting you have replacement tokens in replacement text.  The
+default is false.</span>
                                                         </dd>
                                                 </dl>
 
@@ -148,7 +160,7 @@ the key inside of the braces.</span>
                                                     <code property="yui:return">
                                                             string
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the substituted string</dd>
+                                                    <dd property="yui:returnInfo">the substituted string.</dd>
                                                 </dl>
 
 
