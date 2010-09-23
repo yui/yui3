@@ -12,6 +12,45 @@
  * @submodule loader-base
  */
 
+
+var NOT_FOUND = {},
+    NO_REQUIREMENTS = [],
+    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
+    GLOBAL_ENV = YUI.Env,
+    GLOBAL_LOADED = GLOBAL_ENV._loaded,
+    CSS = 'css',
+    JS = 'js',
+    INTL = 'intl',
+    VERSION = Y.version,
+    ROOT_LANG = '',
+    YObject = Y.Object,
+    oeach = YObject.each,
+    YArray = Y.Array,
+    _queue = GLOBAL_ENV._loaderQueue,
+    META = GLOBAL_ENV[VERSION],
+    SKIN_PREFIX = 'skin-',
+    L = Y.Lang,
+    ON_PAGE = GLOBAL_ENV.mods,
+    modulekey,
+    cache,
+    _path = function(dir, file, type, nomin) {
+                        var path = dir + '/' + file;
+                        if (!nomin) {
+                            path += '-min';
+                        }
+                        path += '.' + (type || CSS);
+
+                        return path;
+                    };
+
+/**
+ * The component metadata is stored in Y.Env.meta.
+ * Part of the loader module.
+ * @property Env.meta
+ * @for YUI
+ */
+Y.Env.meta = META;
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -26,9 +65,9 @@
  * @see YUI.use for the normal use case.  The use function automatically will
  * pull in missing dependencies.
  *
- * @class Loader
  * @constructor
- * @param o an optional set of configuration options.  Valid options:
+ * @class Loader
+ * @param {object} o an optional set of configuration options.  Valid options:
  * <ul>
  *  <li>base:
  *  The base dir</li>
@@ -116,39 +155,6 @@
  *  going forward.</li>
  * </ul>
  */
-
-var NOT_FOUND = {},
-    NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
-    GLOBAL_ENV = YUI.Env,
-    GLOBAL_LOADED = GLOBAL_ENV._loaded,
-    CSS = 'css',
-    JS = 'js',
-    INTL = 'intl',
-    VERSION = Y.version,
-    ROOT_LANG = '',
-    YObject = Y.Object,
-    oeach = YObject.each,
-    YArray = Y.Array,
-    _queue = GLOBAL_ENV._loaderQueue,
-    META = GLOBAL_ENV[VERSION],
-    SKIN_PREFIX = 'skin-',
-    L = Y.Lang,
-    ON_PAGE = GLOBAL_ENV.mods,
-    modulekey,
-    cache,
-    _path = function(dir, file, type, nomin) {
-                        var path = dir + '/' + file;
-                        if (!nomin) {
-                            path += '-min';
-                        }
-                        path += '.' + (type || CSS);
-
-                        return path;
-                    };
-
-Y.Env.meta = META;
-
 Y.Loader = function(o) {
 
     var defaults = META.modules,
@@ -289,7 +295,7 @@ Y.Loader = function(o) {
      * Browsers:
      *    IE: 2048
      *    Other A-Grade Browsers: Higher that what is typically supported
-     *    'capable' mobile browsers: @TODO
+     *    'capable' mobile browsers:
      *
      * Servers:
      *    Apache: 8192
@@ -516,7 +522,7 @@ Y.Loader = function(o) {
      * Composed of what YUI reports to be loaded combined
      * with what has been loaded by any instance on the page
      * with the version number specified in the metadata.
-     * @propery loaded
+     * @property loaded
      * @type {string: boolean}
      */
     self.loaded = GLOBAL_LOADED[VERSION];
@@ -699,8 +705,8 @@ Y.Loader.prototype = {
      * module name is supplied, the returned skin module name is
      * specific to the module passed in.
      * @method formatSkin
-     * @param skin {string} the name of the skin.
-     * @param mod {string} optional: the name of a module to skin.
+     * @param {string} skin the name of the skin.
+     * @param {string} mod optional: the name of a module to skin.
      * @return {string} the full skin module name.
      */
     formatSkin: function(skin, mod) {
@@ -715,9 +721,9 @@ Y.Loader.prototype = {
     /**
      * Adds the skin def to the module info
      * @method _addSkin
-     * @param skin {string} the name of the skin.
-     * @param mod {string} the name of the module.
-     * @param parent {string} parent module if this is a skin of a
+     * @param {string} skin the name of the skin.
+     * @param {string} mod the name of the module.
+     * @param {string} parent parent module if this is a skin of a
      * submodule or plugin.
      * @return {string} the module name for the skin.
      * @private
@@ -740,12 +746,13 @@ Y.Loader.prototype = {
                     type: 'css',
                     after: sinf.after,
                     after_map: YArray.hash(sinf.after),
-                    path: (parent || pkg) + '/' + sinf.base + skin + 
+                    path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
                 });
 
-// Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
+                // Y.log('adding skin ' + name + ', '
+                // + parent + ', ' + pkg + ', ' + info[name].path);
             }
         }
 
@@ -763,11 +770,8 @@ Y.Loader.prototype = {
      *   <dt>modules:</dt>   <dd>the group of modules</dd>
      * </dl>
      * @method addGroup
-     * @param o An object containing the module data.
-     * @param name the module name (optional), required if not in the module
-     * data.
-     * @return {boolean} true if the module was added, false if
-     * the object passed in did not provide all required attributes.
+     * @param {object} o An object containing the module data.
+     * @param {string} name the group name.
      */
     addGroup: function(o, name) {
         var mods = o.modules,
@@ -831,10 +835,10 @@ Y.Loader.prototype = {
      *       </dd>
      * </dl>
      * @method addModule
-     * @param o An object containing the module data.
-     * @param name the module name (optional), required if not in the module
-     * data.
-     * @return the module definition or null if
+     * @param {object} o An object containing the module data.
+     * @param {string} name the module name (optional), required if not
+     * in the module data.
+     * @return {object} the module definition or null if
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
@@ -995,7 +999,7 @@ Y.Loader.prototype = {
     /**
      * Add a requirement for one or more module
      * @method require
-     * @param what {string[] | string*} the modules to load.
+     * @param {string[] | string*} what the modules to load.
      */
     require: function(what) {
         var a = (typeof what === 'string') ? arguments : what;
@@ -1007,7 +1011,8 @@ Y.Loader.prototype = {
      * Returns an object containing properties for all modules required
      * in order to load the requested module
      * @method getRequires
-     * @param mod The module definition from moduleInfo.
+     * @param {object}  mod The module definition from moduleInfo.
+     * @return {array} the expanded requirement list.
      */
     getRequires: function(mod) {
         if (!mod || mod._parsed) {
@@ -1180,8 +1185,8 @@ Y.Loader.prototype = {
     /**
      * Returns a hash of module names the supplied module satisfies.
      * @method getProvides
-     * @param name {string} The name of the module.
-     * @return what this module provides.
+     * @param {string} name The name of the module.
+     * @return {object} what this module provides.
      */
     getProvides: function(name) {
         var m = this.getModule(name), o, s;
@@ -1213,10 +1218,9 @@ Y.Loader.prototype = {
      * Calculates the dependency tree, the result is stored in the sorted
      * property.
      * @method calculate
-     * @param o optional options object.
-     * @param type optional argument to prune modules.
+     * @param {object} o optional options object.
+     * @param {string} type optional argument to prune modules.
      */
-
     calculate: function(o, type) {
         if (o || type || this.dirty) {
 
@@ -1330,9 +1334,9 @@ Y.Loader.prototype = {
 
     /**
      * Builds a module name for a language pack
-     * @function getLangPackName
-     * @param lang {string} the language code.
-     * @param mname {string} the module to build it for.
+     * @method getLangPackName
+     * @param {string} lang the language code.
+     * @param {string} mname the module to build it for.
      * @return {string} the language pack module name.
      */
     getLangPackName: function(lang, mname) {
@@ -1450,6 +1454,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * Remove superceded modules and loaded modules.  Called by
      * calculate() after we have the mega list of all dependencies
      * @method _reduce
+     * @return {object} the reduced dependency hash.
      * @private
      */
     _reduce: function(r) {
@@ -1705,8 +1710,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * <code>type</code> can be "js" or "css".  Both script and
      * css are inserted if type is not provided.
      * @method insert
-     * @param o optional options object.
-     * @param type {string} the type of dependency to insert.
+     * @param {object} o optional options object.
+     * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type) {
         // Y.log('public insert() ' + (type || '') + ', ' +
@@ -1726,7 +1731,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * is possible to call this if using a method other than
      * Y.register to determine when scripts are fully loaded
      * @method loadNext
-     * @param mname {string} optional the name of the module that has
+     * @param {string} mname optional the name of the module that has
      * been loaded (which is usually why it is time to load the next
      * one).
      */
@@ -1987,8 +1992,8 @@ Y.log('attempting to load ' + s[i] + ', ' + this.base, 'info', 'loader');
     /**
      * Apply filter defined for this instance to a url/path
      * method _filter
-     * @param u {string} the string to filter.
-     * @param name {string} the name of the module, if we are processing
+     * @param {string} u the string to filter.
+     * @param {string} name the name of the module, if we are processing
      * a single module as opposed to a combined url.
      * @return {string} the filtered string.
      * @private
@@ -2015,7 +2020,7 @@ Y.log('attempting to load ' + s[i] + ', ' + this.base, 'info', 'loader');
     /**
      * Generates the full url for a module
      * method _url
-     * @param path {string} the path fragment.
+     * @param {string} path the path fragment.
      * @return {string} the full url.
      * @private
      */

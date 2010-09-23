@@ -65,7 +65,7 @@
 <span class="cm"> * @private</span>
 <span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_rollup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">rollups</span><span class="o">=</span><span class="p">{},</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="nx">roll</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">rollups</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="nx">roll</span><span class="p">,</span>
         <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span> <span class="nx">rolled</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">smod</span><span class="p">;</span>
 
     <span class="c1">// find and cache rollup modules</span>
@@ -89,12 +89,12 @@
         <span class="nx">rolled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="c1">// go through the rollup candidates</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">rollups</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">rollups</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">rollups</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                 <span class="c1">// there can be only one, unless forced</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
-                    <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> 
-                    <span class="nx">s</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="p">[];</span> 
+                    <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                    <span class="nx">s</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="p">[];</span>
                     <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
                     <span class="c1">// @TODO remove continue</span>
@@ -105,16 +105,16 @@
                     <span class="nx">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
                     <span class="c1">// check the threshold</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">j</span><span class="o">&lt;</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">smod</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
 
-                        <span class="c1">// if the superseded module is loaded, we can&#39;t </span>
+                        <span class="c1">// if the superseded module is loaded, we can&#39;t</span>
                         <span class="c1">// load the rollup unless it has been forced.</span>
                         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]])</span> <span class="p">{</span>
                             <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                             <span class="k">break</span><span class="p">;</span>
-                        <span class="c1">// increment the counter if this module is required.  </span>
-                        <span class="c1">// if we are beyond the rollup threshold, we will </span>
+                        <span class="c1">// increment the counter if this module is required.</span>
+                        <span class="c1">// if we are beyond the rollup threshold, we will</span>
                         <span class="c1">// use the rollup module</span>
                         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="nx">smod</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">c</span><span class="o">++</span><span class="p">;</span>

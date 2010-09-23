@@ -60,26 +60,16 @@ YUI.add('autocomplete-base', function(Y) {
 var Lang   = Y.Lang,
     YArray = Y.Array,
 
-    isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
     trim       = Lang.trim,
 
-    ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
-    DATA_SOURCE        = 'dataSource',
-    INPUT_NODE         = 'inputNode',
-    MIN_QUERY_LENGTH   = 'minQueryLength',
-    QUERY              = 'query',
-    QUERY_DELAY        = 'queryDelay',
-    QUERY_DELIMITER    = 'queryDelimiter',
-    REQUEST_TEMPLATE   = 'requestTemplate',
-    RESULT_FILTERS     = 'resultFilters',
-    RESULT_FORMATTER   = 'resultFormatter',
-    RESULT_HIGHLIGHTER = 'resultHighlighter',
-    RESULT_LOCATOR     = 'resultLocator',
-    RESULTS            = 'results',
-    VALUE              = 'value',
-    VALUE_CHANGE       = 'valueChange',
+    INPUT_NODE      = 'inputNode',
+    QUERY           = 'query',
+    QUERY_DELIMITER = 'queryDelimiter',
+    RESULTS         = 'results',
+    VALUE           = 'value',
+    VALUE_CHANGE    = 'valueChange',
 
     EVT_CLEAR   = 'clear',
     EVT_QUERY   = QUERY,
@@ -246,6 +236,19 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
+     * Maximum number of results to return. A value of <code>0</code> or less
+     * will allow an unlimited number of results.
+     *
+     * @attribute maxResults
+     * @type Number
+     * @default 0
+     */
+    maxResults: {
+        validator: isNumber,
+        value: 0
+    },
+
+    /**
      * Minimum number of characters that must be entered before a
      * <code>query</code> event will be fired. A value of <code>0</code>
      * allows empty queries; a negative value will effectively disable all
@@ -299,21 +302,21 @@ AutoCompleteBase.ATTRS = {
      *
      * @attribute queryDelay
      * @type Number
-     * @default 150
+     * @default 100
      */
     queryDelay: {
         validator: function (value) {
             return isNumber(value) && value >= 0;
         },
 
-        value: 150
+        value: 100
     },
 
     /**
      * Query delimiter string. When a delimiter is configured, the input value
-     * will be split on the delimiter, and only the portion that contains the
-     * cursor will be used in autocomplete queries and updated when the
-     * <code>query</code> attribute is modified.
+     * will be split on the delimiter, and only the last portion will be used in
+     * autocomplete queries and updated when the <code>query</code> attribute is
+     * modified.
      *
      * @attribute queryDelimiter
      * @type String|null
@@ -393,7 +396,7 @@ AutoCompleteBase.ATTRS = {
      * @default []
      */
     resultFilters: {
-        validator: isArray,
+        validator: Lang.isArray,
         value: []
     },
 
@@ -552,7 +555,8 @@ AutoCompleteBase.prototype = {
         var inputNode = this.get(INPUT_NODE);
 
         if (inputNode.get('nodeName').toLowerCase() === 'input') {
-            inputNode.setAttribute('autocomplete', this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+            inputNode.setAttribute('autocomplete',
+                    this.get('allowBrowserAutocomplete') ? 'on' : 'off');
         }
 
         this.set(VALUE, inputNode.get(VALUE));
@@ -619,13 +623,15 @@ AutoCompleteBase.prototype = {
             i,
             len,
             locator,
-            locatorMap;
+            locatorMap,
+            maxResults;
 
         if (unfiltered) {
-            filters     = this.get(RESULT_FILTERS);
-            formatter   = this.get(RESULT_FORMATTER);
-            highlighter = this.get(RESULT_HIGHLIGHTER);
-            locator     = this.get(RESULT_LOCATOR);
+            filters     = this.get('resultFilters');
+            formatter   = this.get('resultFormatter');
+            highlighter = this.get('resultHighlighter');
+            locator     = this.get('resultLocator');
+            maxResults  = this.get('maxResults');
 
             if (locator) {
                 // In order to allow filtering based on locator queries, we have
@@ -673,7 +679,10 @@ AutoCompleteBase.prototype = {
 
             // Finally, unroll all the result arrays into a single array of
             // result objects.
-            for (i = 0, len = formatted.length; i < len; ++i) {
+            len = maxResults > 0 ? Math.min(maxResults, formatted.length) :
+                    formatted.length;
+
+            for (i = 0; i < len; ++i) {
                 results.push({
                     display: formatted[i],
                     raw    : raw[i],
@@ -694,8 +703,8 @@ AutoCompleteBase.prototype = {
      * </p>
      *
      * <p>
-     * If a query delimiter is defined, the query will be the delimited part of
-     * the input value that's closest to the cursor.
+     * If a query delimiter is defined, the query will be the last delimited
+     * part of of the string.
      * </p>
      *
      * @method _parseValue
@@ -723,10 +732,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _trimLeft: String.prototype.trimLeft ? function (string) {
-        // Micro-optimization, since trimming occurs often in value parsing. The
-        // native method is faster than the regex in all browsers except Chrome,
-        // but it's not worth doing a Chrome-specific fork.
-        // http://jsperf.com/native-trimleft-vs-regex
+        // Micro-optimization, since trimming occurs often in value parsing.
         return string.trimLeft();
     } : function (string) {
         return string.replace(/^\s+/, '');
@@ -738,8 +744,8 @@ AutoCompleteBase.prototype = {
      * </p>
      *
      * <p>
-     * If a query delimiter is defined, the delimited portion of the input value
-     * closest to the cursor will be replaced with the specified <i>value</i>.
+     * If a query delimiter is defined, the last delimited portion of the input
+     * value will be replaced with the specified <i>value</i>.
      * </p>
      *
      * @method _updateValue
@@ -796,8 +802,8 @@ AutoCompleteBase.prototype = {
 
         query = this._parseValue(newVal);
 
-        if (query && query.length >= this.get(MIN_QUERY_LENGTH)) {
-            delay = this.get(QUERY_DELAY);
+        if (query && query.length >= this.get('minQueryLength')) {
+            delay = this.get('queryDelay');
             that  = this;
 
             fire = function () {
@@ -879,7 +885,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defQueryFn: function (e) {
-        var dataSource = this.get(DATA_SOURCE),
+        var dataSource = this.get('dataSource'),
             query      = e.query;
 
         this._set(QUERY, query);
@@ -887,10 +893,10 @@ AutoCompleteBase.prototype = {
         Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
 
         if (query && dataSource) {
-            Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', 'autocomplete-base');
+            Y.log('sendRequest: ' + this.get('requestTemplate')(query), 'info', 'autocomplete-base');
 
             dataSource.sendRequest({
-                request: this.get(REQUEST_TEMPLATE)(query),
+                request: this.get('requestTemplate')(query),
                 callback: {
                     query  : query,
                     success: Y.bind(this._onResponse, this)
@@ -950,17 +956,17 @@ var Node   = Y.Node,
     _CLASS_ITEM_HOVER  = '_CLASS_ITEM_HOVER',
     _SELECTOR_ITEM     = '_SELECTOR_ITEM',
 
-    ACTIVE_ITEM  = 'activeItem',
-    CIRCULAR     = 'circular',
-    HOVERED_ITEM = 'hoveredItem',
-    ID           = 'id',
-    INPUT_NODE   = 'inputNode',
-    ITEM         = 'item',
-    LIST         = 'list',
-    RESULT       = 'result',
-    RESULTS      = 'results',
-    VISIBLE      = 'visible',
-    WIDTH        = 'width',
+    ACTIVE_ITEM      = 'activeItem',
+    ALWAYS_SHOW_LIST = 'alwaysShowList',
+    CIRCULAR         = 'circular',
+    HOVERED_ITEM     = 'hoveredItem',
+    ID               = 'id',
+    ITEM             = 'item',
+    LIST             = 'list',
+    RESULT           = 'result',
+    RESULTS          = 'results',
+    VISIBLE          = 'visible',
+    WIDTH            = 'width',
 
     // Event names.
     EVT_SELECT = 'select',
@@ -1004,7 +1010,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         });
 
         this._events    = [];
-        this._inputNode = this.get(INPUT_NODE);
+        this._inputNode = this.get('inputNode');
 
         // Cache commonly used classnames and selectors for performance.
         this[_CLASS_ITEM]        = this.getClassName(ITEM);
@@ -1061,6 +1067,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             role: 'combobox'
         });
 
+        if (this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, true);
+        }
+
         this._contentBox = contentBox;
         this._listNode   = listNode;
     },
@@ -1074,14 +1084,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
-     * Hides the list.
+     * Hides the list, unless the <code>alwaysShowList</code> attribute is
+     * <code>true</code>.
      *
      * @method hide
      * @see show
      * @chainable
      */
     hide: function () {
-        return this.set(VISIBLE, false);
+        return this.get(ALWAYS_SHOW_LIST) ? this : this.set(VISIBLE, false);
     },
 
     /**
@@ -1221,13 +1232,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._events.concat([
-            this.after('mouseover', this._afterMouseOver, this),
-            this.after('mouseout', this._afterMouseOut, this),
+            this.after('mouseover', this._afterMouseOver),
+            this.after('mouseout', this._afterMouseOut),
 
-            this.after('activeItemChange', this._afterActiveItemChange, this),
-            this.after('hoveredItemChange', this._afterHoveredItemChange, this),
-            this.after('resultsChange', this._afterResultsChange, this),
-            this.after('visibleChange', this._afterVisibleChange, this),
+            this.after('activeItemChange', this._afterActiveItemChange),
+            this.after('alwaysShowListChange', this._afterAlwaysShowListChange),
+            this.after('hoveredItemChange', this._afterHoveredItemChange),
+            this.after('resultsChange', this._afterResultsChange),
+            this.after('visibleChange', this._afterVisibleChange),
 
             this._listNode.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
         ]);
@@ -1308,6 +1320,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (results.length) {
             items = this._add(results);
         }
+
+        if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
+            this._set(ACTIVE_ITEM, this._getFirstItemNode());
+        }
     },
 
     /**
@@ -1320,7 +1336,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncVisibility: function (visible) {
-        if (visible === undefined) {
+        if (typeof visible === 'undefined') {
             visible = this.get(VISIBLE);
         }
 
@@ -1353,6 +1369,17 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
             this._inputNode.set('aria-activedescendant', newVal.get(ID));
         }
+    },
+
+    /**
+     * Handles <code>alwaysShowListChange</code> events.
+     *
+     * @method _afterAlwaysShowListChange
+     * @param {EventTarget} e
+     * @protected
+     */
+    _afterAlwaysShowListChange: function (e) {
+        this.set(VISIBLE, e.newVal || this.get(RESULTS).length > 0);
     },
 
     /**
@@ -1413,7 +1440,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _afterResultsChange: function (e) {
         this._syncResults(e.newVal);
-        this.set(VISIBLE, !!e.newVal.length);
+
+        if (!this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, !!e.newVal.length);
+        }
     },
 
     /**
@@ -1487,8 +1517,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
                 this.hide();
                 break;
 
-            // case KEY_TAB:
-            //     break;
+            case KEY_TAB:
+                if (this.get('tabSelect')) {
+                    action = 1;
+                    this.selectItem();
+                }
+                break;
 
             case KEY_UP:
                 action = 1;
@@ -1536,6 +1570,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 }, {
     ATTRS: {
         /**
+         * If <code>true</code>, the first item in the list will be activated by
+         * default when the list is initially displayed and when results change.
+         *
+         * @attribute activateFirstItem
+         * @type Boolean
+         * @default false
+         */
+        activateFirstItem: {
+            value: false
+        },
+
+        /**
          * Item that's currently active, if any. When the user presses enter,
          * this is the item that will be selected.
          *
@@ -1553,6 +1599,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             value: {
                 points: ['tl', 'bl']
             }
+        },
+
+        /**
+         * If <code>true</code>, the list will remain visible even when there
+         * are no results to display.
+         *
+         * @attribute alwaysShowList
+         * @type Boolean
+         * @default false
+         */
+        alwaysShowList: {
+            value: false
         },
 
         /**
@@ -1577,6 +1635,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         hoveredItem: {
             readOnly: true,
             value: null
+        },
+
+        /**
+         * If <code>true</code>, pressing the tab key while the list is visible
+         * will select the active item, if any.
+         *
+         * @attribute tabSelect
+         * @type Boolean
+         * @default true
+         */
+        tabSelect: {
+            value: true
         },
 
         // The "visible" attribute is documented in Widget.

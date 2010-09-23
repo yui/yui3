@@ -563,7 +563,7 @@ only take effect if lower than the default.
 Browsers:
 IE: 2048
 Other A-Grade Browsers: Higher that what is typically supported
-'capable' mobile browsers: @TODO
+'capable' mobile browsers:
 Servers:
 Apache: 8192
                                         </div>
@@ -792,19 +792,19 @@ a timeout occurs.
                                                         <code><span property="yui:name">skin</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the name of the skin.</span>
+                                                        <span property="yui:description"> the name of the skin.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">mod</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the name of the module.</span>
+                                                        <span property="yui:description"> the name of the module.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">parent</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  parent module if this is a skin of a
+                                                        <span property="yui:description"> parent module if this is a skin of a
 submodule or plugin.</span>
                                                         </dd>
                                                 </dl>
@@ -893,13 +893,13 @@ method _filter
                                                         <code><span property="yui:name">u</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the string to filter.</span>
+                                                        <span property="yui:description"> the string to filter.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">name</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the name of the module, if we are processing
+                                                        <span property="yui:description"> the name of the module, if we are processing
 a single module as opposed to a combined url.</span>
                                                         </dd>
                                                 </dl>
@@ -928,7 +928,7 @@ a single module as opposed to a combined url.</span>
                                          private 
                                         
                                         
-                                        void
+                                        object
                                             <strong property="yui:name">_reduce</strong>
                                            (
                                             )
@@ -942,6 +942,13 @@ calculate() after we have the mega list of all dependencies
                                         <div class="description">
 
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the reduced dependency hash.</dd>
+                                                </dl>
 
 
              
@@ -1079,7 +1086,7 @@ method _url
                                                         <code><span property="yui:name">path</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the path fragment.</span>
+                                                        <span property="yui:description"> the path fragment.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1107,7 +1114,7 @@ method _url
                                         
                                         
                                         
-                                        boolean
+                                        void
                                             <strong property="yui:name">addGroup</strong>
                                            (
                                                 
@@ -1147,21 +1154,12 @@ resource path</dd>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">name</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the module name (optional), required if not in the module
-data.</span>
+                                                        <span property="yui:description"> the group name.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">true if the module was added, false if
-the object passed in did not provide all required attributes.</dd>
-                                                </dl>
 
 
              
@@ -1179,7 +1177,7 @@ the object passed in did not provide all required attributes.</dd>
                                         
                                         
                                         
-                                        
+                                        object
                                             <strong property="yui:name">addModule</strong>
                                            (
                                                 
@@ -1248,16 +1246,17 @@ loaded.
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">name</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the module name (optional), required if not in the module
-data.</span>
+                                                        <span property="yui:description"> the module name (optional), required if not
+in the module data.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the module definition or null if
 the object passed in did not provide all required attributes.</dd>
@@ -1311,7 +1310,7 @@ property.
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> optional argument to prune modules.</span>
                                                         </dd>
@@ -1363,13 +1362,13 @@ specific to the module passed in.
                                                         <code><span property="yui:name">skin</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the name of the skin.</span>
+                                                        <span property="yui:description"> the name of the skin.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">mod</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional: the name of a module to skin.</span>
+                                                        <span property="yui:description"> optional: the name of a module to skin.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1424,13 +1423,13 @@ specific to the module passed in.
                                                         <code><span property="yui:name">lang</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the language code.</span>
+                                                        <span property="yui:description"> the language code.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">mname</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the module to build it for.</span>
+                                                        <span property="yui:description"> the module to build it for.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1458,7 +1457,7 @@ specific to the module passed in.
                                         
                                         
                                         
-                                        
+                                        object
                                             <strong property="yui:name">getProvides</strong>
                                            (
                                                 
@@ -1481,13 +1480,14 @@ specific to the module passed in.
                                                         <code><span property="yui:name">name</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The name of the module.</span>
+                                                        <span property="yui:description"> The name of the module.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">what this module provides.</dd>
                                                 </dl>
@@ -1508,7 +1508,7 @@ specific to the module passed in.
                                         
                                         
                                         
-                                        void
+                                        array
                                             <strong property="yui:name">getRequires</strong>
                                            (
                                                 
@@ -1536,6 +1536,13 @@ in order to load the requested module
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the expanded requirement list.</dd>
+                                                </dl>
 
 
              
@@ -1588,7 +1595,7 @@ css are inserted if type is not provided.
                                                         <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the type of dependency to insert.</span>
+                                                        <span property="yui:description"> the type of dependency to insert.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1635,7 +1642,7 @@ Y.register to determine when scripts are fully loaded
                                                         <code><span property="yui:name">mname</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional the name of the module that has
+                                                        <span property="yui:description"> optional the name of the module that has
 been loaded (which is usually why it is time to load the next
 one).</span>
                                                         </dd>
@@ -1835,7 +1842,7 @@ with an insert
                                                         <code><span property="yui:name">what</span>
                                                         &lt;<span property="yui:type">string[] | string*</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the modules to load.</span>
+                                                        <span property="yui:description"> the modules to load.</span>
                                                         </dd>
                                                 </dl>
 

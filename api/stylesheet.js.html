@@ -72,7 +72,7 @@
 <span class="nx">_unsetOpacity</span> <span class="o">=</span> <span class="p">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="p">)</span> <span class="o">?</span>
     <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span> <span class="nx">style</span><span class="p">.</span><span class="nx">opacity</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span> <span class="p">}</span> <span class="o">:</span>
     <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span> <span class="nx">style</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span> <span class="p">};</span>
-        
+
 <span class="c1">// Normalizes the removal of an assigned style for a given property.  Expands</span>
 <span class="c1">// shortcut properties if necessary and handles the various names for the float</span>
 <span class="c1">// property.</span>
@@ -114,7 +114,7 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span>
-    
+
 <span class="cm">/**</span>
 <span class="cm"> * Create an instance of StyleSheet to encapsulate a css stylesheet.</span>
 <span class="cm"> * The constructor can be called using function or constructor syntax.</span>
@@ -143,7 +143,7 @@
 <span class="cm"> * &lt;p&gt;The optional second parameter is a string name to register the sheet as.</span>
 <span class="cm"> * This param is largely useful when providing a node id/ref or chunk of css</span>
 <span class="cm"> * text to create a populated instance.&lt;/p&gt;</span>
-<span class="cm"> * </span>
+<span class="cm"> *</span>
 <span class="cm"> * @class StyleSheet</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @param seed {String|HTMLElement|Node} a style or link node, its id, or a</span>
@@ -162,7 +162,7 @@
         <span class="nx">i</span><span class="p">,</span><span class="nx">r</span><span class="p">,</span><span class="nx">sel</span><span class="p">;</span>
 
     <span class="c1">// Factory or constructor</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">StyleSheet</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">StyleSheet</span><span class="p">)))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">StyleSheet</span><span class="p">(</span><span class="nx">seed</span><span class="p">,</span><span class="nx">name</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -410,7 +410,7 @@
                         <span class="nx">remove</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-                
+
                 <span class="k">if</span> <span class="p">(</span><span class="nx">remove</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// remove the rule altogether</span>
                     <span class="nx">rules</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">[</span><span class="nx">_rules</span><span class="p">];</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">rules</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>

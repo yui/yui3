@@ -1112,9 +1112,20 @@
         ]
     }, 
     "recordset": {
-        "requires": [
-            "base"
-        ]
+        "submodules": {
+            "recordset-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "recordset-sort": {
+                "requires": [
+                    "arraysort", 
+                    "recordset-base", 
+                    "plugin"
+                ]
+            }
+        }
     }, 
     "scrollview": {
         "plugins": {

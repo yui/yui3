@@ -1175,9 +1175,20 @@
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;recordset&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;base&quot;</span>
-        <span class="p">]</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;recordset-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;recordset-sort&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;arraysort&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;recordset-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;scrollview&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1449,7 +1460,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;990d278d22dede91c8ec6dcaf11ed9c8&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;bd572847df5bf2473f8c4dd0db3c9178&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>

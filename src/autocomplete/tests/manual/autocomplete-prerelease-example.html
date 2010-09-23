@@ -21,10 +21,17 @@
 
 <h1>AutoComplete prerelease example</h1>
 
-<form id="ac-form">
+<p>
+This is a simple example of an autocomplete list widget that displays
+suggestions from Yahoo! Search. Begin typing a query in the input field below to
+see suggestions.
+</p>
+
+<form id="ac-form" action="http://search.yahoo.com/search" method="get">
     <div id="ac">
         <label for="ac-input">Yahoo! Search:</label><br>
-        <input type="text" id="ac-input">
+        <input type="text" id="ac-input" name="p">
+        <input type="submit" value="Search">
         <div id="ac-list"></div>
     </div>
 </form>
@@ -68,13 +75,7 @@ dataSourceSearch.plug({
     }
 });
 
-autoComplete.on('select', function (e) {
-    Y.config.win.location = 'http://search.yahoo.com/search?p=' +
-            encodeURIComponent(e.result.text);
-});
-
 autoComplete.set('dataSource', dataSourceSearch);
-autoComplete.get('inputNode').focus();
 
 // For easier console tinkering.
 Y.ac = autoComplete;
