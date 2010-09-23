@@ -13,12 +13,11 @@ Y.Env.evt = {
 
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event-custom
  * @submodule event-custom-base
  */
-(function() {
 
 /**
  * Allows for the insertion of methods that are executed before or after
@@ -27,8 +26,8 @@ Y.Env.evt = {
  * @static
  */
 
-var BEFORE = 0,
-    AFTER = 1;
+var DO_BEFORE = 0,
+    DO_AFTER = 1;
 
 Y.Do = {
 
@@ -58,7 +57,7 @@ Y.Do = {
             f = Y.rbind.apply(Y, a);
         }
 
-        return this._inject(BEFORE, f, obj, sFn);
+        return this._inject(DO_BEFORE, f, obj, sFn);
     },
 
     /**
@@ -79,7 +78,7 @@ Y.Do = {
             f = Y.rbind.apply(Y, a);
         }
 
-        return this._inject(AFTER, f, obj, sFn);
+        return this._inject(DO_AFTER, f, obj, sFn);
     },
 
     /**
@@ -111,7 +110,7 @@ Y.Do = {
             o[sFn] = new Y.Do.Method(obj, sFn);
 
             // re-route the method to our wrapper
-            obj[sFn] = 
+            obj[sFn] =
                 function() {
                     return o[sFn].exec.apply(o[sFn], arguments);
                 };
@@ -195,8 +194,8 @@ Y.Do.Method.prototype._delete = function (sid) {
  */
 Y.Do.Method.prototype.exec = function () {
 
-    var args = Y.Array(arguments, 0, true), 
-        i, ret, newRet, 
+    var args = Y.Array(arguments, 0, true),
+        i, ret, newRet,
         bf = this.before,
         af = this.after,
         prevented = false;
@@ -299,25 +298,17 @@ Y.Do.Error = Y.Do.Halt;
 
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
-})();
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event-custom
  * @submodule event-custom-base
  */
 
-/**
- * Return value from all subscribe operations
- * @class EventHandle
- * @constructor
- * @param evt {CustomEvent} the custom event
- * @param sub {Subscriber} the subscriber
- */
 
 // var onsubscribeType = "_event:onsub",
-var AFTER = 'after', 
+var AFTER = 'after',
     CONFIGS = [
         'broadcast',
         'monitored',
@@ -344,6 +335,13 @@ var AFTER = 'after',
     YUI3_SIGNATURE = 9,
     YUI_LOG = 'yui:log';
 
+/**
+ * Return value from all subscribe operations
+ * @class EventHandle
+ * @constructor
+ * @param {CustomEvent} evt the custom event.
+ * @param {Subscriber} sub the subscriber.
+ */
 Y.EventHandle = function(evt, sub) {
 
     /**
@@ -372,15 +370,16 @@ Y.EventHandle.prototype = {
     /**
      * Detaches this subscriber
      * @method detach
+     * @return {int} the number of detached listeners
      */
     detach: function() {
         var evt = this.evt, detached = 0, i;
         if (evt) {
             if (Y.Lang.isArray(evt)) {
-                for (i=0; i<evt.length; i++) {
+                for (i = 0; i < evt.length; i++) {
                     detached += evt[i].detach();
                 }
-            } else { 
+            } else {
                 evt._delete(this.sub);
                 detached = 1;
             }
@@ -395,8 +394,8 @@ Y.EventHandle.prototype = {
      * is what should be monitored, the rest are the normal parameters when
      * subscribing to an event.
      * @method monitor
-     * @param what {string} what to monitor ('attach', 'detach', 'publish')
-     * @return {EventHandle} return value from the monitor event subscription
+     * @param what {string} what to monitor ('attach', 'detach', 'publish').
+     * @return {EventHandle} return value from the monitor event subscription.
      */
     monitor: function(what) {
         return this.evt.monitor.apply(this.evt, arguments);
@@ -407,9 +406,9 @@ Y.EventHandle.prototype = {
  * The CustomEvent class lets you define events for your application
  * that can be subscribed to by one or more independent component.
  *
- * @param {String}  type The type of event, which is passed to the callback
- *                  when the event fires
- * @param o configuration object
+ * @param {String} type The type of event, which is passed to the callback
+ * when the event fires.
+ * @param {object} o configuration object.
  * @class CustomEvent
  * @constructor
  */
@@ -440,7 +439,7 @@ Y.CustomEvent = function(type, o) {
 
     /**
      * Monitor when an event is attached or detached.
-     * 
+     *
      * @property monitored
      * @type boolean
      */
@@ -479,14 +478,14 @@ Y.CustomEvent = function(type, o) {
     /**
      * The subscribers to this event
      * @property subscribers
-     * @type Subscriber{}
+     * @type Subscriber {}
      */
     this.subscribers = {};
 
     /**
      * 'After' subscribers
      * @property afters
-     * @type Subscriber{}
+     * @type Subscriber {}
      */
     this.afters = {};
 
@@ -517,7 +516,7 @@ Y.CustomEvent = function(type, o) {
      * @default false;
      */
     // this.fireOnce = false;
-    
+
     /**
      * fireOnce listeners will fire syncronously unless async
      * is set to true
@@ -579,10 +578,10 @@ Y.CustomEvent = function(type, o) {
 
     /**
      * Specifies whether or not this event's default function
-     * can be cancelled by a subscriber by executing preventDefault() 
-     * on the event facade 
-     * @property preventable 
-     * @type boolean 
+     * can be cancelled by a subscriber by executing preventDefault()
+     * on the event facade
+     * @property preventable
+     * @type boolean
      * @default true
      */
     this.preventable = true;
@@ -641,7 +640,7 @@ Y.CustomEvent.prototype = {
         }
 
         if (when) {
-            return (when == 'after') ?  a : s;
+            return (when == 'after') ? a : s;
         }
 
         return (s + a);
@@ -652,8 +651,8 @@ Y.CustomEvent.prototype = {
      * is what should be monitored, the rest are the normal parameters when
      * subscribing to an event.
      * @method monitor
-     * @param what {string} what to monitor ('detach', 'attach', 'publish')
-     * @return {EventHandle} return value from the monitor event subscription
+     * @param what {string} what to monitor ('detach', 'attach', 'publish').
+     * @return {EventHandle} return value from the monitor event subscription.
      */
     monitor: function(what) {
         this.monitored = true;
@@ -665,7 +664,8 @@ Y.CustomEvent.prototype = {
 
     /**
      * Get all of the subscribers to this event and any sibling event
-     * @return {Array} first item is the on subscribers, second the after
+     * @method getSubs
+     * @return {Array} first item is the on subscribers, second the after.
      */
     getSubs: function() {
         var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
@@ -681,8 +681,8 @@ Y.CustomEvent.prototype = {
     /**
      * Apply configuration properties.  Only applies the CONFIG whitelist
      * @method applyConfig
-     * @param o hash of properties to apply
-     * @param force {boolean} if true, properties that exist on the event 
+     * @param o hash of properties to apply.
+     * @param force {boolean} if true, properties that exist on the event
      * will be overwritten.
      */
     applyConfig: function(o, force) {
@@ -694,7 +694,7 @@ Y.CustomEvent.prototype = {
     _on: function(fn, context, args, when) {
 
         if (!fn) {
-            this.log("Invalid callback for CE: " + this.type);
+            this.log('Invalid callback for CE: ' + this.type);
         }
 
         var s = new Y.Subscriber(fn, context, args, when);
@@ -722,26 +722,26 @@ Y.CustomEvent.prototype = {
     /**
      * Listen for this event
      * @method subscribe
-     * @param {Function} fn The function to execute
-     * @return {EventHandle} Unsubscribe handle
-     * @deprecated use on
+     * @param {Function} fn The function to execute.
+     * @return {EventHandle} Unsubscribe handle.
+     * @deprecated use on.
      */
     subscribe: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
         return this._on(fn, context, a, true);
     },
 
     /**
      * Listen for this event
      * @method on
-     * @param {Function} fn The function to execute
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * @param {Function} fn The function to execute.
+     * @param {object} context optional execution context.
+     * @param {mixed} arg* 0..n additional arguments to supply to the subscriber
      * when the event fires.
-     * @return {EventHandle} An object with a detach method to detch the handler(s)
+     * @return {EventHandle} An object with a detach method to detch the handler(s).
      */
     on: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
         if (this.host) {
             this.host._monitor('attach', this.type, {
                 args: arguments
@@ -752,27 +752,27 @@ Y.CustomEvent.prototype = {
 
     /**
      * Listen for this event after the normal subscribers have been notified and
-     * the default behavior has been applied.  If a normal subscriber prevents the 
+     * the default behavior has been applied.  If a normal subscriber prevents the
      * default behavior, it also prevents after listeners from firing.
      * @method after
-     * @param {Function} fn The function to execute
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * @param {Function} fn The function to execute.
+     * @param {object} context optional execution context.
+     * @param {mixed} arg* 0..n additional arguments to supply to the subscriber
      * when the event fires.
-     * @return {EventHandle} handle Unsubscribe handle
+     * @return {EventHandle} handle Unsubscribe handle.
      */
     after: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
         return this._on(fn, context, a, AFTER);
     },
 
     /**
      * Detach listeners.
-     * @method detach 
+     * @method detach
      * @param {Function} fn  The subscribed function to remove, if not supplied
-     *                       all will be removed
+     *                       all will be removed.
      * @param {Object}   context The context object passed to subscribe.
-     * @return {int} returns the number of subscribers unsubscribed
+     * @return {int} returns the number of subscribers unsubscribed.
      */
     detach: function(fn, context) {
         // unsubscribe handle
@@ -781,8 +781,8 @@ Y.CustomEvent.prototype = {
         }
 
         var i, s,
-            found = 0, 
-            subs  = Y.merge(this.subscribers, this.afters);
+            found = 0,
+            subs = Y.merge(this.subscribers, this.afters);
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
@@ -801,10 +801,10 @@ Y.CustomEvent.prototype = {
      * Detach listeners.
      * @method unsubscribe
      * @param {Function} fn  The subscribed function to remove, if not supplied
-     *                       all will be removed
+     *                       all will be removed.
      * @param {Object}   context The context object passed to subscribe.
-     * @return {int|undefined} returns the number of subscribers unsubscribed
-     * @deprecated use detach
+     * @return {int|undefined} returns the number of subscribers unsubscribed.
+     * @deprecated use detach.
      */
     unsubscribe: function() {
         return this.detach.apply(this, arguments);
@@ -813,20 +813,20 @@ Y.CustomEvent.prototype = {
     /**
      * Notify a single subscriber
      * @method _notify
-     * @param s {Subscriber} the subscriber
-     * @param args {Array} the arguments array to apply to the listener
+     * @param {Subscriber} s the subscriber.
+     * @param {Array} args the arguments array to apply to the listener.
      * @private
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + "->" + "sub: " +  s.id);
+        this.log(this.type + '->' + 'sub: ' + s.id);
 
         var ret;
 
         ret = s.notify(args, this);
 
         if (false === ret || this.stopped > 1) {
-            this.log(this.type + " cancelled by subscriber");
+            this.log(this.type + ' cancelled by subscriber');
             return false;
         }
 
@@ -836,8 +836,8 @@ Y.CustomEvent.prototype = {
     /**
      * Logger abstraction to centralize the application of the silent flag
      * @method log
-     * @param msg {string} message to log
-     * @param cat {string} log category
+     * @param {string} msg message to log.
+     * @param {string} cat log category.
      */
     log: function(msg, cat) {
         if (!this.silent) {
@@ -846,20 +846,20 @@ Y.CustomEvent.prototype = {
 
     /**
      * Notifies the subscribers.  The callback functions will be executed
-     * from the context specified when the event was created, and with the 
+     * from the context specified when the event was created, and with the
      * following parameters:
      *   <ul>
      *   <li>The type of event</li>
      *   <li>All of the arguments fire() was executed with as an array</li>
-     *   <li>The custom object (if any) that was passed into the subscribe() 
+     *   <li>The custom object (if any) that was passed into the subscribe()
      *       method</li>
      *   </ul>
-     * @method fire 
-     * @param {Object*} arguments an arbitrary set of parameters to pass to 
+     * @method fire
+     * @param {Object*} arguments an arbitrary set of parameters to pass to
      *                            the handler.
-     * @return {boolean} false if one of the subscribers returned false, 
-     *                   true otherwise
-     * 
+     * @return {boolean} false if one of the subscribers returned false,
+     *                   true otherwise.
+     *
      */
     fire: function() {
         if (this.fireOnce && this.fired) {
@@ -940,8 +940,8 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method unsubscribeAll
-     * @return {int} The number of listeners unsubscribed
-     * @deprecated use detachAll
+     * @return {int} The number of listeners unsubscribed.
+     * @deprecated use detachAll.
      */
     unsubscribeAll: function() {
         return this.detachAll.apply(this, arguments);
@@ -950,7 +950,7 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method detachAll
-     * @return {int} The number of listeners unsubscribed
+     * @return {int} The number of listeners unsubscribed.
      */
     detachAll: function() {
         return this.detach();
@@ -958,7 +958,7 @@ Y.CustomEvent.prototype = {
 
     /**
      * @method _delete
-     * @param subscriber object
+     * @param subscriber object.
      * @private
      */
     _delete: function(s) {
@@ -975,7 +975,7 @@ Y.CustomEvent.prototype = {
 
         if (this.host) {
             this.host._monitor('detach', this.type, {
-                ce: this, 
+                ce: this,
                 sub: s
             });
         }
@@ -991,9 +991,9 @@ Y.CustomEvent.prototype = {
 
 /**
  * Stores the subscriber information to be used when the event fires.
- * @param {Function} fn       The wrapped function to execute
- * @param {Object}   context  The value of the keyword 'this' in the listener
- * @param {Array} args*       0..n additional arguments to supply the listener
+ * @param {Function} fn       The wrapped function to execute.
+ * @param {Object}   context  The value of the keyword 'this' in the listener.
+ * @param {Array} args*       0..n additional arguments to supply the listener.
  *
  * @class Subscriber
  * @constructor
@@ -1041,7 +1041,7 @@ Y.Subscriber = function(fn, context, args) {
      * @property once
      */
     // this.once = false;
-    
+
 };
 
 Y.Subscriber.prototype = {
@@ -1075,8 +1075,8 @@ Y.Subscriber.prototype = {
     /**
      * Executes the subscriber.
      * @method notify
-     * @param args {Array} Arguments array for the subscriber
-     * @param ce {CustomEvent} The custom event that sent the notification
+     * @param args {Array} Arguments array for the subscriber.
+     * @param ce {CustomEvent} The custom event that sent the notification.
      */
     notify: function(args, ce) {
         var c = this.context,
@@ -1092,7 +1092,7 @@ Y.Subscriber.prototype = {
         } else {
             try {
                 ret = this._notify(c, args, ce);
-            } catch(e) {
+            } catch (e) {
                 Y.error(this + ' failed: ' + e.message, e);
             }
         }
@@ -1105,9 +1105,9 @@ Y.Subscriber.prototype = {
      * Used by the unsubscribe method to match the right subscriber.
      *
      * @method contains
-     * @param {Function} fn the function to execute
-     * @param {Object} context optional 'this' keyword for the listener
-     * @return {boolean} true if the supplied arguments match this 
+     * @param {Function} fn the function to execute.
+     * @param {Object} context optional 'this' keyword for the listener.
+     * @return {boolean} true if the supplied arguments match this
      *                   subscriber's signature.
      */
     contains: function(fn, context) {
@@ -1121,29 +1121,28 @@ Y.Subscriber.prototype = {
 };
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event-custom
  * @submodule event-custom-base
  */
-(function() {
 
 /**
  * EventTarget provides the implementation for any object to
  * publish, subscribe and fire to custom events, and also
  * alows other EventTargets to target the object with events
  * sourced from the other object.
- * EventTarget is designed to be used with Y.augment to wrap 
- * EventCustom in an interface that allows events to be listened to 
+ * EventTarget is designed to be used with Y.augment to wrap
+ * EventCustom in an interface that allows events to be listened to
  * and fired by name.  This makes it possible for implementing code to
  * subscribe to an event that either has not been created yet, or will
  * not be created at all.
  * @class EventTarget
  * @param opts a configuration object
- * @config emitFacade {boolean} if true, all events will emit event 
+ * @config emitFacade {boolean} if true, all events will emit event
  * facade payloads by default (default false)
- * @config prefix {string} the prefix to apply to non-prefixed event names 
- * @config chain {boolean} if true, on/after/detach return the host to allow 
+ * @config prefix {string} the prefix to apply to non-prefixed event names
+ * @config chain {boolean} if true, on/after/detach return the host to allow
  * chaining, otherwise they return an EventHandle (default false)
  */
 
@@ -1168,7 +1167,7 @@ var L = Y.Lang,
 
         if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
-        } 
+        }
 
         return pre + PREFIX_DELIMITER + type;
     }),
@@ -1186,8 +1185,8 @@ var L = Y.Lang,
 
         if (!L.isString(t)) {
             return t;
-        } 
-        
+        }
+
         i = t.indexOf(AFTER_PREFIX);
 
         if (i > -1) {
@@ -1229,7 +1228,7 @@ var L = Y.Lang,
             bubbling: false,
 
             defaults: {
-                context: o.context || this, 
+                context: o.context || this,
                 host: this,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
@@ -1247,7 +1246,7 @@ var L = Y.Lang,
 ET.prototype = {
 
     /**
-     * Listen to a custom event hosted by this object one time.  
+     * Listen to a custom event hosted by this object one time.
      * This is the equivalent to <code>on</code> except the
      * listener is immediatelly detached when it is executed.
      * @method once
@@ -1269,7 +1268,7 @@ ET.prototype = {
 
     /**
      * Subscribe to a custom event hosted by this object
-     * @method on 
+     * @method on
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
      * @param context {object} optional execution context.
@@ -1284,7 +1283,7 @@ ET.prototype = {
 
         // full name, args, detachcategory, after
         this._monitor('attach', parts[1], {
-            args: arguments, 
+            args: arguments,
             category: parts[0],
             after: parts[2]
         });
@@ -1295,8 +1294,8 @@ ET.prototype = {
                 return Y.Do.before.apply(Y.Do, arguments);
             }
 
-            f = fn; 
-            c = context; 
+            f = fn;
+            c = context;
             args = YArray(arguments, 0, true);
             ret = [];
 
@@ -1327,7 +1326,7 @@ ET.prototype = {
             return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
 
         }
-        
+
         detachcategory = parts[0];
         after = parts[2];
         shorttype = parts[3];
@@ -1371,7 +1370,7 @@ ET.prototype = {
                 handle = Y.Event._attach(args);
             }
 
-        } 
+        }
 
         if (!handle) {
             ce = this._yuievt.events[type] || this.publish(type);
@@ -1399,8 +1398,8 @@ ET.prototype = {
 
     /**
      * Detach one or more listeners the from the specified event
-     * @method detach 
-     * @param type {string|Object}   Either the handle to the subscriber or the 
+     * @method detach
+     * @param type {string|Object}   Either the handle to the subscriber or the
      *                        type of event.  If the type
      *                        is not specified, it will attempt to remove
      *                        the listener from all hosted events.
@@ -1431,7 +1430,7 @@ ET.prototype = {
             return this;
         }
 
-        var parts = _parseType(type, this._yuievt.config.prefix), 
+        var parts = _parseType(type, this._yuievt.config.prefix),
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         adapt, store = Y.Env.evt.handles, detachhost, cat, args,
@@ -1515,7 +1514,7 @@ ET.prototype = {
     unsubscribe: function() {
         return this.detach.apply(this, arguments);
     },
-    
+
     /**
      * Removes all listeners from the specified event.  If the event type
      * is not specified, all listeners from all hosted custom events will
@@ -1542,7 +1541,7 @@ ET.prototype = {
     /**
      * Creates a new custom event of the specified type.  If a custom event
      * by that name already exists, it will not be re-created.  In either
-     * case the custom event is returned. 
+     * case the custom event is returned.
      *
      * @method publish
      *
@@ -1567,7 +1566,7 @@ ET.prototype = {
      *   'emitFacade': whether or not this event emits a facade (false)
      *    </li>
      *    <li>
-     *   'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click' 
+     *   'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click'
      *    </li>
      *    <li>
      *   'fireOnce': if an event is configured to fire once, new subscribers after
@@ -1619,13 +1618,13 @@ ET.prototype = {
         if (L.isObject(type)) {
             ret = {};
             Y.each(type, function(v, k) {
-                ret[k] = this.publish(k, v || opts); 
+                ret[k] = this.publish(k, v || opts);
             }, this);
 
             return ret;
         }
 
-        events = edata.events; 
+        events = edata.events;
         ce = events[type];
 
         if (ce) {
@@ -1654,7 +1653,7 @@ ET.prototype = {
 
     /**
      * This is the entry point for the event monitoring system.
-     * You can monitor 'attach', 'detach', 'fire', and 'publish'.  
+     * You can monitor 'attach', 'detach', 'fire', and 'publish'.
      * When configured, these events generate an event.  click ->
      * click_attach, click_detach, click_publish -- these can
      * be subscribed to like other events to monitor the event
@@ -1675,31 +1674,31 @@ ET.prototype = {
 
    /**
      * Fire a custom event by name.  The callback functions will be executed
-     * from the context specified when the event was created, and with the 
+     * from the context specified when the event was created, and with the
      * following parameters.
      *
-     * If the custom event object hasn't been created, then the event hasn't 
-     * been published and it has no subscribers.  For performance sake, we 
-     * immediate exit in this case.  This means the event won't bubble, so 
-     * if the intention is that a bubble target be notified, the event must 
+     * If the custom event object hasn't been created, then the event hasn't
+     * been published and it has no subscribers.  For performance sake, we
+     * immediate exit in this case.  This means the event won't bubble, so
+     * if the intention is that a bubble target be notified, the event must
      * be published on this object first.
      *
      * The first argument is the event type, and any additional arguments are
      * passed to the listeners as parameters.  If the first of these is an
      * object literal, and the event is configured to emit an event facade,
-     * that object is mixed into the event facade and the facade is provided 
+     * that object is mixed into the event facade and the facade is provided
      * in place of the original object.
      *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
      * a 'type' property.
-     * @param arguments {Object*} an arbitrary set of parameters to pass to 
+     * @param arguments {Object*} an arbitrary set of parameters to pass to
      * the handler.  If the first of these is an object literal and the event is
      * configured to emit an event facade, the event facade will replace that
      * parameter after the properties the object literal contains are copied to
      * the event facade.
      * @return {EventTarget} the event host
-     *                   
+     *
      */
     fire: function(type) {
 
@@ -1710,8 +1709,8 @@ ET.prototype = {
 
         t = (pre) ? _getType(t, pre) : t;
 
-        this._monitor('fire', t, { 
-            args: args 
+        this._monitor('fire', t, {
+            args: args
         });
 
         ce = this.getEvent(t, true);
@@ -1817,14 +1816,14 @@ ET.prototype = {
      *
      * For DOM and custom events:
      * type, callback, context, 0-n arguments
-     *  
+     *
      * For methods:
      * callback, object (method host), methodName, context, 0-n arguments
      *
      * @method before
      * @return detach handle
      */
-    before: function() { 
+    before: function() {
         return this.on.apply(this, arguments);
     }
 
@@ -1833,8 +1832,8 @@ ET.prototype = {
 Y.EventTarget = ET;
 
 // make Y an event target
-Y.mix(Y, ET.prototype, false, false, { 
-    bubbles: false 
+Y.mix(Y, ET.prototype, false, false, {
+    bubbles: false
 });
 
 ET.call(Y);
@@ -1853,11 +1852,9 @@ Y.Global = YUI.Env.globalEvents;
 
 // @TODO implement a global namespace function on Y.Global?
 
-})();
-
 /**
  * <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
- * most events exposed by YUI.  This includes custom events, DOM events, and 
+ * most events exposed by YUI.  This includes custom events, DOM events, and
  * function events.  <code>detach</code> is also provided to remove listeners
  * serviced by this function.
  *
@@ -1876,12 +1873,12 @@ Y.Global = YUI.Env.globalEvents;
  *     <li>An optional context object</li>
  *     <li>0..n additional arguments to supply the callback.</li>
  *   </ul>
- *   Example: 
+ *   Example:
  *   <code>Y.on('drag:drophit', function() { // start work });</code>
  * </li>
  * <li>DOM events.  These are moments reported by the browser related
  * to browser functionality and user interaction.
- * This type of event is delegated to <code>Event</code>'s 
+ * This type of event is delegated to <code>Event</code>'s
  * <code>attach</code> method.
  *   <ul>
  *     <li>The type of the event</li>
@@ -1892,11 +1889,11 @@ Y.Global = YUI.Env.globalEvents;
  *     <li>An optional context object</li>
  *     <li>0..n additional arguments to supply the callback.</li>
  *   </ul>
- *   Example: 
+ *   Example:
  *   <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
  * </li>
  * <li>Function events.  These events can be used to react before or after a
- * function is executed.  This type of event is delegated to <code>Event.Do</code>'s 
+ * function is executed.  This type of event is delegated to <code>Event.Do</code>'s
  * <code>before</code> method.
  *   <ul>
  *     <li>The callback to execute</li>
@@ -1914,7 +1911,7 @@ Y.Global = YUI.Env.globalEvents;
  * execute after the event's default behavior.  <code>before</code> is an
  * alias for <code>on</code>.
  *
- * @method on 
+ * @method on
  * @param type event type (this parameter does not apply for function events)
  * @param fn the callback
  * @param context optionally change the value of 'this' in the callback
@@ -1941,7 +1938,7 @@ Y.Global = YUI.Env.globalEvents;
  * most events exposed by YUI.  This includes custom events,
  * DOM events, and AOP events.  This works the same way as
  * the on() function, only it operates after any default
- * behavior for the event has executed. @see <code>on</code> for more 
+ * behavior for the event has executed. @see <code>on</code> for more
  * information.
  * @method after
  * @param type event type (this parameter does not apply for function events)
