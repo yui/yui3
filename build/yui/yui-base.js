@@ -466,34 +466,37 @@ proto = {
             len = r.length;
 
         for (i = 0; i < len; i++) {
-            name = r[i];
-            mod = mods[name];
-            if (!done[name] && mod) {
-
+            if (!done[r[i]]) {
+                name = r[i];
                 done[name] = true;
-                details = mod.details;
-                req = details.requires;
-                use = details.use;
+                mod = mods[name];
+                if (!mod) {
+                    Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                } else {
+                    details = mod.details;
+                    req = details.requires;
+                    use = details.use;
 
-                if (req && req.length) {
-                    if (!Y._attach(req)) {
-                        return false;
+                    if (req && req.length) {
+                        if (!Y._attach(req)) {
+                            return false;
+                        }
                     }
-                }
 
 
-                if (mod.fn) {
-                    try {
-                        mod.fn(Y, name);
-                    } catch (e) {
-                        Y.error('Attach error: ' + name, e, name);
-                        return false;
+                    if (mod.fn) {
+                        try {
+                            mod.fn(Y, name);
+                        } catch (e) {
+                            Y.error('Attach error: ' + name, e, name);
+                            return false;
+                        }
                     }
-                }
 
-                if (use && use.length) {
-                    if (!Y._attach(use)) {
-                        return false;
+                    if (use && use.length) {
+                        if (!Y._attach(use)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -562,7 +565,6 @@ proto = {
             boot = config.bootstrap,
             missing = [],
             r = [],
-            star,
             ret = true,
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
@@ -691,14 +693,18 @@ proto = {
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
-            star = true;
-            args = Y.Object.keys(mods);
+            // args = Y.Object.keys(mods);
+            ret = Y._attach(Y.Object.keys(mods));
+            if (ret) {
+                handleLoader();
+            }
+            return Y;
         }
 
 
         // use loader to expand dependencies and sort the
         // requirements if it is available.
-        if (boot && !star && Y.Loader && args.length) {
+        if (boot && Y.Loader && args.length) {
 
 
             loader = getLoader(Y);
@@ -768,9 +774,6 @@ proto = {
             }
 
         } else {
-            if (len) {
-                Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
-            }
             ret = Y._attach(args);
             if (ret) {
                 handleLoader();
@@ -1714,9 +1717,9 @@ var Native = Array.prototype, LENGTH = 'length',
  *
  * @method ()
  * @static
- *   @param o the item to arrayify.
- *   @param i {int} if an array or array-like, this is the start index.
- *   @param arraylike {boolean} if true, it forces the array-like fork.  This
+ *   @param {object} o the item to arrayify.
+ *   @param {int} startIdx if an array or array-like, this is the start index.
+ *   @param {boolean} arraylike if true, it forces the array-like fork.  This
  *   can be used to avoid multiple Array.test calls.
  *   @return {Array} the resulting array.
  */
@@ -1754,6 +1757,8 @@ Y.Array = YArray;
  * @todo current implementation (intenionally) will not implicitly
  * handle html elements that are array-like (forms, selects, etc).
  *
+ * @param {object} o the object to test.
+ *
  * @return {int} a number indicating the results:
  * 0: Not an array or an array-like collection
  * 1: A real array.
@@ -1782,10 +1787,10 @@ YArray.test = function(o) {
 /**
  * Executes the supplied function on each item in the array.
  * @method each
- * @param a {Array} the array to iterate.
- * @param f {Function} the function to execute on each item.  The
+ * @param {Array} a the array to iterate.
+ * @param {Function} f the function to execute on each item.  The
  * function receives three arguments: the value, the index, the full array.
- * @param o Optional context object.
+ * @param {object} o Optional context object.
  * @static
  * @return {YUI} the YUI instance.
  */
@@ -1808,8 +1813,8 @@ YArray.each = (Native.forEach) ?
  * provided the value is set to true for each.
  * @method hash
  * @static
- * @param k {Array} keyset.
- * @param v {Array} optional valueset.
+ * @param {Array} k keyset.
+ * @param {Array} v optional valueset.
  * @return {object} the hash.
  */
 YArray.hash = function(k, v) {
@@ -1827,8 +1832,8 @@ YArray.hash = function(k, v) {
  * value isn't found.
  * @method indexOf
  * @static
- * @param a {Array} the array to search.
- * @param val the value to search for.
+ * @param {Array} a the array to search.
+ * @param {any} val the value to search for.
  * @return {int} the index of the item that contains the value or -1.
  */
 YArray.indexOf = (Native.indexOf) ?
@@ -1849,6 +1854,8 @@ YArray.indexOf = (Native.indexOf) ?
  * Numeric sort convenience function.
  * Y.ArrayAssert.itemsAreEqual([1,2,3], [3,1,2].sort(Y.Array.numericSort));
  * @method numericSort
+ * @param {number} a a number.
+ * @param {number} b a number.
  */
 YArray.numericSort = function(a, b) {
     return (a - b);
@@ -1857,13 +1864,12 @@ YArray.numericSort = function(a, b) {
 /**
  * Executes the supplied function on each item in the array.
  * Returning true from the processing function will stop the
- * processing of the remaining
- * items.
+ * processing of the remaining items.
  * @method some
- * @param a {Array} the array to iterate.
- * @param f {Function} the function to execute on each item. The function
+ * @param {Array} a the array to iterate.
+ * @param {Function} f the function to execute on each item. The function
  * receives three arguments: the value, the index, the full array.
- * @param o Optional context object.
+ * @param {object} o Optional context object.
  * @static
  * @return {boolean} true if the function returns true on
  * any of the items in the array.
@@ -1896,7 +1902,7 @@ YArray.some = (Native.some) ?
  *
  * @class Queue
  * @constructor
- * @param item* {MIXED} 0..n items to seed the queue.
+ * @param {MIXED} item* 0..n items to seed the queue.
  */
 function Queue() {
     this._init();
@@ -1932,7 +1938,7 @@ Queue.prototype = {
     },
 
     /**
-     * Get the last in the queue. LIFO support
+     * Get the last in the queue. LIFO support.
      *
      * @method last
      * @return {MIXED} the last item in the queue.
@@ -1942,10 +1948,11 @@ Queue.prototype = {
     },
 
     /**
-     * Add 0..n items to the end of the queue
+     * Add 0..n items to the end of the queue.
      *
      * @method add
-     * @param item* {MIXED} 0..n items
+     * @param {MIXED} item* 0..n items.
+     * @return {object} this queue.
      */
     add: function() {
         Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
@@ -1956,10 +1963,10 @@ Queue.prototype = {
     },
 
     /**
-     * Returns the current number of queued items
+     * Returns the current number of queued items.
      *
      * @method size
-     * @return {Number}
+     * @return {Number} The size.
      */
     size: function() {
         return this._q.length;

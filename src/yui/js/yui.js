@@ -467,35 +467,38 @@ proto = {
             len = r.length;
 
         for (i = 0; i < len; i++) {
-            name = r[i];
-            mod = mods[name];
-            if (!done[name] && mod) {
-
+            if (!done[r[i]]) {
+                name = r[i];
                 done[name] = true;
-                details = mod.details;
-                req = details.requires;
-                use = details.use;
+                mod = mods[name];
+                if (!mod) {
+                    Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                } else {
+                    details = mod.details;
+                    req = details.requires;
+                    use = details.use;
 
-                if (req && req.length) {
-                    if (!Y._attach(req)) {
-                        return false;
+                    if (req && req.length) {
+                        if (!Y._attach(req)) {
+                            return false;
+                        }
                     }
-                }
 
-                // Y.log('attaching ' + name, 'info', 'yui');
+                    // Y.log('attaching ' + name, 'info', 'yui');
 
-                if (mod.fn) {
-                    try {
-                        mod.fn(Y, name);
-                    } catch (e) {
-                        Y.error('Attach error: ' + name, e, name);
-                        return false;
+                    if (mod.fn) {
+                        try {
+                            mod.fn(Y, name);
+                        } catch (e) {
+                            Y.error('Attach error: ' + name, e, name);
+                            return false;
+                        }
                     }
-                }
 
-                if (use && use.length) {
-                    if (!Y._attach(use)) {
-                        return false;
+                    if (use && use.length) {
+                        if (!Y._attach(use)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -564,7 +567,6 @@ proto = {
             boot = config.bootstrap,
             missing = [],
             r = [],
-            star,
             ret = true,
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
@@ -700,15 +702,19 @@ proto = {
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
-            star = true;
-            args = Y.Object.keys(mods);
+            // args = Y.Object.keys(mods);
+            ret = Y._attach(Y.Object.keys(mods));
+            if (ret) {
+                handleLoader();
+            }
+            return Y;
         }
 
         // Y.log('before loader requirements: ' + args, 'info', 'yui');
 
         // use loader to expand dependencies and sort the
         // requirements if it is available.
-        if (boot && !star && Y.Loader && args.length) {
+        if (boot && Y.Loader && args.length) {
 
             // Y.log('checking dependences with loader', 'info', 'yui');
 
@@ -787,11 +793,6 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             }
 
         } else {
-            if (len) {
-                Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
-Y.log('Instance is not provisioned to fetch missing mods: ' +
-       missing, 'log', 'yui');
-            }
             Y.log('Attaching available dependencies: ' + args, 'info', 'yui');
             ret = Y._attach(args);
             if (ret) {

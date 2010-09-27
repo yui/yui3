@@ -466,34 +466,37 @@ proto = {
             len = r.length;
 
         for (i = 0; i < len; i++) {
-            name = r[i];
-            mod = mods[name];
-            if (!done[name] && mod) {
-
+            if (!done[r[i]]) {
+                name = r[i];
                 done[name] = true;
-                details = mod.details;
-                req = details.requires;
-                use = details.use;
+                mod = mods[name];
+                if (!mod) {
+                    Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                } else {
+                    details = mod.details;
+                    req = details.requires;
+                    use = details.use;
 
-                if (req && req.length) {
-                    if (!Y._attach(req)) {
-                        return false;
+                    if (req && req.length) {
+                        if (!Y._attach(req)) {
+                            return false;
+                        }
                     }
-                }
 
 
-                if (mod.fn) {
-                    try {
-                        mod.fn(Y, name);
-                    } catch (e) {
-                        Y.error('Attach error: ' + name, e, name);
-                        return false;
+                    if (mod.fn) {
+                        try {
+                            mod.fn(Y, name);
+                        } catch (e) {
+                            Y.error('Attach error: ' + name, e, name);
+                            return false;
+                        }
                     }
-                }
 
-                if (use && use.length) {
-                    if (!Y._attach(use)) {
-                        return false;
+                    if (use && use.length) {
+                        if (!Y._attach(use)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -562,7 +565,6 @@ proto = {
             boot = config.bootstrap,
             missing = [],
             r = [],
-            star,
             ret = true,
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
@@ -691,14 +693,18 @@ proto = {
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
-            star = true;
-            args = Y.Object.keys(mods);
+            // args = Y.Object.keys(mods);
+            ret = Y._attach(Y.Object.keys(mods));
+            if (ret) {
+                handleLoader();
+            }
+            return Y;
         }
 
 
         // use loader to expand dependencies and sort the
         // requirements if it is available.
-        if (boot && !star && Y.Loader && args.length) {
+        if (boot && Y.Loader && args.length) {
 
 
             loader = getLoader(Y);
@@ -768,9 +774,6 @@ proto = {
             }
 
         } else {
-            if (len) {
-                Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
-            }
             ret = Y._attach(args);
             if (ret) {
                 handleLoader();
@@ -1714,9 +1717,9 @@ var Native = Array.prototype, LENGTH = 'length',
  *
  * @method ()
  * @static
- *   @param o the item to arrayify.
- *   @param i {int} if an array or array-like, this is the start index.
- *   @param arraylike {boolean} if true, it forces the array-like fork.  This
+ *   @param {object} o the item to arrayify.
+ *   @param {int} startIdx if an array or array-like, this is the start index.
+ *   @param {boolean} arraylike if true, it forces the array-like fork.  This
  *   can be used to avoid multiple Array.test calls.
  *   @return {Array} the resulting array.
  */
@@ -1754,6 +1757,8 @@ Y.Array = YArray;
  * @todo current implementation (intenionally) will not implicitly
  * handle html elements that are array-like (forms, selects, etc).
  *
+ * @param {object} o the object to test.
+ *
  * @return {int} a number indicating the results:
  * 0: Not an array or an array-like collection
  * 1: A real array.
@@ -1782,10 +1787,10 @@ YArray.test = function(o) {
 /**
  * Executes the supplied function on each item in the array.
  * @method each
- * @param a {Array} the array to iterate.
- * @param f {Function} the function to execute on each item.  The
+ * @param {Array} a the array to iterate.
+ * @param {Function} f the function to execute on each item.  The
  * function receives three arguments: the value, the index, the full array.
- * @param o Optional context object.
+ * @param {object} o Optional context object.
  * @static
  * @return {YUI} the YUI instance.
  */
@@ -1808,8 +1813,8 @@ YArray.each = (Native.forEach) ?
  * provided the value is set to true for each.
  * @method hash
  * @static
- * @param k {Array} keyset.
- * @param v {Array} optional valueset.
+ * @param {Array} k keyset.
+ * @param {Array} v optional valueset.
  * @return {object} the hash.
  */
 YArray.hash = function(k, v) {
@@ -1827,8 +1832,8 @@ YArray.hash = function(k, v) {
  * value isn't found.
  * @method indexOf
  * @static
- * @param a {Array} the array to search.
- * @param val the value to search for.
+ * @param {Array} a the array to search.
+ * @param {any} val the value to search for.
  * @return {int} the index of the item that contains the value or -1.
  */
 YArray.indexOf = (Native.indexOf) ?
@@ -1849,6 +1854,8 @@ YArray.indexOf = (Native.indexOf) ?
  * Numeric sort convenience function.
  * Y.ArrayAssert.itemsAreEqual([1,2,3], [3,1,2].sort(Y.Array.numericSort));
  * @method numericSort
+ * @param {number} a a number.
+ * @param {number} b a number.
  */
 YArray.numericSort = function(a, b) {
     return (a - b);
@@ -1857,13 +1864,12 @@ YArray.numericSort = function(a, b) {
 /**
  * Executes the supplied function on each item in the array.
  * Returning true from the processing function will stop the
- * processing of the remaining
- * items.
+ * processing of the remaining items.
  * @method some
- * @param a {Array} the array to iterate.
- * @param f {Function} the function to execute on each item. The function
+ * @param {Array} a the array to iterate.
+ * @param {Function} f the function to execute on each item. The function
  * receives three arguments: the value, the index, the full array.
- * @param o Optional context object.
+ * @param {object} o Optional context object.
  * @static
  * @return {boolean} true if the function returns true on
  * any of the items in the array.
@@ -1896,7 +1902,7 @@ YArray.some = (Native.some) ?
  *
  * @class Queue
  * @constructor
- * @param item* {MIXED} 0..n items to seed the queue.
+ * @param {MIXED} item* 0..n items to seed the queue.
  */
 function Queue() {
     this._init();
@@ -1932,7 +1938,7 @@ Queue.prototype = {
     },
 
     /**
-     * Get the last in the queue. LIFO support
+     * Get the last in the queue. LIFO support.
      *
      * @method last
      * @return {MIXED} the last item in the queue.
@@ -1942,10 +1948,11 @@ Queue.prototype = {
     },
 
     /**
-     * Add 0..n items to the end of the queue
+     * Add 0..n items to the end of the queue.
      *
      * @method add
-     * @param item* {MIXED} 0..n items
+     * @param {MIXED} item* 0..n items.
+     * @return {object} this queue.
      */
     add: function() {
         Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
@@ -1956,10 +1963,10 @@ Queue.prototype = {
     },
 
     /**
-     * Returns the current number of queued items
+     * Returns the current number of queued items.
      *
      * @method size
-     * @return {Number}
+     * @return {Number} The size.
      */
     size: function() {
         return this._q.length;
@@ -2738,9 +2745,9 @@ Y.Get = function() {
     /**
      * Generates an HTML element, this is not appended to a document
      * @method _node
-     * @param type {string} the type of element.
-     * @param attr {string} the attributes.
-     * @param win {Window} optional window to create the element in.
+     * @param {string} type the type of element.
+     * @param {string} attr the attributes.
+     * @param {Window} win optional window to create the element in.
      * @return {HTMLElement} the generated node.
      * @private
      */
@@ -2762,9 +2769,9 @@ Y.Get = function() {
     /**
      * Generates a link node
      * @method _linkNode
-     * @param url {string} the url for the css file.
-     * @param win {Window} optional window to create the node in.
-     * @param attributes optional attributes collection to apply to the
+     * @param {string} url the url for the css file.
+     * @param {Window} win optional window to create the node in.
+     * @param {object} attributes optional attributes collection to apply to the
      * new node.
      * @return {HTMLElement} the generated node.
      * @private
@@ -2785,9 +2792,9 @@ Y.Get = function() {
     /**
      * Generates a script node
      * @method _scriptNode
-     * @param url {string} the url for the script file.
-     * @param win {Window} optional window to create the node in.
-     * @param attributes optional attributes collection to apply to the
+     * @param {string} url the url for the script file.
+     * @param {Window} win optional window to create the node in.
+     * @param {object} attributes optional attributes collection to apply to the
      * new node.
      * @return {HTMLElement} the generated node.
      * @private
@@ -2808,8 +2815,12 @@ Y.Get = function() {
     },
 
     /**
-     * Returns the data payload for callback functions
+     * Returns the data payload for callback functions.
      * @method _returnData
+     * @param {object} q the queue.
+     * @param {string} msg the result message.
+     * @param {string} result the status message from the request.
+     * @return {object} the state data from the request.
      * @private
      */
     _returnData = function(q, msg, result) {
@@ -2829,7 +2840,9 @@ Y.Get = function() {
     /**
      * The transaction is finished
      * @method _end
-     * @param id {string} the id of the request.
+     * @param {string} id the id of the request.
+     * @param {string} msg the result message.
+     * @param {string} result the status message from the request.
      * @private
      */
     _end = function(id, msg, result) {
@@ -2845,7 +2858,7 @@ Y.Get = function() {
      * was accomplished.  There isn't a failure case at the
      * moment unless you count aborted transactions
      * @method _fail
-     * @param id {string} the id of the request
+     * @param {string} id the id of the request
      * @private
      */
     _fail = function(id, msg) {
@@ -2868,7 +2881,7 @@ Y.Get = function() {
     /**
      * The request is complete, so executing the requester's callback
      * @method _finish
-     * @param id {string} the id of the request.
+     * @param {string} id the id of the request.
      * @private
      */
     _finish = function(id) {
@@ -2897,7 +2910,7 @@ Y.Get = function() {
     /**
      * Timeout detected
      * @method _timeout
-     * @param id {string} the id of the request.
+     * @param {string} id the id of the request.
      * @private
      */
     _timeout = function(id) {
@@ -2914,8 +2927,9 @@ Y.Get = function() {
     /**
      * Loads the next item for a given request
      * @method _next
-     * @param id {string} the id of the request.
-     * @param loaded {string} the url that was just loaded, if any.
+     * @param {string} id the id of the request.
+     * @param {string} loaded the url that was just loaded, if any.
+     * @return {string} the result.
      * @private
      */
     _next = function(id, loaded) {
@@ -3040,9 +3054,10 @@ Y.Get = function() {
      * Saves the state for the request and begins loading
      * the requested urls
      * @method queue
-     * @param type {string} the type of node to insert.
-     * @param url {string} the url to load.
-     * @param opts the hash of options for this request.
+     * @param {string} type the type of node to insert.
+     * @param {string} url the url to load.
+     * @param {object} opts the hash of options for this request.
+     * @return {object} transaction object.
      * @private
      */
     _queue = function(type, url, opts) {
@@ -3084,14 +3099,14 @@ Y.Get = function() {
      * script nodes, this does not guarantee that contained
      * script is ready to use.
      * @method _track
-     * @param type {string} the type of node to track.
-     * @param n {HTMLElement} the node to track.
-     * @param id {string} the id of the request.
-     * @param url {string} the url that is being loaded.
-     * @param win {Window} the targeted window.
-     * @param qlength the number of remaining items in the queue,
+     * @param {string} type the type of node to track.
+     * @param {HTMLElement} n the node to track.
+     * @param {string} id the id of the request.
+     * @param {string} url the url that is being loaded.
+     * @param {Window} win the targeted window.
+     * @param {int} qlength the number of remaining items in the queue,
      * including this one.
-     * @param trackfn {Function} function to execute when finished
+     * @param {Function} trackfn function to execute when finished
      * the default is _next.
      * @private
      */
@@ -3148,6 +3163,7 @@ Y.Get = function() {
     /**
      * Removes the nodes for the specified queue
      * @method _purge
+     * @param {string} tId the transaction id.
      * @private
      */
     _purge = function(tId) {
@@ -3205,7 +3221,7 @@ Y.Get = function() {
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
          * @static
-         * @param id {string} the transaction id.
+         * @param {string} id the transaction id.
          * @private
          */
         _finalize: function(id) {
@@ -3218,7 +3234,7 @@ Y.Get = function() {
          * Abort a transaction
          * @method abort
          * @static
-         * @param o {string|object} Either the tId or the object returned from
+         * @param {string|object} o Either the tId or the object returned from
          * script() or css().
          */
         abort: function(o) {
@@ -3235,8 +3251,8 @@ Y.Get = function() {
          *
          * @method script
          * @static
-         * @param url {string|string[]} the url or urls to the script(s).
-         * @param opts {object} Options:
+         * @param {string|string[]} url the url or urls to the script(s).
+         * @param {object} opts Options:
          * <dl>
          * <dt>onSuccess</dt>
          * <dd>
@@ -3367,8 +3383,8 @@ Y.Get = function() {
          * window.
          * @method css
          * @static
-         * @param url {string} the url or urls to the css file(s).
-         * @param opts Options:
+         * @param {string} url the url or urls to the css file(s).
+         * @param {object} opts Options:
          * <dl>
          * <dt>onSuccess</dt>
          * <dd>
