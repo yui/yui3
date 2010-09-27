@@ -3,7 +3,7 @@ YUI.add('rls', function(Y) {
 /**
  * Implentation for building the remote loader service url.
  * @method _rls
- * @param what {Array} the requested modules.
+ * @param {Array} what the requested modules.
  * @since 3.2.0
  * @return {string} the url for the remote loader service call.
  */

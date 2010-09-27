@@ -78,7 +78,6 @@ if (typeof YUI != 'undefined') {
         return Y;
     };
 
-(function() {
     var proto, prop,
         VERSION = '@VERSION@',
         BASE = 'http://yui.yahooapis.com/',
@@ -975,7 +974,6 @@ Y.log('Instance is not provisioned to fetch missing mods: ' +
         exports.YUI = YUI;
     }
 
-})();
 
 /**
  * The config object contains all of the configuration options for
@@ -1482,7 +1480,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-// (function() {
+
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -1706,8 +1704,6 @@ L.sub = function(s, o) {
     }) : s);
 };
 
-// })();
-
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -1716,9 +1712,8 @@ L.sub = function(s, o) {
  * @submodule yui-base
  */
 
-(function() {
 
-var L = Y.Lang, Native = Array.prototype, LENGTH = 'length',
+var Native = Array.prototype, LENGTH = 'length',
 
 /**
  * Adds the following array utilities to the YUI instance.  Additional
@@ -1788,8 +1783,8 @@ Y.Array = YArray;
  */
 YArray.test = function(o) {
     var r = 0;
-    if (L.isObject(o)) {
-        if (L.isArray(o)) {
+    if (Y.Lang.isObject(o)) {
+        if (Y.Lang.isArray(o)) {
             r = 1;
         } else {
             try {
@@ -1909,7 +1904,6 @@ YArray.some = (Native.some) ?
         return false;
     };
 
-})();
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2005,14 +1999,7 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
  * @submodule yui-base
  */
 
-(function() {
-
-var L = Y.Lang,
-DELIMITER = '__',
-// FROZEN = {
-//     'prototype': 1,
-//     '_yuid': 1
-// },
+var CACHED_DELIMITER = '__',
 
 /*
  * IE will not enumerate native functions in a derived object even if the
@@ -2026,7 +2013,7 @@ DELIMITER = '__',
  */
 _iefix = function(r, s) {
     var fn = s.toString;
-    if (L.isFunction(fn) && fn != Object.prototype.toString) {
+    if (Y.Lang.isFunction(fn) && fn != Object.prototype.toString) {
         r.toString = fn;
     }
 };
@@ -2106,7 +2093,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            type = L.type(r[p]);
+            type = Y.Lang.type(r[p]);
             if (s.hasOwnProperty(p)) {
                 if (merge && type == 'object') {
                     Y.mix(r[p], s[p]);
@@ -2122,7 +2109,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
-                if (merge && L.isObject(r[i], true)) {
+                if (merge && Y.Lang.isObject(r[i], true)) {
                     Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
@@ -2162,7 +2149,7 @@ Y.cached = function(source, cache, refetch) {
     return function(arg1) {
 
         var k = (arguments.length > 1) ?
-            Array.prototype.join.call(arguments, DELIMITER) : arg1;
+            Array.prototype.join.call(arguments, CACHED_DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);
@@ -2173,8 +2160,6 @@ Y.cached = function(source, cache, refetch) {
 
 };
 
-})();
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2182,7 +2167,6 @@ Y.cached = function(source, cache, refetch) {
  * @module yui
  * @submodule yui-base
  */
-(function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
@@ -2210,7 +2194,7 @@ owns = function(o, k) {
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED,
+UNDEF,
 
 /**
  * Extracts the keys, values, or size from an object
@@ -2374,14 +2358,14 @@ O.some = function(o, f, c, proto) {
  */
 O.getValue = function(o, path) {
     if (!Y.Lang.isObject(o)) {
-        return UNDEFINED;
+        return UNDEF;
     }
 
     var i,
         p = Y.Array(path),
         l = p.length;
 
-    for (i = 0; o !== UNDEFINED && i < l; i++) {
+    for (i = 0; o !== UNDEF && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -2408,14 +2392,14 @@ O.setValue = function(o, path, val) {
         ref = o;
 
     if (leafIdx >= 0) {
-        for (i = 0; ref !== UNDEFINED && i < leafIdx; i++) {
+        for (i = 0; ref !== UNDEF && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
-        if (ref !== UNDEFINED) {
+        if (ref !== UNDEF) {
             ref[p[i]] = val;
         } else {
-            return UNDEFINED;
+            return UNDEF;
         }
     }
 
@@ -2436,8 +2420,6 @@ O.isEmpty = function(o) {
     }
     return true;
 };
-
-})();
 
 /**
  * The YUI module contains the components required for building the YUI seed

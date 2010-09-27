@@ -78,7 +78,6 @@ if (typeof YUI != 'undefined') {
         return Y;
     };
 
-(function() {
     var proto, prop,
         VERSION = '@VERSION@',
         BASE = 'http://yui.yahooapis.com/',
@@ -953,7 +952,6 @@ proto = {
         exports.YUI = YUI;
     }
 
-})();
 
 /**
  * The config object contains all of the configuration options for
@@ -1460,7 +1458,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-// (function() {
+
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -1684,8 +1682,6 @@ L.sub = function(s, o) {
     }) : s);
 };
 
-// })();
-
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -1694,9 +1690,8 @@ L.sub = function(s, o) {
  * @submodule yui-base
  */
 
-(function() {
 
-var L = Y.Lang, Native = Array.prototype, LENGTH = 'length',
+var Native = Array.prototype, LENGTH = 'length',
 
 /**
  * Adds the following array utilities to the YUI instance.  Additional
@@ -1766,8 +1761,8 @@ Y.Array = YArray;
  */
 YArray.test = function(o) {
     var r = 0;
-    if (L.isObject(o)) {
-        if (L.isArray(o)) {
+    if (Y.Lang.isObject(o)) {
+        if (Y.Lang.isArray(o)) {
             r = 1;
         } else {
             try {
@@ -1887,7 +1882,6 @@ YArray.some = (Native.some) ?
         return false;
     };
 
-})();
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -1983,14 +1977,7 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
  * @submodule yui-base
  */
 
-(function() {
-
-var L = Y.Lang,
-DELIMITER = '__',
-// FROZEN = {
-//     'prototype': 1,
-//     '_yuid': 1
-// },
+var CACHED_DELIMITER = '__',
 
 /*
  * IE will not enumerate native functions in a derived object even if the
@@ -2004,7 +1991,7 @@ DELIMITER = '__',
  */
 _iefix = function(r, s) {
     var fn = s.toString;
-    if (L.isFunction(fn) && fn != Object.prototype.toString) {
+    if (Y.Lang.isFunction(fn) && fn != Object.prototype.toString) {
         r.toString = fn;
     }
 };
@@ -2084,7 +2071,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            type = L.type(r[p]);
+            type = Y.Lang.type(r[p]);
             if (s.hasOwnProperty(p)) {
                 if (merge && type == 'object') {
                     Y.mix(r[p], s[p]);
@@ -2100,7 +2087,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
-                if (merge && L.isObject(r[i], true)) {
+                if (merge && Y.Lang.isObject(r[i], true)) {
                     Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
@@ -2140,7 +2127,7 @@ Y.cached = function(source, cache, refetch) {
     return function(arg1) {
 
         var k = (arguments.length > 1) ?
-            Array.prototype.join.call(arguments, DELIMITER) : arg1;
+            Array.prototype.join.call(arguments, CACHED_DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);
@@ -2151,8 +2138,6 @@ Y.cached = function(source, cache, refetch) {
 
 };
 
-})();
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2160,7 +2145,6 @@ Y.cached = function(source, cache, refetch) {
  * @module yui
  * @submodule yui-base
  */
-(function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
@@ -2188,7 +2172,7 @@ owns = function(o, k) {
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED,
+UNDEF,
 
 /**
  * Extracts the keys, values, or size from an object
@@ -2352,14 +2336,14 @@ O.some = function(o, f, c, proto) {
  */
 O.getValue = function(o, path) {
     if (!Y.Lang.isObject(o)) {
-        return UNDEFINED;
+        return UNDEF;
     }
 
     var i,
         p = Y.Array(path),
         l = p.length;
 
-    for (i = 0; o !== UNDEFINED && i < l; i++) {
+    for (i = 0; o !== UNDEF && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -2386,14 +2370,14 @@ O.setValue = function(o, path, val) {
         ref = o;
 
     if (leafIdx >= 0) {
-        for (i = 0; ref !== UNDEFINED && i < leafIdx; i++) {
+        for (i = 0; ref !== UNDEF && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
-        if (ref !== UNDEFINED) {
+        if (ref !== UNDEF) {
             ref[p[i]] = val;
         } else {
-            return UNDEFINED;
+            return UNDEF;
         }
     }
 
@@ -2414,8 +2398,6 @@ O.isEmpty = function(o) {
     }
     return true;
 };
-
-})();
 
 /**
  * The YUI module contains the components required for building the YUI seed
@@ -2705,7 +2687,6 @@ Y.UA = YUI.Env.UA || function() {
 }, '@VERSION@' );
 YUI.add('get', function(Y) {
 
-(function() {
 
 /**
  * Provides a mechanism to fetch remote resources and
@@ -3444,25 +3425,24 @@ Y.Get = function() {
     };
 }();
 
-})();
 
 
 }, '@VERSION@' );
 YUI.add('features', function(Y) {
 
-var tests = {};
+var feature_tests = {};
 
 Y.mix(Y.namespace('Features'), {
 
-    tests: tests,
+    tests: feature_tests,
 
     add: function(cat, name, o) {
-        tests[cat] = tests[cat] || {};
-        tests[cat][name] = o;
+        feature_tests[cat] = feature_tests[cat] || {};
+        feature_tests[cat][name] = o;
     },
 
     all: function(cat, args) {
-        var cat_o = tests[cat],
+        var cat_o = feature_tests[cat],
             // results = {};
             result = '';
         if (cat_o) {
@@ -3479,7 +3459,7 @@ Y.mix(Y.namespace('Features'), {
     test: function(cat, name, args) {
 
         var result, ua, test,
-            cat_o = tests[cat],
+            cat_o = feature_tests[cat],
             feature = cat_o && cat_o[name];
 
         if (!feature) {
@@ -3543,7 +3523,7 @@ YUI.add('rls', function(Y) {
 /**
  * Implentation for building the remote loader service url.
  * @method _rls
- * @param what {Array} the requested modules.
+ * @param {Array} what the requested modules.
  * @since 3.2.0
  * @return {string} the url for the remote loader service call.
  */
@@ -3695,7 +3675,6 @@ YUI.add('yui-log', function(Y) {
  * @module yui
  * @submodule yui-log
  */
-(function() {
 
 var INSTANCE = Y,
     LOGEVENT = 'yui:log',
@@ -3792,8 +3771,6 @@ INSTANCE.message = function() {
     return INSTANCE.log.apply(INSTANCE, arguments);
 };
 
-})();
-
 
 }, '@VERSION@' ,{requires:['yui-base']});
 YUI.add('yui-later', function(Y) {
@@ -3803,64 +3780,60 @@ YUI.add('yui-later', function(Y) {
  * @module yui
  * @submodule yui-later
  */
-(function() {
-    var L = Y.Lang,
 
-    /**
-     * Executes the supplied function in the context of the supplied
-     * object 'when' milliseconds later.  Executes the function a
-     * single time unless periodic is set to true.
-     * @method later
-     * @for YUI
-     * @param when {int} the number of milliseconds to wait until the fn
-     * is executed.
-     * @param o the context object.
-     * @param fn {Function|String} the function to execute or the name of
-     * the method in the 'o' object to execute.
-     * @param data [Array] data that is provided to the function.  This
-     * accepts either a single item or an array.  If an array is provided,
-     * the function is executed with one parameter for each array item.
-     * If you need to pass a single array parameter, it needs to be wrapped
-     * in an array [myarray].
-     * @param periodic {boolean} if true, executes continuously at supplied
-     * interval until canceled.
-     * @return {object} a timer object. Call the cancel() method on this
-     * object to stop the timer.
-     */
-    later = function(when, o, fn, data, periodic) {
-        when = when || 0;
+/**
+ * Executes the supplied function in the context of the supplied
+ * object 'when' milliseconds later.  Executes the function a
+ * single time unless periodic is set to true.
+ * @method later
+ * @for YUI
+ * @param when {int} the number of milliseconds to wait until the fn
+ * is executed.
+ * @param o the context object.
+ * @param fn {Function|String} the function to execute or the name of
+ * the method in the 'o' object to execute.
+ * @param data [Array] data that is provided to the function.  This
+ * accepts either a single item or an array.  If an array is provided,
+ * the function is executed with one parameter for each array item.
+ * If you need to pass a single array parameter, it needs to be wrapped
+ * in an array [myarray].
+ * @param periodic {boolean} if true, executes continuously at supplied
+ * interval until canceled.
+ * @return {object} a timer object. Call the cancel() method on this
+ * object to stop the timer.
+ */
+Y.later = function(when, o, fn, data, periodic) {
+    when = when || 0;
 
-        var m = fn, f, id;
+    var m = fn, f, id;
 
-        if (o && L.isString(fn)) {
-            m = o[fn];
-        }
+    if (o && Y.Lang.isString(fn)) {
+        m = o[fn];
+    }
 
-        f = !L.isUndefined(data) ? function() {
-            m.apply(o, Y.Array(data));
-        } : function() {
-            m.call(o);
-        };
-
-        id = (periodic) ? setInterval(f, when) : setTimeout(f, when);
-
-        return {
-            id: id,
-            interval: periodic,
-            cancel: function() {
-                if (this.interval) {
-                    clearInterval(id);
-                } else {
-                    clearTimeout(id);
-                }
-            }
-        };
+    f = !Y.Lang.isUndefined(data) ? function() {
+        m.apply(o, Y.Array(data));
+    } : function() {
+        m.call(o);
     };
 
-    Y.later = later;
-    L.later = later;
+    id = (periodic) ? setInterval(f, when) : setTimeout(f, when);
 
-})();
+    return {
+        id: id,
+        interval: periodic,
+        cancel: function() {
+            if (this.interval) {
+                clearInterval(id);
+            } else {
+                clearTimeout(id);
+            }
+        }
+    };
+};
+
+Y.Lang.later = Y.later;
+
 
 
 }, '@VERSION@' ,{requires:['yui-base']});
@@ -3884,7 +3857,7 @@ YUI.add('yui-throttle', function(Y) {
  * @return {function} Returns a wrapped function that calls fn throttled.
  * @since 3.1.0
  */
-var throttle = function(fn, ms) {
+Y.throttle = function(fn, ms) {
     ms = (ms) ? ms : (Y.config.throttleTime || 150);
 
     if (ms === -1) {
@@ -3903,13 +3876,6 @@ var throttle = function(fn, ms) {
         }
     });
 };
-
-Y.throttle = throttle;
-
-// We added the redundant definition to later for backwards compatibility.
-// I don't think we need to do the same thing here
-// Y.Lang.throttle = throttle;
-
 
 
 }, '@VERSION@' ,{requires:['yui-base']});

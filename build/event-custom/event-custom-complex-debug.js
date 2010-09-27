@@ -8,9 +8,9 @@ YUI.add('event-custom-complex', function(Y) {
  * @submodule event-custom-complex
  */
 
-(function() {
-
-var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype,
+var FACADE,
+    FACADE_KEYS,
+    CEProto = Y.CustomEvent.prototype,
     ETProto = Y.EventTarget.prototype;
 
 /**
@@ -26,7 +26,7 @@ Y.EventFacade = function(e, currentTarget) {
     e = e || {};
 
     /**
-     * The arguments passed to fire 
+     * The arguments passed to fire
      * @property details
      * @type Array
      */
@@ -68,7 +68,7 @@ Y.EventFacade = function(e, currentTarget) {
      * @type Node
      */
     this.relatedTarget = e.relatedTarget;
-    
+
     /**
      * Stops the propagation to the next bubble target
      * @method stopPropagation
@@ -211,22 +211,9 @@ CEProto.fireComplex = function(args) {
 
     }
 
-    // execute the default behavior if not prevented
-    // console.log('defaultTargetOnly: ' + self.defaultTargetOnly);
-    // console.log('host === target: ' + (host === ef.target));
-    // if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === es.id === self.id)) {
-    if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
-
-        // if (es.id === self.id) {
-        //     self.defaultFn.apply(host, args);
-        //     while ((next = es.defaultFnQueue.last())) {
-        //         next();
-        //     }
-        // } else {
-        //     es.defaultFnQueue.add(function() {
-        //         self.defaultFn.apply(host, args);
-        //     });
-        // }
+    if (self.defaultFn &&
+        !self.prevented &&
+        ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
 
         self.defaultFn.apply(host, args);
     }
@@ -235,16 +222,6 @@ CEProto.fireComplex = function(args) {
     // YUI instance and potentially the YUI global.
     self._broadcast(args);
 
-    // process after listeners.  If the default behavior was
-    // prevented, the after events don't fire.
-    // if (self.afterCount && !self.prevented && self.stopped < 2) {
-
-    // if (subs[1] && !self.prevented && self.stopped < 2) {
-    //     // self._procSubs(Y.merge(self.afters), args, ef);
-    //     self._procSubs(subs[1], args, ef);
-    // }
-
-    
     // Queue the after
     if (subs[1] && !self.prevented && self.stopped < 2) {
         if (es.id === self.id || self.type != host._yuievt.bubbling) {
@@ -268,7 +245,7 @@ CEProto.fireComplex = function(args) {
         queue = es.queue;
 
         while (queue.length) {
-            q = queue.pop(); 
+            q = queue.pop();
             ce = q[0];
             // set up stack to allow the next item to be processed
             es.next = ce;
@@ -278,7 +255,7 @@ CEProto.fireComplex = function(args) {
         }
 
         Y.Env._eventstack = null;
-    } 
+    }
 
     ret = !(self.stopped);
 
@@ -429,7 +406,7 @@ ETProto.removeTarget = function(o) {
 /**
  * Propagate an event.  Requires the event-custom-complex module.
  * @method bubble
- * @param evt {Event.Custom} the custom event to propagate
+ * @param evt {CustomEvent} the custom event to propagate
  * @return {boolean} the aggregated return value from Event.Custom.fire
  * @for EventTarget
  */
@@ -445,8 +422,8 @@ ETProto.bubble = function(evt, args, target) {
         // Y.log('Bubbling ' + evt.type);
         for (i in targs) {
             if (targs.hasOwnProperty(i)) {
-                t = targs[i]; 
-                ce = t.getEvent(type, true); 
+                t = targs[i];
+                ce = t.getEvent(type, true);
                 ce2 = t.getSibling(type, ce);
 
                 if (ce2 && !ce) {
@@ -500,8 +477,6 @@ ETProto.bubble = function(evt, args, target) {
 FACADE = new Y.EventFacade();
 FACADE_KEYS = Y.Object.keys(FACADE);
 
-
-})();
 
 
 }, '@VERSION@' ,{requires:['event-custom-base']});

@@ -78,7 +78,6 @@ if (typeof YUI != 'undefined') {
         return Y;
     };
 
-(function() {
     var proto, prop,
         VERSION = '@VERSION@',
         BASE = 'http://yui.yahooapis.com/',
@@ -975,7 +974,6 @@ Y.log('Instance is not provisioned to fetch missing mods: ' +
         exports.YUI = YUI;
     }
 
-})();
 
 /**
  * The config object contains all of the configuration options for
