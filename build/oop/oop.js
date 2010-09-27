@@ -250,12 +250,12 @@ YUI.add('oop', function(Y) {
         }
 
         // @todo cloning YUI instances doesn't currently work
-        if (o instanceof YUI) {
+        if (Y.instanceOf(o, YUI)) {
             return o;
         }
 
         var o2, marked = cloned || {}, stamp,
-            each = Y.each || Y.Object.each;
+            yeach = Y.each;
 
         switch (L.type(o)) {
             case 'date':
@@ -288,8 +288,8 @@ YUI.add('oop', function(Y) {
 
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
-            each(o, function(v, k) {
-                if (!f || (f.call(c || this, v, k, this, o) !== false)) {
+            yeach(o, function(v, k) {
+                if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
                     if (k !== CLONE_MARKER) {
                         if (k == 'prototype') {
                             // skip the prototype

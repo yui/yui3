@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YUI 3.2.0 Cloning Event kills window.undefined</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+</head>
+<body lang="en-US" class="yui3-skin-sam">
+
+    <h1>Y.clone bug w/ events</h1>
+
+
+<!--
+    <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js"></script>
+    -->
+    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+
+    <script type="text/javascript">
+        YUI({
+            combine: false,
+            filter: "raw"
+        }).use("dump", "test", "node", "event", "console", function(Y) {
+        	var ev = Y.on("click", function(e) {
+            //no-op
+            }, "#h1");
+
+            // var ev = Y.on('fooboo', function(e) { });
+
+            var r = new Y.Console({
+                verbose : true,
+                newestOnTop : false,
+                height: '600px',
+                width: "500px"
+            }).render();
+
+            Y.Test.Runner.add(new Y.Test.Case({
+                "window.undefined should start out undefined" : function() {
+                    Y.assert(typeof window.undefined === "undefined");
+                },
+
+                "window.undefined should still be undefined after cloning an event" : function() {
+                    Y.clone(ev);
+
+                    console.log(window.undefined);
+                    Y.assert(typeof window.undefined === "undefined");
+                }
+            })).run();
+        });
+    </script>
+</body>
+</html>
+
