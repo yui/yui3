@@ -10,6 +10,9 @@
 					"recordset-base",
 					"plugin"
 				]
+			},
+			"recordset-filter": {
+				"requires": ["recordset-base"]
 			}
 		}
     }
