@@ -12,9 +12,7 @@
 				]
 			},
 			"recordset-filter": {
-				"requires": [
-					"recordset-base"
-				]
+				"requires": ["recordset-base"]
 			}
 		}
     }

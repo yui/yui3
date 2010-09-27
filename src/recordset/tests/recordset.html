@@ -384,41 +384,7 @@
 				Y.ObjectAssert.areEqual(oData, this.rs.getRecord(index).getValue());
 				
 			},
-			//---------------------------------------------
-		    // Filter Records
-		    //---------------------------------------------
-			
-			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
-			testFilterByValidator: function() {
-				
-				var validator = function(item) {
-					if (item.getValue('b') === 2) {
-						return true;
-					}
-					else {
-						return false;
-					}
-				},
-				oRecs = this.rs.filter(validator);
-				console.log(oRecs);
-				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
-				Y.ObjectAssert.areEqual(oRecs.getRecord(0), this.rs.getRecord(0));
-				Y.ObjectAssert.areEqual(oRecs.getRecord(1), this.rs.getRecord(2));
-				
-				Y.Assert.areEqual(2, oRecs.getRecord(0).getValue('b'));
-				Y.Assert.areEqual(2, oRecs.getRecord(1).getValue('b'));
-				Y.ObjectAssert.areEqual(oRecs.getLength(), 2);
-				
-			},
-			
-			testFilterByKeyValue: function() {				
-				var oRecs = this.rs.filter('a', 3);
-				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
-				Y.Assert.areEqual(oRecs.getRecord(0).getValue('a'), 3);
-				Y.ObjectAssert.areEqual(oRecs.getLength(), 1);
-				
-			},
-			
+
 			
 			//---------------------------------------------
 		    // Sort Plugin
@@ -617,7 +583,49 @@
 				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecord(6).getValue());
 
 				Y.Assert.areEqual(7, this.rs.getLength());
+			},
+			
+			//---------------------------------------------
+		    // Filter Plugin
+		    //---------------------------------------------
+		
+			testFilterPlugin: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);
+				this.rs.filter.alert();
 			}
+			/*
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testFilterByValidator: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);
+				
+				var validator = function(item) {
+					if (item.getValue('b') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				},
+				oRecs = this.rs.filter.filter(validator);
+				console.log(oRecs);
+				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
+				Y.ObjectAssert.areEqual(oRecs.getRecord(0), this.rs.getRecord(0));
+				Y.ObjectAssert.areEqual(oRecs.getRecord(1), this.rs.getRecord(2));
+				
+				Y.Assert.areEqual(2, oRecs.getRecord(0).getValue('b'));
+				Y.Assert.areEqual(2, oRecs.getRecord(1).getValue('b'));
+				Y.ObjectAssert.areEqual(oRecs.getLength(), 2);
+				
+			},
+			
+			testFilterByKeyValue: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);				
+				var oRecs = this.rs.filter.filter('a', 3);
+				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
+				Y.Assert.areEqual(oRecs.getRecord(0).getValue('a'), 3);
+				Y.ObjectAssert.areEqual(oRecs.getLength(), 1);
+			}
+			*/
 			
         });
 
