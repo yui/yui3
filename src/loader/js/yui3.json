@@ -1118,6 +1118,11 @@
                     "base"
                 ]
             }, 
+            "recordset-filter": {
+                "requires": [
+                    "recordset-base"
+                ]
+            }, 
             "recordset-sort": {
                 "requires": [
                     "arraysort", 
