@@ -61,7 +61,7 @@
 <span class="cm"> *</span>
 <span class="cm"> * @class Queue</span>
 <span class="cm"> * @constructor</span>
-<span class="cm"> * @param item* {MIXED} 0..n items to seed the queue.</span>
+<span class="cm"> * @param {MIXED} item* 0..n items to seed the queue.</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">Queue</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
@@ -97,7 +97,7 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Get the last in the queue. LIFO support</span>
+<span class="cm">     * Get the last in the queue. LIFO support.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method last</span>
 <span class="cm">     * @return {MIXED} the last item in the queue.</span>
@@ -107,10 +107,11 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Add 0..n items to the end of the queue</span>
+<span class="cm">     * Add 0..n items to the end of the queue.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method add</span>
-<span class="cm">     * @param item* {MIXED} 0..n items</span>
+<span class="cm">     * @param {MIXED} item* 0..n items.</span>
+<span class="cm">     * @return {object} this queue.</span>
 <span class="cm">     */</span>
     <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
@@ -121,10 +122,10 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Returns the current number of queued items</span>
+<span class="cm">     * Returns the current number of queued items.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method size</span>
-<span class="cm">     * @return {Number}</span>
+<span class="cm">     * @return {Number} The size.</span>
 <span class="cm">     */</span>
     <span class="nx">size</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>

@@ -55,9 +55,8 @@
 <span class="cm"> * @submodule yui-base</span>
 <span class="cm"> */</span>
 
-<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;length&#39;</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;length&#39;</span><span class="p">,</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Adds the following array utilities to the YUI instance.  Additional</span>
@@ -80,9 +79,9 @@
 <span class="cm"> *</span>
 <span class="cm"> * @method ()</span>
 <span class="cm"> * @static</span>
-<span class="cm"> *   @param o the item to arrayify.</span>
-<span class="cm"> *   @param i {int} if an array or array-like, this is the start index.</span>
-<span class="cm"> *   @param arraylike {boolean} if true, it forces the array-like fork.  This</span>
+<span class="cm"> *   @param {object} o the item to arrayify.</span>
+<span class="cm"> *   @param {int} startIdx if an array or array-like, this is the start index.</span>
+<span class="cm"> *   @param {boolean} arraylike if true, it forces the array-like fork.  This</span>
 <span class="cm"> *   can be used to avoid multiple Array.test calls.</span>
 <span class="cm"> *   @return {Array} the resulting array.</span>
 <span class="cm"> */</span>
@@ -120,6 +119,8 @@
 <span class="cm"> * @todo current implementation (intenionally) will not implicitly</span>
 <span class="cm"> * handle html elements that are array-like (forms, selects, etc).</span>
 <span class="cm"> *</span>
+<span class="cm"> * @param {object} o the object to test.</span>
+<span class="cm"> *</span>
 <span class="cm"> * @return {int} a number indicating the results:</span>
 <span class="cm"> * 0: Not an array or an array-like collection</span>
 <span class="cm"> * 1: A real array.</span>
@@ -127,8 +128,8 @@
 <span class="cm"> */</span>
 <span class="nx">YArray</span><span class="p">.</span><span class="nx">test</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">r</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">try</span> <span class="p">{</span>
@@ -148,10 +149,10 @@
 <span class="cm">/**</span>
 <span class="cm"> * Executes the supplied function on each item in the array.</span>
 <span class="cm"> * @method each</span>
-<span class="cm"> * @param a {Array} the array to iterate.</span>
-<span class="cm"> * @param f {Function} the function to execute on each item.  The</span>
+<span class="cm"> * @param {Array} a the array to iterate.</span>
+<span class="cm"> * @param {Function} f the function to execute on each item.  The</span>
 <span class="cm"> * function receives three arguments: the value, the index, the full array.</span>
-<span class="cm"> * @param o Optional context object.</span>
+<span class="cm"> * @param {object} o Optional context object.</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @return {YUI} the YUI instance.</span>
 <span class="cm"> */</span>
@@ -174,8 +175,8 @@
 <span class="cm"> * provided the value is set to true for each.</span>
 <span class="cm"> * @method hash</span>
 <span class="cm"> * @static</span>
-<span class="cm"> * @param k {Array} keyset.</span>
-<span class="cm"> * @param v {Array} optional valueset.</span>
+<span class="cm"> * @param {Array} k keyset.</span>
+<span class="cm"> * @param {Array} v optional valueset.</span>
 <span class="cm"> * @return {object} the hash.</span>
 <span class="cm"> */</span>
 <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
@@ -193,8 +194,8 @@
 <span class="cm"> * value isn&#39;t found.</span>
 <span class="cm"> * @method indexOf</span>
 <span class="cm"> * @static</span>
-<span class="cm"> * @param a {Array} the array to search.</span>
-<span class="cm"> * @param val the value to search for.</span>
+<span class="cm"> * @param {Array} a the array to search.</span>
+<span class="cm"> * @param {any} val the value to search for.</span>
 <span class="cm"> * @return {int} the index of the item that contains the value or -1.</span>
 <span class="cm"> */</span>
 <span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">)</span> <span class="o">?</span>
@@ -215,6 +216,8 @@
 <span class="cm"> * Numeric sort convenience function.</span>
 <span class="cm"> * Y.ArrayAssert.itemsAreEqual([1,2,3], [3,1,2].sort(Y.Array.numericSort));</span>
 <span class="cm"> * @method numericSort</span>
+<span class="cm"> * @param {number} a a number.</span>
+<span class="cm"> * @param {number} b a number.</span>
 <span class="cm"> */</span>
 <span class="nx">YArray</span><span class="p">.</span><span class="nx">numericSort</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="nx">a</span> <span class="o">-</span> <span class="nx">b</span><span class="p">);</span>
@@ -223,13 +226,12 @@
 <span class="cm">/**</span>
 <span class="cm"> * Executes the supplied function on each item in the array.</span>
 <span class="cm"> * Returning true from the processing function will stop the</span>
-<span class="cm"> * processing of the remaining</span>
-<span class="cm"> * items.</span>
+<span class="cm"> * processing of the remaining items.</span>
 <span class="cm"> * @method some</span>
-<span class="cm"> * @param a {Array} the array to iterate.</span>
-<span class="cm"> * @param f {Function} the function to execute on each item. The function</span>
+<span class="cm"> * @param {Array} a the array to iterate.</span>
+<span class="cm"> * @param {Function} f the function to execute on each item. The function</span>
 <span class="cm"> * receives three arguments: the value, the index, the full array.</span>
-<span class="cm"> * @param o Optional context object.</span>
+<span class="cm"> * @param {object} o Optional context object.</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @return {boolean} true if the function returns true on</span>
 <span class="cm"> * any of the items in the array.</span>
@@ -247,8 +249,6 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span>
-
-<span class="p">})();</span>
 </pre></div>
 
                     </div>

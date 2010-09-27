@@ -55,14 +55,7 @@
 <span class="cm"> * @submodule yui-base</span>
 <span class="cm"> */</span>
 
-<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-<span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-<span class="nx">DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;__&#39;</span><span class="p">,</span>
-<span class="c1">// FROZEN = {</span>
-<span class="c1">//     &#39;prototype&#39;: 1,</span>
-<span class="c1">//     &#39;_yuid&#39;: 1</span>
-<span class="c1">// },</span>
+<span class="kd">var</span> <span class="nx">CACHED_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;__&#39;</span><span class="p">,</span>
 
 <span class="cm">/*</span>
 <span class="cm"> * IE will not enumerate native functions in a derived object even if the</span>
@@ -76,7 +69,7 @@
 <span class="cm"> */</span>
 <span class="nx">_iefix</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">toString</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">fn</span> <span class="o">!=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">fn</span> <span class="o">!=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">r</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
@@ -156,7 +149,7 @@
     <span class="k">if</span> <span class="p">(</span><span class="nx">wl</span> <span class="o">&amp;&amp;</span> <span class="nx">wl</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">wl</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">p</span> <span class="o">=</span> <span class="nx">wl</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-            <span class="nx">type</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">p</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">merge</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">p</span><span class="p">],</span> <span class="nx">s</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
@@ -172,7 +165,7 @@
                 <span class="c1">// check white list if it was supplied</span>
                 <span class="c1">// if the receiver has this property, it is an object,</span>
                 <span class="c1">// and merge is specified, merge the two objects.</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">merge</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="kc">true</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">merge</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="kc">true</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> <span class="c1">// recursive</span>
                 <span class="c1">// otherwise apply the property only if overwrite</span>
                 <span class="c1">// is specified or the receiver doesn&#39;t have one.</span>
@@ -212,7 +205,7 @@
     <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arg1</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span>
-            <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">join</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">DELIMITER</span><span class="p">)</span> <span class="o">:</span> <span class="nx">arg1</span><span class="p">;</span>
+            <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">join</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CACHED_DELIMITER</span><span class="p">)</span> <span class="o">:</span> <span class="nx">arg1</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">cache</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">refetch</span> <span class="o">&amp;&amp;</span> <span class="nx">cache</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">==</span> <span class="nx">refetch</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">cache</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">source</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -222,8 +215,6 @@
     <span class="p">};</span>
 
 <span class="p">};</span>
-
-<span class="p">})();</span>
 </pre></div>
 
                     </div>

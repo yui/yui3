@@ -394,7 +394,7 @@ config.  The YUI component build tool does this for you.</span>
 most events exposed by YUI.  This includes custom events,
 DOM events, and AOP events.  This works the same way as
 the on() function, only it operates after any default
-behavior for the event has executed. @see <code>on</code> for more 
+behavior for the event has executed. @see <code>on</code> for more
 information.
                                         </div>
 
@@ -1674,7 +1674,7 @@ This fails because "long" is a future reserved word in ECMAScript
                                         
                                         <div class="description" property="yui:description">
                                             <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
-most events exposed by YUI.  This includes custom events, DOM events, and 
+most events exposed by YUI.  This includes custom events, DOM events, and
 function events.  <code>detach</code> is also provided to remove listeners
 serviced by this function.
 The signature that <code>on</code> accepts varies depending on the type
@@ -1691,12 +1691,12 @@ modules in the library.  This type of event is delegated to
 <li>An optional context object</li>
 <li>0..n additional arguments to supply the callback.</li>
 </ul>
-Example: 
+Example:
 <code>Y.on('drag:drophit', function() { // start work });</code>
 </li>
 <li>DOM events.  These are moments reported by the browser related
 to browser functionality and user interaction.
-This type of event is delegated to <code>Event</code>'s 
+This type of event is delegated to <code>Event</code>'s
 <code>attach</code> method.
 <ul>
 <li>The type of the event</li>
@@ -1707,11 +1707,11 @@ refereces.</li>
 <li>An optional context object</li>
 <li>0..n additional arguments to supply the callback.</li>
 </ul>
-Example: 
+Example:
 <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
 </li>
 <li>Function events.  These events can be used to react before or after a
-function is executed.  This type of event is delegated to <code>Event.Do</code>'s 
+function is executed.  This type of event is delegated to <code>Event.Do</code>'s
 <code>before</code> method.
 <ul>
 <li>The callback to execute</li>
