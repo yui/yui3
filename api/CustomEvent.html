@@ -87,13 +87,13 @@ that can be subscribed to by one or more independent component.
                                                     &lt;<span property="yui:type">String</span>&gt;
                                                     </code>
                                                     <span property="yui:description"> The type of event, which is passed to the callback
-when the event fires</span>
+when the event fires.</span>
                                                 </dd>
                                                 <dd rel="yui:parameter">
                                                     <code><span property="yui:name">o</span>
                                                     &lt;<span property="yui:type">object</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"> configuration object</span>
+                                                    <span property="yui:description"> configuration object.</span>
                                                 </dd>
                                         </dl>
                                     
@@ -109,7 +109,7 @@ when the event fires</span>
                             <div class="content">
                                     <div class="" rel="yui:property" resource="#property_afters">
                                     <h4><a name="property_afters" property="yui:name">afters</a>
-                                        - <code><span property="yui:type">Subscriber{}</span></code>
+                                        - <code><span property="yui:type">Subscriber {}</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -323,7 +323,7 @@ to enable event bubbling
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Specifies whether or not this event's default function
-can be cancelled by a subscriber by executing preventDefault() 
+can be cancelled by a subscriber by executing preventDefault()
 on the event facade
                                         </div>
                                     </div>
@@ -458,7 +458,7 @@ stopPropagation or stopImmediatePropagation
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_subscribers">
                                     <h4><a name="property_subscribers" property="yui:name">subscribers</a>
-                                        - <code><span property="yui:type">Subscriber{}</span></code>
+                                        - <code><span property="yui:type">Subscriber {}</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -526,7 +526,7 @@ stopPropagation or stopImmediatePropagation
                                                         <code><span property="yui:name">subscriber</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> object</span>
+                                                        <span property="yui:description"> object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -574,13 +574,13 @@ stopPropagation or stopImmediatePropagation
                                                         <code><span property="yui:name">s</span>
                                                         &lt;<span property="yui:type">Subscriber</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the subscriber</span>
+                                                        <span property="yui:description"> the subscriber.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">args</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the arguments array to apply to the listener</span>
+                                                        <span property="yui:description"> the arguments array to apply to the listener.</span>
                                                         </dd>
                                                 </dl>
 
@@ -622,7 +622,7 @@ stopPropagation or stopImmediatePropagation
                                         
                                         <div class="description" property="yui:description">
                                             Listen for this event after the normal subscribers have been notified and
-the default behavior has been applied.  If a normal subscriber prevents the 
+the default behavior has been applied.  If a normal subscriber prevents the
 default behavior, it also prevents after listeners from firing.
                                         </div>
 
@@ -634,19 +634,19 @@ default behavior, it also prevents after listeners from firing.
                                                         <code><span property="yui:name">fn</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The function to execute</span>
+                                                        <span property="yui:description"> The function to execute.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional execution context.</span>
+                                                        <span property="yui:description"> optional execution context.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">arg*</span>
                                                         &lt;<span property="yui:type">mixed</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  0..n additional arguments to supply to the subscriber
+                                                        <span property="yui:description"> 0..n additional arguments to supply to the subscriber
 when the event fires.</span>
                                                         </dd>
                                                 </dl>
@@ -656,7 +656,7 @@ when the event fires.</span>
                                                     <code property="yui:return">
                                                             EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">handle Unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">handle Unsubscribe handle.</dd>
                                                 </dl>
 
 
@@ -702,13 +702,13 @@ when the event fires.</span>
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> hash of properties to apply</span>
+                                                        <span property="yui:description"> hash of properties to apply.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">force</span>
                                                         &lt;<span property="yui:type">boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  if true, properties that exist on the event 
+                                                        <span property="yui:description">  if true, properties that exist on the event
 will be overwritten.</span>
                                                         </dd>
                                                 </dl>
@@ -758,7 +758,7 @@ will be overwritten.</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  The subscribed function to remove, if not supplied
-all will be removed</span>
+all will be removed.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
@@ -773,7 +773,7 @@ all will be removed</span>
                                                     <code property="yui:return">
                                                             int
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">returns the number of subscribers unsubscribed</dd>
+                                                    <dd property="yui:returnInfo">returns the number of subscribers unsubscribed.</dd>
                                                 </dl>
 
 
@@ -810,7 +810,7 @@ all will be removed</span>
                                                     <code property="yui:return">
                                                             int
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The number of listeners unsubscribed</dd>
+                                                    <dd property="yui:returnInfo">The number of listeners unsubscribed.</dd>
                                                 </dl>
 
 
@@ -842,12 +842,12 @@ all will be removed</span>
                                         
                                         <div class="description" property="yui:description">
                                             Notifies the subscribers.  The callback functions will be executed
-from the context specified when the event was created, and with the 
+from the context specified when the event was created, and with the
 following parameters:
 <ul>
 <li>The type of event</li>
 <li>All of the arguments fire() was executed with as an array</li>
-<li>The custom object (if any) that was passed into the subscribe() 
+<li>The custom object (if any) that was passed into the subscribe()
 method</li>
 </ul>
                                         </div>
@@ -860,7 +860,7 @@ method</li>
                                                         <code><span property="yui:name">arguments</span>
                                                         &lt;<span property="yui:type">Object*</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> an arbitrary set of parameters to pass to 
+                                                        <span property="yui:description"> an arbitrary set of parameters to pass to
 the handler.</span>
                                                         </dd>
                                                 </dl>
@@ -870,8 +870,8 @@ the handler.</span>
                                                     <code property="yui:return">
                                                             boolean
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">false if one of the subscribers returned false, 
-true otherwise</dd>
+                                                    <dd property="yui:returnInfo">false if one of the subscribers returned false,
+true otherwise.</dd>
                                                 </dl>
 
 
@@ -908,7 +908,7 @@ true otherwise</dd>
                                                     <code property="yui:return">
                                                             Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">first item is the on subscribers, second the after</dd>
+                                                    <dd property="yui:returnInfo">first item is the on subscribers, second the after.</dd>
                                                 </dl>
 
 
@@ -1000,13 +1000,13 @@ on the current target will not be executed</span>
                                                         <code><span property="yui:name">msg</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  message to log</span>
+                                                        <span property="yui:description"> message to log.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">cat</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  log category</span>
+                                                        <span property="yui:description"> log category.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1052,7 +1052,7 @@ subscribing to an event.
                                                         <code><span property="yui:name">what</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  what to monitor ('detach', 'attach', 'publish')</span>
+                                                        <span property="yui:description">  what to monitor ('detach', 'attach', 'publish').</span>
                                                         </dd>
                                                 </dl>
 
@@ -1061,7 +1061,7 @@ subscribing to an event.
                                                     <code property="yui:return">
                                                             EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">return value from the monitor event subscription</dd>
+                                                    <dd property="yui:returnInfo">return value from the monitor event subscription.</dd>
                                                 </dl>
 
 
@@ -1111,19 +1111,19 @@ subscribing to an event.
                                                         <code><span property="yui:name">fn</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The function to execute</span>
+                                                        <span property="yui:description"> The function to execute.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional execution context.</span>
+                                                        <span property="yui:description"> optional execution context.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">arg*</span>
                                                         &lt;<span property="yui:type">mixed</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  0..n additional arguments to supply to the subscriber
+                                                        <span property="yui:description"> 0..n additional arguments to supply to the subscriber
 when the event fires.</span>
                                                         </dd>
                                                 </dl>
@@ -1133,7 +1133,7 @@ when the event fires.</span>
                                                     <code property="yui:return">
                                                             EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">An object with a detach method to detch the handler(s)</dd>
+                                                    <dd property="yui:returnInfo">An object with a detach method to detch the handler(s).</dd>
                                                 </dl>
 
 
@@ -1266,7 +1266,7 @@ subscribers on the current target from executing.
                                                         <code><span property="yui:name">fn</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The function to execute</span>
+                                                        <span property="yui:description"> The function to execute.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1275,13 +1275,13 @@ subscribers on the current target from executing.
                                                     <code property="yui:return">
                                                             EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">Unsubscribe handle.</dd>
                                                 </dl>
 
 
              
                                             <div class="deprecated">
-                                                <strong>Deprecated</strong> use on
+                                                <strong>Deprecated</strong> use on.
                                             </div>        
 
                                         </div>
@@ -1325,7 +1325,7 @@ subscribers on the current target from executing.
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  The subscribed function to remove, if not supplied
-all will be removed</span>
+all will be removed.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
@@ -1340,13 +1340,13 @@ all will be removed</span>
                                                     <code property="yui:return">
                                                             int|undefined
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">returns the number of subscribers unsubscribed</dd>
+                                                    <dd property="yui:returnInfo">returns the number of subscribers unsubscribed.</dd>
                                                 </dl>
 
 
              
                                             <div class="deprecated">
-                                                <strong>Deprecated</strong> use detach
+                                                <strong>Deprecated</strong> use detach.
                                             </div>        
 
                                         </div>
@@ -1380,13 +1380,13 @@ all will be removed</span>
                                                     <code property="yui:return">
                                                             int
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The number of listeners unsubscribed</dd>
+                                                    <dd property="yui:returnInfo">The number of listeners unsubscribed.</dd>
                                                 </dl>
 
 
              
                                             <div class="deprecated">
-                                                <strong>Deprecated</strong> use detachAll
+                                                <strong>Deprecated</strong> use detachAll.
                                             </div>        
 
                                         </div>

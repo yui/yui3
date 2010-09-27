@@ -188,6 +188,14 @@ processes
                                                          id
                                                     
                                                 
+                                                        , 
+                                                         msg
+                                                    
+                                                
+                                                        , 
+                                                         result
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -203,7 +211,19 @@ processes
                                                         <code><span property="yui:name">id</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the id of the request.</span>
+                                                        <span property="yui:description"> the id of the request.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">msg</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the result message.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">result</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the status message from the request.</span>
                                                         </dd>
                                                 </dl>
 
@@ -247,7 +267,7 @@ processes
                                                         <code><span property="yui:name">id</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the transaction id.</span>
+                                                        <span property="yui:description"> the transaction id.</span>
                                                         </dd>
                                                 </dl>
 
@@ -291,7 +311,7 @@ processes
                                                         <code><span property="yui:name">id</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the id of the request.</span>
+                                                        <span property="yui:description"> the id of the request.</span>
                                                         </dd>
                                                 </dl>
 
@@ -343,13 +363,13 @@ processes
                                                         <code><span property="yui:name">url</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the url for the css file.</span>
+                                                        <span property="yui:description"> the url for the css file.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">win</span>
                                                         &lt;<span property="yui:type">Window</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional window to create the node in.</span>
+                                                        <span property="yui:description"> optional window to create the node in.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">attributes</span>
@@ -384,7 +404,7 @@ new node.</span>
                                          private 
                                         
                                         
-                                        void
+                                        string
                                             <strong property="yui:name">_next</strong>
                                            (
                                                 
@@ -411,16 +431,23 @@ new node.</span>
                                                         <code><span property="yui:name">id</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the id of the request.</span>
+                                                        <span property="yui:description"> the id of the request.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">loaded</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the url that was just loaded, if any.</span>
+                                                        <span property="yui:description"> the url that was just loaded, if any.</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the result.</dd>
+                                                </dl>
 
 
              
@@ -469,19 +496,19 @@ new node.</span>
                                                         <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the type of element.</span>
+                                                        <span property="yui:description"> the type of element.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">attr</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the attributes.</span>
+                                                        <span property="yui:description"> the attributes.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">win</span>
                                                         &lt;<span property="yui:type">Window</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional window to create the element in.</span>
+                                                        <span property="yui:description"> optional window to create the element in.</span>
                                                         </dd>
                                                 </dl>
 
@@ -512,6 +539,11 @@ new node.</span>
                                         void
                                             <strong property="yui:name">_purge</strong>
                                            (
+                                                
+                                                        
+                                                         tId
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -521,6 +553,15 @@ new node.</span>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">tId</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the transaction id.</span>
+                                                        </dd>
+                                                </dl>
 
 
 
@@ -539,19 +580,60 @@ new node.</span>
                                          private 
                                         
                                         
-                                        void
+                                        object
                                             <strong property="yui:name">_returnData</strong>
                                            (
+                                                
+                                                        
+                                                         q
+                                                    
+                                                
+                                                        , 
+                                                         msg
+                                                    
+                                                
+                                                        , 
+                                                         result
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the data payload for callback functions
+                                            Returns the data payload for callback functions.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">q</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the queue.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">msg</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the result message.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">result</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the status message from the request.</span>
+                                                        </dd>
+                                                </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the state data from the request.</dd>
+                                                </dl>
 
 
              
@@ -600,13 +682,13 @@ new node.</span>
                                                         <code><span property="yui:name">url</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the url for the script file.</span>
+                                                        <span property="yui:description"> the url for the script file.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">win</span>
                                                         &lt;<span property="yui:type">Window</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional window to create the node in.</span>
+                                                        <span property="yui:description"> optional window to create the node in.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">attributes</span>
@@ -664,7 +746,7 @@ new node.</span>
                                                         <code><span property="yui:name">id</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the id of the request.</span>
+                                                        <span property="yui:description"> the id of the request.</span>
                                                         </dd>
                                                 </dl>
 
@@ -734,35 +816,35 @@ script is ready to use.
                                                         <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the type of node to track.</span>
+                                                        <span property="yui:description"> the type of node to track.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">n</span>
                                                         &lt;<span property="yui:type">HTMLElement</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the node to track.</span>
+                                                        <span property="yui:description"> the node to track.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">id</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the id of the request.</span>
+                                                        <span property="yui:description"> the id of the request.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">url</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the url that is being loaded.</span>
+                                                        <span property="yui:description"> the url that is being loaded.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">win</span>
                                                         &lt;<span property="yui:type">Window</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the targeted window.</span>
+                                                        <span property="yui:description"> the targeted window.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">qlength</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">int</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> the number of remaining items in the queue,
 including this one.</span>
@@ -771,7 +853,7 @@ including this one.</span>
                                                         <code><span property="yui:name">trackfn</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  function to execute when finished
+                                                        <span property="yui:description"> function to execute when finished
 the default is _next.</span>
                                                         </dd>
                                                 </dl>
@@ -816,7 +898,7 @@ the default is _next.</span>
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">string|object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Either the tId or the object returned from
+                                                        <span property="yui:description"> Either the tId or the object returned from
 script() or css().</span>
                                                         </dd>
                                                 </dl>
@@ -867,7 +949,7 @@ window.
                                                         <code><span property="yui:name">url</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the url or urls to the css file(s).</span>
+                                                        <span property="yui:description"> the url or urls to the css file(s).</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">opts</span>
@@ -950,7 +1032,7 @@ transaction.</dd>
                                          private 
                                         
                                         
-                                        void
+                                        object
                                             <strong property="yui:name">queue</strong>
                                            (
                                                 
@@ -982,13 +1064,13 @@ the requested urls
                                                         <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the type of node to insert.</span>
+                                                        <span property="yui:description"> the type of node to insert.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">url</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the url to load.</span>
+                                                        <span property="yui:description"> the url to load.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">opts</span>
@@ -998,6 +1080,13 @@ the requested urls
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">transaction object.</dd>
+                                                </dl>
 
 
              
@@ -1043,13 +1132,13 @@ of the current document or the document in a specified window.
                                                         <code><span property="yui:name">url</span>
                                                         &lt;<span property="yui:type">string|string[]</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the url or urls to the script(s).</span>
+                                                        <span property="yui:description"> the url or urls to the script(s).</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">opts</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Options:
+                                                        <span property="yui:description"> Options:
 <dl>
 <dt>onSuccess</dt>
 <dd>

@@ -47,9 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-<span class="cm">/**</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * Provides a mechanism to fetch remote resources and</span>
 <span class="cm"> * insert them into a document.</span>
 <span class="cm"> * @module yui</span>
@@ -99,9 +97,9 @@
     <span class="cm">/**</span>
 <span class="cm">     * Generates an HTML element, this is not appended to a document</span>
 <span class="cm">     * @method _node</span>
-<span class="cm">     * @param type {string} the type of element.</span>
-<span class="cm">     * @param attr {string} the attributes.</span>
-<span class="cm">     * @param win {Window} optional window to create the element in.</span>
+<span class="cm">     * @param {string} type the type of element.</span>
+<span class="cm">     * @param {string} attr the attributes.</span>
+<span class="cm">     * @param {Window} win optional window to create the element in.</span>
 <span class="cm">     * @return {HTMLElement} the generated node.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
@@ -123,9 +121,9 @@
     <span class="cm">/**</span>
 <span class="cm">     * Generates a link node</span>
 <span class="cm">     * @method _linkNode</span>
-<span class="cm">     * @param url {string} the url for the css file.</span>
-<span class="cm">     * @param win {Window} optional window to create the node in.</span>
-<span class="cm">     * @param attributes optional attributes collection to apply to the</span>
+<span class="cm">     * @param {string} url the url for the css file.</span>
+<span class="cm">     * @param {Window} win optional window to create the node in.</span>
+<span class="cm">     * @param {object} attributes optional attributes collection to apply to the</span>
 <span class="cm">     * new node.</span>
 <span class="cm">     * @return {HTMLElement} the generated node.</span>
 <span class="cm">     * @private</span>
@@ -146,9 +144,9 @@
     <span class="cm">/**</span>
 <span class="cm">     * Generates a script node</span>
 <span class="cm">     * @method _scriptNode</span>
-<span class="cm">     * @param url {string} the url for the script file.</span>
-<span class="cm">     * @param win {Window} optional window to create the node in.</span>
-<span class="cm">     * @param attributes optional attributes collection to apply to the</span>
+<span class="cm">     * @param {string} url the url for the script file.</span>
+<span class="cm">     * @param {Window} win optional window to create the node in.</span>
+<span class="cm">     * @param {object} attributes optional attributes collection to apply to the</span>
 <span class="cm">     * new node.</span>
 <span class="cm">     * @return {HTMLElement} the generated node.</span>
 <span class="cm">     * @private</span>
@@ -169,8 +167,12 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Returns the data payload for callback functions</span>
+<span class="cm">     * Returns the data payload for callback functions.</span>
 <span class="cm">     * @method _returnData</span>
+<span class="cm">     * @param {object} q the queue.</span>
+<span class="cm">     * @param {string} msg the result message.</span>
+<span class="cm">     * @param {string} result the status message from the request.</span>
+<span class="cm">     * @return {object} the state data from the request.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_returnData</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">q</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
@@ -190,7 +192,9 @@
     <span class="cm">/**</span>
 <span class="cm">     * The transaction is finished</span>
 <span class="cm">     * @method _end</span>
-<span class="cm">     * @param id {string} the id of the request.</span>
+<span class="cm">     * @param {string} id the id of the request.</span>
+<span class="cm">     * @param {string} msg the result message.</span>
+<span class="cm">     * @param {string} result the status message from the request.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_end</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
@@ -206,7 +210,7 @@
 <span class="cm">     * was accomplished.  There isn&#39;t a failure case at the</span>
 <span class="cm">     * moment unless you count aborted transactions</span>
 <span class="cm">     * @method _fail</span>
-<span class="cm">     * @param id {string} the id of the request</span>
+<span class="cm">     * @param {string} id the id of the request</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_fail</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
@@ -230,7 +234,7 @@
     <span class="cm">/**</span>
 <span class="cm">     * The request is complete, so executing the requester&#39;s callback</span>
 <span class="cm">     * @method _finish</span>
-<span class="cm">     * @param id {string} the id of the request.</span>
+<span class="cm">     * @param {string} id the id of the request.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_finish</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
@@ -260,7 +264,7 @@
     <span class="cm">/**</span>
 <span class="cm">     * Timeout detected</span>
 <span class="cm">     * @method _timeout</span>
-<span class="cm">     * @param id {string} the id of the request.</span>
+<span class="cm">     * @param {string} id the id of the request.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_timeout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
@@ -278,8 +282,9 @@
     <span class="cm">/**</span>
 <span class="cm">     * Loads the next item for a given request</span>
 <span class="cm">     * @method _next</span>
-<span class="cm">     * @param id {string} the id of the request.</span>
-<span class="cm">     * @param loaded {string} the url that was just loaded, if any.</span>
+<span class="cm">     * @param {string} id the id of the request.</span>
+<span class="cm">     * @param {string} loaded the url that was just loaded, if any.</span>
+<span class="cm">     * @return {string} the result.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
@@ -411,9 +416,10 @@
 <span class="cm">     * Saves the state for the request and begins loading</span>
 <span class="cm">     * the requested urls</span>
 <span class="cm">     * @method queue</span>
-<span class="cm">     * @param type {string} the type of node to insert.</span>
-<span class="cm">     * @param url {string} the url to load.</span>
-<span class="cm">     * @param opts the hash of options for this request.</span>
+<span class="cm">     * @param {string} type the type of node to insert.</span>
+<span class="cm">     * @param {string} url the url to load.</span>
+<span class="cm">     * @param {object} opts the hash of options for this request.</span>
+<span class="cm">     * @return {object} transaction object.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_queue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
@@ -455,14 +461,14 @@
 <span class="cm">     * script nodes, this does not guarantee that contained</span>
 <span class="cm">     * script is ready to use.</span>
 <span class="cm">     * @method _track</span>
-<span class="cm">     * @param type {string} the type of node to track.</span>
-<span class="cm">     * @param n {HTMLElement} the node to track.</span>
-<span class="cm">     * @param id {string} the id of the request.</span>
-<span class="cm">     * @param url {string} the url that is being loaded.</span>
-<span class="cm">     * @param win {Window} the targeted window.</span>
-<span class="cm">     * @param qlength the number of remaining items in the queue,</span>
+<span class="cm">     * @param {string} type the type of node to track.</span>
+<span class="cm">     * @param {HTMLElement} n the node to track.</span>
+<span class="cm">     * @param {string} id the id of the request.</span>
+<span class="cm">     * @param {string} url the url that is being loaded.</span>
+<span class="cm">     * @param {Window} win the targeted window.</span>
+<span class="cm">     * @param {int} qlength the number of remaining items in the queue,</span>
 <span class="cm">     * including this one.</span>
-<span class="cm">     * @param trackfn {Function} function to execute when finished</span>
+<span class="cm">     * @param {Function} trackfn function to execute when finished</span>
 <span class="cm">     * the default is _next.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
@@ -522,6 +528,7 @@
     <span class="cm">/**</span>
 <span class="cm">     * Removes the nodes for the specified queue</span>
 <span class="cm">     * @method _purge</span>
+<span class="cm">     * @param {string} tId the transaction id.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_purge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tId</span><span class="p">)</span> <span class="p">{</span>
@@ -579,7 +586,7 @@
 <span class="cm">         * Called by the the helper for detecting script load in Safari</span>
 <span class="cm">         * @method _finalize</span>
 <span class="cm">         * @static</span>
-<span class="cm">         * @param id {string} the transaction id.</span>
+<span class="cm">         * @param {string} id the transaction id.</span>
 <span class="cm">         * @private</span>
 <span class="cm">         */</span>
         <span class="nx">_finalize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
@@ -593,7 +600,7 @@
 <span class="cm">         * Abort a transaction</span>
 <span class="cm">         * @method abort</span>
 <span class="cm">         * @static</span>
-<span class="cm">         * @param o {string|object} Either the tId or the object returned from</span>
+<span class="cm">         * @param {string|object} o Either the tId or the object returned from</span>
 <span class="cm">         * script() or css().</span>
 <span class="cm">         */</span>
         <span class="nx">abort</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
@@ -611,8 +618,8 @@
 <span class="cm">         *</span>
 <span class="cm">         * @method script</span>
 <span class="cm">         * @static</span>
-<span class="cm">         * @param url {string|string[]} the url or urls to the script(s).</span>
-<span class="cm">         * @param opts {object} Options:</span>
+<span class="cm">         * @param {string|string[]} url the url or urls to the script(s).</span>
+<span class="cm">         * @param {object} opts Options:</span>
 <span class="cm">         * &lt;dl&gt;</span>
 <span class="cm">         * &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
 <span class="cm">         * &lt;dd&gt;</span>
@@ -748,8 +755,8 @@
 <span class="cm">         * window.</span>
 <span class="cm">         * @method css</span>
 <span class="cm">         * @static</span>
-<span class="cm">         * @param url {string} the url or urls to the css file(s).</span>
-<span class="cm">         * @param opts Options:</span>
+<span class="cm">         * @param {string} url the url or urls to the css file(s).</span>
+<span class="cm">         * @param {object} opts Options:</span>
 <span class="cm">         * &lt;dl&gt;</span>
 <span class="cm">         * &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
 <span class="cm">         * &lt;dd&gt;</span>
@@ -806,8 +813,6 @@
         <span class="p">}</span>
     <span class="p">};</span>
 <span class="p">}();</span>
-
-<span class="p">})();</span>
 </pre></div>
 
                     </div>
