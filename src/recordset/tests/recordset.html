@@ -42,7 +42,6 @@
 		        
 				//create recordset
 				this.rs = new Y.Recordset({records:this.initialData});
-				this.rs.plug(Y.Plugin.RecordsetSort);
 
 				//Some Ways to access recordset properties
 				//Y.log(rs.getRecord(0).getValue('a'));
@@ -306,6 +305,10 @@
 				
 			},
 			
+			//---------------------------------------------
+		    // Update Records - with overwriteFlag
+		    //---------------------------------------------
+			
 			testUpdateRecordAtIndexWithOverwriteFlag: function() {
 				var newRecord, oldRecord, index=1;
 				
@@ -381,10 +384,219 @@
 				Y.ObjectAssert.areEqual(oData, this.rs.getRecord(index).getValue());
 				
 			},
+
 			
+			//---------------------------------------------
+		    // Sort Plugin
+		    //---------------------------------------------
+		
+		
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testDefaultSort: function() {
+				var oldRs = Y.clone(this.rs);
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				
+				//Test ascending order
+				this.rs.sort.sort('a',false);
+				
+				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(2).getValue());
+				Y.Assert.areEqual(oldRs.getLength(), this.rs.getLength());
+				
+				
+				//Test Descending Order
+				this.rs.sort.sort('c',true);
+				
+				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(2).getValue());
+				Y.Assert.areEqual(oldRs.getLength(), this.rs.getLength());
+				
+				//Test sort when values are equal (sorts by ID)
+				this.rs.sort.sort('b',true);
+				
+				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(2).getValue());
+				Y.Assert.areEqual(oldRs.getLength(), this.rs.getLength());
+				
+			},
+			
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}]
+			testResort: function() {
+				var oldRs = Y.clone(this.rs);
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				
+				//Test ascending order
+				this.rs.sort.sort('a',false);
+				
+				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(2).getValue());
+				Y.Assert.areEqual(oldRs.getLength(), this.rs.getLength());
+				
+				//Add another record to the end of the recordset
+				this.rs.add({a:6,b:5,c:8});
+				Y.ObjectAssert.areEqual({a:6,b:5,c:8}, this.rs.getRecord(3).getValue());
+				
+				//Refresh Sorter
+				this.rs.sort.resort();
+				
+				//make sure the added record was sorted into the recordset using the existing sort properties
+				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual({a:6,b:5,c:8}, this.rs.getRecord(2).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(3).getValue());
+				Y.Assert.areEqual(4, this.rs.getLength());
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}
+			testReverseBeforeSort: function() {
+				var oldRs = Y.clone(this.rs),
+				 	a = {a:'a', b:'b', c:'c'},
+					b = {a:'d', b:'e', c:'f'},
+					c = {a:'g', b:'h', c:'i'},
+					d = {a:'j', b:'k', c:'l'};
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				
+				//adding in some records backwards to understand if reversing is working properly
+				this.rs.add([d,c,b,a]);
+				this.rs.sort.reverse();
+				
+				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(6).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(5).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(4).getValue());
+				
+				Y.ObjectAssert.areEqual(d, this.rs.getRecord(3).getValue());
+				Y.ObjectAssert.areEqual(c, this.rs.getRecord(2).getValue());
+				Y.ObjectAssert.areEqual(b, this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(a, this.rs.getRecord(0).getValue());
+				
+				Y.Assert.areEqual(7, this.rs.getLength());
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}
+			testReverseAfterSort: function() {
+				var oldRs = Y.clone(this.rs),
+				 	a = {a:1, b:'b', c:'c'},
+					b = {a:2, b:'e', c:'f'},
+					c = {a:3, b:'h', c:'i'},
+					d = {a:4, b:'k', c:'l'};
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				
+				//adding in some records backwards to understand if reversing is working properly
+				this.rs.add([d,c,b,a]);
+				
+				this.rs.sort.sort('a',true);
+				this.rs.sort.reverse();
+				
+				//1s
+				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(a, this.rs.getRecord(1).getValue());
+				//2s				
+				Y.ObjectAssert.areEqual(b, this.rs.getRecord(2).getValue());
+				//3s
+				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(3).getValue());
+				Y.ObjectAssert.areEqual(c, this.rs.getRecord(4).getValue());
+				Y.ObjectAssert.areEqual(d, this.rs.getRecord(5).getValue());
+				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(6).getValue());
+				
+				Y.Assert.areEqual(7, this.rs.getLength());
+			},
 			
 			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testCustomSort: function() {
+				
+			
+				var oldRs = Y.clone(this.rs),
+					a = {a:1, b:1, c:4},
+					b = {a:2, b:2, c:5},
+					c = {a:3, b:2, c:4},
+					d = {a:4, b:4, c:7};
+				//This is just a copy of Y.ArraySort.compare
+				var compare = function(a, b, desc) {
+			        if(!Y.Lang.isValue(a)) {
+			            if(!Y.Lang.isValue(b)) {
+			                return 0;
+			            }
+			            else {
+			                return 1;
+			            }
+			        }
+			        else if(!Y.Lang.isValue(b)) {
+			            return -1;
+			        }
+
+			        if(Y.Lang.isString(a)) {
+			            a.toLowerCase();
+			        }
+			        if(Y.Lang.isString(b)) {
+			            b.toLowerCase();
+			        }
+			        if(a < b) {
+			            return (desc) ? 1 : -1;
+			        }
+			        else if (a > b) {
+			            return (desc) ? -1 : 1;
+			        }
+			        else {
+			            return 0;
+			        }
+			    };
+			
+			
+				//custom sort where if the values in the given fieldA are equal, the values in fieldB are checked
+				var customsort = function(recA, recB, field, desc) {
+	                var first_sorted = compare(recA.getValue(field), recB.getValue(field), desc);
+	                if(first_sorted === 0) {
+	                    var second_sorted = compare(recA.getValue('b'), recB.getValue('b'), desc);
+						if (second_sorted === 0) {
+							return compare(recA.get("id"), recB.get("id"), desc);
+						}
+						else {
+							return second_sorted;
+						}
+	                }
+	                else {
+	                    return first_sorted;
+	                }
+	            };
+				
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				this.rs.add([a,b,c,d]);
+				this.rs.sort.sort('a',false,customsort);
+				
+				for (var i=0; i<this.rs.getLength(); i++) {
+					console.log(this.rs.getRecord(i).getValue());
+				}
+				
+				
+				//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+				Y.ObjectAssert.areEqual({a:1, b:1, c:4}, this.rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual({a:2, b:2, c:5}, this.rs.getRecord(2).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecord(3).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:4}, this.rs.getRecord(4).getValue());
+				Y.ObjectAssert.areEqual({a:4, b:4, c:7}, this.rs.getRecord(5).getValue());
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecord(6).getValue());
+
+				Y.Assert.areEqual(7, this.rs.getLength());
+			},
+			
+			//---------------------------------------------
+		    // Filter Plugin
+		    //---------------------------------------------
+		
+			testFilterPlugin: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);
+				this.rs.filter.alert();
+			}
+			/*
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
 			testFilterByValidator: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);
 				
 				var validator = function(item) {
 					if (item.getValue('b') === 2) {
@@ -394,7 +606,7 @@
 						return false;
 					}
 				},
-				oRecs = this.rs.filter(validator);
+				oRecs = this.rs.filter.filter(validator);
 				console.log(oRecs);
 				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
 				Y.ObjectAssert.areEqual(oRecs.getRecord(0), this.rs.getRecord(0));
@@ -406,18 +618,14 @@
 				
 			},
 			
-			testFilterByKeyValue: function() {				
-				var oRecs = this.rs.filter('a', 3);
+			testFilterByKeyValue: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);				
+				var oRecs = this.rs.filter.filter('a', 3);
 				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
 				Y.Assert.areEqual(oRecs.getRecord(0).getValue('a'), 3);
 				Y.ObjectAssert.areEqual(oRecs.getLength(), 1);
-				
-			},
-			
-			testsort: function() {
-				this.rs.sort.custom();
-				Y.Assert.fail();
 			}
+			*/
 			
         });
 

@@ -354,20 +354,20 @@ Y.extend(Recordset, Y.Base, {
      * @return {Y.Recordset} A recordset of filtered records
      * @public
      */
-	filter: function(k,v) {
-		var oRecs = [], i=0, rec, len;
-		len = this.get('records').length;
-		for (; i<len;i++) {
-			rec = this.getRecord(i);
-			
-			if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
-				(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
-					oRecs.push(rec);
-			}  
-		}
-
-		return new this.constructor({records:oRecs});
-	},
+	// filter: function(k,v) {
+	// 	var oRecs = [], i=0, rec, len;
+	// 	len = this.get('records').length;
+	// 	for (; i<len;i++) {
+	// 		rec = this.getRecord(i);
+	// 		
+	// 		if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
+	// 			(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
+	// 				oRecs.push(rec);
+	// 		}  
+	// 	}
+	// 
+	// 	return new this.constructor({records:oRecs});
+	// },
 	
 
     /**
@@ -500,57 +500,67 @@ Y.mix(RecordsetSort, {
     NAME: "recordsetSort",
 
     ATTRS: {
-        dt: {
-        },
+		lastSortProperties: {
+			value: {
+				field:undefined,
+				desc:undefined,
+				sorter:undefined
+			}
+		},
 
         defaultSorter: {
-            // value: function(recA, recB, field, desc) {
-            //     var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
-            //     if(sorted === 0) {
-            //         return COMPARE(recA.get("id"), recB.get("id"), desc);
-            //     }
-            //     else {
-            //         return sorted;
-            //     }
-            // }
+            value: function(recA, recB, field, desc) {
+                var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
+                if(sorted === 0) {
+                    return COMPARE(recA.get("id"), recB.get("id"), desc);
+                }
+                else {
+                    return sorted;
+                }
+            }
         }
     }
 });
 
 Y.extend(RecordsetSort, Y.Plugin.Base, {
     initializer: function(config) {
-        //this.addTarget(this.get("dt"));
-        //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
+        this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
     },
 
     destructor: function(config) {
     },
 
     _defSortFn: function(e) {
-        //this.get("host").get("records").sort(function(a, b) {return (e.sorter)(a, b, e.field, e.desc);});
+		this.set('lastSortProperties', e);
+        this.get("host").get("records").sort(function(a, b) {
+			return (e.sorter)(a, b, e.field, e.desc);
+		});
     },
 
     sort: function(field, desc, sorter) {
-        //this.fire("sort", {field:field, desc: desc, sorter: sorter|| this.get("defaultSorter")});
+		this.fire("sort", {field:field, desc: desc, sorter: sorter || this.get("defaultSorter")});
     },
 
-    custom: function() {
-        alert("sort custom");
-    },
+	resort: function() {
+		var p = this.get('lastSortProperties');
+		this.fire("sort", {field:p.field, desc: p.desc, sorter: this.get("defaultSorter")});
+	},
 
-    // force asc
-    asc: function() {
-        alert("sort asc");
-    },
-
-    // force desc
-    desc: function() {
-        alert("sort desc");
-    },
-
-    // force reverse
+	//Flips the recordset around
     reverse: function() {
-        alert("sort reverse");
+		var rs = this.get('host'),
+			len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
+			i=0;
+		
+		for(; i <= len; i++) {
+			if (i < (len-i)) {
+				
+				var left = rs.getRecord(i);
+				var right = rs.getRecord(len-i);
+				rs.update(left, len-i);
+				rs.update(right, i);
+			}
+		}
     }
 });
 
@@ -559,7 +569,59 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
+YUI.add('recordset-filter', function(Y) {
+
+function RecordsetFilter(config) {
+    RecordsetFilter.superclass.constructor.apply(this, arguments);
+}
+
+Y.mix(RecordsetFilter, {
+    NS: "filter",
+
+    NAME: "recordsetFilter",
+
+    ATTRS: {
+
+    }
+});
+
+Y.extend(RecordsetFilter, Y.Plugin.Base, {
+    initializer: function(config) {
+        //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
+    },
+
+    destructor: function(config) {
+    },
+
+	alert: function() {
+		alert('im working!!');
+	},
+
+	filter: function(k,v) {
+		var oRecs = [], i=0, rec, len, host;
+		host = this.get('host');
+		len = host.get('records').getLength();
+		for (; i<len;i++) {
+			rec = host.getRecord(i);
+			
+			if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
+				(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
+					oRecs.push(rec);
+			}  
+		}
+
+		return new host.constructor({records:oRecs});
+	}
 
 
-YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort']});
+});
+
+Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
+
+
+
+}, '@VERSION@' ,{requires:['recordset-base','plugin']});
+
+
+YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter']});
 

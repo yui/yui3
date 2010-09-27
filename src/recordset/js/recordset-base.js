@@ -1,59 +1,3 @@
-YUI.add('recordset-base', function(Y) {
-
-function Record(config) {
-    Record.superclass.constructor.apply(this, arguments);
-}
-
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "record"
- */
-Record.NAME = "record";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Record Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Record.ATTRS = {
-    id: {
-        valueFn: "_setId",
-        writeOnce: true
-    },
-    data : {
-    }
-};
-
-/* Record extends Base */
-Y.extend(Record, Y.Base, {
-    _setId: function() {
-        return Y.guid();
-    },
-
-    initializer: function(data) {
-    },
-
-    destructor: function() {
-    },
-    
-    getValue: function(field) {
-		if (field === undefined) {
-        	return this.get("data");
-		}
-		else {
-			return this.get("data")[field];
-		}
-		return null;
-    }
-
-});
-
-Y.Record = Record;
 function Recordset(config) {
     Recordset.superclass.constructor.apply(this, arguments);
 }
@@ -67,7 +11,7 @@ function Recordset(config) {
  *
  * @property NAME
  * @type String
- * @static
+ * @static=
  * @final
  * @value "recordset"
  */
@@ -226,12 +170,12 @@ Y.extend(Recordset, Y.Base, {
 	 * (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
      *
      * @method _recordSetUpdated
-     * @param idx {Number} Index at which the modifications to the recordset were made
      * @private
      */
 	_recordsetChanged: function() {
 		
 		this.on(['recordsetUpdatedEvent', 'recordsetAddedEvent', 'recordsetRemovedEvent', 'recordsetEmptiedEvent'], function() {
+			Y.log('recordsetChangedEvent fire');
 			this.fire('recordsetChangedEvent', {});
 		});
 	},
@@ -246,6 +190,7 @@ Y.extend(Recordset, Y.Base, {
      */
 	_recordAdded: function(oRecord, i) {
 		this.fire('recordsetAddedEvent', {data:oRecord, index: i});
+		Y.log('recordsetAdded Event Fired');
 	},
 	
 	/**
@@ -258,6 +203,7 @@ Y.extend(Recordset, Y.Base, {
      */
 	_recordRemoved: function(oRecord, idx) {
 		this.fire('recordsetRemovedEvent', {data:oRecord, index: idx});
+		Y.log('recordsetRemoved Event Fired');
 	},
 	
 	/**
@@ -269,6 +215,7 @@ Y.extend(Recordset, Y.Base, {
 	_recordsetEmptied: function() {
 		//TODO: What configuration object should be sent here?
 		this.fire('recordsetEmptiedEvent', {});
+		Y.log('recordsetEmptied Event Fired');
 	},
 	
 	_recordsetUpdated: function(newRecords, delRecords, index) {
@@ -326,11 +273,11 @@ Y.extend(Recordset, Y.Base, {
 	},
 		
 	/**
-     * Returns a string of values for a specified key in the recordset
+     * Returns an array of values for a specified key in the recordset
      *
      * @method getRecord
      * @param index {Number} (optional) Index at which the required record resides
-     * @return {Y.Record} An Y.Record instance
+     * @return {Array} An array of values for the given key
      * @public
      */
 	getValuesByKey: function(key) {
@@ -340,30 +287,6 @@ Y.extend(Recordset, Y.Base, {
 		}
 		return retVals;
 	},
-	
-	/**
-     * Filters the recordset according to the boolean validator function
-     *
-     * @method filter
-     * @param k {Function || String}  A boolean function representing the conditional logic to filter by, or the key to filter by.
-     * @param v {Value} (optional)  If 'k' was passed as a key, this represents the value the key should have. 
-     * @return {Y.Recordset} A recordset of filtered records
-     * @public
-     */
-	// filter: function(k,v) {
-	// 	var oRecs = [], i=0, rec, len;
-	// 	len = this.get('records').length;
-	// 	for (; i<len;i++) {
-	// 		rec = this.getRecord(i);
-	// 		
-	// 		if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
-	// 			(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
-	// 				oRecs.push(rec);
-	// 		}  
-	// 	}
-	// 
-	// 	return new this.constructor({records:oRecs});
-	// },
 	
 
     /**
@@ -478,146 +401,4 @@ Y.extend(Recordset, Y.Base, {
 	
 });
 Y.Recordset = Recordset;
-
-
-
-}, '@VERSION@' ,{requires:['base','record']});
-YUI.add('recordset-sort', function(Y) {
-
-var COMPARE = Y.ArraySort.compare;
-
-function RecordsetSort(field, desc, sorter) {
-    RecordsetSort.superclass.constructor.apply(this, arguments);
-}
-
-Y.mix(RecordsetSort, {
-    NS: "sort",
-
-    NAME: "recordsetSort",
-
-    ATTRS: {
-		lastSortProperties: {
-			value: {
-				field:undefined,
-				desc:undefined,
-				sorter:undefined
-			}
-		},
-
-        defaultSorter: {
-            value: function(recA, recB, field, desc) {
-                var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
-                if(sorted === 0) {
-                    return COMPARE(recA.get("id"), recB.get("id"), desc);
-                }
-                else {
-                    return sorted;
-                }
-            }
-        }
-    }
-});
-
-Y.extend(RecordsetSort, Y.Plugin.Base, {
-    initializer: function(config) {
-        this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
-    },
-
-    destructor: function(config) {
-    },
-
-    _defSortFn: function(e) {
-		this.set('lastSortProperties', e);
-        this.get("host").get("records").sort(function(a, b) {
-			return (e.sorter)(a, b, e.field, e.desc);
-		});
-    },
-
-    sort: function(field, desc, sorter) {
-		this.fire("sort", {field:field, desc: desc, sorter: sorter || this.get("defaultSorter")});
-    },
-
-	resort: function() {
-		var p = this.get('lastSortProperties');
-		this.fire("sort", {field:p.field, desc: p.desc, sorter: this.get("defaultSorter")});
-	},
-
-	//Flips the recordset around
-    reverse: function() {
-		var rs = this.get('host'),
-			len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
-			i=0;
-		
-		for(; i <= len; i++) {
-			if (i < (len-i)) {
-				
-				var left = rs.getRecord(i);
-				var right = rs.getRecord(len-i);
-				rs.update(left, len-i);
-				rs.update(right, i);
-			}
-		}
-    }
-});
-
-Y.namespace("Plugin").RecordsetSort = RecordsetSort;
-
-
-
-}, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
-YUI.add('recordset-filter', function(Y) {
-
-function RecordsetFilter(config) {
-    RecordsetFilter.superclass.constructor.apply(this, arguments);
-}
-
-Y.mix(RecordsetFilter, {
-    NS: "filter",
-
-    NAME: "recordsetFilter",
-
-    ATTRS: {
-
-    }
-});
-
-Y.extend(RecordsetFilter, Y.Plugin.Base, {
-    initializer: function(config) {
-        //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
-    },
-
-    destructor: function(config) {
-    },
-
-	alert: function() {
-		alert('im working!!');
-	},
-
-	filter: function(k,v) {
-		var oRecs = [], i=0, rec, len, host;
-		host = this.get('host');
-		len = host.get('records').getLength();
-		for (; i<len;i++) {
-			rec = host.getRecord(i);
-			
-			if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
-				(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
-					oRecs.push(rec);
-			}  
-		}
-
-		return new host.constructor({records:oRecs});
-	}
-
-
-});
-
-Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
-
-
-
-}, '@VERSION@' ,{requires:['recordset-base','plugin']});
-
-
-YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter']});
 
