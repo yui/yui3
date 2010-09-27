@@ -150,17 +150,19 @@ YUI.add('selection', function(Y) {
         var endTime1 = (new Date()).getTime();
         Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'selection');
 
+        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
+
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
-                el.className = 'hr yui-non';
+                el.className = 'hr yui-non yui-skip';
                 el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
                 el.setAttribute('readonly', true);
                 el.setAttribute('contenteditable', false); //Keep it from being Edited
                 if (hr.parentNode) {
                     hr.parentNode.replaceChild(el, hr);
                 }
-
         });
+        
 
         Y.each(classNames, function(v, k) {
             cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';
@@ -255,6 +257,7 @@ YUI.add('selection', function(Y) {
         }
         
         if (!Y.UA.ie) {
+            /*
             divs = Y.all('div, p');
             divs.each(function(d) {
                 if (d.hasClass('yui-non')) {
@@ -274,7 +277,7 @@ YUI.add('selection', function(Y) {
                         }
                     }
                 }
-            });
+            });*/
 
             /** Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
@@ -350,10 +353,10 @@ YUI.add('selection', function(Y) {
 
         nons = Y.all('.yui-non');
         nons.each(function(n) {
-            if (n.get('innerHTML') === '') {
+            if (!n.hasClass('yui-skip') && n.get('innerHTML') === '') {
                 n.remove();
             } else {
-                n.removeClass('yui-non');
+                n.removeClass('yui-non').removeClass('yui-skip');
             }
         });
 
@@ -474,24 +477,14 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
-        /*
-        var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
-        if (cur) {
-            cur.id = '';
-            if (cur.innerHTML == '&nbsp;' || cur.innerHTML == '<br>') {
-                if (cur.parentNode) {
-                    cur.parentNode.removeChild(cur);
-                }
-            }
-        }
-        */
-        
         var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
-        if (cur.size) {
+        if (cur.size()) {
             cur.each(function(c) {
                 var html = c.get('innerHTML');
                 if (html == '&nbsp' || html == '<br>') {
-                    c.remove();
+                    if (c.previous() || c.next()) {
+                        c.remove();
+                    }
                 }
             });
         }

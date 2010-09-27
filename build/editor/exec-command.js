@@ -49,7 +49,7 @@ YUI.add('exec-command', function(Y) {
             _command: function(action, value) {
                 var inst = this.getInstance();
                 try {
-                    inst.config.doc.execCommand(action, false, value);
+                    inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
                 }
             },
@@ -120,7 +120,7 @@ YUI.add('exec-command', function(Y) {
                 */
                 inserthtml: function(cmd, html) {
                     var inst = this.getInstance();
-                    if (inst.Selection.hasCursor()) {
+                    if (inst.Selection.hasCursor() || Y.UA.ie) {
                         return (new inst.Selection()).insertContent(html);
                     } else {
                         this._command('inserthtml', html);

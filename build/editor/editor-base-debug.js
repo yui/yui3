@@ -350,7 +350,7 @@ YUI.add('editor-base', function(Y) {
                     sel = inst.config.doc.selection.createRange(),
                     bk = sel.moveToBookmark(this._lastBookmark);
 
-                sel.collapse(true);
+                //sel.collapse(true);
                 sel.select();
                 this._lastBookmark = null;
             }

@@ -115,11 +115,11 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+</div>
+    <!---div><br></div>
 Above the HR
 <hr size="1">
 <?php //include('mail.php'); ?>
-</div>
-    <!---div><br></div>
     <ul>
         <li style="font-family: courier new">Item #1</li>
         <li>Item #1</li>
