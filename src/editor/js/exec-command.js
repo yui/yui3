@@ -49,7 +49,7 @@
                 var inst = this.getInstance();
                 try {
                     Y.log('Internal execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
-                    inst.config.doc.execCommand(action, false, value);
+                    inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
                     Y.log(e.message, 'error', 'exec-command');
                 }
@@ -121,7 +121,7 @@
                 */
                 inserthtml: function(cmd, html) {
                     var inst = this.getInstance();
-                    if (inst.Selection.hasCursor()) {
+                    if (inst.Selection.hasCursor() || Y.UA.ie) {
                         return (new inst.Selection()).insertContent(html);
                     } else {
                         this._command('inserthtml', html);
