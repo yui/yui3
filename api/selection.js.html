@@ -198,17 +198,19 @@
         <span class="kd">var</span> <span class="nx">endTime1</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Node Filter Timer: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">endTime1</span> <span class="o">-</span> <span class="nx">startTime1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;ms&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
 
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;.hr&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-skip&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-non&#39;</span><span class="p">);</span>
+
         <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hrs</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hr</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
-                <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;hr yui-non&#39;</span><span class="p">;</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;hr yui-non yui-skip&#39;</span><span class="p">;</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;&#39;</span><span class="p">);</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;contenteditable&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span> <span class="c1">//Keep it from being Edited</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">hr</span><span class="p">);</span>
                 <span class="p">}</span>
-
         <span class="p">});</span>
+        
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">classNames</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">cssString</span> <span class="o">+=</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39; { font-family: &#39;</span> <span class="o">+</span> <span class="nx">v</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/gi</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;; }&#39;</span><span class="p">;</span>
@@ -303,26 +305,27 @@
         <span class="p">}</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">divs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;div, p&#39;</span><span class="p">);</span>
-            <span class="nx">divs</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s1">&#39;yui-non&#39;</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">return</span><span class="p">;</span>
-                <span class="p">}</span>
-                <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Empty DIV/P Tag Found, Removing It&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                    <span class="nx">d</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;DIVS/PS Count: &#39;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">(),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;This Div/P only has one Child Node&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
-                            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;This Div/P is a child of a paragraph, remove it..&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">);</span>
-                            <span class="nx">d</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">});</span>
+            <span class="cm">/*</span>
+<span class="cm">            divs = Y.all(&#39;div, p&#39;);</span>
+<span class="cm">            divs.each(function(d) {</span>
+<span class="cm">                if (d.hasClass(&#39;yui-non&#39;)) {</span>
+<span class="cm">                    return;</span>
+<span class="cm">                }</span>
+<span class="cm">                var html = d.get(&#39;innerHTML&#39;);</span>
+<span class="cm">                if (html === &#39;&#39;) {</span>
+<span class="cm">                    Y.log(&#39;Empty DIV/P Tag Found, Removing It&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+<span class="cm">                    d.remove();</span>
+<span class="cm">                } else {</span>
+<span class="cm">                    Y.log(&#39;DIVS/PS Count: &#39; + d.get(&#39;childNodes&#39;).size(), &#39;info&#39;, &#39;selection&#39;);</span>
+<span class="cm">                    if (d.get(&#39;childNodes&#39;).size() == 1) {</span>
+<span class="cm">                        Y.log(&#39;This Div/P only has one Child Node&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+<span class="cm">                        if (d.ancestor(&#39;p&#39;)) {</span>
+<span class="cm">                            Y.log(&#39;This Div/P is a child of a paragraph, remove it..&#39;, &#39;info&#39;, &#39;selection&#39;);</span>
+<span class="cm">                            d.replace(d.get(&#39;firstChild&#39;));</span>
+<span class="cm">                        }</span>
+<span class="cm">                    }</span>
+<span class="cm">                }</span>
+<span class="cm">            });*/</span>
 
             <span class="cm">/** Removed this, as it was causing Pasting to be funky in Safari</span>
 <span class="cm">            spans = Y.all(&#39;.Apple-style-span, .apple-style-span&#39;);</span>
@@ -398,10 +401,10 @@
 
         <span class="nx">nons</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;.yui-non&#39;</span><span class="p">);</span>
         <span class="nx">nons</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">n</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="s1">&#39;yui-skip&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">n</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">n</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;yui-non&#39;</span><span class="p">);</span>
+                <span class="nx">n</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;yui-non&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;yui-skip&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">});</span>
 
@@ -522,24 +525,14 @@
 <span class="cm">    * @method cleanCursor</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="cm">/*</span>
-<span class="cm">        var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);</span>
-<span class="cm">        if (cur) {</span>
-<span class="cm">            cur.id = &#39;&#39;;</span>
-<span class="cm">            if (cur.innerHTML == &#39;&amp;nbsp;&#39; || cur.innerHTML == &#39;&lt;br&gt;&#39;) {</span>
-<span class="cm">                if (cur.parentNode) {</span>
-<span class="cm">                    cur.parentNode.removeChild(cur);</span>
-<span class="cm">                }</span>
-<span class="cm">            }</span>
-<span class="cm">        }</span>
-<span class="cm">        */</span>
-        
         <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CUR_WRAPID</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">size</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="p">{</span>
             <span class="nx">cur</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">==</span> <span class="s1">&#39;&amp;nbsp&#39;</span> <span class="o">||</span> <span class="nx">html</span> <span class="o">==</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">c</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">previous</span><span class="p">()</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">next</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="nx">c</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">});</span>
         <span class="p">}</span>
