@@ -496,57 +496,67 @@ Y.mix(RecordsetSort, {
     NAME: "recordsetSort",
 
     ATTRS: {
-        dt: {
-        },
+		lastSortProperties: {
+			value: {
+				field:undefined,
+				desc:undefined,
+				sorter:undefined
+			}
+		},
 
         defaultSorter: {
-            // value: function(recA, recB, field, desc) {
-            //     var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
-            //     if(sorted === 0) {
-            //         return COMPARE(recA.get("id"), recB.get("id"), desc);
-            //     }
-            //     else {
-            //         return sorted;
-            //     }
-            // }
+            value: function(recA, recB, field, desc) {
+                var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
+                if(sorted === 0) {
+                    return COMPARE(recA.get("id"), recB.get("id"), desc);
+                }
+                else {
+                    return sorted;
+                }
+            }
         }
     }
 });
 
 Y.extend(RecordsetSort, Y.Plugin.Base, {
     initializer: function(config) {
-        //this.addTarget(this.get("dt"));
-        //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
+        this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
     },
 
     destructor: function(config) {
     },
 
     _defSortFn: function(e) {
-        //this.get("host").get("records").sort(function(a, b) {return (e.sorter)(a, b, e.field, e.desc);});
+		this.set('lastSortProperties', e);
+        this.get("host").get("records").sort(function(a, b) {
+			return (e.sorter)(a, b, e.field, e.desc);
+		});
     },
 
     sort: function(field, desc, sorter) {
-        //this.fire("sort", {field:field, desc: desc, sorter: sorter|| this.get("defaultSorter")});
+		this.fire("sort", {field:field, desc: desc, sorter: sorter || this.get("defaultSorter")});
     },
 
-    custom: function() {
-        alert("sort custom");
-    },
+	resort: function() {
+		var p = this.get('lastSortProperties');
+		this.fire("sort", {field:p.field, desc: p.desc, sorter: this.get("defaultSorter")});
+	},
 
-    // force asc
-    asc: function() {
-        alert("sort asc");
-    },
-
-    // force desc
-    desc: function() {
-        alert("sort desc");
-    },
-
-    // force reverse
+	//Flips the recordset around
     reverse: function() {
-        alert("sort reverse");
+		var rs = this.get('host'),
+			len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
+			i=0;
+		
+		for(; i <= len; i++) {
+			if (i < (len-i)) {
+				
+				var left = rs.getRecord(i);
+				var right = rs.getRecord(len-i);
+				rs.update(left, len-i);
+				rs.update(right, i);
+			}
+		}
     }
 });
 
