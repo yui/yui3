@@ -79,7 +79,6 @@ if (typeof YUI != 'undefined') {
         return Y;
     };
 
-(function() {
     var proto, prop,
         VERSION = '@VERSION@',
         BASE = 'http://yui.yahooapis.com/',
@@ -469,35 +468,38 @@ proto = {
             len = r.length;
 
         for (i = 0; i < len; i++) {
-            name = r[i];
-            mod = mods[name];
-            if (!done[name] && mod) {
-
+            if (!done[r[i]]) {
+                name = r[i];
                 done[name] = true;
-                details = mod.details;
-                req = details.requires;
-                use = details.use;
+                mod = mods[name];
+                if (!mod) {
+                    Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                } else {
+                    details = mod.details;
+                    req = details.requires;
+                    use = details.use;
 
-                if (req && req.length) {
-                    if (!Y._attach(req)) {
-                        return false;
+                    if (req && req.length) {
+                        if (!Y._attach(req)) {
+                            return false;
+                        }
                     }
-                }
 
-                // Y.log('attaching ' + name, 'info', 'yui');
+                    // Y.log('attaching ' + name, 'info', 'yui');
 
-                if (mod.fn) {
-                    try {
-                        mod.fn(Y, name);
-                    } catch (e) {
-                        Y.error('Attach error: ' + name, e, name);
-                        return false;
+                    if (mod.fn) {
+                        try {
+                            mod.fn(Y, name);
+                        } catch (e) {
+                            Y.error('Attach error: ' + name, e, name);
+                            return false;
+                        }
                     }
-                }
 
-                if (use && use.length) {
-                    if (!Y._attach(use)) {
-                        return false;
+                    if (use && use.length) {
+                        if (!Y._attach(use)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -566,7 +568,6 @@ proto = {
             boot = config.bootstrap,
             missing = [],
             r = [],
-            star,
             ret = true,
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
@@ -702,15 +703,19 @@ proto = {
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
-            star = true;
-            args = Y.Object.keys(mods);
+            // args = Y.Object.keys(mods);
+            ret = Y._attach(Y.Object.keys(mods));
+            if (ret) {
+                handleLoader();
+            }
+            return Y;
         }
 
         // Y.log('before loader requirements: ' + args, 'info', 'yui');
 
         // use loader to expand dependencies and sort the
         // requirements if it is available.
-        if (boot && !star && Y.Loader && args.length) {
+        if (boot && Y.Loader && args.length) {
 
             // Y.log('checking dependences with loader', 'info', 'yui');
 
@@ -789,11 +794,6 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             }
 
         } else {
-            if (len) {
-                Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
-Y.log('Instance is not provisioned to fetch missing mods: ' +
-       missing, 'log', 'yui');
-            }
             Y.log('Attaching available dependencies: ' + args, 'info', 'yui');
             ret = Y._attach(args);
             if (ret) {
@@ -976,7 +976,6 @@ Y.log('Instance is not provisioned to fetch missing mods: ' +
         exports.YUI = YUI;
     }
 
-})();
 
 /**
  * The config object contains all of the configuration options for
@@ -1483,7 +1482,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-// (function() {
+
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -1707,8 +1706,6 @@ L.sub = function(s, o) {
     }) : s);
 };
 
-// })();
-
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -1717,9 +1714,8 @@ L.sub = function(s, o) {
  * @submodule yui-base
  */
 
-(function() {
 
-var L = Y.Lang, Native = Array.prototype, LENGTH = 'length',
+var Native = Array.prototype, LENGTH = 'length',
 
 /**
  * Adds the following array utilities to the YUI instance.  Additional
@@ -1742,9 +1738,9 @@ var L = Y.Lang, Native = Array.prototype, LENGTH = 'length',
  *
  * @method ()
  * @static
- *   @param o the item to arrayify.
- *   @param i {int} if an array or array-like, this is the start index.
- *   @param arraylike {boolean} if true, it forces the array-like fork.  This
+ *   @param {object} o the item to arrayify.
+ *   @param {int} startIdx if an array or array-like, this is the start index.
+ *   @param {boolean} arraylike if true, it forces the array-like fork.  This
  *   can be used to avoid multiple Array.test calls.
  *   @return {Array} the resulting array.
  */
@@ -1782,6 +1778,8 @@ Y.Array = YArray;
  * @todo current implementation (intenionally) will not implicitly
  * handle html elements that are array-like (forms, selects, etc).
  *
+ * @param {object} o the object to test.
+ *
  * @return {int} a number indicating the results:
  * 0: Not an array or an array-like collection
  * 1: A real array.
@@ -1789,8 +1787,8 @@ Y.Array = YArray;
  */
 YArray.test = function(o) {
     var r = 0;
-    if (L.isObject(o)) {
-        if (L.isArray(o)) {
+    if (Y.Lang.isObject(o)) {
+        if (Y.Lang.isArray(o)) {
             r = 1;
         } else {
             try {
@@ -1810,10 +1808,10 @@ YArray.test = function(o) {
 /**
  * Executes the supplied function on each item in the array.
  * @method each
- * @param a {Array} the array to iterate.
- * @param f {Function} the function to execute on each item.  The
+ * @param {Array} a the array to iterate.
+ * @param {Function} f the function to execute on each item.  The
  * function receives three arguments: the value, the index, the full array.
- * @param o Optional context object.
+ * @param {object} o Optional context object.
  * @static
  * @return {YUI} the YUI instance.
  */
@@ -1836,8 +1834,8 @@ YArray.each = (Native.forEach) ?
  * provided the value is set to true for each.
  * @method hash
  * @static
- * @param k {Array} keyset.
- * @param v {Array} optional valueset.
+ * @param {Array} k keyset.
+ * @param {Array} v optional valueset.
  * @return {object} the hash.
  */
 YArray.hash = function(k, v) {
@@ -1855,8 +1853,8 @@ YArray.hash = function(k, v) {
  * value isn't found.
  * @method indexOf
  * @static
- * @param a {Array} the array to search.
- * @param val the value to search for.
+ * @param {Array} a the array to search.
+ * @param {any} val the value to search for.
  * @return {int} the index of the item that contains the value or -1.
  */
 YArray.indexOf = (Native.indexOf) ?
@@ -1877,6 +1875,8 @@ YArray.indexOf = (Native.indexOf) ?
  * Numeric sort convenience function.
  * Y.ArrayAssert.itemsAreEqual([1,2,3], [3,1,2].sort(Y.Array.numericSort));
  * @method numericSort
+ * @param {number} a a number.
+ * @param {number} b a number.
  */
 YArray.numericSort = function(a, b) {
     return (a - b);
@@ -1885,13 +1885,12 @@ YArray.numericSort = function(a, b) {
 /**
  * Executes the supplied function on each item in the array.
  * Returning true from the processing function will stop the
- * processing of the remaining
- * items.
+ * processing of the remaining items.
  * @method some
- * @param a {Array} the array to iterate.
- * @param f {Function} the function to execute on each item. The function
+ * @param {Array} a the array to iterate.
+ * @param {Function} f the function to execute on each item. The function
  * receives three arguments: the value, the index, the full array.
- * @param o Optional context object.
+ * @param {object} o Optional context object.
  * @static
  * @return {boolean} true if the function returns true on
  * any of the items in the array.
@@ -1910,7 +1909,6 @@ YArray.some = (Native.some) ?
         return false;
     };
 
-})();
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -1925,7 +1923,7 @@ YArray.some = (Native.some) ?
  *
  * @class Queue
  * @constructor
- * @param item* {MIXED} 0..n items to seed the queue.
+ * @param {MIXED} item* 0..n items to seed the queue.
  */
 function Queue() {
     this._init();
@@ -1961,7 +1959,7 @@ Queue.prototype = {
     },
 
     /**
-     * Get the last in the queue. LIFO support
+     * Get the last in the queue. LIFO support.
      *
      * @method last
      * @return {MIXED} the last item in the queue.
@@ -1971,10 +1969,11 @@ Queue.prototype = {
     },
 
     /**
-     * Add 0..n items to the end of the queue
+     * Add 0..n items to the end of the queue.
      *
      * @method add
-     * @param item* {MIXED} 0..n items
+     * @param {MIXED} item* 0..n items.
+     * @return {object} this queue.
      */
     add: function() {
         Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
@@ -1985,10 +1984,10 @@ Queue.prototype = {
     },
 
     /**
-     * Returns the current number of queued items
+     * Returns the current number of queued items.
      *
      * @method size
-     * @return {Number}
+     * @return {Number} The size.
      */
     size: function() {
         return this._q.length;
@@ -2006,14 +2005,7 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
  * @submodule yui-base
  */
 
-(function() {
-
-var L = Y.Lang,
-DELIMITER = '__',
-// FROZEN = {
-//     'prototype': 1,
-//     '_yuid': 1
-// },
+var CACHED_DELIMITER = '__',
 
 /*
  * IE will not enumerate native functions in a derived object even if the
@@ -2027,7 +2019,7 @@ DELIMITER = '__',
  */
 _iefix = function(r, s) {
     var fn = s.toString;
-    if (L.isFunction(fn) && fn != Object.prototype.toString) {
+    if (Y.Lang.isFunction(fn) && fn != Object.prototype.toString) {
         r.toString = fn;
     }
 };
@@ -2107,7 +2099,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            type = L.type(r[p]);
+            type = Y.Lang.type(r[p]);
             if (s.hasOwnProperty(p)) {
                 if (merge && type == 'object') {
                     Y.mix(r[p], s[p]);
@@ -2123,7 +2115,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
-                if (merge && L.isObject(r[i], true)) {
+                if (merge && Y.Lang.isObject(r[i], true)) {
                     Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
@@ -2163,7 +2155,7 @@ Y.cached = function(source, cache, refetch) {
     return function(arg1) {
 
         var k = (arguments.length > 1) ?
-            Array.prototype.join.call(arguments, DELIMITER) : arg1;
+            Array.prototype.join.call(arguments, CACHED_DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);
@@ -2174,8 +2166,6 @@ Y.cached = function(source, cache, refetch) {
 
 };
 
-})();
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2183,7 +2173,6 @@ Y.cached = function(source, cache, refetch) {
  * @module yui
  * @submodule yui-base
  */
-(function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
@@ -2211,7 +2200,7 @@ owns = function(o, k) {
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED,
+UNDEF,
 
 /**
  * Extracts the keys, values, or size from an object
@@ -2375,14 +2364,14 @@ O.some = function(o, f, c, proto) {
  */
 O.getValue = function(o, path) {
     if (!Y.Lang.isObject(o)) {
-        return UNDEFINED;
+        return UNDEF;
     }
 
     var i,
         p = Y.Array(path),
         l = p.length;
 
-    for (i = 0; o !== UNDEFINED && i < l; i++) {
+    for (i = 0; o !== UNDEF && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -2409,14 +2398,14 @@ O.setValue = function(o, path, val) {
         ref = o;
 
     if (leafIdx >= 0) {
-        for (i = 0; ref !== UNDEFINED && i < leafIdx; i++) {
+        for (i = 0; ref !== UNDEF && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
-        if (ref !== UNDEFINED) {
+        if (ref !== UNDEF) {
             ref[p[i]] = val;
         } else {
-            return UNDEFINED;
+            return UNDEF;
         }
     }
 
@@ -2437,8 +2426,6 @@ O.isEmpty = function(o) {
     }
     return true;
 };
-
-})();
 
 /**
  * The YUI module contains the components required for building the YUI seed
@@ -2728,7 +2715,6 @@ Y.UA = YUI.Env.UA || function() {
 }, '@VERSION@' );
 YUI.add('get', function(Y) {
 
-(function() {
 
 /**
  * Provides a mechanism to fetch remote resources and
@@ -2780,9 +2766,9 @@ Y.Get = function() {
     /**
      * Generates an HTML element, this is not appended to a document
      * @method _node
-     * @param type {string} the type of element.
-     * @param attr {string} the attributes.
-     * @param win {Window} optional window to create the element in.
+     * @param {string} type the type of element.
+     * @param {string} attr the attributes.
+     * @param {Window} win optional window to create the element in.
      * @return {HTMLElement} the generated node.
      * @private
      */
@@ -2804,9 +2790,9 @@ Y.Get = function() {
     /**
      * Generates a link node
      * @method _linkNode
-     * @param url {string} the url for the css file.
-     * @param win {Window} optional window to create the node in.
-     * @param attributes optional attributes collection to apply to the
+     * @param {string} url the url for the css file.
+     * @param {Window} win optional window to create the node in.
+     * @param {object} attributes optional attributes collection to apply to the
      * new node.
      * @return {HTMLElement} the generated node.
      * @private
@@ -2827,9 +2813,9 @@ Y.Get = function() {
     /**
      * Generates a script node
      * @method _scriptNode
-     * @param url {string} the url for the script file.
-     * @param win {Window} optional window to create the node in.
-     * @param attributes optional attributes collection to apply to the
+     * @param {string} url the url for the script file.
+     * @param {Window} win optional window to create the node in.
+     * @param {object} attributes optional attributes collection to apply to the
      * new node.
      * @return {HTMLElement} the generated node.
      * @private
@@ -2850,8 +2836,12 @@ Y.Get = function() {
     },
 
     /**
-     * Returns the data payload for callback functions
+     * Returns the data payload for callback functions.
      * @method _returnData
+     * @param {object} q the queue.
+     * @param {string} msg the result message.
+     * @param {string} result the status message from the request.
+     * @return {object} the state data from the request.
      * @private
      */
     _returnData = function(q, msg, result) {
@@ -2871,7 +2861,9 @@ Y.Get = function() {
     /**
      * The transaction is finished
      * @method _end
-     * @param id {string} the id of the request.
+     * @param {string} id the id of the request.
+     * @param {string} msg the result message.
+     * @param {string} result the status message from the request.
      * @private
      */
     _end = function(id, msg, result) {
@@ -2887,7 +2879,7 @@ Y.Get = function() {
      * was accomplished.  There isn't a failure case at the
      * moment unless you count aborted transactions
      * @method _fail
-     * @param id {string} the id of the request
+     * @param {string} id the id of the request
      * @private
      */
     _fail = function(id, msg) {
@@ -2911,7 +2903,7 @@ Y.Get = function() {
     /**
      * The request is complete, so executing the requester's callback
      * @method _finish
-     * @param id {string} the id of the request.
+     * @param {string} id the id of the request.
      * @private
      */
     _finish = function(id) {
@@ -2941,7 +2933,7 @@ Y.Get = function() {
     /**
      * Timeout detected
      * @method _timeout
-     * @param id {string} the id of the request.
+     * @param {string} id the id of the request.
      * @private
      */
     _timeout = function(id) {
@@ -2959,8 +2951,9 @@ Y.Get = function() {
     /**
      * Loads the next item for a given request
      * @method _next
-     * @param id {string} the id of the request.
-     * @param loaded {string} the url that was just loaded, if any.
+     * @param {string} id the id of the request.
+     * @param {string} loaded the url that was just loaded, if any.
+     * @return {string} the result.
      * @private
      */
     _next = function(id, loaded) {
@@ -3092,9 +3085,10 @@ Y.Get = function() {
      * Saves the state for the request and begins loading
      * the requested urls
      * @method queue
-     * @param type {string} the type of node to insert.
-     * @param url {string} the url to load.
-     * @param opts the hash of options for this request.
+     * @param {string} type the type of node to insert.
+     * @param {string} url the url to load.
+     * @param {object} opts the hash of options for this request.
+     * @return {object} transaction object.
      * @private
      */
     _queue = function(type, url, opts) {
@@ -3136,14 +3130,14 @@ Y.Get = function() {
      * script nodes, this does not guarantee that contained
      * script is ready to use.
      * @method _track
-     * @param type {string} the type of node to track.
-     * @param n {HTMLElement} the node to track.
-     * @param id {string} the id of the request.
-     * @param url {string} the url that is being loaded.
-     * @param win {Window} the targeted window.
-     * @param qlength the number of remaining items in the queue,
+     * @param {string} type the type of node to track.
+     * @param {HTMLElement} n the node to track.
+     * @param {string} id the id of the request.
+     * @param {string} url the url that is being loaded.
+     * @param {Window} win the targeted window.
+     * @param {int} qlength the number of remaining items in the queue,
      * including this one.
-     * @param trackfn {Function} function to execute when finished
+     * @param {Function} trackfn function to execute when finished
      * the default is _next.
      * @private
      */
@@ -3203,6 +3197,7 @@ Y.Get = function() {
     /**
      * Removes the nodes for the specified queue
      * @method _purge
+     * @param {string} tId the transaction id.
      * @private
      */
     _purge = function(tId) {
@@ -3260,7 +3255,7 @@ Y.Get = function() {
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
          * @static
-         * @param id {string} the transaction id.
+         * @param {string} id the transaction id.
          * @private
          */
         _finalize: function(id) {
@@ -3274,7 +3269,7 @@ Y.Get = function() {
          * Abort a transaction
          * @method abort
          * @static
-         * @param o {string|object} Either the tId or the object returned from
+         * @param {string|object} o Either the tId or the object returned from
          * script() or css().
          */
         abort: function(o) {
@@ -3292,8 +3287,8 @@ Y.Get = function() {
          *
          * @method script
          * @static
-         * @param url {string|string[]} the url or urls to the script(s).
-         * @param opts {object} Options:
+         * @param {string|string[]} url the url or urls to the script(s).
+         * @param {object} opts Options:
          * <dl>
          * <dt>onSuccess</dt>
          * <dd>
@@ -3429,8 +3424,8 @@ Y.Get = function() {
          * window.
          * @method css
          * @static
-         * @param url {string} the url or urls to the css file(s).
-         * @param opts Options:
+         * @param {string} url the url or urls to the css file(s).
+         * @param {object} opts Options:
          * <dl>
          * <dt>onSuccess</dt>
          * <dd>
@@ -3488,25 +3483,24 @@ Y.Get = function() {
     };
 }();
 
-})();
 
 
 }, '@VERSION@' );
 YUI.add('features', function(Y) {
 
-var tests = {};
+var feature_tests = {};
 
 Y.mix(Y.namespace('Features'), {
 
-    tests: tests,
+    tests: feature_tests,
 
     add: function(cat, name, o) {
-        tests[cat] = tests[cat] || {};
-        tests[cat][name] = o;
+        feature_tests[cat] = feature_tests[cat] || {};
+        feature_tests[cat][name] = o;
     },
 
     all: function(cat, args) {
-        var cat_o = tests[cat],
+        var cat_o = feature_tests[cat],
             // results = {};
             result = '';
         if (cat_o) {
@@ -3523,7 +3517,7 @@ Y.mix(Y.namespace('Features'), {
     test: function(cat, name, args) {
 
         var result, ua, test,
-            cat_o = tests[cat],
+            cat_o = feature_tests[cat],
             feature = cat_o && cat_o[name];
 
         if (!feature) {
@@ -3588,7 +3582,7 @@ YUI.add('rls', function(Y) {
 /**
  * Implentation for building the remote loader service url.
  * @method _rls
- * @param what {Array} the requested modules.
+ * @param {Array} what the requested modules.
  * @since 3.2.0
  * @return {string} the url for the remote loader service call.
  */
@@ -3740,7 +3734,6 @@ YUI.add('yui-log', function(Y) {
  * @module yui
  * @submodule yui-log
  */
-(function() {
 
 var INSTANCE = Y,
     LOGEVENT = 'yui:log',
@@ -3837,8 +3830,6 @@ INSTANCE.message = function() {
     return INSTANCE.log.apply(INSTANCE, arguments);
 };
 
-})();
-
 
 }, '@VERSION@' ,{requires:['yui-base']});
 YUI.add('yui-later', function(Y) {
@@ -3848,64 +3839,60 @@ YUI.add('yui-later', function(Y) {
  * @module yui
  * @submodule yui-later
  */
-(function() {
-    var L = Y.Lang,
 
-    /**
-     * Executes the supplied function in the context of the supplied
-     * object 'when' milliseconds later.  Executes the function a
-     * single time unless periodic is set to true.
-     * @method later
-     * @for YUI
-     * @param when {int} the number of milliseconds to wait until the fn
-     * is executed.
-     * @param o the context object.
-     * @param fn {Function|String} the function to execute or the name of
-     * the method in the 'o' object to execute.
-     * @param data [Array] data that is provided to the function.  This
-     * accepts either a single item or an array.  If an array is provided,
-     * the function is executed with one parameter for each array item.
-     * If you need to pass a single array parameter, it needs to be wrapped
-     * in an array [myarray].
-     * @param periodic {boolean} if true, executes continuously at supplied
-     * interval until canceled.
-     * @return {object} a timer object. Call the cancel() method on this
-     * object to stop the timer.
-     */
-    later = function(when, o, fn, data, periodic) {
-        when = when || 0;
+/**
+ * Executes the supplied function in the context of the supplied
+ * object 'when' milliseconds later.  Executes the function a
+ * single time unless periodic is set to true.
+ * @method later
+ * @for YUI
+ * @param when {int} the number of milliseconds to wait until the fn
+ * is executed.
+ * @param o the context object.
+ * @param fn {Function|String} the function to execute or the name of
+ * the method in the 'o' object to execute.
+ * @param data [Array] data that is provided to the function.  This
+ * accepts either a single item or an array.  If an array is provided,
+ * the function is executed with one parameter for each array item.
+ * If you need to pass a single array parameter, it needs to be wrapped
+ * in an array [myarray].
+ * @param periodic {boolean} if true, executes continuously at supplied
+ * interval until canceled.
+ * @return {object} a timer object. Call the cancel() method on this
+ * object to stop the timer.
+ */
+Y.later = function(when, o, fn, data, periodic) {
+    when = when || 0;
 
-        var m = fn, f, id;
+    var m = fn, f, id;
 
-        if (o && L.isString(fn)) {
-            m = o[fn];
-        }
+    if (o && Y.Lang.isString(fn)) {
+        m = o[fn];
+    }
 
-        f = !L.isUndefined(data) ? function() {
-            m.apply(o, Y.Array(data));
-        } : function() {
-            m.call(o);
-        };
-
-        id = (periodic) ? setInterval(f, when) : setTimeout(f, when);
-
-        return {
-            id: id,
-            interval: periodic,
-            cancel: function() {
-                if (this.interval) {
-                    clearInterval(id);
-                } else {
-                    clearTimeout(id);
-                }
-            }
-        };
+    f = !Y.Lang.isUndefined(data) ? function() {
+        m.apply(o, Y.Array(data));
+    } : function() {
+        m.call(o);
     };
 
-    Y.later = later;
-    L.later = later;
+    id = (periodic) ? setInterval(f, when) : setTimeout(f, when);
 
-})();
+    return {
+        id: id,
+        interval: periodic,
+        cancel: function() {
+            if (this.interval) {
+                clearInterval(id);
+            } else {
+                clearTimeout(id);
+            }
+        }
+    };
+};
+
+Y.Lang.later = Y.later;
+
 
 
 }, '@VERSION@' ,{requires:['yui-base']});
@@ -3929,7 +3916,7 @@ YUI.add('yui-throttle', function(Y) {
  * @return {function} Returns a wrapped function that calls fn throttled.
  * @since 3.1.0
  */
-var throttle = function(fn, ms) {
+Y.throttle = function(fn, ms) {
     ms = (ms) ? ms : (Y.config.throttleTime || 150);
 
     if (ms === -1) {
@@ -3949,13 +3936,6 @@ var throttle = function(fn, ms) {
     });
 };
 
-Y.throttle = throttle;
-
-// We added the redundant definition to later for backwards compatibility.
-// I don't think we need to do the same thing here
-// Y.Lang.throttle = throttle;
-
-
 
 }, '@VERSION@' ,{requires:['yui-base']});
 
@@ -3972,10 +3952,15 @@ YUI.add('oop', function(Y) {
  * @module oop
  */
 
-    var L  = Y.Lang, 
-        A  = Y.Array,
+/**
+ * The following methods are added to the YUI instance
+ * @class YUI~oop
+ */
+
+    var L = Y.Lang,
+        A = Y.Array,
         OP = Object.prototype,
-        CLONE_MARKER = "_~yuim~_",
+        CLONE_MARKER = '_~yuim~_',
         EACH = 'each',
         SOME = 'some',
 
@@ -3994,55 +3979,53 @@ YUI.add('oop', function(Y) {
             }
         };
 
-    /**
-     * The following methods are added to the YUI instance
-     * @class YUI~oop
-     */
 
     /**
      * Applies prototype properties from the supplier to the receiver.
      * The receiver can be a constructor or an instance.
      * @method augment
-     * @param {Function} r  the object to receive the augmentation
-     * @param {Function} s  the object that supplies the properties to augment
-     * @param ov {boolean} if true, properties already on the receiver
+     * @param {function} r  the object to receive the augmentation.
+     * @param {function} s  the object that supplies the properties to augment.
+     * @param {boolean} ov if true, properties already on the receiver
      * will be overwritten if found on the supplier.
-     * @param wl {string[]} a whitelist.  If supplied, only properties in 
+     * @param {string[]} wl  a whitelist.  If supplied, only properties in
      * this list will be applied to the receiver.
-     * @param args {Array | Any} arg or arguments to apply to the supplier
+     * @param {Array | Any} args arg or arguments to apply to the supplier
      * constructor when initializing.
-     * @return {object} the augmented object
+     * @return {object} the augmented object.
      *
      * @todo constructor optional?
      * @todo understanding what an instance is augmented with
-     * @TODO best practices for overriding sequestered methods.
+     * @todo best practices for overriding sequestered methods.
      */
     Y.augment = function(r, s, ov, wl, args) {
-        var sProto           = s.prototype, 
-            newProto         = null, 
-            construct        = s, 
-            a                = (args) ? Y.Array(args) : [], 
-            rProto           = r.prototype, 
-            target           = rProto || r, 
+        var sProto = s.prototype,
+            newProto = null,
+            construct = s,
+            a = (args) ? Y.Array(args) : [],
+            rProto = r.prototype,
+            target = rProto || r,
             applyConstructor = false,
             sequestered, replacements;
 
         // working on a class, so apply constructor infrastructure
         if (rProto && construct) {
-            sequestered  = {};
+            sequestered = {};
             replacements = {};
-            newProto     = {};
+            newProto = {};
 
             // sequester all of the functions in the supplier and replace with
             // one that will restore all of them.
             Y.Object.each(sProto, function(v, k) {
                 replacements[k] = function() {
 
-// Y.log('sequestered function "' + k + '" executed.  Initializing EventTarget');
-// overwrite the prototype with all of the sequestered functions,
-// but only if it hasn't been overridden
-                    for (var i in sequestered) {
-                        if (sequestered.hasOwnProperty(i) && (this[i] === replacements[i])) {
+            // Y.log('sequestered function "' + k +
+            // '" executed.  Initializing EventTarget');
+            // overwrite the prototype with all of the sequestered functions,
+            // but only if it hasn't been overridden
+                        for (var i in sequestered) {
+                        if (sequestered.hasOwnProperty(i) &&
+                                (this[i] === replacements[i])) {
                             // Y.log('... restoring ' + k);
                             this[i] = sequestered[i];
                         }
@@ -4092,13 +4075,13 @@ YUI.add('oop', function(Y) {
      * object will be augmented with the supplier's value.  If the property
      * is an array, the suppliers value will be appended to the target.
      * @method aggregate
-     * @param {Function} r  the object to receive the augmentation
-     * @param {Function} s  the object that supplies the properties to augment
-     * @param ov {boolean} if true, properties already on the receiver
+     * @param {function} r  the object to receive the augmentation.
+     * @param {function} s  the object that supplies the properties to augment.
+     * @param {boolean} ov if true, properties already on the receiver
      * will be overwritten if found on the supplier.
-     * @param wl {string[]} a whitelist.  If supplied, only properties in 
+     * @param {string[]} wl a whitelist.  If supplied, only properties in
      * this list will be applied to the receiver.
-     * @return the extended object
+     * @return {object} the extended object.
      */
     Y.aggregate = function(r, s, ov, wl) {
         return Y.mix(r, s, ov, wl, 0, true);
@@ -4110,29 +4093,29 @@ YUI.add('oop', function(Y) {
      * Static members will not be inherited.
      *
      * @method extend
-     * @param {Function} r   the object to modify
-     * @param {Function} s the object to inherit
-     * @param {Object} px prototype properties to add/override
-     * @param {Object} sx static properties to add/override
-     * @return the extended object
+     * @param {function} r   the object to modify.
+     * @param {function} s the object to inherit.
+     * @param {object} px prototype properties to add/override.
+     * @param {object} sx static properties to add/override.
+     * @return {object} the extended object.
      */
     Y.extend = function(r, s, px, sx) {
-        if (!s||!r) {
+        if (!s || !r) {
             // @TODO error symbols
-            Y.error("extend failed, verify dependencies");
+            Y.error('extend failed, verify dependencies');
         }
 
-        var sp = s.prototype, rp=Y.Object(sp);
-        r.prototype=rp;
+        var sp = s.prototype, rp = Y.Object(sp);
+        r.prototype = rp;
 
-        rp.constructor=r;
-        r.superclass=sp;
+        rp.constructor = r;
+        r.superclass = sp;
 
         // assign constructor property
         if (s != Object && sp.constructor == OP.constructor) {
-            sp.constructor=s;
+            sp.constructor = s;
         }
-    
+
         // add prototype overrides
         if (px) {
             Y.mix(rp, px, true);
@@ -4151,29 +4134,32 @@ YUI.add('oop', function(Y) {
      * a collection.  Supports arrays, objects, and
      * Y.NodeLists
      * @method each
-     * @param o the object to iterate
-     * @param f the function to execute.  This function
-     * receives the value, key, and object as parameters
-     * @param proto if true, prototype properties are
-     * iterated on objects
-     * @return {YUI} the YUI instance
+     * @param {object} o the object to iterate.
+     * @param {function} f the function to execute.  This function
+     * receives the value, key, and object as parameters.
+     * @param {object} c the execution context for the function.
+     * @param {boolean} proto if true, prototype properties are
+     * iterated on objects.
+     * @return {YUI} the YUI instance.
      */
     Y.each = function(o, f, c, proto) {
         return dispatch(o, f, c, proto, EACH);
     };
 
-    /*
+    /**
      * Executes the supplied function for each item in
      * a collection.  The operation stops if the function
      * returns true. Supports arrays, objects, and
      * Y.NodeLists.
      * @method some
-     * @param o the object to iterate
-     * @param f the function to execute.  This function
-     * receives the value, key, and object as parameters
-     * @param proto if true, prototype properties are
-     * iterated on objects
-     * @return {boolean} true if the function ever returns true, false otherwise
+     * @param {object} o the object to iterate.
+     * @param {function} f the function to execute.  This function
+     * receives the value, key, and object as parameters.
+     * @param {object} c the execution context for the function.
+     * @param {boolean} proto if true, prototype properties are
+     * iterated on objects.
+     * @return {boolean} true if the function ever returns true,
+     * false otherwise.
      */
     Y.some = function(o, f, c, proto) {
         return dispatch(o, f, c, proto, SOME);
@@ -4188,21 +4174,23 @@ YUI.add('oop', function(Y) {
      * filter keys, validate values, etc.
      *
      * @method clone
-     * @param o what to clone
-     * @param safe {boolean} if true, objects will not have prototype
+     * @param {object} o what to clone.
+     * @param {boolean} safe if true, objects will not have prototype
      * items from the source.  If false, they will.  In this case, the
-     * original is initially protected, but the clone is not completely immune
-     * from changes to the source object prototype.  Also, cloned prototype
-     * items that are deleted from the clone will result in the value
-     * of the source prototype being exposed.  If operating on a non-safe
-     * clone, items should be nulled out rather than deleted.
-     * @param f optional function to apply to each item in a collection;
-     *          it will be executed prior to applying the value to
-     *          the new object.  Return false to prevent the copy.
-     * @param c optional execution context for f
-     * @param owner Owner object passed when clone is iterating an
-     * object.  Used to set up context for cloned functions.
-     * @return {Array|Object} the cloned object
+     * original is initially protected, but the clone is not completely
+     * immune from changes to the source object prototype.  Also, cloned
+     * prototype items that are deleted from the clone will result
+     * in the value of the source prototype being exposed.  If operating
+     * on a non-safe clone, items should be nulled out rather than deleted.
+     * @param {function} f optional function to apply to each item in a
+     * collection; it will be executed prior to applying the value to
+     * the new object.  Return false to prevent the copy.
+     * @param {object} c optional execution context for f.
+     * @param {object} owner Owner object passed when clone is iterating
+     * an object.  Used to set up context for cloned functions.
+     * @param {object} cloned hash of previously cloned objects to avoid
+     * multiple clones.
+     * @return {Array|Object} the cloned object.
      */
     Y.clone = function(o, safe, f, c, owner, cloned) {
 
@@ -4210,19 +4198,20 @@ YUI.add('oop', function(Y) {
             return o;
         }
 
-        // @TODO cloning YUI instances doesn't currently work
-        if (o instanceof YUI) {
+        // @todo cloning YUI instances doesn't currently work
+        if (Y.instanceOf(o, YUI)) {
             return o;
         }
 
         var o2, marked = cloned || {}, stamp,
-            each = Y.each || Y.Object.each;
+            yeach = Y.each;
 
         switch (L.type(o)) {
             case 'date':
                 return new Date(o);
             case 'regexp':
-                // return new RegExp(o.source); // if we do this we need to set the flags too
+                // if we do this we need to set the flags too
+                // return new RegExp(o.source);
                 return o;
             case 'function':
                 // o2 = Y.bind(o, owner);
@@ -4248,15 +4237,16 @@ YUI.add('oop', function(Y) {
 
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
-            each(o, function(v, k) {
-                if (!f || (f.call(c || this, v, k, this, o) !== false)) {
+            yeach(o, function(v, k) {
+                if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
                     if (k !== CLONE_MARKER) {
                         if (k == 'prototype') {
                             // skip the prototype
                         // } else if (o[k] === o) {
                         //     this[k] = this;
                         } else {
-                            this[k] = Y.clone(v, safe, f, c, owner || o, marked);
+                            this[k] =
+                                Y.clone(v, safe, f, c, owner || o, marked);
                         }
                     }
                 }
@@ -4277,26 +4267,28 @@ YUI.add('oop', function(Y) {
     /**
      * Returns a function that will execute the supplied function in the
      * supplied object's context, optionally adding any additional
-     * supplied parameters to the beginning of the arguments collection the 
+     * supplied parameters to the beginning of the arguments collection the
      * supplied to the function.
      *
      * @method bind
-     * @param f {Function|String} the function to bind, or a function name
-     * to execute on the context object
-     * @param c the execution context
-     * @param args* 0..n arguments to include before the arguments the 
+     * @param {Function|String} f the function to bind, or a function name
+     * to execute on the context object.
+     * @param {object} c the execution context.
+     * @param {any} args* 0..n arguments to include before the arguments the
      * function is executed with.
-     * @return {function} the wrapped function
+     * @return {function} the wrapped function.
      */
     Y.bind = function(f, c) {
-        var xargs = arguments.length > 2 ? Y.Array(arguments, 2, true) : null;
-        return function () {
-            var fn = L.isString(f) ? c[f] : f, 
-                args = (xargs) ? xargs.concat(Y.Array(arguments, 0, true)) : arguments;
+        var xargs = arguments.length > 2 ?
+                Y.Array(arguments, 2, true) : null;
+        return function() {
+            var fn = L.isString(f) ? c[f] : f,
+                args = (xargs) ?
+                    xargs.concat(Y.Array(arguments, 0, true)) : arguments;
             return fn.apply(c || fn, args);
         };
     };
-    
+
     /**
      * Returns a function that will execute the supplied function in the
      * supplied object's context, optionally adding any additional
@@ -4304,18 +4296,19 @@ YUI.add('oop', function(Y) {
      * is executed with.
      *
      * @method rbind
-     * @param f {Function|String} the function to bind, or a function name
-     * to execute on the context object
-     * @param c the execution context
-     * @param args* 0..n arguments to append to the end of arguments collection
-     * supplied to the function
-     * @return {function} the wrapped function
+     * @param {Function|String} f the function to bind, or a function name
+     * to execute on the context object.
+     * @param {object} c the execution context.
+     * @param {any} args* 0..n arguments to append to the end of
+     * arguments collection supplied to the function.
+     * @return {function} the wrapped function.
      */
     Y.rbind = function(f, c) {
         var xargs = arguments.length > 2 ? Y.Array(arguments, 2, true) : null;
-        return function () {
-            var fn = L.isString(f) ? c[f] : f, 
-                args = (xargs) ? Y.Array(arguments, 0, true).concat(xargs) : arguments;
+        return function() {
+            var fn = L.isString(f) ? c[f] : f,
+                args = (xargs) ?
+                    Y.Array(arguments, 0, true).concat(xargs) : arguments;
             return fn.apply(c || fn, args);
         };
     };
@@ -6848,12 +6841,11 @@ Y.Env.evt = {
 
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event-custom
  * @submodule event-custom-base
  */
-(function() {
 
 /**
  * Allows for the insertion of methods that are executed before or after
@@ -6862,8 +6854,8 @@ Y.Env.evt = {
  * @static
  */
 
-var BEFORE = 0,
-    AFTER = 1;
+var DO_BEFORE = 0,
+    DO_AFTER = 1;
 
 Y.Do = {
 
@@ -6894,7 +6886,7 @@ Y.Do = {
             f = Y.rbind.apply(Y, a);
         }
 
-        return this._inject(BEFORE, f, obj, sFn);
+        return this._inject(DO_BEFORE, f, obj, sFn);
     },
 
     /**
@@ -6915,7 +6907,7 @@ Y.Do = {
             f = Y.rbind.apply(Y, a);
         }
 
-        return this._inject(AFTER, f, obj, sFn);
+        return this._inject(DO_AFTER, f, obj, sFn);
     },
 
     /**
@@ -6947,7 +6939,7 @@ Y.Do = {
             o[sFn] = new Y.Do.Method(obj, sFn);
 
             // re-route the method to our wrapper
-            obj[sFn] = 
+            obj[sFn] =
                 function() {
                     return o[sFn].exec.apply(o[sFn], arguments);
                 };
@@ -7032,8 +7024,8 @@ Y.Do.Method.prototype._delete = function (sid) {
  */
 Y.Do.Method.prototype.exec = function () {
 
-    var args = Y.Array(arguments, 0, true), 
-        i, ret, newRet, 
+    var args = Y.Array(arguments, 0, true),
+        i, ret, newRet,
         bf = this.before,
         af = this.after,
         prevented = false;
@@ -7136,25 +7128,17 @@ Y.Do.Error = Y.Do.Halt;
 
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
-})();
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event-custom
  * @submodule event-custom-base
  */
 
-/**
- * Return value from all subscribe operations
- * @class EventHandle
- * @constructor
- * @param evt {CustomEvent} the custom event
- * @param sub {Subscriber} the subscriber
- */
 
 // var onsubscribeType = "_event:onsub",
-var AFTER = 'after', 
+var AFTER = 'after',
     CONFIGS = [
         'broadcast',
         'monitored',
@@ -7181,6 +7165,13 @@ var AFTER = 'after',
     YUI3_SIGNATURE = 9,
     YUI_LOG = 'yui:log';
 
+/**
+ * Return value from all subscribe operations
+ * @class EventHandle
+ * @constructor
+ * @param {CustomEvent} evt the custom event.
+ * @param {Subscriber} sub the subscriber.
+ */
 Y.EventHandle = function(evt, sub) {
 
     /**
@@ -7209,16 +7200,17 @@ Y.EventHandle.prototype = {
     /**
      * Detaches this subscriber
      * @method detach
+     * @return {int} the number of detached listeners
      */
     detach: function() {
         var evt = this.evt, detached = 0, i;
         if (evt) {
             // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
             if (Y.Lang.isArray(evt)) {
-                for (i=0; i<evt.length; i++) {
+                for (i = 0; i < evt.length; i++) {
                     detached += evt[i].detach();
                 }
-            } else { 
+            } else {
                 evt._delete(this.sub);
                 detached = 1;
             }
@@ -7233,8 +7225,8 @@ Y.EventHandle.prototype = {
      * is what should be monitored, the rest are the normal parameters when
      * subscribing to an event.
      * @method monitor
-     * @param what {string} what to monitor ('attach', 'detach', 'publish')
-     * @return {EventHandle} return value from the monitor event subscription
+     * @param what {string} what to monitor ('attach', 'detach', 'publish').
+     * @return {EventHandle} return value from the monitor event subscription.
      */
     monitor: function(what) {
         return this.evt.monitor.apply(this.evt, arguments);
@@ -7245,9 +7237,9 @@ Y.EventHandle.prototype = {
  * The CustomEvent class lets you define events for your application
  * that can be subscribed to by one or more independent component.
  *
- * @param {String}  type The type of event, which is passed to the callback
- *                  when the event fires
- * @param o configuration object
+ * @param {String} type The type of event, which is passed to the callback
+ * when the event fires.
+ * @param {object} o configuration object.
  * @class CustomEvent
  * @constructor
  */
@@ -7278,7 +7270,7 @@ Y.CustomEvent = function(type, o) {
 
     /**
      * Monitor when an event is attached or detached.
-     * 
+     *
      * @property monitored
      * @type boolean
      */
@@ -7317,14 +7309,14 @@ Y.CustomEvent = function(type, o) {
     /**
      * The subscribers to this event
      * @property subscribers
-     * @type Subscriber{}
+     * @type Subscriber {}
      */
     this.subscribers = {};
 
     /**
      * 'After' subscribers
      * @property afters
-     * @type Subscriber{}
+     * @type Subscriber {}
      */
     this.afters = {};
 
@@ -7355,7 +7347,7 @@ Y.CustomEvent = function(type, o) {
      * @default false;
      */
     // this.fireOnce = false;
-    
+
     /**
      * fireOnce listeners will fire syncronously unless async
      * is set to true
@@ -7417,10 +7409,10 @@ Y.CustomEvent = function(type, o) {
 
     /**
      * Specifies whether or not this event's default function
-     * can be cancelled by a subscriber by executing preventDefault() 
-     * on the event facade 
-     * @property preventable 
-     * @type boolean 
+     * can be cancelled by a subscriber by executing preventDefault()
+     * on the event facade
+     * @property preventable
+     * @type boolean
      * @default true
      */
     this.preventable = true;
@@ -7479,7 +7471,7 @@ Y.CustomEvent.prototype = {
         }
 
         if (when) {
-            return (when == 'after') ?  a : s;
+            return (when == 'after') ? a : s;
         }
 
         return (s + a);
@@ -7490,8 +7482,8 @@ Y.CustomEvent.prototype = {
      * is what should be monitored, the rest are the normal parameters when
      * subscribing to an event.
      * @method monitor
-     * @param what {string} what to monitor ('detach', 'attach', 'publish')
-     * @return {EventHandle} return value from the monitor event subscription
+     * @param what {string} what to monitor ('detach', 'attach', 'publish').
+     * @return {EventHandle} return value from the monitor event subscription.
      */
     monitor: function(what) {
         this.monitored = true;
@@ -7503,7 +7495,8 @@ Y.CustomEvent.prototype = {
 
     /**
      * Get all of the subscribers to this event and any sibling event
-     * @return {Array} first item is the on subscribers, second the after
+     * @method getSubs
+     * @return {Array} first item is the on subscribers, second the after.
      */
     getSubs: function() {
         var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
@@ -7519,8 +7512,8 @@ Y.CustomEvent.prototype = {
     /**
      * Apply configuration properties.  Only applies the CONFIG whitelist
      * @method applyConfig
-     * @param o hash of properties to apply
-     * @param force {boolean} if true, properties that exist on the event 
+     * @param o hash of properties to apply.
+     * @param force {boolean} if true, properties that exist on the event
      * will be overwritten.
      */
     applyConfig: function(o, force) {
@@ -7532,7 +7525,7 @@ Y.CustomEvent.prototype = {
     _on: function(fn, context, args, when) {
 
         if (!fn) {
-            this.log("Invalid callback for CE: " + this.type);
+            this.log('Invalid callback for CE: ' + this.type);
         }
 
         var s = new Y.Subscriber(fn, context, args, when);
@@ -7560,27 +7553,27 @@ Y.CustomEvent.prototype = {
     /**
      * Listen for this event
      * @method subscribe
-     * @param {Function} fn The function to execute
-     * @return {EventHandle} Unsubscribe handle
-     * @deprecated use on
+     * @param {Function} fn The function to execute.
+     * @return {EventHandle} Unsubscribe handle.
+     * @deprecated use on.
      */
     subscribe: function(fn, context) {
         Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
         return this._on(fn, context, a, true);
     },
 
     /**
      * Listen for this event
      * @method on
-     * @param {Function} fn The function to execute
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * @param {Function} fn The function to execute.
+     * @param {object} context optional execution context.
+     * @param {mixed} arg* 0..n additional arguments to supply to the subscriber
      * when the event fires.
-     * @return {EventHandle} An object with a detach method to detch the handler(s)
+     * @return {EventHandle} An object with a detach method to detch the handler(s).
      */
     on: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
         if (this.host) {
             this.host._monitor('attach', this.type, {
                 args: arguments
@@ -7591,27 +7584,27 @@ Y.CustomEvent.prototype = {
 
     /**
      * Listen for this event after the normal subscribers have been notified and
-     * the default behavior has been applied.  If a normal subscriber prevents the 
+     * the default behavior has been applied.  If a normal subscriber prevents the
      * default behavior, it also prevents after listeners from firing.
      * @method after
-     * @param {Function} fn The function to execute
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * @param {Function} fn The function to execute.
+     * @param {object} context optional execution context.
+     * @param {mixed} arg* 0..n additional arguments to supply to the subscriber
      * when the event fires.
-     * @return {EventHandle} handle Unsubscribe handle
+     * @return {EventHandle} handle Unsubscribe handle.
      */
     after: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
         return this._on(fn, context, a, AFTER);
     },
 
     /**
      * Detach listeners.
-     * @method detach 
+     * @method detach
      * @param {Function} fn  The subscribed function to remove, if not supplied
-     *                       all will be removed
+     *                       all will be removed.
      * @param {Object}   context The context object passed to subscribe.
-     * @return {int} returns the number of subscribers unsubscribed
+     * @return {int} returns the number of subscribers unsubscribed.
      */
     detach: function(fn, context) {
         // unsubscribe handle
@@ -7620,8 +7613,8 @@ Y.CustomEvent.prototype = {
         }
 
         var i, s,
-            found = 0, 
-            subs  = Y.merge(this.subscribers, this.afters);
+            found = 0,
+            subs = Y.merge(this.subscribers, this.afters);
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
@@ -7640,10 +7633,10 @@ Y.CustomEvent.prototype = {
      * Detach listeners.
      * @method unsubscribe
      * @param {Function} fn  The subscribed function to remove, if not supplied
-     *                       all will be removed
+     *                       all will be removed.
      * @param {Object}   context The context object passed to subscribe.
-     * @return {int|undefined} returns the number of subscribers unsubscribed
-     * @deprecated use detach
+     * @return {int|undefined} returns the number of subscribers unsubscribed.
+     * @deprecated use detach.
      */
     unsubscribe: function() {
         return this.detach.apply(this, arguments);
@@ -7652,20 +7645,20 @@ Y.CustomEvent.prototype = {
     /**
      * Notify a single subscriber
      * @method _notify
-     * @param s {Subscriber} the subscriber
-     * @param args {Array} the arguments array to apply to the listener
+     * @param {Subscriber} s the subscriber.
+     * @param {Array} args the arguments array to apply to the listener.
      * @private
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + "->" + "sub: " +  s.id);
+        this.log(this.type + '->' + 'sub: ' + s.id);
 
         var ret;
 
         ret = s.notify(args, this);
 
         if (false === ret || this.stopped > 1) {
-            this.log(this.type + " cancelled by subscriber");
+            this.log(this.type + ' cancelled by subscriber');
             return false;
         }
 
@@ -7675,31 +7668,31 @@ Y.CustomEvent.prototype = {
     /**
      * Logger abstraction to centralize the application of the silent flag
      * @method log
-     * @param msg {string} message to log
-     * @param cat {string} log category
+     * @param {string} msg message to log.
+     * @param {string} cat log category.
      */
     log: function(msg, cat) {
         if (!this.silent) {
-            Y.log(this.id + ': ' + msg, cat || "info", "event");
+            Y.log(this.id + ': ' + msg, cat || 'info', 'event');
         }
     },
 
     /**
      * Notifies the subscribers.  The callback functions will be executed
-     * from the context specified when the event was created, and with the 
+     * from the context specified when the event was created, and with the
      * following parameters:
      *   <ul>
      *   <li>The type of event</li>
      *   <li>All of the arguments fire() was executed with as an array</li>
-     *   <li>The custom object (if any) that was passed into the subscribe() 
+     *   <li>The custom object (if any) that was passed into the subscribe()
      *       method</li>
      *   </ul>
-     * @method fire 
-     * @param {Object*} arguments an arbitrary set of parameters to pass to 
+     * @method fire
+     * @param {Object*} arguments an arbitrary set of parameters to pass to
      *                            the handler.
-     * @return {boolean} false if one of the subscribers returned false, 
-     *                   true otherwise
-     * 
+     * @return {boolean} false if one of the subscribers returned false,
+     *                   true otherwise.
+     *
      */
     fire: function() {
         if (this.fireOnce && this.fired) {
@@ -7781,8 +7774,8 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method unsubscribeAll
-     * @return {int} The number of listeners unsubscribed
-     * @deprecated use detachAll
+     * @return {int} The number of listeners unsubscribed.
+     * @deprecated use detachAll.
      */
     unsubscribeAll: function() {
         return this.detachAll.apply(this, arguments);
@@ -7791,7 +7784,7 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method detachAll
-     * @return {int} The number of listeners unsubscribed
+     * @return {int} The number of listeners unsubscribed.
      */
     detachAll: function() {
         return this.detach();
@@ -7799,7 +7792,7 @@ Y.CustomEvent.prototype = {
 
     /**
      * @method _delete
-     * @param subscriber object
+     * @param subscriber object.
      * @private
      */
     _delete: function(s) {
@@ -7816,7 +7809,7 @@ Y.CustomEvent.prototype = {
 
         if (this.host) {
             this.host._monitor('detach', this.type, {
-                ce: this, 
+                ce: this,
                 sub: s
             });
         }
@@ -7832,9 +7825,9 @@ Y.CustomEvent.prototype = {
 
 /**
  * Stores the subscriber information to be used when the event fires.
- * @param {Function} fn       The wrapped function to execute
- * @param {Object}   context  The value of the keyword 'this' in the listener
- * @param {Array} args*       0..n additional arguments to supply the listener
+ * @param {Function} fn       The wrapped function to execute.
+ * @param {Object}   context  The value of the keyword 'this' in the listener.
+ * @param {Array} args*       0..n additional arguments to supply the listener.
  *
  * @class Subscriber
  * @constructor
@@ -7882,7 +7875,7 @@ Y.Subscriber = function(fn, context, args) {
      * @property once
      */
     // this.once = false;
-    
+
 };
 
 Y.Subscriber.prototype = {
@@ -7916,8 +7909,8 @@ Y.Subscriber.prototype = {
     /**
      * Executes the subscriber.
      * @method notify
-     * @param args {Array} Arguments array for the subscriber
-     * @param ce {CustomEvent} The custom event that sent the notification
+     * @param args {Array} Arguments array for the subscriber.
+     * @param ce {CustomEvent} The custom event that sent the notification.
      */
     notify: function(args, ce) {
         var c = this.context,
@@ -7933,7 +7926,7 @@ Y.Subscriber.prototype = {
         } else {
             try {
                 ret = this._notify(c, args, ce);
-            } catch(e) {
+            } catch (e) {
                 Y.error(this + ' failed: ' + e.message, e);
             }
         }
@@ -7946,9 +7939,9 @@ Y.Subscriber.prototype = {
      * Used by the unsubscribe method to match the right subscriber.
      *
      * @method contains
-     * @param {Function} fn the function to execute
-     * @param {Object} context optional 'this' keyword for the listener
-     * @return {boolean} true if the supplied arguments match this 
+     * @param {Function} fn the function to execute.
+     * @param {Object} context optional 'this' keyword for the listener.
+     * @return {boolean} true if the supplied arguments match this
      *                   subscriber's signature.
      */
     contains: function(fn, context) {
@@ -7962,29 +7955,28 @@ Y.Subscriber.prototype = {
 };
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event-custom
  * @submodule event-custom-base
  */
-(function() {
 
 /**
  * EventTarget provides the implementation for any object to
  * publish, subscribe and fire to custom events, and also
  * alows other EventTargets to target the object with events
  * sourced from the other object.
- * EventTarget is designed to be used with Y.augment to wrap 
- * EventCustom in an interface that allows events to be listened to 
+ * EventTarget is designed to be used with Y.augment to wrap
+ * EventCustom in an interface that allows events to be listened to
  * and fired by name.  This makes it possible for implementing code to
  * subscribe to an event that either has not been created yet, or will
  * not be created at all.
  * @class EventTarget
  * @param opts a configuration object
- * @config emitFacade {boolean} if true, all events will emit event 
+ * @config emitFacade {boolean} if true, all events will emit event
  * facade payloads by default (default false)
- * @config prefix {string} the prefix to apply to non-prefixed event names 
- * @config chain {boolean} if true, on/after/detach return the host to allow 
+ * @config prefix {string} the prefix to apply to non-prefixed event names
+ * @config chain {boolean} if true, on/after/detach return the host to allow
  * chaining, otherwise they return an EventHandle (default false)
  */
 
@@ -8009,7 +8001,7 @@ var L = Y.Lang,
 
         if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
-        } 
+        }
 
         return pre + PREFIX_DELIMITER + type;
     }),
@@ -8027,8 +8019,8 @@ var L = Y.Lang,
 
         if (!L.isString(t)) {
             return t;
-        } 
-        
+        }
+
         i = t.indexOf(AFTER_PREFIX);
 
         if (i > -1) {
@@ -8072,7 +8064,7 @@ var L = Y.Lang,
             bubbling: false,
 
             defaults: {
-                context: o.context || this, 
+                context: o.context || this,
                 host: this,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
@@ -8090,7 +8082,7 @@ var L = Y.Lang,
 ET.prototype = {
 
     /**
-     * Listen to a custom event hosted by this object one time.  
+     * Listen to a custom event hosted by this object one time.
      * This is the equivalent to <code>on</code> except the
      * listener is immediatelly detached when it is executed.
      * @method once
@@ -8112,7 +8104,7 @@ ET.prototype = {
 
     /**
      * Subscribe to a custom event hosted by this object
-     * @method on 
+     * @method on
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
      * @param context {object} optional execution context.
@@ -8127,7 +8119,7 @@ ET.prototype = {
 
         // full name, args, detachcategory, after
         this._monitor('attach', parts[1], {
-            args: arguments, 
+            args: arguments,
             category: parts[0],
             after: parts[2]
         });
@@ -8138,8 +8130,8 @@ ET.prototype = {
                 return Y.Do.before.apply(Y.Do, arguments);
             }
 
-            f = fn; 
-            c = context; 
+            f = fn;
+            c = context;
             args = YArray(arguments, 0, true);
             ret = [];
 
@@ -8170,7 +8162,7 @@ ET.prototype = {
             return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
 
         }
-        
+
         detachcategory = parts[0];
         after = parts[2];
         shorttype = parts[3];
@@ -8216,7 +8208,7 @@ ET.prototype = {
                 handle = Y.Event._attach(args);
             }
 
-        } 
+        }
 
         if (!handle) {
             ce = this._yuievt.events[type] || this.publish(type);
@@ -8245,8 +8237,8 @@ ET.prototype = {
 
     /**
      * Detach one or more listeners the from the specified event
-     * @method detach 
-     * @param type {string|Object}   Either the handle to the subscriber or the 
+     * @method detach
+     * @param type {string|Object}   Either the handle to the subscriber or the
      *                        type of event.  If the type
      *                        is not specified, it will attempt to remove
      *                        the listener from all hosted events.
@@ -8277,7 +8269,7 @@ ET.prototype = {
             return this;
         }
 
-        var parts = _parseType(type, this._yuievt.config.prefix), 
+        var parts = _parseType(type, this._yuievt.config.prefix),
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         adapt, store = Y.Env.evt.handles, detachhost, cat, args,
@@ -8362,7 +8354,7 @@ ET.prototype = {
 Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecated');
         return this.detach.apply(this, arguments);
     },
-    
+
     /**
      * Removes all listeners from the specified event.  If the event type
      * is not specified, all listeners from all hosted custom events will
@@ -8390,7 +8382,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
     /**
      * Creates a new custom event of the specified type.  If a custom event
      * by that name already exists, it will not be re-created.  In either
-     * case the custom event is returned. 
+     * case the custom event is returned.
      *
      * @method publish
      *
@@ -8415,7 +8407,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *   'emitFacade': whether or not this event emits a facade (false)
      *    </li>
      *    <li>
-     *   'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click' 
+     *   'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click'
      *    </li>
      *    <li>
      *   'fireOnce': if an event is configured to fire once, new subscribers after
@@ -8467,13 +8459,13 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         if (L.isObject(type)) {
             ret = {};
             Y.each(type, function(v, k) {
-                ret[k] = this.publish(k, v || opts); 
+                ret[k] = this.publish(k, v || opts);
             }, this);
 
             return ret;
         }
 
-        events = edata.events; 
+        events = edata.events;
         ce = events[type];
 
         if (ce) {
@@ -8502,7 +8494,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
     /**
      * This is the entry point for the event monitoring system.
-     * You can monitor 'attach', 'detach', 'fire', and 'publish'.  
+     * You can monitor 'attach', 'detach', 'fire', and 'publish'.
      * When configured, these events generate an event.  click ->
      * click_attach, click_detach, click_publish -- these can
      * be subscribed to like other events to monitor the event
@@ -8524,31 +8516,31 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
    /**
      * Fire a custom event by name.  The callback functions will be executed
-     * from the context specified when the event was created, and with the 
+     * from the context specified when the event was created, and with the
      * following parameters.
      *
-     * If the custom event object hasn't been created, then the event hasn't 
-     * been published and it has no subscribers.  For performance sake, we 
-     * immediate exit in this case.  This means the event won't bubble, so 
-     * if the intention is that a bubble target be notified, the event must 
+     * If the custom event object hasn't been created, then the event hasn't
+     * been published and it has no subscribers.  For performance sake, we
+     * immediate exit in this case.  This means the event won't bubble, so
+     * if the intention is that a bubble target be notified, the event must
      * be published on this object first.
      *
      * The first argument is the event type, and any additional arguments are
      * passed to the listeners as parameters.  If the first of these is an
      * object literal, and the event is configured to emit an event facade,
-     * that object is mixed into the event facade and the facade is provided 
+     * that object is mixed into the event facade and the facade is provided
      * in place of the original object.
      *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
      * a 'type' property.
-     * @param arguments {Object*} an arbitrary set of parameters to pass to 
+     * @param arguments {Object*} an arbitrary set of parameters to pass to
      * the handler.  If the first of these is an object literal and the event is
      * configured to emit an event facade, the event facade will replace that
      * parameter after the properties the object literal contains are copied to
      * the event facade.
      * @return {EventTarget} the event host
-     *                   
+     *
      */
     fire: function(type) {
 
@@ -8559,8 +8551,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         t = (pre) ? _getType(t, pre) : t;
 
-        this._monitor('fire', t, { 
-            args: args 
+        this._monitor('fire', t, {
+            args: args
         });
 
         ce = this.getEvent(t, true);
@@ -8666,14 +8658,14 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      * For DOM and custom events:
      * type, callback, context, 0-n arguments
-     *  
+     *
      * For methods:
      * callback, object (method host), methodName, context, 0-n arguments
      *
      * @method before
      * @return detach handle
      */
-    before: function() { 
+    before: function() {
         return this.on.apply(this, arguments);
     }
 
@@ -8682,8 +8674,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 Y.EventTarget = ET;
 
 // make Y an event target
-Y.mix(Y, ET.prototype, false, false, { 
-    bubbles: false 
+Y.mix(Y, ET.prototype, false, false, {
+    bubbles: false
 });
 
 ET.call(Y);
@@ -8702,11 +8694,9 @@ Y.Global = YUI.Env.globalEvents;
 
 // @TODO implement a global namespace function on Y.Global?
 
-})();
-
 /**
  * <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
- * most events exposed by YUI.  This includes custom events, DOM events, and 
+ * most events exposed by YUI.  This includes custom events, DOM events, and
  * function events.  <code>detach</code> is also provided to remove listeners
  * serviced by this function.
  *
@@ -8725,12 +8715,12 @@ Y.Global = YUI.Env.globalEvents;
  *     <li>An optional context object</li>
  *     <li>0..n additional arguments to supply the callback.</li>
  *   </ul>
- *   Example: 
+ *   Example:
  *   <code>Y.on('drag:drophit', function() { // start work });</code>
  * </li>
  * <li>DOM events.  These are moments reported by the browser related
  * to browser functionality and user interaction.
- * This type of event is delegated to <code>Event</code>'s 
+ * This type of event is delegated to <code>Event</code>'s
  * <code>attach</code> method.
  *   <ul>
  *     <li>The type of the event</li>
@@ -8741,11 +8731,11 @@ Y.Global = YUI.Env.globalEvents;
  *     <li>An optional context object</li>
  *     <li>0..n additional arguments to supply the callback.</li>
  *   </ul>
- *   Example: 
+ *   Example:
  *   <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
  * </li>
  * <li>Function events.  These events can be used to react before or after a
- * function is executed.  This type of event is delegated to <code>Event.Do</code>'s 
+ * function is executed.  This type of event is delegated to <code>Event.Do</code>'s
  * <code>before</code> method.
  *   <ul>
  *     <li>The callback to execute</li>
@@ -8763,7 +8753,7 @@ Y.Global = YUI.Env.globalEvents;
  * execute after the event's default behavior.  <code>before</code> is an
  * alias for <code>on</code>.
  *
- * @method on 
+ * @method on
  * @param type event type (this parameter does not apply for function events)
  * @param fn the callback
  * @param context optionally change the value of 'this' in the callback
@@ -8790,7 +8780,7 @@ Y.Global = YUI.Env.globalEvents;
  * most events exposed by YUI.  This includes custom events,
  * DOM events, and AOP events.  This works the same way as
  * the on() function, only it operates after any default
- * behavior for the event has executed. @see <code>on</code> for more 
+ * behavior for the event has executed. @see <code>on</code> for more
  * information.
  * @method after
  * @param type event type (this parameter does not apply for function events)
