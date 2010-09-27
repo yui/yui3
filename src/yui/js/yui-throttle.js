@@ -16,7 +16,7 @@
  * @return {function} Returns a wrapped function that calls fn throttled.
  * @since 3.1.0
  */
-var throttle = function(fn, ms) {
+Y.throttle = function(fn, ms) {
     ms = (ms) ? ms : (Y.config.throttleTime || 150);
 
     if (ms === -1) {
@@ -35,10 +35,3 @@ var throttle = function(fn, ms) {
         }
     });
 };
-
-Y.throttle = throttle;
-
-// We added the redundant definition to later for backwards compatibility.
-// I don't think we need to do the same thing here
-// Y.Lang.throttle = throttle;
-

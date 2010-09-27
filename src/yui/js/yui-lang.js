@@ -5,7 +5,7 @@
  * @module yui
  * @submodule yui-base
  */
-// (function() {
+
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -228,5 +228,3 @@ L.sub = function(s, o) {
         return (!L.isUndefined(o[key])) ? o[key] : match;
     }) : s);
 };
-
-// })();
