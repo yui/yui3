@@ -63,6 +63,7 @@
         <span class="p">};</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">ExecCommand</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">_lastKey</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
             <span class="cm">/**</span>
 <span class="cm">            * An internal reference to the instance of the frame plugged into.</span>
 <span class="cm">            * @private</span>
@@ -122,6 +123,10 @@
                         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">exec</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">});</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keypress&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_lastKey</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">;</span>
+                <span class="p">},</span> <span class="k">this</span><span class="p">));</span>
             <span class="p">}</span>
         <span class="p">},</span> <span class="p">{</span>
             <span class="cm">/**</span>
@@ -330,22 +335,16 @@
 <span class="cm">                * @param {String} val The font name to apply</span>
 <span class="cm">                * @return {NodeList} NodeList of the items touched by this command.</span>
 <span class="cm">                */</span>
-                <span class="c1">//Removed from commands list, so the default is executed..</span>
-                <span class="nx">fontname_enh</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
-                        <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">(),</span> <span class="nx">n</span><span class="p">;</span>
+                <span class="nx">fontname</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;fontname&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&amp;nbsp;&#39;</span><span class="p">))</span> <span class="p">{</span>
-                            <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;fontFamily&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
-                            <span class="nx">n</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">;</span>
-                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                            <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;span style=&quot;font-family: &#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">+</span> <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="p">);</span>
-                            <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                    <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                        <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+                    
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_lastKey</span> <span class="o">!=</span> <span class="mi">32</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;face&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                         <span class="p">}</span>
-                        <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
-                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;fontname&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
                 <span class="cm">/**</span>
@@ -356,23 +355,16 @@
 <span class="cm">                * @param {String} val The font size to apply</span>
 <span class="cm">                * @return {NodeList} NodeList of the items touched by this command.</span>
 <span class="cm">                */</span>
-                <span class="c1">//Removed from commands list, so the default is executed..</span>
-                <span class="nx">fontsize_enh</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
-                        <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">(),</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">prev</span><span class="p">;</span>
+                <span class="nx">fontsize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;fontsize&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;font size=&quot;&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&amp;nbsp;&lt;/font&gt;&#39;</span><span class="p">);</span>
-                        <span class="nx">prev</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;previousSibling&#39;</span><span class="p">);</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">prev</span> <span class="o">&amp;&amp;</span> <span class="nx">prev</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodeType&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">prev</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">prev</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-                            <span class="p">}</span>
+                    <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                        <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+                    
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_lastKey</span> <span class="o">!=</span> <span class="mi">32</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                         <span class="p">}</span>
-                        <span class="nx">sel</span><span class="p">.</span><span class="nx">selectNode</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">),</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-                        <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
-                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;fontsize&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
