@@ -57,9 +57,11 @@ YUI.add('autocomplete-base', function(Y) {
  * @class AutoCompleteBase
  */
 
-var Lang   = Y.Lang,
+var Get    = Y.Get,
+    Lang   = Y.Lang,
     YArray = Y.Array,
 
+    isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
     trim       = Lang.trim,
@@ -199,30 +201,6 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
-     * <p>
-     * DataSource object which will be used to make queries. This can be
-     * an actual DataSource instance or any other object with a
-     * sendRequest() method that has the same signature as DataSource's
-     * sendRequest() method.
-     * </p>
-     *
-     * <p>
-     * As an alternative to providing a DataSource, you could listen for
-     * <code>query</code> events and handle them any way you see fit.
-     * Providing a DataSource or DataSource-like object is optional, but
-     * will often be simpler.
-     * </p>
-     *
-     * @attribute dataSource
-     * @type DataSource|Object|null
-     */
-    dataSource: {
-        validator: function (value) {
-            return (value && isFunction(value.sendRequest)) || value === null;
-        }
-    },
-
-    /**
      * Node to monitor for changes, which will generate <code>query</code>
      * events when appropriate. May be either an input field or a textarea.
      *
@@ -335,40 +313,29 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * When using a string template, if it's necessary for the literal
-     * string "{query}" to appear in the request, escape it with a slash:
-     * "\{query}".
-     * </p>
-     *
-     * <p>
      * While <code>requestTemplate</code> may be set to either a function or
      * a string, it will always be returned as a function that accepts a
      * query argument and returns a string.
      * </p>
      *
      * @attribute requestTemplate
-     * @type Function|String
-     * @default encodeURIComponent
+     * @type Function|String|null
+     * @default null
      */
     requestTemplate: {
         setter: function (template) {
-            if (isFunction(template)) {
+            if (template === null || isFunction(template)) {
                 return template;
             }
 
             template = template.toString();
 
             return function (query) {
-                // Replace {query} with the URI-encoded query, but turn
-                // \{query} into the literal string "{query}" to allow that
-                // string to appear in the request if necessary.
-                return template.
-                    replace(/(^|[^\\])((\\{2})*)\{query\}/, '$1$2' + encodeURIComponent(query)).
-                    replace(/(^|[^\\])((\\{2})*)\\(\{query\})/, '$1$2$4');
+                return Lang.sub(template, {query: encodeURIComponent(query)});
             };
         },
 
-        value: encodeURIComponent
+        value: null
     },
 
     /**
@@ -396,7 +363,7 @@ AutoCompleteBase.ATTRS = {
      * @default []
      */
     resultFilters: {
-        validator: Lang.isArray,
+        validator: isArray,
         value: []
     },
 
@@ -443,10 +410,55 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * <p>
+     * Locator that should be used to extract an array of results from a
+     * non-array response.
+     * </p>
+     *
+     * <p>
+     * By default, no locator is applied, and all responses are assumed to be
+     * arrays by default. If all responses are already arrays, you don't need to
+     * define a locator.
+     * </p>
+     *
+     * <p>
+     * The locator may be either a function (which will receive the raw response
+     * as an argument and must return an array) or a string representing an
+     * object path, such as "foo.bar.baz" (which would return the value of
+     * <code>result.foo.bar.baz</code> if the response is an object).
+     * </p>
+     *
+     * <p>
+     * While <code>resultListLocator</code> may be set to either a function or a
+     * string, it will always be returned as a function that accepts a response
+     * argument and returns an array.
+     * </p>
+     *
+     * @attribute resultListLocator
+     * @type Function|String|null
+     */
+    resultListLocator: {
+        setter: '_setLocator'
+    },
+
+    /**
+     * Current results, or an empty array if there are no results.
+     *
+     * @attribute results
+     * @type Array
+     * @default []
+     * @readonly
+     */
+    results: {
+        readOnly: true,
+        value: []
+    },
+
+    /**
+     * <p>
      * Locator that should be used to extract a plain text string from a
-     * non-string result item. This value will be fed to any defined filters,
-     * and will typically also be the value that ends up being inserted into a
-     * text input field or textarea when the user of an autocomplete widget
+     * non-string result item. The resulting text value will be fed to any
+     * defined filters, and will typically also be the value that ends up being
+     * inserted into an input field or textarea when the user of an autocomplete
      * implementation selects a result.
      * </p>
      *
@@ -464,39 +476,96 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * While <code>resultLocator</code> may be set to either a function or a
+     * While <code>resultTextLocator</code> may be set to either a function or a
      * string, it will always be returned as a function that accepts a result
      * argument and returns a string.
      * </p>
      *
-     * @attribute resultLocator
+     * @attribute resultTextLocator
      * @type Function|String|null
      */
-    resultLocator: {
-        setter: function (locator) {
-            if (locator === null || isFunction(locator)) {
-                return locator;
-            }
-
-            locator = locator.toString().split('.');
-
-            return function (result) {
-                return Y.Object.getValue(result, locator);
-            };
-        }
+    resultTextLocator: {
+        setter: '_setLocator'
     },
 
     /**
-     * Current results, or an empty array if there are no results.
+     * <p>
+     * Source for autocomplete results. The following source types are
+     * supported:
+     * </p>
      *
-     * @attribute results
-     * @type Array
-     * @default []
-     * @readonly
+     * <dl>
+     *   <dt>Array</dt>
+     *   <dd>
+     *     <p>
+     *     <i>Example:</i><br> <code>['first result', 'second result', 'etc']</code>
+     *     </p>
+     *
+     *     <p>
+     *     The full array will be provided to any configured filters for each query.
+     *     Use filters to filter the contents of the array based on the query. This is
+     *     an easy way to create a fully client-side autocomplete implementation.
+     *     </p>
+     *   </dd>
+     *
+     *   <dt>DataSource</dt>
+     *   <dd>
+     *     A <code>DataSource</code> instance or other object that provides a
+     *     DataSource-like <code>sendRequest</code> method. See the
+     *     <code>DataSource</code> documentation for details.
+     *   </dd>
+     *
+     *   <dt>Object</dt>
+     *   <dd>
+     *     <p>
+     *     <i>Example:</i><br> <code>{foo: ['foo result 1', 'foo result 2'], bar: ['bar result']}</code>
+     *     </p>
+     *
+     *     <p>
+     *     An object will be treated as a query hashmap. If a property on the object
+     *     matches the current query, the value of that property will be used as the
+     *     response.
+     *     </p>
+     *
+     *     <p>
+     *     The response is assumed to be an array of results by default. If the
+     *     response is not an array, provide a <code>resultListLocator</code> to
+     *     process the response and return an array.
+     *     </p>
+     *   </dd>
+     *
+     *   <dt>String</dt>
+     *   <dd>
+     *     <p>
+     *     <i>Example:</i><br> <code>'http://example.com/search?q={query}&callback={callback}'</code>
+     *     </p>
+     *
+     *     <p>
+     *     If a string is provided, it will be used as the URL for a JSONP request. The
+     *     <code>{query}</code> placeholder will be replaced with the current query,
+     *     and the <code>{callback}</code> placeholder (if any) will be replaced with
+     *     an internally-generated JSONP callback name.
+     *     </p>
+     *
+     *     <p>
+     *     The response is assumed to be an array of results by default. If the
+     *     response is not an array, provide a <code>resultListLocator</code> to
+     *     process the response and return an array.
+     *     </p>
+     *   </dd>
+     * </dl>
+     *
+     * <p>
+     * As an alternative to providing a source, you could also simply listen for
+     * <code>query</code> events and handle them any way you see fit. Providing
+     * a source is optional, but will usually be simpler.
+     * </p>
+     *
+     * @attribute source
+     * @type Array|DataSource|Object|String|null
      */
-    results: {
-        readOnly: true,
-        value: []
+    source: {
+        setter: '_setSource'
     },
 
     /**
@@ -576,6 +645,105 @@ AutoCompleteBase.prototype = {
     // -- Protected Prototype Methods ------------------------------------------
 
     /**
+     * Creates a DataSource-like object that simply returns the specified array
+     * as a response. See the <code>source</code> attribute for more details.
+     *
+     * @method _createArraySource
+     * @param {Array} source
+     * @return {Object} DataSource-like object.
+     * @protected
+     */
+    _createArraySource: function (source) {
+        return {sendRequest: function (request) {
+            var data = source.concat();
+
+            request.callback.success({
+                data: data,
+                response: {results: data}
+            });
+        }};
+    },
+
+    /**
+     * Creates a DataSource-like object that calls the specified JSONP
+     * <i>url</i> for results. See the <code>source</code> attribute for more
+     * details.
+     *
+     * @method _createJSONPSource
+     * @param {String} source JSONP URL
+     * @return {Object} DataSource-like object.
+     * @protected
+     */
+    _createJSONPSource: function (source) {
+        var cache     = {},
+            globalEnv = YUI.namespace('Env.AC'),
+            that      = this,
+            lastGet;
+
+        return {sendRequest: function (request) {
+            var guid,
+                query = request.request,
+                url;
+
+            if (cache[query]) {
+                request.callback.success(cache[query]);
+                return;
+            }
+
+            guid = Y.guid();
+
+            url = Lang.sub(source, {
+                callback: 'YUI.Env.AC.' + guid,
+
+                // If a requestTemplate is set, assume the query is already
+                // encoded. Otherwise, encode it.
+                query: that.get('requestTemplate') ? query :
+                        encodeURIComponent(query)
+            });
+
+            globalEnv[guid] = function (data) {
+                delete globalEnv[guid];
+                lastGet = null;
+
+                cache[query] = {
+                    data: data,
+                    response: {results: data}
+                };
+
+                request.callback.success(cache[query]);
+            };
+
+            if (lastGet) {
+                Get.abort(lastGet);
+            }
+
+            lastGet = Get.script(url, {autopurge: true});
+        }};
+    },
+
+    /**
+     * Creates a DataSource-like object that looks up queries as properties on
+     * the specified object, and returns the found value (if any) as a response.
+     * See the <code>source</code> attribute for more details.
+     *
+     * @method _createObjectSource
+     * @param {Object} source
+     * @return {Object} DataSource-like object.
+     * @protected
+     */
+    _createObjectSource: function (source) {
+        return {sendRequest: function (request) {
+            var query = request.request,
+                data  = Y.Object.owns(source, query) ? source[query] : [];
+
+            request.callback.success({
+                data: data,
+                response: {results: data}
+            });
+        }};
+    },
+
+    /**
      * Returns <code>true</code> if <i>value</i> is either a function or
      * <code>null</code>.
      *
@@ -585,6 +753,31 @@ AutoCompleteBase.prototype = {
      */
     _functionValidator: function (value) {
         return isFunction(value) || value === null;
+    },
+
+    /**
+     * Faster and safer alternative to Y.Object.getValue(). Doesn't bother
+     * casting the path to an array (since we already know it's an array) and
+     * doesn't throw an error if a value in the middle of the object hierarchy
+     * is neither <code>undefined</code> nor an object.
+     *
+     * @method _getObjectValue
+     * @param {Object} obj
+     * @param {Array} path
+     * @return {mixed} Located value, or <code>undefined</code> if the value was
+     *   not found at the specified path.
+     * @protected
+     */
+    _getObjectValue: function (obj, path) {
+        if (!obj) {
+            return;
+        }
+
+        for (var i = 0, len = path.length; obj && i < len; i++) {
+            obj = obj[path[i]];
+        }
+
+        return obj;
     },
 
     /**
@@ -622,24 +815,29 @@ AutoCompleteBase.prototype = {
             highlighter,
             i,
             len,
-            locator,
-            locatorMap,
-            maxResults;
+            listLocator = this.get('resultListLocator'),
+            maxResults,
+            textLocator,
+            textLocatorMap;
+
+        if (unfiltered && listLocator) {
+            unfiltered = listLocator(unfiltered);
+        }
 
         if (unfiltered) {
             filters     = this.get('resultFilters');
             formatter   = this.get('resultFormatter');
             highlighter = this.get('resultHighlighter');
-            locator     = this.get('resultLocator');
             maxResults  = this.get('maxResults');
+            textLocator = this.get('resultTextLocator');
 
-            if (locator) {
+            if (textLocator) {
                 // In order to allow filtering based on locator queries, we have
                 // to create a mapping of "located" results to original results
                 // so we can sync up the original results later without
                 // requiring the filters to do extra work.
-                raw        = YArray.map(unfiltered, locator);
-                locatorMap = YArray.hash(raw, unfiltered);
+                raw            = YArray.map(unfiltered, textLocator);
+                textLocatorMap = YArray.hash(raw, unfiltered);
             } else {
                 raw = unfiltered;
             }
@@ -653,14 +851,14 @@ AutoCompleteBase.prototype = {
                 }
             }
 
-            if (locator) {
+            if (textLocator) {
                 // Sync up the original results with the filtered, "located"
                 // results.
                 unformatted = raw;
                 raw = [];
 
                 for (i = 0, len = unformatted.length; i < len; ++i) {
-                    raw.push(locatorMap[unformatted[i]]);
+                    raw.push(textLocatorMap[unformatted[i]]);
                 }
             } else {
                 unformatted = [].concat(raw); // copy
@@ -721,6 +919,63 @@ AutoCompleteBase.prototype = {
         }
 
         return this._trimLeft(value);
+    },
+
+    /**
+     * Setter for the <code>source</code> attribute. Returns a DataSource or
+     * a DataSource-like function depending on the type of <i>source</i>.
+     *
+     * @method _setSource
+     * @param {Array|DataSource|Object|String} source AutoComplete source. See
+     *   the <code>source</code> attribute for details.
+     * @return {DataSource|Function}
+     * @protected
+     */
+    _setSource: function (source) {
+        if ((source && isFunction(source.sendRequest)) || source === null) {
+            // Quacks like a DataSource instance (or null). Make it so!
+            return source;
+
+        } else if (typeof source === 'string') {
+            // Assume the string is a JSONP URL and build a JSONP source out of
+            // it.
+            return this._createJSONPSource(source);
+
+        } else if (isArray(source)) {
+            // Wrap the array in a teensy tiny fake DataSource that just returns
+            // the array itself for each request. Filters will do the rest.
+            return this._createArraySource(source);
+
+        } else if (Lang.isObject(source)) {
+            // Wrap the object in a teensy tiny fake DataSource that looks for
+            // the request as a property on the object and returns it if it
+            // exists, or an empty array otherwise.
+            return this._createObjectSource(source);
+        }
+
+        // TODO: Support JSONPRequest and YQLRequest instances as sources.
+
+        return Y.Attribute.INVALID_VALUE;
+    },
+
+    /**
+     * Setter for locator attributes.
+     *
+     * @method _setLocator
+     * @param {Function|String|null} locator
+     * @return {Function|null}
+     * @protected
+     */
+    _setLocator: function (locator) {
+        if (locator === null || isFunction(locator)) {
+            return locator;
+        }
+
+        locator = locator.toString().split('.');
+
+        return Y.bind(function (result) {
+            return result && this._getObjectValue(result, locator);
+        }, this);
     },
 
     /**
@@ -825,27 +1080,11 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Handles DataSource responses and fires the <code>results</code> event.
-     *
-     * @method _onResponse
-     * @param {EventFacade} e
-     * @protected
-     */
-    _onResponse: function (e) {
-        var query = e && e.callback && e.callback.query;
-
-        // Ignore stale responses that aren't for the current query.
-        if (query && query === this.get(QUERY)) {
-            this._parseResponse(query, e.response, e.data);
-        }
-    },
-
-    /**
      * Handles <code>valueChange</code> events on the input node and fires a
      * <code>query</code> event when the input value meets the configured
      * criteria.
      *
-     * @method _onValueChange
+     * @method _onInputValueChange
      * @param {EventFacade} e
      * @protected
      */
@@ -859,6 +1098,20 @@ AutoCompleteBase.prototype = {
         }
 
         this.set(VALUE, newVal, {src: AutoCompleteBase.UI_SRC});
+    },
+
+    /**
+     * Handles DataSource responses and fires the <code>results</code> event.
+     *
+     * @method _onResponse
+     * @param {EventFacade} e
+     * @protected
+     */
+    _onResponse: function (query, e) {
+        // Ignore stale responses that aren't for the current query.
+        if (query && query === this.get(QUERY)) {
+            this._parseResponse(query, e.response, e.data);
+        }
     },
 
     // -- Protected Default Event Handlers -------------------------------------
@@ -884,19 +1137,23 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defQueryFn: function (e) {
-        var dataSource = this.get('dataSource'),
-            query      = e.query;
+        var query = e.query,
+            request,
+            requestTemplate,
+            source = this.get('source');
 
         this._set(QUERY, query);
 
 
-        if (query && dataSource) {
+        if (query && source) {
+            requestTemplate = this.get('requestTemplate');
+            request         = requestTemplate ? requestTemplate(query) : query;
 
-            dataSource.sendRequest({
-                request: this.get('requestTemplate')(query),
+
+            source.sendRequest({
+                request: request,
                 callback: {
-                    query  : query,
-                    success: Y.bind(this._onResponse, this)
+                    success: Y.bind(this._onResponse, this, query)
                 }
             });
         }
