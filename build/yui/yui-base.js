@@ -78,6 +78,8 @@ if (typeof YUI != 'undefined') {
         return Y;
     };
 
+(function() {
+
     var proto, prop,
         VERSION = '@VERSION@',
         BASE = 'http://yui.yahooapis.com/',
@@ -923,6 +925,8 @@ proto = {
     instanceOf: instanceOf
 };
 
+
+
     YUI.prototype = proto;
 
     // inheritance utilities are not available yet
@@ -954,6 +958,8 @@ proto = {
     if (typeof exports == 'object') {
         exports.YUI = YUI;
     }
+
+}());
 
 
 /**

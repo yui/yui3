@@ -78,6 +78,8 @@ if (typeof YUI != 'undefined') {
         return Y;
     };
 
+(function() {
+
     var proto, prop,
         VERSION = '@VERSION@',
         BASE = 'http://yui.yahooapis.com/',
@@ -943,6 +945,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     instanceOf: instanceOf
 };
 
+
+
     YUI.prototype = proto;
 
     // inheritance utilities are not available yet
@@ -974,6 +978,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     if (typeof exports == 'object') {
         exports.YUI = YUI;
     }
+
+}());
 
 
 /**
