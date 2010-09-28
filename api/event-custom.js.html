@@ -106,11 +106,11 @@
 <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">each</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">f</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="nx">batch</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">f</span><span class="p">);</span>
+                <span class="nx">h</span><span class="p">.</span><span class="nx">batch</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">f</span><span class="p">);</span>
             <span class="p">});</span>
         <span class="p">}</span>
     <span class="p">},</span>

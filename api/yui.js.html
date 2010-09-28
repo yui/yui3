@@ -127,6 +127,8 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
     <span class="p">};</span>
 
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
     <span class="kd">var</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
         <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="p">,</span>
         <span class="nx">BASE</span> <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span><span class="p">,</span>
@@ -992,6 +994,8 @@
     <span class="nx">instanceOf</span><span class="o">:</span> <span class="nx">instanceOf</span>
 <span class="p">};</span>
 
+
+
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">proto</span><span class="p">;</span>
 
     <span class="c1">// inheritance utilities are not available yet</span>
@@ -1023,6 +1027,8 @@
     <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">exports</span><span class="p">.</span><span class="nx">YUI</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
     <span class="p">}</span>
+
+<span class="p">}());</span>
 
 
 <span class="cm">/**</span>
