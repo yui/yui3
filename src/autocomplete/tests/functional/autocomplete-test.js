@@ -96,28 +96,9 @@ baseSuite.add(new Y.Test.Case({
         delete this.inputNode;
     },
 
-    'dataSource should only accept dataSource-like objects and null': function () {
-        var ds = {sendRequest: function () {}};
-
-        Assert.isUndefined(this.ac.get('dataSource'));
-
-        this.ac.set('dataSource', {});
-        Assert.isUndefined(this.ac.get('dataSource'));
-
-        this.ac.set('dataSource', ds);
-        Assert.areSame(ds, this.ac.get('dataSource'));
-
-        this.ac.set('dataSource', null);
-        Assert.isNull(this.ac.get('dataSource'));
-    },
-
     'inputNode should be writable only on init': function () {
         this.ac.set('inputNode', Y.Node.create('<input>'));
         Assert.areSame(this.inputNode, this.ac.get('inputNode'));
-    },
-
-    'requestTemplate should be encodeURIComponent by default': function () {
-        Assert.areSame(encodeURIComponent, this.ac.get('requestTemplate'));
     },
 
     'requestTemplate should accept a custom template function': function () {
@@ -144,11 +125,6 @@ baseSuite.add(new Y.Test.Case({
 
         Assert.areSame('/ac?q=foo&a=aardvark', rt('foo'));
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
-    },
-
-    'requestTemplate function should replace \\{query} with the literal string {query}': function () {
-        this.ac.set('requestTemplate', 'foo\\{query}bar');
-        Assert.areSame('foo{query}bar', this.ac.get('requestTemplate')('test'));
     }
 }));
 
