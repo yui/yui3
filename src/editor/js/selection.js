@@ -369,6 +369,8 @@
 
         html = Y.one('body').get('innerHTML');
         
+        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
+
         nodes.each(function(n) {
             n.addClass(n._yuid);
             n.setStyle(FONT_FAMILY, '');
@@ -480,7 +482,7 @@
         if (cur.size()) {
             cur.each(function(c) {
                 var html = c.get('innerHTML');
-                if (html == '&nbsp' || html == '<br>') {
+                if (html == '&nbsp;' || html == '<br>') {
                     if (c.previous() || c.next()) {
                         c.remove();
                     }

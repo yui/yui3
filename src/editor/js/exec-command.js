@@ -15,6 +15,7 @@
         };
 
         Y.extend(ExecCommand, Y.Base, {
+            _lastKey: null,
             /**
             * An internal reference to the instance of the frame plugged into.
             * @private
@@ -74,6 +75,10 @@
                         return this.exec._command(action, value);
                     }
                 });
+
+                this.get('host').on('dom:keypress', Y.bind(function(e) {
+                    this._lastKey = e.keyCode;
+                }, this));
             }
         }, {
             /**
@@ -282,22 +287,16 @@
                 * @param {String} val The font name to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                //Removed from commands list, so the default is executed..
-                fontname_enh: function(cmd, val) {
-                    var inst = this.getInstance(),
-                        sel = new inst.Selection(), n;
+                fontname: function(cmd, val) {
+                    this._command('fontname', val);
 
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('fontFamily', val);
-                            n = sel.anchorNode;
-                        } else {
-                            n = this.command('inserthtml', '<span style="font-family: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection();
+                    
+                    if (sel.isCollapsed && (this._lastKey != 32)) {
+                        if (sel.anchorNode.test('font')) {
+                            sel.anchorNode.set('face', val);
                         }
-                        return n;
-                    } else {
-                        return this._command('fontname', val);
                     }
                 },
                 /**
@@ -308,23 +307,16 @@
                 * @param {String} val The font size to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                //Removed from commands list, so the default is executed..
-                fontsize_enh: function(cmd, val) {
-                    var inst = this.getInstance(),
-                        sel = new inst.Selection(), n, prev;
+                fontsize: function(cmd, val) {
+                    this._command('fontsize', val);
 
-                    if (sel.isCollapsed) {
-                        n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
-                        prev = n.get('previousSibling');
-                        if (prev && prev.get('nodeType') === 3) {
-                            if (prev.get('length') < 2) {
-                                prev.remove();
-                            }
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection();
+                    
+                    if (sel.isCollapsed && (this._lastKey != 32)) {
+                        if (sel.anchorNode.test('font')) {
+                            sel.anchorNode.set('size', val);
                         }
-                        sel.selectNode(n.get('firstChild'), true, false);
-                        return n;
-                    } else {
-                        return this._command('fontsize', val);
                     }
                 }
             }
