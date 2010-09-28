@@ -360,11 +360,11 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
-    each: function(f) {
-        f(this);
+    batch: function(f, c) {
+        f.call(c || this, this);
         if (Y.Lang.isArray(this.evt)) {
             Y.Array.each(this.evt, function(h) {
-                h.each(f);
+                h.batch.call(c || h, f);
             });
         }
     },
@@ -1266,7 +1266,7 @@ ET.prototype = {
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
-        handle.each(function(hand) {
+        handle.batch(function(hand) {
             if (hand.sub) {
                 hand.sub.once = true;
             }
