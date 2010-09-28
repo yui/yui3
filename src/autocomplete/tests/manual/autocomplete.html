@@ -68,7 +68,7 @@
     </div>
 
     <fieldset id="data-sources">
-        <legend>DataSource</legend>
+        <legend>Source</legend>
         <div>
             <input type="radio" id="ds-none" name="ds" value="none">
             <label for="ds-none">None</label>
@@ -131,9 +131,6 @@ var Y = YUI({
     'autocomplete-filters',
     'autocomplete-highlighters',
     'console-filters',
-    'datasource-get',
-    'datasource-jsonschema',
-    'datasource-local',
     'dump',
     'event-delegate',
     'substitute',
@@ -151,41 +148,10 @@ new Y.Console({
 var autoComplete = new Y.AutoCompleteList({
         boundingBox: '#ac-list',
         inputNode: '#ac-input'
-    }),
-
-    dataSourceFlickr = new Y.DataSource.Get({
-        source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
-    }),
-
-    dataSourceLocal = new Y.DataSource.Local({
-        source: ExampleData.arrayStates
-    }),
-
-    dataSourceSearch = new Y.DataSource.Get({
-        source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
     });
 
 // For easier debugging.
 Y.ac = autoComplete;
-
-// -- DataSource config --------------------------------------------------------
-dataSourceFlickr.plug({
-    fn: Y.Plugin.DataSourceJSONSchema,
-    cfg: {
-        schema: {
-            resultListLocator: 'query.results.photo'
-        }
-    }
-});
-
-dataSourceSearch.plug({
-    fn: Y.Plugin.DataSourceJSONSchema,
-    cfg: {
-        schema: {
-            resultListLocator: 'query.results.Result'
-        }
-    }
-});
 
 // -- UI stuff -----------------------------------------------------------------
 var filtersDiv      = Y.one('#filters>div'),
@@ -307,10 +273,9 @@ function useLocal() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource     : dataSourceLocal,
-        requestTemplate: '{query}',
-        resultLocator  : null,
-        resultFormatter: null
+        resultTextLocator: null,
+        resultFormatter  : null,
+        source           : ExampleData.arrayStates
     });
 }
 
@@ -320,9 +285,9 @@ function useNone() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource     : null,
-        resultLocator  : null,
-        resultFormatter: null
+        source           : null,
+        resultTextLocator: null,
+        resultFormatter  : null
     });
 }
 
@@ -332,10 +297,10 @@ function useFlickr() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource     : dataSourceFlickr,
-        requestTemplate: 'q=' + encodeURIComponent('select * from flickr.photos.search where tags="') + '{query}' + encodeURIComponent('"'),
-        resultLocator  : 'title',
-        resultFormatter: flickrFormatter
+        resultFormatter  : flickrFormatter,
+        resultListLocator: 'query.results.photo',
+        resultTextLocator: 'title',
+        source           : 'http://query.yahooapis.com/v1/public/yql?format=json&callback={callback}&q=' + encodeURIComponent('select * from flickr.photos.search where tags="') + '{query}' + encodeURIComponent('"')
     });
 }
 
@@ -345,10 +310,10 @@ function useSearch() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        dataSource     : dataSourceSearch,
-        requestTemplate: 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'),
-        resultLocator  : null,
-        resultFormatter: null
+        resultFormatter  : null,
+        resultListLocator: 'query.results.Result',
+        resultTextLocator: null,
+        source           : 'http://query.yahooapis.com/v1/public/yql?format=json&callback={callback}&q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"')
     });
 }
 
