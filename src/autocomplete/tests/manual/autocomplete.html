@@ -133,7 +133,7 @@ var Y = YUI({
     'console-filters',
     'dump',
     'event-delegate',
-    'substitute',
+    'yql',
 function (Y) {
 
 Y.one('#ac-form').reset();
@@ -145,9 +145,9 @@ new Y.Console({
 }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
 // -- AutoComplete setup -------------------------------------------------------
-var autoComplete = new Y.AutoCompleteList({
+var autoComplete = new Y.AutoComplete({
         boundingBox: '#ac-list',
-        inputNode: '#ac-input'
+        inputNode  : '#ac-input'
     });
 
 // For easier debugging.
@@ -221,9 +221,9 @@ autoComplete.get('inputNode').focus();
 // -- UI functions -------------------------------------------------------------
 function flickrFormatter(query, raw, highlighted) {
     return Y.Array.map(raw, function (result, i) {
-        var imgUrl = Y.substitute('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result);
+        var imgUrl = Y.Lang.sub('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result);
 
-        result.linkUrl = Y.substitute('http://www.flickr.com/photos/{owner}/{id}', result);
+        result.linkUrl = Y.Lang.sub('http://www.flickr.com/photos/{owner}/{id}', result);
 
         return '<div class="flickr">' +
                  '<img src="' + imgUrl + '" alt="thumbnail">' +
@@ -273,8 +273,8 @@ function useLocal() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        resultTextLocator: null,
         resultFormatter  : null,
+        resultTextLocator: null,
         source           : ExampleData.arrayStates
     });
 }
@@ -285,9 +285,9 @@ function useNone() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
-        source           : null,
+        resultFormatter  : null,
         resultTextLocator: null,
-        resultFormatter  : null
+        source           : null
     });
 }
 
@@ -298,9 +298,8 @@ function useFlickr() {
 
     autoComplete.setAttrs({
         resultFormatter  : flickrFormatter,
-        resultListLocator: 'query.results.photo',
         resultTextLocator: 'title',
-        source           : 'http://query.yahooapis.com/v1/public/yql?format=json&callback={callback}&q=' + encodeURIComponent('select * from flickr.photos.search where tags="') + '{query}' + encodeURIComponent('"')
+        source           : 'select * from flickr.photos.search where tags="{query}"'
     });
 }
 
@@ -311,9 +310,8 @@ function useSearch() {
 
     autoComplete.setAttrs({
         resultFormatter  : null,
-        resultListLocator: 'query.results.Result',
         resultTextLocator: null,
-        source           : 'http://query.yahooapis.com/v1/public/yql?format=json&callback={callback}&q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"')
+        source           : 'select * from search.suggest where query="{query}"'
     });
 }
 

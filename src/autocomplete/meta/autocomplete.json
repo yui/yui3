@@ -41,6 +41,11 @@
                     }
                 },
 
+                "optional": [
+                    "jsonp",
+                    "yql"
+                ],
+
                 "requires": [
                     "array-extras",
                     "event-valuechange",

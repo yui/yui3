@@ -48,7 +48,7 @@ var Y = YUI({
     comboBase: 'http://fuji.jetpants.com/yui/yui3/combo?',
     combine  : true,
     root     : 'build/'
-}).use('autocomplete', 'autocomplete-highlighters', function (Y) {
+}).use('autocomplete', 'autocomplete-highlighters', 'yql', function (Y) {
 
 // Assigning the instance to Y.ac for easier console tinkering.
 Y.ac = new Y.AutoCompleteList({
@@ -56,8 +56,7 @@ Y.ac = new Y.AutoCompleteList({
     inputNode        : '#ac-input',
     render           : true,
     resultHighlighter: Y.AutoCompleteHighlighters.phraseMatch,
-    resultListLocator: 'query.results.Result',
-    source           : 'http://query.yahooapis.com/v1/public/yql?format=json&q=select%20*%20from%20search.suggest%20where%20query%3D%22{query}%22&callback={callback}'
+    source           : 'select * from search.suggest where query="{query}"'
 });
 
 });
