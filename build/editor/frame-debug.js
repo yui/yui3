@@ -72,6 +72,7 @@ YUI.add('frame', function(Y) {
                 LANG: this.get('lang'),
                 TITLE: this.get('title'),
                 META: Frame.META,
+                LINKED_CSS: this.get('linkedcss'),
                 CONTENT: this.get('content'),
                 BASE_HREF: this.get('basehref'),
                 DEFAULT_CSS: Frame.DEFAULT_CSS,
@@ -344,6 +345,27 @@ YUI.add('frame', function(Y) {
             }
             return html;
         },
+        _getLinkedCSS: function(urls) {
+            if (!Y.Lang.isArray(urls)) {
+                urls = [urls];
+            }
+            var str = '';
+            if (!this._ready) {
+                Y.each(urls, function(v) {
+                    str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                });
+            } else {
+                str = urls;
+            }
+            return str;
+        },
+        _setLinkedCSS: function(css) {
+            if (this._ready) {
+                var inst = this.getInstance();
+                inst.Get.css(css);
+            }
+            return css;
+        },
         /**
         * @private
         * @method _setExtraCSS
@@ -602,7 +624,7 @@ YUI.add('frame', function(Y) {
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/>{LINKED_CSS}<style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
         /**
         * @static
         * @property DOC_TYPE
@@ -723,6 +745,16 @@ YUI.add('frame', function(Y) {
                     }
                     return id;
                 }
+            },
+            /**
+            * @attribute linkedcss
+            * @description An array of url's to external linked style sheets
+            * @type String
+            */
+            linkedcss: {
+                value: '',
+                getter: '_getLinkedCSS',
+                setter: '_setLinkedCSS'
             },
             /**
             * @attribute extracss
