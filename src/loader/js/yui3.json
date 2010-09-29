@@ -64,6 +64,10 @@
     "autocomplete": {
         "submodules": {
             "autocomplete-base": {
+                "optional": [
+                    "jsonp", 
+                    "yql"
+                ], 
                 "plugins": {
                     "autocomplete-filters": {
                         "path": "autocomplete/autocomplete-filters-min.js", 

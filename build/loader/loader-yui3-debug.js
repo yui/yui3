@@ -73,6 +73,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "autocomplete": {
         "submodules": {
             "autocomplete-base": {
+                "optional": [
+                    "jsonp", 
+                    "yql"
+                ], 
                 "plugins": {
                     "autocomplete-filters": {
                         "path": "autocomplete/autocomplete-filters-min.js", 
@@ -1418,7 +1422,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'f79c8ab760c949adf7e1eb0c602aff58';
+YUI.Env[Y.version].md5 = '465579f9f29d79b3548ffc3c857d0358';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
