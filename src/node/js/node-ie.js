@@ -11,6 +11,16 @@ if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     };
 }
 
+// IE throws an error when calling focus() on an element that's invisible, not
+// displayed, or disabled.
+Y.Node.prototype.focus = function () {
+    try {
+        this._node.focus();
+    } catch (e) {
+        Y.log('error focusing node: ' + e.toString(), 'error', 'node');
+    }
+};
+
 // IE throws error when setting input.type = 'hidden',
 // input.setAttribute('type', 'hidden') and input.attributes.type.value = 'hidden'
 Y.Node.ATTRS.type = {
