@@ -12,18 +12,18 @@
 		    filter: 'debug'
 		};
 	</script>
-	<script type="text/javascript">	
+	<script type="text/javascript">
 		YUI(YUI_config).use('dd', function (Y) {
-			
 			alert ('First block is ready');
-			
+
+            Y.use('dd', function() { console.log(Y.DD); });
+            Y.use('dd', function() { console.log(Y.DD); });
+            Y.use('dd', function() { console.log(Y.DD); });
 		});
 	</script>
-	<script type="text/javascript">	
+	<script type="text/javascript">
 		YUI(YUI_config).use('node', function (Y) {
-			
 		    alert ('Second block is ready...');
-			
 		});
 	</script>
 
