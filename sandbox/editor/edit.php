@@ -363,8 +363,19 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
+        linkedcss: [
+            'http://yui.yahooapis.com/2.8.1/build/reset/reset.css',
+            'http://yui.yahooapis.com/2.8.1/build/fonts/fonts.css',
+            'http://yui.yahooapis.com/2.8.1/build/grids/grids.css'
+        ],
         extracss: 'body { color: red; } p { border: 1px solid green; padding: .25em; margin: 1em; } #yui-cursor { border: 1px solid purple; }'
     });
+
+    setTimeout(function() {
+        console.log('Injecting');
+        editor.set('linkedcss', ['http://blog.davglass.com/files/yui/css/davglass.css']);
+    }, 5000);
+
     editor.after('nodeChange', function(e) {
         //console.log('changedType: ' + e.changedType);
         //if (e.changedType !== 'execcommand') {

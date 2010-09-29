@@ -29,6 +29,7 @@
                 use: EditorBase.USE,
                 dir: this.get('dir'),
                 extracss: this.get('extracss'),
+                linkedcss: this.get('linkedcss'),
                 host: this
             }).plug(Y.Plugin.ExecCommand);
 
@@ -669,6 +670,20 @@
             dir: {
                 writeOnce: true,
                 value: 'ltr'
+            },
+            /**
+            * @attribute linkedcss
+            * @description An array of url's to external linked style sheets
+            * @type String
+            */            
+            linkedcss: {
+                value: false,
+                setter: function(css) {
+                    if (this.frame) {
+                        this.frame.set('linkedcss', css);
+                    }
+                    return css;
+                }
             },
             /**
             * @attribute extracss
