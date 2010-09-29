@@ -193,7 +193,6 @@
             <span class="p">}</span>
         <span class="p">},</span>
 
-        <span class="nx">serviced</span> <span class="o">=</span> <span class="p">{},</span>
         <span class="nx">ALREADY_DONE</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
 
 <span class="c1">//  Stamp the documentElement (HTML) with a class of &quot;yui-loaded&quot; to</span>
@@ -294,6 +293,7 @@
                 <span class="nx">_uidx</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="nx">_guidp</span><span class="o">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span>
                 <span class="nx">_loaded</span><span class="o">:</span> <span class="p">{},</span>
+                <span class="nx">serviced</span><span class="o">:</span> <span class="p">{},</span>
                 <span class="nx">getBase</span><span class="o">:</span> <span class="nx">G_ENV</span> <span class="o">&amp;&amp;</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">getBase</span> <span class="o">||</span>
         <span class="kd">function</span><span class="p">(</span><span class="nx">srcPattern</span><span class="p">,</span> <span class="nx">comboPattern</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">match</span><span class="p">;</span>
@@ -622,11 +622,11 @@
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">key</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">join</span><span class="p">();</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">ALREADY_DONE</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_use</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
                 <span class="p">});</span>
             <span class="p">}</span>
