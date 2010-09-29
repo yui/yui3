@@ -1378,6 +1378,16 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             html = '<link id="dyn-link-3" href="#" rel="stylesheet">'
             Y.one('head').prepend(html);
             Assert.isNotNull(document.getElementById('dyn-link-3'));
+        },
+
+        test_focus: function () {
+            var button = document.createElement('button');
+            button.style.visibility = 'hidden';
+            document.body.appendChild(button);
+
+            // This will throw in IE, but the focus() wrapper should catch the
+            // exception.
+            Y.one(button).focus();
         }
 
     })); 
