@@ -79,6 +79,8 @@ if (typeof YUI != 'undefined') {
         return Y;
     };
 
+(function() {
+
     var proto, prop,
         VERSION = '@VERSION@',
         BASE = 'http://yui.yahooapis.com/',
@@ -141,7 +143,9 @@ if (typeof YUI != 'undefined') {
                     r[i] = s[i];
                 }
             }
-        };
+        },
+
+        ALREADY_DONE = { success: true };
 
 //  Stamp the documentElement (HTML) with a class of "yui-loaded" to
 //  enable styles that need to key off of JS being enabled.
@@ -241,6 +245,7 @@ proto = {
                 _uidx: 0,
                 _guidp: 'y',
                 _loaded: {},
+                serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
         function(srcPattern, comboPattern) {
             var b, nodes, i, src, match;
@@ -465,7 +470,7 @@ proto = {
             mods = YUI.Env.mods,
             Y = this,
             done = Y.Env._attached,
-            len = r.length;
+            len = r.length, loader;
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
@@ -473,7 +478,10 @@ proto = {
                 done[name] = true;
                 mod = mods[name];
                 if (!mod) {
-                    Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                    loader = Y.Env._loader;
+                    if (!loader || !loader.moduleInfo[name]) {
+                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                    }
                 } else {
                     details = mod.details;
                     req = details.requires;
@@ -548,6 +556,48 @@ proto = {
      * @return {YUI} the YUI instance.
      */
     use: function() {
+        var args = SLICE.call(arguments, 0),
+            callback = args[args.length - 1],
+            Y = this,
+            key;
+
+        // The last argument supplied to use can be a load complete callback
+        if (Y.Lang.isFunction(callback)) {
+            args.pop();
+        } else {
+            callback = null;
+        }
+
+        if (Y._loading) {
+            Y._useQueue = Y._useQueue || new Y.Queue();
+            Y._useQueue.add([args, callback]);
+        } else {
+            key = args.join();
+
+            if (Y.Env.serviced[key]) {
+                Y._notify(callback, ALREADY_DONE, args);
+            } else {
+                Y._use(args, function(Y, response) {
+                    Y.Env.serviced[key] = true;
+                    Y._notify(callback, response, args);
+                });
+            }
+        }
+
+        return Y;
+    },
+
+    _notify: function(callback, response, args) {
+        if (callback) {
+            try {
+                callback(this, response);
+            } catch (e) {
+                this.error('use callback error', e, args);
+            }
+        }
+    },
+
+    _use: function(args, callback) {
 
         if (!this.Array) {
             this._attach(['yui-base']);
@@ -556,13 +606,13 @@ proto = {
         var len, loader, handleBoot,
             Y = this,
             G_ENV = YUI.Env,
-            args = SLICE.call(arguments, 0),
+            // args = SLICE.call(arguments, 0),
             mods = G_ENV.mods,
             Env = Y.Env,
             used = Env._used,
             queue = G_ENV._loaderQueue,
             firstArg = args[0],
-            callback = args[args.length - 1],
+            // callback = args[args.length - 1],
             YArray = Y.Array,
             config = Y.config,
             boot = config.bootstrap,
@@ -616,22 +666,14 @@ proto = {
                 });
             },
 
-            notify = function(response) {
-                if (callback) {
-                    try {
-                        callback(Y, response);
-                    } catch (e) {
-                        Y.error('use callback error', e, args);
-                    }
-                }
-            },
 
             handleLoader = function(fromLoader) {
                 var response = fromLoader || {
                         success: true,
                         msg: 'not dynamic'
                     },
-                    newData, redo, origMissing,
+                    // newData,
+                    redo, origMissing,
                     ret = true,
                     data = response.data;
 
@@ -661,45 +703,42 @@ proto = {
 
                     // newData = data.concat();
                     // newData = missing.concat();
-                    newData = args.concat();
 
-                    newData.push(function() {
+                    // newData = args.concat();
+
+                    // newData.push(function() {
+                    //     Y.log('Nested USE callback: ' + data, 'info', 'yui');
+                    //     if (Y._attach(data)) {
+                    //         notify(response);
+                    //     }
+                    // });
+
+                    Y._loading = false;
+                    // Y.use.apply(Y, newData);
+                    Y._use(args, function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
-                            notify(response);
+                            Y._notify(callback, response, data);
                         }
                     });
-                    Y._loading = false;
-                    Y.use.apply(Y, newData);
                 } else {
                     if (data) {
                         ret = Y._attach(data);
                     }
                     if (ret) {
-                        notify(response);
+                        Y._notify(callback, response, args);
                     }
                 }
 
                 if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    Y.use.apply(Y, Y._useQueue.next());
+                    // Y.use.apply(Y, Y._useQueue.next());
+                    Y._use.apply(Y, Y._useQueue.next());
                 }
             };
 
-
-        if (Y._loading) {
-            Y._useQueue = Y._useQueue || new Y.Queue();
-            Y._useQueue.add(args);
-            return Y;
-        }
-
 // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
 
-        // The last argument supplied to use can be a load complete callback
-        if (Y.Lang.isFunction(callback)) {
-            args.pop();
-        } else {
-            callback = null;
-        }
+
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
@@ -771,14 +810,15 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
             Y._loading = true;
-            args = YArray(arguments, 0, true);
+            // args = YArray(arguments, 0, true);
 
             handleBoot = function() {
                 Y._loading = false;
                 queue.running = false;
                 Env.bootstrapped = true;
                 if (Y._attach(['loader'])) {
-                    Y.use.apply(Y, args);
+                    // Y.use.apply(Y, args);
+                    Y._use(args, callback);
                 }
             };
 
@@ -944,6 +984,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     instanceOf: instanceOf
 };
 
+
+
     YUI.prototype = proto;
 
     // inheritance utilities are not available yet
@@ -975,6 +1017,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     if (typeof exports == 'object') {
         exports.YUI = YUI;
     }
+
+}());
 
 
 /**
@@ -7188,11 +7232,11 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
-    each: function(f) {
-        f(this);
+    batch: function(f, c) {
+        f.call(c || this, this);
         if (Y.Lang.isArray(this.evt)) {
             Y.Array.each(this.evt, function(h) {
-                h.each(f);
+                h.batch.call(c || h, f);
             });
         }
     },
@@ -8094,7 +8138,7 @@ ET.prototype = {
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
-        handle.each(function(hand) {
+        handle.batch(function(hand) {
             if (hand.sub) {
                 hand.sub.once = true;
             }

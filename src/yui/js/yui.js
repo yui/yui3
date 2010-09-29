@@ -144,7 +144,6 @@ if (typeof YUI != 'undefined') {
             }
         },
 
-        serviced = {},
         ALREADY_DONE = { success: true };
 
 //  Stamp the documentElement (HTML) with a class of "yui-loaded" to
@@ -245,6 +244,7 @@ proto = {
                 _uidx: 0,
                 _guidp: 'y',
                 _loaded: {},
+                serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
         function(srcPattern, comboPattern) {
             var b, nodes, i, src, match;
@@ -573,11 +573,11 @@ proto = {
         } else {
             key = args.join();
 
-            if (serviced[key]) {
+            if (Y.Env.serviced[key]) {
                 Y._notify(callback, ALREADY_DONE, args);
             } else {
                 Y._use(args, function(Y, response) {
-                    serviced[key] = true;
+                    Y.Env.serviced[key] = true;
                     Y._notify(callback, response, args);
                 });
             }
