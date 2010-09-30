@@ -56,7 +56,7 @@
 <span class="cm"> */</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">_YUI</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="cm">/**</span>
@@ -77,14 +77,14 @@
 <span class="cm"> */</span>
     <span class="cm">/*global YUI*/</span>
     <span class="cm">/*global YUI_config*/</span>
-    <span class="kd">var</span> <span class="nx">instanceOf</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">type</span><span class="p">));</span>
-        <span class="p">},</span>
-    <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span>
             <span class="nx">l</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">instanceOf</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">type</span><span class="p">));</span>
+            <span class="p">},</span>
             <span class="nx">gconf</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">)))</span> <span class="p">{</span>
@@ -123,6 +123,8 @@
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
         <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span> <span class="o">=</span> <span class="nx">instanceOf</span><span class="p">;</span>
 
         <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
     <span class="p">};</span>
@@ -343,9 +345,9 @@
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="o">++</span><span class="nx">G_ENV</span><span class="p">.</span><span class="nx">_yidx</span><span class="p">;</span>
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_guidp</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;yui_&#39;</span> <span class="o">+</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
                              <span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">time</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\./g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">_YUI</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="nx">G_ENV</span> <span class="o">=</span> <span class="nx">_YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
+                <span class="nx">G_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">+=</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">_yidx</span><span class="p">;</span>
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_uidx</span> <span class="o">+=</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">_uidx</span><span class="p">;</span>
 
@@ -354,6 +356,8 @@
                         <span class="nx">Env</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">G_ENV</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
+
+                <span class="k">delete</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span><span class="p">;</span>
             <span class="p">}</span>
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
@@ -1020,7 +1024,7 @@
         <span class="k">delete</span> <span class="nx">instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
         <span class="k">delete</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
         <span class="k">delete</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
-    <span class="p">},</span>
+    <span class="p">}</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * instanceof check for objects that works around</span>
@@ -1029,7 +1033,6 @@
 <span class="cm">     * @method instanceOf</span>
 <span class="cm">     * @since 3.3.0</span>
 <span class="cm">     */</span>
-    <span class="nx">instanceOf</span><span class="o">:</span> <span class="nx">instanceOf</span>
 <span class="p">};</span>
 
 
