@@ -494,6 +494,26 @@ YUI.add('frame', function(Y) {
             return this;
         },
         /**
+        * @private
+        * @method _handleFocus
+        * @description Does some tricks on focus to set the proper cursor position.
+        */
+        _handleFocus: function() {
+            var inst = this.getInstance(),
+                sel = new inst.Selection();
+
+            if (sel.anchorNode) {
+                var n = sel.anchorNode,
+                    c = n.get('childNodes');
+
+                if (c.size() == 1) {
+                    if (c.item(0).test('br')) {
+                        sel.selectNode(n, true, false);
+                    }
+                }
+            }
+        },
+        /**
         * @method focus
         * @description Set the focus to the iframe
         * @param {Function} fn Callback function to execute after focus happens        
@@ -504,6 +524,9 @@ YUI.add('frame', function(Y) {
             if (Y.UA.ie) {
                 Y.one('win').focus();
                 this.getInstance().one('win').focus();
+                if (fn === true) {
+                    this._handleFocus();
+                }
                 if (Y.Lang.isFunction(fn)) {
                     fn();
                 }
@@ -512,6 +535,9 @@ YUI.add('frame', function(Y) {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
+                        if (fn === true) {
+                            this._handleFocus();
+                        }
                         if (Y.Lang.isFunction(fn)) {
                             fn();
                         }
@@ -580,11 +606,7 @@ YUI.add('frame', function(Y) {
         * @description The default css used when creating the document.
         * @type String
         */
-        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
-        
-        //DEFAULT_CSS: 'html { } body { margin: -15px 0 0 -15px; padding: 7px 0 0 15px; display: block; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
-        //DEFAULT_CSS: 'html { height: 95%; } body { height: 100%; padding: 7px; margin: 0 0 0 -7px; postion: relative; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
-        //DEFAULT_CSS: 'html { margin: 0; padding: 0; border: none; border-size: 0; } body { height: 97%; margin: 0; padding: 0; display: block; background-color: gray; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0; *height: 0; *width: 0; *font-size: 0; *overflow: hidden; }',
         /**
         * @static
         * @property HTML

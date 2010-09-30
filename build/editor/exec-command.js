@@ -288,7 +288,6 @@ YUI.add('exec-command', function(Y) {
                 */
                 fontname: function(cmd, val) {
                     this._command('fontname', val);
-
                     var inst = this.getInstance(),
                         sel = new inst.Selection();
                     
