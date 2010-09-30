@@ -1135,7 +1135,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "recordset-base": {
                 "requires": [
-                    "base"
+                    "base", 
+                    "collection"
                 ]
             }, 
             "recordset-filter": {
@@ -1422,7 +1423,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '465579f9f29d79b3548ffc3c857d0358';
+YUI.Env[Y.version].md5 = '2c81f35c64747ee063f5c9872474f368';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

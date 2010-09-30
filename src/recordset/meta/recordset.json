@@ -2,7 +2,7 @@
     "recordset": {
 		"submodules": {
 			"recordset-base": {
-				"requires": ["base"]
+				"requires": ["base", "collection"]
 			},
 			"recordset-sort": {
 				"requires": [

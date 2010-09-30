@@ -98,6 +98,7 @@
 				var newRecord;
 				
 				//Single Record
+
 				newRecord = this.rs.getRecord(1);
 				Y.ObjectAssert.areEqual(newRecord.getValue(), this.initialData[1]);
 				
@@ -586,13 +587,29 @@
 			},
 			
 			//---------------------------------------------
+		    // ArrayList Methods
+		    //---------------------------------------------
+			
+			
+			testArrayList: function() {
+				Y.Assert.isFalse(this.rs.isEmpty());
+				this.rs.empty();
+				Y.Assert.isTrue(this.rs.isEmpty());
+			},
+			
+			testSize: function() {
+				Y.Assert.areEqual(3, this.rs.getLength());
+			},
+			
+			//---------------------------------------------
 		    // Filter Plugin
 		    //---------------------------------------------
 		
 			testFilterPlugin: function() {
 				this.rs.plug(Y.Plugin.RecordsetFilter);
-				this.rs.filter.alert();
-			}
+				//this.rs.filter.alert();
+			},
+			
 			/*
 			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
 			testFilterByValidator: function() {

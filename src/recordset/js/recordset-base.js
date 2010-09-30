@@ -1,54 +1,5 @@
-function Recordset(config) {
-    Recordset.superclass.constructor.apply(this, arguments);
-}
-
-/**
- * TODO: Implement methods: hasRecord(), reverseRecords(), sortRecords(), toString(), getLength()
- */
-
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static=
- * @final
- * @value "recordset"
- */
-Recordset.NAME = "recordset";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Recordset Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Recordset.ATTRS = {
-    records: {
-        value: null,
-        setter: "_setRecords"
-    }
-};
-
-/* Recordset extends Base */
-Y.extend(Recordset, Y.Base, {
-    _setRecords: function(allData) {
-        var records = [];
-
-        function initRecord(oneData){
-			
-			//This part can probably get condensed a bit - very verbose.
-			if (!(oneData instanceof Y.Record)) {
-            	records.push(new Y.Record({data:oneData}));
-			}
-			
-			else {
-				records.push(oneData);
-			}
-        }
-
-        Y.Array.each(allData, initRecord);
-        return records;
-    },
+var ArrayList = Y.ArrayList;
+var Recordset = Y.Base.create('recordset', Y.Base, [], {
 
     initializer: function() {
 	
@@ -70,7 +21,7 @@ Y.extend(Recordset, Y.Base, {
      */
 	_add: function(aRecord, index) {
 		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
-		this.get('records').splice(index,0,aRecord);
+		this._items.splice(index,0,aRecord);
 		
 		return aRecord;
 	},
@@ -245,7 +196,7 @@ Y.extend(Recordset, Y.Base, {
      * @public
      */
     getRecord: function(index) {
-        return this.get("records")[index];
+        return this._items[index];
     },
 	
 	/**
@@ -263,13 +214,13 @@ Y.extend(Recordset, Y.Base, {
 		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
 		
 		for(; i<range; i++) {
-			returnedRecords.push(this.get('records')[index+i]);
+			returnedRecords.push(this._items[index+i]);
 		}
 		return returnedRecords;
 	},
 	
 	getLength: function() {
-		return this.get('records').length;
+		return this.size();
 	},
 		
 	/**
@@ -306,7 +257,7 @@ Y.extend(Recordset, Y.Base, {
 		//Passing in array of object literals for oData
 		if (Y.Lang.isArray(oData)) {
 			newRecords = [];
-			idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
+			idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
 			
 			for(i=0; i < oData.length; i++) {
 					oRecord = new Y.Record({data:oData[i]});
@@ -345,11 +296,11 @@ Y.extend(Recordset, Y.Base, {
 		var remRecords=[];
 		
 		//Default is to only remove the last record - the length is always 1 greater than the last index
-		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length-1;
+		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : (this.size()-1);
 		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
 
 		//Remove records and store them in remRecords
-		remRecords = this.get('records').splice(index,range);
+		remRecords = this._items.splice(index,range);
 		
 		//Fire event
 		this._recordRemoved(remRecords, index);
@@ -366,7 +317,7 @@ Y.extend(Recordset, Y.Base, {
      * @public
      */
 	empty: function() {
-		this.set('records').value = [];
+		this._items = [];
 		this._recordsetEmptied();	
 		return null;
 	},
@@ -397,8 +348,36 @@ Y.extend(Recordset, Y.Base, {
 		this._recordsetUpdated(data.updated, data.overwritten, index);
 		return null;
 	}
-	
-	
+},
+{
+    ATTRS: {
+        records: {
+            validator: Y.Lang.isArray,
+            getter: function () {
+                // give them a copy, not the internal object
+                return Y.Array(this._items);
+            },
+            setter: function (allData) {
+				var records = [];
+				function initRecord(oneData) {
+					if (oneData instanceof Y.Record) {
+						records.push(oneData);
+					}
+					else {
+						o = new Y.Record({data:oneData});
+						records.push(o);
+					}
+				}
+				Y.Array.each(allData, initRecord);
+                // ...unless we don't care about live object references
+                this._items = Y.Array(records);
+            },
+			//for performance reasons, getters and setters aren't active until they are accessed. Set this to false, since 
+			//they are needed to be active in order for the constructor to create the necessary records
+			lazyAdd: false
+        }
+    }
 });
+Y.augment(Recordset, ArrayList);
 Y.Recordset = Recordset;
 

@@ -24,6 +24,11 @@ Record.ATTRS = {
         writeOnce: true
     },
     data : {
+		setter: function(val) {
+			if (val instanceof Y.Record) {
+				this.value = val.data;
+			}
+		}
     }
 };
 

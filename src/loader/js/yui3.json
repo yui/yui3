@@ -1119,7 +1119,8 @@
         "submodules": {
             "recordset-base": {
                 "requires": [
-                    "base"
+                    "base", 
+                    "collection"
                 ]
             }, 
             "recordset-filter": {
