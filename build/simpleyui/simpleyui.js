@@ -8,7 +8,7 @@
  */
 
 if (typeof YUI != 'undefined') {
-    var _YUI = YUI;
+    YUI._YUI = YUI;
 }
 
 /**
@@ -29,14 +29,14 @@ if (typeof YUI != 'undefined') {
  */
     /*global YUI*/
     /*global YUI_config*/
-    var instanceOf = function(o, type) {
-            return (o && o.hasOwnProperty && (o instanceof type));
-        },
-    YUI = function() {
+    var YUI = function() {
         var i = 0,
             Y = this,
             args = arguments,
             l = args.length,
+            instanceOf = function(o, type) {
+                return (o && o.hasOwnProperty && (o instanceof type));
+            },
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
         if (!(instanceOf(Y, YUI))) {
@@ -75,6 +75,8 @@ if (typeof YUI != 'undefined') {
 
             Y._setup();
         }
+
+        Y.instanceOf = instanceOf;
 
         return Y;
     };
@@ -295,9 +297,9 @@ proto = {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
                              Env._yidx + '_' + time).replace(/\./g, '_');
-            } else if (typeof _YUI != 'undefined') {
+            } else if (YUI._YUI) {
 
-                G_ENV = _YUI.Env;
+                G_ENV = YUI._YUI.Env;
                 Env._yidx += G_ENV._yidx;
                 Env._uidx += G_ENV._uidx;
 
@@ -306,6 +308,8 @@ proto = {
                         Env[prop] = G_ENV[prop];
                     }
                 }
+
+                delete YUI._YUI;
             }
 
             Y.id = Y.stamp(Y);
@@ -951,7 +955,7 @@ proto = {
         delete instances[Y.id];
         delete Y.Env;
         delete Y.config;
-    },
+    }
 
     /**
      * instanceof check for objects that works around
@@ -960,7 +964,6 @@ proto = {
      * @method instanceOf
      * @since 3.3.0
      */
-    instanceOf: instanceOf
 };
 
 
@@ -8758,83 +8761,26 @@ Y.Global = YUI.Env.globalEvents;
 
 
 }, '@VERSION@' ,{requires:['oop']});
-/*
- * DOM event listener abstraction layer
- * @module event
- * @submodule event-base
- */
-
-(function() {
-
-// Unlike most of the library, this code has to be executed as soon as it is
-// introduced into the page -- and it should only be executed one time
-// regardless of the number of instances that use it.
-
-var stateChangeListener,
-    GLOBAL_ENV   = YUI.Env, 
-    config       = YUI.config, 
-    doc          = config.doc, 
-    docElement   = doc && doc.documentElement, 
-    doScrollCap  = docElement && docElement.doScroll,
-    add          = YUI.Env.add,
-    remove       = YUI.Env.remove,
-    targetEvent  = (doScrollCap) ? 'onreadystatechange' : 'DOMContentLoaded',
-    pollInterval = config.pollInterval || 40,
-    _ready       = function(e) {
-                     GLOBAL_ENV._ready();
-                 };
+var GLOBAL_ENV = YUI.Env;
 
 if (!GLOBAL_ENV._ready) {
     GLOBAL_ENV._ready = function() {
-        if (!GLOBAL_ENV.DOMReady) {
-            GLOBAL_ENV.DOMReady = true;
-            remove(doc, targetEvent, _ready); // remove DOMContentLoaded listener
-        }
+        GLOBAL_ENV.DOMReady = true;
+        GLOBAL_ENV.remove(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
     };
 
-/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
-// Internet Explorer: use the doScroll() method on the root element.  This isolates what 
-// appears to be a safe moment to manipulate the DOM prior to when the document's readyState 
-// suggests it is safe to do so.
-    if (doScrollCap) {
-        if (self !== self.top) {
-            stateChangeListener = function() {
-                if (doc.readyState == 'complete') {
-                    remove(doc, targetEvent, stateChangeListener); // remove onreadystatechange listener
-                    _ready();
-                }
-            };
-            add(doc, targetEvent, stateChangeListener); // add onreadystatechange listener
-        } else {
-            GLOBAL_ENV._dri = setInterval(function() {
-                try {
-                    docElement.doScroll('left');
-                    clearInterval(GLOBAL_ENV._dri);
-                    GLOBAL_ENV._dri = null;
-                    _ready();
-                } catch (domNotReady) { }
-            }, pollInterval); 
-        }
-    } else { // FireFox, Opera, Safari 3+ provide an event for this moment.
-        add(doc, targetEvent, _ready); // add DOMContentLoaded listener
-    }
+    // if (!YUI.UA.ie) {
+        GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
+    // }
 }
 
-})();
 YUI.add('event-base', function(Y) {
 
-(function() {
 /*
  * DOM event listener abstraction layer
  * @module event
  * @submodule event-base
  */
-
-var GLOBAL_ENV = YUI.Env,
-    
-    yready = function() {
-        Y.fire('domready');
-    };
 
 /**
  * The domready event fires at the moment the browser's DOM is
@@ -8852,7 +8798,7 @@ var GLOBAL_ENV = YUI.Env,
  * it to true if the yui.js script is not included inline.
  *
  * This method is part of the 'event-ready' module, which is a
- * submodule of 'event'.  
+ * submodule of 'event'.
  *
  * @event domready
  * @for YUI
@@ -8863,16 +8809,10 @@ Y.publish('domready', {
 });
 
 if (GLOBAL_ENV.DOMReady) {
-    // console.log('DOMReady already fired', 'info', 'event');
-    yready();
+    Y.fire('domready');
 } else {
-    // console.log('setting up before listener', 'info', 'event');
-    // console.log('env: ' + YUI.Env.windowLoaded, 'info', 'event');
-    Y.before(yready, GLOBAL_ENV, "_ready");
+    Y.Do.before(function() { Y.fire('domready'); }, YUI.Env, '_ready');
 }
-
-})();
-(function() {
 
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
@@ -8889,58 +8829,6 @@ if (GLOBAL_ENV.DOMReady) {
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
  */
-
-/*
- * @TODO constants? LEFTBUTTON, MIDDLEBUTTON, RIGHTBUTTON, keys
- */
-
-/*
-
-var whitelist = {
-    altKey          : 1,
-    // "button"          : 1, // we supply
-    // "bubbles"         : 1, // needed?
-    // "cancelable"      : 1, // needed?
-    // "charCode"        : 1, // we supply
-    cancelBubble    : 1,
-    // "currentTarget"   : 1, // we supply
-    ctrlKey         : 1,
-    clientX         : 1, // needed?
-    clientY         : 1, // needed?
-    detail          : 1, // not fully implemented
-    // "fromElement"     : 1,
-    keyCode         : 1,
-    // "height"          : 1, // needed?
-    // "initEvent"       : 1, // need the init events?
-    // "initMouseEvent"  : 1,
-    // "initUIEvent"     : 1,
-    // "layerX"          : 1, // needed?
-    // "layerY"          : 1, // needed?
-    metaKey         : 1,
-    // "modifiers"       : 1, // needed?
-    // "offsetX"         : 1, // needed?
-    // "offsetY"         : 1, // needed?
-    // "preventDefault"  : 1, // we supply
-    // "reason"          : 1, // IE proprietary
-    // "relatedTarget"   : 1,
-    // "returnValue"     : 1, // needed?
-    shiftKey        : 1,
-    // "srcUrn"          : 1, // IE proprietary
-    // "srcElement"      : 1,
-    // "srcFilter"       : 1, IE proprietary
-    // "stopPropagation" : 1, // we supply
-    // "target"          : 1,
-    // "timeStamp"       : 1, // needed?
-    // "toElement"       : 1,
-    type            : 1,
-    // "view"            : 1,
-    // "which"           : 1, // we supply
-    // "width"           : 1, // needed?
-    x               : 1,
-    y               : 1
-},
-
-*/
 
     var ua = Y.UA,
 
@@ -8980,6 +8868,9 @@ var whitelist = {
      * @private
      */
     resolve = function(n) {
+        if (!n) {
+            return n;
+        }
         try {
             if (n && 3 == n.nodeType) {
                 n = n.parentNode;
@@ -8989,8 +8880,133 @@ var whitelist = {
         }
 
         return Y.one(n);
+    },
+
+    DOMEventFacade = function(ev, currentTarget, wrapper) {
+        this._event = ev;
+        this._currentTarget = currentTarget;
+        this._wrapper = wrapper;
+
+        // if not lazy init
+        this.init();
     };
 
+Y.extend(DOMEventFacade, Object, {
+    init: function() {
+
+        var e = this._event,
+            overrides = this._wrapper.overrides,
+            x = e.pageX,
+            y = e.pageY,
+            c, d, b, de, t,
+            currentTarget = this._currentTarget;
+
+        this.altKey   = e.altKey;
+        this.ctrlKey  = e.ctrlKey;
+        this.metaKey  = e.metaKey;
+        this.shiftKey = e.shiftKey;
+        this.type     = (overrides && overrides.type) || e.type;
+        this.clientX  = e.clientX;
+        this.clientY  = e.clientY;
+
+        if (('clientX' in e) && (!x) && (0 !== x)) {
+            x = e.clientX;
+            y = e.clientY;
+
+            if (ua.ie) {
+
+                d = Y.config.doc;
+                b = d.body;
+                de = d.documentElement;
+
+                x += (de.scrollLeft || (b && b.scrollLeft) || 0);
+                y += (de.scrollTop  || (b && b.scrollTop)  || 0);
+            }
+        }
+
+        this.pageX = x;
+        this.pageY = y;
+
+        c = e.keyCode || e.charCode || 0;
+
+        if (ua.webkit && (c in webkitKeymap)) {
+            c = webkitKeymap[c];
+        }
+
+        this.keyCode = c;
+        this.charCode = c;
+        this.button = e.which || e.button;
+        this.which = this.button;
+        this.target = resolve(e.target || e.srcElement);
+        this.currentTarget = resolve(currentTarget);
+
+        t = e.relatedTarget;
+
+        if (!t) {
+            if (e.type == "mouseout") {
+                t = e.toElement;
+            } else if (e.type == "mouseover") {
+                t = e.fromElement;
+            }
+        }
+
+        this.relatedTarget = resolve(t);
+
+        if (e.type == "mousewheel" || e.type == "DOMMouseScroll") {
+            this.wheelDelta = (e.detail) ? (e.detail * -1) : Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
+        }
+
+        if (this._touch) {
+            this._touch(e, currentTarget, this._wrapper);
+        }
+    },
+
+    stopPropagation: function() {
+        var e = this._event;
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
+        this._wrapper.stopped = 1;
+        this.stopped = 1;
+    },
+
+    stopImmediatePropagation: function() {
+        var e = this._event;
+        if (e.stopImmediatePropagation) {
+            e.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+        this._wrapper.stopped = 2;
+        this.stopped = 2;
+    },
+
+    preventDefault: function(returnValue) {
+        var e = this._event;
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        e.returnValue = returnValue || false;
+        this._wrapper.prevented = 1;
+        this.prevented = 1;
+    },
+
+    halt: function(immediate) {
+        if (immediate) {
+            this.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+
+        this.preventDefault();
+    }
+
+});
+
+
+Y.DOMEventFacade = DOMEventFacade;
 
 // provide a single event with browser abstractions resolved
 //
@@ -8998,7 +9014,7 @@ var whitelist = {
 // include only DOM2 spec properties?
 // provide browser-specific facade?
 
-Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
+Y.DOMEventFacade___ = function(ev, currentTarget, wrapper) {
 
     wrapper = wrapper || {};
 
@@ -9200,8 +9216,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     }
 
 };
-
-})();
 (function() {
 /**
  * DOM event listener abstraction layer
@@ -9222,33 +9236,34 @@ Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
 var _eventenv = Y.Env.evt,
-config = Y.config,
-win = config.win,
-add = YUI.Env.add,
-remove = YUI.Env.remove,
+    config = Y.config,
+    win = config.win,
+    add = YUI.Env.add,
+    remove = YUI.Env.remove,
 
-onLoad = function() {
-    YUI.Env.windowLoaded = true;
-    Y.Event._load();
-    remove(win, "load", onLoad);
-},
+    onLoad = function() {
+        YUI.Env.windowLoaded = true;
+        Y.Event._load();
+        remove(win, "load", onLoad);
+    },
 
-onUnload = function() {
-    Y.Event._unload();
-},
+    onUnload = function() {
+        Y.Event._unload();
+    },
 
-EVENT_READY = 'domready',
+    EVENT_READY = 'domready',
 
-COMPAT_ARG = '~yui|2|compat~',
+    COMPAT_ARG = '~yui|2|compat~',
 
-shouldIterate = function(o) {
-    try {
-        return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !o.alert);
-    } catch(ex) {
-        return false;
-    }
+    shouldIterate = function(o) {
+        try {
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) &&
+                    !o.tagName && !o.alert);
+        } catch(ex) {
+            return false;
+        }
 
-},
+    },
 
 Event = function() {
 
@@ -9368,7 +9383,7 @@ Event = function() {
          */
         startInterval: function() {
             if (!Event._interval) {
-Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
+Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             }
         },
 
@@ -9416,7 +9431,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             _retryCount = this.POLL_RETRYS;
 
             // We want the first test to be immediate, but async
-            setTimeout(Y.bind(Event._poll, Event), 0);
+            setTimeout(Event._poll, 0);
 
             availHandle = new Y.EventHandle({
 
@@ -9456,9 +9471,9 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          *
          * @param {string}   id the id of the element to look for.
          * @param {function} fn what to execute when the element is ready.
-         * @param {object}   p_obj an optional object to be passed back as
+         * @param {object}   obj an optional object to be passed back as
          *                   a parameter to fn.
-         * @param {boolean|object}  p_override If set to true, fn will execute
+         * @param {boolean|object}  override If set to true, fn will execute
          *                   in the context of p_obj.  If an object, fn will
          *                   exectute in the context of that object
          *
@@ -9466,8 +9481,8 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          * @deprecated Use Y.on("contentready")
          */
         // @TODO fix arguments
-        onContentReady: function(id, fn, p_obj, p_override, compat) {
-            return this.onAvailable(id, fn, p_obj, p_override, true, compat);
+        onContentReady: function(id, fn, obj, override, compat) {
+            return Event.onAvailable(id, fn, obj, override, true, compat);
         },
 
         /**
@@ -9622,7 +9637,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 // Not found = defer adding the event until the element is available
                 } else {
 
-                    ret = this.onAvailable(el, function() {
+                    ret = Event.onAvailable(el, function() {
 
                         ret.handle = Event._attach(args, conf);
 
@@ -9642,7 +9657,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 el = Y.Node.getDOMNode(el);
             }
 
-            cewrapper = this._createWrapper(el, type, capture, compat, facade);
+            cewrapper = Event._createWrapper(el, type, capture, compat, facade);
             if (overrides) {
                 Y.mix(cewrapper.overrides, overrides);
             }
@@ -9743,7 +9758,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             }
 
             if (!type || !fn || !fn.call) {
-                return this.purgeElement(el, false, type);
+                return Event.purgeElement(el, false, type);
             }
 
             id = 'event:' + Y.stamp(el) + type;
@@ -9843,7 +9858,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          * @private
          */
         _poll: function() {
-            if (this.locked) {
+            if (Event.locked) {
                 return;
             }
 
@@ -9851,11 +9866,11 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 // Hold off if DOMReady has not fired and check current
                 // readyState to protect against the IE operation aborted
                 // issue.
-                this.startInterval();
+                Event.startInterval();
                 return;
             }
 
-            this.locked = true;
+            Event.locked = true;
 
             // keep trying until after the page is loaded.  We need to
             // check the page load state prior to trying to bind the
@@ -9932,13 +9947,13 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
 
             if (tryAgain) {
                 // we may need to strip the nulled out items here
-                this.startInterval();
+                Event.startInterval();
             } else {
-                clearInterval(this._interval);
-                this._interval = null;
+                clearInterval(Event._interval);
+                Event._interval = null;
             }
 
-            this.locked = false;
+            Event.locked = false;
 
             return;
 
@@ -9959,7 +9974,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len, props, children, child;
+                lis = Event.getListeners(oEl, type), i, len, props, children, child;
 
             if (recurse && oEl) {
                 lis = lis || [];
@@ -9967,7 +9982,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 i = 0;
                 len = children.length;
                 for (; i < len; ++i) {
-                    child = this.getListeners(children[i], type);
+                    child = Event.getListeners(children[i], type);
                     if (child) {
                         lis = lis.concat(child);
                     }
@@ -10090,7 +10105,7 @@ if (config.injected || YUI.Env.windowLoaded) {
 
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
 if (Y.UA.ie) {
-    Y.on(EVENT_READY, Event._poll, Event, true);
+    Y.on(EVENT_READY, Event._poll);
 }
 
 Y.on("unload", onUnload);
@@ -10112,7 +10127,7 @@ Event._poll();
  */
 
 /**
- * Executes the callback as soon as the specified element 
+ * Executes the callback as soon as the specified element
  * is detected in the DOM.
  * @event available
  * @param type {string} 'available'
@@ -10126,13 +10141,13 @@ Event._poll();
  */
 Y.Env.evt.plugins.available = {
     on: function(type, fn, id, o) {
-        var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+        var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : null;
         return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
     }
 };
 
 /**
- * Executes the callback as soon as the specified element 
+ * Executes the callback as soon as the specified element
  * is detected in the DOM with a nextSibling property
  * (indicating that the element's children are available)
  * @event contentready
@@ -10147,7 +10162,7 @@ Y.Env.evt.plugins.available = {
  */
 Y.Env.evt.plugins.contentready = {
     on: function(type, fn, id, o) {
-        var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+        var a = arguments.length > 4 ? Y.Array(arguments, 4, true) : null;
         return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
     }
 };
@@ -12303,6 +12318,15 @@ if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     };
 }
 
+// IE throws an error when calling focus() on an element that's invisible, not
+// displayed, or disabled.
+Y.Node.prototype.focus = function () {
+    try {
+        this._node.focus();
+    } catch (e) {
+    }
+};
+
 // IE throws error when setting input.type = 'hidden',
 // input.setAttribute('type', 'hidden') and input.attributes.type.value = 'hidden'
 Y.Node.ATTRS.type = {
@@ -12806,7 +12830,7 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 
 YUI.add('event-delegate', function(Y) {
 

@@ -7,7 +7,7 @@
  */
 
 if (typeof YUI != 'undefined') {
-    var _YUI = YUI;
+    YUI._YUI = YUI;
 }
 
 /**
@@ -28,14 +28,14 @@ if (typeof YUI != 'undefined') {
  */
     /*global YUI*/
     /*global YUI_config*/
-    var instanceOf = function(o, type) {
-            return (o && o.hasOwnProperty && (o instanceof type));
-        },
-    YUI = function() {
+    var YUI = function() {
         var i = 0,
             Y = this,
             args = arguments,
             l = args.length,
+            instanceOf = function(o, type) {
+                return (o && o.hasOwnProperty && (o instanceof type));
+            },
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
         if (!(instanceOf(Y, YUI))) {
@@ -74,6 +74,8 @@ if (typeof YUI != 'undefined') {
 
             Y._setup();
         }
+
+        Y.instanceOf = instanceOf;
 
         return Y;
     };
@@ -294,9 +296,9 @@ proto = {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
                              Env._yidx + '_' + time).replace(/\./g, '_');
-            } else if (typeof _YUI != 'undefined') {
+            } else if (YUI._YUI) {
 
-                G_ENV = _YUI.Env;
+                G_ENV = YUI._YUI.Env;
                 Env._yidx += G_ENV._yidx;
                 Env._uidx += G_ENV._uidx;
 
@@ -305,6 +307,8 @@ proto = {
                         Env[prop] = G_ENV[prop];
                     }
                 }
+
+                delete YUI._YUI;
             }
 
             Y.id = Y.stamp(Y);
@@ -950,7 +954,7 @@ proto = {
         delete instances[Y.id];
         delete Y.Env;
         delete Y.config;
-    },
+    }
 
     /**
      * instanceof check for objects that works around
@@ -959,7 +963,6 @@ proto = {
      * @method instanceOf
      * @since 3.3.0
      */
-    instanceOf: instanceOf
 };
 
 
