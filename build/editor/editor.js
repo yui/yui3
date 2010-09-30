@@ -3364,17 +3364,24 @@ YUI.add('editor-para', function(Y) {
                     }
                     break;
                 case 'backspace-up':
+                case 'backspace-down':
                 case 'delete-up':
-                    var ps = inst.all(FIRST_P), br, item;
-                    if (ps.size() < 2) {
+                    if (!Y.UA.ie) {
+                        var ps = inst.all(FIRST_P), br, item, html;
                         item = inst.one(BODY);
                         if (ps.item(0)) {
                             item = ps.item(0);
                         }
+                        br = item.one('br');
+                        if (br) {
+                            br.removeAttribute('id');
+                            br.removeAttribute('class');
+                        }
+                        html = item.get('innerHTML');
                         if (inst.Selection.getText(item) === '' && !item.test('p')) {
                             this._fixFirstPara();
-                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                            e.changedEvent.halt();
+                        } else if (item.test('p') && (html.length === 0) || (html == '<span><br></span>')) {
+                            e.changedEvent.frameEvent.halt();
                         }
                     }
                     break;
