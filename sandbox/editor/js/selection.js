@@ -465,7 +465,8 @@ YUI.add('selection', function(Y) {
     * @static
     * @property CURSOR
     */
-    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+    //Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><br class="yui-cursor"></span>';
 
     Y.Selection.hasCursor = function() {
         var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
@@ -856,7 +857,8 @@ YUI.add('selection', function(Y) {
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                    //cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                    cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {
                     cur.remove();
                 }

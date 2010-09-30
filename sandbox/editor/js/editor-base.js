@@ -59,6 +59,10 @@ YUI.add('editor-base', function(Y) {
         * @param {Node} to The Node instance to copy the styles to
         */
         copyStyles: function(from, to) {
+            if (from.test('a')) {
+                //Don't carry the A styles
+                return;
+            }
             var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
                 newStyles = {};
 
