@@ -474,6 +474,7 @@ proto = {
             done = Y.Env._attached,
             len = r.length, loader;
 
+
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
@@ -481,8 +482,10 @@ proto = {
                 mod = mods[name];
                 if (!mod) {
                     loader = Y.Env._loader;
+
+
                     if (!loader || !loader.moduleInfo[name]) {
-                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        // Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
                     details = mod.details;
@@ -494,7 +497,6 @@ proto = {
                             return false;
                         }
                     }
-
 
                     if (mod.fn) {
                         try {
@@ -667,19 +669,14 @@ proto = {
                 });
             },
 
-
             handleLoader = function(fromLoader) {
                 var response = fromLoader || {
                         success: true,
                         msg: 'not dynamic'
                     },
-                    // newData,
                     redo, origMissing,
                     ret = true,
                     data = response.data;
-
-                Y._loading = false;
-
 
                 if (data) {
                     origMissing = missing.concat();
@@ -696,20 +693,6 @@ proto = {
                 }
 
                 if (redo && data) {
-
-                    // newData = data.concat();
-                    // newData = missing.concat();
-
-                    // newData = args.concat();
-
-                    // newData.push(function() {
-                    //     if (Y._attach(data)) {
-                    //         notify(response);
-                    //     }
-                    // });
-
-                    Y._loading = false;
-                    // Y.use.apply(Y, newData);
                     Y._use(args, function() {
                         if (Y._attach(data)) {
                             Y._notify(callback, response, data);
@@ -724,10 +707,12 @@ proto = {
                     }
                 }
 
-                if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    // Y.use.apply(Y, Y._useQueue.next());
+                Y._loading = false;
+
+                if (Y._useQueue && Y._useQueue.size()) {
                     Y._use.apply(Y, Y._useQueue.next());
                 }
+
             };
 
 
@@ -802,7 +787,6 @@ proto = {
                 queue.running = false;
                 Env.bootstrapped = true;
                 if (Y._attach(['loader'])) {
-                    // Y.use.apply(Y, args);
                     Y._use(args, callback);
                 }
             };
@@ -978,8 +962,6 @@ proto = {
 
     // set up the environment
     YUI._init();
-
-    // setTimeout(function() { YUI._attach(['yui-base']); }, 0);
 
     if (hasWin) {
         // add a window load event at load time so we can capture
