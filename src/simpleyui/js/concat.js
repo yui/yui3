@@ -476,6 +476,8 @@ proto = {
             done = Y.Env._attached,
             len = r.length, loader;
 
+        // Y.log('attaching: ' + r, 'info', 'yui');
+
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
@@ -483,8 +485,11 @@ proto = {
                 mod = mods[name];
                 if (!mod) {
                     loader = Y.Env._loader;
+
+                    Y.log('no js def for: ' + name, 'info', 'yui');
+
                     if (!loader || !loader.moduleInfo[name]) {
-                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        // Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
                     details = mod.details;
@@ -496,8 +501,6 @@ proto = {
                             return false;
                         }
                     }
-
-                    // Y.log('attaching ' + name, 'info', 'yui');
 
                     if (mod.fn) {
                         try {
@@ -579,9 +582,11 @@ proto = {
             key = args.join();
 
             if (Y.Env.serviced[key]) {
+                Y.log('already provisioned: ' + key, 'info', 'yui');
                 Y._notify(callback, ALREADY_DONE, args);
             } else {
                 Y._use(args, function(Y, response) {
+                    Y.log('caching request: ' + key, 'info', 'yui');
                     Y.Env.serviced[key] = true;
                     Y._notify(callback, response, args);
                 });
@@ -670,20 +675,14 @@ proto = {
                 });
             },
 
-
             handleLoader = function(fromLoader) {
                 var response = fromLoader || {
                         success: true,
                         msg: 'not dynamic'
                     },
-                    // newData,
                     redo, origMissing,
                     ret = true,
                     data = response.data;
-
-                Y._loading = false;
-
-                // Y.log('Use complete: ' + data);
 
                 if (data) {
                     origMissing = missing.concat();
@@ -700,25 +699,6 @@ proto = {
                 }
 
                 if (redo && data) {
-                    // Y.log('redo r: ' + r);
-                    // Y.log('redo data: ' + data);
-                    // Y.log('redo missing: ' + missing);
-                    // Y.log('redo args: ' + args);
-
-                    // newData = data.concat();
-                    // newData = missing.concat();
-
-                    // newData = args.concat();
-
-                    // newData.push(function() {
-                    //     Y.log('Nested USE callback: ' + data, 'info', 'yui');
-                    //     if (Y._attach(data)) {
-                    //         notify(response);
-                    //     }
-                    // });
-
-                    Y._loading = false;
-                    // Y.use.apply(Y, newData);
                     Y._use(args, function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
@@ -727,6 +707,7 @@ proto = {
                     });
                 } else {
                     if (data) {
+                        Y.log('attaching from loader: ' + data, 'info', 'yui');
                         ret = Y._attach(data);
                     }
                     if (ret) {
@@ -734,10 +715,12 @@ proto = {
                     }
                 }
 
-                if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    // Y.use.apply(Y, Y._useQueue.next());
+                Y._loading = false;
+
+                if (Y._useQueue && Y._useQueue.size()) {
                     Y._use.apply(Y, Y._useQueue.next());
                 }
+
             };
 
 // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
@@ -821,7 +804,6 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                 queue.running = false;
                 Env.bootstrapped = true;
                 if (Y._attach(['loader'])) {
-                    // Y.use.apply(Y, args);
                     Y._use(args, callback);
                 }
             };
@@ -1000,8 +982,6 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
     // set up the environment
     YUI._init();
-
-    // setTimeout(function() { YUI._attach(['yui-base']); }, 0);
 
     if (hasWin) {
         // add a window load event at load time so we can capture
