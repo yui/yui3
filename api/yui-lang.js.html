@@ -97,8 +97,8 @@
 <span class="cm"> * Determines whether or not the provided item is an array.</span>
 <span class="cm"> * Returns false for array-like collections such as the</span>
 <span class="cm"> * function arguments collection or HTMLElement collection</span>
-<span class="cm"> * will return false.  You can use @see Array.test if you</span>
-<span class="cm"> * want to</span>
+<span class="cm"> * will return false.  Use &lt;code&gt;Y.Array.test&lt;/code&gt; if you</span>
+<span class="cm"> * want to test for an array-like collection.</span>
 <span class="cm"> * @method isArray</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -109,7 +109,7 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Determines whether or not the provided item is a boolean</span>
+<span class="cm"> * Determines whether or not the provided item is a boolean.</span>
 <span class="cm"> * @method isBoolean</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -120,17 +120,23 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Determines whether or not the provided item is a function</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * Determines whether or not the provided item is a function.</span>
 <span class="cm"> * Note: Internet Explorer thinks certain functions are objects:</span>
+<span class="cm"> * &lt;/p&gt;</span>
 <span class="cm"> *</span>
+<span class="cm"> * &lt;pre&gt;</span>
 <span class="cm"> * var obj = document.createElement(&quot;object&quot;);</span>
 <span class="cm"> * Y.Lang.isFunction(obj.getAttribute) // reports false in IE</span>
-<span class="cm"> *</span>
+<span class="cm"> * &amp;nbsp;</span>
 <span class="cm"> * var input = document.createElement(&quot;input&quot;); // append to body</span>
 <span class="cm"> * Y.Lang.isFunction(input.focus) // reports false in IE</span>
+<span class="cm"> * &lt;/pre&gt;</span>
 <span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
 <span class="cm"> * You will have to implement additional tests if these functions</span>
 <span class="cm"> * matter to you.</span>
+<span class="cm"> * &lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method isFunction</span>
 <span class="cm"> * @static</span>
@@ -142,7 +148,7 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Determines whether or not the supplied item is a date instance</span>
+<span class="cm"> * Determines whether or not the supplied item is a date instance.</span>
 <span class="cm"> * @method isDate</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -154,7 +160,7 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Determines whether or not the provided item is null</span>
+<span class="cm"> * Determines whether or not the provided item is null.</span>
 <span class="cm"> * @method isNull</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -165,7 +171,7 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Determines whether or not the provided item is a legal number</span>
+<span class="cm"> * Determines whether or not the provided item is a legal number.</span>
 <span class="cm"> * @method isNumber</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -177,7 +183,8 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Determines whether or not the provided item is of type object</span>
-<span class="cm"> * or function</span>
+<span class="cm"> * or function. Note that arrays are also objects, so</span>
+<span class="cm"> * &lt;code&gt;Y.Lang.isObject([]) === true&lt;/code&gt;.</span>
 <span class="cm"> * @method isObject</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -191,7 +198,7 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Determines whether or not the provided item is a string</span>
+<span class="cm"> * Determines whether or not the provided item is a string.</span>
 <span class="cm"> * @method isString</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -202,7 +209,7 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Determines whether or not the provided item is undefined</span>
+<span class="cm"> * Determines whether or not the provided item is undefined.</span>
 <span class="cm"> * @method isUndefined</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o The object to test.</span>
@@ -251,26 +258,41 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
 <span class="cm"> * Returns a string representing the type of the item passed in.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
 <span class="cm"> * Known issues:</span>
-<span class="cm"> *    typeof HTMLElementCollection returns function in Safari, but</span>
-<span class="cm"> *    Y.type() reports object, which could be a good thing --</span>
-<span class="cm"> *    but it actually caused the logic in Y.Lang.isObject to fail.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> *   &lt;li&gt;</span>
+<span class="cm"> *     &lt;code&gt;typeof HTMLElementCollection&lt;/code&gt; returns function in Safari, but</span>
+<span class="cm"> *     &lt;code&gt;Y.type()&lt;/code&gt; reports object, which could be a good thing --</span>
+<span class="cm"> *     but it actually caused the logic in &lt;code&gt;Y.Lang.isObject&lt;/code&gt; to fail.</span>
+<span class="cm"> *   &lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> *</span>
 <span class="cm"> * @method type</span>
 <span class="cm"> * @param o the item to test.</span>
 <span class="cm"> * @return {string} the detected type.</span>
+<span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">L</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">TYPES</span><span class="p">[</span><span class="k">typeof</span> <span class="nx">o</span><span class="p">]</span> <span class="o">||</span> <span class="nx">TYPES</span><span class="p">[</span><span class="nx">TOSTRING</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">)]</span> <span class="o">||</span> <span class="p">(</span><span class="nx">o</span> <span class="o">?</span> <span class="nx">OBJECT</span> <span class="o">:</span> <span class="nx">NULL</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Lightweight version of @see Y.substitute... it uses the same template</span>
-<span class="cm"> * structure as Y.substitute, but doesn&#39;t support recursion, auto-object</span>
-<span class="cm"> * coersion, or formats</span>
+<span class="cm"> * Lightweight version of &lt;code&gt;Y.substitute&lt;/code&gt;. Uses the same template</span>
+<span class="cm"> * structure as &lt;code&gt;Y.substitute&lt;/code&gt;, but doesn&#39;t support recursion,</span>
+<span class="cm"> * auto-object coersion, or formats.</span>
 <span class="cm"> * @method sub</span>
-<span class="cm"> * @since 3.2.0</span>
+<span class="cm"> * @param {string} s String to be modified.</span>
+<span class="cm"> * @param {object} o Object containing replacement values.</span>
 <span class="cm"> * @return {string} the substitute result.</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @since 3.2.0</span>
 <span class="cm"> */</span>
 <span class="nx">L</span><span class="p">.</span><span class="nx">sub</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">((</span><span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">)</span> <span class="o">?</span> <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">SUBREGEX</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
