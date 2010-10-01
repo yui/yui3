@@ -119,6 +119,11 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">from</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;b,strong&#39;</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">newStyles</span><span class="p">.</span><span class="nx">fontWeight</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span><span class="p">;</span>
             <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">from</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">newStyles</span><span class="p">.</span><span class="nx">textDecoration</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">newStyles</span><span class="p">.</span><span class="nx">textDecoration</span> <span class="o">=</span> <span class="s1">&#39;underline&#39;</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
             <span class="nx">to</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">(</span><span class="nx">newStyles</span><span class="p">);</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
@@ -176,8 +181,27 @@
                     <span class="p">}</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="k">case</span> <span class="s1">&#39;enter-up&#39;</span><span class="o">:</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="kd">var</span> <span class="nx">prev</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">.</span><span class="nx">previous</span><span class="p">(),</span> <span class="nx">lc</span><span class="p">,</span> <span class="nx">lc2</span><span class="p">,</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="kd">var</span> <span class="nx">para</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_lastPara</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_lastPara</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">),</span>
+                        <span class="nx">b</span> <span class="o">=</span> <span class="nx">para</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;br.yui-cursor&#39;</span><span class="p">);</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_lastPara</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_lastPara</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">previous</span><span class="p">()</span> <span class="o">||</span> <span class="nx">b</span><span class="p">.</span><span class="nx">next</span><span class="p">())</span> <span class="p">{</span>
+                            <span class="nx">b</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">para</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="kd">var</span> <span class="nx">para2</span> <span class="o">=</span> <span class="nx">para</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">para2</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">para</span> <span class="o">=</span> <span class="nx">para2</span><span class="p">;</span>
+                            <span class="nx">para2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">para</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="kd">var</span> <span class="nx">prev</span> <span class="o">=</span> <span class="nx">para</span><span class="p">.</span><span class="nx">previous</span><span class="p">(),</span> <span class="nx">lc</span><span class="p">,</span> <span class="nx">lc2</span><span class="p">,</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">prev</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">lc</span> <span class="o">=</span> <span class="nx">prev</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;:last-child&#39;</span><span class="p">);</span>
                             <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
@@ -193,12 +217,20 @@
                                 <span class="p">}</span>
                             <span class="p">}</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">lc</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="k">this</span><span class="p">.</span><span class="nx">copyStyles</span><span class="p">(</span><span class="nx">lc</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">);</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">copyStyles</span><span class="p">(</span><span class="nx">lc</span><span class="p">,</span> <span class="nx">para</span><span class="p">);</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
-                    <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filterBlocks</span><span class="p">();</span>
+                    <span class="c1">//inst.Selection.filterBlocks();</span>
                     <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_lastPara</span> <span class="o">=</span> <span class="nx">p</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
             <span class="p">}</span>
 
             <span class="kd">var</span> <span class="nx">changed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDomPath</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">,</span> <span class="kc">false</span><span class="p">),</span>
