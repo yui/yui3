@@ -1,6 +1,3 @@
-function Record(config) {
-    Record.superclass.constructor.apply(this, arguments);
-}
 
 /**
  * Class name.
@@ -11,34 +8,13 @@ function Record(config) {
  * @final
  * @value "record"
  */
-Record.NAME = "record";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Record Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Record.ATTRS = {
-    id: {
-        valueFn: "_setId",
-        writeOnce: true
-    },
-    data : {
-		setter: function(val) {
-			if (val instanceof Y.Record) {
-				this.value = val.data;
-			}
-		}
-    }
-};
-
-/* Record extends Base */
-Y.extend(Record, Y.Base, {
-    _setId: function() {
+var Record = Y.Base.create('record', Y.Base, [], {
+	_setId: function() {
         return Y.guid();
     },
 
-    initializer: function(data) {
+    initializer: function(o) {
+
     },
 
     destructor: function() {
@@ -53,7 +29,16 @@ Y.extend(Record, Y.Base, {
 		}
 		return null;
     }
-
+},
+{
+	ATTRS: {
+	    id: {
+	        valueFn: "_setId",
+	        writeOnce: true
+	    },
+	    data : {
+	    }
+	}
 });
 
 Y.Record = Record;

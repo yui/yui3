@@ -1,8 +1,5 @@
 YUI.add('recordset-base', function(Y) {
 
-function Record(config) {
-    Record.superclass.constructor.apply(this, arguments);
-}
 
 /**
  * Class name.
@@ -13,34 +10,13 @@ function Record(config) {
  * @final
  * @value "record"
  */
-Record.NAME = "record";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Record Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Record.ATTRS = {
-    id: {
-        valueFn: "_setId",
-        writeOnce: true
-    },
-    data : {
-		setter: function(val) {
-			if (val instanceof Y.Record) {
-				this.value = val.data;
-			}
-		}
-    }
-};
-
-/* Record extends Base */
-Y.extend(Record, Y.Base, {
-    _setId: function() {
+var Record = Y.Base.create('record', Y.Base, [], {
+	_setId: function() {
         return Y.guid();
     },
 
-    initializer: function(data) {
+    initializer: function(o) {
+
     },
 
     destructor: function() {
@@ -55,7 +31,16 @@ Y.extend(Record, Y.Base, {
 		}
 		return null;
     }
-
+},
+{
+	ATTRS: {
+	    id: {
+	        valueFn: "_setId",
+	        writeOnce: true
+	    },
+	    data : {
+	    }
+	}
 });
 
 Y.Record = Record;
@@ -65,6 +50,7 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
     initializer: function() {
 	
 		//set up event listener to fire events when recordset is modified in anyway
+		this.publish('add', {defaultFn: Y.bind("_defAddFn", this)});
 		this._recordsetChanged();
     },
     
@@ -74,17 +60,24 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 	/**
      * Helper method called upon by add() - it is used to create a new record(s) in the recordset
      *
-     * @method _add
+     * @method _defAddFn
      * @param aRecord {Y.Record} A Y.Record instance
      * @param index {Number} (optional) Index at which to add the record(s)
      * @return {Y.Record} A Record instance.
      * @private
      */
-	_add: function(aRecord, index) {
-		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
-		this._items.splice(index,0,aRecord);
+	_defAddFn: function(e) {
+		var len = this._items.length,
+			rec = e.record,
+			index = e.index;
+		//index = (Y.Lang.isNumber(index) && (index > -1)) ? index : len;
 		
-		return aRecord;
+		if (index === len) {
+			this._items.push(rec);
+		}
+		else {
+			this._items.splice(index,0,rec);
+		}
 	},
 	
 	
@@ -97,6 +90,8 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @param overwriteFlag {boolean} (optional) A boolean to represent whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
      * @private
      */
+
+	/*
 	_updateGivenArray: function(arr, index, overwriteFlag) {
 		var i = 0,
 			overwrittenRecords = [],
@@ -123,6 +118,7 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 		return ({updated:newRecords, overwritten:overwrittenRecords});
 	}, 
 	
+	*/
 	
 	/**
      * Helper method called upon by update() and _updateGivenArray() - it updates the recordset when an array is passed in
@@ -135,6 +131,8 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 
      * @private
      */
+
+	/*
 	_updateGivenObject: function(obj, index, overwriteFlag) {
 		var oRecs = [], 
 			overwrittenRecords = [];
@@ -152,6 +150,7 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 		//Always returning the object in an array so it can be iterated through
 		return ({updated:oRecs, overwritten:overwrittenRecords});
 	},
+	*/
 	
 	/**
      * Helper method - it takes an object bag and converts it to a Y.Record
@@ -186,22 +185,11 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      */
 	_recordsetChanged: function() {
 		
-		this.on(['recordsetUpdatedEvent', 'recordsetAddedEvent', 'recordsetRemovedEvent', 'recordsetEmptiedEvent'], function() {
-			this.fire('recordsetChangedEvent', {});
+		this.on(['update', 'add', 'remove', 'empty'], function() {
+			this.fire('change', {});
 		});
 	},
-	
-	/**
-     * Event that is fired whenever the a record is added to the recordset. Multiple simultaneous changes still fires this event once.
-     *
-     * @method _recordAdded
-	 * @param oRecord {Array} The record that was added, or an array of records added
-     * @param i {Number} Index at which the modifications to the recordset were made
-     * @private
-     */
-	_recordAdded: function(oRecord, i) {
-		this.fire('recordsetAddedEvent', {data:oRecord, index: i});
-	},
+
 	
 	/**
      * Event that is fired whenever the a record is removed from the recordset. Multiple simultaneous changes still fires this event once.
@@ -212,7 +200,7 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @private
      */
 	_recordRemoved: function(oRecord, idx) {
-		this.fire('recordsetRemovedEvent', {data:oRecord, index: idx});
+		this.fire('remove', {data:oRecord, index: idx});
 	},
 	
 	/**
@@ -223,10 +211,10 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      */
 	_recordsetEmptied: function() {
 		//TODO: What configuration object should be sent here?
-		this.fire('recordsetEmptiedEvent', {});
+		this.fire('empty', {});
 	},
 	
-	_recordsetUpdated: function(newRecords, delRecords, index) {
+	_recordsetUpdated: function(newRecords, delRecords, i) {
 		var e = {
 				data:
 				{
@@ -234,10 +222,10 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 					overwritten: delRecords
 				},
 				
-				index: index
+				index: i
 			};
 			
-		this.fire('recordsetUpdatedEvent', e);
+		this.fire('update', e);
 	},
 	
 	//---------------------------------------------
@@ -248,12 +236,12 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      * Returns the record at a particular index
      *
      * @method getRecord
-     * @param index {Number} Index at which the required record resides
+     * @param i {Number} Index at which the required record resides
      * @return {Y.Record} An Y.Record instance
      * @public
      */
-    getRecord: function(index) {
-        return this._items[index];
+    getRecord: function(i) {
+        return this._items[i];
     },
 	
 	/**
@@ -289,9 +277,9 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @public
      */
 	getValuesByKey: function(key) {
-		var i = 0, len = this.get('records').length, retVals = [];
+		var i = 0, len = this._items.length, retVals = [];
 		for( ; i < len; i++) {
-			retVals.push(this.getRecord(i).getValue(key));
+			retVals.push(this._items[i].getValue(key));
 		}
 		return retVals;
 	},
@@ -310,33 +298,22 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 	add: function(oData, index) {
 		
 		var oRecord, newRecords=[], idx, i;		
-		
+		idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
 		//Passing in array of object literals for oData
 		if (Y.Lang.isArray(oData)) {
 			newRecords = [];
-			idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
-			
+
 			for(i=0; i < oData.length; i++) {
-					oRecord = new Y.Record({data:oData[i]});
-					newRecords[i] = this._add(oRecord, idx);
-					idx++;
+				newRecords[i] = this._changeToRecord(oData[i]);
+				this.fire('add', {record:newRecords[i], index:idx+i});
 			}
 
 		}
-		//If it is an object literal of data
-		else if (Y.Lang.isObject(oData) && !(oData instanceof Y.Record)) {
-			oRecord = new Y.Record({data:oData});
-			newRecords[0] = this._add(oRecord, index);
+		//If it is an object literal of data or a Y.Record
+		else if (Y.Lang.isObject(oData)) {
+			this.fire('add', {record:this._changeToRecord(oData), index:idx});
 		}
-		
-		//it is an instance of Y.Record - checking explicitly here so nothing weird gets through
-		else if (oData instanceof Y.Record){
-			 newRecords[0] = this._add(oRecord, index);
-		}
-		this._recordAdded(newRecords, index);
-		
-		//return an object literal, containing array of new Y.Record instances
-		return ({data: newRecords, index:index});
+		return this;
 	},
 	
 	/**
@@ -362,8 +339,8 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 		//Fire event
 		this._recordRemoved(remRecords, index);
 		
-		return ({data: remRecords, index:index}); 
-		
+		//return ({data: remRecords, index:index}); 
+		return this;
 
 	},
 	
@@ -376,8 +353,26 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 	empty: function() {
 		this._items = [];
 		this._recordsetEmptied();	
-		return null;
+		return this;
 	},
+	
+	update: function(data, index) {
+		var remRecords = [], newRecords = [], i = 0;
+		if (Y.Lang.isArray(data)) {
+			for (; i<data.length; i++) {
+				newRecords[i] = this._changeToRecord(data[i]);
+				remRecords[i] = this._items[index+i];
+				this._items[index+i] = newRecords[i];
+			}
+		}
+		else if (Y.Lang.isObject(data)) {
+			newRecords[0] = this._changeToRecord(data);
+			remRecords[0] = this._items[index];
+			this._items[index] = newRecords[0];
+		}
+		this._recordsetUpdated(newRecords, remRecords, index);
+		
+	}
 	
 	/**
      * Updates one or more records in the recordset with new records. New records can overwrite existing records or be appended at an index.
@@ -389,6 +384,7 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 
      * @public
      */
+	/*
 	update: function(oData, index, overwriteFlag) {
 		
 		var data;
@@ -405,6 +401,7 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 		this._recordsetUpdated(data.updated, data.overwritten, index);
 		return null;
 	}
+	*/
 },
 {
     ATTRS: {
