@@ -84,6 +84,7 @@ if (typeof YUI != 'undefined') {
 
     var proto, prop,
         VERSION = '@VERSION@',
+        PERIOD = '.',
         BASE = 'http://yui.yahooapis.com/',
         DOC_LABEL = 'yui3-js-enabled',
         NOOP = function() {},
@@ -609,13 +610,11 @@ proto = {
         var len, loader, handleBoot,
             Y = this,
             G_ENV = YUI.Env,
-            // args = SLICE.call(arguments, 0),
             mods = G_ENV.mods,
             Env = Y.Env,
             used = Env._used,
             queue = G_ENV._loaderQueue,
             firstArg = args[0],
-            // callback = args[args.length - 1],
             YArray = Y.Array,
             config = Y.config,
             boot = config.bootstrap,
@@ -682,7 +681,7 @@ proto = {
                 Y._loading = false;
 
                 if (data) {
-                    origMissing = missing.concat();
+                    origMissing = missing;
                     missing = [];
                     r = [];
                     process(data);
@@ -721,7 +720,6 @@ proto = {
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
-            // args = Y.Object.keys(mods);
             ret = Y._attach(Y.Object.keys(mods));
             if (ret) {
                 handleLoader();
@@ -738,11 +736,8 @@ proto = {
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
-            // loader.allowRollup = false;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
-
-            // YUI.Env.loaders[Y.config._sig] = loader;
         }
 
 
@@ -760,11 +755,9 @@ proto = {
         // dynamic load
         if (boot && len && Y.Loader) {
             Y._loading = true;
-            // loader = new Y.Loader(config);
             loader = getLoader(Y);
             loader.onEnd = handleLoader;
             loader.context = Y;
-            // loader.attaching = args;
             loader.data = args;
             loader.require((fetchCSS) ? missing : args);
             loader.insert(null, (fetchCSS) ? null : 'js');
@@ -781,7 +774,6 @@ proto = {
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
             Y._loading = true;
-            // args = YArray(arguments, 0, true);
 
             handleBoot = function() {
                 Y._loading = false;
@@ -834,13 +826,18 @@ proto = {
      * @return {object}  A reference to the last namespace object created.
      */
     namespace: function() {
-        var a = arguments, o = null, i, j, d;
-        for (i = 0; i < a.length; i = i + 1) {
-            d = ('' + a[i]).split('.');
-            o = this;
-            for (j = (d[0] == 'YAHOO') ? 1 : 0; j < d.length; j = j + 1) {
-                o[d[j]] = o[d[j]] || {};
-                o = o[d[j]];
+        var a = arguments, o = this, i = 0, j, d, arg;
+        for (; i < a.length; i++) {
+            // d = ('' + a[i]).split('.');
+            arg = a[i];
+            if (arg.indexOf(PERIOD)) {
+                d = arg.split(PERIOD);
+                for (j = (d[0] == 'YAHOO') ? 1 : 0; j < d.length; j++) {
+                    o[d[j]] = o[d[j]] || {};
+                    o = o[d[j]];
+                }
+            } else {
+                o[arg] = o[arg] || {};
             }
         }
         return o;
