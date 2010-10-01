@@ -683,6 +683,9 @@ proto = {
                     ret = true,
                     data = response.data;
 
+
+                Y._loading = false;
+
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
@@ -698,6 +701,7 @@ proto = {
                 }
 
                 if (redo && data) {
+                    Y._loading = false;
                     Y._use(args, function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
@@ -714,17 +718,14 @@ proto = {
                     }
                 }
 
-                Y._loading = false;
 
-                if (Y._useQueue && Y._useQueue.size()) {
+                if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
                     Y._use.apply(Y, Y._useQueue.next());
                 }
 
             };
 
 // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
-
-
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
