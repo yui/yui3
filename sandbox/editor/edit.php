@@ -371,7 +371,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             'http://yui.yahooapis.com/2.8.1/build/grids/grids.css'
         ],
         */
-        extracss: 'body { color: red; } p { border: 1px solid green; padding: .25em; margin: 1em; } #yui-cursor { border: 1px solid purple; }'
+        extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } #yui-cursor { border: 1px solid purple; }'
     });
     
     /*
