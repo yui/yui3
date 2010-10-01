@@ -249,44 +249,45 @@ proto = {
                 _loaded: {},
                 serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
-        function(srcPattern, comboPattern) {
-            var b, nodes, i, src, match;
-            // get from querystring
-            nodes = (doc && doc.getElementsByTagName('script')) || [];
-            for (i = 0; i < nodes.length; i = i + 1) {
-                src = nodes[i].src;
-                if (src) {
 
-                    match = src.match(srcPattern);
-                    b = match && match[1];
-                    if (b) {
-                        // this is to set up the path to the loader.  The file
-                        // filter for loader should match the yui include.
-                        filter = match[2];
+    function(srcPattern, comboPattern) {
+        var b, nodes, i, src, match;
+        // get from querystring
+        nodes = (doc && doc.getElementsByTagName('script')) || [];
+        for (i = 0; i < nodes.length; i = i + 1) {
+            src = nodes[i].src;
+            if (src) {
 
-                        if (filter) {
-                            match = filter.indexOf('js');
+                match = src.match(srcPattern);
+                b = match && match[1];
+                if (b) {
+                    // this is to set up the path to the loader.  The file
+                    // filter for loader should match the yui include.
+                    filter = match[2];
 
-                            if (match > -1) {
-                                filter = filter.substr(0, match);
-                            }
+                    if (filter) {
+                        match = filter.indexOf('js');
+
+                        if (match > -1) {
+                            filter = filter.substr(0, match);
                         }
-
-                        // extract correct path for mixed combo urls
-                        // http://yuilibrary.com/projects/yui3/ticket/2528423
-                        match = src.match(comboPattern);
-                        if (match && match[3]) {
-                            b = match[1] + match[3];
-                        }
-
-                        break;
                     }
+
+                    // extract correct path for mixed combo urls
+                    // http://yuilibrary.com/projects/yui3/ticket/2528423
+                    match = src.match(comboPattern);
+                    if (match && match[3]) {
+                        b = match[1] + match[3];
+                    }
+
+                    break;
                 }
             }
-
-            // use CDN default
-            return b || Env.cdn;
         }
+
+        // use CDN default
+        return b || Env.cdn;
+    }
             };
 
             Env = Y.Env;

@@ -249,44 +249,45 @@ proto = {
                 _loaded: {},
                 serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
-        function(srcPattern, comboPattern) {
-            var b, nodes, i, src, match;
-            // get from querystring
-            nodes = (doc && doc.getElementsByTagName('script')) || [];
-            for (i = 0; i < nodes.length; i = i + 1) {
-                src = nodes[i].src;
-                if (src) {
 
-                    match = src.match(srcPattern);
-                    b = match && match[1];
-                    if (b) {
-                        // this is to set up the path to the loader.  The file
-                        // filter for loader should match the yui include.
-                        filter = match[2];
+    function(srcPattern, comboPattern) {
+        var b, nodes, i, src, match;
+        // get from querystring
+        nodes = (doc && doc.getElementsByTagName('script')) || [];
+        for (i = 0; i < nodes.length; i = i + 1) {
+            src = nodes[i].src;
+            if (src) {
 
-                        if (filter) {
-                            match = filter.indexOf('js');
+                match = src.match(srcPattern);
+                b = match && match[1];
+                if (b) {
+                    // this is to set up the path to the loader.  The file
+                    // filter for loader should match the yui include.
+                    filter = match[2];
 
-                            if (match > -1) {
-                                filter = filter.substr(0, match);
-                            }
+                    if (filter) {
+                        match = filter.indexOf('js');
+
+                        if (match > -1) {
+                            filter = filter.substr(0, match);
                         }
-
-                        // extract correct path for mixed combo urls
-                        // http://yuilibrary.com/projects/yui3/ticket/2528423
-                        match = src.match(comboPattern);
-                        if (match && match[3]) {
-                            b = match[1] + match[3];
-                        }
-
-                        break;
                     }
+
+                    // extract correct path for mixed combo urls
+                    // http://yuilibrary.com/projects/yui3/ticket/2528423
+                    match = src.match(comboPattern);
+                    if (match && match[3]) {
+                        b = match[1] + match[3];
+                    }
+
+                    break;
                 }
             }
-
-            // use CDN default
-            return b || Env.cdn;
         }
+
+        // use CDN default
+        return b || Env.cdn;
+    }
             };
 
             Env = Y.Env;
@@ -1533,8 +1534,8 @@ SUBREGEX = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
  * Determines whether or not the provided item is an array.
  * Returns false for array-like collections such as the
  * function arguments collection or HTMLElement collection
- * will return false.  You can use @see Array.test if you
- * want to
+ * will return false.  Use <code>Y.Array.test</code> if you
+ * want to test for an array-like collection.
  * @method isArray
  * @static
  * @param o The object to test.
@@ -1545,7 +1546,7 @@ L.isArray = function(o) {
 };
 
 /**
- * Determines whether or not the provided item is a boolean
+ * Determines whether or not the provided item is a boolean.
  * @method isBoolean
  * @static
  * @param o The object to test.
@@ -1556,17 +1557,23 @@ L.isBoolean = function(o) {
 };
 
 /**
- * Determines whether or not the provided item is a function
+ * <p>
+ * Determines whether or not the provided item is a function.
  * Note: Internet Explorer thinks certain functions are objects:
+ * </p>
  *
+ * <pre>
  * var obj = document.createElement("object");
  * Y.Lang.isFunction(obj.getAttribute) // reports false in IE
- *
+ * &nbsp;
  * var input = document.createElement("input"); // append to body
  * Y.Lang.isFunction(input.focus) // reports false in IE
+ * </pre>
  *
+ * <p>
  * You will have to implement additional tests if these functions
  * matter to you.
+ * </p>
  *
  * @method isFunction
  * @static
@@ -1578,7 +1585,7 @@ L.isFunction = function(o) {
 };
 
 /**
- * Determines whether or not the supplied item is a date instance
+ * Determines whether or not the supplied item is a date instance.
  * @method isDate
  * @static
  * @param o The object to test.
@@ -1590,7 +1597,7 @@ L.isDate = function(o) {
 };
 
 /**
- * Determines whether or not the provided item is null
+ * Determines whether or not the provided item is null.
  * @method isNull
  * @static
  * @param o The object to test.
@@ -1601,7 +1608,7 @@ L.isNull = function(o) {
 };
 
 /**
- * Determines whether or not the provided item is a legal number
+ * Determines whether or not the provided item is a legal number.
  * @method isNumber
  * @static
  * @param o The object to test.
@@ -1613,7 +1620,8 @@ L.isNumber = function(o) {
 
 /**
  * Determines whether or not the provided item is of type object
- * or function
+ * or function. Note that arrays are also objects, so
+ * <code>Y.Lang.isObject([]) === true</code>.
  * @method isObject
  * @static
  * @param o The object to test.
@@ -1627,7 +1635,7 @@ L.isObject = function(o, failfn) {
 };
 
 /**
- * Determines whether or not the provided item is a string
+ * Determines whether or not the provided item is a string.
  * @method isString
  * @static
  * @param o The object to test.
@@ -1638,7 +1646,7 @@ L.isString = function(o) {
 };
 
 /**
- * Determines whether or not the provided item is undefined
+ * Determines whether or not the provided item is undefined.
  * @method isUndefined
  * @static
  * @param o The object to test.
@@ -1687,26 +1695,41 @@ L.isValue = function(o) {
 };
 
 /**
+ * <p>
  * Returns a string representing the type of the item passed in.
+ * </p>
+ *
+ * <p>
  * Known issues:
- *    typeof HTMLElementCollection returns function in Safari, but
- *    Y.type() reports object, which could be a good thing --
- *    but it actually caused the logic in Y.Lang.isObject to fail.
+ * </p>
+ *
+ * <ul>
+ *   <li>
+ *     <code>typeof HTMLElementCollection</code> returns function in Safari, but
+ *     <code>Y.type()</code> reports object, which could be a good thing --
+ *     but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
+ *   </li>
+ * </ul>
+ *
  * @method type
  * @param o the item to test.
  * @return {string} the detected type.
+ * @static
  */
 L.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 /**
- * Lightweight version of @see Y.substitute... it uses the same template
- * structure as Y.substitute, but doesn't support recursion, auto-object
- * coersion, or formats
+ * Lightweight version of <code>Y.substitute</code>. Uses the same template
+ * structure as <code>Y.substitute</code>, but doesn't support recursion,
+ * auto-object coersion, or formats.
  * @method sub
- * @since 3.2.0
+ * @param {string} s String to be modified.
+ * @param {object} o Object containing replacement values.
  * @return {string} the substitute result.
+ * @static
+ * @since 3.2.0
  */
 L.sub = function(s, o) {
     return ((s.replace) ? s.replace(SUBREGEX, function(match, key) {
