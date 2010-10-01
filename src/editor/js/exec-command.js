@@ -315,6 +315,11 @@
                     if (sel.isCollapsed && (this._lastKey != 32)) {
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('size', val);
+                        } else if (Y.UA.gecko) {
+                            var p = sel.anchorNode.ancestor('p');
+                            if (p) {
+                                p.setStyle('fontSize', '');
+                            }
                         }
                     }
                 }
