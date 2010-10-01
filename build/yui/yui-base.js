@@ -678,6 +678,9 @@ proto = {
                     ret = true,
                     data = response.data;
 
+
+                Y._loading = false;
+
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
@@ -693,6 +696,7 @@ proto = {
                 }
 
                 if (redo && data) {
+                    Y._loading = false;
                     Y._use(args, function() {
                         if (Y._attach(data)) {
                             Y._notify(callback, response, data);
@@ -707,15 +711,12 @@ proto = {
                     }
                 }
 
-                Y._loading = false;
 
-                if (Y._useQueue && Y._useQueue.size()) {
+                if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
                     Y._use.apply(Y, Y._useQueue.next());
                 }
 
             };
-
-
 
 
         // YUI().use('*'); // bind everything available
