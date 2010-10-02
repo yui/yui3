@@ -1,0 +1,17 @@
+<html>
+<head>
+    <script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-base-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/get-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/loader/loader-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/dom/dom-base-min.js"></script>
+    <script type="text/javascript">
+        YUI({
+            allowRollup: false,
+            combine: false
+        }).use("node", function(Y) {
+            console.log(Y.Env._loader.moduleInfo);
+        });
+    </script>
+</body>
+</html>
+i

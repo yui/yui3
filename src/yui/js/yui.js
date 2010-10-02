@@ -478,17 +478,17 @@ proto = {
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
-                done[name] = true;
                 mod = mods[name];
                 if (!mod) {
                     loader = Y.Env._loader;
 
-                    Y.log('no js def for: ' + name, 'info', 'yui');
+                    // Y.log('no js def for: ' + name, 'info', 'yui');
 
                     if (!loader || !loader.moduleInfo[name]) {
-                        // Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
+                    done[name] = true;
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
@@ -588,7 +588,7 @@ proto = {
         } else {
             key = args.join();
 
-            if (Y.Env.serviced[key]) {
+            if (false && Y.Env.serviced[key]) {
                 Y.log('already provisioned: ' + key, 'info', 'yui');
                 Y._notify(callback, ALREADY_DONE, args);
             } else {
@@ -709,21 +709,20 @@ proto = {
                 if (redo && data) {
                     Y._loading = false;
                     Y._use(args, function() {
-                        Y.log('Nested USE callback: ' + data, 'info', 'yui');
+                        Y.log('Nested use callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
                             Y._notify(callback, response, data);
                         }
                     });
                 } else {
                     if (data) {
-                        Y.log('attaching from loader: ' + data, 'info', 'yui');
+                        // Y.log('attaching from loader: ' + data, 'info', 'yui');
                         ret = Y._attach(data);
                     }
                     if (ret) {
                         Y._notify(callback, response, args);
                     }
                 }
-
 
                 if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
                     Y._use.apply(Y, Y._useQueue.next());
