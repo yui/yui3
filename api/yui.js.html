@@ -527,17 +527,17 @@
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">[</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
                 <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                <span class="nx">done</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="nx">mod</span> <span class="o">=</span> <span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">loader</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span><span class="p">;</span>
 
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;no js def for: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                    <span class="c1">// Y.log(&#39;no js def for: &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loader</span> <span class="o">||</span> <span class="o">!</span><span class="nx">loader</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
-                        <span class="c1">// Y.message(&#39;NOT loaded: &#39; + name, &#39;warn&#39;, &#39;yui&#39;);</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">message</span><span class="p">(</span><span class="s1">&#39;NOT loaded: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">done</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="nx">details</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">details</span><span class="p">;</span>
                     <span class="nx">req</span> <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
                     <span class="nx">use</span> <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
@@ -637,7 +637,7 @@
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">key</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">join</span><span class="p">();</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;already provisioned: &#39;</span> <span class="o">+</span> <span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">ALREADY_DONE</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -758,21 +758,20 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">_use</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested USE callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested use callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
                             <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
                         <span class="p">}</span>
                     <span class="p">});</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;attaching from loader: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                        <span class="c1">// Y.log(&#39;attaching from loader: &#39; + data, &#39;info&#39;, &#39;yui&#39;);</span>
                         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">_use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">next</span><span class="p">());</span>
