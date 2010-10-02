@@ -37,6 +37,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 	        writeOnce: true
 	    },
 	    data : {
+			value: null
 	    }
 	}
 });

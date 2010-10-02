@@ -39,6 +39,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 	        writeOnce: true
 	    },
 	    data : {
+			value: null
 	    }
 	}
 });
@@ -218,43 +219,7 @@ var ArrayList = Y.ArrayList,
 		});
 	},
 
-	
-	/**
-     * Event that is fired whenever the a record is removed from the recordset. Multiple simultaneous changes still fires this event once.
-     *
-     * @method _recordDeleted
-	 * @param oRecord {Array} An array of Y.Records that were deleted
-     * @param idx {Number} Index at which the modifications to the recordset were made
-     * @private
-     */
-	_recordRemoved: function(oRecord, idx) {
-		this.fire('remove', {data:oRecord, index: idx});
-	},
-	
-	/**
-     * Event that is fired when the record set is emptied
-     *
-     * @method _recordsetEmptied
-     * @private
-     */
-	_recordsetEmptied: function() {
-		//TODO: What configuration object should be sent here?
-		this.fire('empty', {});
-	},
-	
-	_recordsetUpdated: function(newRecords, delRecords, i) {
-		var e = {
-				data:
-				{
-					updated: newRecords,
-					overwritten: delRecords
-				},
-				
-				index: i
-			};
-			
-		this.fire('update', e);
-	},
+
 	
 	//---------------------------------------------
     // Public Methods

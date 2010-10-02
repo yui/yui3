@@ -408,8 +408,8 @@
 			
 			testUpdateRecordAtIndex: function() {
 				var newRecord, oldRecord, index=1;
-				
-				newRecord = new Y.Record({data:{a:'newG', b:'newH', c:'newI'}});
+				var o = {a:'newG', b:'newH', c:'newI'};
+				newRecord = new Y.Record({data:o});
 				oldRecord = this.rs.getRecord(index);
 				
 				this.rs.on('update', function(e) {
@@ -429,7 +429,6 @@
 			
 			testUpdateRecordAtIndices:function(){
 				var newRecords = [], index=0, oldRecord = [], a, b;
-				
 				oldRecord = this.rs.getRecords(index,2);
 				a = new Y.Record({data:{a:'newA', b:'newB', c:'newC'}});
 				b = new Y.Record({data:{a:'newD', b:'newE', c:'newF'}});
