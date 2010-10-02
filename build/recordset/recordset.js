@@ -44,13 +44,18 @@ var Record = Y.Base.create('record', Y.Base, [], {
 });
 
 Y.Record = Record;
-var ArrayList = Y.ArrayList;
-var Recordset = Y.Base.create('recordset', Y.Base, [], {
+var ArrayList = Y.ArrayList,
+	Bind = Y.bind,
+	Recordset = Y.Base.create('recordset', Y.Base, [], {
 
     initializer: function() {
 	
 		//set up event listener to fire events when recordset is modified in anyway
-		this.publish('add', {defaultFn: Y.bind("_defAddFn", this)});
+		this.publish('add', {defaultFn: Bind("_defAddFn", this)});
+		this.publish('remove', {defaultFn: Bind("_defRemoveFn", this)});
+		this.publish('empty', {defaultFn: Bind("_defEmptyFn", this)});
+		this.publish('update', {defaultFn: Bind("_defUpdateFn", this)});
+		
 		this._recordsetChanged();
     },
     
@@ -68,7 +73,7 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      */
 	_defAddFn: function(e) {
 		var len = this._items.length,
-			rec = e.record,
+			rec = e.added,
 			index = e.index;
 		//index = (Y.Lang.isNumber(index) && (index > -1)) ? index : len;
 		
@@ -80,6 +85,29 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 		}
 	},
 	
+	_defRemoveFn: function(e) {
+		var rem;
+		if (e.index === 0) {
+			this._items.pop();
+		}
+		else {
+			this._items.splice(e.index,e.range);
+		}
+		
+	},
+	
+	_defEmptyFn: function(e) {
+		this._items = [];
+	},
+	
+	_defUpdateFn: function(e) {
+		var newRecords = [], i = 0;
+		
+		for (; i<e.updated.length; i++) {
+			newRecords[i] = this._changeToRecord(data[i]);
+			this._items[e.index + i] = newRecords[i];
+		}
+	},
 	
 	/**
      * Helper method called upon by update() - it updates the recordset when an array is passed in
@@ -305,13 +333,13 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 			for(i=0; i < oData.length; i++) {
 				newRecords[i] = this._changeToRecord(oData[i]);
-				this.fire('add', {record:newRecords[i], index:idx+i});
+				this.fire('add', {added:newRecords[i], index:idx+i});
 			}
 
 		}
 		//If it is an object literal of data or a Y.Record
 		else if (Y.Lang.isObject(oData)) {
-			this.fire('add', {record:this._changeToRecord(oData), index:idx});
+			this.fire('add', {added:this._changeToRecord(oData), index:idx});
 		}
 		return this;
 	},
@@ -330,18 +358,16 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
 		var remRecords=[];
 		
 		//Default is to only remove the last record - the length is always 1 greater than the last index
-		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : (this.size()-1);
-		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
-
-		//Remove records and store them in remRecords
-		remRecords = this._items.splice(index,range);
+		index = (index > -1) ? index : (this.size()-1);
+		range = (range > 0) ? range : 1;
 		
-		//Fire event
-		this._recordRemoved(remRecords, index);
+		remRecords = this._items.slice(index,(index+range));
+
+		this.fire('remove', {removed: remRecords, range:range, index:index});
+		//this._recordRemoved(remRecords, index);
 		
 		//return ({data: remRecords, index:index}); 
 		return this;
-
 	},
 	
 	/**
@@ -351,27 +377,20 @@ var Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @public
      */
 	empty: function() {
-		this._items = [];
-		this._recordsetEmptied();	
+		this.fire('empty', {});
 		return this;
 	},
 	
+	
 	update: function(data, index) {
-		var remRecords = [], newRecords = [], i = 0;
-		if (Y.Lang.isArray(data)) {
-			for (; i<data.length; i++) {
-				newRecords[i] = this._changeToRecord(data[i]);
-				remRecords[i] = this._items[index+i];
-				this._items[index+i] = newRecords[i];
-			}
-		}
-		else if (Y.Lang.isObject(data)) {
-			newRecords[0] = this._changeToRecord(data);
-			remRecords[0] = this._items[index];
-			this._items[index] = newRecords[0];
-		}
-		this._recordsetUpdated(newRecords, remRecords, index);
+		var len, rec, arr;
 		
+		//Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method
+		arr = (!(Y.Lang.isArray(data))) ? [data] : data;
+		rec = this._items.slice(index, index+arr.length);
+		this.fire('update', {updated:arr, overwritten:rec, index:index});
+		
+		return this;		
 	}
 	
 	/**
