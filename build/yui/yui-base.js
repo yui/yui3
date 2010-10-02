@@ -476,16 +476,16 @@ proto = {
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
-                done[name] = true;
                 mod = mods[name];
                 if (!mod) {
                     loader = Y.Env._loader;
 
 
                     if (!loader || !loader.moduleInfo[name]) {
-                        // Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
+                    done[name] = true;
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
@@ -585,7 +585,7 @@ proto = {
         } else {
             key = args.join();
 
-            if (Y.Env.serviced[key]) {
+            if (false && Y.Env.serviced[key]) {
                 Y._notify(callback, ALREADY_DONE, args);
             } else {
                 Y._use(args, function(Y, response) {
@@ -716,7 +716,6 @@ proto = {
                         Y._notify(callback, response, args);
                     }
                 }
-
 
                 if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
                     Y._use.apply(Y, Y._useQueue.next());
