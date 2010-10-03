@@ -335,7 +335,8 @@
     */
     Y.Selection.unfilter = function() {
         var nodes = Y.all('body [class]'),
-            html = '', nons, ids;
+            html = '', nons, ids,
+            body = Y.one('body');
         
         Y.log('UnFiltering nodes', 'info', 'selection');
         
@@ -366,8 +367,10 @@
                 n.removeAttribute('_yuid');
             }
         });
-
-        html = Y.one('body').get('innerHTML');
+        
+        if (body) {
+            html = body.get('innerHTML');
+        }
         
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
 

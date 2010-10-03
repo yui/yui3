@@ -546,8 +546,12 @@ YUI.add('frame', function(Y) {
         */
         focus: function(fn) {
             if (Y.UA.ie) {
-                Y.one('win').focus();
-                this.getInstance().one('win').focus();
+                try {
+                    Y.one('win').focus();
+                    this.getInstance().one('win').focus();
+                } catch (ierr) {
+                    Y.log('Frame focus failed', 'warn', 'frame');
+                }
                 if (fn === true) {
                     this._handleFocus();
                 }

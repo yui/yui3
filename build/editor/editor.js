@@ -522,8 +522,11 @@ YUI.add('frame', function(Y) {
         */
         focus: function(fn) {
             if (Y.UA.ie) {
-                Y.one('win').focus();
-                this.getInstance().one('win').focus();
+                try {
+                    Y.one('win').focus();
+                    this.getInstance().one('win').focus();
+                } catch (ierr) {
+                }
                 if (fn === true) {
                     this._handleFocus();
                 }
@@ -1106,7 +1109,8 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.unfilter = function() {
         var nodes = Y.all('body [class]'),
-            html = '', nons, ids;
+            html = '', nons, ids,
+            body = Y.one('body');
         
         
         nodes.each(function(n) {
@@ -1136,8 +1140,10 @@ YUI.add('selection', function(Y) {
                 n.removeAttribute('_yuid');
             }
         });
-
-        html = Y.one('body').get('innerHTML');
+        
+        if (body) {
+            html = body.get('innerHTML');
+        }
         
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
 
