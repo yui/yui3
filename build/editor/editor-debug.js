@@ -1955,7 +1955,7 @@ YUI.add('exec-command', function(Y) {
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
-
+                    
                     if (Y.UA.gecko || Y.UA.opera) {
                         cmd = 'hilitecolor';
                     }
@@ -1969,6 +1969,7 @@ YUI.add('exec-command', function(Y) {
                                 n = sel.anchorNode;
                             } else {
                                 n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+
                                 sel.focusCursor(true, true);
                             }
                             return n;
@@ -1976,7 +1977,16 @@ YUI.add('exec-command', function(Y) {
                             return this._command(cmd, val);
                         }
                     } else {
-                        this._command(cmd, val);
+                        if (Y.UA.gecko && sel.isCollapsed) {
+                            this._command('inserthtml', '<span id="yui3-bcolor" style="background-color: ' + val + '"></span>');
+                            var c = inst.one('#yui3-bcolor');
+                            if (c) {
+                                c.set('id', '');
+                                c.removeAttribute('id');
+                            }
+                        } else {
+                            this._command(cmd, val);
+                        }
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
