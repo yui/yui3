@@ -588,7 +588,7 @@ proto = {
         } else {
             key = args.join();
 
-            if (false && Y.Env.serviced[key]) {
+            if (Y.Env.serviced[key]) {
                 Y.log('already provisioned: ' + key, 'info', 'yui');
                 Y._notify(callback, ALREADY_DONE, args);
             } else {
