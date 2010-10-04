@@ -65,7 +65,7 @@ var Lang    = Y.Lang,
     isObject   = Lang.isObject,
     trim       = Lang.trim,
 
-    INVALID_VALUE = (Y.Attribute && Y.Attribute.INVALID_VALUE) || {},
+    INVALID_VALUE = Y.Attribute.INVALID_VALUE,
 
     _SOURCE_SUCCESS     = '_sourceSuccess',
     INPUT_NODE          = 'inputNode',
