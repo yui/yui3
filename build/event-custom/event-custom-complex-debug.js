@@ -10,6 +10,7 @@ YUI.add('event-custom-complex', function(Y) {
 
 var FACADE,
     FACADE_KEYS,
+    EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
     ETProto = Y.EventTarget.prototype;
 
@@ -23,7 +24,9 @@ var FACADE,
 
 Y.EventFacade = function(e, currentTarget) {
 
-    e = e || {};
+    e = e || EMPTY;
+
+    this._event = e;
 
     /**
      * The arguments passed to fire
@@ -69,14 +72,18 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.relatedTarget = e.relatedTarget;
 
+};
+
+Y.extend(Y.EventFacade, Object, {
+
     /**
      * Stops the propagation to the next bubble target
      * @method stopPropagation
      */
-    this.stopPropagation = function() {
-        e.stopPropagation();
+    stopPropagation: function() {
+        this._event.stopPropagation();
         this.stopped = 1;
-    };
+    },
 
     /**
      * Stops the propagation to the next bubble target and
@@ -84,19 +91,19 @@ Y.EventFacade = function(e, currentTarget) {
      * on the current target.
      * @method stopImmediatePropagation
      */
-    this.stopImmediatePropagation = function() {
-        e.stopImmediatePropagation();
+    stopImmediatePropagation: function() {
+        this._event.stopImmediatePropagation();
         this.stopped = 2;
-    };
+    },
 
     /**
      * Prevents the event's default behavior
      * @method preventDefault
      */
-    this.preventDefault = function() {
-        e.preventDefault();
+    preventDefault: function() {
+        this._event.preventDefault();
         this.prevented = 1;
-    };
+    },
 
     /**
      * Stops the event propagation and prevents the default
@@ -105,13 +112,13 @@ Y.EventFacade = function(e, currentTarget) {
      * @param immediate {boolean} if true additional listeners
      * on the current target will not be executed
      */
-    this.halt = function(immediate) {
-        e.halt(immediate);
+    halt: function(immediate) {
+        this._event.halt(immediate);
         this.prevented = 1;
         this.stopped = (immediate) ? 2 : 1;
-    };
+    }
 
-};
+});
 
 CEProto.fireComplex = function(args) {
     var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs,
