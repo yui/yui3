@@ -1120,12 +1120,13 @@
             "recordset-base": {
                 "requires": [
                     "base", 
-                    "collection"
+                    "arraylist"
                 ]
             }, 
             "recordset-filter": {
                 "requires": [
-                    "recordset-base"
+                    "recordset-base", 
+                    "array-extras"
                 ]
             }, 
             "recordset-sort": {

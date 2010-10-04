@@ -415,16 +415,16 @@
 				this.rs.on('update', function(e) {
 					console.log('update');
 					console.log(e);
-					//Y.ObjectAssert.areEqual(newRecord, e.updated[0], 'Updated record is != to new record');
-					//Y.ObjectAssert.areEqual(oldRecord, e.overwritten[0], 'Overwritten record is != to old record');
-					//Y.Assert.areEqual(1, e.overwritten.length, 'overwritten array is not of expected length');
-					//Y.Assert.areEqual(1, e.updated.length);
-					//Y.Assert.areEqual(index, e.index, "correct index was modified");
+					Y.ObjectAssert.areEqual(newRecord, e.updated[0], 'Updated record is != to new record');
+					Y.ObjectAssert.areEqual(oldRecord, e.overwritten[0], 'Overwritten record is != to old record');
+					Y.Assert.areEqual(1, e.overwritten.length, 'overwritten array is not of expected length');
+					Y.Assert.areEqual(1, e.updated.length);
+					Y.Assert.areEqual(index, e.index, "correct index was modified");
 				});
 				
 				
 				this.rs.update(newRecord, index);
-				//Y.ObjectAssert.areEqual(newRecord.getValue(), this.rs.getRecord(index).getValue());
+				Y.ObjectAssert.areEqual(newRecord.getValue(), this.rs.getRecord(index).getValue());
 			},
 			
 			testUpdateRecordAtIndices:function(){
@@ -477,7 +477,7 @@
 				Y.ObjectAssert.areEqual(oldRs.getRecord(1).getValue(), this.rs.getRecord(2).getValue());
 				Y.Assert.areEqual(oldRs.getLength(), this.rs.getLength());
 				
-				
+				/*
 				//Test Descending Order
 				this.rs.sort.sort('c',true);
 				
@@ -493,7 +493,7 @@
 				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(1).getValue());
 				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(2).getValue());
 				Y.Assert.areEqual(oldRs.getLength(), this.rs.getLength());
-				
+				*/
 			},
 			
 			
@@ -662,29 +662,10 @@
 		    // ArrayList Methods
 		    //---------------------------------------------
 			
-			
-			testArrayList: function() {
-				Y.Assert.isFalse(this.rs.isEmpty());
-				this.rs.empty();
-				Y.Assert.isTrue(this.rs.isEmpty());
-			},
+
 			
 			testSize: function() {
 				Y.Assert.areEqual(3, this.rs.getLength());
-			},
-			
-			testRecord: function() {
-				var o = {foo:1, bar:"3"},
-					a,
-					b;
-				a = new Y.Record({data:o});
-				b = new Y.Record({data:a});
-				console.log('a is ');
-				console.log(a.getValue());
-				
-				console.log('b is ');
-				console.log(b.getValue());
-				Y.ObjectAssert.areEqual(a.getValue(),b.getValue());
 			},
 			
 			
@@ -692,9 +673,46 @@
 		    // Filter Plugin
 		    //---------------------------------------------
 		
-			testFilterPlugin: function() {
+			testFilter: function() {
 				this.rs.plug(Y.Plugin.RecordsetFilter);
-				//this.rs.filter.alert();
+				var validator = function(item) {
+					if (item.getValue('b') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				};
+				
+				var	rs = this.rs.filter.filter(validator);
+					
+				console.log('filter');
+				console.log(rs);
+				
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, rs.getRecord(1).getValue());
+				Y.Assert.areEqual(2, rs.getLength());
+				
+				//test a filter that doesn't return anything from recordset
+				validator = function(item) {
+					if (item.getValue('c') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				};
+				
+				rs = this.rs.filter.filter(validator);
+				Y.Assert.areEqual(0, rs.getLength());
+				
+				
+				//Test Filter with Key Value pair
+				rs = this.rs.filter.filter('b',2);
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, rs.getRecord(1).getValue());
+				Y.Assert.areEqual(2, rs.getLength());
+				
 			},
 			
 			/*

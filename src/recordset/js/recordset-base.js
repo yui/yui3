@@ -58,11 +58,9 @@ var ArrayList = Y.ArrayList,
 	},
 	
 	_defUpdateFn: function(e) {
-		var newRecords = [], i = 0;
 		
-		for (; i<e.updated.length; i++) {
-			newRecords[i] = this._changeToRecord(data[i]);
-			this._items[e.index + i] = newRecords[i];
+		for (var i=0; i<e.updated.length; i++) {
+			this._items[e.index + i] = this._changeToRecord(e.updated[i]);
 		}
 	},
 	

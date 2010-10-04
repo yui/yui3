@@ -1,4 +1,4 @@
-var COMPARE = Y.ArraySort.compare;
+var Compare = Y.ArraySort.compare;
 
 function RecordsetSort(field, desc, sorter) {
     RecordsetSort.superclass.constructor.apply(this, arguments);
@@ -20,9 +20,9 @@ Y.mix(RecordsetSort, {
 
         defaultSorter: {
             value: function(recA, recB, field, desc) {
-                var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
+                var sorted = Compare(recA.getValue(field), recB.getValue(field), desc);
                 if(sorted === 0) {
-                    return COMPARE(recA.get("id"), recB.get("id"), desc);
+                    return Compare(recA.get("id"), recB.get("id"), desc);
                 }
                 else {
                     return sorted;
@@ -41,7 +41,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     _defSortFn: function(e) {
-		this.set('lastSortProperties', e);
+		//this.set('lastSortProperties', e);
         this.get("host").get("records").sort(function(a, b) {
 			return (e.sorter)(a, b, e.field, e.desc);
 		});
