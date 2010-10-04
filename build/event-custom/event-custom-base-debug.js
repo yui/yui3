@@ -1340,7 +1340,7 @@ ET.prototype = {
         shorttype = parts[3];
 
         // extra redirection so we catch adaptor events too.  take a look at this.
-        if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
+        if (Node && Y.instanceOf(this, Node) && (shorttype in Node.DOM_EVENTS)) {
             args = YArray(arguments, 0, true);
             args.splice(2, 0, Node.getDOMNode(this));
             // Y.log("Node detected, redirecting with these args: " + args);
@@ -1349,7 +1349,7 @@ ET.prototype = {
 
         type = parts[1];
 
-        if (this instanceof YUI) {
+        if (Y.instanceOf(this, YUI)) {
 
             adapt = Y.Env.evt.plugins[type];
             args  = YArray(arguments, 0, true);
@@ -1358,9 +1358,9 @@ ET.prototype = {
             if (Node) {
                 n = args[2];
 
-                if (n instanceof Y.NodeList) {
+                if (Y.instanceOf(n, Y.NodeList)) {
                     n = Y.NodeList.getDOMNodes(n);
-                } else if (n instanceof Node) {
+                } else if (Y.instanceOf(n, Node)) {
                     n = Node.getDOMNode(n);
                 }
 
@@ -1425,7 +1425,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
         var evts = this._yuievt.events, i,
-            Node = Y.Node, isNode = Node && (this instanceof Node);
+            Node = Y.Node, isNode = Node && (Y.instanceOf(this, Node));
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -1494,7 +1494,7 @@ ET.prototype = {
         adapt = Y.Env.evt.plugins[shorttype];
 
         // The YUI instance handles DOM events and adaptors
-        if (this instanceof YUI) {
+        if (Y.instanceOf(this, YUI)) {
             args = YArray(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {

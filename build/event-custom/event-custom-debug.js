@@ -1340,7 +1340,7 @@ ET.prototype = {
         shorttype = parts[3];
 
         // extra redirection so we catch adaptor events too.  take a look at this.
-        if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
+        if (Node && Y.instanceOf(this, Node) && (shorttype in Node.DOM_EVENTS)) {
             args = YArray(arguments, 0, true);
             args.splice(2, 0, Node.getDOMNode(this));
             // Y.log("Node detected, redirecting with these args: " + args);
@@ -1349,7 +1349,7 @@ ET.prototype = {
 
         type = parts[1];
 
-        if (this instanceof YUI) {
+        if (Y.instanceOf(this, YUI)) {
 
             adapt = Y.Env.evt.plugins[type];
             args  = YArray(arguments, 0, true);
@@ -1358,9 +1358,9 @@ ET.prototype = {
             if (Node) {
                 n = args[2];
 
-                if (n instanceof Y.NodeList) {
+                if (Y.instanceOf(n, Y.NodeList)) {
                     n = Y.NodeList.getDOMNodes(n);
-                } else if (n instanceof Node) {
+                } else if (Y.instanceOf(n, Node)) {
                     n = Node.getDOMNode(n);
                 }
 
@@ -1425,7 +1425,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
         var evts = this._yuievt.events, i,
-            Node = Y.Node, isNode = Node && (this instanceof Node);
+            Node = Y.Node, isNode = Node && (Y.instanceOf(this, Node));
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -1494,7 +1494,7 @@ ET.prototype = {
         adapt = Y.Env.evt.plugins[shorttype];
 
         // The YUI instance handles DOM events and adaptors
-        if (this instanceof YUI) {
+        if (Y.instanceOf(this, YUI)) {
             args = YArray(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
@@ -1977,6 +1977,7 @@ YUI.add('event-custom-complex', function(Y) {
 
 var FACADE,
     FACADE_KEYS,
+    EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
     ETProto = Y.EventTarget.prototype;
 
@@ -1990,7 +1991,9 @@ var FACADE,
 
 Y.EventFacade = function(e, currentTarget) {
 
-    e = e || {};
+    e = e || EMPTY;
+
+    this._event = e;
 
     /**
      * The arguments passed to fire
@@ -2036,14 +2039,18 @@ Y.EventFacade = function(e, currentTarget) {
      */
     this.relatedTarget = e.relatedTarget;
 
+};
+
+Y.extend(Y.EventFacade, Object, {
+
     /**
      * Stops the propagation to the next bubble target
      * @method stopPropagation
      */
-    this.stopPropagation = function() {
-        e.stopPropagation();
+    stopPropagation: function() {
+        this._event.stopPropagation();
         this.stopped = 1;
-    };
+    },
 
     /**
      * Stops the propagation to the next bubble target and
@@ -2051,19 +2058,19 @@ Y.EventFacade = function(e, currentTarget) {
      * on the current target.
      * @method stopImmediatePropagation
      */
-    this.stopImmediatePropagation = function() {
-        e.stopImmediatePropagation();
+    stopImmediatePropagation: function() {
+        this._event.stopImmediatePropagation();
         this.stopped = 2;
-    };
+    },
 
     /**
      * Prevents the event's default behavior
      * @method preventDefault
      */
-    this.preventDefault = function() {
-        e.preventDefault();
+    preventDefault: function() {
+        this._event.preventDefault();
         this.prevented = 1;
-    };
+    },
 
     /**
      * Stops the event propagation and prevents the default
@@ -2072,13 +2079,13 @@ Y.EventFacade = function(e, currentTarget) {
      * @param immediate {boolean} if true additional listeners
      * on the current target will not be executed
      */
-    this.halt = function(immediate) {
-        e.halt(immediate);
+    halt: function(immediate) {
+        this._event.halt(immediate);
         this.prevented = 1;
         this.stopped = (immediate) ? 2 : 1;
-    };
+    }
 
-};
+});
 
 CEProto.fireComplex = function(args) {
     var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs,
