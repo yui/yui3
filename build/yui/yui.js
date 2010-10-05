@@ -585,7 +585,7 @@ proto = {
         } else {
             key = args.join();
 
-            if (false && Y.Env.serviced[key]) {
+            if (Y.Env.serviced[key]) {
                 Y._notify(callback, ALREADY_DONE, args);
             } else {
                 Y._use(args, function(Y, response) {
@@ -1905,6 +1905,7 @@ YArray.indexOf = (Native.indexOf) ?
  * Numeric sort convenience function.
  * Y.ArrayAssert.itemsAreEqual([1,2,3], [3,1,2].sort(Y.Array.numericSort));
  * @method numericSort
+ * @static
  * @param {number} a a number.
  * @param {number} b a number.
  */
@@ -2385,6 +2386,7 @@ O.some = function(o, f, c, proto) {
  * from the value object provided.
  *
  * @method getValue
+ * @static
  * @param o The object from which to extract the property value.
  * @param path {Array} A path array, specifying the object traversal path
  * from which to obtain the sub value.
@@ -2414,6 +2416,7 @@ O.getValue = function(o, path) {
  * undefined if the path is invalid.
  *
  * @method setValue
+ * @static
  * @param o             The object on which to set the sub value.
  * @param path {Array}  A path array, specifying the object traversal path
  *                      at which to set the sub value.
@@ -2445,6 +2448,7 @@ O.setValue = function(o, path, val) {
 /**
  * Returns true if the object has no properties of its own
  * @method isEmpty
+ * @static
  * @return {boolean} true if the object is empty.
  * @since 3.2.0
  */
@@ -3494,7 +3498,7 @@ Y.Get = function() {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});
 YUI.add('features', function(Y) {
 
 var feature_tests = {};
@@ -3562,8 +3566,8 @@ Y.mix(Y.namespace('Features'), {
 var add = Y.Features.add;
 // 0
 add('load', '0', {
-    "trigger": "dom-style", 
-    "ua": "ie"
+    "trigger": "node-base", 
+    "ua": "gecko"
 });
 // history-hash-ie-test.js
 add('load', '1', {
@@ -3645,7 +3649,7 @@ Y._rls = function(what) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base','get','features']});
+}, '@VERSION@' ,{requires:['get','features']});
 YUI.add('intl-base', function(Y) {
 
 /**

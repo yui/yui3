@@ -648,6 +648,7 @@ Y.Loader = function(o) {
 
     // Y.on('yui:load', self.loadNext, self);
 
+    self.tested = {};
 
     /*
      * Cached sorted calculate results
@@ -679,6 +680,7 @@ Y.Loader.prototype = {
                    mr = m && m.requires;
                if (m) {
                    if (!m._inspected && req && mr.length != req.length) {
+                       // console.log('deleting ' + m.name);
                        delete m.expanded;
                    }
                } else {
@@ -693,10 +695,15 @@ Y.Loader.prototype = {
 // directly or by means of modules it supersedes.
    _requires: function(mod1, mod2) {
 
-        var i, rm, after, after_map, s,
+        var i, rm, after_map, s,
             info = this.moduleInfo,
             m = info[mod1],
             other = info[mod2];
+            // key = mod1 + mod2;
+
+        // if (this.tested[key]) {
+            // return this.tested[key];
+        // }
 
         // if (loaded[mod2] || !m || !other) {
         if (!m || !other) {
@@ -704,20 +711,19 @@ Y.Loader.prototype = {
         }
 
         rm = m.expanded_map;
-        after = m.after;
         after_map = m.after_map;
 
-        // check if this module requires the other directly
-        // if (r && YArray.indexOf(r, mod2) > -1) {
-        if (rm && (mod2 in rm)) {
+        // check if this module should be sorted after the other
+        // do this first to short circut circular deps
+        if (after_map && (mod2 in after_map)) {
             return true;
         }
 
-        // check if this module should be sorted after the other
-        if (after_map && (mod2 in after_map)) {
-            return true;
-        } else if (after && YArray.indexOf(after, mod2) > -1) {
-            return true;
+        after_map = other.after_map;
+
+        // and vis-versa
+        if (after_map && (mod1 in after_map)) {
+            return false;
         }
 
         // check if this module requires one the other supersedes
@@ -728,6 +734,21 @@ Y.Loader.prototype = {
                     return true;
                 }
             }
+        }
+
+        s = info[mod1] && info[mod1].supersedes;
+        if (s) {
+            for (i = 0; i < s.length; i++) {
+                if (this._requires(mod2, s[i])) {
+                    return false;
+                }
+            }
+        }
+
+        // check if this module requires the other directly
+        // if (r && YArray.indexOf(r, mod2) > -1) {
+        if (rm && (mod2 in rm)) {
+            return true;
         }
 
         // external css files should be sorted below yui css
@@ -834,7 +855,6 @@ Y.Loader.prototype = {
                     group: mdef.group,
                     type: 'css',
                     after: sinf.after,
-                    after_map: YArray.hash(sinf.after),
                     path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
@@ -954,7 +974,7 @@ Y.Loader.prototype = {
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
             overrides, skinname,
-            conditions = this.conditions, condmod;
+            conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
 
         this.moduleInfo[name] = o;
@@ -1067,9 +1087,15 @@ Y.Loader.prototype = {
         }
 
         if (o.condition) {
-            condmod = o.condition.trigger;
-            conditions[condmod] = conditions[condmod] || {};
-            conditions[condmod][name] = o.condition;
+            trigger = o.condition.trigger;
+            conditions[trigger] = conditions[trigger] || {};
+            conditions[trigger][name] = o.condition;
+            o.after = o.after || [];
+            o.after.push(trigger);
+        }
+
+        if (o.after) {
+            o.after_map = YArray.hash(o.after);
         }
 
         // this.dirty = true;
@@ -1104,37 +1130,42 @@ Y.Loader.prototype = {
      * @return {array} the expanded requirement list.
      */
     getRequires: function(mod) {
+
+        // if (mod.name == 'node-base') {
+            // eval('debugger;');
+        // }
+
         if (!mod || mod._parsed) {
+            // Y.log('returning no reqs for ' + mod.name);
             return NO_REQUIREMENTS;
         }
 
         var i, m, j, add, packName, lang,
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
-            d = [],
+            d,
             r, old_mod,
             o, skinmod, skindef,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
-            hash = {};
+            hash;
 
         // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
-
             old_mod = mod;
-
             mod = this.addModule(adddef, name);
             mod.group = old_mod.group;
             mod.pkg = old_mod.pkg;
             delete mod.expanded;
-            // console.log('TEMP MOD: ' + name + ', ' + mod.requires);
-            // console.log(Y.dump(mod));
         }
 
         if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
             // Y.log('already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
+
+        d = [];
+        hash = {};
 
         r = mod.requires;
         o = mod.optional;
@@ -1234,6 +1265,7 @@ Y.Loader.prototype = {
                         hash[condmod] = true;
                         d.push(condmod);
                         m = this.getModule(condmod);
+                        // console.log('conditional', m);
                         if (m) {
                             add = this.getRequires(m);
                             for (j = 0; j < add.length; j++) {
@@ -1303,6 +1335,28 @@ Y.Loader.prototype = {
         return m.provides;
     },
 
+    checkConditions: function() {
+        var self = this,
+            conds = self.conditions;
+
+        Y.Object.each(self.required, function(mod, name) {
+
+            var cond = conds[name];
+
+            Y.Object.each(cond, function(def, condmod) {
+                if (def) {
+                    var go = def.result || ((def.ua && Y.UA[def.ua]) ||
+                                 (def.test && def.test(Y)));
+                    def.result = go;
+                    if (go) {
+                        self.required[condmod] = true;
+                    }
+                }
+            });
+
+        });
+    },
+
     /**
      * Calculates the dependency tree, the result is stored in the sorted
      * property.
@@ -1321,7 +1375,11 @@ Y.Loader.prototype = {
                 this._setup();
             }
 
+
             this._explode();
+
+            // this.checkConditions();
+
             if (this.allowRollup) {
                 this._rollup();
             }
@@ -1386,6 +1444,7 @@ Y.Loader.prototype = {
                 }
             }
         }
+
 
         //l = Y.merge(this.inserted);
         l = {};
@@ -2141,22 +2200,22 @@ YUI.add('loader-rollup', function(Y) {
  * @private
  */
 Y.Loader.prototype._rollup = function() {
-    var i, j, m, s, rollups = {}, r = this.required, roll,
+    var i, j, m, s, r = this.required, roll,
         info = this.moduleInfo, rolled, c, smod;
 
     // find and cache rollup modules
     if (this.dirty || !this.rollups) {
+        this.rollups = {};
         for (i in info) {
             if (info.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // if (m && m.rollup && m.supersedes) {
                 if (m && m.rollup) {
-                    rollups[i] = m;
+                    this.rollups[i] = m;
                 }
             }
         }
 
-        this.rollups = rollups;
         this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
     }
 
@@ -2165,8 +2224,8 @@ Y.Loader.prototype._rollup = function() {
         rolled = false;
 
         // go through the rollup candidates
-        for (i in rollups) {
-            if (rollups.hasOwnProperty(i)) {
+        for (i in this.rollups) {
+            if (this.rollups.hasOwnProperty(i)) {
                 // there can be only one, unless forced
                 if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
                     m = this.getModule(i);
@@ -2337,6 +2396,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "array-extras", 
+                    "base-build", 
                     "event-valuechange", 
                     "node-base"
                 ]
@@ -2928,8 +2988,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "escape": {}, 
     "event": {
-        "expound": "node-base", 
+        "after": "node-base", 
         "plugins": {
+            "event-base-ie": {
+                "after": [
+                    "event-base"
+                ], 
+                "condition": {
+                    "trigger": "node-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -2938,7 +3010,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "submodules": {
             "event-base": {
-                "expound": "node-base", 
+                "after": "node-base", 
                 "requires": [
                     "event-custom-base"
                 ]
@@ -2976,7 +3048,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-synthetic": {
                 "requires": [
                     "node-base", 
-                    "event-custom"
+                    "event-custom-complex"
                 ]
             }
         }
@@ -2985,8 +3057,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "event-custom-base": {
                 "requires": [
-                    "oop", 
-                    "yui-later"
+                    "oop"
                 ]
             }, 
             "event-custom-complex": {
@@ -3173,24 +3244,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "oop"
         ]
     }, 
-    "loader": {
-        "requires": [
-            "get"
-        ], 
-        "submodules": {
-            "loader-base": {}, 
-            "loader-rollup": {
-                "requires": [
-                    "loader-base"
-                ]
-            }, 
-            "loader-yui3": {
-                "requires": [
-                    "loader-base"
-                ]
-            }
-        }
-    }, 
     "node": {
         "plugins": {
             "align-plugin": {
@@ -3223,10 +3276,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }
         }, 
-        "requires": [
-            "dom", 
-            "event-base"
-        ], 
         "submodules": {
             "node-base": {
                 "requires": [
@@ -3634,22 +3683,47 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "yui": {
         "submodules": {
-            "features": {}, 
-            "get": {}, 
-            "intl-base": {}, 
+            "features": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "get": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "intl-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
             "rls": {
                 "requires": [
+                    "get", 
                     "features"
                 ]
             }, 
             "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
+            "yui-later": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-log": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-throttle": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 };
-YUI.Env[Y.version].md5 = '465579f9f29d79b3548ffc3c857d0358';
+YUI.Env[Y.version].md5 = 'ebb5ae7c4a973b33925e45269946ac2f';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

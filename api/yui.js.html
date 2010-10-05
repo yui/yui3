@@ -637,7 +637,7 @@
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">key</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">join</span><span class="p">();</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;already provisioned: &#39;</span> <span class="o">+</span> <span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">ALREADY_DONE</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>

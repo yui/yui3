@@ -608,6 +608,7 @@
 
     <span class="c1">// Y.on(&#39;yui:load&#39;, self.loadNext, self);</span>
 
+    <span class="nx">self</span><span class="p">.</span><span class="nx">tested</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="cm">/*</span>
 <span class="cm">     * Cached sorted calculate results</span>
@@ -639,6 +640,7 @@
                    <span class="nx">mr</span> <span class="o">=</span> <span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">.</span><span class="nx">_inspected</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">mr</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                       <span class="c1">// console.log(&#39;deleting &#39; + m.name);</span>
                        <span class="k">delete</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
                    <span class="p">}</span>
                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -653,10 +655,15 @@
 <span class="c1">// directly or by means of modules it supersedes.</span>
    <span class="nx">_requires</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod1</span><span class="p">,</span> <span class="nx">mod2</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">rm</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">after_map</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">rm</span><span class="p">,</span> <span class="nx">after_map</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
             <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span>
             <span class="nx">m</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">],</span>
             <span class="nx">other</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod2</span><span class="p">];</span>
+            <span class="c1">// key = mod1 + mod2;</span>
+
+        <span class="c1">// if (this.tested[key]) {</span>
+            <span class="c1">// return this.tested[key];</span>
+        <span class="c1">// }</span>
 
         <span class="c1">// if (loaded[mod2] || !m || !other) {</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span> <span class="o">||</span> <span class="o">!</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
@@ -664,20 +671,19 @@
         <span class="p">}</span>
 
         <span class="nx">rm</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">;</span>
-        <span class="nx">after</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">after</span><span class="p">;</span>
         <span class="nx">after_map</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">after_map</span><span class="p">;</span>
 
-        <span class="c1">// check if this module requires the other directly</span>
-        <span class="c1">// if (r &amp;&amp; YArray.indexOf(r, mod2) &gt; -1) {</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">rm</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">rm</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// check if this module should be sorted after the other</span>
+        <span class="c1">// do this first to short circut circular deps</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">after_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">after_map</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="c1">// check if this module should be sorted after the other</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">after_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">after_map</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">after</span> <span class="o">&amp;&amp;</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">after</span><span class="p">,</span> <span class="nx">mod2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">after_map</span> <span class="o">=</span> <span class="nx">other</span><span class="p">.</span><span class="nx">after_map</span><span class="p">;</span>
+
+        <span class="c1">// and vis-versa</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">after_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod1</span> <span class="k">in</span> <span class="nx">after_map</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="c1">// check if this module requires one the other supersedes</span>
@@ -688,6 +694,21 @@
                     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">s</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">].</span><span class="nx">supersedes</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_requires</span><span class="p">(</span><span class="nx">mod2</span><span class="p">,</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// check if this module requires the other directly</span>
+        <span class="c1">// if (r &amp;&amp; YArray.indexOf(r, mod2) &gt; -1) {</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">rm</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">rm</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="c1">// external css files should be sorted below yui css</span>
@@ -794,7 +815,6 @@
                     <span class="nx">group</span><span class="o">:</span> <span class="nx">mdef</span><span class="p">.</span><span class="nx">group</span><span class="p">,</span>
                     <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span>
                     <span class="nx">after</span><span class="o">:</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">after</span><span class="p">,</span>
-                    <span class="nx">after_map</span><span class="o">:</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">sinf</span><span class="p">.</span><span class="nx">after</span><span class="p">),</span>
                     <span class="nx">path</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">||</span> <span class="nx">pkg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">skin</span> <span class="o">+</span>
                           <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">mod</span> <span class="o">+</span> <span class="s1">&#39;.css&#39;</span><span class="p">,</span>
                     <span class="nx">ext</span><span class="o">:</span> <span class="nx">ext</span>
@@ -914,7 +934,7 @@
         <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">submodules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sup</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span> <span class="nx">plugins</span><span class="p">,</span> <span class="nx">plug</span><span class="p">,</span>
             <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span>
             <span class="nx">overrides</span><span class="p">,</span> <span class="nx">skinname</span><span class="p">,</span>
-            <span class="nx">conditions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">conditions</span><span class="p">,</span> <span class="nx">condmod</span><span class="p">;</span>
+            <span class="nx">conditions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">conditions</span><span class="p">,</span> <span class="nx">trigger</span><span class="p">;</span>
             <span class="c1">// , existing = this.moduleInfo[name], newr;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
@@ -1027,9 +1047,15 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">condmod</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">.</span><span class="nx">trigger</span><span class="p">;</span>
-            <span class="nx">conditions</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conditions</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
-            <span class="nx">conditions</span><span class="p">[</span><span class="nx">condmod</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">;</span>
+            <span class="nx">trigger</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">.</span><span class="nx">trigger</span><span class="p">;</span>
+            <span class="nx">conditions</span><span class="p">[</span><span class="nx">trigger</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conditions</span><span class="p">[</span><span class="nx">trigger</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">conditions</span><span class="p">[</span><span class="nx">trigger</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">;</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">after</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">after</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">after</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">trigger</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">after</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">after_map</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">after</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="c1">// this.dirty = true;</span>
@@ -1064,37 +1090,42 @@
 <span class="cm">     * @return {array} the expanded requirement list.</span>
 <span class="cm">     */</span>
     <span class="nx">getRequires</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// if (mod.name == &#39;node-base&#39;) {</span>
+            <span class="c1">// eval(&#39;debugger;&#39;);</span>
+        <span class="c1">// }</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">_parsed</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Y.log(&#39;returning no reqs for &#39; + mod.name);</span>
             <span class="k">return</span> <span class="nx">NO_REQUIREMENTS</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">add</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">cond</span><span class="p">,</span> <span class="nx">go</span><span class="p">,</span>
             <span class="nx">adddef</span> <span class="o">=</span> <span class="nx">ON_PAGE</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">ON_PAGE</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">details</span><span class="p">,</span>
-            <span class="nx">d</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">d</span><span class="p">,</span>
             <span class="nx">r</span><span class="p">,</span> <span class="nx">old_mod</span><span class="p">,</span>
             <span class="nx">o</span><span class="p">,</span> <span class="nx">skinmod</span><span class="p">,</span> <span class="nx">skindef</span><span class="p">,</span>
             <span class="nx">intl</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">intl</span><span class="p">,</span>
             <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span>
-            <span class="nx">hash</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">hash</span><span class="p">;</span>
 
         <span class="c1">// pattern match leaves module stub that needs to be filled out</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">temp</span> <span class="o">&amp;&amp;</span> <span class="nx">adddef</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="nx">old_mod</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
-
             <span class="nx">mod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">adddef</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
             <span class="nx">mod</span><span class="p">.</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">old_mod</span><span class="p">.</span><span class="nx">group</span><span class="p">;</span>
             <span class="nx">mod</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">=</span> <span class="nx">old_mod</span><span class="p">.</span><span class="nx">pkg</span><span class="p">;</span>
             <span class="k">delete</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
-            <span class="c1">// console.log(&#39;TEMP MOD: &#39; + name + &#39;, &#39; + mod.requires);</span>
-            <span class="c1">// console.log(Y.dump(mod));</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;already expanded &#39; + name + &#39;, &#39; + mod.expanded);</span>
             <span class="k">return</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="nx">d</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">hash</span> <span class="o">=</span> <span class="p">{};</span>
 
         <span class="nx">r</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">optional</span><span class="p">;</span>
@@ -1194,6 +1225,7 @@
                         <span class="nx">hash</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                         <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">condmod</span><span class="p">);</span>
                         <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">condmod</span><span class="p">);</span>
+                        <span class="c1">// console.log(&#39;conditional&#39;, m);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
                             <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">add</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -1263,6 +1295,28 @@
         <span class="k">return</span> <span class="nx">m</span><span class="p">.</span><span class="nx">provides</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="nx">checkConditions</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">conds</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">conditions</span><span class="p">;</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">cond</span> <span class="o">=</span> <span class="nx">conds</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">cond</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">def</span><span class="p">,</span> <span class="nx">condmod</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">def</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">go</span> <span class="o">=</span> <span class="nx">def</span><span class="p">.</span><span class="nx">result</span> <span class="o">||</span> <span class="p">((</span><span class="nx">def</span><span class="p">.</span><span class="nx">ua</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">[</span><span class="nx">def</span><span class="p">.</span><span class="nx">ua</span><span class="p">])</span> <span class="o">||</span>
+                                 <span class="p">(</span><span class="nx">def</span><span class="p">.</span><span class="nx">test</span> <span class="o">&amp;&amp;</span> <span class="nx">def</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">Y</span><span class="p">)));</span>
+                    <span class="nx">def</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="nx">go</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">go</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">self</span><span class="p">.</span><span class="nx">required</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+
+        <span class="p">});</span>
+    <span class="p">},</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Calculates the dependency tree, the result is stored in the sorted</span>
 <span class="cm">     * property.</span>
@@ -1281,7 +1335,11 @@
                 <span class="k">this</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
             <span class="p">}</span>
 
+
             <span class="k">this</span><span class="p">.</span><span class="nx">_explode</span><span class="p">();</span>
+
+            <span class="c1">// this.checkConditions();</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">allowRollup</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_rollup</span><span class="p">();</span>
             <span class="p">}</span>
@@ -1346,6 +1404,7 @@
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
 
         <span class="c1">//l = Y.merge(this.inserted);</span>
         <span class="nx">l</span> <span class="o">=</span> <span class="p">{};</span>

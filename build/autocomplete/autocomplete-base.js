@@ -63,12 +63,12 @@ var Lang    = Y.Lang,
 
     isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
-    isNumber   = Lang.isNumber,
     isObject   = Lang.isObject,
     trim       = Lang.trim,
 
-    INVALID_VALUE = (Y.Attribute && Y.Attribute.INVALID_VALUE) || {},
+    INVALID_VALUE = Y.Attribute.INVALID_VALUE,
 
+    _FUNCTION_VALIDATOR = '_functionValidator',
     _SOURCE_SUCCESS     = '_sourceSuccess',
     INPUT_NODE          = 'inputNode',
     QUERY               = 'query',
@@ -228,7 +228,6 @@ AutoCompleteBase.ATTRS = {
      * @default 0
      */
     maxResults: {
-        validator: isNumber,
         value: 0
     },
 
@@ -243,7 +242,6 @@ AutoCompleteBase.ATTRS = {
      * @default 1
      */
     minQueryLength: {
-        validator: isNumber,
         value: 1
     },
 
@@ -289,10 +287,6 @@ AutoCompleteBase.ATTRS = {
      * @default 100
      */
     queryDelay: {
-        validator: function (value) {
-            return isNumber(value) && value >= 0;
-        },
-
         value: 100
     },
 
@@ -329,18 +323,7 @@ AutoCompleteBase.ATTRS = {
      * @default null
      */
     requestTemplate: {
-        setter: function (template) {
-            if (template === null || isFunction(template)) {
-                return template;
-            }
-
-            template = template.toString();
-
-            return function (query) {
-                return Lang.sub(template, {query: encodeURIComponent(query)});
-            };
-        },
-
+        setter: '_setRequestTemplate',
         value: null
     },
 
@@ -391,7 +374,7 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultFormatter: {
-        validator: '_functionValidator'
+        validator: _FUNCTION_VALIDATOR
     },
 
     /**
@@ -411,7 +394,7 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultHighlighter: {
-        validator: '_functionValidator'
+        validator: _FUNCTION_VALIDATOR
     },
 
     /**
@@ -672,8 +655,10 @@ AutoCompleteBase.prototype = {
      * @method unbindInput
      */
     unbindInput: function () {
-        while (this._inputEvents && this._inputEvents.length) {
-            this._inputEvents.pop().detach();
+        var inputEvents = this._inputEvents;
+
+        while (inputEvents && inputEvents.length) {
+            inputEvents.pop().detach();
         }
     },
 
@@ -718,7 +703,7 @@ AutoCompleteBase.prototype = {
             } else {
                 // Hack alert: JSONPRequest currently doesn't support
                 // per-request callbacks, so we're reaching into the protected
-                // _config object to make it happen. 
+                // _config object to make it happen.
                 //
                 // This limitation is mentioned in the following JSONP
                 // enhancement ticket:
@@ -886,7 +871,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _functionValidator: function (value) {
-        return isFunction(value) || value === null;
+        return value === null || isFunction(value);
     },
 
     /**
@@ -1064,16 +1049,36 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _setLocator: function (locator) {
-        var that = this;
-
-        if (locator === null || isFunction(locator)) {
+        if (this[_FUNCTION_VALIDATOR](locator)) {
             return locator;
         }
+
+        var that = this;
 
         locator = locator.toString().split('.');
 
         return function (result) {
             return result && that._getObjectValue(result, locator);
+        };
+    },
+
+    /**
+     * Setter for the <code>requestTemplate</code> attribute.
+     *
+     * @method _setRequestTemplate
+     * @param {Function|String|null} template
+     * @return {Function|null}
+     * @protected
+     */
+    _setRequestTemplate: function (template) {
+        if (this[_FUNCTION_VALIDATOR](template)) {
+            return template;
+        }
+
+        template = template.toString();
+
+        return function (query) {
+            return Lang.sub(template, {query: encodeURIComponent(query)});
         };
     },
 
@@ -1325,4 +1330,4 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'event-valuechange', 'node-base'], optional:['jsonp', 'yql']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'event-valuechange', 'node-base'], optional:['jsonp', 'yql']});

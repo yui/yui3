@@ -274,6 +274,7 @@ function useLocal() {
 
     autoComplete.setAttrs({
         resultFormatter  : null,
+        resultListLocator: null,
         resultTextLocator: null,
         source           : ExampleData.arrayStates
     });
@@ -286,6 +287,7 @@ function useNone() {
 
     autoComplete.setAttrs({
         resultFormatter  : null,
+        resultListLocator: null,
         resultTextLocator: null,
         source           : null
     });
@@ -298,6 +300,7 @@ function useFlickr() {
 
     autoComplete.setAttrs({
         resultFormatter  : flickrFormatter,
+        resultListLocator: null,
         resultTextLocator: 'title',
         source           : 'select * from flickr.photos.search where tags="{query}"'
     });
@@ -310,6 +313,7 @@ function useSearch() {
 
     autoComplete.setAttrs({
         resultFormatter  : null,
+        resultListLocator: null,
         resultTextLocator: null,
         source           : 'select * from search.suggest where query="{query}"'
     });
