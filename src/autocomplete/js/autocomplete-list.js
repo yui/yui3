@@ -212,21 +212,24 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Activates the next item after the currently active item. If there is no
      * next item and the <code>circular</code> attribute is <code>true</code>,
-     * the first item in the list will be activated.
+     * focus will wrap back to the input node.
      *
      * @method _activateNextItem
+     * @chainable
      * @protected
      */
     _activateNextItem: function () {
         var item = this.get(ACTIVE_ITEM),
             nextItem;
 
-        nextItem = (item && item.next(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getFirstItemNode();
-
-        if (nextItem) {
-            this._set(ACTIVE_ITEM, nextItem);
+        if (item) {
+            nextItem = item.next(this[_SELECTOR_ITEM]) ||
+                    (this.get(CIRCULAR) ? null : item);
+        } else {
+            nextItem = this._getFirstItemNode();
         }
+
+        this._set(ACTIVE_ITEM, nextItem);
 
         return this;
     },
@@ -234,21 +237,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Activates the item previous to the currently active item. If there is no
      * previous item and the <code>circular</code> attribute is
-     * <code>true</code>, the last item in the list will be activated.
+     * <code>true</code>, focus will wrap back to the input node.
      *
      * @method _activatePrevItem
+     * @chainable
      * @protected
      */
     _activatePrevItem: function () {
         var item     = this.get(ACTIVE_ITEM),
-            prevItem;
+            prevItem = item ? item.previous(this[_SELECTOR_ITEM]) :
+                    this.get(CIRCULAR) && this._getLastItemNode();
 
-        prevItem = (item && item.previous(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getLastItemNode();
-
-        if (prevItem) {
-            this._set(ACTIVE_ITEM, prevItem);
-        }
+        this._set(ACTIVE_ITEM, prevItem || null);
 
         return this;
     },
