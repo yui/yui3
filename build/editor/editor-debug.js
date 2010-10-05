@@ -2918,7 +2918,7 @@ YUI.add('editor-base', function(Y) {
             * @type String
             */            
             linkedcss: {
-                value: false,
+                value: '',
                 setter: function(css) {
                     if (this.frame) {
                         this.frame.set('linkedcss', css);
