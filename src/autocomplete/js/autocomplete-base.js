@@ -66,6 +66,7 @@ var Lang    = Y.Lang,
 
     INVALID_VALUE = Y.Attribute.INVALID_VALUE,
 
+    _FUNCTION_VALIDATOR = '_functionValidator',
     _SOURCE_SUCCESS     = '_sourceSuccess',
     INPUT_NODE          = 'inputNode',
     QUERY               = 'query',
@@ -320,18 +321,7 @@ AutoCompleteBase.ATTRS = {
      * @default null
      */
     requestTemplate: {
-        setter: function (template) {
-            if (template === null || isFunction(template)) {
-                return template;
-            }
-
-            template = template.toString();
-
-            return function (query) {
-                return Lang.sub(template, {query: encodeURIComponent(query)});
-            };
-        },
-
+        setter: '_setRequestTemplate',
         value: null
     },
 
@@ -382,7 +372,7 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultFormatter: {
-        validator: '_functionValidator'
+        validator: _FUNCTION_VALIDATOR
     },
 
     /**
@@ -402,7 +392,7 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultHighlighter: {
-        validator: '_functionValidator'
+        validator: _FUNCTION_VALIDATOR
     },
 
     /**
@@ -879,7 +869,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _functionValidator: function (value) {
-        return isFunction(value) || value === null;
+        return value === null || isFunction(value);
     },
 
     /**
@@ -1057,16 +1047,36 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _setLocator: function (locator) {
-        var that = this;
-
-        if (locator === null || isFunction(locator)) {
+        if (this[_FUNCTION_VALIDATOR](locator)) {
             return locator;
         }
+
+        var that = this;
 
         locator = locator.toString().split('.');
 
         return function (result) {
             return result && that._getObjectValue(result, locator);
+        };
+    },
+
+    /**
+     * Setter for the <code>requestTemplate</code> attribute.
+     *
+     * @method _setRequestTemplate
+     * @param {Function|String|null} template
+     * @return {Function|null}
+     * @protected
+     */
+    _setRequestTemplate: function (template) {
+        if (this[_FUNCTION_VALIDATOR](template)) {
+            return template;
+        }
+
+        template = template.toString();
+
+        return function (query) {
+            return Lang.sub(template, {query: encodeURIComponent(query)});
         };
     },
 
