@@ -2,7 +2,7 @@
 var add = Y.Features.add;
 // 0
 add('load', '0', {
-    "trigger": "dom-style", 
+    "trigger": "node-base", 
     "ua": "ie"
 });
 // history-hash-ie-test.js
