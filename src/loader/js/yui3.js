@@ -699,8 +699,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "escape": {}, 
     "event": {
-        "expound": "node-base", 
+        "after": "node-base", 
         "plugins": {
+            "event-base-ie": {
+                "after": [
+                    "event-base"
+                ], 
+                "condition": {
+                    "trigger": "node-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -709,7 +721,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "submodules": {
             "event-base": {
-                "expound": "node-base", 
+                "after": "node-base", 
                 "requires": [
                     "event-custom-base"
                 ]
@@ -747,7 +759,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-synthetic": {
                 "requires": [
                     "node-base", 
-                    "event-custom"
+                    "event-custom-complex"
                 ]
             }
         }
@@ -943,24 +955,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "get", 
             "oop"
         ]
-    }, 
-    "loader": {
-        "requires": [
-            "get"
-        ], 
-        "submodules": {
-            "loader-base": {}, 
-            "loader-rollup": {
-                "requires": [
-                    "loader-base"
-                ]
-            }, 
-            "loader-yui3": {
-                "requires": [
-                    "loader-base"
-                ]
-            }
-        }
     }, 
     "node": {
         "plugins": {
@@ -1405,19 +1399,44 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "yui": {
         "submodules": {
-            "features": {}, 
-            "get": {}, 
-            "intl-base": {}, 
+            "features": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "get": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "intl-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
             "rls": {
                 "requires": [
+                    "get", 
                     "features"
                 ]
             }, 
             "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
+            "yui-later": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-log": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-throttle": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 };
-YUI.Env[Y.version].md5 = '465579f9f29d79b3548ffc3c857d0358';
+YUI.Env[Y.version].md5 = '7b51cf8a754bf8e709b4dd0fe8b730e5';
