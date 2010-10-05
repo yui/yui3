@@ -16,22 +16,22 @@
  * @private
  */
 Y.Loader.prototype._rollup = function() {
-    var i, j, m, s, rollups = {}, r = this.required, roll,
+    var i, j, m, s, r = this.required, roll,
         info = this.moduleInfo, rolled, c, smod;
 
     // find and cache rollup modules
     if (this.dirty || !this.rollups) {
+        this.rollups = {};
         for (i in info) {
             if (info.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // if (m && m.rollup && m.supersedes) {
                 if (m && m.rollup) {
-                    rollups[i] = m;
+                    this.rollups[i] = m;
                 }
             }
         }
 
-        this.rollups = rollups;
         this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
     }
 
@@ -40,8 +40,8 @@ Y.Loader.prototype._rollup = function() {
         rolled = false;
 
         // go through the rollup candidates
-        for (i in rollups) {
-            if (rollups.hasOwnProperty(i)) {
+        for (i in this.rollups) {
+            if (this.rollups.hasOwnProperty(i)) {
                 // there can be only one, unless forced
                 if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
                     m = this.getModule(i);

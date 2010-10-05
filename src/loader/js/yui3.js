@@ -769,8 +769,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "event-custom-base": {
                 "requires": [
-                    "oop", 
-                    "yui-later"
+                    "oop"
                 ]
             }, 
             "event-custom-complex": {
@@ -957,24 +956,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "oop"
         ]
     }, 
-    "loader": {
-        "requires": [
-            "get"
-        ], 
-        "submodules": {
-            "loader-base": {}, 
-            "loader-rollup": {
-                "requires": [
-                    "loader-base"
-                ]
-            }, 
-            "loader-yui3": {
-                "requires": [
-                    "loader-base"
-                ]
-            }
-        }
-    }, 
     "node": {
         "plugins": {
             "align-plugin": {
@@ -1007,10 +988,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }
         }, 
-        "requires": [
-            "dom", 
-            "event-base"
-        ], 
         "submodules": {
             "node-base": {
                 "requires": [
@@ -1460,4 +1437,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
+<<<<<<< HEAD
 YUI.Env[Y.version].md5 = 'f7cfd219b03792a58ad8e356a4c19634';
+=======
+YUI.Env[Y.version].md5 = 'ebb5ae7c4a973b33925e45269946ac2f';
+>>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
