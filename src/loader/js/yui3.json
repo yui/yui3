@@ -101,6 +101,7 @@
                 }, 
                 "requires": [
                     "array-extras", 
+                    "base-build", 
                     "event-valuechange", 
                     "node-base"
                 ]
@@ -690,8 +691,20 @@
     }, 
     "escape": {}, 
     "event": {
-        "expound": "node-base", 
+        "after": "node-base", 
         "plugins": {
+            "event-base-ie": {
+                "after": [
+                    "event-base"
+                ], 
+                "condition": {
+                    "trigger": "node-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -700,7 +713,7 @@
         }, 
         "submodules": {
             "event-base": {
-                "expound": "node-base", 
+                "after": "node-base", 
                 "requires": [
                     "event-custom-base"
                 ]
@@ -738,7 +751,7 @@
             "event-synthetic": {
                 "requires": [
                     "node-base", 
-                    "event-custom"
+                    "event-custom-complex"
                 ]
             }
         }
@@ -1393,18 +1406,43 @@
     }, 
     "yui": {
         "submodules": {
-            "features": {}, 
-            "get": {}, 
-            "intl-base": {}, 
+            "features": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "get": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "intl-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
             "rls": {
                 "requires": [
+                    "get", 
                     "features"
                 ]
             }, 
             "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
+            "yui-later": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-log": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-throttle": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 }
