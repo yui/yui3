@@ -13,7 +13,10 @@
 <ul id="output"></ul>
 
 <script src="../../../../build/yui/yui.js"></script>
+<!--
+<script src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script>
 <script src="../../../../build/event/event-synthetic.js"></script>
+-->
 <script>
 YUI({
     useBrowserConsole: false,
@@ -29,6 +32,9 @@ Y.Event.define('konami', {
         var guid = Y.guid();
 
         node.on(guid + '|keydown', function (e) {
+
+            Y.log(e.keyCode);
+
             if (e.keyCode === sub.keys[sub.progress]) {
                 if (++sub.progress === sub.keys.length) {
                     ce.fire();
@@ -41,6 +47,7 @@ Y.Event.define('konami', {
 
         Y.mix(sub,{
             progress : 0,
+            keys     : [38,38,40,40,37,39,37,39,66,65],
             keys     : [38,38,40,40,37,39,37,39,66,65],
             _evtGuid : guid
         });
