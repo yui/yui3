@@ -769,8 +769,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "event-custom-base": {
                 "requires": [
-                    "oop", 
-                    "yui-later"
+                    "oop"
                 ]
             }, 
             "event-custom-complex": {
@@ -1436,4 +1435,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '703ed474c4df0c97f7ef38672026dd87';
+YUI.Env[Y.version].md5 = 'ebb5ae7c4a973b33925e45269946ac2f';

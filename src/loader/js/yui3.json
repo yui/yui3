@@ -760,8 +760,7 @@
         "submodules": {
             "event-custom-base": {
                 "requires": [
-                    "oop", 
-                    "yui-later"
+                    "oop"
                 ]
             }, 
             "event-custom-complex": {
