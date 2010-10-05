@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: event   available.js  (YUI Library)</title>
+	<title>API: event   event-facade-dom-ie.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
-                 &gt; available.js (source view) 
+                 &gt; event-facade-dom-ie.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,52 +47,77 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * DOM event listener abstraction layer</span>
+                        <div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM</span>
+<span class="cm"> * events.</span>
 <span class="cm"> * @module event</span>
 <span class="cm"> * @submodule event-base</span>
 <span class="cm"> */</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Executes the callback as soon as the specified element</span>
-<span class="cm"> * is detected in the DOM.</span>
-<span class="cm"> * @event available</span>
-<span class="cm"> * @param type {string} &#39;available&#39;</span>
-<span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
-<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> * These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">available</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="kd">var</span> <span class="nx">IEEventFacade</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// IEEventFacade.superclass.constructor.apply(this, arguments);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM2EventFacade</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Executes the callback as soon as the specified element</span>
-<span class="cm"> * is detected in the DOM with a nextSibling property</span>
-<span class="cm"> * (indicating that the element&#39;s children are available)</span>
-<span class="cm"> * @event contentready</span>
-<span class="cm"> * @param type {string} &#39;contentready&#39;</span>
-<span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
-<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> * These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">contentready</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">onContentReady</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">IEEventFacade</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM2EventFacade</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="nx">IEEventFacade</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_event</span><span class="p">,</span>
+            <span class="nx">resolve</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM2EventFacade</span><span class="p">.</span><span class="nx">resolve</span><span class="p">,</span>
+            <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">de</span><span class="p">,</span> <span class="nx">t</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">srcElement</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;clientX&#39;</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">x</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="mi">0</span> <span class="o">!==</span> <span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
+            <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
+
+            <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+            <span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+            <span class="nx">de</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">;</span>
+
+            <span class="nx">x</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">de</span><span class="p">.</span><span class="nx">scrollLeft</span> <span class="o">||</span> <span class="p">(</span><span class="nx">b</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">scrollLeft</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="nx">y</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">de</span><span class="p">.</span><span class="nx">scrollTop</span>  <span class="o">||</span> <span class="p">(</span><span class="nx">b</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">)</span>  <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;mouseout&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">toElement</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;mouseover&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">fromElement</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+
+    <span class="p">},</span>
+
+    <span class="nx">stopPropagation</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_event</span><span class="p">;</span>
+        <span class="nx">e</span><span class="p">.</span><span class="nx">cancelBubble</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_wrapper</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">stopImmediatePropagation</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_wrapper</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">preventDefault</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">returnValue</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">returnValue</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_wrapper</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
-<span class="p">};</span>
+
+<span class="p">});</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span> <span class="o">=</span> <span class="nx">IEEventFacade</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -190,10 +215,10 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="available.js.html" title="available.js">available.js</a></li>
+                                <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
                                 <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
-                                <li class=""><a href="event-facade-dom-ie.js.html" title="event-facade-dom-ie.js">event-facade-dom-ie.js</a></li>
+                                <li class="selected"><a href="event-facade-dom-ie.js.html" title="event-facade-dom-ie.js">event-facade-dom-ie.js</a></li>
                                 <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
                                 <li class=""><a href="event-ready-base-ie.js.html" title="event-ready-base-ie.js">event-ready-base-ie.js</a></li>
                                 <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>

@@ -261,7 +261,7 @@
         <span class="nx">shorttype</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
 
         <span class="c1">// extra redirection so we catch adaptor events too.  take a look at this.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">Node</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
             <span class="c1">// Y.log(&quot;Node detected, redirecting with these args: &quot; + args);</span>
@@ -270,7 +270,7 @@
 
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
 
             <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
             <span class="nx">args</span>  <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
@@ -279,9 +279,9 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">getDOMNodes</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">Node</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">n</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
                 <span class="p">}</span>
 
@@ -346,7 +346,7 @@
 <span class="cm">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span>
-            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">isNode</span> <span class="o">=</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="p">);</span>
+            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">isNode</span> <span class="o">=</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">Node</span><span class="p">));</span>
 
         <span class="c1">// detachAll disabled on the Y instance.</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="o">!==</span> <span class="nx">Y</span><span class="p">))</span> <span class="p">{</span>
@@ -415,7 +415,7 @@
         <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">shorttype</span><span class="p">];</span>
 
         <span class="c1">// The YUI instance handles DOM events and adaptors</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="c1">// use the adaptor specific detach code if</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="p">.</span><span class="nx">detach</span><span class="p">)</span> <span class="p">{</span>

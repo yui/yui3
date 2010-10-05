@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: event   available.js  (YUI Library)</title>
+	<title>API: event   event-ready-base-ie.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
-                 &gt; available.js (source view) 
+                 &gt; event-ready-base-ie.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,52 +47,46 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * DOM event listener abstraction layer</span>
-<span class="cm"> * @module event</span>
-<span class="cm"> * @submodule event-base</span>
-<span class="cm"> */</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Executes the callback as soon as the specified element</span>
-<span class="cm"> * is detected in the DOM.</span>
-<span class="cm"> * @event available</span>
-<span class="cm"> * @param type {string} &#39;available&#39;</span>
-<span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
-<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> * These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">available</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="kd">var</span> <span class="nx">stateChangeListener</span><span class="p">,</span>
+    <span class="nx">GLOBAL_ENV</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
+    <span class="nx">config</span>       <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span>
+    <span class="nx">doc</span>          <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+    <span class="nx">docElement</span>   <span class="o">=</span> <span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
+    <span class="nx">EVENT_NAME</span>   <span class="o">=</span> <span class="s1">&#39;onreadystatechange&#39;</span><span class="p">,</span>
+    <span class="nx">pollInterval</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pollInterval</span> <span class="o">||</span> <span class="mi">40</span><span class="p">;</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Executes the callback as soon as the specified element</span>
-<span class="cm"> * is detected in the DOM with a nextSibling property</span>
-<span class="cm"> * (indicating that the element&#39;s children are available)</span>
-<span class="cm"> * @event contentready</span>
-<span class="cm"> * @param type {string} &#39;contentready&#39;</span>
-<span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
-<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> * These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">contentready</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">onContentReady</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ieready</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ieready</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ready</span><span class="p">();</span>
+    <span class="p">};</span>
+
+<span class="cm">/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */</span>
+<span class="c1">// Internet Explorer: use the doScroll() method on the root element.</span>
+<span class="c1">// This isolates what appears to be a safe moment to manipulate the</span>
+<span class="c1">// DOM prior to when the document&#39;s readyState suggests it is safe to do so.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">self</span> <span class="o">!==</span> <span class="nx">self</span><span class="p">.</span><span class="nx">top</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">stateChangeListener</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">==</span> <span class="s1">&#39;complete&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">EVENT_NAME</span><span class="p">,</span> <span class="nx">stateChangeListener</span><span class="p">);</span>
+                <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">ieready</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">EVENT_NAME</span><span class="p">,</span> <span class="nx">stateChangeListener</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="nx">docElement</span><span class="p">.</span><span class="nx">doScroll</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">);</span>
+                <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_dri</span><span class="p">);</span>
+                <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ieready</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">domNotReady</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="p">},</span> <span class="nx">pollInterval</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">};</span>
+<span class="p">}</span>
+
+<span class="p">})();</span>
 </pre></div>
 
                     </div>
@@ -190,12 +184,12 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="available.js.html" title="available.js">available.js</a></li>
+                                <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
                                 <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
                                 <li class=""><a href="event-facade-dom-ie.js.html" title="event-facade-dom-ie.js">event-facade-dom-ie.js</a></li>
                                 <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
-                                <li class=""><a href="event-ready-base-ie.js.html" title="event-ready-base-ie.js">event-ready-base-ie.js</a></li>
+                                <li class="selected"><a href="event-ready-base-ie.js.html" title="event-ready-base-ie.js">event-ready-base-ie.js</a></li>
                                 <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
                                 <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
