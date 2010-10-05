@@ -670,8 +670,10 @@ AutoCompleteBase.prototype = {
      * @method unbindInput
      */
     unbindInput: function () {
-        while (this._inputEvents && this._inputEvents.length) {
-            this._inputEvents.pop().detach();
+        var inputEvents = this._inputEvents;
+
+        while (inputEvents && inputEvents.length) {
+            inputEvents.pop().detach();
         }
     },
 
