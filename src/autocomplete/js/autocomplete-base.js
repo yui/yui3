@@ -61,7 +61,6 @@ var Lang    = Y.Lang,
 
     isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
-    isNumber   = Lang.isNumber,
     isObject   = Lang.isObject,
     trim       = Lang.trim,
 
@@ -226,7 +225,6 @@ AutoCompleteBase.ATTRS = {
      * @default 0
      */
     maxResults: {
-        validator: isNumber,
         value: 0
     },
 
@@ -241,7 +239,6 @@ AutoCompleteBase.ATTRS = {
      * @default 1
      */
     minQueryLength: {
-        validator: isNumber,
         value: 1
     },
 
@@ -287,10 +284,6 @@ AutoCompleteBase.ATTRS = {
      * @default 100
      */
     queryDelay: {
-        validator: function (value) {
-            return isNumber(value) && value >= 0;
-        },
-
         value: 100
     },
 
