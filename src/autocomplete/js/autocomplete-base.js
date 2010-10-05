@@ -68,6 +68,8 @@ var Lang    = Y.Lang,
 
     _FUNCTION_VALIDATOR = '_functionValidator',
     _SOURCE_SUCCESS     = '_sourceSuccess',
+
+    ALLOW_BROWSER_AC    = 'allowBrowserAutocomplete',
     INPUT_NODE          = 'inputNode',
     QUERY               = 'query',
     QUERY_DELIMITER     = 'queryDelimiter',
@@ -197,11 +199,9 @@ AutoCompleteBase.ATTRS = {
      * @attribute allowBrowserAutocomplete
      * @type Boolean
      * @default false
-     * @writeonce
      */
     allowBrowserAutocomplete: {
-        value: false,
-        writeOnce: 'initOnly'
+        value: false
     },
 
     /**
@@ -626,8 +626,8 @@ AutoCompleteBase.prototype = {
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
 
-            // And here's our own valueChange event.
-            this.after(VALUE_CHANGE, this._afterValueChange, this)
+            this.after(ALLOW_BROWSER_AC + 'Change', this._syncBrowserAutocomplete),
+            this.after(VALUE_CHANGE, this._afterValueChange)
         ];
     },
 
@@ -637,14 +637,8 @@ AutoCompleteBase.prototype = {
      * @method syncInput
      */
     syncInput: function () {
-        var inputNode = this.get(INPUT_NODE);
-
-        if (inputNode.get('nodeName').toLowerCase() === 'input') {
-            inputNode.setAttribute('autocomplete',
-                    this.get('allowBrowserAutocomplete') ? 'on' : 'off');
-        }
-
-        this.set(VALUE, inputNode.get(VALUE));
+        this._syncBrowserAutocomplete();
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
     },
 
     /**
@@ -1130,6 +1124,22 @@ AutoCompleteBase.prototype = {
             data: data,
             response: {results: data}
         });
+    },
+
+    /**
+     * Synchronizes the UI state of the <code>allowBrowserAutocomplete</code>
+     * attribute.
+     *
+     * @method _syncBrowserAutocomplete
+     * @protected
+     */
+    _syncBrowserAutocomplete: function () {
+        var inputNode = this.get(INPUT_NODE);
+
+        if (inputNode.get('nodeName').toLowerCase() === 'input') {
+            inputNode.setAttribute('autocomplete',
+                    this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+        }
     },
 
     /**
