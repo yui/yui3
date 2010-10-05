@@ -413,8 +413,6 @@
 				oldRecord = this.rs.getRecord(index);
 				
 				this.rs.on('update', function(e) {
-					console.log('update');
-					console.log(e);
 					Y.ObjectAssert.areEqual(newRecord, e.updated[0], 'Updated record is != to new record');
 					Y.ObjectAssert.areEqual(oldRecord, e.overwritten[0], 'Overwritten record is != to old record');
 					Y.Assert.areEqual(1, e.overwritten.length, 'overwritten array is not of expected length');
@@ -469,8 +467,22 @@
 				var oldRs = Y.clone(this.rs);
 				this.rs.plug(Y.Plugin.RecordsetSort);
 				
+				
+				
+				for (var i=0; i<this.rs.getLength(); i++) {
+					console.log(this.rs.getRecord(i).getValue());
+				}
+				
+				
 				//Test ascending order
-				this.rs.sort.sort('a',false);
+				this.rs.sort.defsort('a',false);
+				var items = this.rs.get('records').sort();
+				
+				for (var i=0; i<this.rs.getLength(); i++) {
+					console.log(this.rs.getRecord(i).getValue());
+					//console.log(items[i].getValue());
+					
+				}
 				
 				Y.ObjectAssert.areEqual(oldRs.getRecord(2).getValue(), this.rs.getRecord(0).getValue());
 				Y.ObjectAssert.areEqual(oldRs.getRecord(0).getValue(), this.rs.getRecord(1).getValue());
@@ -640,10 +652,7 @@
 				this.rs.plug(Y.Plugin.RecordsetSort);
 				this.rs.add([a,b,c,d]);
 				this.rs.sort.sort('a',false,customsort);
-				
-				for (var i=0; i<this.rs.getLength(); i++) {
-					console.log(this.rs.getRecord(i).getValue());
-				}
+
 				
 				
 				//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
@@ -685,9 +694,6 @@
 				};
 				
 				var	rs = this.rs.filter.filter(validator);
-					
-				console.log('filter');
-				console.log(rs);
 				
 				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, rs.getRecord(0).getValue());
 				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, rs.getRecord(1).getValue());
@@ -715,9 +721,7 @@
 				
 			},
 			
-			/*
-			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
-			testFilterByValidator: function() {
+			testReject: function() {
 				this.rs.plug(Y.Plugin.RecordsetFilter);
 				
 				var validator = function(item) {
@@ -728,26 +732,56 @@
 						return false;
 					}
 				},
-				oRecs = this.rs.filter.filter(validator);
-				console.log(oRecs);
-				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
-				Y.ObjectAssert.areEqual(oRecs.getRecord(0), this.rs.getRecord(0));
-				Y.ObjectAssert.areEqual(oRecs.getRecord(1), this.rs.getRecord(2));
 				
-				Y.Assert.areEqual(2, oRecs.getRecord(0).getValue('b'));
-				Y.Assert.areEqual(2, oRecs.getRecord(1).getValue('b'));
-				Y.ObjectAssert.areEqual(oRecs.getLength(), 2);
+					rs = this.rs.filter.reject(validator);
+					
+				//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, rs.getRecord(0).getValue());
+				Y.Assert.areEqual(1, rs.getLength());
 				
+				
+				//try it with a validator that always returns false
+				validator = function(item) {
+					if (item.getValue('c') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				};
+				
+				rs = this.rs.filter.reject(validator);
+				Y.ObjectAssert.areEqual(this.rs.getRecord(0).getValue(), rs.getRecord(0).getValue());
+				Y.ObjectAssert.areEqual(this.rs.getRecord(1).getValue(), rs.getRecord(1).getValue());
+				Y.ObjectAssert.areEqual(this.rs.getRecord(2).getValue(), rs.getRecord(2).getValue());
+				
+				Y.Assert.areEqual(this.rs.getLength(), rs.getLength());
+									
 			},
 			
-			testFilterByKeyValue: function() {
-				this.rs.plug(Y.Plugin.RecordsetFilter);				
-				var oRecs = this.rs.filter.filter('a', 3);
-				Y.Assert.isTrue(oRecs instanceof Y.Recordset);
-				Y.Assert.areEqual(oRecs.getRecord(0).getValue('a'), 3);
-				Y.ObjectAssert.areEqual(oRecs.getLength(), 1);
+			
+			//Map is tested on the actual array because it returns an array of booleans typically (atleast that's the use case I can think of)
+			testMap: function() {
+				var f = function(item) {
+					if (item.getValue('b') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					} 
+				},
+					rs = Y.Array.map(this.rs.get('records'),f);
+				Y.Assert.areEqual(true, rs[0]);
+				Y.Assert.areEqual(false, rs[1]);
+				Y.Assert.areEqual(true, rs[2]);
+				Y.Assert.areEqual(3, rs.length);
+			},
+			
+			testGrep: function() {
+				
 			}
-			*/
+			
+
 			
         });
 

@@ -10,12 +10,10 @@ Y.mix(RecordsetSort, {
     NAME: "recordsetSort",
 
     ATTRS: {
-		lastSortProperties: {
+		state: {
 			value: {
-				field:undefined,
-				desc:undefined,
-				sorter:undefined
 			}
+
 		},
 
         defaultSorter: {
@@ -33,6 +31,7 @@ Y.mix(RecordsetSort, {
 });
 
 Y.extend(RecordsetSort, Y.Plugin.Base, {
+
     initializer: function(config) {
         this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
     },
@@ -41,36 +40,37 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     _defSortFn: function(e) {
-		//this.set('lastSortProperties', e);
+		//this.set('state', e);
         this.get("host").get("records").sort(function(a, b) {
 			return (e.sorter)(a, b, e.field, e.desc);
 		});
     },
 
-    sort: function(field, desc, sorter) {
+    defsort: function(field, desc, sorter) {
 		this.fire("sort", {field:field, desc: desc, sorter: sorter || this.get("defaultSorter")});
     },
 
 	resort: function() {
-		var p = this.get('lastSortProperties');
+		var p = this.get('state');
 		this.fire("sort", {field:p.field, desc: p.desc, sorter: this.get("defaultSorter")});
 	},
 
 	//Flips the recordset around
     reverse: function() {
-		var rs = this.get('host'),
-			len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
-			i=0;
-		
-		for(; i <= len; i++) {
-			if (i < (len-i)) {
-				
-				var left = rs.getRecord(i);
-				var right = rs.getRecord(len-i);
-				rs.update(left, len-i);
-				rs.update(right, i);
-			}
-		}
+		// var rs = this.get('host'),
+		// 	len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
+		// 	i=0;
+		// 
+		// for(; i <= len; i++) {
+		// 	if (i < (len-i)) {
+		// 		
+		// 		var left = rs.getRecord(i);
+		// 		var right = rs.getRecord(len-i);
+		// 		rs.update(left, len-i);
+		// 		rs.update(right, i);
+		// 	}
+		// }
+		this.get('host').get('records').reverse();
     }
 });
 

@@ -1,3 +1,4 @@
+var YArray = Y.Array;
 function RecordsetFilter(config) {
     RecordsetFilter.superclass.constructor.apply(this, arguments);
 }
@@ -13,31 +14,16 @@ Y.mix(RecordsetFilter, {
 
 });
 
+
 Y.extend(RecordsetFilter, Y.Plugin.Base, {
+
+	
     initializer: function(config) {
         //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
     },
 
     destructor: function(config) {
     },
-
-	
-
-	// filter: function(k,v) {
-	// 		var oRecs = [], i=0, rec, len, host;
-	// 		host = this.get('host');
-	// 		len = host.get('records').getLength();
-	// 		for (; i<len;i++) {
-	// 			rec = host.getRecord(i);
-	// 			
-	// 			if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
-	// 				(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
-	// 					oRecs.push(rec);
-	// 			}  
-	// 		}
-	// 
-	// 		return new host.constructor({records:oRecs});
-	// 	},
 	
 	filter: function(f,v) {
 		var recs = this.get('host').get('records'),
@@ -47,7 +33,7 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
 			
 		//If a validator function is passed in, simply pass it through to the filter method on Y.Array (in array-extras submodule)
 		if (Y.Lang.isFunction(f) && v===undefined) {
-			oRecs = recs.filter(f);
+			oRecs = YArray.filter(recs, f);
 		}
 		
 		//If a key-value pair is passed in, loop through the records to see if records match the k-v pair
@@ -64,9 +50,12 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
 	},
 	
 	reject: function(f) {
-		return new Y.Recordset({records:this.get("host").get('records').reject(f)});
+		return new Y.Recordset({records:YArray.reject(this.get('host').get('records'),f)});
+	},
+	
+	grep: function(pattern) {
+		return new Y.Recordset({records:YArray.grep(this.get('host').get('records'),pattern)});
 	}
-
 
 });
 
