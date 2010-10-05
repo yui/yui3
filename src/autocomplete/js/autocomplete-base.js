@@ -31,24 +31,47 @@
  * <p>
  * This extension cannot be instantiated directly, since it doesn't provide an
  * actual implementation. It's intended to be mixed into a
- * <code>Base</code>-based class or widget, as illustrated in the following
- * example:
+ * <code>Y.Base</code>-based class or widget.
+ * </p>
+ *
+ * <p>
+ * <code>Y.Widget</code>-based example:
  * </p>
  *
  * <pre>
- * YUI().use('autocomplete-base', 'base', function (Y) {
- * &nbsp;&nbsp;var MyAutoComplete = Y.Base.create('myAutocomplete', Y.Base, [Y.AutoComplete], {
+ * YUI().use('autocomplete-base', 'widget', function (Y) {
+ * &nbsp;&nbsp;var MyAC = Y.Base.create('myAC', Y.Widget, [Y.AutoCompleteBase], {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
+ * &nbsp;&nbsp;}, {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
+ * &nbsp;&nbsp;});
+ * &nbsp;
+ * &nbsp;&nbsp;// Custom implementation code.
+ * });
+ * </pre>
+ *
+ * <p>
+ * <code>Y.Base</code>-based example:
+ * </p>
+ *
+ * <pre>
+ * YUI().use('autocomplete-base', function (Y) {
+ * &nbsp;&nbsp;var MyAC = Y.Base.create('myAC', Y.Base, [Y.AutoCompleteBase], {
  * &nbsp;&nbsp;&nbsp;&nbsp;initializer: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.bindInput();
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.syncInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._bindUIACBase();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._syncUIACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;},
  * &nbsp;
  * &nbsp;&nbsp;&nbsp;&nbsp;destructor: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.unbindInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._destructorACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;}
+ * &nbsp;
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
+ * &nbsp;&nbsp;}, {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
  * &nbsp;&nbsp;});
  * &nbsp;
- * &nbsp;&nbsp;// ... custom implementation code ...
+ * &nbsp;&nbsp;// Custom implementation code.
  * });
  * </pre>
  *
@@ -84,6 +107,13 @@ var Lang    = Y.Lang,
     EVT_RESULTS = RESULTS;
 
 function AutoCompleteBase() {
+    // AOP bindings.
+    Y.before(this._bindUIACBase, this, 'bindUI');
+    Y.before(this._destructorACBase, this, 'destructor');
+    Y.before(this._syncUIACBase, this, 'syncUI');
+
+    // -- Public Events --------------------------------------------------------
+
     /**
      * Fires after the query has been completely cleared or no longer meets the
      * minimum query length requirement.
@@ -604,25 +634,23 @@ AutoCompleteBase.CSS_PREFIX = 'ac';
 AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 AutoCompleteBase.prototype = {
-    // -- Public Lifecycle Methods ---------------------------------------------
+    // -- Protected Lifecycle Methods ------------------------------------------
 
     /**
-     * Attaches <code>inputNode</code> event listeners.
+     * Attaches AutoCompleteBase event listeners.
      *
-     * @method bindInput
+     * @method _bindUIACBase
+     * @protected
      */
-    bindInput: function () {
+    _bindUIACBase: function () {
         var inputNode = this.get(INPUT_NODE);
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
         }
 
-        // Unbind first, just in case.
-        this.unbindInput();
-
-        this._inputEvents = [
-            // This is the valueChange event on the inputNode provided by the
+        this._acBaseEvents = [
+            // This is the valueChange event on the inputNode, provided by the
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
 
@@ -632,26 +660,28 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Synchronizes the UI state of the <code>inputNode</code>.
+     * Detaches AutoCompleteBase event listeners.
      *
-     * @method syncInput
+     * @method _destructorACBase
+     * @protected
      */
-    syncInput: function () {
-        this._syncBrowserAutocomplete();
-        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
+    _destructorACBase: function () {
+        var events = this._acBaseEvents;
+
+        while (events && events.length) {
+            events.pop().detach();
+        }
     },
 
     /**
-     * Detaches <code>inputNode</code> event listeners.
+     * Synchronizes the UI state of the <code>inputNode</code>.
      *
-     * @method unbindInput
+     * @method _syncUIACBase
+     * @protected
      */
-    unbindInput: function () {
-        var inputEvents = this._inputEvents;
-
-        while (inputEvents && inputEvents.length) {
-            inputEvents.pop().detach();
-        }
+    _syncUIACBase: function () {
+        this._syncBrowserAutocomplete();
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
     },
 
     // -- Protected Prototype Methods ------------------------------------------

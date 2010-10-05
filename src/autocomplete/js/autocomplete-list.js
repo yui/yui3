@@ -56,6 +56,29 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
+        var inputNode = this.get('inputNode');
+
+        if (!inputNode) {
+            Y.error('No inputNode specified.');
+        }
+
+        this._events    = [];
+        this._inputNode = inputNode;
+
+        // Cache commonly used classnames and selectors for performance.
+        this[_CLASS_ITEM]        = this.getClassName(ITEM);
+        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
+        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
+        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
+
+        if (!this.get('align.node')) {
+            this.set('align.node', inputNode);
+        }
+
+        if (!this.get(WIDTH)) {
+            this.set(WIDTH, inputNode.get('offsetWidth'));
+        }
+
         /**
          * Fires when an autocomplete suggestion is selected from the list by
          * a keyboard action or mouse click.
@@ -81,32 +104,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this.publish(EVT_SELECT, {
             defaultFn: this._defSelectFn
         });
-
-        this._events    = [];
-        this._inputNode = this.get('inputNode');
-
-        // Cache commonly used classnames and selectors for performance.
-        this[_CLASS_ITEM]        = this.getClassName(ITEM);
-        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
-        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
-        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
-
-        if (!this._inputNode) {
-            Y.error('No inputNode specified.');
-        }
-
-        if (!this.get('align.node')) {
-            this.set('align.node', this._inputNode);
-        }
-
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, this._inputNode.get('offsetWidth'));
-        }
     },
 
     destructor: function () {
-        this.unbindInput();
-
         while (this._events.length) {
             this._events.pop().detach();
         }
@@ -149,7 +149,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     syncUI: function () {
-        this.syncInput();
         this._syncResults();
         this._syncVisibility();
     },
@@ -278,18 +277,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Binds <code>inputNode</code> events, in addition to those already bound
-     * by <code>AutoCompleteBase</code>'s public <code>bindInput()</code>
-     * method.
+     * Binds <code>inputNode</code> events.
      *
      * @method _bindInput
      * @protected
      */
     _bindInput: function () {
         var inputNode = this._inputNode;
-
-        // Call AutoCompleteBase's bind method first.
-        this.bindInput();
 
         this._events.concat([
             inputNode.on('blur', this._onInputBlur, this),
