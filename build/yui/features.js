@@ -66,7 +66,7 @@ var add = Y.Features.add;
 // 0
 add('load', '0', {
     "trigger": "node-base", 
-    "ua": "gecko"
+    "ua": "ie"
 });
 // history-hash-ie-test.js
 add('load', '1', {

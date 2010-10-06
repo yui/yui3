@@ -1246,27 +1246,27 @@ Y.Loader.prototype = {
         return m.provides;
     },
 
-    checkConditions: function() {
-        var self = this,
-            conds = self.conditions;
+    // checkConditions: function() {
+    //     var self = this,
+    //         conds = self.conditions;
 
-        Y.Object.each(self.required, function(mod, name) {
+    //     Y.Object.each(self.required, function(mod, name) {
 
-            var cond = conds[name];
+    //         var cond = conds[name];
 
-            Y.Object.each(cond, function(def, condmod) {
-                if (def) {
-                    var go = def.result || ((def.ua && Y.UA[def.ua]) ||
-                                 (def.test && def.test(Y)));
-                    def.result = go;
-                    if (go) {
-                        self.required[condmod] = true;
-                    }
-                }
-            });
+    //         Y.Object.each(cond, function(def, condmod) {
+    //             if (def) {
+    //                 var go = def.result || ((def.ua && Y.UA[def.ua]) ||
+    //                              (def.test && def.test(Y)));
+    //                 def.result = go;
+    //                 if (go) {
+    //                     self.required[condmod] = true;
+    //                 }
+    //             }
+    //         });
 
-        });
-    },
+    //     });
+    // },
 
     /**
      * Calculates the dependency tree, the result is stored in the sorted
@@ -1692,6 +1692,46 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
     },
 
+    // _get: function(js, css) {
+
+
+
+    // }
+
+    // _combo: function(js, css) {
+
+    // }
+
+    // _insert: function(source, o, type) {
+    //     if (source) {
+    //         this._config(source);
+    //     }
+
+    //     var js = [],
+    //         css = [],
+    //         mod,
+    //         sorted = this.sorted,
+    //         i = 0,
+    //         l = sorted.length,
+    //         combine = this.combine;
+
+    //     for (; i < l; i++) {
+    //         mod = this.getModule(sorted[i]);
+    //         if (mod.type = CSS && type != JS) {
+    //             css.push(mod);
+    //         } else if (type != CSS) {
+    //             js.push(mod);
+    //         }
+    //     }
+
+    //     if (this.combine) {
+    //         this._combo(js, css);
+    //     } else {
+    //         this._get(js, css);
+    //     }
+
+    // },
+
     _insert: function(source, o, type) {
 
 // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
@@ -1705,6 +1745,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         // don't include type so we can process CSS and script in
         // one pass when the type is not specified.
         this.calculate(o);
+
         this.loadType = type;
 
         if (!type) {
@@ -1775,7 +1816,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     insert: function(o, type) {
         // Y.log('public insert() ' + (type || '') + ', ' +
         //  Y.Object.keys(this.required), "info", "loader");
-        var self = this, copy = Y.merge(this, true);
+        var self = this, copy = Y.merge(this);
         delete copy.require;
         delete copy.dirty;
         _queue.add(function() {
@@ -1805,8 +1846,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var s, len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             comboSource, comboSources, mods, combining, urls, comboBase,
             // provided,
-            type = this.loadType,
             self = this,
+            type = this.loadType,
             handleSuccess = function(o) {
                                 self.loadNext(o.data);
                             },

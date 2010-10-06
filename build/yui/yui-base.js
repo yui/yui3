@@ -335,6 +335,10 @@ proto = {
             Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
                           /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
 
+        if (!filter || (!('-min.-debug.').indexOf(filter))) {
+            filter = '-min.';
+        }
+
         Y.config.loaderPath = YUI.config.loaderPath ||
             'loader/loader' + (filter || '-min.') + 'js';
 

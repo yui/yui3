@@ -1324,27 +1324,27 @@ Y.Loader.prototype = {
         return m.provides;
     },
 
-    checkConditions: function() {
-        var self = this,
-            conds = self.conditions;
+    // checkConditions: function() {
+    //     var self = this,
+    //         conds = self.conditions;
 
-        Y.Object.each(self.required, function(mod, name) {
+    //     Y.Object.each(self.required, function(mod, name) {
 
-            var cond = conds[name];
+    //         var cond = conds[name];
 
-            Y.Object.each(cond, function(def, condmod) {
-                if (def) {
-                    var go = def.result || ((def.ua && Y.UA[def.ua]) ||
-                                 (def.test && def.test(Y)));
-                    def.result = go;
-                    if (go) {
-                        self.required[condmod] = true;
-                    }
-                }
-            });
+    //         Y.Object.each(cond, function(def, condmod) {
+    //             if (def) {
+    //                 var go = def.result || ((def.ua && Y.UA[def.ua]) ||
+    //                              (def.test && def.test(Y)));
+    //                 def.result = go;
+    //                 if (go) {
+    //                     self.required[condmod] = true;
+    //                 }
+    //             }
+    //         });
 
-        });
-    },
+    //     });
+    // },
 
     /**
      * Calculates the dependency tree, the result is stored in the sorted
@@ -1757,6 +1757,46 @@ Y.Loader.prototype = {
 
     },
 
+    // _get: function(js, css) {
+
+
+
+    // }
+
+    // _combo: function(js, css) {
+
+    // }
+
+    // _insert: function(source, o, type) {
+    //     if (source) {
+    //         this._config(source);
+    //     }
+
+    //     var js = [],
+    //         css = [],
+    //         mod,
+    //         sorted = this.sorted,
+    //         i = 0,
+    //         l = sorted.length,
+    //         combine = this.combine;
+
+    //     for (; i < l; i++) {
+    //         mod = this.getModule(sorted[i]);
+    //         if (mod.type = CSS && type != JS) {
+    //             css.push(mod);
+    //         } else if (type != CSS) {
+    //             js.push(mod);
+    //         }
+    //     }
+
+    //     if (this.combine) {
+    //         this._combo(js, css);
+    //     } else {
+    //         this._get(js, css);
+    //     }
+
+    // },
+
     _insert: function(source, o, type) {
 
 
@@ -1769,6 +1809,7 @@ Y.Loader.prototype = {
         // don't include type so we can process CSS and script in
         // one pass when the type is not specified.
         this.calculate(o);
+
         this.loadType = type;
 
         if (!type) {
@@ -1836,7 +1877,7 @@ Y.Loader.prototype = {
      * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type) {
-        var self = this, copy = Y.merge(this, true);
+        var self = this, copy = Y.merge(this);
         delete copy.require;
         delete copy.dirty;
         _queue.add(function() {
@@ -1866,8 +1907,8 @@ Y.Loader.prototype = {
         var s, len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             comboSource, comboSources, mods, combining, urls, comboBase,
             // provided,
-            type = this.loadType,
             self = this,
+            type = this.loadType,
             handleSuccess = function(o) {
                                 self.loadNext(o.data);
                             },
@@ -3686,11 +3727,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-<<<<<<< HEAD
-YUI.Env[Y.version].md5 = 'f7cfd219b03792a58ad8e356a4c19634';
-=======
-YUI.Env[Y.version].md5 = 'ebb5ae7c4a973b33925e45269946ac2f';
->>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
+YUI.Env[Y.version].md5 = '1790c745a247f6af07e8cc84febce662';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
