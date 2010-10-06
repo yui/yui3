@@ -10,7 +10,6 @@
 
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
-<!-- <script src="../../js/autocomplete-widget.js"></script> -->
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -31,7 +30,8 @@ var Y = YUI({
             requires: [
                 'autocomplete-base', 'autocomplete-filters',
                 'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-                'autocomplete-highlighters-accentfold', 'base-build', 'test'
+                'autocomplete-highlighters-accentfold', 'datasource-local',
+                'jsonp', 'node', 'test', 'yql'
             ]
         }
     },
