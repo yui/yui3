@@ -1295,27 +1295,27 @@
         <span class="k">return</span> <span class="nx">m</span><span class="p">.</span><span class="nx">provides</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="nx">checkConditions</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
-            <span class="nx">conds</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">conditions</span><span class="p">;</span>
+    <span class="c1">// checkConditions: function() {</span>
+    <span class="c1">//     var self = this,</span>
+    <span class="c1">//         conds = self.conditions;</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//     Y.Object.each(self.required, function(mod, name) {</span>
 
-            <span class="kd">var</span> <span class="nx">cond</span> <span class="o">=</span> <span class="nx">conds</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+    <span class="c1">//         var cond = conds[name];</span>
 
-            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">cond</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">def</span><span class="p">,</span> <span class="nx">condmod</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">def</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="kd">var</span> <span class="nx">go</span> <span class="o">=</span> <span class="nx">def</span><span class="p">.</span><span class="nx">result</span> <span class="o">||</span> <span class="p">((</span><span class="nx">def</span><span class="p">.</span><span class="nx">ua</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">[</span><span class="nx">def</span><span class="p">.</span><span class="nx">ua</span><span class="p">])</span> <span class="o">||</span>
-                                 <span class="p">(</span><span class="nx">def</span><span class="p">.</span><span class="nx">test</span> <span class="o">&amp;&amp;</span> <span class="nx">def</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">Y</span><span class="p">)));</span>
-                    <span class="nx">def</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="nx">go</span><span class="p">;</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">go</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">self</span><span class="p">.</span><span class="nx">required</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">});</span>
+    <span class="c1">//         Y.Object.each(cond, function(def, condmod) {</span>
+    <span class="c1">//             if (def) {</span>
+    <span class="c1">//                 var go = def.result || ((def.ua &amp;&amp; Y.UA[def.ua]) ||</span>
+    <span class="c1">//                              (def.test &amp;&amp; def.test(Y)));</span>
+    <span class="c1">//                 def.result = go;</span>
+    <span class="c1">//                 if (go) {</span>
+    <span class="c1">//                     self.required[condmod] = true;</span>
+    <span class="c1">//                 }</span>
+    <span class="c1">//             }</span>
+    <span class="c1">//         });</span>
 
-        <span class="p">});</span>
-    <span class="p">},</span>
+    <span class="c1">//     });</span>
+    <span class="c1">// },</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Calculates the dependency tree, the result is stored in the sorted</span>
@@ -1741,6 +1741,46 @@
 
     <span class="p">},</span>
 
+    <span class="c1">// _get: function(js, css) {</span>
+
+
+
+    <span class="c1">// }</span>
+
+    <span class="c1">// _combo: function(js, css) {</span>
+
+    <span class="c1">// }</span>
+
+    <span class="c1">// _insert: function(source, o, type) {</span>
+    <span class="c1">//     if (source) {</span>
+    <span class="c1">//         this._config(source);</span>
+    <span class="c1">//     }</span>
+
+    <span class="c1">//     var js = [],</span>
+    <span class="c1">//         css = [],</span>
+    <span class="c1">//         mod,</span>
+    <span class="c1">//         sorted = this.sorted,</span>
+    <span class="c1">//         i = 0,</span>
+    <span class="c1">//         l = sorted.length,</span>
+    <span class="c1">//         combine = this.combine;</span>
+
+    <span class="c1">//     for (; i &lt; l; i++) {</span>
+    <span class="c1">//         mod = this.getModule(sorted[i]);</span>
+    <span class="c1">//         if (mod.type = CSS &amp;&amp; type != JS) {</span>
+    <span class="c1">//             css.push(mod);</span>
+    <span class="c1">//         } else if (type != CSS) {</span>
+    <span class="c1">//             js.push(mod);</span>
+    <span class="c1">//         }</span>
+    <span class="c1">//     }</span>
+
+    <span class="c1">//     if (this.combine) {</span>
+    <span class="c1">//         this._combo(js, css);</span>
+    <span class="c1">//     } else {</span>
+    <span class="c1">//         this._get(js, css);</span>
+    <span class="c1">//     }</span>
+
+    <span class="c1">// },</span>
+
     <span class="nx">_insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
 
 <span class="c1">// Y.log(&#39;private _insert() &#39; + (type || &#39;&#39;) + &#39;, &#39; + Y.id, &quot;info&quot;, &quot;loader&quot;);</span>
@@ -1754,6 +1794,7 @@
         <span class="c1">// don&#39;t include type so we can process CSS and script in</span>
         <span class="c1">// one pass when the type is not specified.</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">calculate</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">loadType</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
@@ -1824,7 +1865,7 @@
     <span class="nx">insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Y.log(&#39;public insert() &#39; + (type || &#39;&#39;) + &#39;, &#39; +</span>
         <span class="c1">//  Y.Object.keys(this.required), &quot;info&quot;, &quot;loader&quot;);</span>
-        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">copy</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">copy</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
         <span class="k">delete</span> <span class="nx">copy</span><span class="p">.</span><span class="nx">require</span><span class="p">;</span>
         <span class="k">delete</span> <span class="nx">copy</span><span class="p">.</span><span class="nx">dirty</span><span class="p">;</span>
         <span class="nx">_queue</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -1854,8 +1895,8 @@
         <span class="kd">var</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">frag</span><span class="p">,</span>
             <span class="nx">comboSource</span><span class="p">,</span> <span class="nx">comboSources</span><span class="p">,</span> <span class="nx">mods</span><span class="p">,</span> <span class="nx">combining</span><span class="p">,</span> <span class="nx">urls</span><span class="p">,</span> <span class="nx">comboBase</span><span class="p">,</span>
             <span class="c1">// provided,</span>
-            <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">loadType</span><span class="p">,</span>
             <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">loadType</span><span class="p">,</span>
             <span class="nx">handleSuccess</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">self</span><span class="p">.</span><span class="nx">loadNext</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
                             <span class="p">},</span>
