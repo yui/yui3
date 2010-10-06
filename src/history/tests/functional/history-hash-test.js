@@ -22,7 +22,8 @@ Y.Test.Runner.add(new Y.Test.Case({
     _should: {
         ignore: {
             'hashchange should be case-sensitive (except in IE8+)': Y.UA.ie >= 8,
-            'hashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8
+            'hashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8,
+            'Setting an unencoded hash value outside of HistoryHash should not result in two history entries': Y.UA.ie && Y.UA.ie < 8
         }
     },
 
@@ -219,6 +220,10 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.Assert.areSame('apple', this.history.get('a'));
         Y.Assert.areSame('bumblebee', this.history.get('b'));
+
+        this.history.add({foo: 'bar/baz'}, {merge: false});
+        Y.Assert.areSame('bar/baz', this.history.get('foo'));
+        Y.Assert.areSame('foo=bar%2Fbaz', Y.HistoryHash.getHash());
     },
 
     'replace() should replace the hash': function () {
@@ -226,6 +231,27 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.Assert.areSame('aardvark', this.history.get('a'));
         Y.Assert.areSame('boomerang', this.history.get('b'));
+    },
+
+    // -- Bugs -----------------------------------------------------------------
+
+    // http://yuilibrary.com/projects/yui3/ticket/2529399
+    'Setting an unencoded hash value outside of HistoryHash should not result in two history entries': function () {
+        // Necessary to avoid catching a late-firing event from a previous test.
+        this.wait(function () {
+            var changes = 0,
+
+            event = Y.on('hashchange', function (e) {
+                changes += 1;
+            }, win);
+
+            location.href = '#foo=bar/baz';
+
+            this.wait(function () {
+                event.detach();
+                Y.Assert.areSame(1, changes);
+            }, 105);
+        }, 51);
     }
 }));
 
