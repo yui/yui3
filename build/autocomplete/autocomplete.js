@@ -33,24 +33,47 @@ YUI.add('autocomplete-base', function(Y) {
  * <p>
  * This extension cannot be instantiated directly, since it doesn't provide an
  * actual implementation. It's intended to be mixed into a
- * <code>Base</code>-based class or widget, as illustrated in the following
- * example:
+ * <code>Y.Base</code>-based class or widget.
+ * </p>
+ *
+ * <p>
+ * <code>Y.Widget</code>-based example:
  * </p>
  *
  * <pre>
- * YUI().use('autocomplete-base', 'base', function (Y) {
- * &nbsp;&nbsp;var MyAutoComplete = Y.Base.create('myAutocomplete', Y.Base, [Y.AutoComplete], {
+ * YUI().use('autocomplete-base', 'widget', function (Y) {
+ * &nbsp;&nbsp;var MyAC = Y.Base.create('myAC', Y.Widget, [Y.AutoCompleteBase], {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
+ * &nbsp;&nbsp;}, {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
+ * &nbsp;&nbsp;});
+ * &nbsp;
+ * &nbsp;&nbsp;// Custom implementation code.
+ * });
+ * </pre>
+ *
+ * <p>
+ * <code>Y.Base</code>-based example:
+ * </p>
+ *
+ * <pre>
+ * YUI().use('autocomplete-base', function (Y) {
+ * &nbsp;&nbsp;var MyAC = Y.Base.create('myAC', Y.Base, [Y.AutoCompleteBase], {
  * &nbsp;&nbsp;&nbsp;&nbsp;initializer: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.bindInput();
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.syncInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._bindUIACBase();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._syncUIACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;},
  * &nbsp;
  * &nbsp;&nbsp;&nbsp;&nbsp;destructor: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.unbindInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._destructorACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;}
+ * &nbsp;
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
+ * &nbsp;&nbsp;}, {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
  * &nbsp;&nbsp;});
  * &nbsp;
- * &nbsp;&nbsp;// ... custom implementation code ...
+ * &nbsp;&nbsp;// Custom implementation code.
  * });
  * </pre>
  *
@@ -70,6 +93,8 @@ var Lang    = Y.Lang,
 
     _FUNCTION_VALIDATOR = '_functionValidator',
     _SOURCE_SUCCESS     = '_sourceSuccess',
+
+    ALLOW_BROWSER_AC    = 'allowBrowserAutocomplete',
     INPUT_NODE          = 'inputNode',
     QUERY               = 'query',
     QUERY_DELIMITER     = 'queryDelimiter',
@@ -84,6 +109,13 @@ var Lang    = Y.Lang,
     EVT_RESULTS = RESULTS;
 
 function AutoCompleteBase() {
+    // AOP bindings.
+    Y.before(this._bindUIACBase, this, 'bindUI');
+    Y.before(this._destructorACBase, this, 'destructor');
+    Y.before(this._syncUIACBase, this, 'syncUI');
+
+    // -- Public Events --------------------------------------------------------
+
     /**
      * Fires after the query has been completely cleared or no longer meets the
      * minimum query length requirement.
@@ -199,11 +231,9 @@ AutoCompleteBase.ATTRS = {
      * @attribute allowBrowserAutocomplete
      * @type Boolean
      * @default false
-     * @writeonce
      */
     allowBrowserAutocomplete: {
-        value: false,
-        writeOnce: 'initOnly'
+        value: false
     },
 
     /**
@@ -606,60 +636,54 @@ AutoCompleteBase.CSS_PREFIX = 'ac';
 AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 AutoCompleteBase.prototype = {
-    // -- Public Lifecycle Methods ---------------------------------------------
+    // -- Protected Lifecycle Methods ------------------------------------------
 
     /**
-     * Attaches <code>inputNode</code> event listeners.
+     * Attaches AutoCompleteBase event listeners.
      *
-     * @method bindInput
+     * @method _bindUIACBase
+     * @protected
      */
-    bindInput: function () {
+    _bindUIACBase: function () {
         var inputNode = this.get(INPUT_NODE);
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
         }
 
-        // Unbind first, just in case.
-        this.unbindInput();
-
-        this._inputEvents = [
-            // This is the valueChange event on the inputNode provided by the
+        this._acBaseEvents = [
+            // This is the valueChange event on the inputNode, provided by the
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
 
-            // And here's our own valueChange event.
-            this.after(VALUE_CHANGE, this._afterValueChange, this)
+            this.after(ALLOW_BROWSER_AC + 'Change', this._syncBrowserAutocomplete),
+            this.after(VALUE_CHANGE, this._afterValueChange)
         ];
+    },
+
+    /**
+     * Detaches AutoCompleteBase event listeners.
+     *
+     * @method _destructorACBase
+     * @protected
+     */
+    _destructorACBase: function () {
+        var events = this._acBaseEvents;
+
+        while (events && events.length) {
+            events.pop().detach();
+        }
     },
 
     /**
      * Synchronizes the UI state of the <code>inputNode</code>.
      *
-     * @method syncInput
+     * @method _syncUIACBase
+     * @protected
      */
-    syncInput: function () {
-        var inputNode = this.get(INPUT_NODE);
-
-        if (inputNode.get('nodeName').toLowerCase() === 'input') {
-            inputNode.setAttribute('autocomplete',
-                    this.get('allowBrowserAutocomplete') ? 'on' : 'off');
-        }
-
-        this.set(VALUE, inputNode.get(VALUE));
-    },
-
-    /**
-     * Detaches <code>inputNode</code> event listeners.
-     *
-     * @method unbindInput
-     */
-    unbindInput: function () {
-        var inputEvents = this._inputEvents;
-
-        while (inputEvents && inputEvents.length) {
-            inputEvents.pop().detach();
-        }
+    _syncUIACBase: function () {
+        this._syncBrowserAutocomplete();
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -1135,6 +1159,22 @@ AutoCompleteBase.prototype = {
     },
 
     /**
+     * Synchronizes the UI state of the <code>allowBrowserAutocomplete</code>
+     * attribute.
+     *
+     * @method _syncBrowserAutocomplete
+     * @protected
+     */
+    _syncBrowserAutocomplete: function () {
+        var inputNode = this.get(INPUT_NODE);
+
+        if (inputNode.get('nodeName').toLowerCase() === 'input') {
+            inputNode.setAttribute('autocomplete',
+                    this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+        }
+    },
+
+    /**
      * Utility function to trim whitespace from the left side of a string.
      *
      * @method _trimLeft
@@ -1391,6 +1431,29 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
+        var inputNode = this.get('inputNode');
+
+        if (!inputNode) {
+            Y.error('No inputNode specified.');
+        }
+
+        this._events    = [];
+        this._inputNode = inputNode;
+
+        // Cache commonly used classnames and selectors for performance.
+        this[_CLASS_ITEM]        = this.getClassName(ITEM);
+        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
+        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
+        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
+
+        if (!this.get('align.node')) {
+            this.set('align.node', inputNode);
+        }
+
+        if (!this.get(WIDTH)) {
+            this.set(WIDTH, inputNode.get('offsetWidth'));
+        }
+
         /**
          * Fires when an autocomplete suggestion is selected from the list by
          * a keyboard action or mouse click.
@@ -1416,32 +1479,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this.publish(EVT_SELECT, {
             defaultFn: this._defSelectFn
         });
-
-        this._events    = [];
-        this._inputNode = this.get('inputNode');
-
-        // Cache commonly used classnames and selectors for performance.
-        this[_CLASS_ITEM]        = this.getClassName(ITEM);
-        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
-        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
-        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
-
-        if (!this._inputNode) {
-            Y.error('No inputNode specified.');
-        }
-
-        if (!this.get('align.node')) {
-            this.set('align.node', this._inputNode);
-        }
-
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, this._inputNode.get('offsetWidth'));
-        }
     },
 
     destructor: function () {
-        this.unbindInput();
-
         while (this._events.length) {
             this._events.pop().detach();
         }
@@ -1484,7 +1524,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     syncUI: function () {
-        this.syncInput();
         this._syncResults();
         this._syncVisibility();
     },
@@ -1548,21 +1587,24 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Activates the next item after the currently active item. If there is no
      * next item and the <code>circular</code> attribute is <code>true</code>,
-     * the first item in the list will be activated.
+     * focus will wrap back to the input node.
      *
      * @method _activateNextItem
+     * @chainable
      * @protected
      */
     _activateNextItem: function () {
         var item = this.get(ACTIVE_ITEM),
             nextItem;
 
-        nextItem = (item && item.next(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getFirstItemNode();
-
-        if (nextItem) {
-            this._set(ACTIVE_ITEM, nextItem);
+        if (item) {
+            nextItem = item.next(this[_SELECTOR_ITEM]) ||
+                    (this.get(CIRCULAR) ? null : item);
+        } else {
+            nextItem = this._getFirstItemNode();
         }
+
+        this._set(ACTIVE_ITEM, nextItem);
 
         return this;
     },
@@ -1570,21 +1612,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Activates the item previous to the currently active item. If there is no
      * previous item and the <code>circular</code> attribute is
-     * <code>true</code>, the last item in the list will be activated.
+     * <code>true</code>, focus will wrap back to the input node.
      *
      * @method _activatePrevItem
+     * @chainable
      * @protected
      */
     _activatePrevItem: function () {
         var item     = this.get(ACTIVE_ITEM),
-            prevItem;
+            prevItem = item ? item.previous(this[_SELECTOR_ITEM]) :
+                    this.get(CIRCULAR) && this._getLastItemNode();
 
-        prevItem = (item && item.previous(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getLastItemNode();
-
-        if (prevItem) {
-            this._set(ACTIVE_ITEM, prevItem);
-        }
+        this._set(ACTIVE_ITEM, prevItem || null);
 
         return this;
     },
@@ -1613,18 +1652,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Binds <code>inputNode</code> events, in addition to those already bound
-     * by <code>AutoCompleteBase</code>'s public <code>bindInput()</code>
-     * method.
+     * Binds <code>inputNode</code> events.
      *
      * @method _bindInput
      * @protected
      */
     _bindInput: function () {
         var inputNode = this._inputNode;
-
-        // Call AutoCompleteBase's bind method first.
-        this.bindInput();
 
         this._events.concat([
             inputNode.on('blur', this._onInputBlur, this),

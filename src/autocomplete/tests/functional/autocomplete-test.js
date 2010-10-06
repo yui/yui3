@@ -14,12 +14,12 @@ var Assert      = Y.Assert,
 
 ACBase = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
     initializer: function () {
-        this.bindInput();
-        this.syncInput();
+        this._bindUIACBase();
+        this._syncUIACBase();
     },
 
     destructor: function () {
-        this.unbindInput();
+        this._destructorACBase();
     }
 });
 
@@ -60,20 +60,6 @@ baseSuite.add(new Y.Test.Case({
     'Initializer should require an inputNode': function () {
         // Should fail.
         var ac = new ACBase();
-    },
-
-    'Browser autocomplete should be off by default': function () {
-        var ac = new ACBase({inputNode: this.inputNode});
-        Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
-    },
-
-    'Browser autocomplete should be turned on when enabled': function () {
-        var ac = new ACBase({
-            inputNode: this.inputNode,
-            allowBrowserAutocomplete: true
-        });
-
-        Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
     }
 }));
 
@@ -94,6 +80,28 @@ baseSuite.add(new Y.Test.Case({
 
         delete this.ac;
         delete this.inputNode;
+    },
+
+    'Browser autocomplete should be off by default': function () {
+        Assert.isFalse(this.ac.get('allowBrowserAutocomplete'));
+        Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
+    },
+
+    'Browser autocomplete should be turned on when enabled': function () {
+        var ac = new ACBase({
+            inputNode: this.inputNode,
+            allowBrowserAutocomplete: true
+        });
+
+        Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
+    },
+
+    'Browser autocomplete should be settable after init': function () {
+        var ac = new ACBase({inputNode: this.inputNode});
+        Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
+
+        ac.set('allowBrowserAutocomplete', true);
+        Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
     },
 
     'inputNode should be writable only on init': function () {
@@ -125,6 +133,38 @@ baseSuite.add(new Y.Test.Case({
 
         Assert.areSame('/ac?q=foo&a=aardvark', rt('foo'));
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
+    },
+
+    // -- Setters and validators -----------------------------------------------
+    '_functionValidator() should accept a function or null': function () {
+        Assert.isTrue(this.ac._functionValidator(function () {}));
+        Assert.isTrue(this.ac._functionValidator(null));
+        Assert.isFalse(this.ac._functionValidator('foo'));
+    },
+
+    '_setSource() should accept a DataSource': function () {
+        var ds = new Y.DataSource.Local({source: []});
+        Assert.areSame(ds, this.ac._setSource(ds));
+    },
+
+    '_setSource() should accept an array': function () {
+        Assert.isFunction(this.ac._setSource(['foo']).sendRequest);
+    },
+
+    '_setSource() should accept an object': function () {
+        Assert.isFunction(this.ac._setSource({foo: ['bar']}).sendRequest);
+    },
+
+    '_setSource() should accept a URL string': function () {
+        Assert.isFunction(this.ac._setSource('http://example.com/').sendRequest);
+    },
+
+    '_setSource() should accept a YQL string': function () {
+        Assert.isFunction(this.ac._setSource('select * from foo where query="{query}"').sendRequest);
+    },
+
+    '_setSource() should accept a Y.JSONPRequest instance': function () {
+        Assert.isFunction(this.ac._setSource(new Y.JSONPRequest('http://example.com/')).sendRequest);
     }
 }));
 
@@ -490,6 +530,7 @@ Y.Test.Runner.add(suite);
     requires: [
         'autocomplete-base', 'autocomplete-filters',
         'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-        'autocomplete-highlighters-accentfold', 'base-build', 'node', 'test'
+        'autocomplete-highlighters-accentfold', 'datasource-local', 'node',
+        'jsonp', 'test', 'yql'
     ]
 });
