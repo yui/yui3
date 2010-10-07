@@ -1797,7 +1797,12 @@ Y.Loader.prototype = {
 
     // },
 
-    _insert: function(source, o, type) {
+    partial: function(partial, o, type) {
+        this.sorted = partial;
+        this.insert(o, type, true);
+    },
+
+    _insert: function(source, o, type, skipcalc) {
 
 
         // restore the state at the time of the request
@@ -1808,7 +1813,9 @@ Y.Loader.prototype = {
         // build the dependency list
         // don't include type so we can process CSS and script in
         // one pass when the type is not specified.
-        this.calculate(o);
+        if (!skipcalc) {
+            this.calculate(o);
+        }
 
         this.loadType = type;
 
@@ -1876,12 +1883,12 @@ Y.Loader.prototype = {
      * @param {object} o optional options object.
      * @param {string} type the type of dependency to insert.
      */
-    insert: function(o, type) {
+    insert: function(o, type, skipsort) {
         var self = this, copy = Y.merge(this);
         delete copy.require;
         delete copy.dirty;
         _queue.add(function() {
-            self._insert(copy, o, type);
+            self._insert(copy, o, type, skipsort);
         });
         this._continue();
     },

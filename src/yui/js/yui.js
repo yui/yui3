@@ -51,9 +51,10 @@ if (typeof YUI != 'undefined') {
                 Y.applyConfig(YUI.GlobalConfig);
             }
 
-            // YUI_Config is a page-level config.  It is applied to all instances
-            // created on the page.  This is applied after YUI.GlobalConfig, and
-            // before the instance level configuration objects.
+            // YUI_Config is a page-level config.  It is applied to all
+            // instances created on the page.  This is applied after
+            // YUI.GlobalConfig, and before the instance level configuration
+            // objects.
             if (gconf) {
                 Y.applyConfig(gconf);
             }
@@ -65,9 +66,10 @@ if (typeof YUI != 'undefined') {
         }
 
         if (l) {
-            // Each instance can accept one or more configuration objects.  These
-            // are applied after YUI.GlobalConfig and YUI_Config, overriding values
-            // set in those config files if there is a matching property.
+            // Each instance can accept one or more configuration objects.
+            // These are applied after YUI.GlobalConfig and YUI_Config,
+            // overriding values set in those config files if there is a '
+            // matching property.
             for (; i < l; i++) {
                 Y.applyConfig(args[i]);
             }
@@ -774,12 +776,15 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 // Y.log('Using loader to fetch missing deps: ' + missing, 'info', 'yui');
             Y.log('Using Loader', 'info', 'yui');
             Y._loading = true;
-            loader = getLoader(Y);
+            // loader = getLoader(Y);
             loader.onEnd = handleLoader;
             loader.context = Y;
             loader.data = args;
-            loader.require((fetchCSS) ? missing : args);
-            loader.insert(null, (fetchCSS) ? null : 'js');
+            loader.ignoreRegistered = false;
+            // loader.require((fetchCSS) ? missing : args);
+            // loader.insert(null, (fetchCSS) ? null : 'js');
+            loader.partial(missing, (fetchCSS) ? null : 'js');
+
         } else if (len && Y.config.use_rls) {
 
             // server side loader service
