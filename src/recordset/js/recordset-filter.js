@@ -26,7 +26,7 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
     },
 
 	
-	filter: function(f,v,n) {
+	filter: function(f,v) {
 		var recs = this.get('host').get('records'),
 			len = recs.length,
 			i = 0,
@@ -47,7 +47,9 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
  		}
 
 		oRecs = YArray.filter(recs, func);
-
+		
+		
+		//PARENT CHILD RELATIONSHIP
 		return new Y.Recordset({records:oRecs});
 		//return new host.constructor({records:arr});
 	},

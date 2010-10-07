@@ -318,6 +318,7 @@ var ArrayList = Y.ArrayList,
 			//see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this
 			lazyAdd: false
         }
+		
     }
 });
 Y.augment(Recordset, ArrayList);
@@ -465,7 +466,7 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
     },
 
 	
-	filter: function(f,v,n) {
+	filter: function(f,v) {
 		var recs = this.get('host').get('records'),
 			len = recs.length,
 			i = 0,
@@ -506,7 +507,75 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
 }, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
+YUI.add('recordset-indexer', function(Y) {
+
+function RecordsetIndexer(config) {
+    RecordsetIndexer.superclass.constructor.apply(this, arguments);
+}
+
+Y.mix(RecordsetIndexer, {
+    NS: "indexer",
+
+    NAME: "recordsetIndexer",
+
+    ATTRS: {
+		hash: {
+			valueFn: "_setDefaultHash",
+			lazyAdd: false
+		},
+		
+		defaultKey: {
+			value: "id"
+		}
+    }
+});
 
 
-YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter']});
+Y.extend(RecordsetIndexer, Y.Plugin.Base, {
+    initializer: function(config) {
+       var host = this.get('host');
+
+		//setup listeners on recordset events
+		this.onHostEvent('add', Y.bind("_defAddHash", this), host);
+		this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
+		this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);
+    },
+
+    destructor: function(config) {
+    },
+
+	_setDefaultHash: function() {
+		var host = this.get('host'), obj = {}, key = this.get('defaultKey');
+		host.each(function() {
+			obj[this.get(key)] = this;
+		});
+		return obj;
+	},
+	
+	_defAddHash: function(e) {
+		console.log('e');
+		console.log(e);
+		var obj = this.get('hash'), key = this.get('defaultKey');
+		obj[e.added.get(key)] = e.added;
+	},
+	
+	_defRemoveHash: function(e) {
+		
+	},
+	
+	_defUpdateHash: function(e) {
+		
+	}
+	
+	
+});
+
+Y.namespace("Plugin").RecordsetIndexer = RecordsetIndexer;
+
+
+
+}, '@VERSION@' ,{requires:['recordset-base','plugin']});
+
+
+YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter','recordset-indexer']});
 

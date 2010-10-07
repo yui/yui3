@@ -1133,11 +1133,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "array-extras"
                 ]
             }, 
+            "recordset-indexer": {
+                "requires": [
+                    "recordset-base", 
+                    "plugin"
+                ]
+            }, 
             "recordset-sort": {
                 "requires": [
                     "arraysort", 
-                    "recordset-base", 
-                    "plugin"
+                    "recordset-base"
                 ]
             }
         }
@@ -1437,4 +1442,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '1790c745a247f6af07e8cc84febce662';
+YUI.Env[Y.version].md5 = '3f7a3b8632850fc4ebd6150bbec3ed3b';

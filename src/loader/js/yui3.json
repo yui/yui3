@@ -1119,11 +1119,16 @@
                     "array-extras"
                 ]
             }, 
+            "recordset-indexer": {
+                "requires": [
+                    "recordset-base", 
+                    "plugin"
+                ]
+            }, 
             "recordset-sort": {
                 "requires": [
                     "arraysort", 
-                    "recordset-base", 
-                    "plugin"
+                    "recordset-base"
                 ]
             }
         }

@@ -806,8 +806,34 @@
 				Y.Assert.areEqual(false, rs[1]);
 				Y.Assert.areEqual(true, rs[2]);
 				Y.Assert.areEqual(3, rs.length);
-			}
+			},
+			
+			//---------------------------------------------
+		    // Indexer Plugin
+		    //---------------------------------------------
 
+			testDefaultHash: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+				
+				var hashTable = this.rs.indexer.get('hash');
+				
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(0).get('id')], this.rs.getRecord(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(1).get('id')], this.rs.getRecord(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(2).get('id')], this.rs.getRecord(2));
+				
+				this.rs.add({a:'hello', b:'hey', c:'yo!'});
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(0).get('id')], this.rs.getRecord(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(1).get('id')], this.rs.getRecord(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(2).get('id')], this.rs.getRecord(2));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(3).get('id')], this.rs.getRecord(3));
+				
+			},
+			
+			testCustomHash: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+				var hashTable = this.rs.indexer.get('hash')
+			}
+			
 			
         });
 
