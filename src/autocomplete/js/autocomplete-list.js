@@ -146,10 +146,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._contentBox = contentBox;
         this._listNode   = listNode;
         this._parentNode = parentNode;
-
-        if (this.get(ALWAYS_SHOW_LIST)) {
-            this.set(VISIBLE, true);
-        }
     },
 
     syncUI: function () {
@@ -455,6 +451,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncVisibility: function (visible) {
+        if (this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, true);
+            return;
+        }
+
         if (typeof visible === 'undefined') {
             visible = this.get(VISIBLE);
         }
