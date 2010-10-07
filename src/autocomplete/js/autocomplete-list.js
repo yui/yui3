@@ -218,7 +218,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             nextItem = this._getFirstItemNode();
         }
 
-        this._set(ACTIVE_ITEM, nextItem);
+        this.set(ACTIVE_ITEM, nextItem);
 
         return this;
     },
@@ -237,7 +237,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             prevItem = item ? item.previous(this[_SELECTOR_ITEM]) :
                     this.get(CIRCULAR) && this._getLastItemNode();
 
-        this._set(ACTIVE_ITEM, prevItem || null);
+        this.set(ACTIVE_ITEM, prevItem || null);
 
         return this;
     },
@@ -323,7 +323,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _clear: function () {
-        this._set(ACTIVE_ITEM, null);
+        this.set(ACTIVE_ITEM, null);
         this._set(HOVERED_ITEM, null);
 
         this._listNode.get('children').remove(true);
@@ -426,7 +426,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
-            this._set(ACTIVE_ITEM, this._getFirstItemNode());
+            this.set(ACTIVE_ITEM, this._getFirstItemNode());
         }
     },
 
@@ -452,7 +452,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._contentBox.set('aria-hidden', !visible);
 
         if (!visible) {
-            this._set(ACTIVE_ITEM, null);
+            this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
         }
     },
@@ -657,7 +657,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         e.preventDefault();
 
-        this._set(ACTIVE_ITEM, itemNode);
+        this.set(ACTIVE_ITEM, itemNode);
         this.selectItem(itemNode);
     },
 
@@ -699,10 +699,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
          *
          * @attribute activeItem
          * @type Node
-         * @readonly
          */
         activeItem: {
-            readOnly: true,
+            setter: Y.one,
             value: null
         },
 
