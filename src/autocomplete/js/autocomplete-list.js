@@ -178,13 +178,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     selectItem: function (itemNode) {
         if (itemNode) {
             if (!itemNode.hasClass(this[_CLASS_ITEM])) {
-                return;
+                return this;
             }
         } else {
             itemNode = this.get(ACTIVE_ITEM);
 
             if (!itemNode) {
-                return;
+                return this;
             }
         }
 
