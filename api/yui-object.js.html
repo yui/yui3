@@ -62,19 +62,18 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Y.Object(o) returns a new object based upon the supplied object.</span>
-<span class="cm"> * @todo Use native Object.create() when available</span>
 <span class="cm"> * @method ()</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o the supplier object.</span>
 <span class="cm"> * @return {Object} the new object.</span>
 <span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+<span class="kd">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
+
+<span class="nx">O</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span> <span class="o">||</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">F</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span>
-<span class="p">};</span>
+<span class="p">},</span>
 
-<span class="kd">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
 
 <span class="nx">owns</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">k</span><span class="p">);</span>
@@ -109,39 +108,38 @@
     <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
 <span class="p">};</span>
 
+<span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span> <span class="o">=</span> <span class="nx">O</span><span class="p">;</span>
+
 <span class="cm">/**</span>
 <span class="cm"> * Returns an array containing the object&#39;s keys</span>
-<span class="cm"> * @todo use native Object.keys() if available</span>
 <span class="cm"> * @method keys</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o an object.</span>
 <span class="cm"> * @return {string[]} the keys.</span>
 <span class="cm"> */</span>
-<span class="nx">O</span><span class="p">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span> <span class="o">||</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">_extract</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Returns an array containing the object&#39;s values</span>
-<span class="cm"> * @todo use native Object.values() if available</span>
 <span class="cm"> * @method values</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o an object.</span>
 <span class="cm"> * @return {Array} the values.</span>
 <span class="cm"> */</span>
-<span class="nx">O</span><span class="p">.</span><span class="nx">values</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">values</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span> <span class="o">||</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">_extract</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Returns the size of an object</span>
-<span class="cm"> * @todo use native Object.size() if available</span>
 <span class="cm"> * @method size</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param o an object.</span>
 <span class="cm"> * @return {int} the size.</span>
 <span class="cm"> */</span>
-<span class="nx">O</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">size</span> <span class="o">||</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">_extract</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 <span class="p">};</span>
 
