@@ -49,7 +49,9 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
  		}
 
 		oRecs = YArray.filter(recs, func);
-
+		
+		
+		//TODO: PARENT CHILD RELATIONSHIP
 		return new Y.Recordset({records:oRecs});
 		//return new host.constructor({records:arr});
 	},

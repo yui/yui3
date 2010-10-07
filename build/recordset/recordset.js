@@ -74,15 +74,20 @@ var ArrayList = Y.ArrayList,
      */
 	_defAddFn: function(e) {
 		var len = this._items.length,
-			rec = e.added,
-			index = e.index;
+			recs = e.added,
+			index = e.index,
+			i=0;
 		//index = (Y.Lang.isNumber(index) && (index > -1)) ? index : len;
 		
-		if (index === len) {
-			this._items.push(rec);
-		}
-		else {
-			this._items.splice(index,0,rec);
+		for (; i < recs.length; i++) {
+			//if records are to be added one at a time, push them in one at a time
+			if (index === len) {
+				this._items.push(recs[i]);
+			}
+			else {
+				this._items.splice(index,0,recs[i]);
+				index++;
+			}
 		}
 	},
 	
@@ -216,22 +221,23 @@ var ArrayList = Y.ArrayList,
      */
 	add: function(oData, index) {
 		
-		var newRecords=[], idx, i;		
+		var newRecords=[], idx, i=0;		
 		idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
+		
+
+		
 		//Passing in array of object literals for oData
 		if (Y.Lang.isArray(oData)) {
-			newRecords = [];
-
-			for(i=0; i < oData.length; i++) {
+			for(; i < oData.length; i++) {
 				newRecords[i] = this._changeToRecord(oData[i]);
-				this.fire('add', {added:newRecords[i], index:idx+i});
 			}
 
 		}
-		//If it is an object literal of data or a Y.Record
 		else if (Y.Lang.isObject(oData)) {
-			this.fire('add', {added:this._changeToRecord(oData), index:idx});
+			newRecords[0] = this._changeToRecord(oData);
 		}
+		
+		this.fire('add', {added:newRecords, index:idx});
 		return this;
 	},
 	
@@ -481,7 +487,9 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
  		}
 
 		oRecs = YArray.filter(recs, func);
-
+		
+		
+		//TODO: PARENT CHILD RELATIONSHIP
 		return new Y.Recordset({records:oRecs});
 		//return new host.constructor({records:arr});
 	},
@@ -519,7 +527,8 @@ Y.mix(RecordsetIndexer, {
 		},
 		
 		defaultKey: {
-			value: "id"
+			value: "id",
+			setter: "_setDefaultKey"
 		}
     }
 });
@@ -546,19 +555,32 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 		return obj;
 	},
 	
+	_setDefaultKey: function(key) {
+	},
+	
 	_defAddHash: function(e) {
-		console.log('e');
-		console.log(e);
-		var obj = this.get('hash'), key = this.get('defaultKey');
-		obj[e.added.get(key)] = e.added;
+		var obj = this.get('hash'), key = this.get('defaultKey'), i=0;
+		for (; i<e.added.length; i++) {
+			obj[e.added[i].get(key)] = e.added[i];			
+		}
 	},
 	
 	_defRemoveHash: function(e) {
-		
+		var obj = this.get('hash'), key = this.get('defaultKey'), i=0;
+		for (; i<e.removed.length; i++) {
+			delete obj[e.removed[i].get(key)];
+		}
 	},
 	
 	_defUpdateHash: function(e) {
+		var obj = {}, key = this.get('defaultKey'), i=0;
 		
+		//deletes the object key that held on to an overwritten record and
+		//creates an object key to hold on to the updated record
+		for (; i < e.updated.length; i++) {
+			delete obj[e.overwritten[i].get(key)];
+			obj[e.updated[i].get(key)] = e.updated[i]; 
+		}
 	}
 	
 	

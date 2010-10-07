@@ -14,7 +14,7 @@
 				"requires": ["recordset-base", "array-extras"]
 			},
 			"recordset-indexer": {
-				"requires": ["recordset-base", "plugin"]
+				"requires": ["recordset-base", "plugin", "state"]
 			}
 		}
     }

@@ -74,15 +74,20 @@ var ArrayList = Y.ArrayList,
      */
 	_defAddFn: function(e) {
 		var len = this._items.length,
-			rec = e.added,
-			index = e.index;
+			recs = e.added,
+			index = e.index,
+			i=0;
 		//index = (Y.Lang.isNumber(index) && (index > -1)) ? index : len;
 		
-		if (index === len) {
-			this._items.push(rec);
-		}
-		else {
-			this._items.splice(index,0,rec);
+		for (; i < recs.length; i++) {
+			//if records are to be added one at a time, push them in one at a time
+			if (index === len) {
+				this._items.push(recs[i]);
+			}
+			else {
+				this._items.splice(index,0,recs[i]);
+				index++;
+			}
 		}
 	},
 	
@@ -216,22 +221,23 @@ var ArrayList = Y.ArrayList,
      */
 	add: function(oData, index) {
 		
-		var newRecords=[], idx, i;		
+		var newRecords=[], idx, i=0;		
 		idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
+		
+
+		
 		//Passing in array of object literals for oData
 		if (Y.Lang.isArray(oData)) {
-			newRecords = [];
-
-			for(i=0; i < oData.length; i++) {
+			for(; i < oData.length; i++) {
 				newRecords[i] = this._changeToRecord(oData[i]);
-				this.fire('add', {added:newRecords[i], index:idx+i});
 			}
 
 		}
-		//If it is an object literal of data or a Y.Record
 		else if (Y.Lang.isObject(oData)) {
-			this.fire('add', {added:this._changeToRecord(oData), index:idx});
+			newRecords[0] = this._changeToRecord(oData);
 		}
+		
+		this.fire('add', {added:newRecords, index:idx});
 		return this;
 	},
 	

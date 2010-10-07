@@ -827,11 +827,17 @@
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(2).get('id')], this.rs.getRecord(2));
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(3).get('id')], this.rs.getRecord(3));
 				
+				this.rs.remove(1);
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(0).get('id')], this.rs.getRecord(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(1).get('id')], this.rs.getRecord(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecord(2).get('id')], this.rs.getRecord(2));
+				console.log(hashTable);
+				
 			},
 			
 			testCustomHash: function() {
-				this.rs.plug(Y.Plugin.RecordsetIndexer);
-				var hashTable = this.rs.indexer.get('hash')
+				//this.rs.plug(Y.Plugin.RecordsetIndexer);
+				//var hashTable = this.rs.indexer.get('hash')
 			}
 			
 			

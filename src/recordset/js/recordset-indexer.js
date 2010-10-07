@@ -46,22 +46,32 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 	},
 	
 	_defAddHash: function(e) {
-		console.log('e');
-		console.log(e);
-		var obj = this.get('hash'), key = this.get('defaultKey');
-		obj[e.added.get(key)] = e.added;
+		var obj = this.get('hash'), key = this.get('defaultKey'), i=0;
+		for (; i<e.added.length; i++) {
+			obj[e.added[i].get(key)] = e.added[i];			
+		}
 	},
 	
 	_defRemoveHash: function(e) {
-		
+		var obj = this.get('hash'), key = this.get('defaultKey'), i=0;
+		for (; i<e.removed.length; i++) {
+			delete obj[e.removed[i].get(key)];
+		}
 	},
 	
 	_defUpdateHash: function(e) {
+		var obj = {}, key = this.get('defaultKey'), i=0;
 		
+		//deletes the object key that held on to an overwritten record and
+		//creates an object key to hold on to the updated record
+		for (; i < e.updated.length; i++) {
+			delete obj[e.overwritten[i].get(key)];
+			obj[e.updated[i].get(key)] = e.updated[i]; 
+		}
 	}
 	
 	
 });
-
+Y.augment(RecordsetIndexer, Y.State);
 Y.namespace("Plugin").RecordsetIndexer = RecordsetIndexer;
 
