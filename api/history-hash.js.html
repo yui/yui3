@@ -102,14 +102,19 @@
 
     <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
     <span class="nx">_storeState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="nx">newState</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">decode</span>  <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">decode</span><span class="p">,</span>
+            <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="nx">newState</span><span class="p">);</span>
 
         <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_storeState</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 
         <span class="c1">// Update the location hash with the changes, but only if the new hash</span>
         <span class="c1">// actually differs from the current hash (this avoids creating multiple</span>
         <span class="c1">// history entries for a single state).</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">newHash</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//</span>
+        <span class="c1">// We always compare decoded hashes, since it&#39;s possible that the hash</span>
+        <span class="c1">// could be set incorrectly to a non-encoded value outside of</span>
+        <span class="c1">// HistoryHash.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">decode</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span><span class="p">())</span> <span class="o">!==</span> <span class="nx">decode</span><span class="p">(</span><span class="nx">newHash</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">HistoryHash</span><span class="p">[</span><span class="nx">src</span> <span class="o">===</span> <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">SRC_REPLACE</span> <span class="o">?</span> <span class="s1">&#39;replaceHash&#39;</span> <span class="o">:</span> <span class="s1">&#39;setHash&#39;</span><span class="p">](</span><span class="nx">newHash</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
