@@ -13,19 +13,18 @@
 
 /**
  * Y.Object(o) returns a new object based upon the supplied object.
- * @todo Use native Object.create() when available
  * @method ()
  * @static
  * @param o the supplier object.
  * @return {Object} the new object.
  */
-Y.Object = function(o) {
-    var F = function() {};
+var F = function() {},
+
+O = Object.create || function(o) {
     F.prototype = o;
     return new F();
-};
+},
 
-var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
@@ -59,6 +58,8 @@ _extract = function(o, what) {
 
     return out;
 };
+
+Y.Object = O;
 
 /**
  * Returns an array containing the object's keys
