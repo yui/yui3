@@ -123,7 +123,7 @@ ScrollbarsPlugin.ATTRS = {
      */
     verticalNode: {
 		setter: '_setNode',
-        value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
+        valueFn: '_defaultNode'
     },
 
     /**
@@ -134,7 +134,7 @@ ScrollbarsPlugin.ATTRS = {
      */
     horizontalNode: {
 		setter: '_setNode',
-        value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
+        valueFn: 'defaultNode'
     }
 };
 
@@ -541,6 +541,18 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         return node;
     },
+
+    /**
+     * Creates default node instances for scrollbars
+     *
+     * @method _defaultNode
+     * @return {Node} The Y.Node instance for the scrollbar
+     * 
+     * @protected
+     */
+    _defaultNode: function() {
+        return Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE);
+    },    
 
     _basic: Y.UA.ie && Y.UA.ie <= 8
 
