@@ -2271,37 +2271,34 @@ Y.Object = O;
 
 /**
  * Returns an array containing the object's keys
- * @todo use native Object.keys() if available
  * @method keys
  * @static
  * @param o an object.
  * @return {string[]} the keys.
  */
-O.keys = function(o) {
+O.keys = Object.keys || function(o) {
     return _extract(o);
 };
 
 /**
  * Returns an array containing the object's values
- * @todo use native Object.values() if available
  * @method values
  * @static
  * @param o an object.
  * @return {Array} the values.
  */
-O.values = function(o) {
+O.values = Object.values || function(o) {
     return _extract(o, 1);
 };
 
 /**
  * Returns the size of an object
- * @todo use native Object.size() if available
  * @method size
  * @static
  * @param o an object.
  * @return {int} the size.
  */
-O.size = function(o) {
+O.size = Object.size || function(o) {
     return _extract(o, 2);
 };
 
