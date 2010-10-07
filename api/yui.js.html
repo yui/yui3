@@ -100,9 +100,10 @@
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">GlobalConfig</span><span class="p">);</span>
             <span class="p">}</span>
 
-            <span class="c1">// YUI_Config is a page-level config.  It is applied to all instances</span>
-            <span class="c1">// created on the page.  This is applied after YUI.GlobalConfig, and</span>
-            <span class="c1">// before the instance level configuration objects.</span>
+            <span class="c1">// YUI_Config is a page-level config.  It is applied to all</span>
+            <span class="c1">// instances created on the page.  This is applied after</span>
+            <span class="c1">// YUI.GlobalConfig, and before the instance level configuration</span>
+            <span class="c1">// objects.</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">gconf</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">gconf</span><span class="p">);</span>
             <span class="p">}</span>
@@ -114,9 +115,10 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// Each instance can accept one or more configuration objects.  These</span>
-            <span class="c1">// are applied after YUI.GlobalConfig and YUI_Config, overriding values</span>
-            <span class="c1">// set in those config files if there is a matching property.</span>
+            <span class="c1">// Each instance can accept one or more configuration objects.</span>
+            <span class="c1">// These are applied after YUI.GlobalConfig and YUI_Config,</span>
+            <span class="c1">// overriding values set in those config files if there is a &#39;</span>
+            <span class="c1">// matching property.</span>
             <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
@@ -823,12 +825,15 @@
 <span class="c1">// Y.log(&#39;Using loader to fetch missing deps: &#39; + missing, &#39;info&#39;, &#39;yui&#39;);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Using Loader&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
+            <span class="c1">// loader = getLoader(Y);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span> <span class="o">=</span> <span class="nx">handleLoader</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">args</span><span class="p">;</span>
-            <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">((</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="nx">missing</span> <span class="o">:</span> <span class="nx">args</span><span class="p">);</span>
-            <span class="nx">loader</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
+            <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="c1">// loader.require((fetchCSS) ? missing : args);</span>
+            <span class="c1">// loader.insert(null, (fetchCSS) ? null : &#39;js&#39;);</span>
+            <span class="nx">loader</span><span class="p">.</span><span class="nx">partial</span><span class="p">(</span><span class="nx">missing</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
+
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">use_rls</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="c1">// server side loader service</span>
