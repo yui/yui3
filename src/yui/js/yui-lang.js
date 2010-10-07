@@ -25,6 +25,7 @@ NULL = 'null',
 OBJECT = 'object',
 REGEX = 'regexp',
 STRING = 'string',
+STRING_PROTO = String.prototype,
 TOSTRING = Object.prototype.toString,
 UNDEFINED = 'undefined',
 
@@ -55,7 +56,7 @@ SUBREGEX = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
  * @param o The object to test.
  * @return {boolean} true if o is an array.
  */
-L.isArray = function(o) {
+L.isArray = Array.isArray || function(o) {
     return L.type(o) === ARRAY;
 };
 
@@ -178,12 +179,40 @@ L.isUndefined = function(o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = function(s) {
+L.trim = STRING_PROTO.trim ? function(s) {
+    return s.trim();
+} : function (s) {
     try {
         return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch (e) {
         return s;
     }
+};
+
+/**
+ * Returns a string without any leading whitespace.
+ * @method trimLeft
+ * @static
+ * @param s {string} the string to trim.
+ * @return {string} the trimmed string.
+ */
+L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
+    return s.trimLeft();
+} : function (s) {
+    return s.replace(/^s+/, '');
+};
+
+/**
+ * Returns a string without any trailing whitespace.
+ * @method trimLeft
+ * @static
+ * @param s {string} the string to trim.
+ * @return {string} the trimmed string.
+ */
+L.trimRight = STRING_PROTO.trimRight ? function (s) {
+    return s.trimRight();
+} : function (s) {
+    return s.replace(/s+$/, '');
 };
 
 /**
