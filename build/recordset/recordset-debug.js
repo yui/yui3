@@ -314,8 +314,8 @@ var ArrayList = Y.ArrayList,
                 // ...unless we don't care about live object references
                 this._items = Y.Array(records);
             },
-			//for performance reasons, getters and setters aren't active until they are accessed. Set this to false, since 
-			//they are needed to be active in order for the constructor to create the necessary records
+			//initialization of the attribute must be done before the first call is made.
+			//see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this
 			lazyAdd: false
         }
     }
@@ -328,7 +328,8 @@ Y.Recordset = Recordset;
 }, '@VERSION@' ,{requires:['base','record','arraylist']});
 YUI.add('recordset-sort', function(Y) {
 
-var COMPARE = Y.ArraySort.compare;
+var Compare = Y.ArraySort.compare,
+	isValue = Y.Lang.isValue;
 
 function RecordsetSort(field, desc, sorter) {
     RecordsetSort.superclass.constructor.apply(this, arguments);
@@ -343,22 +344,30 @@ Y.mix(RecordsetSort, {
 		lastSortProperties: {
 			value: {
 				field:undefined,
-				desc:undefined,
+				desc:true,
 				sorter:undefined
+			},
+			validator: function(v) {
+				return (isValue(v.field) && isValue(v.desc) && isValue(v.sorter));
 			}
 		},
 
         defaultSorter: {
             value: function(recA, recB, field, desc) {
-                var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
+                var sorted = Compare(recA.getValue(field), recB.getValue(field), desc);
                 if(sorted === 0) {
-                    return COMPARE(recA.get("id"), recB.get("id"), desc);
+                    return Compare(recA.get("id"), recB.get("id"), desc);
                 }
                 else {
                     return sorted;
                 }
             }
-        }
+        },
+
+		isSorted: {
+			value: false,
+			valueFn: "_getState"
+		}
     }
 });
 
@@ -370,8 +379,25 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     destructor: function(config) {
     },
 
+	_getState: function() {
+		var host = this.get('host'),
+			checker = Y.bind(function() {
+				this.set('isSorted',false);
+			}, this);
+		
+		this.on("sort", function() {
+		 	this.set('isSorted', true);
+		});
+		
+		this.onHostEvent('add', checker, host);
+		this.onHostEvent('update', checker, host);
+	},
+
     _defSortFn: function(e) {
+		Y.log('sort fired');
 		this.set('lastSortProperties', e);
+		
+		//have to work directly with _items here - changing the recordset.
         this.get("host")._items.sort(function(a, b) {
 			return (e.sorter)(a, b, e.field, e.desc);
 		});
@@ -383,25 +409,25 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
 	resort: function() {
 		var p = this.get('lastSortProperties');
-		this.fire("sort", {field:p.field, desc: p.desc, sorter: this.get("defaultSorter")});
+		this.fire("sort", {field:p.field, desc: p.desc, sorter: p.sorter || this.get("defaultSorter")});
 	},
 
-	//Flips the recordset around
     reverse: function() {
-		var rs = this.get('host'),
-			len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
-			i=0;
+		this.get('host')._items.reverse();
+    },
+
+	//flips the recordset based on the same sort method that user had defined
+	flip: function() {
+		var p = this.get('lastSortProperties');
 		
-		for(; i <= len; i++) {
-			if (i < (len-i)) {
-				
-				var left = rs.getRecord(i);
-				var right = rs.getRecord(len-i);
-				rs.update(left, len-i);
-				rs.update(right, i);
-			}
+		//If a predefined field is not provided by which to sort by, throw an error
+		if (isValue(p.field)) {
+			this.fire("sort", {field:p.field, desc: !p.desc, sorter: p.sorter || this.get("defaultSorter")});
 		}
-    }
+		else {
+			Y.log('You called flip before setting a field by which to sort by. Maybe you meant to call reverse().');
+		}
+	}
 });
 
 Y.namespace("Plugin").RecordsetSort = RecordsetSort;
@@ -411,7 +437,8 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
 YUI.add('recordset-filter', function(Y) {
 
-var YArray = Y.Array;
+var YArray = Y.Array,
+	Lang = Y.Lang;
 function RecordsetFilter(config) {
     RecordsetFilter.superclass.constructor.apply(this, arguments);
 }
@@ -422,7 +449,6 @@ Y.mix(RecordsetFilter, {
     NAME: "recordsetFilter",
 
     ATTRS: {
-
     }
 
 });
@@ -432,32 +458,35 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
 
 	
     initializer: function(config) {
-        //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
+        //this.publish("filter", {defaultFn: Y.bind("_defFilterFn", this)});
     },
 
     destructor: function(config) {
     },
+
 	
-	filter: function(f,v) {
+	filter: function(f,v,n) {
 		var recs = this.get('host').get('records'),
 			len = recs.length,
 			i = 0,
-			oRecs = [];
+			oRecs = [],
+			func = f;
 			
-		//If a validator function is passed in, simply pass it through to the filter method on Y.Array (in array-extras submodule)
-		if (Y.Lang.isFunction(f) && v===undefined) {
-			oRecs = YArray.filter(recs, f);
-		}
-		
-		//If a key-value pair is passed in, loop through the records to see if records match the k-v pair
-		else if (Y.Lang.isString(f) && Y.Lang.isValue(v)) {
-			for (; i<len;i++) {
-				
-				if (recs[i].getValue(f) === v) {
-					oRecs.push(recs[i]);
+		//If a key-value pair is passed in, generate a custom function
+		if (Lang.isString(f) && Lang.isValue(v)) {
+
+			func = function(item) {
+				if (item.getValue(f) === v) {
+					return true;
 				}
-			}
+				else {
+					return false;
+				}
+			};
  		}
+
+		oRecs = YArray.filter(recs, func);
+
 		return new Y.Recordset({records:oRecs});
 		//return new host.constructor({records:arr});
 	},

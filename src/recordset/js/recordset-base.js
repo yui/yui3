@@ -267,10 +267,11 @@ var ArrayList = Y.ArrayList,
                 // ...unless we don't care about live object references
                 this._items = Y.Array(records);
             },
-			//for performance reasons, getters and setters aren't active until they are accessed. Set this to false, since 
-			//they are needed to be active in order for the constructor to create the necessary records
+			//initialization of the attribute must be done before the first call is made.
+			//see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this
 			lazyAdd: false
         }
+		
     }
 });
 Y.augment(Recordset, ArrayList);

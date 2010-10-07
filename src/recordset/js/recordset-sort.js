@@ -1,4 +1,5 @@
-var COMPARE = Y.ArraySort.compare;
+var Compare = Y.ArraySort.compare,
+	isValue = Y.Lang.isValue;
 
 function RecordsetSort(field, desc, sorter) {
     RecordsetSort.superclass.constructor.apply(this, arguments);
@@ -13,22 +14,30 @@ Y.mix(RecordsetSort, {
 		lastSortProperties: {
 			value: {
 				field:undefined,
-				desc:undefined,
+				desc:true,
 				sorter:undefined
+			},
+			validator: function(v) {
+				return (isValue(v.field) && isValue(v.desc) && isValue(v.sorter));
 			}
 		},
 
         defaultSorter: {
             value: function(recA, recB, field, desc) {
-                var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
+                var sorted = Compare(recA.getValue(field), recB.getValue(field), desc);
                 if(sorted === 0) {
-                    return COMPARE(recA.get("id"), recB.get("id"), desc);
+                    return Compare(recA.get("id"), recB.get("id"), desc);
                 }
                 else {
                     return sorted;
                 }
             }
-        }
+        },
+
+		isSorted: {
+			value: false,
+			valueFn: "_getState"
+		}
     }
 });
 
@@ -40,7 +49,22 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     destructor: function(config) {
     },
 
+	_getState: function() {
+		var host = this.get('host'),
+			checker = Y.bind(function() {
+				this.set('isSorted',false);
+			}, this);
+		
+		this.on("sort", function() {
+		 	this.set('isSorted', true);
+		});
+		
+		this.onHostEvent('add', checker, host);
+		this.onHostEvent('update', checker, host);
+	},
+
     _defSortFn: function(e) {
+		Y.log('sort fired');
 		this.set('lastSortProperties', e);
 		
 		//have to work directly with _items here - changing the recordset.
@@ -55,26 +79,25 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
 	resort: function() {
 		var p = this.get('lastSortProperties');
-		this.fire("sort", {field:p.field, desc: p.desc, sorter: this.get("defaultSorter")});
+		this.fire("sort", {field:p.field, desc: p.desc, sorter: p.sorter || this.get("defaultSorter")});
 	},
 
-	//Flips the recordset around
     reverse: function() {
-		// var rs = this.get('host'),
-		// 	len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
-		// 	i=0;
-		// 
-		// for(; i <= len; i++) {
-		// 	if (i < (len-i)) {
-		// 		
-		// 		var left = rs.getRecord(i);
-		// 		var right = rs.getRecord(len-i);
-		// 		rs.update(left, len-i);
-		// 		rs.update(right, i);
-		// 	}
-		// }
 		this.get('host')._items.reverse();
-    }
+    },
+
+	//flips the recordset based on the same sort method that user had defined
+	flip: function() {
+		var p = this.get('lastSortProperties');
+		
+		//If a predefined field is not provided by which to sort by, throw an error
+		if (isValue(p.field)) {
+			this.fire("sort", {field:p.field, desc: !p.desc, sorter: p.sorter || this.get("defaultSorter")});
+		}
+		else {
+			Y.log('You called flip before setting a field by which to sort by. Maybe you meant to call reverse().');
+		}
+	}
 });
 
 Y.namespace("Plugin").RecordsetSort = RecordsetSort;
