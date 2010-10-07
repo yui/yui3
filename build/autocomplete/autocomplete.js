@@ -1388,7 +1388,8 @@ YUI.add('autocomplete-list', function(Y) {
  * @param {Object} config Configuration object.
  */
 
-var Node   = Y.Node,
+var Lang   = Y.Lang,
+    Node   = Y.Node,
     YArray = Y.Array,
 
     // keyCode constants.
@@ -1426,6 +1427,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.WidgetStack
 ], {
     // -- Prototype Properties -------------------------------------------------
+    ARIA_TEMPLATE: '<div/>',
     ITEM_TEMPLATE: '<li/>',
     LIST_TEMPLATE: '<ul/>',
 
@@ -1439,6 +1441,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         this._events    = [];
         this._inputNode = inputNode;
+
+        // This ensures that the list is rendered inside the same parent as the
+        // input node by default, which is necessary for proper ARIA support.
+        this.DEF_PARENT_NODE = inputNode.get('parentNode');
 
         // Cache commonly used classnames and selectors for performance.
         this[_CLASS_ITEM]        = this.getClassName(ITEM);
@@ -1493,34 +1499,32 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
-        var contentBox = this.get('contentBox'),
-            listNode   = this.get('listNode');
+        var ariaNode   = this._createAriaNode(),
+            contentBox = this.get('contentBox'),
+            inputNode  = this._inputNode,
+            listNode   = this.get('listNode'),
+            parentNode = inputNode.get('parentNode');
 
-        // See http://www.w3.org/WAI/PF/aria/roles#combobox for ARIA details.
         if (!listNode) {
-            listNode = Node.create(this.LIST_TEMPLATE);
-
-            listNode.addClass(this.getClassName(LIST)).setAttrs({
-                id  : Y.stamp(listNode),
-                role: 'listbox'
-            });
-
+            listNode = this._createListNode();
             contentBox.append(listNode);
         }
 
-        this._inputNode.addClass(this.getClassName('input')).setAttrs({
-            'aria-autocomplete': LIST,
-            'aria-live': 'polite', // causes the screen reader to announce the value of an item when selected
-            'aria-owns': listNode.get(ID),
-            role: 'combobox'
-        });
+        inputNode.addClass(this.getClassName('input'))
+            .set('aria-autocomplete', LIST);
+
+        // ARIA node must be outside the widget or announcements won't be made
+        // when the widget is hidden.
+        parentNode.set('role', 'combobox').append(ariaNode);
+
+        this._ariaNode   = ariaNode;
+        this._contentBox = contentBox;
+        this._listNode   = listNode;
+        this._parentNode = parentNode;
 
         if (this.get(ALWAYS_SHOW_LIST)) {
             this.set(VISIBLE, true);
         }
-
-        this._contentBox = contentBox;
-        this._listNode   = listNode;
     },
 
     syncUI: function () {
@@ -1641,7 +1645,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _add: function (items) {
         var itemNodes = [];
 
-        YArray.each(Y.Lang.isArray(items) ? items : [items], function (item) {
+        YArray.each(Lang.isArray(items) ? items : [items], function (item) {
             itemNodes.push(this._createItemNode(item).setData(RESULT, item));
         }, this);
 
@@ -1649,6 +1653,21 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._listNode.append(itemNodes.toFrag());
 
         return itemNodes;
+    },
+
+    /**
+     * Updates the ARIA live region with the specified message.
+     *
+     * @method _ariaSay
+     * @param {String} stringId String id (from the <code>strings</code>
+     *   attribute) of the message to speak.
+     * @param {Object} subs (optional) Substitutions for placeholders in the
+     *   string.
+     * @protected
+     */
+    _ariaSay: function (stringId, subs) {
+        var message = this.get('strings.' + stringId);
+        this._ariaNode.setContent(subs ? Lang.sub(message, subs) : message);
     },
 
     /**
@@ -1701,12 +1720,28 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Creates an item node with the specified <i>content</i>.
+     * Creates and returns an ARIA live region node.
+     *
+     * @method _createAriaNode
+     * @return {Node} ARIA node.
+     * @protected
+     */
+    _createAriaNode: function () {
+        var ariaNode = Node.create(this.ARIA_TEMPLATE);
+
+        return ariaNode.addClass(this.getClassName('aria')).setAttrs({
+            role       : 'status',
+            'aria-live': 'polite'
+        });
+    },
+
+    /**
+     * Creates and returns an item node with the specified <i>content</i>.
      *
      * @method _createItemNode
      * @param {Object} result Result object.
-     * @protected
      * @return {Node} Item node.
+     * @protected
      */
     _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
@@ -1714,7 +1749,23 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         return itemNode.addClass(this[_CLASS_ITEM]).setAttrs({
             id  : Y.stamp(itemNode),
             role: 'option'
-        }).append(result.display);
+        }).setAttribute('data-text', result.text).append(result.display);
+    },
+
+    /**
+     * Creates and returns a list node.
+     *
+     * @method _createListNode
+     * @return {Node} List node.
+     * @protected
+     */
+    _createListNode: function () {
+        var listNode = Node.create(this.LIST_TEMPLATE);
+
+        return listNode.addClass(this.getClassName(LIST)).setAttrs({
+            id  : Y.stamp(listNode),
+            role: 'listbox'
+        });
     },
 
     /**
@@ -1761,6 +1812,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (results.length) {
             items = this._add(results);
+            this._ariaSay('ITEMS_AVAILABLE');
         }
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
@@ -1940,11 +1992,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (keyCode === KEY_DOWN) {
             action = 1;
 
-            if (!visible) {
+            if (visible) {
+                this._activateNextItem();
+            } else {
                 this.show();
             }
-
-            this._activateNextItem();
         }
 
         if (visible) {
@@ -2004,9 +2056,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _defSelectFn: function (e) {
+        var text = e.result.text;
+
         // TODO: support typeahead completion, etc.
         this._inputNode.focus();
-        this._updateValue(e.result.text);
+        this._updateValue(text);
+        this._ariaSay('ITEM_SELECTED', {item: text});
         this.hide();
     }
 }, {
@@ -2077,6 +2132,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         hoveredItem: {
             readOnly: true,
             value: null
+        },
+
+        // The "strings" attribute is documented in Widget.
+        strings: {
+            value: {
+                // These strings are used in ARIA live region announcements.
+                ITEM_SELECTED: '{item} selected.',
+                ITEMS_AVAILABLE: 'Suggestions are available. Use the up and down arrow keys to select suggestions.'
+            }
         },
 
         /**
