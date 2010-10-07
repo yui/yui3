@@ -2565,7 +2565,7 @@ YUI.add('dd-constrain', function(Y) {
 			var ev = [
 				EV_TICK_ALIGN_X,
 				EV_TICK_ALIGN_Y
-			]
+			];
 
 			Y.each(ev, function(v, k) {
 	            this.publish(v, {
@@ -2739,7 +2739,7 @@ YUI.add('dd-constrain', function(Y) {
 	        host.actXY = _xy;
 
 			var xt = this.get('tickX'),
-            	yt = this.get('tickY');
+				yt = this.get('tickY');
 
 			if ((Y.Lang.isNumber(xt) || this.get(TICK_X_ARRAY)) && (this._lastTickXFired !== _xy[0])) {
 				this._tickAlignX();
