@@ -16,10 +16,11 @@
 </ul>
 
 
-<script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
+<script src="../../build/yui/yui-debug.js"></script>
 <script>
 YUI({
-    debug: true
+    debug: true,
+    filter: 'debug'
 }).use('node', function(Y) {
     Y.on('mouseover', function(e) {
         //console.log(e.target);

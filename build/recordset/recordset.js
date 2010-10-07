@@ -1,8 +1,5 @@
 YUI.add('recordset-base', function(Y) {
 
-function Record(config) {
-    Record.superclass.constructor.apply(this, arguments);
-}
 
 /**
  * Class name.
@@ -13,29 +10,13 @@ function Record(config) {
  * @final
  * @value "record"
  */
-Record.NAME = "record";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Record Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Record.ATTRS = {
-    id: {
-        valueFn: "_setId",
-        writeOnce: true
-    },
-    data : {
-    }
-};
-
-/* Record extends Base */
-Y.extend(Record, Y.Base, {
-    _setId: function() {
+var Record = Y.Base.create('record', Y.Base, [], {
+	_setId: function() {
         return Y.guid();
     },
 
-    initializer: function(data) {
+    initializer: function(o) {
+
     },
 
     destructor: function() {
@@ -50,65 +31,32 @@ Y.extend(Record, Y.Base, {
 		}
 		return null;
     }
-
+},
+{
+	ATTRS: {
+	    id: {
+	        valueFn: "_setId",
+	        writeOnce: true
+	    },
+	    data : {
+			value: null
+	    }
+	}
 });
 
 Y.Record = Record;
-function Recordset(config) {
-    Recordset.superclass.constructor.apply(this, arguments);
-}
-
-/**
- * TODO: Implement methods: hasRecord(), reverseRecords(), sortRecords(), toString(), getLength()
- */
-
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "recordset"
- */
-Recordset.NAME = "recordset";
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Recordset Attributes
-//
-/////////////////////////////////////////////////////////////////////////////
-Recordset.ATTRS = {
-    records: {
-        value: null,
-        setter: "_setRecords"
-    }
-};
-
-/* Recordset extends Base */
-Y.extend(Recordset, Y.Base, {
-    _setRecords: function(allData) {
-        var records = [];
-
-        function initRecord(oneData){
-			
-			//This part can probably get condensed a bit - very verbose.
-			if (!(oneData instanceof Y.Record)) {
-            	records.push(new Y.Record({data:oneData}));
-			}
-			
-			else {
-				records.push(oneData);
-			}
-        }
-
-        Y.Array.each(allData, initRecord);
-        return records;
-    },
+var ArrayList = Y.ArrayList,
+	Bind = Y.bind,
+	Recordset = Y.Base.create('recordset', Y.Base, [], {
 
     initializer: function() {
 	
 		//set up event listener to fire events when recordset is modified in anyway
+		this.publish('add', {defaultFn: Bind("_defAddFn", this)});
+		this.publish('remove', {defaultFn: Bind("_defRemoveFn", this)});
+		this.publish('empty', {defaultFn: Bind("_defEmptyFn", this)});
+		this.publish('update', {defaultFn: Bind("_defUpdateFn", this)});
+		
 		this._recordsetChanged();
     },
     
@@ -118,83 +66,45 @@ Y.extend(Recordset, Y.Base, {
 	/**
      * Helper method called upon by add() - it is used to create a new record(s) in the recordset
      *
-     * @method _add
+     * @method _defAddFn
      * @param aRecord {Y.Record} A Y.Record instance
      * @param index {Number} (optional) Index at which to add the record(s)
      * @return {Y.Record} A Record instance.
      * @private
      */
-	_add: function(aRecord, index) {
-		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
-		this.get('records').splice(index,0,aRecord);
+	_defAddFn: function(e) {
+		var len = this._items.length,
+			rec = e.added,
+			index = e.index;
+		//index = (Y.Lang.isNumber(index) && (index > -1)) ? index : len;
 		
-		return aRecord;
-	},
-	
-	
-	/**
-     * Helper method called upon by update() - it updates the recordset when an array is passed in
-     *
-     * @method _updateGivenArray
-     * @param arr {Array} An array of object literals or Y.Record instances
-     * @param index {Number} The index at which to update the records.
-     * @param overwriteFlag {boolean} (optional) A boolean to represent whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
-     * @private
-     */
-	_updateGivenArray: function(arr, index, overwriteFlag) {
-		var i = 0,
-			overwrittenRecords = [],
-			newRecords = [];
-			
-		for (; i < arr.length; i++) {
-			//store everything being added into newRecords
-			newRecords[i] = this._changeToRecord(arr[i]);
-			
-			//Arrays at the first index will always overwrite the one they are updating.
-			if (i===0) {
-				//splice returns an array with 1 object, so just get the object - otherwise this will become a nested array
-				overwrittenRecords[i] = this.get('records').splice(index, 1, newRecords[i])[0];
-				//console.log(overwrittenRecords[i]);
-			}
-			else {
-				overwrittenRecords[i] = this._updateGivenObject(newRecords[i], index+i, overwriteFlag).overwritten[0];
-				if (overwrittenRecords[i] === undefined) {
-					overwrittenRecords.pop();
-				}
-			}
-		}
-		
-		return ({updated:newRecords, overwritten:overwrittenRecords});
-	}, 
-	
-	
-	/**
-     * Helper method called upon by update() and _updateGivenArray() - it updates the recordset when an array is passed in
-     *
-     * @method _updateGivenObject
-     * @param obj {Object || Y.Record} Any objet literal or Y.Record instance
-     * @param index {Number} The index at which to update the records.
-     * @param overwriteFlag {boolean} (optional) A boolean to represent whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
-     * @return {Y.Record || null} The overwritten Record instance, if it exists.
-
-     * @private
-     */
-	_updateGivenObject: function(obj, index, overwriteFlag) {
-		var oRecs = [], 
-			overwrittenRecords = [];
-			
-		oRecs[0] = this._changeToRecord(obj);
-
-		//If overwrite is set to true, splice and remove the record at current entry, otherwise just add it
-		if (overwriteFlag) {
-			overwrittenRecords[0] = this.get('records').splice(index,1,oRecs[0])[0];
+		if (index === len) {
+			this._items.push(rec);
 		}
 		else {
-			this.get('records').splice(index,0,oRecs[0]);
+			this._items.splice(index,0,rec);
+		}
+	},
+	
+	_defRemoveFn: function(e) {
+		if (e.index === 0) {
+			this._items.pop();
+		}
+		else {
+			this._items.splice(e.index,e.range);
 		}
 		
-		//Always returning the object in an array so it can be iterated through
-		return ({updated:oRecs, overwritten:overwrittenRecords});
+	},
+	
+	_defEmptyFn: function(e) {
+		this._items = [];
+	},
+	
+	_defUpdateFn: function(e) {
+		
+		for (var i=0; i<e.updated.length; i++) {
+			this._items[e.index + i] = this._changeToRecord(e.updated[i]);
+		}
 	},
 	
 	/**
@@ -226,64 +136,16 @@ Y.extend(Recordset, Y.Base, {
 	 * (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
      *
      * @method _recordSetUpdated
-     * @param idx {Number} Index at which the modifications to the recordset were made
      * @private
      */
 	_recordsetChanged: function() {
 		
-		this.on(['recordsetUpdatedEvent', 'recordsetAddedEvent', 'recordsetRemovedEvent', 'recordsetEmptiedEvent'], function() {
-			this.fire('recordsetChangedEvent', {});
+		this.on(['update', 'add', 'remove', 'empty'], function() {
+			this.fire('change', {});
 		});
 	},
-	
-	/**
-     * Event that is fired whenever the a record is added to the recordset. Multiple simultaneous changes still fires this event once.
-     *
-     * @method _recordAdded
-	 * @param oRecord {Array} The record that was added, or an array of records added
-     * @param i {Number} Index at which the modifications to the recordset were made
-     * @private
-     */
-	_recordAdded: function(oRecord, i) {
-		this.fire('recordsetAddedEvent', {data:oRecord, index: i});
-	},
-	
-	/**
-     * Event that is fired whenever the a record is removed from the recordset. Multiple simultaneous changes still fires this event once.
-     *
-     * @method _recordDeleted
-	 * @param oRecord {Array} An array of Y.Records that were deleted
-     * @param idx {Number} Index at which the modifications to the recordset were made
-     * @private
-     */
-	_recordRemoved: function(oRecord, idx) {
-		this.fire('recordsetRemovedEvent', {data:oRecord, index: idx});
-	},
-	
-	/**
-     * Event that is fired when the record set is emptied
-     *
-     * @method _recordsetEmptied
-     * @private
-     */
-	_recordsetEmptied: function() {
-		//TODO: What configuration object should be sent here?
-		this.fire('recordsetEmptiedEvent', {});
-	},
-	
-	_recordsetUpdated: function(newRecords, delRecords, index) {
-		var e = {
-				data:
-				{
-					updated: newRecords,
-					overwritten: delRecords
-				},
-				
-				index: index
-			};
-			
-		this.fire('recordsetUpdatedEvent', e);
-	},
+
+
 	
 	//---------------------------------------------
     // Public Methods
@@ -293,12 +155,12 @@ Y.extend(Recordset, Y.Base, {
      * Returns the record at a particular index
      *
      * @method getRecord
-     * @param index {Number} Index at which the required record resides
+     * @param i {Number} Index at which the required record resides
      * @return {Y.Record} An Y.Record instance
      * @public
      */
-    getRecord: function(index) {
-        return this.get("records")[index];
+    getRecord: function(i) {
+        return this._items[i];
     },
 	
 	/**
@@ -316,54 +178,30 @@ Y.extend(Recordset, Y.Base, {
 		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
 		
 		for(; i<range; i++) {
-			returnedRecords.push(this.get('records')[index+i]);
+			returnedRecords.push(this._items[index+i]);
 		}
 		return returnedRecords;
 	},
 	
 	getLength: function() {
-		return this.get('records').length;
+		return this.size();
 	},
 		
 	/**
-     * Returns a string of values for a specified key in the recordset
+     * Returns an array of values for a specified key in the recordset
      *
      * @method getRecord
      * @param index {Number} (optional) Index at which the required record resides
-     * @return {Y.Record} An Y.Record instance
+     * @return {Array} An array of values for the given key
      * @public
      */
 	getValuesByKey: function(key) {
-		var i = 0, len = this.get('records').length, retVals = [];
+		var i = 0, len = this._items.length, retVals = [];
 		for( ; i < len; i++) {
-			retVals.push(this.getRecord(i).getValue(key));
+			retVals.push(this._items[i].getValue(key));
 		}
 		return retVals;
 	},
-	
-	/**
-     * Filters the recordset according to the boolean validator function
-     *
-     * @method filter
-     * @param k {Function || String}  A boolean function representing the conditional logic to filter by, or the key to filter by.
-     * @param v {Value} (optional)  If 'k' was passed as a key, this represents the value the key should have. 
-     * @return {Y.Recordset} A recordset of filtered records
-     * @public
-     */
-	// filter: function(k,v) {
-	// 	var oRecs = [], i=0, rec, len;
-	// 	len = this.get('records').length;
-	// 	for (; i<len;i++) {
-	// 		rec = this.getRecord(i);
-	// 		
-	// 		if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
-	// 			(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
-	// 				oRecs.push(rec);
-	// 		}  
-	// 	}
-	// 
-	// 	return new this.constructor({records:oRecs});
-	// },
 	
 
     /**
@@ -378,34 +216,23 @@ Y.extend(Recordset, Y.Base, {
      */
 	add: function(oData, index) {
 		
-		var oRecord, newRecords=[], idx, i;		
-		
+		var newRecords=[], idx, i;		
+		idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
 		//Passing in array of object literals for oData
 		if (Y.Lang.isArray(oData)) {
 			newRecords = [];
-			idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length;
-			
+
 			for(i=0; i < oData.length; i++) {
-					oRecord = new Y.Record({data:oData[i]});
-					newRecords[i] = this._add(oRecord, idx);
-					idx++;
+				newRecords[i] = this._changeToRecord(oData[i]);
+				this.fire('add', {added:newRecords[i], index:idx+i});
 			}
 
 		}
-		//If it is an object literal of data
-		else if (Y.Lang.isObject(oData) && !(oData instanceof Y.Record)) {
-			oRecord = new Y.Record({data:oData});
-			newRecords[0] = this._add(oRecord, index);
+		//If it is an object literal of data or a Y.Record
+		else if (Y.Lang.isObject(oData)) {
+			this.fire('add', {added:this._changeToRecord(oData), index:idx});
 		}
-		
-		//it is an instance of Y.Record - checking explicitly here so nothing weird gets through
-		else if (oData instanceof Y.Record){
-			 newRecords[0] = this._add(oRecord, index);
-		}
-		this._recordAdded(newRecords, index);
-		
-		//return an object literal, containing array of new Y.Record instances
-		return ({data: newRecords, index:index});
+		return this;
 	},
 	
 	/**
@@ -422,18 +249,16 @@ Y.extend(Recordset, Y.Base, {
 		var remRecords=[];
 		
 		//Default is to only remove the last record - the length is always 1 greater than the last index
-		index = (Y.Lang.isNumber(index) && (index > -1)) ? index : this.get('records').length-1;
-		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
+		index = (index > -1) ? index : (this.size()-1);
+		range = (range > 0) ? range : 1;
+		
+		remRecords = this._items.slice(index,(index+range));
 
-		//Remove records and store them in remRecords
-		remRecords = this.get('records').splice(index,range);
+		this.fire('remove', {removed: remRecords, range:range, index:index});
+		//this._recordRemoved(remRecords, index);
 		
-		//Fire event
-		this._recordRemoved(remRecords, index);
-		
-		return ({data: remRecords, index:index}); 
-		
-
+		//return ({data: remRecords, index:index}); 
+		return this;
 	},
 	
 	/**
@@ -443,45 +268,60 @@ Y.extend(Recordset, Y.Base, {
      * @public
      */
 	empty: function() {
-		this.set('records').value = [];
-		this._recordsetEmptied();	
-		return null;
+		this.fire('empty', {});
+		return this;
 	},
 	
-	/**
-     * Updates one or more records in the recordset with new records. New records can overwrite existing records or be appended at an index.
-     *
-     * @method update
-     * @param oData {Object || Array || Y.Record}  This represents the data you want to update the record with. Can be an object literal, an array of object literals, a Y.Record instance or an array of Y.Record instances.
-     * @param index {Number} The index at which to update the records.
-     * @param overwriteFlag {boolean} (optional) Represents whether or not you wish to over-write the existing records with records from your recordset. Default is false. The first record is always overwritten.
-
-     * @public
-     */
-	update: function(oData, index, overwriteFlag) {
+	
+	update: function(data, index) {
+		var rec, arr;
 		
-		var data;
+		//Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method
+		arr = (!(Y.Lang.isArray(data))) ? [data] : data;
+		rec = this._items.slice(index, index+arr.length);
+		this.fire('update', {updated:arr, overwritten:rec, index:index});
 		
-		if (Y.Lang.isArray(oData)) {
-			data = this._updateGivenArray(oData, index, overwriteFlag);			
-		}
-		else if (Y.Lang.isObject(oData)) {
-			//If its just an object, it will overwrite the existing one, so passing in true
-			data = this._updateGivenObject(oData, index, true);
-		}
-		
-		//fire event
-		this._recordsetUpdated(data.updated, data.overwritten, index);
-		return null;
+		return this;		
 	}
 	
-	
+},
+{
+    ATTRS: {
+        records: {
+            validator: Y.Lang.isArray,
+            getter: function () {
+                // give them a copy, not the internal object
+                return Y.Array(this._items);
+            },
+            setter: function (allData) {
+				var records = [];
+				function initRecord(oneData) {
+					var o;
+					
+					if (oneData instanceof Y.Record) {
+						records.push(oneData);
+					}
+					else {
+						o = new Y.Record({data:oneData});
+						records.push(o);
+					}
+				}
+				Y.Array.each(allData, initRecord);
+                // ...unless we don't care about live object references
+                this._items = Y.Array(records);
+            },
+			//for performance reasons, getters and setters aren't active until they are accessed. Set this to false, since 
+			//they are needed to be active in order for the constructor to create the necessary records
+			lazyAdd: false
+        }
+    }
 });
+Y.augment(Recordset, ArrayList);
 Y.Recordset = Recordset;
 
 
 
-}, '@VERSION@' ,{requires:['base','record']});
+}, '@VERSION@' ,{requires:['base','record','arraylist']});
 YUI.add('recordset-sort', function(Y) {
 
 var COMPARE = Y.ArraySort.compare;
@@ -528,7 +368,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     _defSortFn: function(e) {
 		this.set('lastSortProperties', e);
-        this.get("host").get("records").sort(function(a, b) {
+        this.get("host")._items.sort(function(a, b) {
 			return (e.sorter)(a, b, e.field, e.desc);
 		});
     },
@@ -567,6 +407,7 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
 YUI.add('recordset-filter', function(Y) {
 
+var YArray = Y.Array;
 function RecordsetFilter(config) {
     RecordsetFilter.superclass.constructor.apply(this, arguments);
 }
@@ -579,36 +420,51 @@ Y.mix(RecordsetFilter, {
     ATTRS: {
 
     }
+
 });
 
+
 Y.extend(RecordsetFilter, Y.Plugin.Base, {
+
+	
     initializer: function(config) {
         //this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
     },
 
     destructor: function(config) {
     },
-
-	alert: function() {
-		alert('im working!!');
-	},
-
-	filter: function(k,v) {
-		var oRecs = [], i=0, rec, len, host;
-		host = this.get('host');
-		len = host.get('records').getLength();
-		for (; i<len;i++) {
-			rec = host.getRecord(i);
+	
+	filter: function(f,v) {
+		var recs = this.get('host').get('records'),
+			len = recs.length,
+			i = 0,
+			oRecs = [];
 			
-			if ((Y.Lang.isFunction(k) && v===undefined && k(rec)) || //if only k is supplied, and k is the custom function
-				(Y.Lang.isString(k) && Y.Lang.isValue(v) && rec.getValue(k) === v)) { //if key/value pair is provided, and neither are null/undefined/NaN
-					oRecs.push(rec);
-			}  
+		//If a validator function is passed in, simply pass it through to the filter method on Y.Array (in array-extras submodule)
+		if (Y.Lang.isFunction(f) && v===undefined) {
+			oRecs = YArray.filter(recs, f);
 		}
-
-		return new host.constructor({records:oRecs});
+		
+		//If a key-value pair is passed in, loop through the records to see if records match the k-v pair
+		else if (Y.Lang.isString(f) && Y.Lang.isValue(v)) {
+			for (; i<len;i++) {
+				
+				if (recs[i].getValue(f) === v) {
+					oRecs.push(recs[i]);
+				}
+			}
+ 		}
+		return new Y.Recordset({records:oRecs});
+		//return new host.constructor({records:arr});
+	},
+	
+	reject: function(f) {
+		return new Y.Recordset({records:YArray.reject(this.get('host').get('records'),f)});
+	},
+	
+	grep: function(pattern) {
+		return new Y.Recordset({records:YArray.grep(this.get('host').get('records'),pattern)});
 	}
-
 
 });
 
@@ -616,7 +472,7 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
 
-}, '@VERSION@' ,{requires:['recordset-base','plugin']});
+}, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
 
 
 YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter']});

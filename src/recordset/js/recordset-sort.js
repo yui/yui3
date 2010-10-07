@@ -42,7 +42,9 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     _defSortFn: function(e) {
 		this.set('lastSortProperties', e);
-        this.get("host").get("records").sort(function(a, b) {
+		
+		//have to work directly with _items here - changing the recordset.
+        this.get("host")._items.sort(function(a, b) {
 			return (e.sorter)(a, b, e.field, e.desc);
 		});
     },
@@ -58,19 +60,20 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
 	//Flips the recordset around
     reverse: function() {
-		var rs = this.get('host'),
-			len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
-			i=0;
-		
-		for(; i <= len; i++) {
-			if (i < (len-i)) {
-				
-				var left = rs.getRecord(i);
-				var right = rs.getRecord(len-i);
-				rs.update(left, len-i);
-				rs.update(right, i);
-			}
-		}
+		// var rs = this.get('host'),
+		// 	len = rs.getLength() - 1, //since we are starting from i=0, (len-i) = len at first iteration (rs.getRecord(len) is undefined at first iteration)
+		// 	i=0;
+		// 
+		// for(; i <= len; i++) {
+		// 	if (i < (len-i)) {
+		// 		
+		// 		var left = rs.getRecord(i);
+		// 		var right = rs.getRecord(len-i);
+		// 		rs.update(left, len-i);
+		// 		rs.update(right, i);
+		// 	}
+		// }
+		this.get('host')._items.reverse();
     }
 });
 

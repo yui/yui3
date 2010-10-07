@@ -749,4 +749,4 @@ Y.Get = function() {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

@@ -168,6 +168,7 @@ YArray.indexOf = (Native.indexOf) ?
  * Numeric sort convenience function.
  * Y.ArrayAssert.itemsAreEqual([1,2,3], [3,1,2].sort(Y.Array.numericSort));
  * @method numericSort
+ * @static
  * @param {number} a a number.
  * @param {number} b a number.
  */

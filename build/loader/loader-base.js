@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.09.22-20-15',
+            GALLERY_VERSION = 'gallery-2010.09.29-18-36',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.8.1',
@@ -648,6 +648,7 @@ Y.Loader = function(o) {
 
     // Y.on('yui:load', self.loadNext, self);
 
+    self.tested = {};
 
     /*
      * Cached sorted calculate results
@@ -679,6 +680,7 @@ Y.Loader.prototype = {
                    mr = m && m.requires;
                if (m) {
                    if (!m._inspected && req && mr.length != req.length) {
+                       // console.log('deleting ' + m.name);
                        delete m.expanded;
                    }
                } else {
@@ -693,10 +695,15 @@ Y.Loader.prototype = {
 // directly or by means of modules it supersedes.
    _requires: function(mod1, mod2) {
 
-        var i, rm, after, after_map, s,
+        var i, rm, after_map, s,
             info = this.moduleInfo,
             m = info[mod1],
             other = info[mod2];
+            // key = mod1 + mod2;
+
+        // if (this.tested[key]) {
+            // return this.tested[key];
+        // }
 
         // if (loaded[mod2] || !m || !other) {
         if (!m || !other) {
@@ -704,20 +711,19 @@ Y.Loader.prototype = {
         }
 
         rm = m.expanded_map;
-        after = m.after;
         after_map = m.after_map;
 
-        // check if this module requires the other directly
-        // if (r && YArray.indexOf(r, mod2) > -1) {
-        if (rm && (mod2 in rm)) {
+        // check if this module should be sorted after the other
+        // do this first to short circut circular deps
+        if (after_map && (mod2 in after_map)) {
             return true;
         }
 
-        // check if this module should be sorted after the other
-        if (after_map && (mod2 in after_map)) {
-            return true;
-        } else if (after && YArray.indexOf(after, mod2) > -1) {
-            return true;
+        after_map = other.after_map;
+
+        // and vis-versa
+        if (after_map && (mod1 in after_map)) {
+            return false;
         }
 
         // check if this module requires one the other supersedes
@@ -728,6 +734,21 @@ Y.Loader.prototype = {
                     return true;
                 }
             }
+        }
+
+        s = info[mod1] && info[mod1].supersedes;
+        if (s) {
+            for (i = 0; i < s.length; i++) {
+                if (this._requires(mod2, s[i])) {
+                    return false;
+                }
+            }
+        }
+
+        // check if this module requires the other directly
+        // if (r && YArray.indexOf(r, mod2) > -1) {
+        if (rm && (mod2 in rm)) {
+            return true;
         }
 
         // external css files should be sorted below yui css
@@ -833,7 +854,6 @@ Y.Loader.prototype = {
                     group: mdef.group,
                     type: 'css',
                     after: sinf.after,
-                    after_map: YArray.hash(sinf.after),
                     path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
@@ -951,7 +971,7 @@ Y.Loader.prototype = {
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
             overrides, skinname,
-            conditions = this.conditions, condmod;
+            conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
 
         this.moduleInfo[name] = o;
@@ -1063,9 +1083,15 @@ Y.Loader.prototype = {
         }
 
         if (o.condition) {
-            condmod = o.condition.trigger;
-            conditions[condmod] = conditions[condmod] || {};
-            conditions[condmod][name] = o.condition;
+            trigger = o.condition.trigger;
+            conditions[trigger] = conditions[trigger] || {};
+            conditions[trigger][name] = o.condition;
+            o.after = o.after || [];
+            o.after.push(trigger);
+        }
+
+        if (o.after) {
+            o.after_map = YArray.hash(o.after);
         }
 
         // this.dirty = true;
@@ -1100,6 +1126,11 @@ Y.Loader.prototype = {
      * @return {array} the expanded requirement list.
      */
     getRequires: function(mod) {
+
+        // if (mod.name == 'node-base') {
+            // eval('debugger;');
+        // }
+
         if (!mod || mod._parsed) {
             return NO_REQUIREMENTS;
         }
@@ -1107,29 +1138,28 @@ Y.Loader.prototype = {
         var i, m, j, add, packName, lang,
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
-            d = [],
+            d,
             r, old_mod,
             o, skinmod, skindef,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
-            hash = {};
+            hash;
 
         // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
-
             old_mod = mod;
-
             mod = this.addModule(adddef, name);
             mod.group = old_mod.group;
             mod.pkg = old_mod.pkg;
             delete mod.expanded;
-            // console.log('TEMP MOD: ' + name + ', ' + mod.requires);
-            // console.log(Y.dump(mod));
         }
 
         if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
             return mod.expanded;
         }
+
+        d = [];
+        hash = {};
 
         r = mod.requires;
         o = mod.optional;
@@ -1226,6 +1256,7 @@ Y.Loader.prototype = {
                         hash[condmod] = true;
                         d.push(condmod);
                         m = this.getModule(condmod);
+                        // console.log('conditional', m);
                         if (m) {
                             add = this.getRequires(m);
                             for (j = 0; j < add.length; j++) {
@@ -1293,6 +1324,28 @@ Y.Loader.prototype = {
         return m.provides;
     },
 
+    // checkConditions: function() {
+    //     var self = this,
+    //         conds = self.conditions;
+
+    //     Y.Object.each(self.required, function(mod, name) {
+
+    //         var cond = conds[name];
+
+    //         Y.Object.each(cond, function(def, condmod) {
+    //             if (def) {
+    //                 var go = def.result || ((def.ua && Y.UA[def.ua]) ||
+    //                              (def.test && def.test(Y)));
+    //                 def.result = go;
+    //                 if (go) {
+    //                     self.required[condmod] = true;
+    //                 }
+    //             }
+    //         });
+
+    //     });
+    // },
+
     /**
      * Calculates the dependency tree, the result is stored in the sorted
      * property.
@@ -1311,7 +1364,11 @@ Y.Loader.prototype = {
                 this._setup();
             }
 
+
             this._explode();
+
+            // this.checkConditions();
+
             if (this.allowRollup) {
                 this._rollup();
             }
@@ -1376,6 +1433,7 @@ Y.Loader.prototype = {
                 }
             }
         }
+
 
         //l = Y.merge(this.inserted);
         l = {};
@@ -1699,6 +1757,46 @@ Y.Loader.prototype = {
 
     },
 
+    // _get: function(js, css) {
+
+
+
+    // }
+
+    // _combo: function(js, css) {
+
+    // }
+
+    // _insert: function(source, o, type) {
+    //     if (source) {
+    //         this._config(source);
+    //     }
+
+    //     var js = [],
+    //         css = [],
+    //         mod,
+    //         sorted = this.sorted,
+    //         i = 0,
+    //         l = sorted.length,
+    //         combine = this.combine;
+
+    //     for (; i < l; i++) {
+    //         mod = this.getModule(sorted[i]);
+    //         if (mod.type = CSS && type != JS) {
+    //             css.push(mod);
+    //         } else if (type != CSS) {
+    //             js.push(mod);
+    //         }
+    //     }
+
+    //     if (this.combine) {
+    //         this._combo(js, css);
+    //     } else {
+    //         this._get(js, css);
+    //     }
+
+    // },
+
     _insert: function(source, o, type) {
 
 
@@ -1711,6 +1809,7 @@ Y.Loader.prototype = {
         // don't include type so we can process CSS and script in
         // one pass when the type is not specified.
         this.calculate(o);
+
         this.loadType = type;
 
         if (!type) {
@@ -1778,7 +1877,7 @@ Y.Loader.prototype = {
      * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type) {
-        var self = this, copy = Y.merge(this, true);
+        var self = this, copy = Y.merge(this);
         delete copy.require;
         delete copy.dirty;
         _queue.add(function() {
@@ -1808,8 +1907,8 @@ Y.Loader.prototype = {
         var s, len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             comboSource, comboSources, mods, combining, urls, comboBase,
             // provided,
-            type = this.loadType,
             self = this,
+            type = this.loadType,
             handleSuccess = function(o) {
                                 self.loadNext(o.data);
                             },

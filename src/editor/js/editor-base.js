@@ -58,6 +58,10 @@
         * @param {Node} to The Node instance to copy the styles to
         */
         copyStyles: function(from, to) {
+            if (from.test('a')) {
+                //Don't carry the A styles
+                return;
+            }
             var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
                 newStyles = {};
 
@@ -66,6 +70,11 @@
             });
             if (from.ancestor('b,strong')) {
                 newStyles.fontWeight = 'bold';
+            }
+            if (from.ancestor('u')) {
+                if (!newStyles.textDecoration) {
+                    newStyles.textDecoration = 'underline';
+                }
             }
             to.setStyles(newStyles);
         },
@@ -124,8 +133,27 @@
                     }
                     break;
                 case 'enter-up':
-                    if (e.changedNode.test('p')) {
-                        var prev = e.changedNode.previous(), lc, lc2, found = false;
+                    var para = ((this._lastPara) ? this._lastPara : e.changedNode),
+                        b = para.one('br.yui-cursor');
+
+                    if (this._lastPara) {
+                        delete this._lastPara;
+                    }
+
+                    if (b) {
+                        if (b.previous() || b.next()) {
+                            b.remove();
+                        }
+                    }
+                    if (!para.test('p')) {
+                        var para2 = para.ancestor('p');
+                        if (para2) {
+                            para = para2;
+                            para2 = null;
+                        }
+                    }
+                    if (para.test('p')) {
+                        var prev = para.previous(), lc, lc2, found = false;
                         if (prev) {
                             lc = prev.one(':last-child');
                             while (!found) {
@@ -141,12 +169,20 @@
                                 }
                             }
                             if (lc) {
-                                this.copyStyles(lc, e.changedNode);
+                                this.copyStyles(lc, para);
                             }
                         }
                     }
-                    inst.Selection.filterBlocks();
+                    //inst.Selection.filterBlocks();
                     break;
+            }
+            if (Y.UA.gecko) {
+                if (!e.changedNode.test('p')) {
+                    var p = e.changedNode.ancestor('p');
+                    if (p) {
+                        this._lastPara = p;
+                    }
+                }
             }
 
             var changed = this.getDomPath(e.changedNode, false),
@@ -677,7 +713,7 @@
             * @type String
             */            
             linkedcss: {
-                value: false,
+                value: '',
                 setter: function(css) {
                     if (this.frame) {
                         this.frame.set('linkedcss', css);

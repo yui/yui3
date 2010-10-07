@@ -1,16 +1,28 @@
 {
     "yui": {
         "submodules": {
-            "get": {}, 
-            "yui-base": {}, 
+            "get": {
+                "requires": ["yui-base"]
+            },
+            "yui-base": {},
             "rls": {
-                "requires": ["features"]
-            }, 
-            "features": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {},
-            "intl-base": {}
+                "requires": ["get", "features"]
+            },
+            "features": {
+                "requires": ["yui-base"]
+            },
+            "yui-later": {
+                "requires": ["yui-base"]
+            },
+            "yui-log": {
+                "requires": ["yui-base"]
+            },
+            "yui-throttle": {
+                "requires": ["yui-base"]
+            },
+            "intl-base": {
+                "requires": ["yui-base"]
+            }
         }
     }
 }

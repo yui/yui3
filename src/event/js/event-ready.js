@@ -1,15 +1,8 @@
-(function() {
 /*
  * DOM event listener abstraction layer
  * @module event
  * @submodule event-base
  */
-
-var GLOBAL_ENV = YUI.Env,
-    
-    yready = function() {
-        Y.fire('domready');
-    };
 
 /**
  * The domready event fires at the moment the browser's DOM is
@@ -27,7 +20,7 @@ var GLOBAL_ENV = YUI.Env,
  * it to true if the yui.js script is not included inline.
  *
  * This method is part of the 'event-ready' module, which is a
- * submodule of 'event'.  
+ * submodule of 'event'.
  *
  * @event domready
  * @for YUI
@@ -38,12 +31,8 @@ Y.publish('domready', {
 });
 
 if (GLOBAL_ENV.DOMReady) {
-    // console.log('DOMReady already fired', 'info', 'event');
-    yready();
+    Y.fire('domready');
 } else {
-    // console.log('setting up before listener', 'info', 'event');
-    // console.log('env: ' + YUI.Env.windowLoaded, 'info', 'event');
-    Y.before(yready, GLOBAL_ENV, "_ready");
+    Y.Do.before(function() { Y.fire('domready'); }, YUI.Env, '_ready');
 }
 
-})();

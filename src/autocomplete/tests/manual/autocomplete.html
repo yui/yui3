@@ -64,7 +64,6 @@
     <div id="ac">
         <label for="ac-input">Type things here! Try the name of a US state.</label><br>
         <input type="text" id="ac-input">
-        <div id="ac-list"></div>
     </div>
 
     <fieldset id="data-sources">
@@ -145,10 +144,7 @@ new Y.Console({
 }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
 // -- AutoComplete setup -------------------------------------------------------
-var autoComplete = new Y.AutoComplete({
-        boundingBox: '#ac-list',
-        inputNode  : '#ac-input'
-    });
+var autoComplete = new Y.AutoComplete({inputNode: '#ac-input'});
 
 // For easier debugging.
 Y.ac = autoComplete;
@@ -274,6 +270,7 @@ function useLocal() {
 
     autoComplete.setAttrs({
         resultFormatter  : null,
+        resultListLocator: null,
         resultTextLocator: null,
         source           : ExampleData.arrayStates
     });
@@ -286,6 +283,7 @@ function useNone() {
 
     autoComplete.setAttrs({
         resultFormatter  : null,
+        resultListLocator: null,
         resultTextLocator: null,
         source           : null
     });
@@ -298,6 +296,7 @@ function useFlickr() {
 
     autoComplete.setAttrs({
         resultFormatter  : flickrFormatter,
+        resultListLocator: null,
         resultTextLocator: 'title',
         source           : 'select * from flickr.photos.search where tags="{query}"'
     });
@@ -310,6 +309,7 @@ function useSearch() {
 
     autoComplete.setAttrs({
         resultFormatter  : null,
+        resultListLocator: null,
         resultTextLocator: null,
         source           : 'select * from search.suggest where query="{query}"'
     });

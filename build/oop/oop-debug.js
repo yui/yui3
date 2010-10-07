@@ -157,7 +157,6 @@ YUI.add('oop', function(Y) {
      */
     Y.extend = function(r, s, px, sx) {
         if (!s || !r) {
-            // @TODO error symbols
             Y.error('extend failed, verify dependencies');
         }
 

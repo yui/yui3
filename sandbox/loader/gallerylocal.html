@@ -2,11 +2,11 @@
 <html debug="true">
 <head>
 <title>gallery-local</title>
-    <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
-    <script src="../../build/dump/dump-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
-    <script type="text/javascript" charset="utf-8">                                                                                                                 
+    <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../build/dump/dump-debug.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
 
-        YUI({
+        var Y = YUI({
             filter: 'debug',
             groups: {
                 gallery: {
@@ -27,11 +27,18 @@
                 }
             }
         // }).use('node', 'base', 'gallery-port', 'gallery-treeview', function(Y) {
-        }).use('gallery-aui-toolbar', function(Y) {
+        })
+
+        Y.use('gallery-aui-toolbar', function(Y) {
             // console.log('tv: ' + Y.apm.TreeView);
-            console.log(Y);
-        });                                                                                                                                 
-    </script>     
+            console.log(1, Y);
+        });
+
+        Y.use('gallery-aui-toolbar', function(Y) {
+            // console.log('tv: ' + Y.apm.TreeView);
+            console.log(2, Y);
+        });
+    </script>
 <body>
 </body>
 </html>

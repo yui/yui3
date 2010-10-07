@@ -33,24 +33,47 @@ YUI.add('autocomplete-base', function(Y) {
  * <p>
  * This extension cannot be instantiated directly, since it doesn't provide an
  * actual implementation. It's intended to be mixed into a
- * <code>Base</code>-based class or widget, as illustrated in the following
- * example:
+ * <code>Y.Base</code>-based class or widget.
+ * </p>
+ *
+ * <p>
+ * <code>Y.Widget</code>-based example:
  * </p>
  *
  * <pre>
- * YUI().use('autocomplete-base', 'base', function (Y) {
- * &nbsp;&nbsp;var MyAutoComplete = Y.Base.create('myAutocomplete', Y.Base, [Y.AutoComplete], {
+ * YUI().use('autocomplete-base', 'widget', function (Y) {
+ * &nbsp;&nbsp;var MyAC = Y.Base.create('myAC', Y.Widget, [Y.AutoCompleteBase], {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
+ * &nbsp;&nbsp;}, {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
+ * &nbsp;&nbsp;});
+ * &nbsp;
+ * &nbsp;&nbsp;// Custom implementation code.
+ * });
+ * </pre>
+ *
+ * <p>
+ * <code>Y.Base</code>-based example:
+ * </p>
+ *
+ * <pre>
+ * YUI().use('autocomplete-base', function (Y) {
+ * &nbsp;&nbsp;var MyAC = Y.Base.create('myAC', Y.Base, [Y.AutoCompleteBase], {
  * &nbsp;&nbsp;&nbsp;&nbsp;initializer: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.bindInput();
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.syncInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._bindUIACBase();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._syncUIACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;},
  * &nbsp;
  * &nbsp;&nbsp;&nbsp;&nbsp;destructor: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.unbindInput();
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._destructorACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;}
+ * &nbsp;
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
+ * &nbsp;&nbsp;}, {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
  * &nbsp;&nbsp;});
  * &nbsp;
- * &nbsp;&nbsp;// ... custom implementation code ...
+ * &nbsp;&nbsp;// Custom implementation code.
  * });
  * </pre>
  *
@@ -63,13 +86,15 @@ var Lang    = Y.Lang,
 
     isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
-    isNumber   = Lang.isNumber,
     isObject   = Lang.isObject,
     trim       = Lang.trim,
 
-    INVALID_VALUE = (Y.Attribute && Y.Attribute.INVALID_VALUE) || {},
+    INVALID_VALUE = Y.Attribute.INVALID_VALUE,
 
+    _FUNCTION_VALIDATOR = '_functionValidator',
     _SOURCE_SUCCESS     = '_sourceSuccess',
+
+    ALLOW_BROWSER_AC    = 'allowBrowserAutocomplete',
     INPUT_NODE          = 'inputNode',
     QUERY               = 'query',
     QUERY_DELIMITER     = 'queryDelimiter',
@@ -84,6 +109,13 @@ var Lang    = Y.Lang,
     EVT_RESULTS = RESULTS;
 
 function AutoCompleteBase() {
+    // AOP bindings.
+    Y.before(this._bindUIACBase, this, 'bindUI');
+    Y.before(this._destructorACBase, this, 'destructor');
+    Y.before(this._syncUIACBase, this, 'syncUI');
+
+    // -- Public Events --------------------------------------------------------
+
     /**
      * Fires after the query has been completely cleared or no longer meets the
      * minimum query length requirement.
@@ -199,11 +231,9 @@ AutoCompleteBase.ATTRS = {
      * @attribute allowBrowserAutocomplete
      * @type Boolean
      * @default false
-     * @writeonce
      */
     allowBrowserAutocomplete: {
-        value: false,
-        writeOnce: 'initOnly'
+        value: false
     },
 
     /**
@@ -228,7 +258,6 @@ AutoCompleteBase.ATTRS = {
      * @default 0
      */
     maxResults: {
-        validator: isNumber,
         value: 0
     },
 
@@ -243,7 +272,6 @@ AutoCompleteBase.ATTRS = {
      * @default 1
      */
     minQueryLength: {
-        validator: isNumber,
         value: 1
     },
 
@@ -289,10 +317,6 @@ AutoCompleteBase.ATTRS = {
      * @default 100
      */
     queryDelay: {
-        validator: function (value) {
-            return isNumber(value) && value >= 0;
-        },
-
         value: 100
     },
 
@@ -329,18 +353,7 @@ AutoCompleteBase.ATTRS = {
      * @default null
      */
     requestTemplate: {
-        setter: function (template) {
-            if (template === null || isFunction(template)) {
-                return template;
-            }
-
-            template = template.toString();
-
-            return function (query) {
-                return Lang.sub(template, {query: encodeURIComponent(query)});
-            };
-        },
-
+        setter: '_setRequestTemplate',
         value: null
     },
 
@@ -391,7 +404,7 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultFormatter: {
-        validator: '_functionValidator'
+        validator: _FUNCTION_VALIDATOR
     },
 
     /**
@@ -411,7 +424,7 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultHighlighter: {
-        validator: '_functionValidator'
+        validator: _FUNCTION_VALIDATOR
     },
 
     /**
@@ -623,58 +636,54 @@ AutoCompleteBase.CSS_PREFIX = 'ac';
 AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 AutoCompleteBase.prototype = {
-    // -- Public Lifecycle Methods ---------------------------------------------
+    // -- Protected Lifecycle Methods ------------------------------------------
 
     /**
-     * Attaches <code>inputNode</code> event listeners.
+     * Attaches AutoCompleteBase event listeners.
      *
-     * @method bindInput
+     * @method _bindUIACBase
+     * @protected
      */
-    bindInput: function () {
+    _bindUIACBase: function () {
         var inputNode = this.get(INPUT_NODE);
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
         }
 
-        // Unbind first, just in case.
-        this.unbindInput();
-
-        this._inputEvents = [
-            // This is the valueChange event on the inputNode provided by the
+        this._acBaseEvents = [
+            // This is the valueChange event on the inputNode, provided by the
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
 
-            // And here's our own valueChange event.
-            this.after(VALUE_CHANGE, this._afterValueChange, this)
+            this.after(ALLOW_BROWSER_AC + 'Change', this._syncBrowserAutocomplete),
+            this.after(VALUE_CHANGE, this._afterValueChange)
         ];
+    },
+
+    /**
+     * Detaches AutoCompleteBase event listeners.
+     *
+     * @method _destructorACBase
+     * @protected
+     */
+    _destructorACBase: function () {
+        var events = this._acBaseEvents;
+
+        while (events && events.length) {
+            events.pop().detach();
+        }
     },
 
     /**
      * Synchronizes the UI state of the <code>inputNode</code>.
      *
-     * @method syncInput
+     * @method _syncUIACBase
+     * @protected
      */
-    syncInput: function () {
-        var inputNode = this.get(INPUT_NODE);
-
-        if (inputNode.get('nodeName').toLowerCase() === 'input') {
-            inputNode.setAttribute('autocomplete',
-                    this.get('allowBrowserAutocomplete') ? 'on' : 'off');
-        }
-
-        this.set(VALUE, inputNode.get(VALUE));
-    },
-
-    /**
-     * Detaches <code>inputNode</code> event listeners.
-     *
-     * @method unbindInput
-     */
-    unbindInput: function () {
-        while (this._inputEvents && this._inputEvents.length) {
-            this._inputEvents.pop().detach();
-        }
+    _syncUIACBase: function () {
+        this._syncBrowserAutocomplete();
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -718,7 +727,7 @@ AutoCompleteBase.prototype = {
             } else {
                 // Hack alert: JSONPRequest currently doesn't support
                 // per-request callbacks, so we're reaching into the protected
-                // _config object to make it happen. 
+                // _config object to make it happen.
                 //
                 // This limitation is mentioned in the following JSONP
                 // enhancement ticket:
@@ -886,7 +895,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _functionValidator: function (value) {
-        return isFunction(value) || value === null;
+        return value === null || isFunction(value);
     },
 
     /**
@@ -1064,16 +1073,36 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _setLocator: function (locator) {
-        var that = this;
-
-        if (locator === null || isFunction(locator)) {
+        if (this[_FUNCTION_VALIDATOR](locator)) {
             return locator;
         }
+
+        var that = this;
 
         locator = locator.toString().split('.');
 
         return function (result) {
             return result && that._getObjectValue(result, locator);
+        };
+    },
+
+    /**
+     * Setter for the <code>requestTemplate</code> attribute.
+     *
+     * @method _setRequestTemplate
+     * @param {Function|String|null} template
+     * @return {Function|null}
+     * @protected
+     */
+    _setRequestTemplate: function (template) {
+        if (this[_FUNCTION_VALIDATOR](template)) {
+            return template;
+        }
+
+        template = template.toString();
+
+        return function (query) {
+            return Lang.sub(template, {query: encodeURIComponent(query)});
         };
     },
 
@@ -1127,6 +1156,22 @@ AutoCompleteBase.prototype = {
             data: data,
             response: {results: data}
         });
+    },
+
+    /**
+     * Synchronizes the UI state of the <code>allowBrowserAutocomplete</code>
+     * attribute.
+     *
+     * @method _syncBrowserAutocomplete
+     * @protected
+     */
+    _syncBrowserAutocomplete: function () {
+        var inputNode = this.get(INPUT_NODE);
+
+        if (inputNode.get('nodeName').toLowerCase() === 'input') {
+            inputNode.setAttribute('autocomplete',
+                    this.get(ALLOW_BROWSER_AC) ? 'on' : 'off');
+        }
     },
 
     /**
@@ -1325,7 +1370,7 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'event-valuechange', 'node-base'], optional:['jsonp', 'yql']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'event-valuechange', 'node-base'], optional:['jsonp', 'yql']});
 YUI.add('autocomplete-list', function(Y) {
 
 /**
@@ -1343,7 +1388,8 @@ YUI.add('autocomplete-list', function(Y) {
  * @param {Object} config Configuration object.
  */
 
-var Node   = Y.Node,
+var Lang   = Y.Lang,
+    Node   = Y.Node,
     YArray = Y.Array,
 
     // keyCode constants.
@@ -1381,11 +1427,39 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.WidgetStack
 ], {
     // -- Prototype Properties -------------------------------------------------
+    ARIA_TEMPLATE: '<div/>',
     ITEM_TEMPLATE: '<li/>',
     LIST_TEMPLATE: '<ul/>',
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
+        var inputNode = this.get('inputNode');
+
+        if (!inputNode) {
+            Y.error('No inputNode specified.');
+        }
+
+        this._events    = [];
+        this._inputNode = inputNode;
+
+        // This ensures that the list is rendered inside the same parent as the
+        // input node by default, which is necessary for proper ARIA support.
+        this.DEF_PARENT_NODE = inputNode.get('parentNode');
+
+        // Cache commonly used classnames and selectors for performance.
+        this[_CLASS_ITEM]        = this.getClassName(ITEM);
+        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
+        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
+        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
+
+        if (!this.get('align.node')) {
+            this.set('align.node', inputNode);
+        }
+
+        if (!this.get(WIDTH)) {
+            this.set(WIDTH, inputNode.get('offsetWidth'));
+        }
+
         /**
          * Fires when an autocomplete suggestion is selected from the list by
          * a keyboard action or mouse click.
@@ -1411,32 +1485,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this.publish(EVT_SELECT, {
             defaultFn: this._defSelectFn
         });
-
-        this._events    = [];
-        this._inputNode = this.get('inputNode');
-
-        // Cache commonly used classnames and selectors for performance.
-        this[_CLASS_ITEM]        = this.getClassName(ITEM);
-        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
-        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
-        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
-
-        if (!this._inputNode) {
-            Y.error('No inputNode specified.');
-        }
-
-        if (!this.get('align.node')) {
-            this.set('align.node', this._inputNode);
-        }
-
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, this._inputNode.get('offsetWidth'));
-        }
     },
 
     destructor: function () {
-        this.unbindInput();
-
         while (this._events.length) {
             this._events.pop().detach();
         }
@@ -1448,38 +1499,35 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
-        var contentBox = this.get('contentBox'),
-            listNode   = this.get('listNode');
+        var ariaNode   = this._createAriaNode(),
+            contentBox = this.get('contentBox'),
+            inputNode  = this._inputNode,
+            listNode   = this.get('listNode'),
+            parentNode = inputNode.get('parentNode');
 
-        // See http://www.w3.org/WAI/PF/aria/roles#combobox for ARIA details.
         if (!listNode) {
-            listNode = Node.create(this.LIST_TEMPLATE);
-
-            listNode.addClass(this.getClassName(LIST)).setAttrs({
-                id  : Y.stamp(listNode),
-                role: 'listbox'
-            });
-
+            listNode = this._createListNode();
             contentBox.append(listNode);
         }
 
-        this._inputNode.addClass(this.getClassName('input')).setAttrs({
-            'aria-autocomplete': LIST,
-            'aria-live': 'polite', // causes the screen reader to announce the value of an item when selected
-            'aria-owns': listNode.get(ID),
-            role: 'combobox'
-        });
+        inputNode.addClass(this.getClassName('input'))
+            .set('aria-autocomplete', LIST);
+
+        // ARIA node must be outside the widget or announcements won't be made
+        // when the widget is hidden.
+        parentNode.set('role', 'combobox').append(ariaNode);
+
+        this._ariaNode   = ariaNode;
+        this._contentBox = contentBox;
+        this._listNode   = listNode;
+        this._parentNode = parentNode;
 
         if (this.get(ALWAYS_SHOW_LIST)) {
             this.set(VISIBLE, true);
         }
-
-        this._contentBox = contentBox;
-        this._listNode   = listNode;
     },
 
     syncUI: function () {
-        this.syncInput();
         this._syncResults();
         this._syncVisibility();
     },
@@ -1543,21 +1591,24 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Activates the next item after the currently active item. If there is no
      * next item and the <code>circular</code> attribute is <code>true</code>,
-     * the first item in the list will be activated.
+     * focus will wrap back to the input node.
      *
      * @method _activateNextItem
+     * @chainable
      * @protected
      */
     _activateNextItem: function () {
         var item = this.get(ACTIVE_ITEM),
             nextItem;
 
-        nextItem = (item && item.next(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getFirstItemNode();
-
-        if (nextItem) {
-            this._set(ACTIVE_ITEM, nextItem);
+        if (item) {
+            nextItem = item.next(this[_SELECTOR_ITEM]) ||
+                    (this.get(CIRCULAR) ? null : item);
+        } else {
+            nextItem = this._getFirstItemNode();
         }
+
+        this._set(ACTIVE_ITEM, nextItem);
 
         return this;
     },
@@ -1565,21 +1616,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Activates the item previous to the currently active item. If there is no
      * previous item and the <code>circular</code> attribute is
-     * <code>true</code>, the last item in the list will be activated.
+     * <code>true</code>, focus will wrap back to the input node.
      *
      * @method _activatePrevItem
+     * @chainable
      * @protected
      */
     _activatePrevItem: function () {
         var item     = this.get(ACTIVE_ITEM),
-            prevItem;
+            prevItem = item ? item.previous(this[_SELECTOR_ITEM]) :
+                    this.get(CIRCULAR) && this._getLastItemNode();
 
-        prevItem = (item && item.previous(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getLastItemNode();
-
-        if (prevItem) {
-            this._set(ACTIVE_ITEM, prevItem);
-        }
+        this._set(ACTIVE_ITEM, prevItem || null);
 
         return this;
     },
@@ -1597,7 +1645,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _add: function (items) {
         var itemNodes = [];
 
-        YArray.each(Y.Lang.isArray(items) ? items : [items], function (item) {
+        YArray.each(Lang.isArray(items) ? items : [items], function (item) {
             itemNodes.push(this._createItemNode(item).setData(RESULT, item));
         }, this);
 
@@ -1608,18 +1656,28 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Binds <code>inputNode</code> events, in addition to those already bound
-     * by <code>AutoCompleteBase</code>'s public <code>bindInput()</code>
-     * method.
+     * Updates the ARIA live region with the specified message.
+     *
+     * @method _ariaSay
+     * @param {String} stringId String id (from the <code>strings</code>
+     *   attribute) of the message to speak.
+     * @param {Object} subs (optional) Substitutions for placeholders in the
+     *   string.
+     * @protected
+     */
+    _ariaSay: function (stringId, subs) {
+        var message = this.get('strings.' + stringId);
+        this._ariaNode.setContent(subs ? Lang.sub(message, subs) : message);
+    },
+
+    /**
+     * Binds <code>inputNode</code> events.
      *
      * @method _bindInput
      * @protected
      */
     _bindInput: function () {
         var inputNode = this._inputNode;
-
-        // Call AutoCompleteBase's bind method first.
-        this.bindInput();
 
         this._events.concat([
             inputNode.on('blur', this._onInputBlur, this),
@@ -1662,12 +1720,28 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Creates an item node with the specified <i>content</i>.
+     * Creates and returns an ARIA live region node.
+     *
+     * @method _createAriaNode
+     * @return {Node} ARIA node.
+     * @protected
+     */
+    _createAriaNode: function () {
+        var ariaNode = Node.create(this.ARIA_TEMPLATE);
+
+        return ariaNode.addClass(this.getClassName('aria')).setAttrs({
+            role       : 'status',
+            'aria-live': 'polite'
+        });
+    },
+
+    /**
+     * Creates and returns an item node with the specified <i>content</i>.
      *
      * @method _createItemNode
      * @param {Object} result Result object.
-     * @protected
      * @return {Node} Item node.
+     * @protected
      */
     _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
@@ -1675,7 +1749,23 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         return itemNode.addClass(this[_CLASS_ITEM]).setAttrs({
             id  : Y.stamp(itemNode),
             role: 'option'
-        }).append(result.display);
+        }).setAttribute('data-text', result.text).append(result.display);
+    },
+
+    /**
+     * Creates and returns a list node.
+     *
+     * @method _createListNode
+     * @return {Node} List node.
+     * @protected
+     */
+    _createListNode: function () {
+        var listNode = Node.create(this.LIST_TEMPLATE);
+
+        return listNode.addClass(this.getClassName(LIST)).setAttrs({
+            id  : Y.stamp(listNode),
+            role: 'listbox'
+        });
     },
 
     /**
@@ -1722,6 +1812,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (results.length) {
             items = this._add(results);
+            this._ariaSay('ITEMS_AVAILABLE');
         }
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
@@ -1901,11 +1992,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (keyCode === KEY_DOWN) {
             action = 1;
 
-            if (!visible) {
+            if (visible) {
+                this._activateNextItem();
+            } else {
                 this.show();
             }
-
-            this._activateNextItem();
         }
 
         if (visible) {
@@ -1965,9 +2056,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _defSelectFn: function (e) {
+        var text = e.result.text;
+
         // TODO: support typeahead completion, etc.
         this._inputNode.focus();
-        this._updateValue(e.result.text);
+        this._updateValue(text);
+        this._ariaSay('ITEM_SELECTED', {item: text});
         this.hide();
     }
 }, {
@@ -2038,6 +2132,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         hoveredItem: {
             readOnly: true,
             value: null
+        },
+
+        // The "strings" attribute is documented in Widget.
+        strings: {
+            value: {
+                // These strings are used in ARIA live region announcements.
+                ITEM_SELECTED: '{item} selected.',
+                ITEMS_AVAILABLE: 'Suggestions are available. Use the up and down arrow keys to select suggestions.'
+            }
         },
 
         /**

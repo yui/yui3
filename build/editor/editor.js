@@ -494,6 +494,26 @@ YUI.add('frame', function(Y) {
             return this;
         },
         /**
+        * @private
+        * @method _handleFocus
+        * @description Does some tricks on focus to set the proper cursor position.
+        */
+        _handleFocus: function() {
+            var inst = this.getInstance(),
+                sel = new inst.Selection();
+
+            if (sel.anchorNode) {
+                var n = sel.anchorNode,
+                    c = n.get('childNodes');
+
+                if (c.size() == 1) {
+                    if (c.item(0).test('br')) {
+                        sel.selectNode(n, true, false);
+                    }
+                }
+            }
+        },
+        /**
         * @method focus
         * @description Set the focus to the iframe
         * @param {Function} fn Callback function to execute after focus happens        
@@ -502,8 +522,14 @@ YUI.add('frame', function(Y) {
         */
         focus: function(fn) {
             if (Y.UA.ie) {
-                Y.one('win').focus();
-                this.getInstance().one('win').focus();
+                try {
+                    Y.one('win').focus();
+                    this.getInstance().one('win').focus();
+                } catch (ierr) {
+                }
+                if (fn === true) {
+                    this._handleFocus();
+                }
                 if (Y.Lang.isFunction(fn)) {
                     fn();
                 }
@@ -512,6 +538,9 @@ YUI.add('frame', function(Y) {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
+                        if (fn === true) {
+                            this._handleFocus();
+                        }
                         if (Y.Lang.isFunction(fn)) {
                             fn();
                         }
@@ -580,11 +609,7 @@ YUI.add('frame', function(Y) {
         * @description The default css used when creating the document.
         * @type String
         */
-        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
-        
-        //DEFAULT_CSS: 'html { } body { margin: -15px 0 0 -15px; padding: 7px 0 0 15px; display: block; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
-        //DEFAULT_CSS: 'html { height: 95%; } body { height: 100%; padding: 7px; margin: 0 0 0 -7px; postion: relative; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
-        //DEFAULT_CSS: 'html { margin: 0; padding: 0; border: none; border-size: 0; } body { height: 97%; margin: 0; padding: 0; display: block; background-color: gray; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0; *height: 0; *width: 0; *font-size: 0; *overflow: hidden; }',
         /**
         * @static
         * @property HTML
@@ -1084,7 +1109,8 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.unfilter = function() {
         var nodes = Y.all('body [class]'),
-            html = '', nons, ids;
+            html = '', nons, ids,
+            body = Y.one('body');
         
         
         nodes.each(function(n) {
@@ -1114,8 +1140,10 @@ YUI.add('selection', function(Y) {
                 n.removeAttribute('_yuid');
             }
         });
-
-        html = Y.one('body').get('innerHTML');
+        
+        if (body) {
+            html = body.get('innerHTML');
+        }
         
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
 
@@ -1212,7 +1240,8 @@ YUI.add('selection', function(Y) {
     * @static
     * @property CURSOR
     */
-    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+    //Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><br class="yui-cursor"></span>';
 
     Y.Selection.hasCursor = function() {
         var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
@@ -1598,7 +1627,8 @@ YUI.add('selection', function(Y) {
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                    //cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                    cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {
                     cur.remove();
                 }
@@ -1878,7 +1908,7 @@ YUI.add('exec-command', function(Y) {
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
-
+                    
                     if (Y.UA.gecko || Y.UA.opera) {
                         cmd = 'hilitecolor';
                     }
@@ -1892,6 +1922,7 @@ YUI.add('exec-command', function(Y) {
                                 n = sel.anchorNode;
                             } else {
                                 n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+
                                 sel.focusCursor(true, true);
                             }
                             return n;
@@ -1899,7 +1930,16 @@ YUI.add('exec-command', function(Y) {
                             return this._command(cmd, val);
                         }
                     } else {
-                        this._command(cmd, val);
+                        if (Y.UA.gecko && sel.isCollapsed) {
+                            this._command('inserthtml', '<span id="yui3-bcolor" style="background-color: ' + val + '"></span>');
+                            var c = inst.one('#yui3-bcolor');
+                            if (c) {
+                                c.set('id', '');
+                                c.removeAttribute('id');
+                            }
+                        } else {
+                            this._command(cmd, val);
+                        }
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
@@ -1926,7 +1966,6 @@ YUI.add('exec-command', function(Y) {
                 */
                 fontname: function(cmd, val) {
                     this._command('fontname', val);
-
                     var inst = this.getInstance(),
                         sel = new inst.Selection();
                     
@@ -1953,6 +1992,11 @@ YUI.add('exec-command', function(Y) {
                     if (sel.isCollapsed && (this._lastKey != 32)) {
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('size', val);
+                        } else if (Y.UA.gecko) {
+                            var p = sel.anchorNode.ancestor('p');
+                            if (p) {
+                                p.setStyle('fontSize', '');
+                            }
                         }
                     }
                 }
@@ -2170,6 +2214,10 @@ YUI.add('editor-base', function(Y) {
         * @param {Node} to The Node instance to copy the styles to
         */
         copyStyles: function(from, to) {
+            if (from.test('a')) {
+                //Don't carry the A styles
+                return;
+            }
             var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
                 newStyles = {};
 
@@ -2178,6 +2226,11 @@ YUI.add('editor-base', function(Y) {
             });
             if (from.ancestor('b,strong')) {
                 newStyles.fontWeight = 'bold';
+            }
+            if (from.ancestor('u')) {
+                if (!newStyles.textDecoration) {
+                    newStyles.textDecoration = 'underline';
+                }
             }
             to.setStyles(newStyles);
         },
@@ -2234,8 +2287,27 @@ YUI.add('editor-base', function(Y) {
                     }
                     break;
                 case 'enter-up':
-                    if (e.changedNode.test('p')) {
-                        var prev = e.changedNode.previous(), lc, lc2, found = false;
+                    var para = ((this._lastPara) ? this._lastPara : e.changedNode),
+                        b = para.one('br.yui-cursor');
+
+                    if (this._lastPara) {
+                        delete this._lastPara;
+                    }
+
+                    if (b) {
+                        if (b.previous() || b.next()) {
+                            b.remove();
+                        }
+                    }
+                    if (!para.test('p')) {
+                        var para2 = para.ancestor('p');
+                        if (para2) {
+                            para = para2;
+                            para2 = null;
+                        }
+                    }
+                    if (para.test('p')) {
+                        var prev = para.previous(), lc, lc2, found = false;
                         if (prev) {
                             lc = prev.one(':last-child');
                             while (!found) {
@@ -2251,12 +2323,20 @@ YUI.add('editor-base', function(Y) {
                                 }
                             }
                             if (lc) {
-                                this.copyStyles(lc, e.changedNode);
+                                this.copyStyles(lc, para);
                             }
                         }
                     }
-                    inst.Selection.filterBlocks();
+                    //inst.Selection.filterBlocks();
                     break;
+            }
+            if (Y.UA.gecko) {
+                if (!e.changedNode.test('p')) {
+                    var p = e.changedNode.ancestor('p');
+                    if (p) {
+                        this._lastPara = p;
+                    }
+                }
             }
 
             var changed = this.getDomPath(e.changedNode, false),
@@ -2784,7 +2864,7 @@ YUI.add('editor-base', function(Y) {
             * @type String
             */            
             linkedcss: {
-                value: false,
+                value: '',
                 setter: function(css) {
                     if (this.frame) {
                         this.frame.set('linkedcss', css);
@@ -3337,17 +3417,24 @@ YUI.add('editor-para', function(Y) {
                     }
                     break;
                 case 'backspace-up':
+                case 'backspace-down':
                 case 'delete-up':
-                    var ps = inst.all(FIRST_P), br, item;
-                    if (ps.size() < 2) {
+                    if (!Y.UA.ie) {
+                        var ps = inst.all(FIRST_P), br, item, html;
                         item = inst.one(BODY);
                         if (ps.item(0)) {
                             item = ps.item(0);
                         }
+                        br = item.one('br');
+                        if (br) {
+                            br.removeAttribute('id');
+                            br.removeAttribute('class');
+                        }
+                        html = item.get('innerHTML');
                         if (inst.Selection.getText(item) === '' && !item.test('p')) {
                             this._fixFirstPara();
-                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                            e.changedEvent.halt();
+                        } else if (item.test('p') && (html.length === 0) || (html == '<span><br></span>')) {
+                            e.changedEvent.frameEvent.halt();
                         }
                     }
                     break;

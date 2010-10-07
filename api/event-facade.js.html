@@ -56,6 +56,7 @@
 
 <span class="kd">var</span> <span class="nx">FACADE</span><span class="p">,</span>
     <span class="nx">FACADE_KEYS</span><span class="p">,</span>
+    <span class="nx">EMPTY</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="nx">CEProto</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
     <span class="nx">ETProto</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
 
@@ -69,7 +70,9 @@
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">EventFacade</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">currentTarget</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nx">EMPTY</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">_event</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * The arguments passed to fire</span>
@@ -115,14 +118,18 @@
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">relatedTarget</span><span class="p">;</span>
 
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">EventFacade</span><span class="p">,</span> <span class="nb">Object</span><span class="p">,</span> <span class="p">{</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Stops the propagation to the next bubble target</span>
 <span class="cm">     * @method stopPropagation</span>
 <span class="cm">     */</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">stopPropagation</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">e</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">();</span>
+    <span class="nx">stopPropagation</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Stops the propagation to the next bubble target and</span>
@@ -130,19 +137,19 @@
 <span class="cm">     * on the current target.</span>
 <span class="cm">     * @method stopImmediatePropagation</span>
 <span class="cm">     */</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">e</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span><span class="p">();</span>
+    <span class="nx">stopImmediatePropagation</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Prevents the event&#39;s default behavior</span>
 <span class="cm">     * @method preventDefault</span>
 <span class="cm">     */</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">preventDefault</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="nx">preventDefault</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Stops the event propagation and prevents the default</span>
@@ -151,13 +158,13 @@
 <span class="cm">     * @param immediate {boolean} if true additional listeners</span>
 <span class="cm">     * on the current target will not be executed</span>
 <span class="cm">     */</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">halt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">immediate</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">e</span><span class="p">.</span><span class="nx">halt</span><span class="p">(</span><span class="nx">immediate</span><span class="p">);</span>
+    <span class="nx">halt</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">immediate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">halt</span><span class="p">(</span><span class="nx">immediate</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="p">(</span><span class="nx">immediate</span><span class="p">)</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">}</span>
 
-<span class="p">};</span>
+<span class="p">});</span>
 
 <span class="nx">CEProto</span><span class="p">.</span><span class="nx">fireComplex</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_eventstack</span><span class="p">,</span> <span class="nx">ef</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">queue</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">subs</span><span class="p">,</span>
