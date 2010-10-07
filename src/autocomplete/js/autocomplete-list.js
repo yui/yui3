@@ -196,17 +196,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         return this;
     },
 
-    /**
-     * Shows the list.
-     *
-     * @method show
-     * @see hide
-     * @chainable
-     */
-    show: function () {
-        return this.set(VISIBLE, true);
-    },
-
     // -- Protected Prototype Methods ------------------------------------------
 
     /**
