@@ -27,8 +27,10 @@ Change History
 --------------
 
 3.3.0
-  * Bug fix: setting an improperly encoded hash value outside of HistoryHash
+  * Bug fix: Setting an improperly encoded hash value outside of HistoryHash
     resulted in two history entries being created. [Ticket #2529399]
+  * Bug fix: Changes to the URL hash (as opposed to the iframe hash) are now
+    reflected in the history state in IE6 and IE7. [Ticket #2529400]
 
 3.2.0
   * Initial release. The pre-3.2.0 Browser History Utility has been

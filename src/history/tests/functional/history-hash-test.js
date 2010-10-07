@@ -22,8 +22,7 @@ Y.Test.Runner.add(new Y.Test.Case({
     _should: {
         ignore: {
             'hashchange should be case-sensitive (except in IE8+)': Y.UA.ie >= 8,
-            'hashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8,
-            'Setting an unencoded hash value outside of HistoryHash should not result in two history entries': Y.UA.ie && Y.UA.ie < 8
+            'hashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8
         }
     },
 

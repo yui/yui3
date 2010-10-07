@@ -65,7 +65,7 @@ Y.extend(HistoryHash, HistoryBase, {
         // We always compare decoded hashes, since it's possible that the hash
         // could be set incorrectly to a non-encoded value outside of
         // HistoryHash.
-        if (decode(HistoryHash.getHash()) !== decode(newHash)) {
+        if (src !== SRC_HASH && decode(HistoryHash.getHash()) !== decode(newHash)) {
             HistoryHash[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
         }
     },
@@ -436,7 +436,7 @@ if (HistoryBase.nativeHashChange) {
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                YArray.each(hashNotifiers, function (notifier) {
+                YArray.each(hashNotifiers.concat(), function (notifier) {
                     notifier.fire({
                         oldHash: oldHash,
                         oldUrl : oldUrl,
