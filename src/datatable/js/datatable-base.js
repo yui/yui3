@@ -117,11 +117,11 @@ Y.extend(DTBase, Y.Widget, {
     // Initialization
     initializer: function() {
         // Custom events that broadcast DOM updates
-        this.publish("addTheadTr", {defaultFn: BIND("_defAddTheadTrFn", this), queuable:false});
-        this.publish("addTheadTh", {defaultFn: BIND("_defAddTheadThFn", this), queuable:false});
+        this.publish("addTheadTr", {defaultFn: this._defAddTheadTrFn});
+        this.publish("addTheadTh", {defaultFn: this._defAddTheadThFn});
 
-        this.publish("addTr", {defaultFn: BIND("_defAddTrFn", this), queuable:false});
-        this.publish("addTd", {defaultFn: BIND("_defAddTdFn", this), queuable:false});
+        this.publish("addTr", {defaultFn: this._defAddTrFn});
+        this.publish("addTd", {defaultFn: this._defAddTdFn});
 
         // Custom events that broadcast DOM interactions
         // Simply pass through DOM event facades
