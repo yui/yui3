@@ -62,10 +62,11 @@ YUI.add('editor-para', function(Y) {
                             br.removeAttribute('id');
                             br.removeAttribute('class');
                         }
-                        html = item.get('innerHTML');
+                        html = item.get('innerHTML').replace(/ /g, '').replace(/\n/g, '');
                         if (inst.Selection.getText(item) === '' && !item.test('p')) {
                             this._fixFirstPara();
-                        } else if (item.test('p') && (html.length === 0) || (html == '<span><br></span>')) {
+                            e.changedEvent.frameEvent.halt();
+                        } else if (item.test('p') && (html.length === 0) || (html == '<span><br></span>') || (html == '<br>')) {
                             e.changedEvent.frameEvent.halt();
                         }
                     }
