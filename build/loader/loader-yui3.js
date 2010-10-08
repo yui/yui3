@@ -392,9 +392,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "datatable-sort": {
                 "requires": [
-                    "arraysort", 
                     "datatable-base", 
-                    "plugin"
+                    "plugin", 
+                    "recordset-sort"
                 ]
             }
         }
@@ -1444,7 +1444,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3f7a3b8632850fc4ebd6150bbec3ed3b';
+YUI.Env[Y.version].md5 = '402b0be3d5abbb6e9baf33c9620144ab';
+
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

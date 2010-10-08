@@ -971,7 +971,7 @@ var //getClassName = Y.ClassNameManager.getClassName,
     TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
 
 
-function RecordsetSort(field, desc, sorter) {
+/*function RecordsetSort(field, desc, sorter) {
     RecordsetSort.superclass.constructor.apply(this, arguments);
 }
 
@@ -1035,7 +1035,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     }
 });
 
-Y.namespace("Plugin").RecordsetSort = RecordsetSort;
+Y.namespace("Plugin").RecordsetSort = RecordsetSort;*/
 
 
 
@@ -1061,7 +1061,8 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
 
     initializer: function(config) {
         var dt = this.get("host");
-        dt.get("recordset").plug(RecordsetSort, {dt: dt});
+        dt.get("recordset").plug(Y.Plugin.RecordsetSort, {dt: dt});
+        dt.get("recordset").sort.addTarget(dt);
         
         // Wrap link around TH value
         this.doBefore("_getTheadThMarkup", this._beforeGetTheadThMarkup);
@@ -1129,7 +1130,7 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['plugin','datatable-base']});
+}, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
 
 YUI.add('datatable-colresize', function(Y) {
 
