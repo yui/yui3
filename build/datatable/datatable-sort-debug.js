@@ -45,7 +45,7 @@ Y.mix(RecordsetSort, {
 Y.extend(RecordsetSort, Y.Plugin.Base, {
     initializer: function(config) {
         this.addTarget(this.get("dt"));
-        this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
+        this.publish("sort", {defaultFn: this._defSortFn});
     },
 
     destructor: function(config) {
