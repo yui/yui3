@@ -1689,7 +1689,7 @@ L.isUndefined = function(o) {
  * @return {string} the trimmed string.
  */
 L.trim = STRING_PROTO.trim ? function(s) {
-    return s.trim();
+    return (s && s.trim) ? s.trim() : s;
 } : function (s) {
     try {
         return s.replace(TRIMREGEX, EMPTYSTRING);
@@ -1713,7 +1713,7 @@ L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
 
 /**
  * Returns a string without any trailing whitespace.
- * @method trimLeft
+ * @method trimRight
  * @static
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
