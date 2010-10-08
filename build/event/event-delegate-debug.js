@@ -121,7 +121,7 @@ delegate.notifySub = function (thisObj, args, ce) {
     // Only notify subs if the event occurred on a targeted element
     var currentTarget = delegate._applyFilter(this.filter, args, ce),
         //container     = e.currentTarget,
-        e, i, ret;
+        e, i, len, ret;
 
     if (currentTarget) {
         // Support multiple matches up the the container subtree
@@ -134,7 +134,7 @@ delegate.notifySub = function (thisObj, args, ce) {
 
         e.container = Y.one(ce.el);
     
-        for (i = currentTarget.length - 1; i >= 0 && !e.stopped; --i) {
+        for (i = 0, len = currentTarget.length; i < len && !e.stopped; ++i) {
             e.currentTarget = Y.one(currentTarget[i]);
 
             ret = this.fn.apply(this.context || e.currentTarget, args);
