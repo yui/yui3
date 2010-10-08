@@ -58,7 +58,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
-        var inputNode = this.get('inputNode');
+        var keys        = {},
+            keysVisible = {},
+            inputNode   = this.get('inputNode');
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
@@ -70,6 +72,19 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // This ensures that the list is rendered inside the same parent as the
         // input node by default, which is necessary for proper ARIA support.
         this.DEF_PARENT_NODE = inputNode.get('parentNode');
+
+        // Register keyboard command handlers. _keys contains handlers that will
+        // always be called; _keysVisible contains handlers that will only be
+        // called when the list is visible.
+        keys[KEY_DOWN] = this._keyDown;
+
+        keysVisible[KEY_ENTER] = this._keyEnter;
+        keysVisible[KEY_ESC]   = this._keyEsc;
+        keysVisible[KEY_TAB]   = this._keyTab;
+        keysVisible[KEY_UP]    = this._keyUp;
+
+        this._keys        = keys;
+        this._keysVisible = keysVisible;
 
         // Cache commonly used classnames and selectors for performance.
         this[_CLASS_ITEM]        = this.getClassName(ITEM);
@@ -146,10 +161,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._contentBox = contentBox;
         this._listNode   = listNode;
         this._parentNode = parentNode;
-
-        if (this.get(ALWAYS_SHOW_LIST)) {
-            this.set(VISIBLE, true);
-        }
     },
 
     syncUI: function () {
@@ -182,13 +193,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     selectItem: function (itemNode) {
         if (itemNode) {
             if (!itemNode.hasClass(this[_CLASS_ITEM])) {
-                return;
+                return this;
             }
         } else {
             itemNode = this.get(ACTIVE_ITEM);
 
             if (!itemNode) {
-                return;
+                return this;
             }
         }
 
@@ -198,17 +209,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         });
 
         return this;
-    },
-
-    /**
-     * Shows the list.
-     *
-     * @method show
-     * @see hide
-     * @chainable
-     */
-    show: function () {
-        return this.set(VISIBLE, true);
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -233,7 +233,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             nextItem = this._getFirstItemNode();
         }
 
-        this._set(ACTIVE_ITEM, nextItem);
+        this.set(ACTIVE_ITEM, nextItem);
 
         return this;
     },
@@ -252,7 +252,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             prevItem = item ? item.previous(this[_SELECTOR_ITEM]) :
                     this.get(CIRCULAR) && this._getLastItemNode();
 
-        this._set(ACTIVE_ITEM, prevItem || null);
+        this.set(ACTIVE_ITEM, prevItem || null);
 
         return this;
     },
@@ -338,7 +338,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _clear: function () {
-        this._set(ACTIVE_ITEM, null);
+        this.set(ACTIVE_ITEM, null);
         this._set(HOVERED_ITEM, null);
 
         this._listNode.get('children').remove(true);
@@ -394,6 +394,62 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+     * Called when the down arrow key is pressed.
+     *
+     * @method _keyDown
+     * @protected
+     */
+    _keyDown: function () {
+        if (this.get(VISIBLE)) {
+            this._activateNextItem();
+        } else {
+            this.show();
+        }
+    },
+
+    /**
+     * Called when the enter key is pressed.
+     *
+     * @method _keyEnter
+     * @protected
+     */
+    _keyEnter: function () {
+        this.selectItem();
+    },
+
+    /**
+     * Called when the escape key is pressed.
+     *
+     * @method _keyEsc
+     * @protected
+     */
+    _keyEsc: function () {
+        this.hide();
+    },
+
+    /**
+     * Called when the tab key is pressed.
+     *
+     * @method _keyTab
+     * @protected
+     */
+    _keyTab: function () {
+        if (this.get('tabSelect')) {
+            this.selectItem();
+        }
+    },
+
+    /**
+     * Called when the up arrow key is pressed.
+     *
+     * @method _keyUp
+     * @protected
+     */
+    _keyUp: function () {
+        this._activatePrevItem();
+    },
+
+    /**
      * Gets the last item node in the list, or <code>null</code> if the list is
      * empty.
      *
@@ -441,7 +497,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
-            this._set(ACTIVE_ITEM, this._getFirstItemNode());
+            this.set(ACTIVE_ITEM, this._getFirstItemNode());
         }
     },
 
@@ -455,6 +511,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncVisibility: function (visible) {
+        if (this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, true);
+            return;
+        }
+
         if (typeof visible === 'undefined') {
             visible = this.get(VISIBLE);
         }
@@ -462,7 +523,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._contentBox.set('aria-hidden', !visible);
 
         if (!visible) {
-            this._set(ACTIVE_ITEM, null);
+            this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
         }
     },
@@ -602,56 +663,25 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onInputKey: function (e) {
-        var action,
-            keyCode = e.keyCode,
-            visible;
+        var handler,
+            keyCode = e.keyCode;
 
         this._lastInputKey = keyCode;
 
-        if (!this.get(RESULTS).length) {
-            return;
-        }
+        if (this.get(RESULTS).length) {
+            handler = this._keys[keyCode];
 
-        visible = this.get(VISIBLE);
-
-        if (keyCode === KEY_DOWN) {
-            action = 1;
-
-            if (visible) {
-                this._activateNextItem();
-            } else {
-                this.show();
+            if (!handler && this.get(VISIBLE)) {
+                handler = this._keysVisible[keyCode];
             }
-        }
 
-        if (visible) {
-            switch (keyCode) {
-            case KEY_ENTER:
-                action = 1;
-                this.selectItem();
-                break;
-
-            case KEY_ESC:
-                action = 1;
-                this.hide();
-                break;
-
-            case KEY_TAB:
-                if (this.get('tabSelect')) {
-                    action = 1;
-                    this.selectItem();
+            if (handler) {
+                // A handler may return false to indicate that it doesn't wish
+                // to prevent the default key behavior.
+                if (handler.call(this, e) !== false) {
+                    e.preventDefault();
                 }
-                break;
-
-            case KEY_UP:
-                action = 1;
-                this._activatePrevItem();
-                break;
             }
-        }
-
-        if (action) {
-            e.preventDefault();
         }
     },
 
@@ -667,7 +697,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         e.preventDefault();
 
-        this._set(ACTIVE_ITEM, itemNode);
+        this.set(ACTIVE_ITEM, itemNode);
         this.selectItem(itemNode);
     },
 
@@ -709,10 +739,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
          *
          * @attribute activeItem
          * @type Node
-         * @readonly
          */
         activeItem: {
-            readOnly: true,
+            setter: Y.one,
             value: null
         },
 
