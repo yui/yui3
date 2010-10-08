@@ -53,7 +53,7 @@ YUI.add('editor-para', function(Y) {
                 case 'backspace-down':
                 case 'delete-up':
                     if (!Y.UA.ie) {
-                        var ps = inst.all(FIRST_P), br, item, html, txt;
+                        var ps = inst.all(FIRST_P), br, item, html, txt, p;
                         item = inst.one(BODY);
                         if (ps.item(0)) {
                             item = ps.item(0);
@@ -70,10 +70,25 @@ YUI.add('editor-para', function(Y) {
                         txt = txt.replace('<span><br></span>', '').replace('<br>', '');
                         
                         if (((html.length === 0) || (txt.length === 0))) {
+                            //God this is horrible..
                             if (!item.test('p')) {
                                 this._fixFirstPara();
                             }
-                            e.changedEvent.frameEvent.halt();
+                            p = null;
+                            if (e.changedNode && e.changedNode.test('p')) {
+                                p = e.changedNode;
+                            }
+                            if (!p && host._lastPara && host._lastPara.inDoc()) {
+                                p = host._lastPara;
+                            }
+                            if (p && !p.test('p')) {
+                                p = p.ancestor('p');
+                            }
+                            if (p) {
+                                if (!p.previous()) {
+                                    e.changedEvent.frameEvent.halt();
+                                }
+                            }
                         }
                         /*
                         if (txt === '' && !item.test('p')) {
