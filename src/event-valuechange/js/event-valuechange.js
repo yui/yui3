@@ -115,7 +115,9 @@ VC = {
 
     _onFocus: function (e) {
         var node = e.currentTarget;
+
         VC._history[Y.stamp(node)] = node.get(VALUE);
+        VC._startPolling(node, null, e);
     },
 
     _onKeyDown: function (e) {
