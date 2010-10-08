@@ -27,7 +27,8 @@ YUI.add('editor-para', function(Y) {
         */
         _fixFirstPara: function() {
             var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
+            //inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
+            inst.one('body').set('innerHTML', '<p>' + inst.Selection.CURSOR + '</p>');
             sel = new inst.Selection();
             sel.focusCursor(true, false);
         },
@@ -52,7 +53,7 @@ YUI.add('editor-para', function(Y) {
                 case 'backspace-down':
                 case 'delete-up':
                     if (!Y.UA.ie) {
-                        var ps = inst.all(FIRST_P), br, item, html;
+                        var ps = inst.all(FIRST_P), br, item, html, txt;
                         item = inst.one(BODY);
                         if (ps.item(0)) {
                             item = ps.item(0);
@@ -62,13 +63,27 @@ YUI.add('editor-para', function(Y) {
                             br.removeAttribute('id');
                             br.removeAttribute('class');
                         }
+
                         html = item.get('innerHTML').replace(/ /g, '').replace(/\n/g, '');
-                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                            this._fixFirstPara();
-                            e.changedEvent.frameEvent.halt();
-                        } else if (item.test('p') && (html.length === 0) || (html == '<span><br></span>') || (html == '<br>')) {
+                        txt = inst.Selection.getText(item);
+                        //Clean out the cursor subs to see if the Node is empty
+                        txt = txt.replace('<span><br></span>', '').replace('<br>', '');
+                        
+                        if (((html.length === 0) || (txt.length === 0))) {
+                            if (!item.test('p')) {
+                                this._fixFirstPara();
+                            }
                             e.changedEvent.frameEvent.halt();
                         }
+                        /*
+                        if (txt === '' && !item.test('p')) {
+                            this._fixFirstPara();
+                            e.changedEvent.frameEvent.halt();
+                        //} else if (item.test('p') && (html.length === 0) || (txt == '') || (html == '<span><br></span>') || (html == '<br>')) {
+                        } else if (item.test('p') && ((html.length === 0) || (txt.length === 0))) {
+                            e.changedEvent.frameEvent.halt();
+                        }
+                        */
                     }
                     break;
             }

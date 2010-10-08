@@ -115,7 +115,8 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
-Above the HR
+</div>
+<!--Above the HR
 <hr size="1">
 <?php //include('mail.php'); ?>
     <ul>
@@ -167,7 +168,7 @@ Above the HR
             </div><br><br>
         </div>
     </div>
-</div>
+</div-->
 <!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
