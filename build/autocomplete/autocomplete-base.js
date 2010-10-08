@@ -1061,7 +1061,7 @@ AutoCompleteBase.prototype = {
             value = value[value.length - 1];
         }
 
-        return this._trimLeft(value);
+        return Lang.trimLeft(value);
     },
 
     /**
@@ -1175,20 +1175,6 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Utility function to trim whitespace from the left side of a string.
-     *
-     * @method _trimLeft
-     * @param {String} string String to trim.
-     * @return {String} Trimmed string.
-     * @protected
-     */
-    _trimLeft: String.prototype.trimLeft ? function (string) {
-        return string.trimLeft();
-    } : function (string) {
-        return string.replace(/^\s+/, '');
-    },
-
-    /**
      * <p>
      * Updates the query portion of the <code>value</code> attribute.
      * </p>
@@ -1208,7 +1194,7 @@ AutoCompleteBase.prototype = {
             len,
             prevVal;
 
-        newVal = this._trimLeft(newVal);
+        newVal = Lang.trimLeft(newVal);
 
         if (delim) {
             insertDelim = trim(delim); // so we don't double up on spaces
