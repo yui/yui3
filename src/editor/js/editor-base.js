@@ -177,7 +177,7 @@
                     break;
             }
             if (Y.UA.gecko) {
-                if (!e.changedNode.test('p')) {
+                if (e.changedNode && !e.changedNode.test('p')) {
                     var p = e.changedNode.ancestor('p');
                     if (p) {
                         this._lastPara = p;
