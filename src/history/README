@@ -1,4 +1,4 @@
-History Manager
+History Utility
 ===============
 
 Provides browser history management functionality using a simple
@@ -9,17 +9,17 @@ application that doesn't perform full-page refreshes.
 
 The following modules are available:
 
-  history         - Rollup of history-base, history-hash, history-hash-ie,
-                    and history-html5.
-  history-base    - Generic history management API (but no storage layer).
-  history-hash    - History management using window.location.hash.
-  history-hash-ie - Adds IE6/7 back/forward support using an iframe hack.
-  history-html5   - History management using the HTML5 history API.
+  * `history`: Rollup of `history-base`, `history-hash`, `history-hash-ie`, and 
+    `history-html5`.
+  * `history-base`: Generic history management API (but no storage layer).
+  * `history-hash`: History management using `window.location.hash`.
+  * `history-hash-ie`: Adds IE6/7 back/forward support using an iframe hack.
+  * `history-html5`: History management using the HTML5 history API.
 
-When using the history rollup module, or when the history-hash and
-history-html5 modules are both loaded, Y.History will be an alias to the
+When using the `history` rollup module, or when the `history-hash` and
+`history-html5` modules are both loaded, `Y.History` will be an alias to the
 best adapter supported by the current browser, which may be either
-Y.HistoryHash or Y.HistoryHTML5. Preference is given to Y.HistoryHTML5 if
+`Y.HistoryHash` or `Y.HistoryHTML5`. Preference is given to `Y.HistoryHTML5` if
 the browser supports the HTML5 history API.
 
 
@@ -27,11 +27,13 @@ Change History
 --------------
 
 3.3.0
+
   * Bug fix: Setting an improperly encoded hash value outside of HistoryHash
     resulted in two history entries being created. [Ticket #2529399]
   * Bug fix: Changes to the URL hash (as opposed to the iframe hash) are now
     reflected in the history state in IE6 and IE7. [Ticket #2529400]
 
 3.2.0
+
   * Initial release. The pre-3.2.0 Browser History Utility has been
     deprecated.

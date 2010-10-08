@@ -1,7 +1,9 @@
 YUI.add('event-valuechange-test', function (Y) {
 
 var Assert = Y.Assert,
-    suite  = new Y.Test.Suite('Y.ValueChange');
+
+    ignoreFocus = Y.UA.ie && Y.UA.ie < 9,
+    suite       = new Y.Test.Suite('Y.ValueChange');
 
 // -- Lifecycle ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
@@ -9,10 +11,11 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            // IE doesn't simulate blur events properly, so these tests fail.
-            // Have to rely on manual testing.
-            'valueChange should stop polling on blur': Y.UA.ie && Y.UA.ie < 9,
-            'valueChange should not report stale changes that occurred while a node was not focused': Y.UA.ie && Y.UA.ie < 9
+            // IE doesn't simulate focus/blur events properly, so these tests
+            // fail. Have to rely on manual testing.
+            'valueChange should stop polling on blur': ignoreFocus,
+            'valueChange should start polling on focus': ignoreFocus,
+            'valueChange should not report stale changes that occurred while a node was not focused': ignoreFocus
         }
     },
 
@@ -102,6 +105,21 @@ suite.add(new Y.Test.Case({
             this.wait(function () {
                 Assert.isFalse(fired);
             }, 60);
+        }, 60);
+    },
+
+    'valueChange should start polling on focus': function () {
+        var fired;
+        
+        this.textInput.once('valueChange', function (e) {
+            fired = true;
+        });
+
+        this.textInput.simulate('focus');
+        this.textInput.set('value', 'foo');
+
+        this.wait(function () {
+            Assert.isTrue(fired);
         }, 60);
     },
 
