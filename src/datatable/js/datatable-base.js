@@ -125,9 +125,20 @@ Y.extend(DTBase, Y.Widget, {
     initializer: function() {
         // Custom events wrap DOM events. Simply pass through DOM event facades.
         //TODO: do we need queuable=true?
-        this.publish("theadCellClick", {emitFacade:false});
-        this.publish("theadRowClick", {emitFacade:false});
-        this.publish("theadClick", {emitFacade:false});
+        this.publish("theadCellClick", {defaultFn: this._defTheadCellClickFn, emitFacade:false, queuable:true});
+        this.publish("theadRowClick", {defaultFn: this._defTheadRowClickFn, emitFacade:false, queuable:true});
+        this.publish("theadClick", {defaultFn: this._defTheadClickFn, emitFacade:false, queuable:true});
+    },
+
+    _defTheadCellClickFn: function(e) {
+        this.fire("theadRowClick", e);
+    },
+
+    _defTheadRowClickFn: function(e) {
+        this.fire("theadClick", e);
+    },
+
+    _defTheadClickFn: function(e) {
     },
 
     // Destruction
@@ -211,114 +222,42 @@ Y.extend(DTBase, Y.Widget, {
             
 
         // DOM event delegation for THEAD
-        tableNode.delegate(FOCUS, Ybind(this._onTheadFocus, this), theadFilter);
-        tableNode.delegate(KEYDOWN, Ybind(this._onTheadKeydown, this), theadFilter);
-        tableNode.delegate(MOUSEOVER, Ybind(this._onTheadMouseover, this), theadFilter);
-        tableNode.delegate(MOUSEOUT, Ybind(this._onTheadMouseout, this), theadFilter);
-        tableNode.delegate(MOUSEUP, Ybind(this._onTheadMouseup, this), theadFilter);
-        tableNode.delegate(MOUSEDOWN, Ybind(this._onTheadMousedown, this), theadFilter);
-        tableNode.delegate(CLICK, Ybind(this._onTheadClick, this), theadFilter);
+        
+        tableNode.delegate(FOCUS, this._onEvent, theadFilter, this, "theadCellFocus");
+        tableNode.delegate(KEYDOWN, this._onEvent, theadFilter, this, "theadCellKeydown");
+        tableNode.delegate(MOUSEOVER, this._onEvent, theadFilter, this, "theadCellMousedown");
+        tableNode.delegate(MOUSEOUT, this._onEvent, theadFilter, this, "theadCellMouseout");
+        tableNode.delegate(MOUSEUP, this._onEvent, theadFilter, this, "theadCellMouseup");
+        tableNode.delegate(MOUSEDOWN, this._onEvent, theadFilter, this, "theadCellMousedown");
+        tableNode.delegate(CLICK, this._onEvent, theadFilter, this, "theadCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, Ybind(this._onTheadDoubleclick, this), theadFilter);
+        contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "theadCellDoubleclick");
 
         // DOM event delegation for TBODY
-        tableNode.delegate(FOCUS, Ybind(this._onTbodyFocus, this), tbodyFilter);
-        tableNode.delegate(KEYDOWN, Ybind(this._onTbodyKeydown, this), tbodyFilter);
-        tableNode.delegate(MOUSEOVER, Ybind(this._onTbodyMouseover, this), tbodyFilter);
-        tableNode.delegate(MOUSEOUT, Ybind(this._onTbodyMouseout, this), tbodyFilter);
-        tableNode.delegate(MOUSEUP, Ybind(this._onTbodyMouseup, this), tbodyFilter);
-        tableNode.delegate(MOUSEDOWN, Ybind(this._onTbodyMousedown, this), tbodyFilter);
-        tableNode.delegate("click", Ybind(this._onTbodyClick, this), tbodyFilter);
+        tableNode.delegate(FOCUS, this._onEvent, theadFilter, this, "tbodyCellFocus");
+        tableNode.delegate(KEYDOWN, this._onEvent, theadFilter, this, "tbodyCellKeydown");
+        tableNode.delegate(MOUSEOVER, this._onEvent, theadFilter, this, "tbodyCellMouseover");
+        tableNode.delegate(MOUSEOUT, this._onEvent, theadFilter, this, "tbodyCellMouseout");
+        tableNode.delegate(MOUSEUP, this._onEvent, theadFilter, this, "tbodyCellMouseup");
+        tableNode.delegate(MOUSEDOWN, this._onEvent, theadFilter, this, "tbodyCellMousedown");
+        tableNode.delegate(CLICK, this._onEvent, theadFilter, this, "tbodyCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, Ybind(this._onTbodyDoubleclick, this), tbodyFilter);
+        contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "tbodyCellDoubleclick");
 
         // DOM event delegation for MSG TBODY
-        tableNode.delegate(FOCUS, Ybind(this._onMsgFocus, this), msgFilter);
-        tableNode.delegate(KEYDOWN, Ybind(this._onMsgKeydown, this), msgFilter);
-        tableNode.delegate(MOUSEOVER, Ybind(this._onMsgMouseover, this), msgFilter);
-        tableNode.delegate(MOUSEOUT, Ybind(this._onMsgMouseout, this), msgFilter);
-        tableNode.delegate(MOUSEUP, Ybind(this._onMsgMouseup, this), msgFilter);
-        tableNode.delegate(MOUSEDOWN, Ybind(this._onMsgMousedown, this), msgFilter);
-        tableNode.delegate("click", Ybind(this._onMsgClick, this), msgFilter);
+        tableNode.delegate(FOCUS, this._onEvent, msgFilter, this, "msgCellFocus");
+        tableNode.delegate(KEYDOWN, this._onEvent, msgFilter, this, "msgCellKeydown");
+        tableNode.delegate(MOUSEOVER, this._onEvent, msgFilter, this, "msgCellMouseover");
+        tableNode.delegate(MOUSEOUT, this._onEvent, msgFilter, this, "msgCellMouseout");
+        tableNode.delegate(MOUSEUP, this._onEvent, msgFilter, this, "msgCellMouseup");
+        tableNode.delegate(MOUSEDOWN, this._onEvent, msgFilter, this, "msgCellMousedown");
+        tableNode.delegate(CLICK, this._onEvent, msgFilter, this, "msgCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, Ybind(this._onMsgDoubleclick, this), msgFilter);
-
+        contentBox.delegate(DOUBLECLICK, this._onEvent, msgFilter, this, "msgCellDoubleclick");
     },
-
-    _onTheadFocus: function() {
-    },
-
-    _onTheadKeydown: function() {
-    },
-
-    _onTheadMouseover: function() {
-    },
-
-    _onTheadMouseout: function() {
-    },
-
-    _onTheadMouseup: function() {
-    },
-
-    _onTheadMousedown: function() {
-    },
-
-    // e.currentTarget holds the clicked element
-    _onTheadClick: function(e) {
-        this.fire("theadCellClick", e);
-        this.fire("theadRowClick", e);
-        this.fire("theadClick", e);
-    },
-
-    _onTheadDoubleclick: function() {
-    },
-
-    _onTbodyFocus: function() {
-    },
-
-    _onTbodyKeydown: function() {
-    },
-
-    _onTbodyMouseover: function() {
-    },
-
-    _onTbodyMouseout: function() {
-    },
-
-    _onTbodyMouseup: function() {
-    },
-
-    _onTbodyMousedown: function() {
-    },
-
-    _onTbodyClick: function(e) {
-    },
-
-    _onTbodyDoubleclick: function() {
-    },
-
-    _onMsgFocus: function() {
-    },
-
-    _onMsgKeydown: function() {
-    },
-
-    _onMsgMouseover: function() {
-    },
-
-    _onMsgMouseout: function() {
-    },
-
-    _onMsgMouseup: function() {
-    },
-
-    _onMsgMousedown: function() {
-    },
-
-    _onMsgClick: function(e) {
-    },
-
-    _onMsgDoubleclick: function() {
+    
+    _onEvent: function(e, type) {
+        this.fire(type, e);
     },
 
     syncUI: function() {
