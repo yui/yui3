@@ -1,5 +1,6 @@
 YUI.add('recordset-indexer', function(Y) {
 
+
 function RecordsetIndexer(config) {
     RecordsetIndexer.superclass.constructor.apply(this, arguments);
 }
@@ -10,15 +11,17 @@ Y.mix(RecordsetIndexer, {
     NAME: "recordsetIndexer",
 
     ATTRS: {
-		hash: {
-			valueFn: "_setDefaultHash",
-			lazyAdd: false
-		},
-		
-		defaultKey: {
-			value: "id",
-			setter: "_setDefaultKey"
-		}
+		hashTables: {
+				value: {
+					
+				}
+			},
+			
+			keys: {
+				value: {
+					
+				}
+			}
     }
 });
 
@@ -26,55 +29,86 @@ Y.mix(RecordsetIndexer, {
 Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     initializer: function(config) {
        var host = this.get('host');
-
-		//setup listeners on recordset events
-		this.onHostEvent('add', Y.bind("_defAddHash", this), host);
-		this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
-		this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);
+       
+       	//setup listeners on recordset events
+       	//this.onHostEvent('add', Y.bind("_defAddHash", this), host);
+       	//this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
+       	//this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);	
+       	//this.publish('hashKeyUpdate', {defaultFn:Y.bind('_defUpdateHashTable', this)});
+       		
+       	//create initial hash
+       	//this.set('key', config.key || 'id');
     },
 
     destructor: function(config) {
     },
 
-	_setDefaultHash: function() {
-		var host = this.get('host'), obj = {}, key = this.get('defaultKey');
-		host.each(function() {
-			obj[this.get(key)] = this;
-		});
+	_setHashTable: function(key) {
+		var host = this.get('host'), obj = {}, i=0, len = host.getLength();
+		
+		for (; i<len; i++) {
+			obj[host._items[i].getValue(key)] = host._items[i];
+		}
 		return obj;
 	},
-	
-	_setDefaultKey: function(key) {
-	},
-	
-	_defAddHash: function(e) {
-		var obj = this.get('hash'), key = this.get('defaultKey'), i=0;
-		for (; i<e.added.length; i++) {
-			obj[e.added[i].get(key)] = e.added[i];			
-		}
-	},
-	
-	_defRemoveHash: function(e) {
-		var obj = this.get('hash'), key = this.get('defaultKey'), i=0;
-		for (; i<e.removed.length; i++) {
-			delete obj[e.removed[i].get(key)];
-		}
-	},
-	
-	_defUpdateHash: function(e) {
-		var obj = {}, key = this.get('defaultKey'), i=0;
+
+	createTable: function(key) {
+		var tbls = this.get('hashTables');
+		tbls[key] = this._setHashTable(key);
+		this.set('hashTables', tbls);
 		
-		//deletes the object key that held on to an overwritten record and
-		//creates an object key to hold on to the updated record
-		for (; i < e.updated.length; i++) {
-			delete obj[e.overwritten[i].get(key)];
-			obj[e.updated[i].get(key)] = e.updated[i]; 
-		}
+		return tbls[key];
+	},
+	
+	getTable: function(key) {
+		return this.get('hashTables')[key];
 	}
+	
+
+	// _setHashKey: function(k) {
+	// 	this.fire('hashKeyUpdate', {key:k});
+	// 	return k;
+	// },
+	// 
+	// _defUpdateHashTable: function(e) {
+	// 	var host = this.get('host'), obj = {}, key=e.key, i=0, len=host.getLength();
+	// 	
+	// 	for (; i<len; i++) {
+	// 		obj[host._items[i].getValue(key)] = host._items[i];
+	// 	}
+	// 	this.set('table', obj);
+	// },
+	// 
+	// _defAddHash: function(e) {
+	// 	var obj = this.get('table'), key = this.get('key'), i=0;
+	// 	for (; i<e.added.length; i++) {
+	// 		obj[e.added[i].getValue(key)] = e.added[i];			
+	// 	}
+	// 	this.set('table', obj);
+	// },
+	// 
+	// _defRemoveHash: function(e) {
+	// 	var obj = this.get('table'), key = this.get('key'), i=0;
+	// 	for (; i<e.removed.length; i++) {
+	// 		delete obj[e.removed[i].getValue(key)];
+	// 	}
+	// 	this.set('table', obj);
+	// },
+	// 
+	// _defUpdateHash: function(e) {
+	// 	var obj = this.get('table'), key = this.get('key'), i=0;
+	// 	
+	// 	//deletes the object key that held on to an overwritten record and
+	// 	//creates an object key to hold on to the updated record
+	// 	for (; i < e.updated.length; i++) {
+	// 		delete obj[e.overwritten[i].get(key)];
+	// 		obj[e.updated[i].getValue(key)] = e.updated[i]; 
+	// 	}
+	// 	this.set('table', obj);
+	// }
 	
 	
 });
-
 Y.namespace("Plugin").RecordsetIndexer = RecordsetIndexer;
 
 

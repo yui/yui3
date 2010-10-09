@@ -24,6 +24,9 @@ var Record = Y.Base.create('record', Y.Base, [], {
 		if (field === undefined) {
         	return this.get("data");
 		}
+		else if (field === 'id') {
+			return this.get('id');
+		}
 		else {
 			return this.get("data")[field];
 		}

@@ -26,6 +26,9 @@ var Record = Y.Base.create('record', Y.Base, [], {
 		if (field === undefined) {
         	return this.get("data");
 		}
+		else if (field === 'id') {
+			return this.get('id');
+		}
 		else {
 			return this.get("data")[field];
 		}
@@ -89,6 +92,9 @@ var ArrayList = Y.ArrayList,
 				index++;
 			}
 		}
+		
+		this._defAddHash(e);
+		
 	},
 	
 	_defRemoveFn: function(e) {
@@ -99,10 +105,13 @@ var ArrayList = Y.ArrayList,
 			this._items.splice(e.index,e.range);
 		}
 		
+		this._defRemoveHash(e);
+		
 	},
 	
 	_defEmptyFn: function(e) {
 		this._items = [];
+		this._defEmptyHash();
 	},
 	
 	_defUpdateFn: function(e) {
@@ -110,7 +119,56 @@ var ArrayList = Y.ArrayList,
 		for (var i=0; i<e.updated.length; i++) {
 			this._items[e.index + i] = this._changeToRecord(e.updated[i]);
 		}
+		this._defUpdateHash(e);
 	},
+	
+	
+	//---------------------------------------------
+    // Hash Table Methods
+    //---------------------------------------------
+	
+	
+	
+	_defAddHash: function(e) {
+		var obj = this.get('table'), key = this.get('key'), i=0;
+		for (; i<e.added.length; i++) {
+			obj[e.added[i].getValue(key)] = e.added[i];			
+		}
+		this.set('table', obj);
+	},
+	
+	_defRemoveHash: function(e) {
+		var obj = this.get('table'), key = this.get('key'), i=0;
+		for (; i<e.removed.length; i++) {
+			delete obj[e.removed[i].getValue(key)];
+		}
+		this.set('table', obj);
+	},
+	
+	_defUpdateHash: function(e) {
+		var obj = this.get('table'), key = this.get('key'), i=0;
+		
+		//deletes the object key that held on to an overwritten record and
+		//creates an object key to hold on to the updated record
+		for (; i < e.updated.length; i++) {
+			delete obj[e.overwritten[i].get(key)];
+			obj[e.updated[i].getValue(key)] = e.updated[i]; 
+		}
+		this.set('table', obj);
+	},
+	
+	_defEmptyHash: function() {
+		this.set('table', {});
+	},
+	
+	_setHashTable: function() {
+		var obj = {}, key=this.get('key'), i=0, len = this._items.length;
+		for (; i<len; i++) {
+			obj[this._items[i].getValue(key)] = this._items[i];
+		}
+		return obj;
+	},
+	
 	
 	/**
      * Helper method - it takes an object bag and converts it to a Y.Record
@@ -157,27 +215,40 @@ var ArrayList = Y.ArrayList,
     //---------------------------------------------
 	
 	/**
-     * Returns the record at a particular index
+     * Returns the record with particular ID
      *
      * @method getRecord
+     * @param i {id} The ID of the record
+     * @return {Y.Record} An Y.Record instance
+     * @public
+     */
+	getRecord: function(id) {
+		return this.get('table')[id];
+	},
+	
+	
+	/**
+     * Returns the record at a particular index
+     *
+     * @method getRecordByIndex
      * @param i {Number} Index at which the required record resides
      * @return {Y.Record} An Y.Record instance
      * @public
      */
-    getRecord: function(i) {
+    getRecordByIndex: function(i) {
         return this._items[i];
     },
 	
 	/**
      * Returns a range of records beginning at particular index
      *
-     * @method getRecord
+     * @method getRecordsByIndex
      * @param index {Number} Index at which the required record resides
 	 * @param range {Number} (Optional) Number of records to retrieve. The default is 1
      * @return {Array} An array of Y.Record instances
      * @public
      */
-	getRecords: function(index, range) {
+	getRecordsByIndex: function(index, range) {
 		var i=0, returnedRecords = [];
 		//Range cannot take on negative values
 		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
@@ -290,6 +361,7 @@ var ArrayList = Y.ArrayList,
 		return this;		
 	}
 	
+
 },
 {
     ATTRS: {
@@ -313,13 +385,20 @@ var ArrayList = Y.ArrayList,
 					}
 				}
 				Y.Array.each(allData, initRecord);
-                // ...unless we don't care about live object references
                 this._items = Y.Array(records);
             },
 			//initialization of the attribute must be done before the first call is made.
 			//see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this
 			lazyAdd: false
-        }
+        },
+	
+	table: {
+		valueFn: '_setHashTable'
+		},
+		
+	key: {
+		value:'id'
+	}
 		
     }
 });
