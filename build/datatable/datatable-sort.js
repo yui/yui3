@@ -109,11 +109,11 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         dt.get("recordset").sort.addTarget(dt);
         
         // Wrap link around TH value
-        this.doBefore("_getTheadThMarkup", this._beforeGetTheadThMarkup);
+        this.doBefore("_createTheadThNode", this._beforeCreateTheadThNode);
         
         // Add class
-        dt.on("addTheadTh", function(e) {
-           e.th.addClass(CLASS_SORTABLE);
+        this.doBefore("_attachTheadThNode", function(o) {
+           o.th.addClass(CLASS_SORTABLE);
         });
 
         // Attach click handlers
@@ -139,8 +139,8 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         }
     },
 
-    _beforeGetTheadThMarkup: function(o, column) {
-        if(column.get("sortable")) {
+    _beforeCreateTheadThNode: function(o) {
+        if(o.column.get("sortable")) {
             o.value = Y.substitute(this.thLinkTemplate, {
                 link_class: "foo",
                 link_title: "bar",
