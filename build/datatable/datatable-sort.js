@@ -15,75 +15,6 @@ var //getClassName = Y.ClassNameManager.getClassName,
     TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
 
 
-/*function RecordsetSort(field, desc, sorter) {
-    RecordsetSort.superclass.constructor.apply(this, arguments);
-}
-
-Y.mix(RecordsetSort, {
-    NS: "sort",
-
-    NAME: "recordsetSort",
-
-    ATTRS: {
-        dt: {
-        },
-
-        defaultSorter: {
-            value: function(recA, recB, field, desc) {
-                var sorted = COMPARE(recA.getValue(field), recB.getValue(field), desc);
-                if(sorted === 0) {
-                    return COMPARE(recA.get("id"), recB.get("id"), desc);
-                }
-                else {
-                    return sorted;
-                }
-            }
-        }
-    }
-});
-
-Y.extend(RecordsetSort, Y.Plugin.Base, {
-    initializer: function(config) {
-        this.addTarget(this.get("dt"));
-        this.publish("sort", {defaultFn: this._defSortFn});
-    },
-
-    destructor: function(config) {
-    },
-
-    _defSortFn: function(e) {
-        this.get("host").get("records").sort(function(a, b) {return (e.sorter)(a, b, e.field, e.desc);});
-    },
-
-    sort: function(field, desc, sorter) {
-        this.fire("sort", {field:field, desc: desc, sorter: sorter|| this.get("defaultSorter")});
-    },
-
-    custom: function() {
-        alert("sort custom");
-    },
-
-    // force asc
-    asc: function() {
-        alert("sort asc");
-    },
-
-    // force desc
-    desc: function() {
-        alert("sort desc");
-    },
-
-    // force reverse
-    reverse: function() {
-        alert("sort reverse");
-    }
-});
-
-Y.namespace("Plugin").RecordsetSort = RecordsetSort;*/
-
-
-
-
 function DataTableSort() {
     DataTableSort.superclass.constructor.apply(this, arguments);
 }
@@ -94,6 +25,11 @@ Y.mix(DataTableSort, {
     NAME: "dataTableSort",
 
     ATTRS: {
+        trigger: {
+            value: "theadCellClick",
+            writeOnce: "initOnly"
+        },
+        
         sortedBy: {
             value: null
         }
@@ -117,7 +53,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         });
 
         // Attach click handlers
-        dt.on("theadCellClick", this._onEventSortColumn);
+        dt.on(this.get("trigger"), this._onEventSortColumn);
 
         // Attach UI hooks
         dt.after("recordsetSort:sort", function() {
