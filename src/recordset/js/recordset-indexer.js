@@ -30,7 +30,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
        
        	//setup listeners on recordset events
        	this.onHostEvent('add', Y.bind("_defAddHash", this), host);
-       	//this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
+       	this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
        	//this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);	
        	//this.publish('hashKeyUpdate', {defaultFn:Y.bind('_defUpdateHashTable', this)});
        		
@@ -62,12 +62,39 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 		return this.get('hashTables')[key];
 	},
 	
-	// _defAddHash: function(e) {
-	// 	var obj = this.get('hashTables'), i=0;
-	// 	for (; i<e.added.length; i++) {
-	// 		obj[e.added[i].getValue(key)] = e.added[i];			
-	// 	}
-	// }
+	_defAddHash: function(e) {
+		var tbl = this.get('hashTables');
+		
+		
+		//Go through every hashtable that is stored.
+		//in each hashtable, look to see if the key is represented in the object being added.
+		Y.each(tbl, function(v,key) {
+			Y.each(e.added, function(o) {
+				//if the object being added has a key which is being stored by hashtable v, add it into the table.
+				if (o.getValue(key)) {
+					v[o.getValue(key)] = o;
+				}
+			});
+		});
+		
+	},
+	
+	_defRemoveHash: function(e) {
+		var tbl = this.get('hashTables'), reckey;
+		
+		//Go through every hashtable that is stored.
+		//in each hashtable, look to see if the key is represented in the object being deleted.
+		Y.each(tbl, function(v,key){
+			Y.each(e.removed, function(o) {
+				reckey = o.getValue(key);
+				
+				//if the hashtable has a key storing a record, and the key and the record both match the record being deleted, delete that row from the hashtable
+				if (v[reckey] == o) {
+					delete v[reckey];
+				}
+			});
+		}); 
+	}
 	
 
 	// _setHashKey: function(k) {

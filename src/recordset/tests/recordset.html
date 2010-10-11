@@ -841,11 +841,31 @@
 				
 				Y.ObjectAssert.areEqual(hashA, hashTables.a);
 				
-				
 				var hashB = this.rs.indexer.createTable('b');
 				Y.ObjectAssert.areEqual(hashB, hashTables.b);
 				
-				// Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).getValue('a')], this.rs.getRecordByIndex(0));
+				this.rs.add({a:'this', b:'is', c:'new'});
+				console.log('added');
+				
+				console.log('hashA is');
+				console.log(hashA);
+				
+				console.log('big hash table is');
+				console.log(hashTables);
+				
+				
+				this.rs.remove(3);
+				console.log('deleted');
+				
+				console.log('hashA is');
+				console.log(hashA);
+				
+				console.log('hashB is');
+				console.log(hashB);
+				
+				console.log('big hash table is');
+				console.log(hashTables);
+				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).getValue('a')], this.rs.getRecordByIndex(0));
 				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).getValue('a')], this.rs.getRecordByIndex(1));
 				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).getValue('a')], this.rs.getRecordByIndex(2));
 				// 				Y.ObjectAssert.areEqual(3, Y.Object.size(hashTable));
