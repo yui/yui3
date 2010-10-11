@@ -776,12 +776,12 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 // Y.log('Using loader to fetch missing deps: ' + missing, 'info', 'yui');
             Y.log('Using Loader', 'info', 'yui');
             Y._loading = true;
-            // loader = getLoader(Y);
+            loader = getLoader(Y);
             loader.onEnd = handleLoader;
             loader.context = Y;
             loader.data = args;
             loader.ignoreRegistered = false;
-            // loader.require((fetchCSS) ? missing : args);
+            loader.require(args);
             loader.insert(null, (fetchCSS) ? null : 'js');
             // loader.partial(missing, (fetchCSS) ? null : 'js');
 
