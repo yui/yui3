@@ -52,9 +52,10 @@ if (typeof YUI != 'undefined') {
                 Y.applyConfig(YUI.GlobalConfig);
             }
 
-            // YUI_Config is a page-level config.  It is applied to all instances
-            // created on the page.  This is applied after YUI.GlobalConfig, and
-            // before the instance level configuration objects.
+            // YUI_Config is a page-level config.  It is applied to all
+            // instances created on the page.  This is applied after
+            // YUI.GlobalConfig, and before the instance level configuration
+            // objects.
             if (gconf) {
                 Y.applyConfig(gconf);
             }
@@ -66,9 +67,10 @@ if (typeof YUI != 'undefined') {
         }
 
         if (l) {
-            // Each instance can accept one or more configuration objects.  These
-            // are applied after YUI.GlobalConfig and YUI_Config, overriding values
-            // set in those config files if there is a matching property.
+            // Each instance can accept one or more configuration objects.
+            // These are applied after YUI.GlobalConfig and YUI_Config,
+            // overriding values set in those config files if there is a '
+            // matching property.
             for (; i < l; i++) {
                 Y.applyConfig(args[i]);
             }
@@ -335,6 +337,10 @@ proto = {
         Y.config.base = YUI.config.base ||
             Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
                           /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+
+        if (!filter || (!('-min.-debug.').indexOf(filter))) {
+            filter = '-min.';
+        }
 
         Y.config.loaderPath = YUI.config.loaderPath ||
             'loader/loader' + (filter || '-min.') + 'js';
@@ -763,8 +769,11 @@ proto = {
             loader.onEnd = handleLoader;
             loader.context = Y;
             loader.data = args;
-            loader.require((fetchCSS) ? missing : args);
+            loader.ignoreRegistered = false;
+            loader.require(args);
             loader.insert(null, (fetchCSS) ? null : 'js');
+            // loader.partial(missing, (fetchCSS) ? null : 'js');
+
         } else if (len && Y.config.use_rls) {
 
             // server side loader service
@@ -1511,6 +1520,7 @@ NULL = 'null',
 OBJECT = 'object',
 REGEX = 'regexp',
 STRING = 'string',
+STRING_PROTO = String.prototype,
 TOSTRING = Object.prototype.toString,
 UNDEFINED = 'undefined',
 
@@ -1541,7 +1551,7 @@ SUBREGEX = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
  * @param o The object to test.
  * @return {boolean} true if o is an array.
  */
-L.isArray = function(o) {
+L.isArray = Array.isArray || function(o) {
     return L.type(o) === ARRAY;
 };
 
@@ -1664,12 +1674,40 @@ L.isUndefined = function(o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = function(s) {
+L.trim = STRING_PROTO.trim ? function(s) {
+    return (s && s.trim) ? s.trim() : s;
+} : function (s) {
     try {
         return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch (e) {
         return s;
     }
+};
+
+/**
+ * Returns a string without any leading whitespace.
+ * @method trimLeft
+ * @static
+ * @param s {string} the string to trim.
+ * @return {string} the trimmed string.
+ */
+L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
+    return s.trimLeft();
+} : function (s) {
+    return s.replace(/^s+/, '');
+};
+
+/**
+ * Returns a string without any trailing whitespace.
+ * @method trimRight
+ * @static
+ * @param s {string} the string to trim.
+ * @return {string} the trimmed string.
+ */
+L.trimRight = STRING_PROTO.trimRight ? function (s) {
+    return s.trimRight();
+} : function (s) {
+    return s.replace(/s+$/, '');
 };
 
 /**
@@ -2213,19 +2251,18 @@ Y.cached = function(source, cache, refetch) {
 
 /**
  * Y.Object(o) returns a new object based upon the supplied object.
- * @todo Use native Object.create() when available
  * @method ()
  * @static
  * @param o the supplier object.
  * @return {Object} the new object.
  */
-Y.Object = function(o) {
-    var F = function() {};
+var F = function() {},
+
+O = Object.create || function(o) {
     F.prototype = o;
     return new F();
-};
+},
 
-var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
@@ -2260,39 +2297,38 @@ _extract = function(o, what) {
     return out;
 };
 
+Y.Object = O;
+
 /**
  * Returns an array containing the object's keys
- * @todo use native Object.keys() if available
  * @method keys
  * @static
  * @param o an object.
  * @return {string[]} the keys.
  */
-O.keys = function(o) {
+O.keys = Object.keys || function(o) {
     return _extract(o);
 };
 
 /**
  * Returns an array containing the object's values
- * @todo use native Object.values() if available
  * @method values
  * @static
  * @param o an object.
  * @return {Array} the values.
  */
-O.values = function(o) {
+O.values = Object.values || function(o) {
     return _extract(o, 1);
 };
 
 /**
  * Returns the size of an object
- * @todo use native Object.size() if available
  * @method size
  * @static
  * @param o an object.
  * @return {int} the size.
  */
-O.size = function(o) {
+O.size = Object.size || function(o) {
     return _extract(o, 2);
 };
 
@@ -3568,7 +3604,7 @@ var add = Y.Features.add;
 // 0
 add('load', '0', {
     "trigger": "node-base", 
-    "ua": "gecko"
+    "ua": "ie"
 });
 // history-hash-ie-test.js
 add('load', '1', {
@@ -8895,148 +8931,22 @@ if (GLOBAL_ENV.DOMReady) {
     DOMEventFacade = function(ev, currentTarget, wrapper) {
         this._event = ev;
         this._currentTarget = currentTarget;
-<<<<<<< HEAD
-        this._wrapper = wrapper;
-=======
         this._wrapper = wrapper || EMPTY;
->>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
 
         // if not lazy init
         this.init();
     };
 
 Y.extend(DOMEventFacade, Object, {
-<<<<<<< HEAD
-    init: function() {
-
-        var e = this._event,
-            overrides = this._wrapper.overrides,
-            x = e.pageX,
-            y = e.pageY,
-            c, d, b, de, t,
-            currentTarget = this._currentTarget;
-
-        this.altKey   = e.altKey;
-        this.ctrlKey  = e.ctrlKey;
-        this.metaKey  = e.metaKey;
-        this.shiftKey = e.shiftKey;
-        this.type     = (overrides && overrides.type) || e.type;
-        this.clientX  = e.clientX;
-        this.clientY  = e.clientY;
-
-        if (('clientX' in e) && (!x) && (0 !== x)) {
-            x = e.clientX;
-            y = e.clientY;
-
-            if (ua.ie) {
-
-                d = Y.config.doc;
-                b = d.body;
-                de = d.documentElement;
-
-                x += (de.scrollLeft || (b && b.scrollLeft) || 0);
-                y += (de.scrollTop  || (b && b.scrollTop)  || 0);
-            }
-        }
-
-        this.pageX = x;
-        this.pageY = y;
-
-        c = e.keyCode || e.charCode || 0;
-
-        if (ua.webkit && (c in webkitKeymap)) {
-            c = webkitKeymap[c];
-        }
-
-        this.keyCode = c;
-        this.charCode = c;
-        this.button = e.which || e.button;
-        this.which = this.button;
-        this.target = resolve(e.target || e.srcElement);
-        this.currentTarget = resolve(currentTarget);
-
-        t = e.relatedTarget;
-
-        if (!t) {
-            if (e.type == "mouseout") {
-                t = e.toElement;
-            } else if (e.type == "mouseover") {
-                t = e.fromElement;
-            }
-        }
-
-        this.relatedTarget = resolve(t);
-
-        if (e.type == "mousewheel" || e.type == "DOMMouseScroll") {
-            this.wheelDelta = (e.detail) ? (e.detail * -1) : Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
-        }
-
-        if (this._touch) {
-            this._touch(e, currentTarget, this._wrapper);
-        }
-    },
-
-    stopPropagation: function() {
-        var e = this._event;
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        } else {
-            e.cancelBubble = true;
-        }
-        this._wrapper.stopped = 1;
-        this.stopped = 1;
-    },
-
-    stopImmediatePropagation: function() {
-        var e = this._event;
-        if (e.stopImmediatePropagation) {
-            e.stopImmediatePropagation();
-        } else {
-            this.stopPropagation();
-        }
-        this._wrapper.stopped = 2;
-        this.stopped = 2;
-    },
-
-    preventDefault: function(returnValue) {
-        var e = this._event;
-        if (e.preventDefault) {
-            e.preventDefault();
-        }
-        e.returnValue = returnValue || false;
-        this._wrapper.prevented = 1;
-        this.prevented = 1;
-    },
-
-    halt: function(immediate) {
-        if (immediate) {
-            this.stopImmediatePropagation();
-        } else {
-            this.stopPropagation();
-        }
-
-        this.preventDefault();
-    }
-
-});
-
-
-Y.DOMEventFacade = DOMEventFacade;
-=======
->>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
 
     init: function() {
 
-<<<<<<< HEAD
-Y.DOMEventFacade___ = function(ev, currentTarget, wrapper) {
-=======
         var e = this._event,
             overrides = this._wrapper.overrides,
             x = e.pageX,
             y = e.pageY,
             c,
             currentTarget = this._currentTarget;
->>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
 
         this.altKey   = e.altKey;
         this.ctrlKey  = e.ctrlKey;
@@ -9206,24 +9116,6 @@ Y.DOMEventFacade = DOMEventFacade;
      * @param immediate {boolean} if true additional listeners
      * on the current target will not be executed
      */
-<<<<<<< HEAD
-    this.halt = function(immediate) {
-        if (immediate) {
-            this.stopImmediatePropagation();
-        } else {
-            this.stopPropagation();
-        }
-
-        this.preventDefault();
-    };
-
-    if (this._touch) {
-        this._touch(e, currentTarget, wrapper);
-    }
-
-};
-=======
->>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
 (function() {
 /**
  * DOM event listener abstraction layer
@@ -9254,7 +9146,6 @@ var _eventenv = Y.Env.evt,
         Y.Event._load();
         remove(win, "load", onLoad);
     },
-<<<<<<< HEAD
 
     onUnload = function() {
         Y.Event._unload();
@@ -9272,25 +9163,6 @@ var _eventenv = Y.Env.evt,
             return false;
         }
 
-=======
-
-    onUnload = function() {
-        Y.Event._unload();
-    },
-
-    EVENT_READY = 'domready',
-
-    COMPAT_ARG = '~yui|2|compat~',
-
-    shouldIterate = function(o) {
-        try {
-            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) &&
-                    !o.tagName && !o.alert);
-        } catch(ex) {
-            return false;
-        }
-
->>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
     },
 
 Event = function() {
@@ -12858,11 +12730,7 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-<<<<<<< HEAD
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
-=======
 YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
->>>>>>> c25576945eeb0f8443f8c51e78a198ad1cf9bd0c
 
 YUI.add('event-delegate', function(Y) {
 
@@ -12986,7 +12854,7 @@ delegate.notifySub = function (thisObj, args, ce) {
     // Only notify subs if the event occurred on a targeted element
     var currentTarget = delegate._applyFilter(this.filter, args, ce),
         //container     = e.currentTarget,
-        e, i, ret;
+        e, i, len, ret;
 
     if (currentTarget) {
         // Support multiple matches up the the container subtree
@@ -12999,7 +12867,7 @@ delegate.notifySub = function (thisObj, args, ce) {
 
         e.container = Y.one(ce.el);
     
-        for (i = currentTarget.length - 1; i >= 0; --i) {
+        for (i = 0, len = currentTarget.length; i < len && !e.stopped; ++i) {
             e.currentTarget = Y.one(currentTarget[i]);
 
             ret = this.fn.apply(this.context || e.currentTarget, args);
