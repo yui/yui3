@@ -351,11 +351,16 @@ var ArrayList = Y.ArrayList,
 	
 	
 	update: function(data, index) {
-		var rec, arr;
+		var rec, arr, i=0;
 		
 		//Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method
 		arr = (!(Y.Lang.isArray(data))) ? [data] : data;
 		rec = this._items.slice(index, index+arr.length);
+		
+		for (; i<arr.length; i++) {
+			arr[i] = this._changeToRecord(arr[i]);
+		}
+		
 		this.fire('update', {updated:arr, overwritten:rec, index:index});
 		
 		return this;		

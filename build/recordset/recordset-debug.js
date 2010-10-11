@@ -355,11 +355,16 @@ var ArrayList = Y.ArrayList,
 	
 	
 	update: function(data, index) {
-		var rec, arr;
+		var rec, arr, i=0;
 		
 		//Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method
 		arr = (!(Y.Lang.isArray(data))) ? [data] : data;
 		rec = this._items.slice(index, index+arr.length);
+		
+		for (; i<arr.length; i++) {
+			arr[i] = this._changeToRecord(arr[i]);
+		}
+		
 		this.fire('update', {updated:arr, overwritten:rec, index:index});
 		
 		return this;		
@@ -629,7 +634,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
        	//setup listeners on recordset events
        	this.onHostEvent('add', Y.bind("_defAddHash", this), host);
        	this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
-       	//this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);	
+       	this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);	
        	//this.publish('hashKeyUpdate', {defaultFn:Y.bind('_defUpdateHashTable', this)});
        		
        	//create initial hash
@@ -692,6 +697,43 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 				}
 			});
 		}); 
+	},
+	
+	_defUpdateHash: function(e) {
+		var tbl = this.get('hashTables'), reckey, updated;
+		
+		Y.each(tbl, function(v, key) {
+			Y.each(e.updated, function(o, i) {
+				
+				//delete record from hashtable if it has been overwritten
+				reckey = o.getValue(key);
+				
+				if (e.overwritten[i]) {
+					overwritten = e.overwritten[i];
+				}
+				
+				if (reckey) {
+					v[reckey] = o;
+				}
+				
+				//the undefined case is if more records are updated than currently exist in the recordset. 
+				if ((Y.Lang.isValue(overwritten)) && (v[overwritten.getValue(key)] == overwritten)) {
+					delete v[overwritten.getValue(key)];
+				}
+				
+								// 
+								// 
+								// if (v[reckey] == o) {
+								// 	delete v[reckey];
+								// }
+								// 
+								// //add the new updated record if it has a key that corresponds to a hash table
+								// if (updated.getValue(key)) {
+								// 	v[updated.getValue(key)] = updated;
+								// }
+								// 
+			});
+		});
 	}
 	
 
