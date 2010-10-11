@@ -831,8 +831,8 @@
             <span class="nx">loader</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">args</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="c1">// loader.require((fetchCSS) ? missing : args);</span>
-            <span class="c1">// loader.insert(null, (fetchCSS) ? null : &#39;js&#39;);</span>
-            <span class="nx">loader</span><span class="p">.</span><span class="nx">partial</span><span class="p">(</span><span class="nx">missing</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
+            <span class="nx">loader</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
+            <span class="c1">// loader.partial(missing, (fetchCSS) ? null : &#39;js&#39;);</span>
 
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">use_rls</span><span class="p">)</span> <span class="p">{</span>
 
