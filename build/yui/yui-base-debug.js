@@ -782,8 +782,8 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.data = args;
             loader.ignoreRegistered = false;
             // loader.require((fetchCSS) ? missing : args);
-            // loader.insert(null, (fetchCSS) ? null : 'js');
-            loader.partial(missing, (fetchCSS) ? null : 'js');
+            loader.insert(null, (fetchCSS) ? null : 'js');
+            // loader.partial(missing, (fetchCSS) ? null : 'js');
 
         } else if (len && Y.config.use_rls) {
 

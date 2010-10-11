@@ -24,7 +24,7 @@
             border-top: 3px solid red;
             float: left;
             padding: 5px;
-            _background-color: orange; 
+            _background-color: orange;
         }
         #test1 button {
             background-color: #ccc;
@@ -138,7 +138,7 @@
             <div id=yiv759936264>
                 <div style="direction:ltr;">
                     <img src="https://s.yimg.com/lq/i/brand/purplelogo/base/us.gif" vspace="10" hspace="20">
-                    <hr noshade width="95%"> <br><br> 
+                    <hr noshade width="95%"> <br><br>
                     <table border="0" width="735">
                         <tbody>
                             <tr>
@@ -152,7 +152,7 @@
                         </tbody>
                     </table>
                     <hr noshade width="95%">
-                    <table width="750"> 
+                    <table width="750">
                         <tbody>
                             <tr>
                                 <td width="2.5%">&nbsp;</td>
@@ -183,7 +183,10 @@ This is some <strong>other</strong> loose test.
 </div-->
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script-->
+<!--
 <script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script>
+-->
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(time()); ?>"></script>
@@ -254,7 +257,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     Y.on('change', function(e) {
         var cmd = e.currentTarget.get('id'),
             val = e.currentTarget.get('value');
-        
+
         editor.frame.focus();
         var ex_return = editor.execCommand(cmd, val);
     }, '#fontsize');
@@ -262,7 +265,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     Y.on('change', function(e) {
         var cmd = e.currentTarget.get('id'),
             val = e.currentTarget.get('value');
-        
+
         editor.frame.focus();
         var ex_return = editor.execCommand(cmd, val);
     }, '#fontname');
@@ -279,9 +282,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         ':-/',
         ':x',
         ':">',
-        ':P' 
+        ':P'
     ];
-    
+
     var s_cont = Y.one('#smilies');
     Y.each(smilies, function(v, k) {
         if (v) {
@@ -300,7 +303,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         e.halt();
         */
     }, 'img');
-    
+
     var buttons = Y.all('#test1 button');
     var f_options = Y.all('#fontname option');
     var s_options = Y.all('#fontsize option');
@@ -317,7 +320,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
                     v.addClass('selected');
                 }
             });
-            
+
             var fname = e.fontFamily,
             size = e.fontSize;
             f_options.item(0).set('selected', true);
@@ -372,7 +375,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         */
         extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } #yui-cursor { border: 1px solid purple; }'
     });
-    
+
     /*
     setTimeout(function() {
         console.log('Injecting');
@@ -389,7 +392,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
                 updateButtons(e);
                 break;
         }
-        
+
         /*
         if (e.changedType === 'keyup') {
             if (e.changedNode) {
@@ -403,7 +406,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             }
         }
         */
-        
+
     });
 
     //editor.plug(Y.Plugin.EditorLists);
@@ -459,20 +462,20 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     });
     //editor.on('dom:focus', function() {console.log("Focus called");});
     //editor.on('dom:blur', function() {console.log("Blur called");});
-    /*   
+    /*
     editor.on('nodeChange', function(e) {
         if (Y.UA.ie) {
-            
+
             var inst = this.getInstance(),
     	    sel = inst.config.doc.selection.createRange();
 
             editor._lastBookmark = sel.getBookmark();
 
             //console.log(e.changedType + ' :: ' + editor._lastBookmark);
-            
+
         }
     });
-    
+
     editor.frame.on('dom:focus', function() {
         var inst = this.getInstance(), sel, cur;
 
@@ -515,7 +518,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     });
     */
 
-    
+
     /*
     editor.on('dom:keyup', function(e) {
         var inst = this.getInstance(),
@@ -533,7 +536,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     });
     */
     editor.render('#test');
-    
+
 
     Y.on('click', function(e) {
         var html = editor.getContent();
