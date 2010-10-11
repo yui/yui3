@@ -380,7 +380,7 @@ AutoCompleteBase.ATTRS = {
      * @default []
      */
     resultFilters: {
-        validator: isArray,
+        setter: '_setResultFilters',
         value: []
     },
 
@@ -1102,6 +1102,25 @@ AutoCompleteBase.prototype = {
         return function (query) {
             return Lang.sub(template, {query: encodeURIComponent(query)});
         };
+    },
+
+    /**
+     * Setter for the <code>resultFilters</code> attribute. Receives
+     * <code>null</code>, a filter function, or an array of filter functions,
+     * and returns an array of filter functions (empty if <i>filters</i> is
+     * <code>null</code>).
+     *
+     * @method _setResultFilters
+     * @param {Array|Function|null} filters
+     * @return {Array}
+     * @protected
+     */
+    _setResultFilters: function (filters) {
+        if (filters === null) {
+            return [];
+        }
+
+        return isArray(filters) ? filters : [filters];
     },
 
     /**

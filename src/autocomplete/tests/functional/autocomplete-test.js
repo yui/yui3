@@ -135,7 +135,20 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
-    // -- Setters and validators -----------------------------------------------
+    'resultFilters should accept a filter, array of filters, or null': function () {
+        var filter = function () {};
+
+        this.ac.set('resultFilters', filter);
+        ArrayAssert.itemsAreSame([filter], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', null);
+        ArrayAssert.isEmpty(this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', [filter]);
+        ArrayAssert.itemsAreSame([filter], this.ac.get('resultFilters'));
+    },
+
+    // -- Generic setters and validators ---------------------------------------
     '_functionValidator() should accept a function or null': function () {
         Assert.isTrue(this.ac._functionValidator(function () {}));
         Assert.isTrue(this.ac._functionValidator(null));
