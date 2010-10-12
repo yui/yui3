@@ -382,7 +382,7 @@ AutoCompleteBase.ATTRS = {
      * @default []
      */
     resultFilters: {
-        validator: isArray,
+        setter: '_setResultFilters',
         value: []
     },
 
@@ -636,6 +636,61 @@ AutoCompleteBase.CSS_PREFIX = 'ac';
 AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 AutoCompleteBase.prototype = {
+    // -- Public Prototype Methods ---------------------------------------------
+
+    /**
+     * <p>
+     * Sends a request to the configured source. If no source is configured,
+     * this method won't do anything.
+     * </p>
+     *
+     * <p>
+     * Usually there's no reason to call this method manually; it will be
+     * called automatically when user input causes a <code>query</code> event to
+     * be fired. The only time you'll need to call this method manually is if
+     * you want to force a request to be sent when no user input has occurred.
+     * </p>
+     *
+     * @method sendRequest
+     * @param {String} query (optional) Query to send. If specified, the
+     *   <code>query</code> attribute will be set to this query. If not
+     *   specified, the current value of the <code>query</code> attribute will
+     *   be used.
+     * @param {Function} requestTemplate (optional) Request template function.
+     *   If not specified, the current value of the <code>requestTemplate</code>
+     *   attribute will be used.
+     * @chainable
+     */
+    sendRequest: function (query, requestTemplate) {
+        var request,
+            source = this.get('source');
+
+        if (source) {
+            if (query || query === '') {
+                this._set(QUERY, query);
+            } else {
+                query = this.get(QUERY);
+            }
+
+            if (!requestTemplate) {
+                requestTemplate = this.get(REQUEST_TEMPLATE);
+            }
+
+            request = requestTemplate ? requestTemplate(query) : query;
+
+            Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
+
+            source.sendRequest({
+                request: request,
+                callback: {
+                    success: Y.bind(this._onResponse, this, query)
+                }
+            });
+        }
+
+        return this;
+    },
+
     // -- Protected Lifecycle Methods ------------------------------------------
 
     /**
@@ -1107,6 +1162,25 @@ AutoCompleteBase.prototype = {
     },
 
     /**
+     * Setter for the <code>resultFilters</code> attribute. Receives
+     * <code>null</code>, a filter function, or an array of filter functions,
+     * and returns an array of filter functions (empty if <i>filters</i> is
+     * <code>null</code>).
+     *
+     * @method _setResultFilters
+     * @param {Array|Function|null} filters
+     * @return {Array}
+     * @protected
+     */
+    _setResultFilters: function (filters) {
+        if (filters === null) {
+            return [];
+        }
+
+        return isArray(filters) ? filters : [filters];
+    },
+
+    /**
      * Setter for the <code>source</code> attribute. Returns a DataSource or
      * a DataSource-like function depending on the type of <i>source</i>.
      *
@@ -1236,9 +1310,9 @@ AutoCompleteBase.prototype = {
 
         Y.log('valueChange: new: "' + newVal + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
 
-        query = this._parseValue(newVal);
+        query = this._parseValue(newVal) || '';
 
-        if (query && query.length >= this.get('minQueryLength')) {
+        if (query.length >= this.get('minQueryLength')) {
             delay = this.get('queryDelay');
             that  = this;
 
@@ -1291,7 +1365,7 @@ AutoCompleteBase.prototype = {
      */
     _onResponse: function (query, e) {
         // Ignore stale responses that aren't for the current query.
-        if (query && query === this.get(QUERY)) {
+        if (query === this.get(QUERY)) {
             this._parseResponse(query, e.response, e.data);
         }
     },
@@ -1319,33 +1393,15 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defQueryFn: function (e) {
-        var query = e.query,
-            request,
-            requestTemplate,
-            source = this.get('source');
-
-        this._set(QUERY, query);
+        var query = e.query;
 
         Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
-
-        if (query && source) {
-            requestTemplate = this.get(REQUEST_TEMPLATE);
-            request         = requestTemplate ? requestTemplate(query) : query;
-
-            Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
-
-            source.sendRequest({
-                request: request,
-                callback: {
-                    success: Y.bind(this._onResponse, this, query)
-                }
-            });
-        }
+        this.sendRequest(query); // sendRequest will set the 'query' attribute
     },
 
     /**
      * Default <code>results</code> event handler. Sets the <code>results</code>
-     * and <code>resultsRaw</code> properties to the latest results.
+     * property to the latest results.
      *
      * @method _defResultsFn
      * @param {EventFacade} e
