@@ -12,6 +12,7 @@ var Assert      = Y.Assert,
     filtersSuite,
     highlightSuite;
 
+// Simple, bare AutoCompleteBase implementation for testing.
 ACBase = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
     initializer: function () {
         this._bindUIACBase();
@@ -178,6 +179,13 @@ baseSuite.add(new Y.Test.Case({
 
     '_setSource() should accept a Y.JSONPRequest instance': function () {
         Assert.isFunction(this.ac._setSource(new Y.JSONPRequest('http://example.com/')).sendRequest);
+    },
+
+    // -- Miscellaneous protected methods that aren't testable otherwise -------
+    '_jsonpFormatter should correctly format URLs both with and without a requestTemplate set': function () {
+        Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo?q={query}&cb={callback}', 'callback', 'bar baz'));
+        this.ac.set('requestTemplate', '?q={query}&cb={callback}');
+        Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo', 'callback', 'bar baz'));
     }
 }));
 
