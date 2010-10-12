@@ -1253,9 +1253,9 @@ AutoCompleteBase.prototype = {
 
         Y.log('valueChange: new: "' + newVal + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
 
-        query = this._parseValue(newVal);
+        query = this._parseValue(newVal) || '';
 
-        if (query && query.length >= this.get('minQueryLength')) {
+        if (query.length >= this.get('minQueryLength')) {
             delay = this.get('queryDelay');
             that  = this;
 
@@ -1308,7 +1308,7 @@ AutoCompleteBase.prototype = {
      */
     _onResponse: function (query, e) {
         // Ignore stale responses that aren't for the current query.
-        if (query && query === this.get(QUERY)) {
+        if (query === this.get(QUERY)) {
             this._parseResponse(query, e.response, e.data);
         }
     },
@@ -1345,7 +1345,7 @@ AutoCompleteBase.prototype = {
 
         Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
 
-        if (query && source) {
+        if (source) {
             requestTemplate = this.get(REQUEST_TEMPLATE);
             request         = requestTemplate ? requestTemplate(query) : query;
 
