@@ -634,6 +634,61 @@ AutoCompleteBase.CSS_PREFIX = 'ac';
 AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 AutoCompleteBase.prototype = {
+    // -- Public Prototype Methods ---------------------------------------------
+
+    /**
+     * <p>
+     * Sends a request to the configured source. If no source is configured,
+     * this method won't do anything.
+     * </p>
+     *
+     * <p>
+     * Usually there's no reason to call this method manually; it will be
+     * called automatically when user input causes a <code>query</code> event to
+     * be fired. The only time you'll need to call this method manually is if
+     * you want to force a request to be sent when no user input has occurred.
+     * </p>
+     *
+     * @method sendRequest
+     * @param {String} query (optional) Query to send. If specified, the
+     *   <code>query</code> attribute will be set to this query. If not
+     *   specified, the current value of the <code>query</code> attribute will
+     *   be used.
+     * @param {Function} requestTemplate (optional) Request template function.
+     *   If not specified, the current value of the <code>requestTemplate</code>
+     *   attribute will be used.
+     * @chainable
+     */
+    sendRequest: function (query, requestTemplate) {
+        var request,
+            source = this.get('source');
+
+        if (source) {
+            if (query || query === '') {
+                this._set(QUERY, query);
+            } else {
+                query = this.get(QUERY);
+            }
+
+            if (!requestTemplate) {
+                requestTemplate = this.get(REQUEST_TEMPLATE);
+            }
+
+            request = requestTemplate ? requestTemplate(query) : query;
+
+            Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
+
+            source.sendRequest({
+                request: request,
+                callback: {
+                    success: Y.bind(this._onResponse, this, query)
+                }
+            });
+        }
+
+        return this;
+    },
+
     // -- Protected Lifecycle Methods ------------------------------------------
 
     /**
@@ -1336,28 +1391,10 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _defQueryFn: function (e) {
-        var query = e.query,
-            request,
-            requestTemplate,
-            source = this.get('source');
-
-        this._set(QUERY, query);
+        var query = e.query;
 
         Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
-
-        if (source) {
-            requestTemplate = this.get(REQUEST_TEMPLATE);
-            request         = requestTemplate ? requestTemplate(query) : query;
-
-            Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
-
-            source.sendRequest({
-                request: request,
-                callback: {
-                    success: Y.bind(this._onResponse, this, query)
-                }
-            });
-        }
+        this.sendRequest(query); // sendRequest will set the 'query' attribute
     },
 
     /**
