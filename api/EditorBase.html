@@ -1243,6 +1243,50 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_defaultblockChange">
+                                    <h4>
+                                        <a name="event_defaultblockChange">defaultblockChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">defaultblockChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'defaultblock' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_dirChange">
                                     <h4>
                                         <a name="event_dirChange">dirChange</a></h4>
@@ -1521,6 +1565,20 @@
 
                                     <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_defaultblock">
+                                    <h4><a name="config_defaultblock">defaultblock</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default tag to use for block level items, defaults to: p
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_dir">
                                     <h4><a name="config_dir">dir</a>
                                         <code>- <span property="yui:type">object</span></code>
@@ -1740,6 +1798,7 @@
                         <h4>Events</h4>
                         <ul class="content">        
                                 <li class=""><a href="#event_contentChange" title="contentChange">contentChange</a></li>
+                                <li class=""><a href="#event_defaultblockChange" title="defaultblockChange">defaultblockChange</a></li>
                                 <li class=""><a href="#event_dirChange" title="dirChange">dirChange</a></li>
                                 <li class=""><a href="#event_extracssChange" title="extracssChange">extracssChange</a></li>
                                 <li class=""><a href="#event_linkedcssChange" title="linkedcssChange">linkedcssChange</a></li>
@@ -1752,6 +1811,7 @@
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
                                 <li class=""><a href="#config_content" title="content">content</a></li>
+                                <li class=""><a href="#config_defaultblock" title="defaultblock">defaultblock</a></li>
                                 <li class=""><a href="#config_dir" title="dir">dir</a></li>
                                 <li class=""><a href="#config_extracss" title="extracss">extracss</a></li>
                                 <li class=""><a href="#config_linkedcss" title="linkedcss">linkedcss</a></li>
@@ -1768,7 +1828,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "EditorBase", "name": "_afterFrameReady", "url": "EditorBase.html#method__afterFrameReady", "type": "method"}, {"access": "", "host": "EditorBase", "name": "content", "url": "EditorBase.html#config_content", "type": "config"}, {"access": "", "host": "EditorBase", "name": "contentChange", "url": "EditorBase.html#event_contentChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "copyStyles", "url": "EditorBase.html#method_copyStyles", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_currentSelection", "url": "EditorBase.html#property__currentSelection", "type": "property"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "DEFAULT", "url": "Plugin.CreateLinkBase.html#property_DEFAULT", "type": "property"}, {"access": "private", "host": "EditorBase", "name": "_defNodeChangeFn", "url": "EditorBase.html#method__defNodeChangeFn", "type": "method"}, {"access": "", "host": "EditorBase", "name": "dir", "url": "EditorBase.html#config_dir", "type": "config"}, {"access": "", "host": "EditorBase", "name": "dirChange", "url": "EditorBase.html#event_dirChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "execCommand", "url": "EditorBase.html#method_execCommand", "type": "method"}, {"access": "", "host": "EditorBase", "name": "extracss", "url": "EditorBase.html#config_extracss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "extracssChange", "url": "EditorBase.html#event_extracssChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "FILTER_RGB", "url": "EditorBase.html#method_FILTER_RGB", "type": "method"}, {"access": "", "host": "EditorBase", "name": "focus", "url": "EditorBase.html#method_focus", "type": "method"}, {"access": "", "host": "EditorBase", "name": "frame", "url": "EditorBase.html#property_frame", "type": "property"}, {"access": "", "host": "EditorBase", "name": "getContent", "url": "EditorBase.html#method_getContent", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getDomPath", "url": "EditorBase.html#method_getDomPath", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getInstance", "url": "EditorBase.html#method_getInstance", "type": "method"}, {"access": "", "host": "EditorBase", "name": "hide", "url": "EditorBase.html#method_hide", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_lastBookmark", "url": "EditorBase.html#property__lastBookmark", "type": "property"}, {"access": "", "host": "EditorBase", "name": "linkedcss", "url": "EditorBase.html#config_linkedcss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "linkedcssChange", "url": "EditorBase.html#event_linkedcssChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "NAME", "url": "EditorBase.html#property_NAME", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NC_KEYS", "url": "EditorBase.html#property_NC_KEYS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "nodeChange", "url": "EditorBase.html#event_nodeChange", "type": "event"}, {"access": "private", "host": "EditorBase", "name": "_onFrameActivate", "url": "EditorBase.html#method__onFrameActivate", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyDown", "url": "EditorBase.html#method__onFrameKeyDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyPress", "url": "EditorBase.html#method__onFrameKeyPress", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyUp", "url": "EditorBase.html#method__onFrameKeyUp", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseDown", "url": "EditorBase.html#method__onFrameMouseDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseUp", "url": "EditorBase.html#method__onFrameMouseUp", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "PROMPT", "url": "Plugin.CreateLinkBase.html#property_PROMPT", "type": "property"}, {"access": "", "host": "EditorBase", "name": "ready", "url": "EditorBase.html#event_ready", "type": "event"}, {"access": "", "host": "EditorBase", "name": "render", "url": "EditorBase.html#method_render", "type": "method"}, {"access": "", "host": "EditorBase", "name": "show", "url": "EditorBase.html#method_show", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "STRINGS", "url": "Plugin.CreateLinkBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS", "url": "EditorBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS.title", "url": "EditorBase.html#property_STRINGS.title", "type": "property"}, {"access": "", "host": "EditorBase", "name": "TABKEY", "url": "EditorBase.html#property_TABKEY", "type": "property"}, {"access": "", "host": "EditorBase", "name": "TAG2CMD", "url": "EditorBase.html#property_TAG2CMD", "type": "property"}, {"access": "", "host": "EditorBase", "name": "USE", "url": "EditorBase.html#property_USE", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "private", "host": "EditorBase", "name": "_afterFrameReady", "url": "EditorBase.html#method__afterFrameReady", "type": "method"}, {"access": "", "host": "EditorBase", "name": "content", "url": "EditorBase.html#config_content", "type": "config"}, {"access": "", "host": "EditorBase", "name": "contentChange", "url": "EditorBase.html#event_contentChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "copyStyles", "url": "EditorBase.html#method_copyStyles", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_currentSelection", "url": "EditorBase.html#property__currentSelection", "type": "property"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "DEFAULT", "url": "Plugin.CreateLinkBase.html#property_DEFAULT", "type": "property"}, {"access": "", "host": "EditorBase", "name": "defaultblock", "url": "EditorBase.html#config_defaultblock", "type": "config"}, {"access": "", "host": "EditorBase", "name": "defaultblockChange", "url": "EditorBase.html#event_defaultblockChange", "type": "event"}, {"access": "private", "host": "EditorBase", "name": "_defNodeChangeFn", "url": "EditorBase.html#method__defNodeChangeFn", "type": "method"}, {"access": "", "host": "EditorBase", "name": "dir", "url": "EditorBase.html#config_dir", "type": "config"}, {"access": "", "host": "EditorBase", "name": "dirChange", "url": "EditorBase.html#event_dirChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "execCommand", "url": "EditorBase.html#method_execCommand", "type": "method"}, {"access": "", "host": "EditorBase", "name": "extracss", "url": "EditorBase.html#config_extracss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "extracssChange", "url": "EditorBase.html#event_extracssChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "FILTER_RGB", "url": "EditorBase.html#method_FILTER_RGB", "type": "method"}, {"access": "", "host": "EditorBase", "name": "focus", "url": "EditorBase.html#method_focus", "type": "method"}, {"access": "", "host": "EditorBase", "name": "frame", "url": "EditorBase.html#property_frame", "type": "property"}, {"access": "", "host": "EditorBase", "name": "getContent", "url": "EditorBase.html#method_getContent", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getDomPath", "url": "EditorBase.html#method_getDomPath", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getInstance", "url": "EditorBase.html#method_getInstance", "type": "method"}, {"access": "", "host": "EditorBase", "name": "hide", "url": "EditorBase.html#method_hide", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_lastBookmark", "url": "EditorBase.html#property__lastBookmark", "type": "property"}, {"access": "", "host": "EditorBase", "name": "linkedcss", "url": "EditorBase.html#config_linkedcss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "linkedcssChange", "url": "EditorBase.html#event_linkedcssChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "NAME", "url": "EditorBase.html#property_NAME", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NC_KEYS", "url": "EditorBase.html#property_NC_KEYS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "nodeChange", "url": "EditorBase.html#event_nodeChange", "type": "event"}, {"access": "private", "host": "EditorBase", "name": "_onFrameActivate", "url": "EditorBase.html#method__onFrameActivate", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyDown", "url": "EditorBase.html#method__onFrameKeyDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyPress", "url": "EditorBase.html#method__onFrameKeyPress", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyUp", "url": "EditorBase.html#method__onFrameKeyUp", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseDown", "url": "EditorBase.html#method__onFrameMouseDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseUp", "url": "EditorBase.html#method__onFrameMouseUp", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "PROMPT", "url": "Plugin.CreateLinkBase.html#property_PROMPT", "type": "property"}, {"access": "", "host": "EditorBase", "name": "ready", "url": "EditorBase.html#event_ready", "type": "event"}, {"access": "", "host": "EditorBase", "name": "render", "url": "EditorBase.html#method_render", "type": "method"}, {"access": "", "host": "EditorBase", "name": "show", "url": "EditorBase.html#method_show", "type": "method"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "STRINGS", "url": "Plugin.CreateLinkBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS", "url": "EditorBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS.title", "url": "EditorBase.html#property_STRINGS.title", "type": "property"}, {"access": "", "host": "EditorBase", "name": "TABKEY", "url": "EditorBase.html#property_TABKEY", "type": "property"}, {"access": "", "host": "EditorBase", "name": "TAG2CMD", "url": "EditorBase.html#property_TAG2CMD", "type": "property"}, {"access": "", "host": "EditorBase", "name": "USE", "url": "EditorBase.html#property_USE", "type": "property"}];
 </script>
 </body>
 </html>
