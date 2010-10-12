@@ -31,8 +31,10 @@ YUI.add('editor-base', function(Y) {
                 dir: this.get('dir'),
                 extracss: this.get('extracss'),
                 linkedcss: this.get('linkedcss'),
+                defaultblock: this.get('defaultblock'),
                 host: this
             }).plug(Y.Plugin.ExecCommand);
+
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
             frame.addTarget(this);
@@ -94,7 +96,8 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
             //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
-            var inst = this.getInstance(), sel;
+            var inst = this.getInstance(), sel,
+                btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
     	        sel = inst.config.doc.selection.createRange();
@@ -113,15 +116,6 @@ YUI.add('editor-base', function(Y) {
             switch (e.changedType) {
                 case 'keydown':
                     inst.Selection.cleanCursor();
-                    break;
-                case 'enter':
-                    if (Y.UA.webkit) {
-                        //Webkit doesn't support shift+enter as a BR, this fixes that.
-                        if (e.changedEvent.shiftKey) {
-                            this.execCommand('insertbr');
-                            e.changedEvent.preventDefault();
-                        }
-                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -148,14 +142,14 @@ YUI.add('editor-base', function(Y) {
                             b.remove();
                         }
                     }
-                    if (!para.test('p')) {
-                        var para2 = para.ancestor('p');
+                    if (!para.test(btag)) {
+                        var para2 = para.ancestor(btag);
                         if (para2) {
                             para = para2;
                             para2 = null;
                         }
                     }
-                    if (para.test('p')) {
+                    if (para.test(btag)) {
                         var prev = para.previous(), lc, lc2, found = false;
                         if (prev) {
                             lc = prev.one(':last-child');
@@ -176,12 +170,11 @@ YUI.add('editor-base', function(Y) {
                             }
                         }
                     }
-                    //inst.Selection.filterBlocks();
                     break;
             }
             if (Y.UA.gecko) {
-                if (e.changedNode && !e.changedNode.test('p')) {
-                    var p = e.changedNode.ancestor('p');
+                if (e.changedNode && !e.changedNode.test(btag)) {
+                    var p = e.changedNode.ancestor(btag);
                     if (p) {
                         this._lastPara = p;
                     }
@@ -737,6 +730,14 @@ YUI.add('editor-base', function(Y) {
                     }
                     return css;
                 }
+            },
+            /**
+            * @attribute defaultblock
+            * @description The default tag to use for block level items, defaults to: p
+            * @type String
+            */            
+            defaultblock: {
+                value: 'p'
             }
         }
     });
