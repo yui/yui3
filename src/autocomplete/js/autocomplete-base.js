@@ -1362,7 +1362,7 @@ AutoCompleteBase.prototype = {
 
     /**
      * Default <code>results</code> event handler. Sets the <code>results</code>
-     * and <code>resultsRaw</code> properties to the latest results.
+     * property to the latest results.
      *
      * @method _defResultsFn
      * @param {EventFacade} e
