@@ -54,7 +54,10 @@
           
             testMap: function () {
                 var data = this.data;
-                var results = A.map(data, function (item) {
+                var results = A.map(data, function (item, i, array) {
+                    Assert.isNumber(item);
+                    Assert.isNumber(i);
+                    Assert.areSame(data, array);
                     return item * 2;
                 });
                 Assert.isArray(results);

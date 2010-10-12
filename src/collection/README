@@ -1,6 +1,8 @@
 YUI Collection Utilities
-    Provides functionality beyond what is is the YUI core
-    for collection management.
+    Provides collection management functionality beyond what's in the YUI core.
+
+3.3.0
+  * Improved the performance of non-native Array.map.
 
 3.2.0
   * No change.

@@ -154,15 +154,19 @@ A.every = (Native.every) ?
 * of the supplied function for each item in the original
 * array.
 */
-A.map = (Native.map) ?
+A.map = Native.map ?
     function(a, f, o) {
-        return Native.map.call(a, f, o);
+        return a.map(f, o);
     } :
     function(a, f, o) {
-        var results = [];
-        A.each(a, function(item, i, a) {
-            results.push(f.call(o, item, i, a));
-        });
+        var i       = 0,
+            len     = a.length,
+            results = a.concat();
+
+        for (; i < len; ++i) {
+            results[i] = f.call(o, a[i], i, a);
+        }
+
         return results;
     };
 
