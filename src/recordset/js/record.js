@@ -36,8 +36,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 {
 	ATTRS: {
 	    id: {
-	        valueFn: "_setId",
-	        writeOnce: true
+	        valueFn: "_setId"
 	    },
 	    data : {
 			value: null

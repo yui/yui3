@@ -38,8 +38,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 {
 	ATTRS: {
 	    id: {
-	        valueFn: "_setId",
-	        writeOnce: true
+	        valueFn: "_setId"
 	    },
 	    data : {
 			value: null
@@ -55,12 +54,13 @@ var ArrayList = Y.ArrayList,
     initializer: function() {
 	
 		//set up event listener to fire events when recordset is modified in anyway
-		this.publish('add', {defaultFn: Bind("_defAddFn", this)});
-		this.publish('remove', {defaultFn: Bind("_defRemoveFn", this)});
-		this.publish('empty', {defaultFn: Bind("_defEmptyFn", this)});
-		this.publish('update', {defaultFn: Bind("_defUpdateFn", this)});
+		this.publish('add', {defaultFn: this._defAddFn});
+		this.publish('remove', {defaultFn: this._defRemoveFn});
+		this.publish('empty', {defaultFn: this._defEmptyFn});
+		this.publish('update', {defaultFn: this._defUpdateFn});
 		
 		this._recordsetChanged();
+		this._syncHashTable();
     },
     
     destructor: function() {
@@ -93,7 +93,6 @@ var ArrayList = Y.ArrayList,
 			}
 		}
 		
-		this._defAddHash(e);
 		Y.log('add Fired');
 		
 	},
@@ -106,14 +105,14 @@ var ArrayList = Y.ArrayList,
 			this._items.splice(e.index,e.range);
 		}
 		
-		this._defRemoveHash(e);
+		//this._defRemoveHash(e);
 		Y.log('remove fired');
 		
 	},
 	
 	_defEmptyFn: function(e) {
 		this._items = [];
-		this._defEmptyHash();
+		//this._defEmptyHash();
 		Y.log('empty fired');
 	},
 	
@@ -122,7 +121,7 @@ var ArrayList = Y.ArrayList,
 		for (var i=0; i<e.updated.length; i++) {
 			this._items[e.index + i] = this._changeToRecord(e.updated[i]);
 		}
-		this._defUpdateHash(e);
+		//this._defUpdateHash(e);
 	},
 	
 	
@@ -212,7 +211,22 @@ var ArrayList = Y.ArrayList,
 		});
 	},
 
-
+	_syncHashTable: function() {
+		
+		this.after('add', function(e) {
+			this._defAddHash(e);
+		});
+		this.after('remove', function(e) {
+			this._defRemoveHash(e);
+		});
+		this.after('update', function(e) {
+			this._defUpdateHash(e);
+		});
+		this.after('update', function(e) {
+			this._defEmptyHash();
+		});
+		
+	},
 	
 	//---------------------------------------------
     // Public Methods
@@ -226,8 +240,15 @@ var ArrayList = Y.ArrayList,
      * @return {Y.Record} An Y.Record instance
      * @public
      */
-	getRecord: function(id) {
-		return this.get('table')[id];
+	getRecord: function(i) {
+		
+		if (Y.Lang.isString(i)) {
+			return this.get('table')[i];
+		}
+		else if (Y.Lang.isNumber(i)) {
+			return this._items[i];
+		}
+		return null;
 	},
 	
 	

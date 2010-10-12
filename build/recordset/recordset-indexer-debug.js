@@ -96,44 +96,44 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 				}
 			});
 		}); 
-	},
-	
-	_defUpdateHash: function(e) {
-		var tbl = this.get('hashTables'), reckey, updated;
-		
-		Y.each(tbl, function(v, key) {
-			Y.each(e.updated, function(o, i) {
-				
-				//delete record from hashtable if it has been overwritten
-				reckey = o.getValue(key);
-				
-				if (e.overwritten[i]) {
-					overwritten = e.overwritten[i];
-				}
-				
-				if (reckey) {
-					v[reckey] = o;
-				}
-				
-				//the undefined case is if more records are updated than currently exist in the recordset. 
-				if ((Y.Lang.isValue(overwritten)) && (v[overwritten.getValue(key)] == overwritten)) {
-					delete v[overwritten.getValue(key)];
-				}
-				
-								// 
-								// 
-								// if (v[reckey] == o) {
-								// 	delete v[reckey];
-								// }
-								// 
-								// //add the new updated record if it has a key that corresponds to a hash table
-								// if (updated.getValue(key)) {
-								// 	v[updated.getValue(key)] = updated;
-								// }
-								// 
-			});
-		});
 	}
+	
+	// _defUpdateHash: function(e) {
+	// 	var tbl = this.get('hashTables'), reckey, updated;
+	// 	
+	// 	Y.each(tbl, function(v, key) {
+	// 		Y.each(e.updated, function(o, i) {
+	// 			
+	// 			//delete record from hashtable if it has been overwritten
+	// 			reckey = o.getValue(key);
+	// 			
+	// 			if (e.overwritten[i]) {
+	// 				overwritten = e.overwritten[i];
+	// 			}
+	// 			
+	// 			if (reckey) {
+	// 				v[reckey] = o;
+	// 			}
+	// 			
+	// 			//the undefined case is if more records are updated than currently exist in the recordset. 
+	// 			if ((Y.Lang.isValue(overwritten)) && (v[overwritten.getValue(key)] == overwritten)) {
+	// 				delete v[overwritten.getValue(key)];
+	// 			}
+	// 			
+	// 							// 
+	// 							// 
+	// 							// if (v[reckey] == o) {
+	// 							// 	delete v[reckey];
+	// 							// }
+	// 							// 
+	// 							// //add the new updated record if it has a key that corresponds to a hash table
+	// 							// if (updated.getValue(key)) {
+	// 							// 	v[updated.getValue(key)] = updated;
+	// 							// }
+	// 							// 
+	// 		});
+	// 	});
+	// }
 	
 
 	// _setHashKey: function(k) {

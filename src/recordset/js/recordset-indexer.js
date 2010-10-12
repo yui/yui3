@@ -94,7 +94,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 				}
 			});
 		}); 
-	},
+	}
 	
 	// _defUpdateHash: function(e) {
 	// 	var tbl = this.get('hashTables'), reckey, updated;

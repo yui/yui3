@@ -38,8 +38,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 {
 	ATTRS: {
 	    id: {
-	        valueFn: "_setId",
-	        writeOnce: true
+	        valueFn: "_setId"
 	    },
 	    data : {
 			value: null
@@ -55,12 +54,13 @@ var ArrayList = Y.ArrayList,
     initializer: function() {
 	
 		//set up event listener to fire events when recordset is modified in anyway
-		this.publish('add', {defaultFn: Bind("_defAddFn", this)});
-		this.publish('remove', {defaultFn: Bind("_defRemoveFn", this)});
-		this.publish('empty', {defaultFn: Bind("_defEmptyFn", this)});
-		this.publish('update', {defaultFn: Bind("_defUpdateFn", this)});
+		this.publish('add', {defaultFn: this._defAddFn});
+		this.publish('remove', {defaultFn: this._defRemoveFn});
+		this.publish('empty', {defaultFn: this._defEmptyFn});
+		this.publish('update', {defaultFn: this._defUpdateFn});
 		
 		this._recordsetChanged();
+		this._syncHashTable();
     },
     
     destructor: function() {
@@ -93,7 +93,6 @@ var ArrayList = Y.ArrayList,
 			}
 		}
 		
-		this._defAddHash(e);
 		
 	},
 	
@@ -105,13 +104,13 @@ var ArrayList = Y.ArrayList,
 			this._items.splice(e.index,e.range);
 		}
 		
-		this._defRemoveHash(e);
+		//this._defRemoveHash(e);
 		
 	},
 	
 	_defEmptyFn: function(e) {
 		this._items = [];
-		this._defEmptyHash();
+		//this._defEmptyHash();
 	},
 	
 	_defUpdateFn: function(e) {
@@ -119,7 +118,7 @@ var ArrayList = Y.ArrayList,
 		for (var i=0; i<e.updated.length; i++) {
 			this._items[e.index + i] = this._changeToRecord(e.updated[i]);
 		}
-		this._defUpdateHash(e);
+		//this._defUpdateHash(e);
 	},
 	
 	
@@ -208,7 +207,22 @@ var ArrayList = Y.ArrayList,
 		});
 	},
 
-
+	_syncHashTable: function() {
+		
+		this.after('add', function(e) {
+			this._defAddHash(e);
+		});
+		this.after('remove', function(e) {
+			this._defRemoveHash(e);
+		});
+		this.after('update', function(e) {
+			this._defUpdateHash(e);
+		});
+		this.after('update', function(e) {
+			this._defEmptyHash();
+		});
+		
+	},
 	
 	//---------------------------------------------
     // Public Methods
@@ -222,8 +236,15 @@ var ArrayList = Y.ArrayList,
      * @return {Y.Record} An Y.Record instance
      * @public
      */
-	getRecord: function(id) {
-		return this.get('table')[id];
+	getRecord: function(i) {
+		
+		if (Y.Lang.isString(i)) {
+			return this.get('table')[i];
+		}
+		else if (Y.Lang.isNumber(i)) {
+			return this._items[i];
+		}
+		return null;
 	},
 	
 	
@@ -691,44 +712,44 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 				}
 			});
 		}); 
-	},
-	
-	_defUpdateHash: function(e) {
-		var tbl = this.get('hashTables'), reckey, updated;
-		
-		Y.each(tbl, function(v, key) {
-			Y.each(e.updated, function(o, i) {
-				
-				//delete record from hashtable if it has been overwritten
-				reckey = o.getValue(key);
-				
-				if (e.overwritten[i]) {
-					overwritten = e.overwritten[i];
-				}
-				
-				if (reckey) {
-					v[reckey] = o;
-				}
-				
-				//the undefined case is if more records are updated than currently exist in the recordset. 
-				if ((Y.Lang.isValue(overwritten)) && (v[overwritten.getValue(key)] == overwritten)) {
-					delete v[overwritten.getValue(key)];
-				}
-				
-								// 
-								// 
-								// if (v[reckey] == o) {
-								// 	delete v[reckey];
-								// }
-								// 
-								// //add the new updated record if it has a key that corresponds to a hash table
-								// if (updated.getValue(key)) {
-								// 	v[updated.getValue(key)] = updated;
-								// }
-								// 
-			});
-		});
 	}
+	
+	// _defUpdateHash: function(e) {
+	// 	var tbl = this.get('hashTables'), reckey, updated;
+	// 	
+	// 	Y.each(tbl, function(v, key) {
+	// 		Y.each(e.updated, function(o, i) {
+	// 			
+	// 			//delete record from hashtable if it has been overwritten
+	// 			reckey = o.getValue(key);
+	// 			
+	// 			if (e.overwritten[i]) {
+	// 				overwritten = e.overwritten[i];
+	// 			}
+	// 			
+	// 			if (reckey) {
+	// 				v[reckey] = o;
+	// 			}
+	// 			
+	// 			//the undefined case is if more records are updated than currently exist in the recordset. 
+	// 			if ((Y.Lang.isValue(overwritten)) && (v[overwritten.getValue(key)] == overwritten)) {
+	// 				delete v[overwritten.getValue(key)];
+	// 			}
+	// 			
+	// 							// 
+	// 							// 
+	// 							// if (v[reckey] == o) {
+	// 							// 	delete v[reckey];
+	// 							// }
+	// 							// 
+	// 							// //add the new updated record if it has a key that corresponds to a hash table
+	// 							// if (updated.getValue(key)) {
+	// 							// 	v[updated.getValue(key)] = updated;
+	// 							// }
+	// 							// 
+	// 		});
+	// 	});
+	// }
 	
 
 	// _setHashKey: function(k) {
