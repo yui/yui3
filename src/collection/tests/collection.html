@@ -143,12 +143,23 @@
             },
 
             testFilter: function () {
-                var data = this.data;
-                var result = A.filter(data, function (item) {
-                    return item % 2 == 0;
-                });
+                var data   = this.data,
+                    obj    = {},
+                    result = A.filter(data, function (item, i, array) {
+                        Assert.isNumber(item);
+                        Assert.isNumber(i);
+                        Assert.areSame(data, array);
+                        Assert.areSame(this, Y.config.win);
+
+                        return item % 2 == 0;
+                    });
+
                 Assert.isArray(result);
                 ArrayAssert.itemsAreEqual([2, 4], result);
+
+                A.filter(data, function () {
+                    Assert.areSame(obj, this);
+                }, obj);
             },
 
             testFilterNoMatch: function () {

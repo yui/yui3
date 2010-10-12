@@ -90,29 +90,33 @@ A.unique = function(a, sort) {
 };
 
 /**
-* Executes the supplied function on each item in the array.
-* Returns a new array containing the items that the supplied
-* function returned true for.
+* Executes the supplied function on each item in the array. Returns a new array
+* containing the items for which the supplied function returned a truthy value.
 * @method Array.filter
-* @param {Array} a the array to iterate.
-* @param {Function} f the function to execute on each item.
-* @param {object} Optional o context object.
+* @param {Array} a Array to filter.
+* @param {Function} f Function to execute on each item.
+* @param {Object} o Optional context object.
 * @static
-* @return {Array} The items on which the supplied function
-* returned true. If no items matched an empty array is
-* returned.
+* @return {Array} Array of items for which the supplied function returned a
+*   truthy value (empty if it never returned a truthy value).
 */
-A.filter = (Native.filter) ?
+A.filter = Native.filter ?
     function(a, f, o) {
-        return Native.filter.call(a, f, o);
+        return a.filter(f, o);
     } :
     function(a, f, o) {
-        var results = [];
-        A.each(a, function(item, i, a) {
+        var i       = 0,
+            len     = a.length,
+            results = [],
+            item;
+
+        for (; i < len; ++i) {
+            item = a[i];
+
             if (f.call(o, item, i, a)) {
                 results.push(item);
             }
-        });
+        }
 
         return results;
     };
