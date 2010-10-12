@@ -843,8 +843,6 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _createStringSource: function (source) {
-        var that = this;
-
         if (/^select\s+/i.test(source)) {
             // Looks like a YQL query.
             if (Y.YQLRequest) {
@@ -857,17 +855,7 @@ AutoCompleteBase.prototype = {
             // Doesn't look like a YQL query, so assume it's a URL.
             if (Y.JSONPRequest) {
                 return this._createJSONPSource(new Y.JSONPRequest(source, {
-                    format: function (url, proxy, query) {
-                        return Lang.sub(url, {
-                            callback: proxy,
-
-                            // If a requestTemplate is set, assume that it will
-                            // handle URI encoding if necessary. Otherwise,
-                            // encode the query.
-                            query: that.get(REQUEST_TEMPLATE) ? query :
-                                    encodeURIComponent(query)
-                        });
-                    }
+                    format: Y.bind(this._jsonpFormatter, this)
                 }));
             } else {
                 Y.error('jsonp module is not loaded');
@@ -976,6 +964,33 @@ AutoCompleteBase.prototype = {
         }
 
         return obj;
+    },
+
+    /**
+     * URL formatter passed to <code>JSONPRequest</code> instances.
+     *
+     * @method _jsonpFormatter
+     * @param {String} url
+     * @param {String} proxy
+     * @param {String} query
+     * @return {String} Formatted URL
+     * @protected
+     */
+    _jsonpFormatter: function (url, proxy, query) {
+        var requestTemplate = this.get(REQUEST_TEMPLATE);
+
+        if (requestTemplate) {
+            url = url + requestTemplate(query);
+        }
+
+        return Lang.sub(url, {
+            callback: proxy,
+
+            // If a requestTemplate is set, assume that it will
+            // handle URI encoding if necessary. Otherwise,
+            // encode the query.
+            query: requestTemplate ? query : encodeURIComponent(query)
+        });
     },
 
     /**
