@@ -50,6 +50,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "arraysort": {}, 
     "async-queue": {
         "requires": [
             "event-custom"
@@ -72,6 +73,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "autocomplete": {
         "submodules": {
             "autocomplete-base": {
+                "optional": [
+                    "jsonp", 
+                    "yql"
+                ], 
                 "plugins": {
                     "autocomplete-filters": {
                         "path": "autocomplete/autocomplete-filters-min.js", 
@@ -105,6 +110,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "array-extras", 
+                    "base-build", 
                     "event-valuechange", 
                     "node-base"
                 ]
@@ -371,6 +377,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
+                ]
+            }
+        }
+    }, 
+    "datatable": {
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset", 
+                    "widget"
+                ], 
+                "skinnable": true
+            }, 
+            "datatable-sort": {
+                "requires": [
+                    "arraysort", 
+                    "datatable-base", 
+                    "plugin"
                 ]
             }
         }
@@ -678,8 +702,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "escape": {}, 
     "event": {
-        "expound": "node-base", 
+        "after": "node-base", 
         "plugins": {
+            "event-base-ie": {
+                "after": [
+                    "event-base"
+                ], 
+                "condition": {
+                    "trigger": "node-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -688,7 +724,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "submodules": {
             "event-base": {
-                "expound": "node-base", 
+                "after": "node-base", 
                 "requires": [
                     "event-custom-base"
                 ]
@@ -726,7 +762,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-synthetic": {
                 "requires": [
                     "node-base", 
-                    "event-custom"
+                    "event-custom-complex"
                 ]
             }
         }
@@ -735,8 +771,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "event-custom-base": {
                 "requires": [
-                    "oop", 
-                    "yui-later"
+                    "oop"
                 ]
             }, 
             "event-custom-complex": {
@@ -923,24 +958,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "oop"
         ]
     }, 
-    "loader": {
-        "requires": [
-            "get"
-        ], 
-        "submodules": {
-            "loader-base": {}, 
-            "loader-rollup": {
-                "requires": [
-                    "loader-base"
-                ]
-            }, 
-            "loader-yui3": {
-                "requires": [
-                    "loader-base"
-                ]
-            }
-        }
-    }, 
     "node": {
         "plugins": {
             "align-plugin": {
@@ -973,10 +990,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }
         }, 
-        "requires": [
-            "dom", 
-            "event-base"
-        ], 
         "submodules": {
             "node-base": {
                 "requires": [
@@ -1107,6 +1120,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-custom"
         ]
+    }, 
+    "recordset": {
+        "submodules": {
+            "recordset-base": {
+                "requires": [
+                    "base", 
+                    "arraylist"
+                ]
+            }, 
+            "recordset-filter": {
+                "requires": [
+                    "recordset-base", 
+                    "array-extras"
+                ]
+            }, 
+            "recordset-indexer": {
+                "requires": [
+                    "recordset-base", 
+                    "plugin"
+                ]
+            }, 
+            "recordset-sort": {
+                "requires": [
+                    "arraysort", 
+                    "recordset-base"
+                ]
+            }
+        }
     }, 
     "scrollview": {
         "plugins": {
@@ -1363,22 +1404,47 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "yui": {
         "submodules": {
-            "features": {}, 
-            "get": {}, 
-            "intl-base": {}, 
+            "features": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "get": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "intl-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
             "rls": {
                 "requires": [
+                    "get", 
                     "features"
                 ]
             }, 
             "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
+            "yui-later": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-log": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-throttle": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 };
-YUI.Env[Y.version].md5 = '99689a93c88e7c457ac6798d166b32ed';
+YUI.Env[Y.version].md5 = '3f7a3b8632850fc4ebd6150bbec3ed3b';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

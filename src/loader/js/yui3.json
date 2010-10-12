@@ -41,6 +41,7 @@
             }
         }
     }, 
+    "arraysort": {}, 
     "async-queue": {
         "requires": [
             "event-custom"
@@ -63,6 +64,10 @@
     "autocomplete": {
         "submodules": {
             "autocomplete-base": {
+                "optional": [
+                    "jsonp", 
+                    "yql"
+                ], 
                 "plugins": {
                     "autocomplete-filters": {
                         "path": "autocomplete/autocomplete-filters-min.js", 
@@ -96,6 +101,7 @@
                 }, 
                 "requires": [
                     "array-extras", 
+                    "base-build", 
                     "event-valuechange", 
                     "node-base"
                 ]
@@ -362,6 +368,24 @@
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
+                ]
+            }
+        }
+    }, 
+    "datatable": {
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset", 
+                    "widget"
+                ], 
+                "skinnable": true
+            }, 
+            "datatable-sort": {
+                "requires": [
+                    "arraysort", 
+                    "datatable-base", 
+                    "plugin"
                 ]
             }
         }
@@ -667,8 +691,20 @@
     }, 
     "escape": {}, 
     "event": {
-        "expound": "node-base", 
+        "after": "node-base", 
         "plugins": {
+            "event-base-ie": {
+                "after": [
+                    "event-base"
+                ], 
+                "condition": {
+                    "trigger": "node-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -677,7 +713,7 @@
         }, 
         "submodules": {
             "event-base": {
-                "expound": "node-base", 
+                "after": "node-base", 
                 "requires": [
                     "event-custom-base"
                 ]
@@ -715,7 +751,7 @@
             "event-synthetic": {
                 "requires": [
                     "node-base", 
-                    "event-custom"
+                    "event-custom-complex"
                 ]
             }
         }
@@ -724,8 +760,7 @@
         "submodules": {
             "event-custom-base": {
                 "requires": [
-                    "oop", 
-                    "yui-later"
+                    "oop"
                 ]
             }, 
             "event-custom-complex": {
@@ -907,24 +942,6 @@
             "oop"
         ]
     }, 
-    "loader": {
-        "requires": [
-            "get"
-        ], 
-        "submodules": {
-            "loader-base": {}, 
-            "loader-rollup": {
-                "requires": [
-                    "loader-base"
-                ]
-            }, 
-            "loader-yui3": {
-                "requires": [
-                    "loader-base"
-                ]
-            }
-        }
-    }, 
     "node": {
         "plugins": {
             "align-plugin": {
@@ -957,10 +974,6 @@
                 ]
             }
         }, 
-        "requires": [
-            "dom", 
-            "event-base"
-        ], 
         "submodules": {
             "node-base": {
                 "requires": [
@@ -1091,6 +1104,34 @@
         "requires": [
             "event-custom"
         ]
+    }, 
+    "recordset": {
+        "submodules": {
+            "recordset-base": {
+                "requires": [
+                    "base", 
+                    "arraylist"
+                ]
+            }, 
+            "recordset-filter": {
+                "requires": [
+                    "recordset-base", 
+                    "array-extras"
+                ]
+            }, 
+            "recordset-indexer": {
+                "requires": [
+                    "recordset-base", 
+                    "plugin"
+                ]
+            }, 
+            "recordset-sort": {
+                "requires": [
+                    "arraysort", 
+                    "recordset-base"
+                ]
+            }
+        }
     }, 
     "scrollview": {
         "plugins": {
@@ -1347,18 +1388,43 @@
     }, 
     "yui": {
         "submodules": {
-            "features": {}, 
-            "get": {}, 
-            "intl-base": {}, 
+            "features": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "get": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "intl-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
             "rls": {
                 "requires": [
+                    "get", 
                     "features"
                 ]
             }, 
             "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
+            "yui-later": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-log": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-throttle": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 }

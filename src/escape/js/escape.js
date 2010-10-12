@@ -65,6 +65,7 @@ Escape = {
      * @method _htmlReplacer
      * @param {String} match Matched character (must exist in HTML_CHARS).
      * @returns {String} HTML entity.
+     * @static
      * @protected
      */
     _htmlReplacer: function (match) {

@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>YUI focus/blur synth Tests</title>
+
+    <script src="../../../build/yui/yui-debug.js"></script>
+    <script src="window-focus.js"></script>
 </head>
 <body class="yui3-skin-sam">
 
@@ -11,21 +14,19 @@
         <input type="text" id="text-1">
     </div>
 
-    <script src="../../../build/yui/yui.js"></script>
-    <script src="window-focus.js"></script>
     <script>
         YUI({
             filter: 'raw',
             filters: { 'event': 'debug' }
         }).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
-            
+
             var Assert = Y.Assert;
 
             new Y.Console({ /*useBrowserConsole: true*/ }).render();
-            
+
             Y.Test.Runner.add(new Y.Test.Case({
                 name: "Event Focus And Blur Test",
-                
+
                 _should: {
                     fail: {
                         //test_purge_focus: 2528244, // fixed
@@ -38,8 +39,8 @@
                 },
 
                 test_add_focus: function(){
-                    
-                    var foo = false, 
+
+                    var foo = false,
                         target,
                         boundEl,
 
@@ -50,7 +51,7 @@
                             target = e.target;
 
                         };
-                    
+
                     Y.on('focus', onFocus, '#container');
 
                     Y.one('#button-1').focus();
@@ -70,7 +71,7 @@
                         Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
                         Assert.areEqual(Y.one('#button-1'), target, "the target is the incorrect node, should be the actual focus target");
                         Assert.areEqual(Y.one('#container'), boundEl, "the default scope should be the bound element");
-                        
+
                         Y.one('#button-1').blur();
                     } else {
                         Y.log("Window is not focused.", "warn", "TestRunner");
@@ -86,61 +87,61 @@
                             foo = true;
 
                         };
-                    
+
                     var handle = Y.on('focus', onFocus, '#container');
 
                     if (Y.isWindowInFocus()) {
                         Y.one('#button-1').focus();
 
                         Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
-                        
+
                         handle.detach();
-                        
-                        Y.one('#button-1').blur();                        
-                        
+
+                        Y.one('#button-1').blur();
+
                         foo = false;
-                        
+
                         Y.one('#button-1').focus();
 
                         Assert.isFalse(foo, "container should not pickup the focus event after listener is removed");
-                        
+
                         Y.one('#button-1').blur();
                     } else {
                         Y.log("Window is not focused.", "warn", "TestRunner");
                     }
                 },
-                
+
                 test_purge_focus: function () {
-                
+
                     var foo = false,
-                
+
                         onFocus = function(e) {
-                
+
                             foo = true;
-                
+
                         };
-                    
+
                     if (Y.isWindowInFocus()) {
                         Y.on('focus', onFocus, '#container');
-                    
+
                         Y.one('#button-1').focus();
-                    
+
                         Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
-                        
+
                         Y.Event.purgeElement('#container', false, 'focus');
-                        
+
                         Y.one('#button-1').blur();
-                    
+
                         foo = false;
-                        
+
                         Y.one('#button-1').focus();
-                    
+
                         Assert.isFalse(foo, "container should not pickup the focus event after listener has been purged");
                     } else {
                         Y.log("Window is not focused.", "warn", "TestRunner");
                     }
                 },
-                                
+
                 test_bubble_order: function () {
                     var from = [],
                         doc  = Y.one(Y.config.doc),
@@ -166,7 +167,7 @@
 
                 test_add_blur: function () {
 
-                    var foo = false, 
+                    var foo = false,
                         target,
                         boundEl,
 
@@ -177,7 +178,7 @@
                             target = e.target;
 
                         };
-                    
+
                     if (Y.isWindowInFocus()) {
                         Y.on('blur', onBlur, '#container');
 
@@ -187,28 +188,28 @@
                         Assert.isTrue(foo, "simple blur fails, container should pickup the focus event");
                         Assert.areEqual(target, Y.one('#button-1'), "the target is the incorrect node, should be the actual blur target");
                         Assert.areEqual(boundEl, Y.one('#container'), "the default scope should be the bound element");
-                        
+
                         foo = false;
                         target = null;
                         boundEl = null;
-                        
+
                         Y.one('#button-1').focus();
                         Y.one('#text-1').focus();
-                        
+
                         Assert.isTrue(foo, "simple blur fails, container should pickup the focus event");
                         Assert.areEqual(target, Y.one('#button-1'), "the target is the incorrect node, should be the actual blur target");
-                        Assert.areEqual(boundEl, Y.one('#container'), "the default scope should be the bound element");                        
+                        Assert.areEqual(boundEl, Y.one('#container'), "the default scope should be the bound element");
                     } else {
                         Y.log("Window is not focused.", "warn", "TestRunner");
                     }
                 },
-        
+
                 test_remove_blur: function () {
-                    var foo = false, 
+                    var foo = false,
                         onBlur = function(e) {
                             foo = true;
                         };
-                    
+
                     if (Y.isWindowInFocus()) {
                         var handle = Y.on('blur', onBlur, '#container');
 
@@ -231,7 +232,7 @@
                         onBlur = function(e) {
                             foo = true;
                         };
-                    
+
                     if (Y.isWindowInFocus()) {
                         Y.on('blur', onBlur, '#container');
 
@@ -246,12 +247,12 @@
                     } else {
                         Y.log("Window is not focused.", "warn", "TestRunner");
                     }
-                }                
-                
-            })); 
-            
+                }
+
+            }));
+
             Y.Test.Runner.run();
-            
+
         });
     </script>
 </body>

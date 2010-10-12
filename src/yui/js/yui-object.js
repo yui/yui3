@@ -5,7 +5,6 @@
  * @module yui
  * @submodule yui-base
  */
-(function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
@@ -14,26 +13,25 @@
 
 /**
  * Y.Object(o) returns a new object based upon the supplied object.
- * @todo Use native Object.create() when available
  * @method ()
  * @static
  * @param o the supplier object.
  * @return {Object} the new object.
  */
-Y.Object = function(o) {
-    var F = function() {};
+var F = function() {},
+
+O = Object.create || function(o) {
     F.prototype = o;
     return new F();
-};
+},
 
-var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED,
+UNDEF,
 
 /**
  * Extracts the keys, values, or size from an object
@@ -61,39 +59,38 @@ _extract = function(o, what) {
     return out;
 };
 
+Y.Object = O;
+
 /**
  * Returns an array containing the object's keys
- * @todo use native Object.keys() if available
  * @method keys
  * @static
  * @param o an object.
  * @return {string[]} the keys.
  */
-O.keys = function(o) {
+O.keys = Object.keys || function(o) {
     return _extract(o);
 };
 
 /**
  * Returns an array containing the object's values
- * @todo use native Object.values() if available
  * @method values
  * @static
  * @param o an object.
  * @return {Array} the values.
  */
-O.values = function(o) {
+O.values = Object.values || function(o) {
     return _extract(o, 1);
 };
 
 /**
  * Returns the size of an object
- * @todo use native Object.size() if available
  * @method size
  * @static
  * @param o an object.
  * @return {int} the size.
  */
-O.size = function(o) {
+O.size = Object.size || function(o) {
     return _extract(o, 2);
 };
 
@@ -188,6 +185,7 @@ O.some = function(o, f, c, proto) {
  * from the value object provided.
  *
  * @method getValue
+ * @static
  * @param o The object from which to extract the property value.
  * @param path {Array} A path array, specifying the object traversal path
  * from which to obtain the sub value.
@@ -197,14 +195,14 @@ O.some = function(o, f, c, proto) {
  */
 O.getValue = function(o, path) {
     if (!Y.Lang.isObject(o)) {
-        return UNDEFINED;
+        return UNDEF;
     }
 
     var i,
         p = Y.Array(path),
         l = p.length;
 
-    for (i = 0; o !== UNDEFINED && i < l; i++) {
+    for (i = 0; o !== UNDEF && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -217,6 +215,7 @@ O.getValue = function(o, path) {
  * undefined if the path is invalid.
  *
  * @method setValue
+ * @static
  * @param o             The object on which to set the sub value.
  * @param path {Array}  A path array, specifying the object traversal path
  *                      at which to set the sub value.
@@ -231,14 +230,14 @@ O.setValue = function(o, path, val) {
         ref = o;
 
     if (leafIdx >= 0) {
-        for (i = 0; ref !== UNDEFINED && i < leafIdx; i++) {
+        for (i = 0; ref !== UNDEF && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
-        if (ref !== UNDEFINED) {
+        if (ref !== UNDEF) {
             ref[p[i]] = val;
         } else {
-            return UNDEFINED;
+            return UNDEF;
         }
     }
 
@@ -248,6 +247,7 @@ O.setValue = function(o, path, val) {
 /**
  * Returns true if the object has no properties of its own
  * @method isEmpty
+ * @static
  * @return {boolean} true if the object is empty.
  * @since 3.2.0
  */
@@ -259,5 +259,3 @@ O.isEmpty = function(o) {
     }
     return true;
 };
-
-})();

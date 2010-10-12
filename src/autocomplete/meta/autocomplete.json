@@ -41,8 +41,14 @@
                     }
                 },
 
+                "optional": [
+                    "jsonp",
+                    "yql"
+                ],
+
                 "requires": [
                     "array-extras",
+                    "base-build",
                     "event-valuechange",
                     "node-base"
                 ]

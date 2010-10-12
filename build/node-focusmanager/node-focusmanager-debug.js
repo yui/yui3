@@ -829,12 +829,16 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 			oNode = this._descendants.item(nActiveDescendant);
 
-			if (oNode && oNode.get(DISABLED)) {
-				this._focusNext(event, nActiveDescendant);
-			}
-			else {
-				this.focus(nActiveDescendant);
-			}
+            if (oNode) {
+
+                if (oNode.get("disabled")) {
+                    this._focusNext(event, nActiveDescendant);
+                }
+                else {
+                    this.focus(nActiveDescendant);
+                }
+
+            }
 
 		}
 
@@ -865,14 +869,18 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 				nActiveDescendant = this._lastNodeIndex;
 			}
 
-			oNode = this._descendants.item(nActiveDescendant);
+            oNode = this._descendants.item(nActiveDescendant);
 
-			if (oNode && oNode.get(DISABLED)) {
-				this._focusPrevious(event, nActiveDescendant);
-			}
-			else {
-				this.focus(nActiveDescendant);
-			}
+            if (oNode) {
+
+                if (oNode.get("disabled")) {
+                    this._focusPrevious(event, nActiveDescendant);
+                }
+                else {
+                    this.focus(nActiveDescendant);
+                }
+
+            }
 
 		}
 

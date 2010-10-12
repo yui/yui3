@@ -56,7 +56,7 @@
 <span class="cm"> */</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">_YUI</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="cm">/**</span>
@@ -82,16 +82,32 @@
             <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span>
             <span class="nx">l</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">instanceOf</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">type</span><span class="p">));</span>
+            <span class="p">},</span>
             <span class="nx">gconf</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">)))</span> <span class="p">{</span>
             <span class="nx">Y</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">();</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="c1">// set up the core environment</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
+
+            <span class="c1">// YUI.GlobalConfig is a master configuration that might span</span>
+            <span class="c1">// multiple contexts in a non-browser environment.  It is applied</span>
+            <span class="c1">// first to all instances in all contexts.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">GlobalConfig</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">GlobalConfig</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="c1">// YUI_Config is a page-level config.  It is applied to all</span>
+            <span class="c1">// instances created on the page.  This is applied after</span>
+            <span class="c1">// YUI.GlobalConfig, and before the instance level configuration</span>
+            <span class="c1">// objects.</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">gconf</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">gconf</span><span class="p">);</span>
             <span class="p">}</span>
+
             <span class="c1">// bind the specified additional modules for this instance</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
@@ -99,6 +115,10 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Each instance can accept one or more configuration objects.</span>
+            <span class="c1">// These are applied after YUI.GlobalConfig and YUI_Config,</span>
+            <span class="c1">// overriding values set in those config files if there is a &#39;</span>
+            <span class="c1">// matching property.</span>
             <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
@@ -106,12 +126,16 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
         <span class="p">}</span>
 
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span> <span class="o">=</span> <span class="nx">instanceOf</span><span class="p">;</span>
+
         <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
     <span class="p">};</span>
 
 <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
     <span class="kd">var</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
         <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="p">,</span>
+        <span class="nx">PERIOD</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
         <span class="nx">BASE</span> <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span><span class="p">,</span>
         <span class="nx">DOC_LABEL</span> <span class="o">=</span> <span class="s1">&#39;yui3-js-enabled&#39;</span><span class="p">,</span>
         <span class="nx">NOOP</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
@@ -172,7 +196,9 @@
                     <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-        <span class="p">};</span>
+        <span class="p">},</span>
+
+        <span class="nx">ALREADY_DONE</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
 
 <span class="c1">//  Stamp the documentElement (HTML) with a class of &quot;yui-loaded&quot; to</span>
 <span class="c1">//  enable styles that need to key off of JS being enabled.</span>
@@ -249,7 +275,7 @@
             <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">G_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
             <span class="nx">Env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
-            <span class="nx">prop</span><span class="p">,</span> <span class="nx">config</span><span class="p">;</span>
+            <span class="nx">prop</span><span class="p">;</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * The version number of the YUI instance.</span>
@@ -272,45 +298,47 @@
                 <span class="nx">_uidx</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="nx">_guidp</span><span class="o">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span>
                 <span class="nx">_loaded</span><span class="o">:</span> <span class="p">{},</span>
+                <span class="nx">serviced</span><span class="o">:</span> <span class="p">{},</span>
                 <span class="nx">getBase</span><span class="o">:</span> <span class="nx">G_ENV</span> <span class="o">&amp;&amp;</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">getBase</span> <span class="o">||</span>
-        <span class="kd">function</span><span class="p">(</span><span class="nx">srcPattern</span><span class="p">,</span> <span class="nx">comboPattern</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">match</span><span class="p">;</span>
-            <span class="c1">// get from querystring</span>
-            <span class="nx">nodes</span> <span class="o">=</span> <span class="p">(</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">))</span> <span class="o">||</span> <span class="p">[];</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">src</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">src</span><span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
 
-                    <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">srcPattern</span><span class="p">);</span>
-                    <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="c1">// this is to set up the path to the loader.  The file</span>
-                        <span class="c1">// filter for loader should match the yui include.</span>
-                        <span class="nx">filter</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">srcPattern</span><span class="p">,</span> <span class="nx">comboPattern</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">match</span><span class="p">;</span>
+        <span class="c1">// get from querystring</span>
+        <span class="nx">nodes</span> <span class="o">=</span> <span class="p">(</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">))</span> <span class="o">||</span> <span class="p">[];</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">src</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">src</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
 
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">match</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;js&#39;</span><span class="p">);</span>
+                <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">srcPattern</span><span class="p">);</span>
+                <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// this is to set up the path to the loader.  The file</span>
+                    <span class="c1">// filter for loader should match the yui include.</span>
+                    <span class="nx">filter</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">filter</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">match</span><span class="p">);</span>
-                            <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">match</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;js&#39;</span><span class="p">);</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">filter</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">match</span><span class="p">);</span>
                         <span class="p">}</span>
-
-                        <span class="c1">// extract correct path for mixed combo urls</span>
-                        <span class="c1">// http://yuilibrary.com/projects/yui3/ticket/2528423</span>
-                        <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">comboPattern</span><span class="p">);</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="p">{</span>
-                            <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-                        <span class="p">}</span>
-
-                        <span class="k">break</span><span class="p">;</span>
                     <span class="p">}</span>
+
+                    <span class="c1">// extract correct path for mixed combo urls</span>
+                    <span class="c1">// http://yuilibrary.com/projects/yui3/ticket/2528423</span>
+                    <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">comboPattern</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+                    <span class="p">}</span>
+
+                    <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-
-            <span class="c1">// use CDN default</span>
-            <span class="k">return</span> <span class="nx">b</span> <span class="o">||</span> <span class="nx">Env</span><span class="p">.</span><span class="nx">cdn</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="c1">// use CDN default</span>
+        <span class="k">return</span> <span class="nx">b</span> <span class="o">||</span> <span class="nx">Env</span><span class="p">.</span><span class="nx">cdn</span><span class="p">;</span>
+    <span class="p">}</span>
             <span class="p">};</span>
 
             <span class="nx">Env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
@@ -321,9 +349,9 @@
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="o">++</span><span class="nx">G_ENV</span><span class="p">.</span><span class="nx">_yidx</span><span class="p">;</span>
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_guidp</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;yui_&#39;</span> <span class="o">+</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
                              <span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">time</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\./g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">_YUI</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="nx">G_ENV</span> <span class="o">=</span> <span class="nx">_YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
+                <span class="nx">G_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">+=</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">_yidx</span><span class="p">;</span>
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">_uidx</span> <span class="o">+=</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">_uidx</span><span class="p">;</span>
 
@@ -332,6 +360,8 @@
                         <span class="nx">Env</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">G_ENV</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
+
+                <span class="k">delete</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">_YUI</span><span class="p">;</span>
             <span class="p">}</span>
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
@@ -343,7 +373,6 @@
 
         <span class="c1">// configuration defaults</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">||</span> <span class="p">{</span>
-            <span class="c1">// _sig:              &#39;&#39;,</span>
             <span class="nx">win</span><span class="o">:</span> <span class="nx">win</span><span class="p">,</span>
             <span class="nx">doc</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>
             <span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -353,14 +382,15 @@
             <span class="nx">fetchCSS</span><span class="o">:</span> <span class="kc">true</span>
         <span class="p">};</span>
 
-        <span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
-
-
-        <span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">||</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">||</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">getBase</span><span class="p">(</span><span class="sr">/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/</span><span class="p">,</span>
                           <span class="sr">/^(.*\?)(.*\&amp;)(.*)yui\/yui[\.\-].*js(\?.*)?$/</span><span class="p">);</span>
 
-        <span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span> <span class="o">||</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">filter</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;-min.-debug.&#39;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">filter</span><span class="p">)))</span> <span class="p">{</span>
+            <span class="nx">filter</span> <span class="o">=</span> <span class="s1">&#39;-min.&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span> <span class="o">||</span>
             <span class="s1">&#39;loader/loader&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">filter</span> <span class="o">||</span> <span class="s1">&#39;-min.&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;js&#39;</span><span class="p">;</span>
 
     <span class="p">},</span>
@@ -465,11 +495,11 @@
                 <span class="nx">details</span><span class="o">:</span> <span class="nx">details</span>
             <span class="p">},</span>
             <span class="nx">loader</span><span class="p">,</span>
-            <span class="nx">i</span><span class="p">;</span>
+            <span class="nx">i</span><span class="p">,</span> <span class="nx">versions</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">;</span>
 
         <span class="nx">env</span><span class="p">.</span><span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
-        <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
+        <span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">=</span> <span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">instances</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">instances</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
@@ -494,40 +524,59 @@
     <span class="nx">_attach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">fromLoader</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">mod</span><span class="p">,</span> <span class="nx">details</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">use</span><span class="p">,</span>
             <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
-            <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span>
             <span class="nx">done</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_attached</span><span class="p">,</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">loader</span><span class="p">;</span>
+
+        <span class="c1">// Y.log(&#39;attaching: &#39; + r, &#39;info&#39;, &#39;yui&#39;);</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-            <span class="nx">mod</span> <span class="o">=</span> <span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">[</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="nx">mod</span> <span class="o">=</span> <span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">loader</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span><span class="p">;</span>
 
-                <span class="nx">done</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="nx">details</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">details</span><span class="p">;</span>
-                <span class="nx">req</span> <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
-                <span class="nx">use</span> <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
+                    <span class="c1">// Y.log(&#39;no js def for: &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loader</span> <span class="o">||</span> <span class="o">!</span><span class="nx">loader</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">message</span><span class="p">(</span><span class="s1">&#39;NOT loaded: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
                     <span class="p">}</span>
-                <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">done</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">details</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">details</span><span class="p">;</span>
+                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
+                    <span class="nx">use</span> <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
 
-                <span class="c1">// Y.log(&#39;attaching &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">try</span> <span class="p">{</span>
-                        <span class="nx">mod</span><span class="p">.</span><span class="nx">fn</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
-                    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Attach error: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
-                        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">[</span><span class="nx">req</span><span class="p">[</span><span class="nx">j</span><span class="p">]])</span> <span class="p">{</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span>
+                                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                                <span class="p">}</span>
+                                <span class="k">break</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
-                <span class="p">}</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">use</span> <span class="o">&amp;&amp;</span> <span class="nx">use</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">use</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">try</span> <span class="p">{</span>
+                            <span class="nx">mod</span><span class="p">.</span><span class="nx">fn</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Attach error: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">use</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">use</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">[</span><span class="nx">use</span><span class="p">[</span><span class="nx">j</span><span class="p">]])</span> <span class="p">{</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">use</span><span class="p">))</span> <span class="p">{</span>
+                                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                                <span class="p">}</span>
+                                <span class="k">break</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -576,6 +625,50 @@
 <span class="cm">     * @return {YUI} the YUI instance.</span>
 <span class="cm">     */</span>
     <span class="nx">use</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">SLICE</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">key</span><span class="p">;</span>
+
+        <span class="c1">// The last argument supplied to use can be a load complete callback</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">callback</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span><span class="p">();</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">add</span><span class="p">([</span><span class="nx">args</span><span class="p">,</span> <span class="nx">callback</span><span class="p">]);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">join</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;already provisioned: &#39;</span> <span class="o">+</span> <span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">ALREADY_DONE</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_use</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;caching request: &#39;</span> <span class="o">+</span> <span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">serviced</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_notify</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="nx">callback</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">response</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;use callback error&#39;</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_use</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;yui-base&#39;</span><span class="p">]);</span>
@@ -584,19 +677,16 @@
         <span class="kd">var</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">loader</span><span class="p">,</span> <span class="nx">handleBoot</span><span class="p">,</span>
             <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">G_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="nx">SLICE</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
             <span class="nx">mods</span> <span class="o">=</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
             <span class="nx">Env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
             <span class="nx">used</span> <span class="o">=</span> <span class="nx">Env</span><span class="p">.</span><span class="nx">_used</span><span class="p">,</span>
             <span class="nx">queue</span> <span class="o">=</span> <span class="nx">G_ENV</span><span class="p">.</span><span class="nx">_loaderQueue</span><span class="p">,</span>
             <span class="nx">firstArg</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="nx">callback</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
             <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
             <span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span>
             <span class="nx">boot</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">bootstrap</span><span class="p">,</span>
             <span class="nx">missing</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nx">r</span> <span class="o">=</span> <span class="p">[],</span>
-            <span class="nx">star</span><span class="p">,</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">fetchCSS</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">fetchCSS</span><span class="p">,</span>
             <span class="nx">process</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">names</span><span class="p">,</span> <span class="nx">skip</span><span class="p">)</span> <span class="p">{</span>
@@ -645,31 +735,20 @@
                 <span class="p">});</span>
             <span class="p">},</span>
 
-            <span class="nx">notify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">try</span> <span class="p">{</span>
-                        <span class="nx">callback</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">response</span><span class="p">);</span>
-                    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;use callback error&#39;</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-
             <span class="nx">handleLoader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fromLoader</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">fromLoader</span> <span class="o">||</span> <span class="p">{</span>
                         <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
                         <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;not dynamic&#39;</span>
                     <span class="p">},</span>
-                    <span class="nx">newData</span><span class="p">,</span> <span class="nx">redo</span><span class="p">,</span> <span class="nx">origMissing</span><span class="p">,</span>
+                    <span class="nx">redo</span><span class="p">,</span> <span class="nx">origMissing</span><span class="p">,</span>
                     <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
                     <span class="nx">data</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
 
+
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-                <span class="c1">// Y.log(&#39;Use complete: &#39; + data);</span>
-
                 <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">origMissing</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+                    <span class="nx">origMissing</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">;</span>
                     <span class="nx">missing</span> <span class="o">=</span> <span class="p">[];</span>
                     <span class="nx">r</span> <span class="o">=</span> <span class="p">[];</span>
                     <span class="nx">process</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
@@ -683,85 +762,56 @@
                 <span class="p">}</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c1">// Y.log(&#39;redo r: &#39; + r);</span>
-                    <span class="c1">// Y.log(&#39;redo data: &#39; + data);</span>
-                    <span class="c1">// Y.log(&#39;redo missing: &#39; + missing);</span>
-                    <span class="c1">// Y.log(&#39;redo args: &#39; + args);</span>
-
-                    <span class="c1">// newData = data.concat();</span>
-                    <span class="c1">// newData = missing.concat();</span>
-                    <span class="nx">newData</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
-
-                    <span class="nx">newData</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested USE callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_use</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested use callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
-                            <span class="nx">notify</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
                         <span class="p">}</span>
                     <span class="p">});</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Y.log(&#39;attaching from loader: &#39; + data, &#39;info&#39;, &#39;yui&#39;);</span>
                         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">notify</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">next</span><span class="p">());</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">next</span><span class="p">());</span>
                 <span class="p">}</span>
+
             <span class="p">};</span>
-
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span><span class="p">();</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
-        <span class="p">}</span>
 
 <span class="c1">// Y.log(Y.id + &#39;: use called: &#39; + a + &#39; :: &#39; + callback, &#39;info&#39;, &#39;yui&#39;);</span>
 
-        <span class="c1">// The last argument supplied to use can be a load complete callback</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">callback</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">args</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">callback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">}</span>
-
         <span class="c1">// YUI().use(&#39;*&#39;); // bind everything available</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">firstArg</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">star</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">mods</span><span class="p">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">mods</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">handleLoader</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="c1">// Y.log(&#39;before loader requirements: &#39; + args, &#39;info&#39;, &#39;yui&#39;);</span>
 
         <span class="c1">// use loader to expand dependencies and sort the</span>
         <span class="c1">// requirements if it is available.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">star</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-
-            <span class="c1">// Y.log(&#39;checking dependences with loader&#39;, &#39;info&#39;, &#39;yui&#39;);</span>
-
+        <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="c1">// loader.allowRollup = false;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">calculate</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">.</span><span class="nx">sorted</span><span class="p">;</span>
-
-            <span class="c1">// YUI.Env.loaders[Y.config._sig] = loader;</span>
         <span class="p">}</span>
-
-        <span class="c1">// Y.log(&#39;after loader requirements: &#39; + args, &#39;info&#39;, &#39;yui&#39;);</span>
 
         <span class="c1">// process each requirement and any additional requirements</span>
         <span class="c1">// the module metadata specifies</span>
         <span class="nx">process</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
 
-        <span class="c1">// Y.log(&#39;args: &#39; + args , &#39;info&#39;, &#39;yui&#39;);</span>
-        <span class="c1">// Y.log(&#39;requires: &#39; + r, &#39;info&#39;, &#39;yui&#39;);</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
@@ -775,14 +825,15 @@
 <span class="c1">// Y.log(&#39;Using loader to fetch missing deps: &#39; + missing, &#39;info&#39;, &#39;yui&#39;);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Using Loader&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="c1">// loader = new Y.Loader(config);</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="nx">getLoader</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span> <span class="o">=</span> <span class="nx">handleLoader</span><span class="p">;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">;</span>
-            <span class="c1">// loader.attaching = args;</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">args</span><span class="p">;</span>
-            <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">((</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="nx">missing</span> <span class="o">:</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">loader</span><span class="p">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">fetchCSS</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
+            <span class="c1">// loader.partial(missing, (fetchCSS) ? null : &#39;js&#39;);</span>
+
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">use_rls</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="c1">// server side loader service</span>
@@ -796,14 +847,13 @@
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Env</span><span class="p">.</span><span class="nx">bootstrapped</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 
             <span class="nx">handleBoot</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="nx">queue</span><span class="p">.</span><span class="nx">running</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="nx">Env</span><span class="p">.</span><span class="nx">bootstrapped</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;loader&#39;</span><span class="p">]))</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_use</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">};</span>
 
@@ -819,11 +869,6 @@
             <span class="p">}</span>
 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">message</span><span class="p">(</span><span class="s1">&#39;Requirement NOT loaded: &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Instance is not provisioned to fetch missing mods: &#39;</span> <span class="o">+</span>
-       <span class="nx">missing</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attaching available dependencies: &#39;</span> <span class="o">+</span> <span class="nx">args</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span><span class="p">)</span> <span class="p">{</span>
@@ -857,13 +902,18 @@
 <span class="cm">     * @return {object}  A reference to the last namespace object created.</span>
 <span class="cm">     */</span>
     <span class="nx">namespace</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">d</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">d</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
-            <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;YAHOO&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">o</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">||</span> <span class="p">{};</span>
-                <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">arg</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// d = (&#39;&#39; + a[i]).split(&#39;.&#39;);</span>
+            <span class="nx">arg</span> <span class="o">=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">arg</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">PERIOD</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">d</span> <span class="o">=</span> <span class="nx">arg</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">PERIOD</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;YAHOO&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">o</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">||</span> <span class="p">{};</span>
+                    <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">o</span><span class="p">[</span><span class="nx">arg</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">arg</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
@@ -961,8 +1011,19 @@
         <span class="p">}</span>
         <span class="k">delete</span> <span class="nx">instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
         <span class="k">delete</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
+        <span class="k">delete</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
     <span class="p">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * instanceof check for objects that works around</span>
+<span class="cm">     * memory leak in IE when the item tested is</span>
+<span class="cm">     * window/document</span>
+<span class="cm">     * @method instanceOf</span>
+<span class="cm">     * @since 3.3.0</span>
+<span class="cm">     */</span>
 <span class="p">};</span>
+
+
 
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">proto</span><span class="p">;</span>
 
@@ -975,8 +1036,6 @@
 
     <span class="c1">// set up the environment</span>
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
-
-    <span class="c1">// setTimeout(function() { YUI._attach([&#39;yui-base&#39;]); }, 0);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">hasWin</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// add a window load event at load time so we can capture</span>
@@ -996,7 +1055,8 @@
         <span class="nx">exports</span><span class="p">.</span><span class="nx">YUI</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
     <span class="p">}</span>
 
-<span class="p">})();</span>
+<span class="p">}());</span>
+
 
 <span class="cm">/**</span>
 <span class="cm"> * The config object contains all of the configuration options for</span>
@@ -1626,7 +1686,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Array", "name": "()", "url": "Array.html#method_()", "type": "method"}, {"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "config", "name": "2in3", "url": "config.html#property_2in3", "type": "property"}, {"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "", "host": "Intl", "name": "add", "url": "Intl.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "UA", "name": "air", "url": "UA.html#property_air", "type": "property"}, {"access": "", "host": "UA", "name": "android", "url": "UA.html#property_android", "type": "property"}, {"access": "", "host": "YUI", "name": "applyConfig", "url": "YUI.html#method_applyConfig", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "private", "host": "YUI", "name": "_attach", "url": "YUI.html#method__attach", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "config", "name": "base", "url": "config.html#property_base", "type": "property"}, {"access": "", "host": "config", "name": "bootstrap", "url": "config.html#property_bootstrap", "type": "property"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "UA", "name": "caja", "url": "UA.html#property_caja", "type": "property"}, {"access": "", "host": "UA", "name": "chrome", "url": "UA.html#property_chrome", "type": "property"}, {"access": "", "host": "config", "name": "combine", "url": "config.html#property_combine", "type": "property"}, {"access": "", "host": "config", "name": "comboBase", "url": "config.html#property_comboBase", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "config", "name": "core", "url": "config.html#property_core", "type": "property"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "", "host": "config", "name": "cssAttributes", "url": "config.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "config", "name": "dateFormat", "url": "config.html#property_dateFormat", "type": "property"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#method_delegate", "type": "method"}, {"access": "protected", "host": "YUI", "name": "delegate._applyFilter", "url": "YUI.html#method_delegate._applyFilter", "type": "method"}, {"access": "", "host": "YUI", "name": "delegate.compileFilter", "url": "YUI.html#method_delegate.compileFilter", "type": "method"}, {"access": "private", "host": "YUI", "name": "delegate.notifySub", "url": "YUI.html#method_delegate.notifySub", "type": "method"}, {"access": "", "host": "YUI", "name": "destroy", "url": "YUI.html#method_destroy", "type": "method"}, {"access": "", "host": "config", "name": "doc", "url": "config.html#property_doc", "type": "property"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "Array", "name": "each", "url": "Array.html#method_each", "type": "method"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "private", "host": "Get", "name": "_end", "url": "Get.html#method__end", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "config", "name": "errorFn", "url": "config.html#property_errorFn", "type": "property"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "config", "name": "fetchCSS", "url": "config.html#property_fetchCSS", "type": "property"}, {"access": "", "host": "config", "name": "filter", "url": "config.html#property_filter", "type": "property"}, {"access": "", "host": "config", "name": "filters", "url": "config.html#property_filters", "type": "property"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "", "host": "YUI", "name": "flick", "url": "YUI.html#event_flick", "type": "event"}, {"access": "", "host": "config", "name": "force", "url": "config.html#property_force", "type": "property"}, {"access": "", "host": "config", "name": "gallery", "url": "config.html#property_gallery", "type": "property"}, {"access": "", "host": "UA", "name": "gecko", "url": "UA.html#property_gecko", "type": "property"}, {"access": "", "host": "YUI", "name": "gesturemove", "url": "YUI.html#event_gesturemove", "type": "event"}, {"access": "", "host": "YUI", "name": "gesturemoveend", "url": "YUI.html#event_gesturemoveend", "type": "event"}, {"access": "", "host": "YUI", "name": "gesturemovestart", "url": "YUI.html#event_gesturemovestart", "type": "event"}, {"access": "", "host": "Intl", "name": "get", "url": "Intl.html#method_get", "type": "method"}, {"access": "", "host": "Intl", "name": "getAvailableLangs", "url": "Intl.html#method_getAvailableLangs", "type": "method"}, {"access": "", "host": "Intl", "name": "getLang", "url": "Intl.html#method_getLang", "type": "method"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Array", "name": "hash", "url": "Array.html#method_hash", "type": "method"}, {"access": "", "host": "YUI", "name": "hashchange", "url": "YUI.html#event_hashchange", "type": "event"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "UA", "name": "ie", "url": "UA.html#property_ie", "type": "property"}, {"access": "", "host": "config", "name": "ignore", "url": "config.html#property_ignore", "type": "property"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Array", "name": "indexOf", "url": "Array.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "config", "name": "injected", "url": "config.html#property_injected", "type": "property"}, {"access": "", "host": "config", "name": "insertBefore", "url": "config.html#property_insertBefore", "type": "property"}, {"access": "", "host": "Intl", "name": "intl:langChange", "url": "Intl.html#event_intl:langChange", "type": "event"}, {"access": "", "host": "UA", "name": "ios", "url": "UA.html#property_ios", "type": "property"}, {"access": "", "host": "UA", "name": "ipad", "url": "UA.html#property_ipad", "type": "property"}, {"access": "", "host": "UA", "name": "iphone", "url": "UA.html#property_iphone", "type": "property"}, {"access": "", "host": "UA", "name": "ipod", "url": "UA.html#property_ipod", "type": "property"}, {"access": "", "host": "Lang", "name": "isArray", "url": "Lang.html#method_isArray", "type": "method"}, {"access": "", "host": "Lang", "name": "isBoolean", "url": "Lang.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Lang", "name": "isDate", "url": "Lang.html#method_isDate", "type": "method"}, {"access": "", "host": "Object", "name": "isEmpty", "url": "Object.html#method_isEmpty", "type": "method"}, {"access": "", "host": "Lang", "name": "isFunction", "url": "Lang.html#method_isFunction", "type": "method"}, {"access": "", "host": "Lang", "name": "isNull", "url": "Lang.html#method_isNull", "type": "method"}, {"access": "", "host": "Lang", "name": "isNumber", "url": "Lang.html#method_isNumber", "type": "method"}, {"access": "", "host": "Lang", "name": "isObject", "url": "Lang.html#method_isObject", "type": "method"}, {"access": "", "host": "Lang", "name": "isString", "url": "Lang.html#method_isString", "type": "method"}, {"access": "", "host": "Lang", "name": "isUndefined", "url": "Lang.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Lang", "name": "isValue", "url": "Lang.html#method_isValue", "type": "method"}, {"access": "", "host": "config", "name": "jsAttributes", "url": "config.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "config", "name": "lang", "url": "config.html#property_lang", "type": "property"}, {"access": "", "host": "Queue", "name": "last", "url": "Queue.html#method_last", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "", "host": "config", "name": "loaderPath", "url": "config.html#property_loaderPath", "type": "property"}, {"access": "", "host": "config", "name": "locale", "url": "config.html#property_locale", "type": "property"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "config", "name": "logExclude", "url": "config.html#property_logExclude", "type": "property"}, {"access": "", "host": "config", "name": "logFn", "url": "config.html#property_logFn", "type": "property"}, {"access": "", "host": "config", "name": "logInclude", "url": "config.html#property_logInclude", "type": "property"}, {"access": "", "host": "Intl", "name": "lookupBestLang", "url": "Intl.html#method_lookupBestLang", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "UA", "name": "mobile", "url": "UA.html#property_mobile", "type": "property"}, {"access": "private", "host": "Intl", "name": "_mod", "url": "Intl.html#method__mod", "type": "method"}, {"access": "", "host": "config", "name": "modules", "url": "config.html#property_modules", "type": "property"}, {"access": "", "host": "YUI", "name": "mousewheel", "url": "YUI.html#event_mousewheel", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "", "host": "Array", "name": "numericSort", "url": "Array.html#method_numericSort", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "", "host": "YUI", "name": "once", "url": "YUI.html#method_once", "type": "method"}, {"access": "", "host": "config", "name": "onCSS", "url": "config.html#property_onCSS", "type": "property"}, {"access": "", "host": "UA", "name": "opera", "url": "UA.html#property_opera", "type": "property"}, {"access": "", "host": "UA", "name": "os", "url": "UA.html#property_os", "type": "property"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "config", "name": "pollInterval", "url": "config.html#property_pollInterval", "type": "property"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "private", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "", "host": "config", "name": "purgethreshold", "url": "config.html#property_purgethreshold", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Queue", "name": "_rls", "url": "Queue.html#method__rls", "type": "method"}, {"access": "", "host": "config", "name": "rls", "url": "config.html#property_rls", "type": "property"}, {"access": "", "host": "config", "name": "rls_base", "url": "config.html#property_rls_base", "type": "property"}, {"access": "", "host": "config", "name": "rls_tmpl", "url": "config.html#property_rls_tmpl", "type": "property"}, {"access": "", "host": "config", "name": "root", "url": "config.html#property_root", "type": "property"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "", "host": "UA", "name": "secure", "url": "UA.html#property_secure", "type": "property"}, {"access": "", "host": "Intl", "name": "setLang", "url": "Intl.html#method_setLang", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "config", "name": "skin", "url": "config.html#property_skin", "type": "property"}, {"access": "", "host": "Array", "name": "some", "url": "Array.html#method_some", "type": "method"}, {"access": "", "host": "Object", "name": "some", "url": "Object.html#method_some", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "Lang", "name": "sub", "url": "Lang.html#method_sub", "type": "method"}, {"access": "", "host": "Array", "name": "test", "url": "Array.html#method_test", "type": "method"}, {"access": "", "host": "YUI", "name": "throttle", "url": "YUI.html#method_throttle", "type": "method"}, {"access": "", "host": "config", "name": "throwFail", "url": "config.html#property_throwFail", "type": "property"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "", "host": "config", "name": "timeout", "url": "config.html#property_timeout", "type": "property"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}, {"access": "", "host": "Lang", "name": "trim", "url": "Lang.html#method_trim", "type": "method"}, {"access": "", "host": "Lang", "name": "type", "url": "Lang.html#method_type", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "config", "name": "useBrowserConsole", "url": "config.html#property_useBrowserConsole", "type": "property"}, {"access": "", "host": "config", "name": "useHistoryHTML5", "url": "config.html#property_useHistoryHTML5", "type": "property"}, {"access": "", "host": "config", "name": "use_rls", "url": "config.html#property_use_rls", "type": "property"}, {"access": "", "host": "YUI", "name": "valueChange", "url": "YUI.html#event_valueChange", "type": "event"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "YUI", "name": "version", "url": "YUI.html#property_version", "type": "property"}, {"access": "", "host": "UA", "name": "webkit", "url": "UA.html#property_webkit", "type": "property"}, {"access": "", "host": "config", "name": "win", "url": "config.html#property_win", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}, {"access": "", "host": "config", "name": "windowResizeDelay", "url": "config.html#property_windowResizeDelay", "type": "property"}, {"access": "", "host": "config", "name": "yui2", "url": "config.html#property_yui2", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Array", "name": "()", "url": "Array.html#method_()", "type": "method"}, {"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "config", "name": "2in3", "url": "config.html#property_2in3", "type": "property"}, {"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "", "host": "Intl", "name": "add", "url": "Intl.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "UA", "name": "air", "url": "UA.html#property_air", "type": "property"}, {"access": "", "host": "UA", "name": "android", "url": "UA.html#property_android", "type": "property"}, {"access": "", "host": "YUI", "name": "applyConfig", "url": "YUI.html#method_applyConfig", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "private", "host": "YUI", "name": "_attach", "url": "YUI.html#method__attach", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "config", "name": "base", "url": "config.html#property_base", "type": "property"}, {"access": "", "host": "config", "name": "bootstrap", "url": "config.html#property_bootstrap", "type": "property"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "UA", "name": "caja", "url": "UA.html#property_caja", "type": "property"}, {"access": "", "host": "UA", "name": "chrome", "url": "UA.html#property_chrome", "type": "property"}, {"access": "", "host": "config", "name": "combine", "url": "config.html#property_combine", "type": "property"}, {"access": "", "host": "config", "name": "comboBase", "url": "config.html#property_comboBase", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "config", "name": "core", "url": "config.html#property_core", "type": "property"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "", "host": "config", "name": "cssAttributes", "url": "config.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "config", "name": "dateFormat", "url": "config.html#property_dateFormat", "type": "property"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#method_delegate", "type": "method"}, {"access": "protected", "host": "YUI", "name": "delegate._applyFilter", "url": "YUI.html#method_delegate._applyFilter", "type": "method"}, {"access": "", "host": "YUI", "name": "delegate.compileFilter", "url": "YUI.html#method_delegate.compileFilter", "type": "method"}, {"access": "private", "host": "YUI", "name": "delegate.notifySub", "url": "YUI.html#method_delegate.notifySub", "type": "method"}, {"access": "", "host": "YUI", "name": "destroy", "url": "YUI.html#method_destroy", "type": "method"}, {"access": "", "host": "config", "name": "doc", "url": "config.html#property_doc", "type": "property"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "Array", "name": "each", "url": "Array.html#method_each", "type": "method"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "private", "host": "Get", "name": "_end", "url": "Get.html#method__end", "type": "method"}, {"access": "", "host": "YUI", "name": "Env.meta", "url": "YUI.html#property_Env.meta", "type": "property"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "config", "name": "errorFn", "url": "config.html#property_errorFn", "type": "property"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "config", "name": "fetchCSS", "url": "config.html#property_fetchCSS", "type": "property"}, {"access": "", "host": "config", "name": "filter", "url": "config.html#property_filter", "type": "property"}, {"access": "", "host": "config", "name": "filters", "url": "config.html#property_filters", "type": "property"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "", "host": "YUI", "name": "flick", "url": "YUI.html#event_flick", "type": "event"}, {"access": "", "host": "config", "name": "force", "url": "config.html#property_force", "type": "property"}, {"access": "", "host": "config", "name": "gallery", "url": "config.html#property_gallery", "type": "property"}, {"access": "", "host": "UA", "name": "gecko", "url": "UA.html#property_gecko", "type": "property"}, {"access": "", "host": "YUI", "name": "gesturemove", "url": "YUI.html#event_gesturemove", "type": "event"}, {"access": "", "host": "YUI", "name": "gesturemoveend", "url": "YUI.html#event_gesturemoveend", "type": "event"}, {"access": "", "host": "YUI", "name": "gesturemovestart", "url": "YUI.html#event_gesturemovestart", "type": "event"}, {"access": "", "host": "Intl", "name": "get", "url": "Intl.html#method_get", "type": "method"}, {"access": "", "host": "Intl", "name": "getAvailableLangs", "url": "Intl.html#method_getAvailableLangs", "type": "method"}, {"access": "", "host": "Intl", "name": "getLang", "url": "Intl.html#method_getLang", "type": "method"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Array", "name": "hash", "url": "Array.html#method_hash", "type": "method"}, {"access": "", "host": "YUI", "name": "hashchange", "url": "YUI.html#event_hashchange", "type": "event"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "UA", "name": "ie", "url": "UA.html#property_ie", "type": "property"}, {"access": "", "host": "config", "name": "ignore", "url": "config.html#property_ignore", "type": "property"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Array", "name": "indexOf", "url": "Array.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "config", "name": "injected", "url": "config.html#property_injected", "type": "property"}, {"access": "", "host": "config", "name": "insertBefore", "url": "config.html#property_insertBefore", "type": "property"}, {"access": "", "host": "YUI", "name": "instanceOf", "url": "YUI.html#method_instanceOf", "type": "method"}, {"access": "", "host": "Intl", "name": "intl:langChange", "url": "Intl.html#event_intl:langChange", "type": "event"}, {"access": "", "host": "UA", "name": "ios", "url": "UA.html#property_ios", "type": "property"}, {"access": "", "host": "UA", "name": "ipad", "url": "UA.html#property_ipad", "type": "property"}, {"access": "", "host": "UA", "name": "iphone", "url": "UA.html#property_iphone", "type": "property"}, {"access": "", "host": "UA", "name": "ipod", "url": "UA.html#property_ipod", "type": "property"}, {"access": "", "host": "Lang", "name": "isArray", "url": "Lang.html#method_isArray", "type": "method"}, {"access": "", "host": "Lang", "name": "isBoolean", "url": "Lang.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Lang", "name": "isDate", "url": "Lang.html#method_isDate", "type": "method"}, {"access": "", "host": "Object", "name": "isEmpty", "url": "Object.html#method_isEmpty", "type": "method"}, {"access": "", "host": "Lang", "name": "isFunction", "url": "Lang.html#method_isFunction", "type": "method"}, {"access": "", "host": "Lang", "name": "isNull", "url": "Lang.html#method_isNull", "type": "method"}, {"access": "", "host": "Lang", "name": "isNumber", "url": "Lang.html#method_isNumber", "type": "method"}, {"access": "", "host": "Lang", "name": "isObject", "url": "Lang.html#method_isObject", "type": "method"}, {"access": "", "host": "Lang", "name": "isString", "url": "Lang.html#method_isString", "type": "method"}, {"access": "", "host": "Lang", "name": "isUndefined", "url": "Lang.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Lang", "name": "isValue", "url": "Lang.html#method_isValue", "type": "method"}, {"access": "", "host": "config", "name": "jsAttributes", "url": "config.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "config", "name": "lang", "url": "config.html#property_lang", "type": "property"}, {"access": "", "host": "Queue", "name": "last", "url": "Queue.html#method_last", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "", "host": "config", "name": "loaderPath", "url": "config.html#property_loaderPath", "type": "property"}, {"access": "", "host": "config", "name": "locale", "url": "config.html#property_locale", "type": "property"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "config", "name": "logExclude", "url": "config.html#property_logExclude", "type": "property"}, {"access": "", "host": "config", "name": "logFn", "url": "config.html#property_logFn", "type": "property"}, {"access": "", "host": "config", "name": "logInclude", "url": "config.html#property_logInclude", "type": "property"}, {"access": "", "host": "Intl", "name": "lookupBestLang", "url": "Intl.html#method_lookupBestLang", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "UA", "name": "mobile", "url": "UA.html#property_mobile", "type": "property"}, {"access": "private", "host": "Intl", "name": "_mod", "url": "Intl.html#method__mod", "type": "method"}, {"access": "", "host": "config", "name": "modules", "url": "config.html#property_modules", "type": "property"}, {"access": "", "host": "YUI", "name": "mousewheel", "url": "YUI.html#event_mousewheel", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "", "host": "Array", "name": "numericSort", "url": "Array.html#method_numericSort", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "", "host": "YUI", "name": "once", "url": "YUI.html#method_once", "type": "method"}, {"access": "", "host": "config", "name": "onCSS", "url": "config.html#property_onCSS", "type": "property"}, {"access": "", "host": "UA", "name": "opera", "url": "UA.html#property_opera", "type": "property"}, {"access": "", "host": "UA", "name": "os", "url": "UA.html#property_os", "type": "property"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "config", "name": "pollInterval", "url": "config.html#property_pollInterval", "type": "property"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "private", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "", "host": "config", "name": "purgethreshold", "url": "config.html#property_purgethreshold", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Queue", "name": "_rls", "url": "Queue.html#method__rls", "type": "method"}, {"access": "", "host": "config", "name": "rls", "url": "config.html#property_rls", "type": "property"}, {"access": "", "host": "config", "name": "rls_base", "url": "config.html#property_rls_base", "type": "property"}, {"access": "", "host": "config", "name": "rls_tmpl", "url": "config.html#property_rls_tmpl", "type": "property"}, {"access": "", "host": "config", "name": "root", "url": "config.html#property_root", "type": "property"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "", "host": "UA", "name": "secure", "url": "UA.html#property_secure", "type": "property"}, {"access": "", "host": "Intl", "name": "setLang", "url": "Intl.html#method_setLang", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "config", "name": "skin", "url": "config.html#property_skin", "type": "property"}, {"access": "", "host": "Array", "name": "some", "url": "Array.html#method_some", "type": "method"}, {"access": "", "host": "Object", "name": "some", "url": "Object.html#method_some", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "Lang", "name": "sub", "url": "Lang.html#method_sub", "type": "method"}, {"access": "", "host": "Array", "name": "test", "url": "Array.html#method_test", "type": "method"}, {"access": "", "host": "YUI", "name": "throttle", "url": "YUI.html#method_throttle", "type": "method"}, {"access": "", "host": "config", "name": "throwFail", "url": "config.html#property_throwFail", "type": "property"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "", "host": "config", "name": "timeout", "url": "config.html#property_timeout", "type": "property"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}, {"access": "", "host": "Lang", "name": "trim", "url": "Lang.html#method_trim", "type": "method"}, {"access": "", "host": "Lang", "name": "trimLeft", "url": "Lang.html#method_trimLeft", "type": "method"}, {"access": "", "host": "Lang", "name": "trimRight", "url": "Lang.html#method_trimRight", "type": "method"}, {"access": "", "host": "Lang", "name": "type", "url": "Lang.html#method_type", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "config", "name": "useBrowserConsole", "url": "config.html#property_useBrowserConsole", "type": "property"}, {"access": "", "host": "config", "name": "useHistoryHTML5", "url": "config.html#property_useHistoryHTML5", "type": "property"}, {"access": "", "host": "config", "name": "use_rls", "url": "config.html#property_use_rls", "type": "property"}, {"access": "", "host": "YUI", "name": "valueChange", "url": "YUI.html#event_valueChange", "type": "event"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "YUI", "name": "version", "url": "YUI.html#property_version", "type": "property"}, {"access": "", "host": "UA", "name": "webkit", "url": "UA.html#property_webkit", "type": "property"}, {"access": "", "host": "config", "name": "win", "url": "config.html#property_win", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}, {"access": "", "host": "config", "name": "windowResizeDelay", "url": "config.html#property_windowResizeDelay", "type": "property"}, {"access": "", "host": "config", "name": "yui2", "url": "config.html#property_yui2", "type": "property"}];
 </script>
 </body>
 </html>

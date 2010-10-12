@@ -71,8 +71,8 @@
 publish, subscribe and fire to custom events, and also
 alows other EventTargets to target the object with events
 sourced from the other object.
-EventTarget is designed to be used with Y.augment to wrap 
-EventCustom in an interface that allows events to be listened to 
+EventTarget is designed to be used with Y.augment to wrap
+EventCustom in an interface that allows events to be listened to
 and fired by name.  This makes it possible for implementing code to
 subscribe to an event that either has not been created yet, or will
 not be created at all.
@@ -135,7 +135,7 @@ applied to the supplied type.
                                         
                                         <div class="description" property="yui:description">
                                             This is the entry point for the event monitoring system.
-You can monitor 'attach', 'detach', 'fire', and 'publish'.  
+You can monitor 'attach', 'detach', 'fire', and 'publish'.
 When configured, these events generate an event.  click ->
 click_attach, click_detach, click_publish -- these can
 be subscribed to like other events to monitor the event
@@ -391,7 +391,7 @@ callback, object (method host), methodName, context, 0-n arguments
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">evt</span>
-                                                        &lt;<span property="yui:type">Event.Custom</span>&gt;
+                                                        &lt;<span property="yui:type">CustomEvent</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  the custom event to propagate</span>
                                                         </dd>
@@ -452,7 +452,7 @@ callback, object (method host), methodName, context, 0-n arguments
                                                         <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">string|Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">    Either the handle to the subscriber or the 
+                                                        <span property="yui:description">    Either the handle to the subscriber or the
 type of event.  If the type
 is not specified, it will attempt to remove
 the listener from all hosted events.</span>
@@ -563,17 +563,17 @@ be removed.
                                         
                                         <div class="description" property="yui:description">
                                             Fire a custom event by name.  The callback functions will be executed
-from the context specified when the event was created, and with the 
+from the context specified when the event was created, and with the
 following parameters.
-If the custom event object hasn't been created, then the event hasn't 
-been published and it has no subscribers.  For performance sake, we 
-immediate exit in this case.  This means the event won't bubble, so 
-if the intention is that a bubble target be notified, the event must 
+If the custom event object hasn't been created, then the event hasn't
+been published and it has no subscribers.  For performance sake, we
+immediate exit in this case.  This means the event won't bubble, so
+if the intention is that a bubble target be notified, the event must
 be published on this object first.
 The first argument is the event type, and any additional arguments are
 passed to the listeners as parameters.  If the first of these is an
 object literal, and the event is configured to emit an event facade,
-that object is mixed into the event facade and the facade is provided 
+that object is mixed into the event facade and the facade is provided
 in place of the original object.
                                         </div>
 
@@ -592,7 +592,7 @@ a 'type' property.</span>
                                                         <code><span property="yui:name">arguments</span>
                                                         &lt;<span property="yui:type">Object*</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  an arbitrary set of parameters to pass to 
+                                                        <span property="yui:description">  an arbitrary set of parameters to pass to
 the handler.  If the first of these is an object literal and the event is
 configured to emit an event facade, the event facade will replace that
 parameter after the properties the object literal contains are copied to
@@ -826,7 +826,7 @@ falsy value otherwise
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Listen to a custom event hosted by this object one time.  
+                                            Listen to a custom event hosted by this object one time.
 This is the equivalent to <code>on</code> except the
 listener is immediatelly detached when it is executed.
                                         </div>
@@ -938,7 +938,7 @@ Events can only bubble if emitFacade is true.
 'emitFacade': whether or not this event emits a facade (false)
 </li>
 <li>
-'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click' 
+'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click'
 </li>
 <li>
 'fireOnce': if an event is configured to fire once, new subscribers after

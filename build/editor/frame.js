@@ -71,6 +71,7 @@ YUI.add('frame', function(Y) {
                 LANG: this.get('lang'),
                 TITLE: this.get('title'),
                 META: Frame.META,
+                LINKED_CSS: this.get('linkedcss'),
                 CONTENT: this.get('content'),
                 BASE_HREF: this.get('basehref'),
                 DEFAULT_CSS: Frame.DEFAULT_CSS,
@@ -331,6 +332,27 @@ YUI.add('frame', function(Y) {
             }
             return html;
         },
+        _getLinkedCSS: function(urls) {
+            if (!Y.Lang.isArray(urls)) {
+                urls = [urls];
+            }
+            var str = '';
+            if (!this._ready) {
+                Y.each(urls, function(v) {
+                    str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                });
+            } else {
+                str = urls;
+            }
+            return str;
+        },
+        _setLinkedCSS: function(css) {
+            if (this._ready) {
+                var inst = this.getInstance();
+                inst.Get.css(css);
+            }
+            return css;
+        },
         /**
         * @private
         * @method _setExtraCSS
@@ -472,6 +494,26 @@ YUI.add('frame', function(Y) {
             return this;
         },
         /**
+        * @private
+        * @method _handleFocus
+        * @description Does some tricks on focus to set the proper cursor position.
+        */
+        _handleFocus: function() {
+            var inst = this.getInstance(),
+                sel = new inst.Selection();
+
+            if (sel.anchorNode) {
+                var n = sel.anchorNode,
+                    c = n.get('childNodes');
+
+                if (c.size() == 1) {
+                    if (c.item(0).test('br')) {
+                        sel.selectNode(n, true, false);
+                    }
+                }
+            }
+        },
+        /**
         * @method focus
         * @description Set the focus to the iframe
         * @param {Function} fn Callback function to execute after focus happens        
@@ -480,8 +522,14 @@ YUI.add('frame', function(Y) {
         */
         focus: function(fn) {
             if (Y.UA.ie) {
-                Y.one('win').focus();
-                this.getInstance().one('win').focus();
+                try {
+                    Y.one('win').focus();
+                    this.getInstance().one('win').focus();
+                } catch (ierr) {
+                }
+                if (fn === true) {
+                    this._handleFocus();
+                }
                 if (Y.Lang.isFunction(fn)) {
                     fn();
                 }
@@ -490,6 +538,9 @@ YUI.add('frame', function(Y) {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         this.getInstance().one('win').focus();
+                        if (fn === true) {
+                            this._handleFocus();
+                        }
                         if (Y.Lang.isFunction(fn)) {
                             fn();
                         }
@@ -558,11 +609,7 @@ YUI.add('frame', function(Y) {
         * @description The default css used when creating the document.
         * @type String
         */
-        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
-        
-        //DEFAULT_CSS: 'html { } body { margin: -15px 0 0 -15px; padding: 7px 0 0 15px; display: block; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
-        //DEFAULT_CSS: 'html { height: 95%; } body { height: 100%; padding: 7px; margin: 0 0 0 -7px; postion: relative; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
-        //DEFAULT_CSS: 'html { margin: 0; padding: 0; border: none; border-size: 0; } body { height: 97%; margin: 0; padding: 0; display: block; background-color: gray; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; }',
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0; *height: 0; *width: 0; *font-size: 0; *overflow: hidden; }',
         /**
         * @static
         * @property HTML
@@ -577,7 +624,7 @@ YUI.add('frame', function(Y) {
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/>{LINKED_CSS}<style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
         /**
         * @static
         * @property DOC_TYPE
@@ -700,6 +747,16 @@ YUI.add('frame', function(Y) {
                 }
             },
             /**
+            * @attribute linkedcss
+            * @description An array of url's to external linked style sheets
+            * @type String
+            */
+            linkedcss: {
+                value: '',
+                getter: '_getLinkedCSS',
+                setter: '_setLinkedCSS'
+            },
+            /**
             * @attribute extracss
             * @description A string of CSS to add to the Head of the Editor
             * @type String
@@ -724,4 +781,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});

@@ -1,0 +1,20 @@
+{
+    "datatable": {
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset",
+                    "widget"
+                ],
+                "skinnable": true
+            },
+            "datatable-sort": {
+                "requires": [
+                    "arraysort",
+                    "datatable-base",
+                    "plugin"
+                ]
+            }
+        }
+    }
+}

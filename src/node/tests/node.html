@@ -1211,6 +1211,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Assert.areEqual('foo', node.getData('foo'),
                 "node.setData('foo', 'foo')");
 
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData()");
+
             node.setData({'bar': 'bar', 'baz': 'baz'});
             Assert.areEqual('bar', node.getData('bar'),
                 "node.setData({'bar': 'bar', 'baz': 'baz'})");
@@ -1228,6 +1232,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.clearData();
             Assert.areEqual(undefined, node.getData('baz'),
                 "node.clearData()");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData() after cleared");
         },
 
         test_appendStyle: function() {
@@ -1361,11 +1369,25 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         },
 
         test_prependFrag: function() {
-            var html = '<link id="dyn-link-1" href="#"><link id="dyn-link-2" href="#">';
+            var html = '<link id="dyn-link-1" href="#" rel="stylesheet"><link id="dyn-link-2" href="#" rel="stylesheet">';
             Y.one('head').prepend(html);
             //Y.one('head').prepend(Y.Node.create(html));
             Assert.isNotNull(document.getElementById('dyn-link-1'));
             Assert.isNotNull(document.getElementById('dyn-link-2'));
+
+            html = '<link id="dyn-link-3" href="#" rel="stylesheet">'
+            Y.one('head').prepend(html);
+            Assert.isNotNull(document.getElementById('dyn-link-3'));
+        },
+
+        test_focus: function () {
+            var button = document.createElement('button');
+            button.style.visibility = 'hidden';
+            document.body.appendChild(button);
+
+            // This will throw in IE, but the focus() wrapper should catch the
+            // exception.
+            Y.one(button).focus();
         }
 
     })); 

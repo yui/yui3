@@ -48,29 +48,28 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM </span>
+<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM</span>
 <span class="cm"> * events.</span>
 <span class="cm"> * @module event-custom</span>
 <span class="cm"> * @submodule event-custom-base</span>
 <span class="cm"> */</span>
-<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * EventTarget provides the implementation for any object to</span>
 <span class="cm"> * publish, subscribe and fire to custom events, and also</span>
 <span class="cm"> * alows other EventTargets to target the object with events</span>
 <span class="cm"> * sourced from the other object.</span>
-<span class="cm"> * EventTarget is designed to be used with Y.augment to wrap </span>
-<span class="cm"> * EventCustom in an interface that allows events to be listened to </span>
+<span class="cm"> * EventTarget is designed to be used with Y.augment to wrap</span>
+<span class="cm"> * EventCustom in an interface that allows events to be listened to</span>
 <span class="cm"> * and fired by name.  This makes it possible for implementing code to</span>
 <span class="cm"> * subscribe to an event that either has not been created yet, or will</span>
 <span class="cm"> * not be created at all.</span>
 <span class="cm"> * @class EventTarget</span>
 <span class="cm"> * @param opts a configuration object</span>
-<span class="cm"> * @config emitFacade {boolean} if true, all events will emit event </span>
+<span class="cm"> * @config emitFacade {boolean} if true, all events will emit event</span>
 <span class="cm"> * facade payloads by default (default false)</span>
-<span class="cm"> * @config prefix {string} the prefix to apply to non-prefixed event names </span>
-<span class="cm"> * @config chain {boolean} if true, on/after/detach return the host to allow </span>
+<span class="cm"> * @config prefix {string} the prefix to apply to non-prefixed event names</span>
+<span class="cm"> * @config chain {boolean} if true, on/after/detach return the host to allow</span>
 <span class="cm"> * chaining, otherwise they return an EventHandle (default false)</span>
 <span class="cm"> */</span>
 
@@ -95,7 +94,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">pre</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">||</span> <span class="nx">type</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">PREFIX_DELIMITER</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">type</span><span class="p">;</span>
-        <span class="p">}</span> 
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">pre</span> <span class="o">+</span> <span class="nx">PREFIX_DELIMITER</span> <span class="o">+</span> <span class="nx">type</span><span class="p">;</span>
     <span class="p">}),</span>
@@ -113,8 +112,8 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">t</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">t</span><span class="p">;</span>
-        <span class="p">}</span> 
-        
+        <span class="p">}</span>
+
         <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">AFTER_PREFIX</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -158,7 +157,7 @@
             <span class="nx">bubbling</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
 
             <span class="nx">defaults</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">context</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span> 
+                <span class="nx">context</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span>
                 <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span>
                 <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">,</span>
                 <span class="nx">fireOnce</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">fireOnce</span><span class="p">,</span>
@@ -176,7 +175,7 @@
 <span class="nx">ET</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Listen to a custom event hosted by this object one time.  </span>
+<span class="cm">     * Listen to a custom event hosted by this object one time.</span>
 <span class="cm">     * This is the equivalent to &lt;code&gt;on&lt;/code&gt; except the</span>
 <span class="cm">     * listener is immediatelly detached when it is executed.</span>
 <span class="cm">     * @method once</span>
@@ -188,7 +187,7 @@
 <span class="cm">     */</span>
     <span class="nx">once</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-        <span class="nx">handle</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">hand</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">handle</span><span class="p">.</span><span class="nx">batch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">hand</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">hand</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
@@ -198,7 +197,7 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Subscribe to a custom event hosted by this object</span>
-<span class="cm">     * @method on </span>
+<span class="cm">     * @method on</span>
 <span class="cm">     * @param type    {string}   The type of the event</span>
 <span class="cm">     * @param fn {Function} The callback</span>
 <span class="cm">     * @param context {object} optional execution context.</span>
@@ -213,7 +212,7 @@
 
         <span class="c1">// full name, args, detachcategory, after</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;attach&#39;</span><span class="p">,</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">{</span>
-            <span class="nx">args</span><span class="o">:</span> <span class="nx">arguments</span><span class="p">,</span> 
+            <span class="nx">args</span><span class="o">:</span> <span class="nx">arguments</span><span class="p">,</span>
             <span class="nx">category</span><span class="o">:</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="nx">after</span><span class="o">:</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
         <span class="p">});</span>
@@ -224,8 +223,8 @@
                 <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
             <span class="p">}</span>
 
-            <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">;</span> 
-            <span class="nx">c</span> <span class="o">=</span> <span class="nx">context</span><span class="p">;</span> 
+            <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">;</span>
+            <span class="nx">c</span> <span class="o">=</span> <span class="nx">context</span><span class="p">;</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="p">[];</span>
 
@@ -256,13 +255,13 @@
             <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">chain</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">ret</span><span class="p">);</span>
 
         <span class="p">}</span>
-        
+
         <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
         <span class="nx">after</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
         <span class="nx">shorttype</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
 
         <span class="c1">// extra redirection so we catch adaptor events too.  take a look at this.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">Node</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
             <span class="c1">// Y.log(&quot;Node detected, redirecting with these args: &quot; + args);</span>
@@ -271,7 +270,7 @@
 
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
 
             <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
             <span class="nx">args</span>  <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
@@ -280,9 +279,9 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">getDOMNodes</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">Node</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">n</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
                 <span class="p">}</span>
 
@@ -302,7 +301,7 @@
                 <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="p">}</span>
 
-        <span class="p">}</span> 
+        <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
@@ -331,8 +330,8 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Detach one or more listeners the from the specified event</span>
-<span class="cm">     * @method detach </span>
-<span class="cm">     * @param type {string|Object}   Either the handle to the subscriber or the </span>
+<span class="cm">     * @method detach</span>
+<span class="cm">     * @param type {string|Object}   Either the handle to the subscriber or the</span>
 <span class="cm">     *                        type of event.  If the type</span>
 <span class="cm">     *                        is not specified, it will attempt to remove</span>
 <span class="cm">     *                        the listener from all hosted events.</span>
@@ -347,7 +346,7 @@
 <span class="cm">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span>
-            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">isNode</span> <span class="o">=</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="p">);</span>
+            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">isNode</span> <span class="o">=</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">Node</span><span class="p">));</span>
 
         <span class="c1">// detachAll disabled on the Y instance.</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="o">!==</span> <span class="nx">Y</span><span class="p">))</span> <span class="p">{</span>
@@ -363,7 +362,7 @@
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">),</span> 
+        <span class="kd">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">),</span>
         <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">parts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         <span class="nx">shorttype</span> <span class="o">=</span> <span class="p">(</span><span class="nx">parts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         <span class="nx">adapt</span><span class="p">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">handles</span><span class="p">,</span> <span class="nx">detachhost</span><span class="p">,</span> <span class="nx">cat</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span>
@@ -416,7 +415,7 @@
         <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">shorttype</span><span class="p">];</span>
 
         <span class="c1">// The YUI instance handles DOM events and adaptors</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="c1">// use the adaptor specific detach code if</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="p">.</span><span class="nx">detach</span><span class="p">)</span> <span class="p">{</span>
@@ -448,7 +447,7 @@
 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventTarget unsubscribe() is deprecated, use detach()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * Removes all listeners from the specified event.  If the event type</span>
 <span class="cm">     * is not specified, all listeners from all hosted custom events will</span>
@@ -476,7 +475,7 @@
     <span class="cm">/**</span>
 <span class="cm">     * Creates a new custom event of the specified type.  If a custom event</span>
 <span class="cm">     * by that name already exists, it will not be re-created.  In either</span>
-<span class="cm">     * case the custom event is returned. </span>
+<span class="cm">     * case the custom event is returned.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method publish</span>
 <span class="cm">     *</span>
@@ -501,7 +500,7 @@
 <span class="cm">     *   &#39;emitFacade&#39;: whether or not this event emits a facade (false)</span>
 <span class="cm">     *    &lt;/li&gt;</span>
 <span class="cm">     *    &lt;li&gt;</span>
-<span class="cm">     *   &#39;prefix&#39;: the prefix for this targets events, e.g., &#39;menu&#39; in &#39;menu:click&#39; </span>
+<span class="cm">     *   &#39;prefix&#39;: the prefix for this targets events, e.g., &#39;menu&#39; in &#39;menu:click&#39;</span>
 <span class="cm">     *    &lt;/li&gt;</span>
 <span class="cm">     *    &lt;li&gt;</span>
 <span class="cm">     *   &#39;fireOnce&#39;: if an event is configured to fire once, new subscribers after</span>
@@ -553,13 +552,13 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="p">{};</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">ret</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">||</span> <span class="nx">opts</span><span class="p">);</span> 
+                <span class="nx">ret</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">||</span> <span class="nx">opts</span><span class="p">);</span>
             <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
             <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">events</span> <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span> 
+        <span class="nx">events</span> <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
         <span class="nx">ce</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
@@ -588,7 +587,7 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * This is the entry point for the event monitoring system.</span>
-<span class="cm">     * You can monitor &#39;attach&#39;, &#39;detach&#39;, &#39;fire&#39;, and &#39;publish&#39;.  </span>
+<span class="cm">     * You can monitor &#39;attach&#39;, &#39;detach&#39;, &#39;fire&#39;, and &#39;publish&#39;.</span>
 <span class="cm">     * When configured, these events generate an event.  click -&gt;</span>
 <span class="cm">     * click_attach, click_detach, click_publish -- these can</span>
 <span class="cm">     * be subscribed to like other events to monitor the event</span>
@@ -610,31 +609,31 @@
 
    <span class="cm">/**</span>
 <span class="cm">     * Fire a custom event by name.  The callback functions will be executed</span>
-<span class="cm">     * from the context specified when the event was created, and with the </span>
+<span class="cm">     * from the context specified when the event was created, and with the</span>
 <span class="cm">     * following parameters.</span>
 <span class="cm">     *</span>
-<span class="cm">     * If the custom event object hasn&#39;t been created, then the event hasn&#39;t </span>
-<span class="cm">     * been published and it has no subscribers.  For performance sake, we </span>
-<span class="cm">     * immediate exit in this case.  This means the event won&#39;t bubble, so </span>
-<span class="cm">     * if the intention is that a bubble target be notified, the event must </span>
+<span class="cm">     * If the custom event object hasn&#39;t been created, then the event hasn&#39;t</span>
+<span class="cm">     * been published and it has no subscribers.  For performance sake, we</span>
+<span class="cm">     * immediate exit in this case.  This means the event won&#39;t bubble, so</span>
+<span class="cm">     * if the intention is that a bubble target be notified, the event must</span>
 <span class="cm">     * be published on this object first.</span>
 <span class="cm">     *</span>
 <span class="cm">     * The first argument is the event type, and any additional arguments are</span>
 <span class="cm">     * passed to the listeners as parameters.  If the first of these is an</span>
 <span class="cm">     * object literal, and the event is configured to emit an event facade,</span>
-<span class="cm">     * that object is mixed into the event facade and the facade is provided </span>
+<span class="cm">     * that object is mixed into the event facade and the facade is provided</span>
 <span class="cm">     * in place of the original object.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method fire</span>
 <span class="cm">     * @param type {String|Object} The type of the event, or an object that contains</span>
 <span class="cm">     * a &#39;type&#39; property.</span>
-<span class="cm">     * @param arguments {Object*} an arbitrary set of parameters to pass to </span>
+<span class="cm">     * @param arguments {Object*} an arbitrary set of parameters to pass to</span>
 <span class="cm">     * the handler.  If the first of these is an object literal and the event is</span>
 <span class="cm">     * configured to emit an event facade, the event facade will replace that</span>
 <span class="cm">     * parameter after the properties the object literal contains are copied to</span>
 <span class="cm">     * the event facade.</span>
 <span class="cm">     * @return {EventTarget} the event host</span>
-<span class="cm">     *                   </span>
+<span class="cm">     *</span>
 <span class="cm">     */</span>
     <span class="nx">fire</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
 
@@ -645,8 +644,8 @@
 
         <span class="nx">t</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">t</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;fire&#39;</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="p">{</span> 
-            <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;fire&#39;</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span>
         <span class="p">});</span>
 
         <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
@@ -752,14 +751,14 @@
 <span class="cm">     *</span>
 <span class="cm">     * For DOM and custom events:</span>
 <span class="cm">     * type, callback, context, 0-n arguments</span>
-<span class="cm">     *  </span>
+<span class="cm">     *</span>
 <span class="cm">     * For methods:</span>
 <span class="cm">     * callback, object (method host), methodName, context, 0-n arguments</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method before</span>
 <span class="cm">     * @return detach handle</span>
 <span class="cm">     */</span>
-    <span class="nx">before</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> 
+    <span class="nx">before</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -768,8 +767,8 @@
 <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">ET</span><span class="p">;</span>
 
 <span class="c1">// make Y an event target</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">ET</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="p">{</span> 
-    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span> 
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">ET</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span>
 <span class="p">});</span>
 
 <span class="nx">ET</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
@@ -788,11 +787,9 @@
 
 <span class="c1">// @TODO implement a global namespace function on Y.Global?</span>
 
-<span class="p">})();</span>
-
 <span class="cm">/**</span>
 <span class="cm"> * &lt;code&gt;YUI&lt;/code&gt;&#39;s &lt;code&gt;on&lt;/code&gt; method is a unified interface for subscribing to</span>
-<span class="cm"> * most events exposed by YUI.  This includes custom events, DOM events, and </span>
+<span class="cm"> * most events exposed by YUI.  This includes custom events, DOM events, and</span>
 <span class="cm"> * function events.  &lt;code&gt;detach&lt;/code&gt; is also provided to remove listeners</span>
 <span class="cm"> * serviced by this function.</span>
 <span class="cm"> *</span>
@@ -811,12 +808,12 @@
 <span class="cm"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
 <span class="cm"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
 <span class="cm"> *   &lt;/ul&gt;</span>
-<span class="cm"> *   Example: </span>
+<span class="cm"> *   Example:</span>
 <span class="cm"> *   &lt;code&gt;Y.on(&#39;drag:drophit&#39;, function() { // start work });&lt;/code&gt;</span>
 <span class="cm"> * &lt;/li&gt;</span>
 <span class="cm"> * &lt;li&gt;DOM events.  These are moments reported by the browser related</span>
 <span class="cm"> * to browser functionality and user interaction.</span>
-<span class="cm"> * This type of event is delegated to &lt;code&gt;Event&lt;/code&gt;&#39;s </span>
+<span class="cm"> * This type of event is delegated to &lt;code&gt;Event&lt;/code&gt;&#39;s</span>
 <span class="cm"> * &lt;code&gt;attach&lt;/code&gt; method.</span>
 <span class="cm"> *   &lt;ul&gt;</span>
 <span class="cm"> *     &lt;li&gt;The type of the event&lt;/li&gt;</span>
@@ -827,11 +824,11 @@
 <span class="cm"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
 <span class="cm"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
 <span class="cm"> *   &lt;/ul&gt;</span>
-<span class="cm"> *   Example: </span>
+<span class="cm"> *   Example:</span>
 <span class="cm"> *   &lt;code&gt;Y.on(&#39;click&#39;, function(e) { // something was clicked }, &#39;#someelement&#39;);&lt;/code&gt;</span>
 <span class="cm"> * &lt;/li&gt;</span>
 <span class="cm"> * &lt;li&gt;Function events.  These events can be used to react before or after a</span>
-<span class="cm"> * function is executed.  This type of event is delegated to &lt;code&gt;Event.Do&lt;/code&gt;&#39;s </span>
+<span class="cm"> * function is executed.  This type of event is delegated to &lt;code&gt;Event.Do&lt;/code&gt;&#39;s</span>
 <span class="cm"> * &lt;code&gt;before&lt;/code&gt; method.</span>
 <span class="cm"> *   &lt;ul&gt;</span>
 <span class="cm"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
@@ -849,7 +846,7 @@
 <span class="cm"> * execute after the event&#39;s default behavior.  &lt;code&gt;before&lt;/code&gt; is an</span>
 <span class="cm"> * alias for &lt;code&gt;on&lt;/code&gt;.</span>
 <span class="cm"> *</span>
-<span class="cm"> * @method on </span>
+<span class="cm"> * @method on</span>
 <span class="cm"> * @param type event type (this parameter does not apply for function events)</span>
 <span class="cm"> * @param fn the callback</span>
 <span class="cm"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
@@ -876,7 +873,7 @@
 <span class="cm"> * most events exposed by YUI.  This includes custom events,</span>
 <span class="cm"> * DOM events, and AOP events.  This works the same way as</span>
 <span class="cm"> * the on() function, only it operates after any default</span>
-<span class="cm"> * behavior for the event has executed. @see &lt;code&gt;on&lt;/code&gt; for more </span>
+<span class="cm"> * behavior for the event has executed. @see &lt;code&gt;on&lt;/code&gt; for more</span>
 <span class="cm"> * information.</span>
 <span class="cm"> * @method after</span>
 <span class="cm"> * @param type event type (this parameter does not apply for function events)</span>

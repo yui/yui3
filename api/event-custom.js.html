@@ -48,22 +48,15 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM </span>
+<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM</span>
 <span class="cm"> * events.</span>
 <span class="cm"> * @module event-custom</span>
 <span class="cm"> * @submodule event-custom-base</span>
 <span class="cm"> */</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Return value from all subscribe operations</span>
-<span class="cm"> * @class EventHandle</span>
-<span class="cm"> * @constructor</span>
-<span class="cm"> * @param evt {CustomEvent} the custom event</span>
-<span class="cm"> * @param sub {Subscriber} the subscriber</span>
-<span class="cm"> */</span>
 
 <span class="c1">// var onsubscribeType = &quot;_event:onsub&quot;,</span>
-<span class="kd">var</span> <span class="nx">AFTER</span> <span class="o">=</span> <span class="s1">&#39;after&#39;</span><span class="p">,</span> 
+<span class="kd">var</span> <span class="nx">AFTER</span> <span class="o">=</span> <span class="s1">&#39;after&#39;</span><span class="p">,</span>
     <span class="nx">CONFIGS</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;broadcast&#39;</span><span class="p">,</span>
         <span class="s1">&#39;monitored&#39;</span><span class="p">,</span>
@@ -90,6 +83,13 @@
     <span class="nx">YUI3_SIGNATURE</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
     <span class="nx">YUI_LOG</span> <span class="o">=</span> <span class="s1">&#39;yui:log&#39;</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Return value from all subscribe operations</span>
+<span class="cm"> * @class EventHandle</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param {CustomEvent} evt the custom event.</span>
+<span class="cm"> * @param {Subscriber} sub the subscriber.</span>
+<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
@@ -106,11 +106,11 @@
 <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">each</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">f</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="nx">batch</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">f</span><span class="p">);</span>
+                <span class="nx">h</span><span class="p">.</span><span class="nx">batch</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">f</span><span class="p">);</span>
             <span class="p">});</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -118,16 +118,17 @@
     <span class="cm">/**</span>
 <span class="cm">     * Detaches this subscriber</span>
 <span class="cm">     * @method detach</span>
+<span class="cm">     * @return {int} the number of detached listeners</span>
 <span class="cm">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">evt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="nx">detached</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;EventHandle.detach: &#39; + this.sub, &#39;info&#39;, &#39;Event&#39;);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">evt</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">evt</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">detached</span> <span class="o">+=</span> <span class="nx">evt</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
                 <span class="p">}</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">evt</span><span class="p">.</span><span class="nx">_delete</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sub</span><span class="p">);</span>
                 <span class="nx">detached</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="p">}</span>
@@ -142,8 +143,8 @@
 <span class="cm">     * is what should be monitored, the rest are the normal parameters when</span>
 <span class="cm">     * subscribing to an event.</span>
 <span class="cm">     * @method monitor</span>
-<span class="cm">     * @param what {string} what to monitor (&#39;attach&#39;, &#39;detach&#39;, &#39;publish&#39;)</span>
-<span class="cm">     * @return {EventHandle} return value from the monitor event subscription</span>
+<span class="cm">     * @param what {string} what to monitor (&#39;attach&#39;, &#39;detach&#39;, &#39;publish&#39;).</span>
+<span class="cm">     * @return {EventHandle} return value from the monitor event subscription.</span>
 <span class="cm">     */</span>
     <span class="nx">monitor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">what</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">monitor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -154,9 +155,9 @@
 <span class="cm"> * The CustomEvent class lets you define events for your application</span>
 <span class="cm"> * that can be subscribed to by one or more independent component.</span>
 <span class="cm"> *</span>
-<span class="cm"> * @param {String}  type The type of event, which is passed to the callback</span>
-<span class="cm"> *                  when the event fires</span>
-<span class="cm"> * @param o configuration object</span>
+<span class="cm"> * @param {String} type The type of event, which is passed to the callback</span>
+<span class="cm"> * when the event fires.</span>
+<span class="cm"> * @param {object} o configuration object.</span>
 <span class="cm"> * @class CustomEvent</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> */</span>
@@ -187,7 +188,7 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Monitor when an event is attached or detached.</span>
-<span class="cm">     * </span>
+<span class="cm">     *</span>
 <span class="cm">     * @property monitored</span>
 <span class="cm">     * @type boolean</span>
 <span class="cm">     */</span>
@@ -226,14 +227,14 @@
     <span class="cm">/**</span>
 <span class="cm">     * The subscribers to this event</span>
 <span class="cm">     * @property subscribers</span>
-<span class="cm">     * @type Subscriber{}</span>
+<span class="cm">     * @type Subscriber {}</span>
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * &#39;After&#39; subscribers</span>
 <span class="cm">     * @property afters</span>
-<span class="cm">     * @type Subscriber{}</span>
+<span class="cm">     * @type Subscriber {}</span>
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">afters</span> <span class="o">=</span> <span class="p">{};</span>
 
@@ -264,7 +265,7 @@
 <span class="cm">     * @default false;</span>
 <span class="cm">     */</span>
     <span class="c1">// this.fireOnce = false;</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * fireOnce listeners will fire syncronously unless async</span>
 <span class="cm">     * is set to true</span>
@@ -326,10 +327,10 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Specifies whether or not this event&#39;s default function</span>
-<span class="cm">     * can be cancelled by a subscriber by executing preventDefault() </span>
-<span class="cm">     * on the event facade </span>
-<span class="cm">     * @property preventable </span>
-<span class="cm">     * @type boolean </span>
+<span class="cm">     * can be cancelled by a subscriber by executing preventDefault()</span>
+<span class="cm">     * on the event facade</span>
+<span class="cm">     * @property preventable</span>
+<span class="cm">     * @type boolean</span>
 <span class="cm">     * @default true</span>
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">preventable</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -388,7 +389,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">when</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">(</span><span class="nx">when</span> <span class="o">==</span> <span class="s1">&#39;after&#39;</span><span class="p">)</span> <span class="o">?</span>  <span class="nx">a</span> <span class="o">:</span> <span class="nx">s</span><span class="p">;</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">when</span> <span class="o">==</span> <span class="s1">&#39;after&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">a</span> <span class="o">:</span> <span class="nx">s</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="nx">s</span> <span class="o">+</span> <span class="nx">a</span><span class="p">);</span>
@@ -399,8 +400,8 @@
 <span class="cm">     * is what should be monitored, the rest are the normal parameters when</span>
 <span class="cm">     * subscribing to an event.</span>
 <span class="cm">     * @method monitor</span>
-<span class="cm">     * @param what {string} what to monitor (&#39;detach&#39;, &#39;attach&#39;, &#39;publish&#39;)</span>
-<span class="cm">     * @return {EventHandle} return value from the monitor event subscription</span>
+<span class="cm">     * @param what {string} what to monitor (&#39;detach&#39;, &#39;attach&#39;, &#39;publish&#39;).</span>
+<span class="cm">     * @return {EventHandle} return value from the monitor event subscription.</span>
 <span class="cm">     */</span>
     <span class="nx">monitor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">what</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">monitored</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -412,7 +413,8 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Get all of the subscribers to this event and any sibling event</span>
-<span class="cm">     * @return {Array} first item is the on subscribers, second the after</span>
+<span class="cm">     * @method getSubs</span>
+<span class="cm">     * @return {Array} first item is the on subscribers, second the after.</span>
 <span class="cm">     */</span>
     <span class="nx">getSubs</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">),</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">),</span> <span class="nx">sib</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sibling</span><span class="p">;</span>
@@ -428,8 +430,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Apply configuration properties.  Only applies the CONFIG whitelist</span>
 <span class="cm">     * @method applyConfig</span>
-<span class="cm">     * @param o hash of properties to apply</span>
-<span class="cm">     * @param force {boolean} if true, properties that exist on the event </span>
+<span class="cm">     * @param o hash of properties to apply.</span>
+<span class="cm">     * @param force {boolean} if true, properties that exist on the event</span>
 <span class="cm">     * will be overwritten.</span>
 <span class="cm">     */</span>
     <span class="nx">applyConfig</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
@@ -441,7 +443,7 @@
     <span class="nx">_on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">when</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Invalid callback for CE: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Invalid callback for CE: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Subscriber</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">when</span><span class="p">);</span>
@@ -469,27 +471,27 @@
     <span class="cm">/**</span>
 <span class="cm">     * Listen for this event</span>
 <span class="cm">     * @method subscribe</span>
-<span class="cm">     * @param {Function} fn The function to execute</span>
-<span class="cm">     * @return {EventHandle} Unsubscribe handle</span>
-<span class="cm">     * @deprecated use on</span>
+<span class="cm">     * @param {Function} fn The function to execute.</span>
+<span class="cm">     * @return {EventHandle} Unsubscribe handle.</span>
+<span class="cm">     * @deprecated use on.</span>
 <span class="cm">     */</span>
     <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ce.subscribe deprecated, use &quot;on&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span><span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Listen for this event</span>
 <span class="cm">     * @method on</span>
-<span class="cm">     * @param {Function} fn The function to execute</span>
-<span class="cm">     * @param context {object} optional execution context.</span>
-<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * @param {Function} fn The function to execute.</span>
+<span class="cm">     * @param {object} context optional execution context.</span>
+<span class="cm">     * @param {mixed} arg* 0..n additional arguments to supply to the subscriber</span>
 <span class="cm">     * when the event fires.</span>
-<span class="cm">     * @return {EventHandle} An object with a detach method to detch the handler(s)</span>
+<span class="cm">     * @return {EventHandle} An object with a detach method to detch the handler(s).</span>
 <span class="cm">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span><span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;attach&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">args</span><span class="o">:</span> <span class="nx">arguments</span>
@@ -500,27 +502,27 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Listen for this event after the normal subscribers have been notified and</span>
-<span class="cm">     * the default behavior has been applied.  If a normal subscriber prevents the </span>
+<span class="cm">     * the default behavior has been applied.  If a normal subscriber prevents the</span>
 <span class="cm">     * default behavior, it also prevents after listeners from firing.</span>
 <span class="cm">     * @method after</span>
-<span class="cm">     * @param {Function} fn The function to execute</span>
-<span class="cm">     * @param context {object} optional execution context.</span>
-<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * @param {Function} fn The function to execute.</span>
+<span class="cm">     * @param {object} context optional execution context.</span>
+<span class="cm">     * @param {mixed} arg* 0..n additional arguments to supply to the subscriber</span>
 <span class="cm">     * when the event fires.</span>
-<span class="cm">     * @return {EventHandle} handle Unsubscribe handle</span>
+<span class="cm">     * @return {EventHandle} handle Unsubscribe handle.</span>
 <span class="cm">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span><span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">AFTER</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Detach listeners.</span>
-<span class="cm">     * @method detach </span>
+<span class="cm">     * @method detach</span>
 <span class="cm">     * @param {Function} fn  The subscribed function to remove, if not supplied</span>
-<span class="cm">     *                       all will be removed</span>
+<span class="cm">     *                       all will be removed.</span>
 <span class="cm">     * @param {Object}   context The context object passed to subscribe.</span>
-<span class="cm">     * @return {int} returns the number of subscribers unsubscribed</span>
+<span class="cm">     * @return {int} returns the number of subscribers unsubscribed.</span>
 <span class="cm">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// unsubscribe handle</span>
@@ -529,8 +531,8 @@
         <span class="p">}</span>
 
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
-            <span class="nx">found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
-            <span class="nx">subs</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">);</span>
+            <span class="nx">found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">);</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
@@ -549,10 +551,10 @@
 <span class="cm">     * Detach listeners.</span>
 <span class="cm">     * @method unsubscribe</span>
 <span class="cm">     * @param {Function} fn  The subscribed function to remove, if not supplied</span>
-<span class="cm">     *                       all will be removed</span>
+<span class="cm">     *                       all will be removed.</span>
 <span class="cm">     * @param {Object}   context The context object passed to subscribe.</span>
-<span class="cm">     * @return {int|undefined} returns the number of subscribers unsubscribed</span>
-<span class="cm">     * @deprecated use detach</span>
+<span class="cm">     * @return {int|undefined} returns the number of subscribers unsubscribed.</span>
+<span class="cm">     * @deprecated use detach.</span>
 <span class="cm">     */</span>
     <span class="nx">unsubscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -561,20 +563,20 @@
     <span class="cm">/**</span>
 <span class="cm">     * Notify a single subscriber</span>
 <span class="cm">     * @method _notify</span>
-<span class="cm">     * @param s {Subscriber} the subscriber</span>
-<span class="cm">     * @param args {Array} the arguments array to apply to the listener</span>
+<span class="cm">     * @param {Subscriber} s the subscriber.</span>
+<span class="cm">     * @param {Array} args the arguments array to apply to the listener.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_notify</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ef</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;sub: &quot;</span> <span class="o">+</span>  <span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;-&gt;&#39;</span> <span class="o">+</span> <span class="s1">&#39;sub: &#39;</span> <span class="o">+</span> <span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
 
         <span class="kd">var</span> <span class="nx">ret</span><span class="p">;</span>
 
         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; cancelled by subscriber&quot;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; cancelled by subscriber&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -584,31 +586,31 @@
     <span class="cm">/**</span>
 <span class="cm">     * Logger abstraction to centralize the application of the silent flag</span>
 <span class="cm">     * @method log</span>
-<span class="cm">     * @param msg {string} message to log</span>
-<span class="cm">     * @param cat {string} log category</span>
+<span class="cm">     * @param {string} msg message to log.</span>
+<span class="cm">     * @param {string} cat log category.</span>
 <span class="cm">     */</span>
     <span class="nx">log</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">cat</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">cat</span> <span class="o">||</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">cat</span> <span class="o">||</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Notifies the subscribers.  The callback functions will be executed</span>
-<span class="cm">     * from the context specified when the event was created, and with the </span>
+<span class="cm">     * from the context specified when the event was created, and with the</span>
 <span class="cm">     * following parameters:</span>
 <span class="cm">     *   &lt;ul&gt;</span>
 <span class="cm">     *   &lt;li&gt;The type of event&lt;/li&gt;</span>
 <span class="cm">     *   &lt;li&gt;All of the arguments fire() was executed with as an array&lt;/li&gt;</span>
-<span class="cm">     *   &lt;li&gt;The custom object (if any) that was passed into the subscribe() </span>
+<span class="cm">     *   &lt;li&gt;The custom object (if any) that was passed into the subscribe()</span>
 <span class="cm">     *       method&lt;/li&gt;</span>
 <span class="cm">     *   &lt;/ul&gt;</span>
-<span class="cm">     * @method fire </span>
-<span class="cm">     * @param {Object*} arguments an arbitrary set of parameters to pass to </span>
+<span class="cm">     * @method fire</span>
+<span class="cm">     * @param {Object*} arguments an arbitrary set of parameters to pass to</span>
 <span class="cm">     *                            the handler.</span>
-<span class="cm">     * @return {boolean} false if one of the subscribers returned false, </span>
-<span class="cm">     *                   true otherwise</span>
-<span class="cm">     * </span>
+<span class="cm">     * @return {boolean} false if one of the subscribers returned false,</span>
+<span class="cm">     *                   true otherwise.</span>
+<span class="cm">     *</span>
 <span class="cm">     */</span>
     <span class="nx">fire</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fireOnce</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">fired</span><span class="p">)</span> <span class="p">{</span>
@@ -690,8 +692,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Removes all listeners</span>
 <span class="cm">     * @method unsubscribeAll</span>
-<span class="cm">     * @return {int} The number of listeners unsubscribed</span>
-<span class="cm">     * @deprecated use detachAll</span>
+<span class="cm">     * @return {int} The number of listeners unsubscribed.</span>
+<span class="cm">     * @deprecated use detachAll.</span>
 <span class="cm">     */</span>
     <span class="nx">unsubscribeAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -700,7 +702,7 @@
     <span class="cm">/**</span>
 <span class="cm">     * Removes all listeners</span>
 <span class="cm">     * @method detachAll</span>
-<span class="cm">     * @return {int} The number of listeners unsubscribed</span>
+<span class="cm">     * @return {int} The number of listeners unsubscribed.</span>
 <span class="cm">     */</span>
     <span class="nx">detachAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
@@ -708,7 +710,7 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * @method _delete</span>
-<span class="cm">     * @param subscriber object</span>
+<span class="cm">     * @param subscriber object.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_delete</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
@@ -725,7 +727,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;detach&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">ce</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span> 
+                <span class="nx">ce</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span>
                 <span class="nx">sub</span><span class="o">:</span> <span class="nx">s</span>
             <span class="p">});</span>
         <span class="p">}</span>
@@ -741,9 +743,9 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Stores the subscriber information to be used when the event fires.</span>
-<span class="cm"> * @param {Function} fn       The wrapped function to execute</span>
-<span class="cm"> * @param {Object}   context  The value of the keyword &#39;this&#39; in the listener</span>
-<span class="cm"> * @param {Array} args*       0..n additional arguments to supply the listener</span>
+<span class="cm"> * @param {Function} fn       The wrapped function to execute.</span>
+<span class="cm"> * @param {Object}   context  The value of the keyword &#39;this&#39; in the listener.</span>
+<span class="cm"> * @param {Array} args*       0..n additional arguments to supply the listener.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @class Subscriber</span>
 <span class="cm"> * @constructor</span>
@@ -791,7 +793,7 @@
 <span class="cm">     * @property once</span>
 <span class="cm">     */</span>
     <span class="c1">// this.once = false;</span>
-    
+
 <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Subscriber</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
@@ -825,8 +827,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Executes the subscriber.</span>
 <span class="cm">     * @method notify</span>
-<span class="cm">     * @param args {Array} Arguments array for the subscriber</span>
-<span class="cm">     * @param ce {CustomEvent} The custom event that sent the notification</span>
+<span class="cm">     * @param args {Array} Arguments array for the subscriber.</span>
+<span class="cm">     * @param ce {CustomEvent} The custom event that sent the notification.</span>
 <span class="cm">     */</span>
     <span class="nx">notify</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span>
@@ -842,7 +844,7 @@
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">try</span> <span class="p">{</span>
                 <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="k">this</span> <span class="o">+</span> <span class="s1">&#39; failed: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -855,9 +857,9 @@
 <span class="cm">     * Used by the unsubscribe method to match the right subscriber.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method contains</span>
-<span class="cm">     * @param {Function} fn the function to execute</span>
-<span class="cm">     * @param {Object} context optional &#39;this&#39; keyword for the listener</span>
-<span class="cm">     * @return {boolean} true if the supplied arguments match this </span>
+<span class="cm">     * @param {Function} fn the function to execute.</span>
+<span class="cm">     * @param {Object} context optional &#39;this&#39; keyword for the listener.</span>
+<span class="cm">     * @return {boolean} true if the supplied arguments match this</span>
 <span class="cm">     *                   subscriber&#39;s signature.</span>
 <span class="cm">     */</span>
     <span class="nx">contains</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>

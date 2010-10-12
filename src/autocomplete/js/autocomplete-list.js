@@ -13,7 +13,8 @@
  * @param {Object} config Configuration object.
  */
 
-var Node   = Y.Node,
+var Lang   = Y.Lang,
+    Node   = Y.Node,
     YArray = Y.Array,
 
     // keyCode constants.
@@ -29,16 +30,17 @@ var Node   = Y.Node,
     _CLASS_ITEM_HOVER  = '_CLASS_ITEM_HOVER',
     _SELECTOR_ITEM     = '_SELECTOR_ITEM',
 
-    ACTIVE_ITEM  = 'activeItem',
-    CIRCULAR     = 'circular',
-    HOVERED_ITEM = 'hoveredItem',
-    ID           = 'id',
-    INPUT_NODE   = 'inputNode',
-    ITEM         = 'item',
-    RESULT       = 'result',
-    RESULTS      = 'results',
-    VISIBLE      = 'visible',
-    WIDTH        = 'width',
+    ACTIVE_ITEM      = 'activeItem',
+    ALWAYS_SHOW_LIST = 'alwaysShowList',
+    CIRCULAR         = 'circular',
+    HOVERED_ITEM     = 'hoveredItem',
+    ID               = 'id',
+    ITEM             = 'item',
+    LIST             = 'list',
+    RESULT           = 'result',
+    RESULTS          = 'results',
+    VISIBLE          = 'visible',
+    WIDTH            = 'width',
 
     // Event names.
     EVT_SELECT = 'select',
@@ -50,11 +52,54 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.WidgetStack
 ], {
     // -- Prototype Properties -------------------------------------------------
-    CONTENT_TEMPLATE: '<ul/>',
+    ARIA_TEMPLATE: '<div/>',
     ITEM_TEMPLATE: '<li/>',
+    LIST_TEMPLATE: '<ul/>',
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
+        var keys        = {},
+            keysVisible = {},
+            inputNode   = this.get('inputNode');
+
+        if (!inputNode) {
+            Y.error('No inputNode specified.');
+        }
+
+        this._events    = [];
+        this._inputNode = inputNode;
+
+        // This ensures that the list is rendered inside the same parent as the
+        // input node by default, which is necessary for proper ARIA support.
+        this.DEF_PARENT_NODE = inputNode.get('parentNode');
+
+        // Register keyboard command handlers. _keys contains handlers that will
+        // always be called; _keysVisible contains handlers that will only be
+        // called when the list is visible.
+        keys[KEY_DOWN] = this._keyDown;
+
+        keysVisible[KEY_ENTER] = this._keyEnter;
+        keysVisible[KEY_ESC]   = this._keyEsc;
+        keysVisible[KEY_TAB]   = this._keyTab;
+        keysVisible[KEY_UP]    = this._keyUp;
+
+        this._keys        = keys;
+        this._keysVisible = keysVisible;
+
+        // Cache commonly used classnames and selectors for performance.
+        this[_CLASS_ITEM]        = this.getClassName(ITEM);
+        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
+        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
+        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
+
+        if (!this.get('align.node')) {
+            this.set('align.node', inputNode);
+        }
+
+        if (!this.get(WIDTH)) {
+            this.set(WIDTH, inputNode.get('offsetWidth'));
+        }
+
         /**
          * Fires when an autocomplete suggestion is selected from the list by
          * a keyboard action or mouse click.
@@ -80,32 +125,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this.publish(EVT_SELECT, {
             defaultFn: this._defSelectFn
         });
-
-        this._events    = [];
-        this._inputNode = this.get(INPUT_NODE);
-
-        // Cache commonly used classnames and selectors for performance.
-        this[_CLASS_ITEM]        = this.getClassName(ITEM);
-        this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
-        this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
-        this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
-
-        if (!this._inputNode) {
-            Y.error('No inputNode specified.');
-        }
-
-        if (!this.get('align.node')) {
-            this.set('align.node', this._inputNode);
-        }
-
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, this._inputNode.get('offsetWidth'));
-        }
     },
 
     destructor: function () {
-        this.unbindInput();
-
         while (this._events.length) {
             this._events.pop().detach();
         }
@@ -117,19 +139,31 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
-        // See http://www.w3.org/WAI/PF/aria/roles#combobox for ARIA details.
-        this._contentBox = this.get('contentBox').set('role', 'listbox');
+        var ariaNode   = this._createAriaNode(),
+            contentBox = this.get('contentBox'),
+            inputNode  = this._inputNode,
+            listNode   = this.get('listNode'),
+            parentNode = inputNode.get('parentNode');
 
-        this._inputNode.addClass(this.getClassName('input')).setAttrs({
-            'aria-autocomplete': 'list',
-            'aria-live': 'polite', // causes the screen reader to announce the value of an item when selected
-            'aria-owns': this._contentBox.get(ID),
-            role: 'combobox'
-        });
+        if (!listNode) {
+            listNode = this._createListNode();
+            contentBox.append(listNode);
+        }
+
+        inputNode.addClass(this.getClassName('input'))
+            .set('aria-autocomplete', LIST);
+
+        // ARIA node must be outside the widget or announcements won't be made
+        // when the widget is hidden.
+        parentNode.set('role', 'combobox').append(ariaNode);
+
+        this._ariaNode   = ariaNode;
+        this._contentBox = contentBox;
+        this._listNode   = listNode;
+        this._parentNode = parentNode;
     },
 
     syncUI: function () {
-        this.syncInput();
         this._syncResults();
         this._syncVisibility();
     },
@@ -137,14 +171,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
-     * Hides the list.
+     * Hides the list, unless the <code>alwaysShowList</code> attribute is
+     * <code>true</code>.
      *
      * @method hide
      * @see show
      * @chainable
      */
     hide: function () {
-        return this.set(VISIBLE, false);
+        return this.get(ALWAYS_SHOW_LIST) ? this : this.set(VISIBLE, false);
     },
 
     /**
@@ -158,13 +193,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     selectItem: function (itemNode) {
         if (itemNode) {
             if (!itemNode.hasClass(this[_CLASS_ITEM])) {
-                return;
+                return this;
             }
         } else {
             itemNode = this.get(ACTIVE_ITEM);
 
             if (!itemNode) {
-                return;
+                return this;
             }
         }
 
@@ -176,37 +211,29 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         return this;
     },
 
-    /**
-     * Shows the list.
-     *
-     * @method show
-     * @see hide
-     * @chainable
-     */
-    show: function () {
-        return this.set(VISIBLE, true);
-    },
-
     // -- Protected Prototype Methods ------------------------------------------
 
     /**
      * Activates the next item after the currently active item. If there is no
      * next item and the <code>circular</code> attribute is <code>true</code>,
-     * the first item in the list will be activated.
+     * focus will wrap back to the input node.
      *
      * @method _activateNextItem
+     * @chainable
      * @protected
      */
     _activateNextItem: function () {
         var item = this.get(ACTIVE_ITEM),
             nextItem;
 
-        nextItem = (item && item.next(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getFirstItemNode();
-
-        if (nextItem) {
-            this._set(ACTIVE_ITEM, nextItem);
+        if (item) {
+            nextItem = item.next(this[_SELECTOR_ITEM]) ||
+                    (this.get(CIRCULAR) ? null : item);
+        } else {
+            nextItem = this._getFirstItemNode();
         }
+
+        this.set(ACTIVE_ITEM, nextItem);
 
         return this;
     },
@@ -214,21 +241,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Activates the item previous to the currently active item. If there is no
      * previous item and the <code>circular</code> attribute is
-     * <code>true</code>, the last item in the list will be activated.
+     * <code>true</code>, focus will wrap back to the input node.
      *
      * @method _activatePrevItem
+     * @chainable
      * @protected
      */
     _activatePrevItem: function () {
         var item     = this.get(ACTIVE_ITEM),
-            prevItem;
+            prevItem = item ? item.previous(this[_SELECTOR_ITEM]) :
+                    this.get(CIRCULAR) && this._getLastItemNode();
 
-        prevItem = (item && item.previous(this[_SELECTOR_ITEM])) ||
-                this.get(CIRCULAR) && this._getLastItemNode();
-
-        if (prevItem) {
-            this._set(ACTIVE_ITEM, prevItem);
-        }
+        this.set(ACTIVE_ITEM, prevItem || null);
 
         return this;
     },
@@ -246,29 +270,39 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _add: function (items) {
         var itemNodes = [];
 
-        YArray.each(Y.Lang.isArray(items) ? items : [items], function (item) {
+        YArray.each(Lang.isArray(items) ? items : [items], function (item) {
             itemNodes.push(this._createItemNode(item).setData(RESULT, item));
         }, this);
 
         itemNodes = Y.all(itemNodes);
-        this._contentBox.append(itemNodes.toFrag());
+        this._listNode.append(itemNodes.toFrag());
 
         return itemNodes;
     },
 
     /**
-     * Binds <code>inputNode</code> events, in addition to those already bound
-     * by <code>AutoCompleteBase</code>'s public <code>bindInput()</code>
-     * method.
+     * Updates the ARIA live region with the specified message.
+     *
+     * @method _ariaSay
+     * @param {String} stringId String id (from the <code>strings</code>
+     *   attribute) of the message to speak.
+     * @param {Object} subs (optional) Substitutions for placeholders in the
+     *   string.
+     * @protected
+     */
+    _ariaSay: function (stringId, subs) {
+        var message = this.get('strings.' + stringId);
+        this._ariaNode.setContent(subs ? Lang.sub(message, subs) : message);
+    },
+
+    /**
+     * Binds <code>inputNode</code> events.
      *
      * @method _bindInput
      * @protected
      */
     _bindInput: function () {
         var inputNode = this._inputNode;
-
-        // Call AutoCompleteBase's bind method first.
-        this.bindInput();
 
         this._events.concat([
             inputNode.on('blur', this._onInputBlur, this),
@@ -284,15 +318,16 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._events.concat([
-            this.after('mouseover', this._afterMouseOver, this),
-            this.after('mouseout', this._afterMouseOut, this),
+            this.after('mouseover', this._afterMouseOver),
+            this.after('mouseout', this._afterMouseOut),
 
-            this.after('activeItemChange', this._afterActiveItemChange, this),
-            this.after('hoveredItemChange', this._afterHoveredItemChange, this),
-            this.after('resultsChange', this._afterResultsChange, this),
-            this.after('visibleChange', this._afterVisibleChange, this),
+            this.after('activeItemChange', this._afterActiveItemChange),
+            this.after('alwaysShowListChange', this._afterAlwaysShowListChange),
+            this.after('hoveredItemChange', this._afterHoveredItemChange),
+            this.after('resultsChange', this._afterResultsChange),
+            this.after('visibleChange', this._afterVisibleChange),
 
-            this._contentBox.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
+            this._listNode.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
         ]);
     },
 
@@ -303,27 +338,115 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _clear: function () {
-        this._set(ACTIVE_ITEM, null);
+        this.set(ACTIVE_ITEM, null);
         this._set(HOVERED_ITEM, null);
 
-        this._contentBox.get('children').remove(true);
+        this._listNode.get('children').remove(true);
     },
 
     /**
-     * Creates an item node with the specified <i>content</i>.
+     * Creates and returns an ARIA live region node.
+     *
+     * @method _createAriaNode
+     * @return {Node} ARIA node.
+     * @protected
+     */
+    _createAriaNode: function () {
+        var ariaNode = Node.create(this.ARIA_TEMPLATE);
+
+        return ariaNode.addClass(this.getClassName('aria')).setAttrs({
+            role       : 'status',
+            'aria-live': 'polite'
+        });
+    },
+
+    /**
+     * Creates and returns an item node with the specified <i>content</i>.
      *
      * @method _createItemNode
      * @param {Object} result Result object.
-     * @protected
      * @return {Node} Item node.
+     * @protected
      */
     _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
 
-        return itemNode.append(result.display).setAttrs({
+        return itemNode.addClass(this[_CLASS_ITEM]).setAttrs({
             id  : Y.stamp(itemNode),
             role: 'option'
-        }).addClass(this[_CLASS_ITEM]);
+        }).setAttribute('data-text', result.text).append(result.display);
+    },
+
+    /**
+     * Creates and returns a list node.
+     *
+     * @method _createListNode
+     * @return {Node} List node.
+     * @protected
+     */
+    _createListNode: function () {
+        var listNode = Node.create(this.LIST_TEMPLATE);
+
+        return listNode.addClass(this.getClassName(LIST)).setAttrs({
+            id  : Y.stamp(listNode),
+            role: 'listbox'
+        });
+    },
+
+    /**
+     * Called when the down arrow key is pressed.
+     *
+     * @method _keyDown
+     * @protected
+     */
+    _keyDown: function () {
+        if (this.get(VISIBLE)) {
+            this._activateNextItem();
+        } else {
+            this.show();
+        }
+    },
+
+    /**
+     * Called when the enter key is pressed.
+     *
+     * @method _keyEnter
+     * @protected
+     */
+    _keyEnter: function () {
+        this.selectItem();
+    },
+
+    /**
+     * Called when the escape key is pressed.
+     *
+     * @method _keyEsc
+     * @protected
+     */
+    _keyEsc: function () {
+        this.hide();
+    },
+
+    /**
+     * Called when the tab key is pressed.
+     *
+     * @method _keyTab
+     * @protected
+     */
+    _keyTab: function () {
+        if (this.get('tabSelect')) {
+            this.selectItem();
+        }
+    },
+
+    /**
+     * Called when the up arrow key is pressed.
+     *
+     * @method _keyUp
+     * @protected
+     */
+    _keyUp: function () {
+        this._activatePrevItem();
     },
 
     /**
@@ -335,7 +458,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _getLastItemNode: function () {
-        return this._contentBox.one(this[_SELECTOR_ITEM] + ':last-child');
+        return this._listNode.one(this[_SELECTOR_ITEM] + ':last-child');
     },
 
     /**
@@ -347,7 +470,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _getFirstItemNode: function () {
-        return this._contentBox.one(this[_SELECTOR_ITEM]);
+        return this._listNode.one(this[_SELECTOR_ITEM]);
     },
 
     /**
@@ -370,6 +493,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (results.length) {
             items = this._add(results);
+            this._ariaSay('ITEMS_AVAILABLE');
+        }
+
+        if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
+            this.set(ACTIVE_ITEM, this._getFirstItemNode());
         }
     },
 
@@ -383,14 +511,19 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncVisibility: function (visible) {
-        if (visible === undefined) {
+        if (this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, true);
+            return;
+        }
+
+        if (typeof visible === 'undefined') {
             visible = this.get(VISIBLE);
         }
 
         this._contentBox.set('aria-hidden', !visible);
 
         if (!visible) {
-            this._set(ACTIVE_ITEM, null);
+            this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
         }
     },
@@ -416,6 +549,17 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
             this._inputNode.set('aria-activedescendant', newVal.get(ID));
         }
+    },
+
+    /**
+     * Handles <code>alwaysShowListChange</code> events.
+     *
+     * @method _afterAlwaysShowListChange
+     * @param {EventTarget} e
+     * @protected
+     */
+    _afterAlwaysShowListChange: function (e) {
+        this.set(VISIBLE, e.newVal || this.get(RESULTS).length > 0);
     },
 
     /**
@@ -476,7 +620,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _afterResultsChange: function (e) {
         this._syncResults(e.newVal);
-        this.set(VISIBLE, !!e.newVal.length);
+
+        if (!this.get(ALWAYS_SHOW_LIST)) {
+            this.set(VISIBLE, !!e.newVal.length);
+        }
     },
 
     /**
@@ -516,52 +663,25 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onInputKey: function (e) {
-        var action,
-            keyCode = e.keyCode,
-            visible;
+        var handler,
+            keyCode = e.keyCode;
 
         this._lastInputKey = keyCode;
 
-        if (!this.get(RESULTS).length) {
-            return;
-        }
+        if (this.get(RESULTS).length) {
+            handler = this._keys[keyCode];
 
-        visible = this.get(VISIBLE);
-
-        if (keyCode === KEY_DOWN) {
-            action = 1;
-
-            if (!visible) {
-                this.show();
+            if (!handler && this.get(VISIBLE)) {
+                handler = this._keysVisible[keyCode];
             }
 
-            this._activateNextItem();
-        }
-
-        if (visible) {
-            switch (keyCode) {
-            case KEY_ENTER:
-                action = 1;
-                this.selectItem();
-                break;
-
-            case KEY_ESC:
-                action = 1;
-                this.hide();
-                break;
-
-            // case KEY_TAB:
-            //     break;
-
-            case KEY_UP:
-                action = 1;
-                this._activatePrevItem();
-                break;
+            if (handler) {
+                // A handler may return false to indicate that it doesn't wish
+                // to prevent the default key behavior.
+                if (handler.call(this, e) !== false) {
+                    e.preventDefault();
+                }
             }
-        }
-
-        if (action) {
-            e.preventDefault();
         }
     },
 
@@ -573,8 +693,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _onItemClick: function (e) {
+        var itemNode = e.currentTarget;
+
         e.preventDefault();
-        this.selectItem(e.currentTarget);
+
+        this.set(ACTIVE_ITEM, itemNode);
+        this.selectItem(itemNode);
     },
 
     // -- Protected Default Event Handlers -------------------------------------
@@ -587,23 +711,37 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _defSelectFn: function (e) {
-        // TODO: support query delimiters, typeahead completion, etc.
-        this.set('value', e.result.text);
+        var text = e.result.text;
+
+        // TODO: support typeahead completion, etc.
         this._inputNode.focus();
+        this._updateValue(text);
+        this._ariaSay('ITEM_SELECTED', {item: text});
         this.hide();
     }
 }, {
     ATTRS: {
+        /**
+         * If <code>true</code>, the first item in the list will be activated by
+         * default when the list is initially displayed and when results change.
+         *
+         * @attribute activateFirstItem
+         * @type Boolean
+         * @default false
+         */
+        activateFirstItem: {
+            value: false
+        },
+
         /**
          * Item that's currently active, if any. When the user presses enter,
          * this is the item that will be selected.
          *
          * @attribute activeItem
          * @type Node
-         * @readonly
          */
         activeItem: {
-            readOnly: true,
+            setter: Y.one,
             value: null
         },
 
@@ -612,6 +750,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             value: {
                 points: ['tl', 'bl']
             }
+        },
+
+        /**
+         * If <code>true</code>, the list will remain visible even when there
+         * are no results to display.
+         *
+         * @attribute alwaysShowList
+         * @type Boolean
+         * @default false
+         */
+        alwaysShowList: {
+            value: false
         },
 
         /**
@@ -638,13 +788,47 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             value: null
         },
 
+        // The "strings" attribute is documented in Widget.
+        strings: {
+            value: {
+                // These strings are used in ARIA live region announcements.
+                ITEM_SELECTED: '{item} selected.',
+                ITEMS_AVAILABLE: 'Suggestions are available. Use the up and down arrow keys to select suggestions.'
+            }
+        },
+
+        /**
+         * If <code>true</code>, pressing the tab key while the list is visible
+         * will select the active item, if any.
+         *
+         * @attribute tabSelect
+         * @type Boolean
+         * @default true
+         */
+        tabSelect: {
+            value: true
+        },
+
         // The "visible" attribute is documented in Widget.
         visible: {
             value: false
         }
     },
 
-    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist'),
+
+    HTML_PARSER: {
+        /**
+         * Node that will contain result items.
+         *
+         * @attribute listNode
+         * @type Node|null
+         * @readonly
+         */
+        listNode: function () {
+            return this.getClassName(LIST);
+        }
+    }
 });
 
 Y.AutoCompleteList = List;

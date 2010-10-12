@@ -10,19 +10,25 @@
 		YUI_config = {
 		    filter: 'debug'
 		};
+
+		YUI.GlobalConfig = {
+		    logFn: function() {
+                console.log('logFn');
+            }
+		};
 	</script>
-	<script type="text/javascript">	
+	<script type="text/javascript">
 		YUI().use('dd', function (Y) {
 
             Y.log('first block');
-			
+
 		});
 	</script>
-	<script type="text/javascript">	
+	<script type="text/javascript">
 		YUI().use('node', function (Y) {
-			
+
             Y.log('second block');
-			
+
 		});
 	</script>
 

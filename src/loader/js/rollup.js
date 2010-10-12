@@ -16,22 +16,22 @@
  * @private
  */
 Y.Loader.prototype._rollup = function() {
-    var i, j, m, s, rollups={}, r=this.required, roll,
+    var i, j, m, s, r = this.required, roll,
         info = this.moduleInfo, rolled, c, smod;
 
     // find and cache rollup modules
     if (this.dirty || !this.rollups) {
+        this.rollups = {};
         for (i in info) {
             if (info.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // if (m && m.rollup && m.supersedes) {
                 if (m && m.rollup) {
-                    rollups[i] = m;
+                    this.rollups[i] = m;
                 }
             }
         }
 
-        this.rollups = rollups;
         this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
     }
 
@@ -40,12 +40,12 @@ Y.Loader.prototype._rollup = function() {
         rolled = false;
 
         // go through the rollup candidates
-        for (i in rollups) { 
-            if (rollups.hasOwnProperty(i)) {
+        for (i in this.rollups) {
+            if (this.rollups.hasOwnProperty(i)) {
                 // there can be only one, unless forced
                 if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
-                    m = this.getModule(i); 
-                    s = m.supersedes || []; 
+                    m = this.getModule(i);
+                    s = m.supersedes || [];
                     roll = false;
 
                     // @TODO remove continue
@@ -56,16 +56,16 @@ Y.Loader.prototype._rollup = function() {
                     c = 0;
 
                     // check the threshold
-                    for (j=0;j<s.length;j=j+1) {
+                    for (j = 0; j < s.length; j++) {
                         smod = info[s[j]];
 
-                        // if the superseded module is loaded, we can't 
+                        // if the superseded module is loaded, we can't
                         // load the rollup unless it has been forced.
                         if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
                             roll = false;
                             break;
-                        // increment the counter if this module is required.  
-                        // if we are beyond the rollup threshold, we will 
+                        // increment the counter if this module is required.
+                        // if we are beyond the rollup threshold, we will
                         // use the rollup module
                         } else if (r[s[j]] && m.type == smod.type) {
                             c++;

@@ -12,7 +12,7 @@
  *
  * @class Queue
  * @constructor
- * @param item* {MIXED} 0..n items to seed the queue.
+ * @param {MIXED} item* 0..n items to seed the queue.
  */
 function Queue() {
     this._init();
@@ -48,7 +48,7 @@ Queue.prototype = {
     },
 
     /**
-     * Get the last in the queue. LIFO support
+     * Get the last in the queue. LIFO support.
      *
      * @method last
      * @return {MIXED} the last item in the queue.
@@ -58,10 +58,11 @@ Queue.prototype = {
     },
 
     /**
-     * Add 0..n items to the end of the queue
+     * Add 0..n items to the end of the queue.
      *
      * @method add
-     * @param item* {MIXED} 0..n items
+     * @param {MIXED} item* 0..n items.
+     * @return {object} this queue.
      */
     add: function() {
         Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
@@ -72,10 +73,10 @@ Queue.prototype = {
     },
 
     /**
-     * Returns the current number of queued items
+     * Returns the current number of queued items.
      *
      * @method size
-     * @return {Number}
+     * @return {Number} The size.
      */
     size: function() {
         return this._q.length;

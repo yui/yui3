@@ -55,14 +55,19 @@ Y.extend(HistoryHash, HistoryBase, {
 
     // -- Protected Methods ----------------------------------------------------
     _storeState: function (src, newState) {
-        var newHash = HistoryHash.createHash(newState);
+        var decode  = HistoryHash.decode,
+            newHash = HistoryHash.createHash(newState);
 
         HistoryHash.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes, but only if the new hash
         // actually differs from the current hash (this avoids creating multiple
         // history entries for a single state).
-        if (HistoryHash.getHash() !== newHash) {
+        //
+        // We always compare decoded hashes, since it's possible that the hash
+        // could be set incorrectly to a non-encoded value outside of
+        // HistoryHash.
+        if (src !== SRC_HASH && decode(HistoryHash.getHash()) !== decode(newHash)) {
             HistoryHash[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
         }
     },
@@ -433,7 +438,7 @@ if (HistoryBase.nativeHashChange) {
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                YArray.each(hashNotifiers, function (notifier) {
+                YArray.each(hashNotifiers.concat(), function (notifier) {
                     notifier.fire({
                         oldHash: oldHash,
                         oldUrl : oldUrl,

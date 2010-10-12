@@ -290,6 +290,36 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="private" rel="yui:method" resource="#method__createEvents">
+                                    <h4>
+                                        <a name="method__createEvents">_createEvents</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_createEvents</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            This method creates all the events for this Event Target and publishes them so we get Event Bubbling.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="private" rel="yui:method" resource="#method__getConstraint">
                                     <h4>
                                         <a name="method__getConstraint">_getConstraint</a></h4>
@@ -336,6 +366,66 @@
                                         
                                         <div class="description" property="yui:description">
                                             Fires on drag:start and clears the _regionCache
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__tickAlignX">
+                                    <h4>
+                                        <a name="method__tickAlignX">_tickAlignX</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_tickAlignX</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the actXY[0] reach a new value respecting the tickX gap.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__tickAlignY">
+                                    <h4>
+                                        <a name="method__tickAlignY">_tickAlignY</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_tickAlignY</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the actXY[1] reach a new value respecting the tickY gap.
                                         </div>
 
                                         <div class="description">
@@ -952,6 +1042,94 @@
                                                                 &lt;<span property="yui:type">Event.Facade</span>&gt;
                                                             </code>
                                                             <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_drag:tickAlignX">
+                                    <h4>
+                                        <a name="event_drag:tickAlignX">drag:tickAlignX</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">drag:tickAlignX</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when this node is aligned with the tickX value.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_drag:tickAlignY">
+                                    <h4>
+                                        <a name="event_drag:tickAlignY">drag:tickAlignY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">drag:tickAlignY</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when this node is aligned with the tickY value.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -1634,8 +1812,11 @@
                                 <li class="private"><a href="#method__cacheRegion" title="_cacheRegion">_cacheRegion</a></li>
                                 <li class="private"><a href="#method__checkRegion" title="_checkRegion">_checkRegion</a></li>
                                 <li class="private"><a href="#method__checkTicks" title="_checkTicks">_checkTicks</a></li>
+                                <li class="private"><a href="#method__createEvents" title="_createEvents">_createEvents</a></li>
                                 <li class="private"><a href="#method__getConstraint" title="_getConstraint">_getConstraint</a></li>
                                 <li class="private"><a href="#method__handleStart" title="_handleStart">_handleStart</a></li>
+                                <li class="private"><a href="#method__tickAlignX" title="_tickAlignX">_tickAlignX</a></li>
+                                <li class="private"><a href="#method__tickAlignY" title="_tickAlignY">_tickAlignY</a></li>
                                 <li class=""><a href="#method_align" title="align">align</a></li>
                                 <li class=""><a href="#method_getRegion" title="getRegion">getRegion</a></li>
                                 <li class=""><a href="#method_inRegion" title="inRegion">inRegion</a></li>
@@ -1651,6 +1832,8 @@
                                 <li class=""><a href="#event_constrain2regionChange" title="constrain2regionChange">constrain2regionChange</a></li>
                                 <li class=""><a href="#event_constrain2viewChange" title="constrain2viewChange">constrain2viewChange</a></li>
                                 <li class=""><a href="#event_constrainChange" title="constrainChange">constrainChange</a></li>
+                                <li class=""><a href="#event_drag:tickAlignX" title="drag:tickAlignX">drag:tickAlignX</a></li>
+                                <li class=""><a href="#event_drag:tickAlignY" title="drag:tickAlignY">drag:tickAlignY</a></li>
                                 <li class=""><a href="#event_gutterChange" title="gutterChange">gutterChange</a></li>
                                 <li class=""><a href="#event_stickXChange" title="stickXChange">stickXChange</a></li>
                                 <li class=""><a href="#event_stickYChange" title="stickYChange">stickYChange</a></li>
@@ -1689,7 +1872,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.DDConstrained", "name": "align", "url": "Plugin.DDConstrained.html#method_align", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_cacheRegion", "url": "Plugin.DDConstrained.html#method__cacheRegion", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "cacheRegion", "url": "Plugin.DDConstrained.html#config_cacheRegion", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "cacheRegionChange", "url": "Plugin.DDConstrained.html#event_cacheRegionChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_checkRegion", "url": "Plugin.DDConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_checkTicks", "url": "Plugin.DDConstrained.html#method__checkTicks", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain", "url": "Plugin.DDConstrained.html#config_constrain", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2node", "url": "Plugin.DDConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2nodeChange", "url": "Plugin.DDConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2region", "url": "Plugin.DDConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2regionChange", "url": "Plugin.DDConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2view", "url": "Plugin.DDConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2viewChange", "url": "Plugin.DDConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrainChange", "url": "Plugin.DDConstrained.html#event_constrainChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_getConstraint", "url": "Plugin.DDConstrained.html#method__getConstraint", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "getRegion", "url": "Plugin.DDConstrained.html#method_getRegion", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "gutter", "url": "Plugin.DDConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "gutterChange", "url": "Plugin.DDConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_handleStart", "url": "Plugin.DDConstrained.html#method__handleStart", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "inRegion", "url": "Plugin.DDConstrained.html#method_inRegion", "type": "method"}, {"access": "protected", "host": "Plugin.DDConstrained", "name": "NS", "url": "Plugin.DDConstrained.html#property_NS", "type": "property"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_regionCache", "url": "Plugin.DDConstrained.html#property__regionCache", "type": "property"}, {"access": "", "host": "Plugin.DDConstrained", "name": "resetCache", "url": "Plugin.DDConstrained.html#method_resetCache", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickX", "url": "Plugin.DDConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickXChange", "url": "Plugin.DDConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickY", "url": "Plugin.DDConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickYChange", "url": "Plugin.DDConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickX", "url": "Plugin.DDConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXArray", "url": "Plugin.DDConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXArrayChange", "url": "Plugin.DDConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXChange", "url": "Plugin.DDConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickY", "url": "Plugin.DDConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYArray", "url": "Plugin.DDConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYArrayChange", "url": "Plugin.DDConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYChange", "url": "Plugin.DDConstrained.html#event_tickYChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.DDConstrained", "name": "align", "url": "Plugin.DDConstrained.html#method_align", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_cacheRegion", "url": "Plugin.DDConstrained.html#method__cacheRegion", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "cacheRegion", "url": "Plugin.DDConstrained.html#config_cacheRegion", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "cacheRegionChange", "url": "Plugin.DDConstrained.html#event_cacheRegionChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_checkRegion", "url": "Plugin.DDConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_checkTicks", "url": "Plugin.DDConstrained.html#method__checkTicks", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain", "url": "Plugin.DDConstrained.html#config_constrain", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2node", "url": "Plugin.DDConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2nodeChange", "url": "Plugin.DDConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2region", "url": "Plugin.DDConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2regionChange", "url": "Plugin.DDConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2view", "url": "Plugin.DDConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2viewChange", "url": "Plugin.DDConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrainChange", "url": "Plugin.DDConstrained.html#event_constrainChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_createEvents", "url": "Plugin.DDConstrained.html#method__createEvents", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "drag:tickAlignX", "url": "Plugin.DDConstrained.html#event_drag:tickAlignX", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "drag:tickAlignY", "url": "Plugin.DDConstrained.html#event_drag:tickAlignY", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_getConstraint", "url": "Plugin.DDConstrained.html#method__getConstraint", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "getRegion", "url": "Plugin.DDConstrained.html#method_getRegion", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "gutter", "url": "Plugin.DDConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "gutterChange", "url": "Plugin.DDConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_handleStart", "url": "Plugin.DDConstrained.html#method__handleStart", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "inRegion", "url": "Plugin.DDConstrained.html#method_inRegion", "type": "method"}, {"access": "protected", "host": "Plugin.DDConstrained", "name": "NS", "url": "Plugin.DDConstrained.html#property_NS", "type": "property"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_regionCache", "url": "Plugin.DDConstrained.html#property__regionCache", "type": "property"}, {"access": "", "host": "Plugin.DDConstrained", "name": "resetCache", "url": "Plugin.DDConstrained.html#method_resetCache", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickX", "url": "Plugin.DDConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickXChange", "url": "Plugin.DDConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickY", "url": "Plugin.DDConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickYChange", "url": "Plugin.DDConstrained.html#event_stickYChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_tickAlignX", "url": "Plugin.DDConstrained.html#method__tickAlignX", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_tickAlignY", "url": "Plugin.DDConstrained.html#method__tickAlignY", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickX", "url": "Plugin.DDConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXArray", "url": "Plugin.DDConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXArrayChange", "url": "Plugin.DDConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXChange", "url": "Plugin.DDConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickY", "url": "Plugin.DDConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYArray", "url": "Plugin.DDConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYArrayChange", "url": "Plugin.DDConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYChange", "url": "Plugin.DDConstrained.html#event_tickYChange", "type": "event"}];
 </script>
 </body>
 </html>

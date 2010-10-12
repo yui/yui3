@@ -83,7 +83,7 @@ removed using next().
                                                     <code><span property="yui:name">item*</span>
                                                     &lt;<span property="yui:type">MIXED</span>&gt;
                                                     </code>
-                                                    <span property="yui:description">  0..n items to seed the queue.</span>
+                                                    <span property="yui:description"> 0..n items to seed the queue.</span>
                                                 </dd>
                                         </dl>
                                     
@@ -182,7 +182,7 @@ removed using next().
                                                         <code><span property="yui:name">what</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the requested modules.</span>
+                                                        <span property="yui:description"> the requested modules.</span>
                                                         </dd>
                                                 </dl>
 
@@ -210,7 +210,7 @@ removed using next().
                                         
                                         
                                         
-                                        void
+                                        object
                                             <strong property="yui:name">add</strong>
                                            (
                                                 
@@ -222,7 +222,7 @@ removed using next().
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Add 0..n items to the end of the queue
+                                            Add 0..n items to the end of the queue.
                                         </div>
 
                                         <div class="description">
@@ -233,10 +233,17 @@ removed using next().
                                                         <code><span property="yui:name">item*</span>
                                                         &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  0..n items</span>
+                                                        <span property="yui:description"> 0..n items.</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">this queue.</dd>
+                                                </dl>
 
 
              
@@ -312,7 +319,7 @@ removed using next().
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Get the last in the queue. LIFO support
+                                            Get the last in the queue. LIFO support.
                                         </div>
 
                                         <div class="description">
@@ -474,12 +481,19 @@ removed using next().
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the current number of queued items
+                                            Returns the current number of queued items.
                                         </div>
 
                                         <div class="description">
 
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Number
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The size.</dd>
+                                                </dl>
 
 
              

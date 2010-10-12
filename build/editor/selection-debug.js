@@ -151,17 +151,19 @@ YUI.add('selection', function(Y) {
         var endTime1 = (new Date()).getTime();
         Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'selection');
 
+        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
+
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
-                el.className = 'hr yui-non';
+                el.className = 'hr yui-non yui-skip';
                 el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
                 el.setAttribute('readonly', true);
                 el.setAttribute('contenteditable', false); //Keep it from being Edited
                 if (hr.parentNode) {
                     hr.parentNode.replaceChild(el, hr);
                 }
-
         });
+        
 
         Y.each(classNames, function(v, k) {
             cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';
@@ -256,6 +258,7 @@ YUI.add('selection', function(Y) {
         }
         
         if (!Y.UA.ie) {
+            /*
             divs = Y.all('div, p');
             divs.each(function(d) {
                 if (d.hasClass('yui-non')) {
@@ -263,25 +266,27 @@ YUI.add('selection', function(Y) {
                 }
                 var html = d.get('innerHTML');
                 if (html === '') {
-                    //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                    Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
                     d.remove();
                 } else {
-                    //Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                    Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
                     if (d.get('childNodes').size() == 1) {
-                        //Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                        Y.log('This Div/P only has one Child Node', 'info', 'selection');
                         if (d.ancestor('p')) {
-                            //Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                            Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
                             d.replace(d.get('firstChild'));
                         }
                     }
                 }
-            });
+            });*/
 
+            /** Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
             Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
             spans.each(function(s) {
                 s.setAttribute('style', '');
             });
+            */
         }
 
 
@@ -332,7 +337,8 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.unfilter = function() {
         var nodes = Y.all('body [class]'),
-            html = '', nons, ids;
+            html = '', nons, ids,
+            body = Y.one('body');
         
         Y.log('UnFiltering nodes', 'info', 'selection');
         
@@ -349,10 +355,10 @@ YUI.add('selection', function(Y) {
 
         nons = Y.all('.yui-non');
         nons.each(function(n) {
-            if (n.get('innerHTML') === '') {
+            if (!n.hasClass('yui-skip') && n.get('innerHTML') === '') {
                 n.remove();
             } else {
-                n.removeClass('yui-non');
+                n.removeClass('yui-non').removeClass('yui-skip');
             }
         });
 
@@ -363,9 +369,13 @@ YUI.add('selection', function(Y) {
                 n.removeAttribute('_yuid');
             }
         });
-
-        html = Y.one('body').get('innerHTML');
         
+        if (body) {
+            html = body.get('innerHTML');
+        }
+        
+        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
+
         nodes.each(function(n) {
             n.addClass(n._yuid);
             n.setStyle(FONT_FAMILY, '');
@@ -459,7 +469,14 @@ YUI.add('selection', function(Y) {
     * @static
     * @property CURSOR
     */
-    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+    //Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><br class="yui-cursor"></span>';
+
+    Y.Selection.hasCursor = function() {
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        Y.log('Has Cursor: ' + cur.size(), 'info', 'selection');
+        return cur.size();
+    };
 
     /**
     * Called from Editor keydown to remove the "extra" space before the cursor.
@@ -467,24 +484,14 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
-        /*
-        var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
-        if (cur) {
-            cur.id = '';
-            if (cur.innerHTML == '&nbsp;' || cur.innerHTML == '<br>') {
-                if (cur.parentNode) {
-                    cur.parentNode.removeChild(cur);
-                }
-            }
-        }
-        */
-        
         var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
-        if (cur.size) {
+        if (cur.size()) {
             cur.each(function(c) {
                 var html = c.get('innerHTML');
-                if (html == '&nbsp' || html == '<br>') {
-                    c.remove();
+                if (html == '&nbsp;' || html == '<br>') {
+                    if (c.previous() || c.next()) {
+                        c.remove();
+                    }
                 }
             });
         }
@@ -854,7 +861,8 @@ YUI.add('selection', function(Y) {
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                    //cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                    cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {
                     cur.remove();
                 }
@@ -891,4 +899,4 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});

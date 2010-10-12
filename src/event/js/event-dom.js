@@ -18,34 +18,35 @@ Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
 var _eventenv = Y.Env.evt,
-config = Y.config,
-win = config.win,
-add = YUI.Env.add,
-remove = YUI.Env.remove,
+    config = Y.config,
+    win = config.win,
+    add = YUI.Env.add,
+    remove = YUI.Env.remove,
 
-onLoad = function() {
-    YUI.Env.windowLoaded = true;
-    Y.Event._load();
-    remove(win, "load", onLoad);
-},
+    onLoad = function() {
+        YUI.Env.windowLoaded = true;
+        Y.Event._load();
+        remove(win, "load", onLoad);
+    },
 
-onUnload = function() {
-    Y.Event._unload();
-},
+    onUnload = function() {
+        Y.Event._unload();
+    },
 
-EVENT_READY = 'domready',
+    EVENT_READY = 'domready',
 
-COMPAT_ARG = '~yui|2|compat~',
+    COMPAT_ARG = '~yui|2|compat~',
 
-shouldIterate = function(o) {
-    try {
-        return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !o.alert);
-    } catch(ex) {
-        Y.log("collection check failure", "warn", "event");
-        return false;
-    }
+    shouldIterate = function(o) {
+        try {
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) &&
+                    !o.tagName && !o.alert);
+        } catch(ex) {
+            Y.log("collection check failure", "warn", "event");
+            return false;
+        }
 
-},
+    },
 
 Event = function() {
 
@@ -165,7 +166,7 @@ Event = function() {
          */
         startInterval: function() {
             if (!Event._interval) {
-Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
+Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             }
         },
 
@@ -214,7 +215,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             _retryCount = this.POLL_RETRYS;
 
             // We want the first test to be immediate, but async
-            setTimeout(Y.bind(Event._poll, Event), 0);
+            setTimeout(Event._poll, 0);
 
             availHandle = new Y.EventHandle({
 
@@ -254,9 +255,9 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          *
          * @param {string}   id the id of the element to look for.
          * @param {function} fn what to execute when the element is ready.
-         * @param {object}   p_obj an optional object to be passed back as
+         * @param {object}   obj an optional object to be passed back as
          *                   a parameter to fn.
-         * @param {boolean|object}  p_override If set to true, fn will execute
+         * @param {boolean|object}  override If set to true, fn will execute
          *                   in the context of p_obj.  If an object, fn will
          *                   exectute in the context of that object
          *
@@ -264,8 +265,8 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          * @deprecated Use Y.on("contentready")
          */
         // @TODO fix arguments
-        onContentReady: function(id, fn, p_obj, p_override, compat) {
-            return this.onAvailable(id, fn, p_obj, p_override, true, compat);
+        onContentReady: function(id, fn, obj, override, compat) {
+            return Event.onAvailable(id, fn, obj, override, true, compat);
         },
 
         /**
@@ -422,7 +423,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 } else {
 
                     // Y.log(el + ' not found');
-                    ret = this.onAvailable(el, function() {
+                    ret = Event.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
 
                         ret.handle = Event._attach(args, conf);
@@ -440,11 +441,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
-            if (Y.Node && el instanceof Y.Node) {
+            if (Y.Node && Y.instanceOf(el, Y.Node)) {
                 el = Y.Node.getDOMNode(el);
             }
 
-            cewrapper = this._createWrapper(el, type, capture, compat, facade);
+            cewrapper = Event._createWrapper(el, type, capture, compat, facade);
             if (overrides) {
                 Y.mix(cewrapper.overrides, overrides);
             }
@@ -545,7 +546,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             if (!type || !fn || !fn.call) {
-                return this.purgeElement(el, false, type);
+                return Event.purgeElement(el, false, type);
             }
 
             id = 'event:' + Y.stamp(el) + type;
@@ -646,7 +647,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @private
          */
         _poll: function() {
-            if (this.locked) {
+            if (Event.locked) {
                 return;
             }
 
@@ -654,11 +655,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // Hold off if DOMReady has not fired and check current
                 // readyState to protect against the IE operation aborted
                 // issue.
-                this.startInterval();
+                Event.startInterval();
                 return;
             }
 
-            this.locked = true;
+            Event.locked = true;
 
             // Y.log.debug("poll");
             // keep trying until after the page is loaded.  We need to
@@ -738,13 +739,13 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             if (tryAgain) {
                 // we may need to strip the nulled out items here
-                this.startInterval();
+                Event.startInterval();
             } else {
-                clearInterval(this._interval);
-                this._interval = null;
+                clearInterval(Event._interval);
+                Event._interval = null;
             }
 
-            this.locked = false;
+            Event.locked = false;
 
             return;
 
@@ -765,7 +766,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len, props, children, child;
+                lis = Event.getListeners(oEl, type), i, len, props, children, child;
 
             if (recurse && oEl) {
                 lis = lis || [];
@@ -773,7 +774,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 i = 0;
                 len = children.length;
                 for (; i < len; ++i) {
-                    child = this.getListeners(children[i], type);
+                    child = Event.getListeners(children[i], type);
                     if (child) {
                         lis = lis.concat(child);
                     }
@@ -856,7 +857,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             remove(win, "unload", onUnload);
         },
 
-
         /**
          * Adds a DOM event directly without the caching, cleanup, context adj, etc
          *
@@ -896,10 +896,10 @@ if (config.injected || YUI.Env.windowLoaded) {
 
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
 if (Y.UA.ie) {
-    Y.on(EVENT_READY, Event._poll, Event, true);
+    Y.on(EVENT_READY, Event._poll);
 }
 
-Y.on("unload", onUnload);
+add(win, "unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;

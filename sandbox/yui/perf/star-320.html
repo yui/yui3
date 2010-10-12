@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI perf</title>
+</head>
+<body class="yui-skin-sam">
+<!-- JS -->
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.2.0/build/yui/yui.js&3.2.0/build/oop/oop.js&3.2.0/build/event-custom/event-custom.js&3.2.0/build/event/event-base.js&3.2.0/build/pluginhost/pluginhost.js&3.2.0/build/dom/dom.js&3.2.0/build/node/node.js&3.2.0/build/event/event-delegate.js&3.2.0/build/attribute/attribute-base.js&3.2.0/build/base/base-base.js&3.2.0/build/anim/anim.js&3.2.0/build/querystring/querystring-stringify-simple.js&3.2.0/build/queue-promote/queue-promote.js&3.2.0/build/datatype/datatype-xml.js&3.2.0/build/io/io.js&3.2.0/build/json/json.js&3.2.0/build/datatype/datatype.js&3.2.0/build/queue-promote/queue-promote.js"></script>
+
+<p>YUI instances.</p>
+
+<script>
+console.profile('yui-star-311');
+for (var i=0; i<4; i++) {
+    var Y = YUI({
+        // bootstrap: false
+    }).use('*', function(Y) {
+        // Y.use('widget');
+        // Y.use('console');
+        // Y.use('slider');
+        // Y.use('widget-parent');
+    });
+}
+
+console.profileEnd('yui-star-311');
+
+// console.log(Y);
+
+/*
+console.log(Y.Env._loader.moduleInfo);
+
+
+var keys = Y.Object.keys(Y.Env._loader.moduleInfo);
+var count = 0;
+
+console.log(keys.length);
+
+
+for (var i=0; i<keys.length; i++){
+    if (keys[i].indexOf('lang/') > -1) {
+        count++;
+    }
+}
+
+console.log(count);
+*/
+
+</script>
+</body>
+</html>

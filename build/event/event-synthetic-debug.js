@@ -461,7 +461,7 @@ Y.mix(SyntheticEvent, {
         _unregisterSub: function (sub) {
             var notifiers = SyntheticEvent.getRegistry(sub.node, this.type),
                 i;
-                
+
             if (notifiers) {
                 for (i = notifiers.length - 1; i >= 0; --i) {
                     if (notifiers[i].sub === sub) {
@@ -489,7 +489,7 @@ Y.mix(SyntheticEvent, {
                 els    = (isString(target)) ?
                             query(target) : toArray(target),
                 node, i, len, handles, j;
-            
+
             // (type, fn, el, context, filter?) => (type, fn, context, filter?)
             args.splice(2, 1);
 

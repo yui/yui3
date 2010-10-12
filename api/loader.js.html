@@ -61,6 +61,45 @@
 <span class="cm"> * @submodule loader-base</span>
 <span class="cm"> */</span>
 
+
+<span class="kd">var</span> <span class="nx">NOT_FOUND</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="nx">NO_REQUIREMENTS</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="nx">MAX_URL_LENGTH</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="o">?</span> <span class="mi">2048</span> <span class="o">:</span> <span class="mi">8192</span><span class="p">,</span>
+    <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
+    <span class="nx">GLOBAL_LOADED</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_loaded</span><span class="p">,</span>
+    <span class="nx">CSS</span> <span class="o">=</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span>
+    <span class="nx">JS</span> <span class="o">=</span> <span class="s1">&#39;js&#39;</span><span class="p">,</span>
+    <span class="nx">INTL</span> <span class="o">=</span> <span class="s1">&#39;intl&#39;</span><span class="p">,</span>
+    <span class="nx">VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
+    <span class="nx">ROOT_LANG</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="nx">YObject</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
+    <span class="nx">oeach</span> <span class="o">=</span> <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">,</span>
+    <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+    <span class="nx">_queue</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_loaderQueue</span><span class="p">,</span>
+    <span class="nx">META</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">[</span><span class="nx">VERSION</span><span class="p">],</span>
+    <span class="nx">SKIN_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;skin-&#39;</span><span class="p">,</span>
+    <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">ON_PAGE</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
+    <span class="nx">modulekey</span><span class="p">,</span>
+    <span class="nx">cache</span><span class="p">,</span>
+    <span class="nx">_path</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">path</span> <span class="o">+=</span> <span class="s1">&#39;-min&#39;</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="nx">path</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">CSS</span><span class="p">);</span>
+
+                        <span class="k">return</span> <span class="nx">path</span><span class="p">;</span>
+                    <span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * The component metadata is stored in Y.Env.meta.</span>
+<span class="cm"> * Part of the loader module.</span>
+<span class="cm"> * @property Env.meta</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span> <span class="o">=</span> <span class="nx">META</span><span class="p">;</span>
+
 <span class="cm">/**</span>
 <span class="cm"> * Loader dynamically loads script and css files.  It includes the dependency</span>
 <span class="cm"> * info for the version of the library in use, and will automatically pull in</span>
@@ -75,9 +114,9 @@
 <span class="cm"> * @see YUI.use for the normal use case.  The use function automatically will</span>
 <span class="cm"> * pull in missing dependencies.</span>
 <span class="cm"> *</span>
-<span class="cm"> * @class Loader</span>
 <span class="cm"> * @constructor</span>
-<span class="cm"> * @param o an optional set of configuration options.  Valid options:</span>
+<span class="cm"> * @class Loader</span>
+<span class="cm"> * @param {object} o an optional set of configuration options.  Valid options:</span>
 <span class="cm"> * &lt;ul&gt;</span>
 <span class="cm"> *  &lt;li&gt;base:</span>
 <span class="cm"> *  The base dir&lt;/li&gt;</span>
@@ -165,39 +204,6 @@
 <span class="cm"> *  going forward.&lt;/li&gt;</span>
 <span class="cm"> * &lt;/ul&gt;</span>
 <span class="cm"> */</span>
-
-<span class="kd">var</span> <span class="nx">NOT_FOUND</span> <span class="o">=</span> <span class="p">{},</span>
-    <span class="nx">NO_REQUIREMENTS</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="nx">MAX_URL_LENGTH</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="o">?</span> <span class="mi">2048</span> <span class="o">:</span> <span class="mi">8192</span><span class="p">,</span>
-    <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
-    <span class="nx">GLOBAL_LOADED</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_loaded</span><span class="p">,</span>
-    <span class="nx">CSS</span> <span class="o">=</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span>
-    <span class="nx">JS</span> <span class="o">=</span> <span class="s1">&#39;js&#39;</span><span class="p">,</span>
-    <span class="nx">INTL</span> <span class="o">=</span> <span class="s1">&#39;intl&#39;</span><span class="p">,</span>
-    <span class="nx">VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
-    <span class="nx">ROOT_LANG</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-    <span class="nx">YObject</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
-    <span class="nx">oeach</span> <span class="o">=</span> <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">,</span>
-    <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
-    <span class="nx">_queue</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_loaderQueue</span><span class="p">,</span>
-    <span class="nx">META</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">[</span><span class="nx">VERSION</span><span class="p">],</span>
-    <span class="nx">SKIN_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;skin-&#39;</span><span class="p">,</span>
-    <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-    <span class="nx">ON_PAGE</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
-    <span class="nx">modulekey</span><span class="p">,</span>
-    <span class="nx">cache</span><span class="p">,</span>
-    <span class="nx">_path</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">;</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nomin</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">path</span> <span class="o">+=</span> <span class="s1">&#39;-min&#39;</span><span class="p">;</span>
-                        <span class="p">}</span>
-                        <span class="nx">path</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">CSS</span><span class="p">);</span>
-
-                        <span class="k">return</span> <span class="nx">path</span><span class="p">;</span>
-                    <span class="p">};</span>
-
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span> <span class="o">=</span> <span class="nx">META</span><span class="p">;</span>
-
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">defaults</span> <span class="o">=</span> <span class="nx">META</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span>
@@ -338,7 +344,7 @@
 <span class="cm">     * Browsers:</span>
 <span class="cm">     *    IE: 2048</span>
 <span class="cm">     *    Other A-Grade Browsers: Higher that what is typically supported</span>
-<span class="cm">     *    &#39;capable&#39; mobile browsers: @TODO</span>
+<span class="cm">     *    &#39;capable&#39; mobile browsers:</span>
 <span class="cm">     *</span>
 <span class="cm">     * Servers:</span>
 <span class="cm">     *    Apache: 8192</span>
@@ -565,7 +571,7 @@
 <span class="cm">     * Composed of what YUI reports to be loaded combined</span>
 <span class="cm">     * with what has been loaded by any instance on the page</span>
 <span class="cm">     * with the version number specified in the metadata.</span>
-<span class="cm">     * @propery loaded</span>
+<span class="cm">     * @property loaded</span>
 <span class="cm">     * @type {string: boolean}</span>
 <span class="cm">     */</span>
     <span class="nx">self</span><span class="p">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="nx">GLOBAL_LOADED</span><span class="p">[</span><span class="nx">VERSION</span><span class="p">];</span>
@@ -602,6 +608,7 @@
 
     <span class="c1">// Y.on(&#39;yui:load&#39;, self.loadNext, self);</span>
 
+    <span class="nx">self</span><span class="p">.</span><span class="nx">tested</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="cm">/*</span>
 <span class="cm">     * Cached sorted calculate results</span>
@@ -633,6 +640,7 @@
                    <span class="nx">mr</span> <span class="o">=</span> <span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">.</span><span class="nx">_inspected</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">mr</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                       <span class="c1">// console.log(&#39;deleting &#39; + m.name);</span>
                        <span class="k">delete</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
                    <span class="p">}</span>
                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -647,10 +655,15 @@
 <span class="c1">// directly or by means of modules it supersedes.</span>
    <span class="nx">_requires</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod1</span><span class="p">,</span> <span class="nx">mod2</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">rm</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">after_map</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">rm</span><span class="p">,</span> <span class="nx">after_map</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
             <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span>
             <span class="nx">m</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">],</span>
             <span class="nx">other</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod2</span><span class="p">];</span>
+            <span class="c1">// key = mod1 + mod2;</span>
+
+        <span class="c1">// if (this.tested[key]) {</span>
+            <span class="c1">// return this.tested[key];</span>
+        <span class="c1">// }</span>
 
         <span class="c1">// if (loaded[mod2] || !m || !other) {</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span> <span class="o">||</span> <span class="o">!</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
@@ -658,20 +671,19 @@
         <span class="p">}</span>
 
         <span class="nx">rm</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">expanded_map</span><span class="p">;</span>
-        <span class="nx">after</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">after</span><span class="p">;</span>
         <span class="nx">after_map</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">after_map</span><span class="p">;</span>
 
-        <span class="c1">// check if this module requires the other directly</span>
-        <span class="c1">// if (r &amp;&amp; YArray.indexOf(r, mod2) &gt; -1) {</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">rm</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">rm</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// check if this module should be sorted after the other</span>
+        <span class="c1">// do this first to short circut circular deps</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">after_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">after_map</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="c1">// check if this module should be sorted after the other</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">after_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">after_map</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">after</span> <span class="o">&amp;&amp;</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">after</span><span class="p">,</span> <span class="nx">mod2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">after_map</span> <span class="o">=</span> <span class="nx">other</span><span class="p">.</span><span class="nx">after_map</span><span class="p">;</span>
+
+        <span class="c1">// and vis-versa</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">after_map</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod1</span> <span class="k">in</span> <span class="nx">after_map</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="c1">// check if this module requires one the other supersedes</span>
@@ -682,6 +694,21 @@
                     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">s</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">].</span><span class="nx">supersedes</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_requires</span><span class="p">(</span><span class="nx">mod2</span><span class="p">,</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// check if this module requires the other directly</span>
+        <span class="c1">// if (r &amp;&amp; YArray.indexOf(r, mod2) &gt; -1) {</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">rm</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">mod2</span> <span class="k">in</span> <span class="nx">rm</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="c1">// external css files should be sorted below yui css</span>
@@ -748,8 +775,8 @@
 <span class="cm">     * module name is supplied, the returned skin module name is</span>
 <span class="cm">     * specific to the module passed in.</span>
 <span class="cm">     * @method formatSkin</span>
-<span class="cm">     * @param skin {string} the name of the skin.</span>
-<span class="cm">     * @param mod {string} optional: the name of a module to skin.</span>
+<span class="cm">     * @param {string} skin the name of the skin.</span>
+<span class="cm">     * @param {string} mod optional: the name of a module to skin.</span>
 <span class="cm">     * @return {string} the full skin module name.</span>
 <span class="cm">     */</span>
     <span class="nx">formatSkin</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">skin</span><span class="p">,</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
@@ -764,9 +791,9 @@
     <span class="cm">/**</span>
 <span class="cm">     * Adds the skin def to the module info</span>
 <span class="cm">     * @method _addSkin</span>
-<span class="cm">     * @param skin {string} the name of the skin.</span>
-<span class="cm">     * @param mod {string} the name of the module.</span>
-<span class="cm">     * @param parent {string} parent module if this is a skin of a</span>
+<span class="cm">     * @param {string} skin the name of the skin.</span>
+<span class="cm">     * @param {string} mod the name of the module.</span>
+<span class="cm">     * @param {string} parent parent module if this is a skin of a</span>
 <span class="cm">     * submodule or plugin.</span>
 <span class="cm">     * @return {string} the module name for the skin.</span>
 <span class="cm">     * @private</span>
@@ -788,13 +815,13 @@
                     <span class="nx">group</span><span class="o">:</span> <span class="nx">mdef</span><span class="p">.</span><span class="nx">group</span><span class="p">,</span>
                     <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span>
                     <span class="nx">after</span><span class="o">:</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">after</span><span class="p">,</span>
-                    <span class="nx">after_map</span><span class="o">:</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">sinf</span><span class="p">.</span><span class="nx">after</span><span class="p">),</span>
-                    <span class="nx">path</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">||</span> <span class="nx">pkg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">skin</span> <span class="o">+</span> 
+                    <span class="nx">path</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">||</span> <span class="nx">pkg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">skin</span> <span class="o">+</span>
                           <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">mod</span> <span class="o">+</span> <span class="s1">&#39;.css&#39;</span><span class="p">,</span>
                     <span class="nx">ext</span><span class="o">:</span> <span class="nx">ext</span>
                 <span class="p">});</span>
 
-<span class="c1">// Y.log(&#39;adding skin &#39; + name + &#39;, &#39; + parent + &#39;, &#39; + pkg + &#39;, &#39; + info[name].path);</span>
+                <span class="c1">// Y.log(&#39;adding skin &#39; + name + &#39;, &#39;</span>
+                <span class="c1">// + parent + &#39;, &#39; + pkg + &#39;, &#39; + info[name].path);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -812,11 +839,8 @@
 <span class="cm">     *   &lt;dt&gt;modules:&lt;/dt&gt;   &lt;dd&gt;the group of modules&lt;/dd&gt;</span>
 <span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     * @method addGroup</span>
-<span class="cm">     * @param o An object containing the module data.</span>
-<span class="cm">     * @param name the module name (optional), required if not in the module</span>
-<span class="cm">     * data.</span>
-<span class="cm">     * @return {boolean} true if the module was added, false if</span>
-<span class="cm">     * the object passed in did not provide all required attributes.</span>
+<span class="cm">     * @param {object} o An object containing the module data.</span>
+<span class="cm">     * @param {string} name the group name.</span>
 <span class="cm">     */</span>
     <span class="nx">addGroup</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">mods</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span>
@@ -880,10 +904,10 @@
 <span class="cm">     *       &lt;/dd&gt;</span>
 <span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     * @method addModule</span>
-<span class="cm">     * @param o An object containing the module data.</span>
-<span class="cm">     * @param name the module name (optional), required if not in the module</span>
-<span class="cm">     * data.</span>
-<span class="cm">     * @return the module definition or null if</span>
+<span class="cm">     * @param {object} o An object containing the module data.</span>
+<span class="cm">     * @param {string} name the module name (optional), required if not</span>
+<span class="cm">     * in the module data.</span>
+<span class="cm">     * @return {object} the module definition or null if</span>
 <span class="cm">     * the object passed in did not provide all required attributes.</span>
 <span class="cm">     */</span>
     <span class="nx">addModule</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
@@ -910,7 +934,7 @@
         <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">submodules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sup</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span> <span class="nx">plugins</span><span class="p">,</span> <span class="nx">plug</span><span class="p">,</span>
             <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span>
             <span class="nx">overrides</span><span class="p">,</span> <span class="nx">skinname</span><span class="p">,</span>
-            <span class="nx">conditions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">conditions</span><span class="p">,</span> <span class="nx">condmod</span><span class="p">;</span>
+            <span class="nx">conditions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">conditions</span><span class="p">,</span> <span class="nx">trigger</span><span class="p">;</span>
             <span class="c1">// , existing = this.moduleInfo[name], newr;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
@@ -1023,9 +1047,15 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">condmod</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">.</span><span class="nx">trigger</span><span class="p">;</span>
-            <span class="nx">conditions</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conditions</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
-            <span class="nx">conditions</span><span class="p">[</span><span class="nx">condmod</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">;</span>
+            <span class="nx">trigger</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">.</span><span class="nx">trigger</span><span class="p">;</span>
+            <span class="nx">conditions</span><span class="p">[</span><span class="nx">trigger</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conditions</span><span class="p">[</span><span class="nx">trigger</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">conditions</span><span class="p">[</span><span class="nx">trigger</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">condition</span><span class="p">;</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">after</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">after</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">after</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">trigger</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">after</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">after_map</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">after</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="c1">// this.dirty = true;</span>
@@ -1044,7 +1074,7 @@
     <span class="cm">/**</span>
 <span class="cm">     * Add a requirement for one or more module</span>
 <span class="cm">     * @method require</span>
-<span class="cm">     * @param what {string[] | string*} the modules to load.</span>
+<span class="cm">     * @param {string[] | string*} what the modules to load.</span>
 <span class="cm">     */</span>
     <span class="nx">require</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">what</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">what</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">arguments</span> <span class="o">:</span> <span class="nx">what</span><span class="p">;</span>
@@ -1056,40 +1086,46 @@
 <span class="cm">     * Returns an object containing properties for all modules required</span>
 <span class="cm">     * in order to load the requested module</span>
 <span class="cm">     * @method getRequires</span>
-<span class="cm">     * @param mod The module definition from moduleInfo.</span>
+<span class="cm">     * @param {object}  mod The module definition from moduleInfo.</span>
+<span class="cm">     * @return {array} the expanded requirement list.</span>
 <span class="cm">     */</span>
     <span class="nx">getRequires</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// if (mod.name == &#39;node-base&#39;) {</span>
+            <span class="c1">// eval(&#39;debugger;&#39;);</span>
+        <span class="c1">// }</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">_parsed</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Y.log(&#39;returning no reqs for &#39; + mod.name);</span>
             <span class="k">return</span> <span class="nx">NO_REQUIREMENTS</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">add</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">cond</span><span class="p">,</span> <span class="nx">go</span><span class="p">,</span>
             <span class="nx">adddef</span> <span class="o">=</span> <span class="nx">ON_PAGE</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">ON_PAGE</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">details</span><span class="p">,</span>
-            <span class="nx">d</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">d</span><span class="p">,</span>
             <span class="nx">r</span><span class="p">,</span> <span class="nx">old_mod</span><span class="p">,</span>
             <span class="nx">o</span><span class="p">,</span> <span class="nx">skinmod</span><span class="p">,</span> <span class="nx">skindef</span><span class="p">,</span>
             <span class="nx">intl</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">intl</span><span class="p">,</span>
             <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span>
-            <span class="nx">hash</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">hash</span><span class="p">;</span>
 
         <span class="c1">// pattern match leaves module stub that needs to be filled out</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">temp</span> <span class="o">&amp;&amp;</span> <span class="nx">adddef</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="nx">old_mod</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
-
             <span class="nx">mod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">adddef</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
             <span class="nx">mod</span><span class="p">.</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">old_mod</span><span class="p">.</span><span class="nx">group</span><span class="p">;</span>
             <span class="nx">mod</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">=</span> <span class="nx">old_mod</span><span class="p">.</span><span class="nx">pkg</span><span class="p">;</span>
             <span class="k">delete</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
-            <span class="c1">// console.log(&#39;TEMP MOD: &#39; + name + &#39;, &#39; + mod.requires);</span>
-            <span class="c1">// console.log(Y.dump(mod));</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;already expanded &#39; + name + &#39;, &#39; + mod.expanded);</span>
             <span class="k">return</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="nx">d</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">hash</span> <span class="o">=</span> <span class="p">{};</span>
 
         <span class="nx">r</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span>
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">optional</span><span class="p">;</span>
@@ -1189,6 +1225,7 @@
                         <span class="nx">hash</span><span class="p">[</span><span class="nx">condmod</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                         <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">condmod</span><span class="p">);</span>
                         <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">condmod</span><span class="p">);</span>
+                        <span class="c1">// console.log(&#39;conditional&#39;, m);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
                             <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">add</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -1229,8 +1266,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Returns a hash of module names the supplied module satisfies.</span>
 <span class="cm">     * @method getProvides</span>
-<span class="cm">     * @param name {string} The name of the module.</span>
-<span class="cm">     * @return what this module provides.</span>
+<span class="cm">     * @param {string} name The name of the module.</span>
+<span class="cm">     * @return {object} what this module provides.</span>
 <span class="cm">     */</span>
     <span class="nx">getProvides</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">name</span><span class="p">),</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
@@ -1258,14 +1295,35 @@
         <span class="k">return</span> <span class="nx">m</span><span class="p">.</span><span class="nx">provides</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="c1">// checkConditions: function() {</span>
+    <span class="c1">//     var self = this,</span>
+    <span class="c1">//         conds = self.conditions;</span>
+
+    <span class="c1">//     Y.Object.each(self.required, function(mod, name) {</span>
+
+    <span class="c1">//         var cond = conds[name];</span>
+
+    <span class="c1">//         Y.Object.each(cond, function(def, condmod) {</span>
+    <span class="c1">//             if (def) {</span>
+    <span class="c1">//                 var go = def.result || ((def.ua &amp;&amp; Y.UA[def.ua]) ||</span>
+    <span class="c1">//                              (def.test &amp;&amp; def.test(Y)));</span>
+    <span class="c1">//                 def.result = go;</span>
+    <span class="c1">//                 if (go) {</span>
+    <span class="c1">//                     self.required[condmod] = true;</span>
+    <span class="c1">//                 }</span>
+    <span class="c1">//             }</span>
+    <span class="c1">//         });</span>
+
+    <span class="c1">//     });</span>
+    <span class="c1">// },</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Calculates the dependency tree, the result is stored in the sorted</span>
 <span class="cm">     * property.</span>
 <span class="cm">     * @method calculate</span>
-<span class="cm">     * @param o optional options object.</span>
-<span class="cm">     * @param type optional argument to prune modules.</span>
+<span class="cm">     * @param {object} o optional options object.</span>
+<span class="cm">     * @param {string} type optional argument to prune modules.</span>
 <span class="cm">     */</span>
-
     <span class="nx">calculate</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">||</span> <span class="nx">type</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span><span class="p">)</span> <span class="p">{</span>
 
@@ -1277,7 +1335,11 @@
                 <span class="k">this</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
             <span class="p">}</span>
 
+
             <span class="k">this</span><span class="p">.</span><span class="nx">_explode</span><span class="p">();</span>
+
+            <span class="c1">// this.checkConditions();</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">allowRollup</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_rollup</span><span class="p">();</span>
             <span class="p">}</span>
@@ -1343,6 +1405,7 @@
             <span class="p">}</span>
         <span class="p">}</span>
 
+
         <span class="c1">//l = Y.merge(this.inserted);</span>
         <span class="nx">l</span> <span class="o">=</span> <span class="p">{};</span>
 
@@ -1379,9 +1442,9 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Builds a module name for a language pack</span>
-<span class="cm">     * @function getLangPackName</span>
-<span class="cm">     * @param lang {string} the language code.</span>
-<span class="cm">     * @param mname {string} the module to build it for.</span>
+<span class="cm">     * @method getLangPackName</span>
+<span class="cm">     * @param {string} lang the language code.</span>
+<span class="cm">     * @param {string} mname the module to build it for.</span>
 <span class="cm">     * @return {string} the language pack module name.</span>
 <span class="cm">     */</span>
     <span class="nx">getLangPackName</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">mname</span><span class="p">)</span> <span class="p">{</span>
@@ -1499,6 +1562,7 @@
 <span class="cm">     * Remove superceded modules and loaded modules.  Called by</span>
 <span class="cm">     * calculate() after we have the mega list of all dependencies</span>
 <span class="cm">     * @method _reduce</span>
+<span class="cm">     * @return {object} the reduced dependency hash.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_reduce</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span> <span class="p">{</span>
@@ -1677,7 +1741,52 @@
 
     <span class="p">},</span>
 
-    <span class="nx">_insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// _get: function(js, css) {</span>
+
+
+
+    <span class="c1">// }</span>
+
+    <span class="c1">// _combo: function(js, css) {</span>
+
+    <span class="c1">// }</span>
+
+    <span class="c1">// _insert: function(source, o, type) {</span>
+    <span class="c1">//     if (source) {</span>
+    <span class="c1">//         this._config(source);</span>
+    <span class="c1">//     }</span>
+
+    <span class="c1">//     var js = [],</span>
+    <span class="c1">//         css = [],</span>
+    <span class="c1">//         mod,</span>
+    <span class="c1">//         sorted = this.sorted,</span>
+    <span class="c1">//         i = 0,</span>
+    <span class="c1">//         l = sorted.length,</span>
+    <span class="c1">//         combine = this.combine;</span>
+
+    <span class="c1">//     for (; i &lt; l; i++) {</span>
+    <span class="c1">//         mod = this.getModule(sorted[i]);</span>
+    <span class="c1">//         if (mod.type = CSS &amp;&amp; type != JS) {</span>
+    <span class="c1">//             css.push(mod);</span>
+    <span class="c1">//         } else if (type != CSS) {</span>
+    <span class="c1">//             js.push(mod);</span>
+    <span class="c1">//         }</span>
+    <span class="c1">//     }</span>
+
+    <span class="c1">//     if (this.combine) {</span>
+    <span class="c1">//         this._combo(js, css);</span>
+    <span class="c1">//     } else {</span>
+    <span class="c1">//         this._get(js, css);</span>
+    <span class="c1">//     }</span>
+
+    <span class="c1">// },</span>
+
+    <span class="nx">partial</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">partial</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">sorted</span> <span class="o">=</span> <span class="nx">partial</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">skipcalc</span><span class="p">)</span> <span class="p">{</span>
 
 <span class="c1">// Y.log(&#39;private _insert() &#39; + (type || &#39;&#39;) + &#39;, &#39; + Y.id, &quot;info&quot;, &quot;loader&quot;);</span>
 
@@ -1689,7 +1798,10 @@
         <span class="c1">// build the dependency list</span>
         <span class="c1">// don&#39;t include type so we can process CSS and script in</span>
         <span class="c1">// one pass when the type is not specified.</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">calculate</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skipcalc</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">calculate</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">loadType</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
@@ -1754,17 +1866,17 @@
 <span class="cm">     * &lt;code&gt;type&lt;/code&gt; can be &quot;js&quot; or &quot;css&quot;.  Both script and</span>
 <span class="cm">     * css are inserted if type is not provided.</span>
 <span class="cm">     * @method insert</span>
-<span class="cm">     * @param o optional options object.</span>
-<span class="cm">     * @param type {string} the type of dependency to insert.</span>
+<span class="cm">     * @param {object} o optional options object.</span>
+<span class="cm">     * @param {string} type the type of dependency to insert.</span>
 <span class="cm">     */</span>
-    <span class="nx">insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">skipsort</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Y.log(&#39;public insert() &#39; + (type || &#39;&#39;) + &#39;, &#39; +</span>
         <span class="c1">//  Y.Object.keys(this.required), &quot;info&quot;, &quot;loader&quot;);</span>
-        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">copy</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">copy</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
         <span class="k">delete</span> <span class="nx">copy</span><span class="p">.</span><span class="nx">require</span><span class="p">;</span>
         <span class="k">delete</span> <span class="nx">copy</span><span class="p">.</span><span class="nx">dirty</span><span class="p">;</span>
         <span class="nx">_queue</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="nx">self</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">copy</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">copy</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">skipsort</span><span class="p">);</span>
         <span class="p">});</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_continue</span><span class="p">();</span>
     <span class="p">},</span>
@@ -1775,7 +1887,7 @@
 <span class="cm">     * is possible to call this if using a method other than</span>
 <span class="cm">     * Y.register to determine when scripts are fully loaded</span>
 <span class="cm">     * @method loadNext</span>
-<span class="cm">     * @param mname {string} optional the name of the module that has</span>
+<span class="cm">     * @param {string} mname optional the name of the module that has</span>
 <span class="cm">     * been loaded (which is usually why it is time to load the next</span>
 <span class="cm">     * one).</span>
 <span class="cm">     */</span>
@@ -1790,8 +1902,8 @@
         <span class="kd">var</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">frag</span><span class="p">,</span>
             <span class="nx">comboSource</span><span class="p">,</span> <span class="nx">comboSources</span><span class="p">,</span> <span class="nx">mods</span><span class="p">,</span> <span class="nx">combining</span><span class="p">,</span> <span class="nx">urls</span><span class="p">,</span> <span class="nx">comboBase</span><span class="p">,</span>
             <span class="c1">// provided,</span>
-            <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">loadType</span><span class="p">,</span>
             <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">loadType</span><span class="p">,</span>
             <span class="nx">handleSuccess</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">self</span><span class="p">.</span><span class="nx">loadNext</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
                             <span class="p">},</span>
@@ -2036,8 +2148,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Apply filter defined for this instance to a url/path</span>
 <span class="cm">     * method _filter</span>
-<span class="cm">     * @param u {string} the string to filter.</span>
-<span class="cm">     * @param name {string} the name of the module, if we are processing</span>
+<span class="cm">     * @param {string} u the string to filter.</span>
+<span class="cm">     * @param {string} name the name of the module, if we are processing</span>
 <span class="cm">     * a single module as opposed to a combined url.</span>
 <span class="cm">     * @return {string} the filtered string.</span>
 <span class="cm">     * @private</span>
@@ -2064,7 +2176,7 @@
     <span class="cm">/**</span>
 <span class="cm">     * Generates the full url for a module</span>
 <span class="cm">     * method _url</span>
-<span class="cm">     * @param path {string} the path fragment.</span>
+<span class="cm">     * @param {string} path the path fragment.</span>
 <span class="cm">     * @return {string} the full url.</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>

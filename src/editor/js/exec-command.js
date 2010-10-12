@@ -15,6 +15,7 @@
         };
 
         Y.extend(ExecCommand, Y.Base, {
+            _lastKey: null,
             /**
             * An internal reference to the instance of the frame plugged into.
             * @private
@@ -49,7 +50,7 @@
                 var inst = this.getInstance();
                 try {
                     Y.log('Internal execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
-                    inst.config.doc.execCommand(action, false, value);
+                    inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
                     Y.log(e.message, 'error', 'exec-command');
                 }
@@ -74,6 +75,10 @@
                         return this.exec._command(action, value);
                     }
                 });
+
+                this.get('host').on('dom:keypress', Y.bind(function(e) {
+                    this._lastKey = e.keyCode;
+                }, this));
             }
         }, {
             /**
@@ -121,7 +126,11 @@
                 */
                 inserthtml: function(cmd, html) {
                     var inst = this.getInstance();
-                    return (new inst.Selection()).insertContent(html);
+                    if (inst.Selection.hasCursor() || Y.UA.ie) {
+                        return (new inst.Selection()).insertContent(html);
+                    } else {
+                        this._command('inserthtml', html);
+                    }
                 },
                 /**
                 * Inserts the provided HTML at the cursor, and focuses the cursor afterwards.
@@ -133,10 +142,14 @@
                 */
                 insertandfocus: function(cmd, html) {
                     var inst = this.getInstance(), out, sel;
-                    html += inst.Selection.CURSOR;
-                    out = this.command('inserthtml', html);
-                    sel = new inst.Selection();
-                    sel.focusCursor(true, true);
+                    if (inst.Selection.hasCursor()) {
+                        html += inst.Selection.CURSOR;
+                        out = this.command('inserthtml', html);
+                        sel = new inst.Selection();
+                        sel.focusCursor(true, true);
+                    } else {
+                        this.command('inserthtml', html);
+                    }
                     return out;
                 },
                 /**
@@ -205,17 +218,21 @@
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('color', val);
-                            n = sel.anchorNode;
+                    if (inst.Selection.hasCursor()) {
+                        if (sel.isCollapsed) {
+                            if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                                sel.anchorNode.setStyle('color', val);
+                                n = sel.anchorNode;
+                            } else {
+                                n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+                                sel.focusCursor(true, true);
+                            }
+                            return n;
                         } else {
-                            n = this.command('inserthtml', '<span style="color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                            return this._command(cmd, val);
                         }
-                        return n;
                     } else {
-                        return this._command(cmd, val);
+                        this._command(cmd, val);
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
@@ -224,24 +241,38 @@
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
-
+                    
                     if (Y.UA.gecko || Y.UA.opera) {
                         cmd = 'hilitecolor';
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('backgroundColor', val);
-                            n = sel.anchorNode;
+                    if (inst.Selection.hasCursor()) {
+                        if (sel.isCollapsed) {
+                            if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
+                                sel.anchorNode.setStyle('backgroundColor', val);
+                                n = sel.anchorNode;
+                            } else {
+                                n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
+
+                                sel.focusCursor(true, true);
+                            }
+                            return n;
                         } else {
-                            n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                            return this._command(cmd, val);
                         }
-                        return n;
                     } else {
-                        return this._command(cmd, val);
+                        if (Y.UA.gecko && sel.isCollapsed) {
+                            this._command('inserthtml', '<span id="yui3-bcolor" style="background-color: ' + val + '"></span>');
+                            var c = inst.one('#yui3-bcolor');
+                            if (c) {
+                                c.set('id', '');
+                                c.removeAttribute('id');
+                            }
+                        } else {
+                            this._command(cmd, val);
+                        }
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
@@ -267,20 +298,14 @@
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
                 fontname: function(cmd, val) {
+                    this._command('fontname', val);
                     var inst = this.getInstance(),
-                        sel = new inst.Selection(), n;
-
-                    if (sel.isCollapsed) {
-                        if (sel.anchorNode && (sel.anchorNode.get('innerHTML') === '&nbsp;')) {
-                            sel.anchorNode.setStyle('fontFamily', val);
-                            n = sel.anchorNode;
-                        } else {
-                            n = this.command('inserthtml', '<span style="font-family: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-                            sel.focusCursor(true, true);
+                        sel = new inst.Selection();
+                    
+                    if (sel.isCollapsed && (this._lastKey != 32)) {
+                        if (sel.anchorNode.test('font')) {
+                            sel.anchorNode.set('face', val);
                         }
-                        return n;
-                    } else {
-                        return this._command('fontname', val);
                     }
                 },
                 /**
@@ -292,21 +317,20 @@
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
                 fontsize: function(cmd, val) {
-                    var inst = this.getInstance(),
-                        sel = new inst.Selection(), n, prev;
+                    this._command('fontsize', val);
 
-                    if (sel.isCollapsed) {
-                        n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
-                        prev = n.get('previousSibling');
-                        if (prev && prev.get('nodeType') === 3) {
-                            if (prev.get('length') < 2) {
-                                prev.remove();
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection();
+                    
+                    if (sel.isCollapsed && (this._lastKey != 32)) {
+                        if (sel.anchorNode.test('font')) {
+                            sel.anchorNode.set('size', val);
+                        } else if (Y.UA.gecko) {
+                            var p = sel.anchorNode.ancestor('p');
+                            if (p) {
+                                p.setStyle('fontSize', '');
                             }
                         }
-                        sel.selectNode(n.get('firstChild'), true, false);
-                        return n;
-                    } else {
-                        return this._command('fontsize', val);
                     }
                 }
             }

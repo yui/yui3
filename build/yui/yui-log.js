@@ -6,7 +6,6 @@ YUI.add('yui-log', function(Y) {
  * @module yui
  * @submodule yui-log
  */
-(function() {
 
 var INSTANCE = Y,
     LOGEVENT = 'yui:log',
@@ -102,8 +101,6 @@ INSTANCE.log = function(msg, cat, src, silent) {
 INSTANCE.message = function() {
     return INSTANCE.log.apply(INSTANCE, arguments);
 };
-
-})();
 
 
 }, '@VERSION@' ,{requires:['yui-base']});

@@ -10,20 +10,20 @@ YUI.add('arraylist-add', function(Y) {
  * Adds methods add and remove to Y.ArrayList
  * @class ArrayList~add
  */
-Y.mix( Y.ArrayList.prototype, {
+Y.mix(Y.ArrayList.prototype, {
 
     /**
      * Add a single item to the ArrayList.  Does not prevent duplicates.
      *
      * @method add
-     * @param item { mixed } Item presumably of the same type as others in the
-     *                       ArrayList
-     * @param index {Number} (Optional.)  Number representing the position at 
+     * @param { mixed } item Item presumably of the same type as others in the
+     *                       ArrayList.
+     * @param {Number} index (Optional.)  Number representing the position at
      * which the item should be inserted.
-     * @return {ArrayList} the instance
+     * @return {ArrayList} the instance.
      * @chainable
      */
-    add: function ( item, index ) {
+    add: function(item, index) {
         var items = this._items;
 
         if (Y.Lang.isNumber(index)) {
@@ -42,19 +42,19 @@ Y.mix( Y.ArrayList.prototype, {
      * matches.
      *
      * @method remove
-     * @param needle { mixed } Item to find and remove from the list
-     * @param all { Boolean } If true, remove all occurrences
-     * @param comparator { Function } optional a/b function to test equivalence
-     * @return {ArrayList} the instance
+     * @param { mixed } needle Item to find and remove from the list.
+     * @param { Boolean } all If true, remove all occurrences.
+     * @param { Function } comparator optional a/b function to test equivalence.
+     * @return {ArrayList} the instance.
      * @chainable
      */
-    remove: function ( needle, all, comparator ) {
+    remove: function(needle, all, comparator) {
         comparator = comparator || this.itemsAreEqual;
 
         for (var i = this._items.length - 1; i >= 0; --i) {
-            if ( comparator.call( this, needle, this.item( i ) ) ) {
-                this._items.splice( i, 1 );
-                if ( !all ) {
+            if (comparator.call(this, needle, this.item(i))) {
+                this._items.splice(i, 1);
+                if (!all) {
                     break;
                 }
             }
@@ -67,15 +67,15 @@ Y.mix( Y.ArrayList.prototype, {
      * Default comparator for items stored in this list.  Used by remove().
      *
      * @method itemsAreEqual
-     * @param a { mixed } item to test equivalence with
-     * @param b { mixed } other item to test equivalance
-     * @return { Boolean } true if items are deemed equivalent
+     * @param { mixed } a item to test equivalence with.
+     * @param { mixed } b other item to test equivalance.
+     * @return { Boolean } true if items are deemed equivalent.
      */
-    itemsAreEqual: function ( a, b ) {
+    itemsAreEqual: function(a, b) {
         return a === b;
     }
 
-} );
+});
 
 
 }, '@VERSION@' ,{requires:['arraylist']});

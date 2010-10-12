@@ -30,6 +30,7 @@ YUI.add('editor-base', function(Y) {
                 use: EditorBase.USE,
                 dir: this.get('dir'),
                 extracss: this.get('extracss'),
+                linkedcss: this.get('linkedcss'),
                 host: this
             }).plug(Y.Plugin.ExecCommand);
 
@@ -58,6 +59,10 @@ YUI.add('editor-base', function(Y) {
         * @param {Node} to The Node instance to copy the styles to
         */
         copyStyles: function(from, to) {
+            if (from.test('a')) {
+                //Don't carry the A styles
+                return;
+            }
             var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
                 newStyles = {};
 
@@ -66,6 +71,11 @@ YUI.add('editor-base', function(Y) {
             });
             if (from.ancestor('b,strong')) {
                 newStyles.fontWeight = 'bold';
+            }
+            if (from.ancestor('u')) {
+                if (!newStyles.textDecoration) {
+                    newStyles.textDecoration = 'underline';
+                }
             }
             to.setStyles(newStyles);
         },
@@ -124,8 +134,27 @@ YUI.add('editor-base', function(Y) {
                     }
                     break;
                 case 'enter-up':
-                    if (e.changedNode.test('p')) {
-                        var prev = e.changedNode.previous(), lc, lc2, found = false;
+                    var para = ((this._lastPara) ? this._lastPara : e.changedNode),
+                        b = para.one('br.yui-cursor');
+
+                    if (this._lastPara) {
+                        delete this._lastPara;
+                    }
+
+                    if (b) {
+                        if (b.previous() || b.next()) {
+                            b.remove();
+                        }
+                    }
+                    if (!para.test('p')) {
+                        var para2 = para.ancestor('p');
+                        if (para2) {
+                            para = para2;
+                            para2 = null;
+                        }
+                    }
+                    if (para.test('p')) {
+                        var prev = para.previous(), lc, lc2, found = false;
                         if (prev) {
                             lc = prev.one(':last-child');
                             while (!found) {
@@ -141,11 +170,20 @@ YUI.add('editor-base', function(Y) {
                                 }
                             }
                             if (lc) {
-                                this.copyStyles(lc, e.changedNode);
+                                this.copyStyles(lc, para);
                             }
                         }
                     }
+                    //inst.Selection.filterBlocks();
                     break;
+            }
+            if (Y.UA.gecko) {
+                if (e.changedNode && !e.changedNode.test('p')) {
+                    var p = e.changedNode.ancestor('p');
+                    if (p) {
+                        this._lastPara = p;
+                    }
+                }
             }
 
             var changed = this.getDomPath(e.changedNode, false),
@@ -201,10 +239,12 @@ YUI.add('editor-base', function(Y) {
                     }
                 });
 
-                fColor = EditorBase.FILTER_RGB(s.color);
+                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
                 var bColor2 = EditorBase.FILTER_RGB(s.backgroundColor);
                 if (bColor2 !== 'transparent') {
-                    bColor = bColor2;
+                    if (bColor2 !== '') {
+                        bColor = bColor2;
+                    }
                 }
                 
             });
@@ -346,7 +386,7 @@ YUI.add('editor-base', function(Y) {
                     sel = inst.config.doc.selection.createRange(),
                     bk = sel.moveToBookmark(this._lastBookmark);
 
-                sel.collapse(true);
+                //sel.collapse(true);
                 sel.select();
                 this._lastBookmark = null;
             }
@@ -667,6 +707,20 @@ YUI.add('editor-base', function(Y) {
             dir: {
                 writeOnce: true,
                 value: 'ltr'
+            },
+            /**
+            * @attribute linkedcss
+            * @description An array of url's to external linked style sheets
+            * @type String
+            */            
+            linkedcss: {
+                value: '',
+                setter: function(css) {
+                    if (this.frame) {
+                        this.frame.set('linkedcss', css);
+                    }
+                    return css;
+                }
             },
             /**
             * @attribute extracss
