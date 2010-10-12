@@ -2,6 +2,7 @@ YUI Collection Utilities
     Provides collection management functionality beyond what's in the YUI core.
 
 3.3.0
+  * Array.lastIndexOf now supports the fromIndex parameter as specified in ES5.
   * Improved the performance of non-native Array.map.
 
 3.2.0

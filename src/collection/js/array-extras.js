@@ -14,26 +14,44 @@ var L = Y.Lang, Native = Array.prototype, A = Y.Array;
  */
 
 /**
- * Returns the index of the last item in the array
- * that contains the specified value, -1 if the
- * value isn't found.
+ * Returns the index of the last item in the array that contains the specified
+ * value, or -1 if the value isn't found.
  * @method Array.lastIndexOf
  * @static
- * @param {Array} a the array to search.
- * @param {any} val the value to search for.
- * @return {int} the index of hte item that contains the value or -1.
+ * @param {Array} a Array to search in.
+ * @param {any} val Value to search for.
+ * @param {Number} fromIndex (optional) Index at which to start searching
+ *   backwards. Defaults to the array's length - 1. If negative, it will be
+ *   taken as an offset from the end of the array. If the calculated index is
+ *   less than 0, the array will not be searched and -1 will be returned.
+ * @return {Number} Index of the item that contains the value, or -1 if not
+ *   found.
  */
-A.lastIndexOf = (Native.lastIndexOf) ?
-    function(a, val) {
-        return a.lastIndexOf(val);
+A.lastIndexOf = Native.lastIndexOf ?
+    function(a, val, fromIndex) {
+        // An undefined fromIndex is still considered a value by some (all?)
+        // native implementations, so we can't pass it unless it's actually
+        // specified.
+        return fromIndex || fromIndex === 0 ? a.lastIndexOf(val, fromIndex) :
+                a.lastIndexOf(val);
     } :
-    function(a, val) {
-        for (var i = a.length - 1; i >= 0; i = i - 1) {
-            if (a[i] === val) {
-                break;
+    function(a, val, fromIndex) {
+        var len = a.length,
+            i   = len - 1;
+
+        if (fromIndex || fromIndex === 0) {
+            i = Math.min(fromIndex < 0 ? len + fromIndex : fromIndex, len);
+        }
+
+        if (i > -1 && len > 0) {
+            for (; i > -1; --i) {
+                if (a[i] === val) {
+                    return i;
+                }
             }
         }
-        return i;
+
+        return -1;
     };
 
 /**
