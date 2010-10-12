@@ -183,10 +183,7 @@ This is some <strong>other</strong> loose test.
 </div-->
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script-->
-<!--
 <script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script>
--->
-<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(time()); ?>"></script>
@@ -550,12 +547,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     Y.on('click', function(e) {
         editor.focus(true);
     }, '#focusEditor');
-
+    
+    /*
     Y.on('click', function(e) {
         Y.one('#test1').setStyle('display', 'block');
         editor.render('#test');
     }, '#showEditor');
-
+    */
 });
 
 </script>
