@@ -18,7 +18,8 @@ YUI.add('editor-para', function(Y) {
     var EditorPara = function() {
         EditorPara.superclass.constructor.apply(this, arguments);
     }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange',
-    FIRST_P = BODY + ' > p';
+    FIRST_P = BODY + ' > p', P = 'p';
+
 
     Y.extend(EditorPara, Y.Base, {
         /**
@@ -28,8 +29,7 @@ YUI.add('editor-para', function(Y) {
         */
         _fixFirstPara: function() {
             var host = this.get(HOST), inst = host.getInstance(), sel;
-            //inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
-            inst.one('body').set('innerHTML', '<p>' + inst.Selection.CURSOR + '</p>');
+            inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
             sel = new inst.Selection();
             sel.focusCursor(true, false);
         },
@@ -42,6 +42,26 @@ YUI.add('editor-para', function(Y) {
             var host = this.get(HOST), inst = host.getInstance();
 
             switch (e.changedType) {
+                case 'enter':
+                    if (Y.UA.webkit) {
+                        //Webkit doesn't support shift+enter as a BR, this fixes that.
+                        if (e.changedEvent.shiftKey) {
+                            host.execCommand('insertbr');
+                            e.changedEvent.preventDefault();
+                        }
+                    }
+                    if (Y.UA.gecko && host.get('defaultblock') !== 'p') {
+                        var par = e.changedNode, d, sel, btag = inst.Selection.DEFAULT_BLOCK_TAG;
+                        if (!par.test(btag)) {
+                            par = par.ancestor(btag);
+                        }
+                        d = inst.Node.create('<' + btag + '>' + inst.Selection.CURSOR + '</' + btag + '>');
+                        sel = new inst.Selection();
+                        par.insert(d, 'after');
+                        sel.focusCursor(true, false);
+                        e.changedEvent.preventDefault();
+                    }
+                    break;
                 case 'keydown':
                     if (inst.config.doc.childNodes.length < 2) {
                         var cont = inst.config.doc.body.innerHTML;
@@ -70,18 +90,18 @@ YUI.add('editor-para', function(Y) {
                         
                         if (txt.length === 0) {
                             //God this is horrible..
-                            if (!item.test('p')) {
+                            if (!item.test(P)) {
                                 this._fixFirstPara();
                             }
                             p = null;
-                            if (e.changedNode && e.changedNode.test('p')) {
+                            if (e.changedNode && e.changedNode.test(P)) {
                                 p = e.changedNode;
                             }
                             if (!p && host._lastPara && host._lastPara.inDoc()) {
                                 p = host._lastPara;
                             }
-                            if (p && !p.test('p')) {
-                                p = p.ancestor('p');
+                            if (p && !p.test(P)) {
+                                p = p.ancestor(P);
                             }
                             if (p) {
                                 if (!p.previous()) {
@@ -89,15 +109,6 @@ YUI.add('editor-para', function(Y) {
                                 }
                             }
                         }
-                        /*
-                        if (txt === '' && !item.test('p')) {
-                            this._fixFirstPara();
-                            e.changedEvent.frameEvent.halt();
-                        //} else if (item.test('p') && (html.length === 0) || (txt == '') || (html == '<span><br></span>') || (html == '<br>')) {
-                        } else if (item.test('p') && ((html.length === 0) || (txt.length === 0))) {
-                            e.changedEvent.frameEvent.halt();
-                        }
-                        */
                     }
                     break;
             }
@@ -109,9 +120,12 @@ YUI.add('editor-para', function(Y) {
         * @method _afterEditorReady
         */
         _afterEditorReady: function() {
-            var host = this.get(HOST), inst = host.getInstance();
+            var host = this.get(HOST), inst = host.getInstance(), btag;
             if (inst) {
                 inst.Selection.filterBlocks();
+                btag = inst.Selection.DEFAULT_BLOCK_TAG;
+                FIRST_P = BODY + ' > ' + btag;
+                P = btag;
             }
         },
         /**

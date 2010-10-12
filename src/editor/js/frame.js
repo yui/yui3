@@ -284,6 +284,10 @@
                 //TODO Circle around and deal with CSS loading...
                 args.push(Y.bind(function() {
                     Y.log('Callback from final internal use call', 'info', 'frame');
+                    if (inst.Selection) {
+                        inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
+                    }
+
                     this.fire('ready');
                 }, this));
                 Y.log('Calling use on internal instance: ' + args, 'info', 'frame');
@@ -343,6 +347,11 @@
             }
             return html;
         },
+        /**
+        * @private
+        * @method _setLinkedCSS
+        * @description Set's the linked CSS on the instance..
+        */
         _getLinkedCSS: function(urls) {
             if (!Y.Lang.isArray(urls)) {
                 urls = [urls];
@@ -350,13 +359,20 @@
             var str = '';
             if (!this._ready) {
                 Y.each(urls, function(v) {
-                    str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                    if (v !== '') {
+                        str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                    }
                 });
             } else {
                 str = urls;
             }
             return str;
         },
+        /**
+        * @private
+        * @method _setLinkedCSS
+        * @description Set's the linked CSS on the instance..
+        */
         _setLinkedCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance();
@@ -388,7 +404,6 @@
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
-
             this._onContentReady();
             
             var doc = this._instance.config.doc;
@@ -796,6 +811,14 @@
             */
             host: {
                 value: false
+            },
+            /**
+            * @attribute defaultblock
+            * @description The default tag to use for block level items, defaults to: p
+            * @type String
+            */            
+            defaultblock: {
+                value: 'p'
             }
         }
     });

@@ -230,7 +230,7 @@ YUI.add('selection', function(Y) {
             wrapped = Y.Selection._wrapBlock(wrapped);
         }
 
-        single = Y.all('p');
+        single = Y.all(Y.Selection.DEFAULT_BLOCK_TAG);
         if (single.size() === 1) {
             br = single.item(0).all('br');
             if (br.size() === 1) {
@@ -312,7 +312,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection._wrapBlock = function(wrapped) {
         if (wrapped) {
-            var newChild = Y.Node.create('<p></p>'),
+            var newChild = Y.Node.create('<' + Y.Selection.DEFAULT_BLOCK_TAG + '></' + Y.Selection.DEFAULT_BLOCK_TAG + '>'),
                 firstChild = Y.one(wrapped[0]), i;
 
             for (i = 1; i < wrapped.length; i++) {
@@ -407,6 +407,9 @@ YUI.add('selection', function(Y) {
         txt = txt.replace('<span><br></span>', '').replace('<br>', '');
         return txt;
     };
+
+    //Y.Selection.DEFAULT_BLOCK_TAG = 'div';
+    Y.Selection.DEFAULT_BLOCK_TAG = 'p';
 
     /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]

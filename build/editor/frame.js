@@ -274,6 +274,10 @@ YUI.add('frame', function(Y) {
                 }
                 //TODO Circle around and deal with CSS loading...
                 args.push(Y.bind(function() {
+                    if (inst.Selection) {
+                        inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
+                    }
+
                     this.fire('ready');
                 }, this));
                 inst.use.apply(inst, args);
@@ -332,6 +336,11 @@ YUI.add('frame', function(Y) {
             }
             return html;
         },
+        /**
+        * @private
+        * @method _setLinkedCSS
+        * @description Set's the linked CSS on the instance..
+        */
         _getLinkedCSS: function(urls) {
             if (!Y.Lang.isArray(urls)) {
                 urls = [urls];
@@ -339,13 +348,20 @@ YUI.add('frame', function(Y) {
             var str = '';
             if (!this._ready) {
                 Y.each(urls, function(v) {
-                    str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                    if (v !== '') {
+                        str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                    }
                 });
             } else {
                 str = urls;
             }
             return str;
         },
+        /**
+        * @private
+        * @method _setLinkedCSS
+        * @description Set's the linked CSS on the instance..
+        */
         _setLinkedCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance();
@@ -377,7 +393,6 @@ YUI.add('frame', function(Y) {
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
-
             this._onContentReady();
             
             var doc = this._instance.config.doc;
@@ -772,6 +787,14 @@ YUI.add('frame', function(Y) {
             */
             host: {
                 value: false
+            },
+            /**
+            * @attribute defaultblock
+            * @description The default tag to use for block level items, defaults to: p
+            * @type String
+            */            
+            defaultblock: {
+                value: 'p'
             }
         }
     });

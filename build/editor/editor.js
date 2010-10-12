@@ -274,6 +274,10 @@ YUI.add('frame', function(Y) {
                 }
                 //TODO Circle around and deal with CSS loading...
                 args.push(Y.bind(function() {
+                    if (inst.Selection) {
+                        inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
+                    }
+
                     this.fire('ready');
                 }, this));
                 inst.use.apply(inst, args);
@@ -332,6 +336,11 @@ YUI.add('frame', function(Y) {
             }
             return html;
         },
+        /**
+        * @private
+        * @method _setLinkedCSS
+        * @description Set's the linked CSS on the instance..
+        */
         _getLinkedCSS: function(urls) {
             if (!Y.Lang.isArray(urls)) {
                 urls = [urls];
@@ -339,13 +348,20 @@ YUI.add('frame', function(Y) {
             var str = '';
             if (!this._ready) {
                 Y.each(urls, function(v) {
-                    str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                    if (v !== '') {
+                        str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
+                    }
                 });
             } else {
                 str = urls;
             }
             return str;
         },
+        /**
+        * @private
+        * @method _setLinkedCSS
+        * @description Set's the linked CSS on the instance..
+        */
         _setLinkedCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance();
@@ -377,7 +393,6 @@ YUI.add('frame', function(Y) {
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
-
             this._onContentReady();
             
             var doc = this._instance.config.doc;
@@ -772,6 +787,14 @@ YUI.add('frame', function(Y) {
             */
             host: {
                 value: false
+            },
+            /**
+            * @attribute defaultblock
+            * @description The default tag to use for block level items, defaults to: p
+            * @type String
+            */            
+            defaultblock: {
+                value: 'p'
             }
         }
     });
@@ -1014,7 +1037,7 @@ YUI.add('selection', function(Y) {
             wrapped = Y.Selection._wrapBlock(wrapped);
         }
 
-        single = Y.all('p');
+        single = Y.all(Y.Selection.DEFAULT_BLOCK_TAG);
         if (single.size() === 1) {
             br = single.item(0).all('br');
             if (br.size() === 1) {
@@ -1096,7 +1119,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection._wrapBlock = function(wrapped) {
         if (wrapped) {
-            var newChild = Y.Node.create('<p></p>'),
+            var newChild = Y.Node.create('<' + Y.Selection.DEFAULT_BLOCK_TAG + '></' + Y.Selection.DEFAULT_BLOCK_TAG + '>'),
                 firstChild = Y.one(wrapped[0]), i;
 
             for (i = 1; i < wrapped.length; i++) {
@@ -1191,6 +1214,9 @@ YUI.add('selection', function(Y) {
         txt = txt.replace('<span><br></span>', '').replace('<br>', '');
         return txt;
     };
+
+    //Y.Selection.DEFAULT_BLOCK_TAG = 'div';
+    Y.Selection.DEFAULT_BLOCK_TAG = 'p';
 
     /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]
@@ -2183,8 +2209,10 @@ YUI.add('editor-base', function(Y) {
                 dir: this.get('dir'),
                 extracss: this.get('extracss'),
                 linkedcss: this.get('linkedcss'),
+                defaultblock: this.get('defaultblock'),
                 host: this
             }).plug(Y.Plugin.ExecCommand);
+
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
             frame.addTarget(this);
@@ -2245,7 +2273,8 @@ YUI.add('editor-base', function(Y) {
         */
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
-            var inst = this.getInstance(), sel;
+            var inst = this.getInstance(), sel,
+                btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
     	        sel = inst.config.doc.selection.createRange();
@@ -2264,15 +2293,6 @@ YUI.add('editor-base', function(Y) {
             switch (e.changedType) {
                 case 'keydown':
                     inst.Selection.cleanCursor();
-                    break;
-                case 'enter':
-                    if (Y.UA.webkit) {
-                        //Webkit doesn't support shift+enter as a BR, this fixes that.
-                        if (e.changedEvent.shiftKey) {
-                            this.execCommand('insertbr');
-                            e.changedEvent.preventDefault();
-                        }
-                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -2298,14 +2318,14 @@ YUI.add('editor-base', function(Y) {
                             b.remove();
                         }
                     }
-                    if (!para.test('p')) {
-                        var para2 = para.ancestor('p');
+                    if (!para.test(btag)) {
+                        var para2 = para.ancestor(btag);
                         if (para2) {
                             para = para2;
                             para2 = null;
                         }
                     }
-                    if (para.test('p')) {
+                    if (para.test(btag)) {
                         var prev = para.previous(), lc, lc2, found = false;
                         if (prev) {
                             lc = prev.one(':last-child');
@@ -2326,12 +2346,11 @@ YUI.add('editor-base', function(Y) {
                             }
                         }
                     }
-                    //inst.Selection.filterBlocks();
                     break;
             }
             if (Y.UA.gecko) {
-                if (e.changedNode && !e.changedNode.test('p')) {
-                    var p = e.changedNode.ancestor('p');
+                if (e.changedNode && !e.changedNode.test(btag)) {
+                    var p = e.changedNode.ancestor(btag);
                     if (p) {
                         this._lastPara = p;
                     }
@@ -2884,6 +2903,14 @@ YUI.add('editor-base', function(Y) {
                     }
                     return css;
                 }
+            },
+            /**
+            * @attribute defaultblock
+            * @description The default tag to use for block level items, defaults to: p
+            * @type String
+            */            
+            defaultblock: {
+                value: 'p'
             }
         }
     });
@@ -3384,7 +3411,8 @@ YUI.add('editor-para', function(Y) {
     var EditorPara = function() {
         EditorPara.superclass.constructor.apply(this, arguments);
     }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange',
-    FIRST_P = BODY + ' > p';
+    FIRST_P = BODY + ' > p', P = 'p';
+
 
     Y.extend(EditorPara, Y.Base, {
         /**
@@ -3394,8 +3422,7 @@ YUI.add('editor-para', function(Y) {
         */
         _fixFirstPara: function() {
             var host = this.get(HOST), inst = host.getInstance(), sel;
-            //inst.one('body').setContent('<p>' + inst.Selection.CURSOR + '</p>');
-            inst.one('body').set('innerHTML', '<p>' + inst.Selection.CURSOR + '</p>');
+            inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
             sel = new inst.Selection();
             sel.focusCursor(true, false);
         },
@@ -3408,6 +3435,26 @@ YUI.add('editor-para', function(Y) {
             var host = this.get(HOST), inst = host.getInstance();
 
             switch (e.changedType) {
+                case 'enter':
+                    if (Y.UA.webkit) {
+                        //Webkit doesn't support shift+enter as a BR, this fixes that.
+                        if (e.changedEvent.shiftKey) {
+                            host.execCommand('insertbr');
+                            e.changedEvent.preventDefault();
+                        }
+                    }
+                    if (Y.UA.gecko && host.get('defaultblock') !== 'p') {
+                        var par = e.changedNode, d, sel, btag = inst.Selection.DEFAULT_BLOCK_TAG;
+                        if (!par.test(btag)) {
+                            par = par.ancestor(btag);
+                        }
+                        d = inst.Node.create('<' + btag + '>' + inst.Selection.CURSOR + '</' + btag + '>');
+                        sel = new inst.Selection();
+                        par.insert(d, 'after');
+                        sel.focusCursor(true, false);
+                        e.changedEvent.preventDefault();
+                    }
+                    break;
                 case 'keydown':
                     if (inst.config.doc.childNodes.length < 2) {
                         var cont = inst.config.doc.body.innerHTML;
@@ -3436,18 +3483,18 @@ YUI.add('editor-para', function(Y) {
                         
                         if (txt.length === 0) {
                             //God this is horrible..
-                            if (!item.test('p')) {
+                            if (!item.test(P)) {
                                 this._fixFirstPara();
                             }
                             p = null;
-                            if (e.changedNode && e.changedNode.test('p')) {
+                            if (e.changedNode && e.changedNode.test(P)) {
                                 p = e.changedNode;
                             }
                             if (!p && host._lastPara && host._lastPara.inDoc()) {
                                 p = host._lastPara;
                             }
-                            if (p && !p.test('p')) {
-                                p = p.ancestor('p');
+                            if (p && !p.test(P)) {
+                                p = p.ancestor(P);
                             }
                             if (p) {
                                 if (!p.previous()) {
@@ -3455,15 +3502,6 @@ YUI.add('editor-para', function(Y) {
                                 }
                             }
                         }
-                        /*
-                        if (txt === '' && !item.test('p')) {
-                            this._fixFirstPara();
-                            e.changedEvent.frameEvent.halt();
-                        //} else if (item.test('p') && (html.length === 0) || (txt == '') || (html == '<span><br></span>') || (html == '<br>')) {
-                        } else if (item.test('p') && ((html.length === 0) || (txt.length === 0))) {
-                            e.changedEvent.frameEvent.halt();
-                        }
-                        */
                     }
                     break;
             }
@@ -3475,9 +3513,12 @@ YUI.add('editor-para', function(Y) {
         * @method _afterEditorReady
         */
         _afterEditorReady: function() {
-            var host = this.get(HOST), inst = host.getInstance();
+            var host = this.get(HOST), inst = host.getInstance(), btag;
             if (inst) {
                 inst.Selection.filterBlocks();
+                btag = inst.Selection.DEFAULT_BLOCK_TAG;
+                FIRST_P = BODY + ' > ' + btag;
+                P = btag;
             }
         },
         /**
