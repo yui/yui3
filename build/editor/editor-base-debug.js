@@ -99,7 +99,9 @@ YUI.add('editor-base', function(Y) {
 
             if (Y.UA.ie) {
     	        sel = inst.config.doc.selection.createRange();
-                this._lastBookmark = sel.getBookmark();
+                if (sel.getBookmark) {
+                    this._lastBookmark = sel.getBookmark();
+                }
             }
 
             /*

@@ -1080,6 +1080,13 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
 
+    /**
+    * Regular Expression to remove all HTML from a string
+    * @static
+    * @property REG_NOHTML
+    */
+    Y.Selection.REG_NOHTML = /<\S[^><]*>/g;
+
 
     /**
     * Wraps an array of elements in a Block level tag
@@ -1179,13 +1186,10 @@ YUI.add('selection', function(Y) {
     * @return {String} The string of text
     */
     Y.Selection.getText = function(node) {
-        var t = node.get('innerHTML').replace(Y.Selection.STRIP_HTML, ''),
-            c = t.match(Y.Selection.REG_CHAR),
-            s = t.match(Y.Selection.REG_NON);
-            if (c === null && s) {
-                t = '';
-            }
-        return t;
+        var txt = node.get('innerHTML').replace(Y.Selection.REG_NOHTML, '');
+        //Clean out the cursor subs to see if the Node is empty
+        txt = txt.replace('<span><br></span>', '').replace('<br>', '');
+        return txt;
     };
 
     /**
@@ -1194,13 +1198,6 @@ YUI.add('selection', function(Y) {
     * @property ALL
     */
     Y.Selection.ALL = '[style],font[face]';
-
-    /**
-    * RegExp used to strip HTML tags from a string
-    * @static
-    * @property STRIP_HTML
-    */
-    Y.Selection.STRIP_HTML = /<\S[^><]*>/g;
 
     /**
     * The selector to use when looking for block level items.
@@ -2252,7 +2249,9 @@ YUI.add('editor-base', function(Y) {
 
             if (Y.UA.ie) {
     	        sel = inst.config.doc.selection.createRange();
-                this._lastBookmark = sel.getBookmark();
+                if (sel.getBookmark) {
+                    this._lastBookmark = sel.getBookmark();
+                }
             }
 
             /*
@@ -3432,12 +3431,10 @@ YUI.add('editor-para', function(Y) {
                             br.removeAttribute('class');
                         }
 
-                        html = item.get('innerHTML').replace(/ /g, '').replace(/\n/g, '');
                         txt = inst.Selection.getText(item);
-                        //Clean out the cursor subs to see if the Node is empty
-                        txt = txt.replace('<span><br></span>', '').replace('<br>', '');
+                        txt = txt.replace(/ /g, '').replace(/\n/g, '');
                         
-                        if (((html.length === 0) || (txt.length === 0))) {
+                        if (txt.length === 0) {
                             //God this is horrible..
                             if (!item.test('p')) {
                                 this._fixFirstPara();

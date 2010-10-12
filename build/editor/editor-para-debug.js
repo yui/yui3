@@ -65,12 +65,10 @@ YUI.add('editor-para', function(Y) {
                             br.removeAttribute('class');
                         }
 
-                        html = item.get('innerHTML').replace(/ /g, '').replace(/\n/g, '');
                         txt = inst.Selection.getText(item);
-                        //Clean out the cursor subs to see if the Node is empty
-                        txt = txt.replace('<span><br></span>', '').replace('<br>', '');
+                        txt = txt.replace(/ /g, '').replace(/\n/g, '');
                         
-                        if (((html.length === 0) || (txt.length === 0))) {
+                        if (txt.length === 0) {
                             //God this is horrible..
                             if (!item.test('p')) {
                                 this._fixFirstPara();
