@@ -307,6 +307,13 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
 
+    /**
+    * Regular Expression to remove all HTML from a string
+    * @static
+    * @property REG_NOHTML
+    */
+    Y.Selection.REG_NOHTML = /<\S[^><]*>/g;
+
 
     /**
     * Wraps an array of elements in a Block level tag
@@ -407,13 +414,10 @@ YUI.add('selection', function(Y) {
     * @return {String} The string of text
     */
     Y.Selection.getText = function(node) {
-        var t = node.get('innerHTML').replace(Y.Selection.STRIP_HTML, ''),
-            c = t.match(Y.Selection.REG_CHAR),
-            s = t.match(Y.Selection.REG_NON);
-            if (c === null && s) {
-                t = '';
-            }
-        return t;
+        var txt = node.get('innerHTML').replace(Y.Selection.REG_NOHTML, '');
+        //Clean out the cursor subs to see if the Node is empty
+        txt = txt.replace('<span><br></span>', '').replace('<br>', '');
+        return txt;
     };
 
     /**
@@ -422,13 +426,6 @@ YUI.add('selection', function(Y) {
     * @property ALL
     */
     Y.Selection.ALL = '[style],font[face]';
-
-    /**
-    * RegExp used to strip HTML tags from a string
-    * @static
-    * @property STRIP_HTML
-    */
-    Y.Selection.STRIP_HTML = /<\S[^><]*>/g;
 
     /**
     * The selector to use when looking for block level items.
