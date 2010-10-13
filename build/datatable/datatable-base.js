@@ -114,7 +114,6 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
-
 var Lang = Y.Lang;
 
 function Columnset(config) {
@@ -423,7 +422,6 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
-
 var YLang = Y.Lang,
     Ysubstitute = Y.Lang.substitute,
     YNode = Y.Node,
@@ -905,5 +903,4 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-
-}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset']});
+}, '@VERSION@' ,{requires:['intl','substitute','widget','recordset'], lang:['en']});

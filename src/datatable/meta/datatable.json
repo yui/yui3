@@ -14,7 +14,13 @@
                     "plugin",
                     "recordset-sort"
                 ]
-            }
+            },
+			"datatable-scroll": {
+				"requires": [
+					"datatable-base",
+					"plugin"
+				]
+			}
         }
     }
 }
