@@ -96,11 +96,19 @@
             },
 
             testReduce: function () {
-                var data = this.data;
-                var result = A.reduce(data, 0, function (sum, item) {
+                var obj = {};
+
+                Assert.areSame(15, A.reduce(this.data, 0, function (sum, item, i, array) {
+                    Assert.isNumber(item);
+                    Assert.isNumber(i);
+                    Assert.isArray(array);
+                    Assert.areSame(Y.config.win, this);
                     return sum + item;
-                });
-                Assert.areEqual(15, result);
+                }));
+
+                A.reduce([1], 0, function () {
+                    Assert.areSame(obj, this);
+                }, obj);
             },
 
             testReduceContext: function() {

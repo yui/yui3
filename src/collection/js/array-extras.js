@@ -225,20 +225,24 @@ A.map = Native.map ?
 * @return {any} A value that results from iteratively applying the
 * supplied function to each element in the array.
 */
-A.reduce = (Native.reduce) ?
+A.reduce = Native.reduce ?
     function(a, init, f, o) {
-        //Firefox's Array.reduce does not allow inclusion of a
-        //  thisObject, so we need to implement it manually
-        return Native.reduce.call(a, function(init, item, i, a) {
+        // ES5 Array.reduce doesn't support a thisObject, so we need to
+        // implement it manually
+        return a.reduce(function(init, item, i, a) {
             return f.call(o, init, item, i, a);
         }, init);
     } :
     function(a, init, f, o) {
-        var r = init;
-        A.each(a, function(item, i, a) {
-            r = f.call(o, r, item, i, a);
-        });
-        return r;
+        var i      = 0,
+            len    = a.length,
+            result = init;
+
+        for (; i < len; ++i) {
+            result = f.call(o, result, a[i], i, a);
+        }
+
+        return result;
     };
 
 
