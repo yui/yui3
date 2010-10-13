@@ -1,6 +1,10 @@
 An extension, which can be used with Base.build to add standard
 module (header, body, footer) support to a Widget class.
 
+3.3.0
+
+* Changed instanceof to Y.instanceOf, to prevent leaks in IE7
+
 3.2.0
 
 * Setting content to null (or undefined, or NaN), will remove section

@@ -100,7 +100,7 @@
         host._requireAddAttr = host._requireAddAttr || false;
 
         // ATTRS support for Node, which is not Base based
-        if ( attrs && !(Base && host instanceof Base)) {
+        if ( attrs && !(Base && Y.instanceOf(host, Base))) {
             host.addAttrs(this._protectAttrs(attrs));
         }
     }

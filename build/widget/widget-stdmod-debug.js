@@ -454,7 +454,7 @@ YUI.add('widget-stdmod', function(Y) {
             // Using isValue, so that "" is valid content 
             if (L.isValue(content)) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
-                if (content instanceof Node || content instanceof NodeList) {
+                if (Y.instanceOf(content, Node) || Y.instanceOf(content, NodeList)) {
                     this._addNodeRef(node, content, where);
                 } else {
                     this._addNodeHTML(node, content, where);
@@ -588,7 +588,7 @@ YUI.add('widget-stdmod', function(Y) {
             if (where == BEFORE) {
                 var n = node.get(FIRST_CHILD);
                 if (n) {
-                    if (children instanceof NodeList) {
+                    if (Y.instanceOf(children, NodeList)) {
                         for (i = children.size() - 1; i >=0; --i) {
                             node.insertBefore(children.item(i), n);
                         }
@@ -602,7 +602,7 @@ YUI.add('widget-stdmod', function(Y) {
             }
 
             if (append) {
-                if (children instanceof NodeList) {
+                if (Y.instanceOf(children, NodeList)) {
                     for (i = 0, s = children.size(); i < s; ++i) {
                         node.appendChild(children.item(i));
                     }
