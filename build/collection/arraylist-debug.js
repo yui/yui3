@@ -115,7 +115,7 @@ ArrayListProto = {
         return this._items.length;
     },
 
-    /** 
+    /**
      * Is this instance managing any items?
      *
      * @method isEmpty
@@ -123,6 +123,16 @@ ArrayListProto = {
      */
     isEmpty: function () {
         return !this.size();
+    },
+
+    /**
+     * Provides an array-like representation for JSON.stringify.
+     *
+     * @method toJSON
+     * @return { Array } an array representation of the ArrayList
+     */
+    toJSON: function () {
+        return this._items;
     }
 };
 // Default implementation does not distinguish between public and private
@@ -156,7 +166,7 @@ Y.mix( ArrayList, {
      * } );
      * // becomes
      * list.methodName( 1, 2, 3 );</code></pre>
-     * 
+     *
      * <p>Additionally, the pass through methods use the item retrieved by the
      * <code>_item</code> method in case there is any special behavior that is
      * appropriate for API mirroring.</p>
