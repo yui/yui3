@@ -55,23 +55,37 @@ A.lastIndexOf = Native.lastIndexOf ?
     };
 
 /**
- * Returns a copy of the array with the duplicate entries removed
+ * Returns a copy of the specified array with duplicate items removed.
  * @method Array.unique
+ * @param {Array} a Array to dedupe.
+ * @return {Array} Copy of the array with duplicate items removed.
  * @static
- * @param {Array} a the array to find the subset of uniques for.
- * @param {bool} sort flag to denote if the array is sorted or not.
- * Defaults to false, the more general operation.
- * @return {Array} a copy of the array with duplicate entries removed.
  */
 A.unique = function(a, sort) {
-    var b = a.slice(), i = 0, n = -1, item = null;
+    // Note: the sort param is deprecated and intentionally undocumented since
+    // YUI 3.3.0. It never did what the API docs said it did (see the older
+    // comment below as well).
+    var i       = 0,
+        len     = a.length,
+        results = [],
+        item, j;
 
-    while (i < b.length) {
-        item = b[i];
-        while ((n = A.lastIndexOf(b, item)) !== i) {
-            b.splice(n, 1);
+    for (; i < len; ++i) {
+        item = a[i];
+
+        // This loop iterates over the results array in reverse order and stops
+        // if it finds an item that matches the current input array item (a
+        // dupe). If it makes it all the way through without finding a dupe, the
+        // current item is pushed onto the results array.
+        for (j = results.length; j > -1; --j) {
+            if (item === results[j]) {
+                break;
+            }
         }
-        i += 1;
+
+        if (j === -1) {
+            results.push(item);
+        }
     }
 
     // Note: the sort option doesn't really belong here... I think it was added
@@ -79,14 +93,14 @@ A.unique = function(a, sort) {
     // implementation was not working, so I replaced it with the following.
     // Leaving it in so that the API doesn't get broken.
     if (sort) {
-        if (L.isNumber(b[0])) {
-            b.sort(A.numericSort);
+        if (L.isNumber(results[0])) {
+            results.sort(A.numericSort);
         } else {
-            b.sort();
+            results.sort();
         }
     }
 
-    return b;
+    return results;
 };
 
 /**
