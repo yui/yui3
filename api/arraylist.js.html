@@ -162,7 +162,7 @@
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="cm">/** </span>
+    <span class="cm">/**</span>
 <span class="cm">     * Is this instance managing any items?</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method isEmpty</span>
@@ -170,6 +170,16 @@
 <span class="cm">     */</span>
     <span class="nx">isEmpty</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Provides an array-like representation for JSON.stringify.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method toJSON</span>
+<span class="cm">     * @return { Array } an array representation of the ArrayList</span>
+<span class="cm">     */</span>
+    <span class="nx">toJSON</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 <span class="c1">// Default implementation does not distinguish between public and private</span>
@@ -203,7 +213,7 @@
 <span class="cm">     * } );</span>
 <span class="cm">     * // becomes</span>
 <span class="cm">     * list.methodName( 1, 2, 3 );&lt;/code&gt;&lt;/pre&gt;</span>
-<span class="cm">     * </span>
+<span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;Additionally, the pass through methods use the item retrieved by the</span>
 <span class="cm">     * &lt;code&gt;_item&lt;/code&gt; method in case there is any special behavior that is</span>
 <span class="cm">     * appropriate for API mirroring.&lt;/p&gt;</span>
@@ -359,7 +369,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.forEach", "url": "YUI~array~extras.html#method_Array.forEach", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList~filter", "name": "filter", "url": "ArrayList~filter.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}, {"access": "", "host": "ArrayList", "name": "some", "url": "ArrayList.html#method_some", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.forEach", "url": "YUI~array~extras.html#method_Array.forEach", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList~filter", "name": "filter", "url": "ArrayList~filter.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}, {"access": "", "host": "ArrayList", "name": "some", "url": "ArrayList.html#method_some", "type": "method"}, {"access": "", "host": "ArrayList", "name": "toJSON", "url": "ArrayList.html#method_toJSON", "type": "method"}];
 </script>
 </body>
 </html>
