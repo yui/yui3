@@ -1,0 +1,1 @@
+YUI.add("datatable-scroll",function(B){function A(){A.superclass.constructor.apply(this,arguments);}B.mix(A,{NS:"scroll",NAME:"dataTableScroll",ATTRS:{}});B.extend(A,B.Plugin.Base,{initializer:function(C){}});B.namespace("Plugin").DatatableScroll=A;},"@VERSION@",{requires:["plugin","datatable-base"]});
