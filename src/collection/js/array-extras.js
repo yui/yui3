@@ -165,12 +165,12 @@ A.reject = function(a, f, o) {
 * @return {boolean} true if every item in the array returns true
 * from the supplied function.
 */
-A.every = (Native.every) ?
+A.every = Native.every ?
     function(a, f, o) {
-        return Native.every.call(a, f, o);
+        return a.every(f, o);
     } :
     function(a, f, o) {
-        for (var i = 0, l = a.length; i < l; i = i + 1) {
+        for (var i = 0, l = a.length; i < l; ++i) {
             if (!f.call(o, a[i], i, a)) {
                 return false;
             }
