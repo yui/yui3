@@ -381,6 +381,12 @@
                 ], 
                 "skinnable": true
             }, 
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base", 
+                    "plugin"
+                ]
+            }, 
             "datatable-sort": {
                 "requires": [
                     "datatable-base", 

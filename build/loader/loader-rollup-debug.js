@@ -101,5 +101,4 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
-
 }, '@VERSION@' ,{requires:['loader-base']});

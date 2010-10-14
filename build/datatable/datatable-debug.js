@@ -114,7 +114,6 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
-
 var Lang = Y.Lang;
 
 function Columnset(config) {
@@ -423,7 +422,6 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
-
 var YLang = Y.Lang,
     Ysubstitute = Y.Lang.substitute,
     YNode = Y.Node,
@@ -905,9 +903,7 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-
-}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset']});
-
+}, '@VERSION@' ,{requires:['intl','substitute','widget','recordset'], lang:['en']});
 YUI.add('datatable-sort', function(Y) {
 
 //TODO: break out into own component
@@ -1019,9 +1015,7 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-
-}, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
-
+}, '@VERSION@' ,{lang:['en'], requires:['plugin','datatable-base','recordset-sort']});
 YUI.add('datatable-colresize', function(Y) {
 
 var GETCLASSNAME = Y.ClassNameManager.getClassName,
@@ -1078,10 +1072,36 @@ Y.extend(DataTableColResize, Y.Plugin.Base, {
 Y.namespace('Plugin').DataTableColResize = DataTableColResize;
 
 
-
 }, '@VERSION@' ,{requires:['plugin','dd','datatable-base']});
+YUI.add('datatable-scroll', function(Y) {
+
+function DatatableScroll() {
+    DatatableScroll.superclass.constructor.apply(this, arguments);
+}
+
+Y.mix(DatatableScroll, {
+
+    NS: "scroll",
+
+    NAME: "dataTableScroll",
+
+    ATTRS: {
+
+    }
+});
+
+Y.extend(DatatableScroll, Y.Plugin.Base, {
+
+    initializer: function(config) {
+        
+    }
+});
+
+Y.namespace('Plugin').DatatableScroll = DatatableScroll;
 
 
+}, '@VERSION@' ,{requires:['plugin','datatable-base']});
 
-YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize']});
+
+YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize','datatable-scroll']});
 
