@@ -650,7 +650,7 @@ YUI.add('frame', function(Y) {
         * @description The default css used when creating the document.
         * @type String
         */
-        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0; *height: 0; *width: 0; *font-size: 0; *overflow: hidden; }',
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0px; *height: 0px; *width: 0px; *font-size: 0px; *overflow: hidden; zoom: 1; *position: absolute; *content: ""; *display: none; }',
         /**
         * @static
         * @property HTML
@@ -1302,7 +1302,6 @@ YUI.add('selection', function(Y) {
     * @static
     * @property CURSOR
     */
-    //Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
     Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><br class="yui-cursor"></span>';
 
     Y.Selection.hasCursor = function() {
@@ -1317,6 +1316,16 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
+        var cur = Y.all('br.yui-cursor');
+        if (cur.size()) {
+            cur.each(function(b) {
+                var c = b.get('parentNode.parentNode.childNodes');
+                if (c.size() > 1) {
+                    b.remove();
+                }
+            });
+        }
+        /*
         var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
         if (cur.size()) {
             cur.each(function(c) {
@@ -1328,7 +1337,7 @@ YUI.add('selection', function(Y) {
                 }
             });
         }
-        
+        */
     };
 
     Y.Selection.prototype = {
@@ -1694,7 +1703,6 @@ YUI.add('selection', function(Y) {
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    //cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
                     cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {
                     cur.remove();
@@ -2342,7 +2350,8 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.Selection.cleanCursor();
+                    inst.later(100, inst, inst.Selection.cleanCursor);
+                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {

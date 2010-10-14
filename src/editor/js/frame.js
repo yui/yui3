@@ -648,7 +648,7 @@
         * @description The default css used when creating the document.
         * @type String
         */
-        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0; *height: 0; *width: 0; *font-size: 0; *overflow: hidden; }',
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0px; *height: 0px; *width: 0px; *font-size: 0px; *overflow: hidden; zoom: 1; *position: absolute; *content: ""; *display: none; }',
         /**
         * @static
         * @property HTML
