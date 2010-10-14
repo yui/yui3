@@ -241,7 +241,7 @@ YUI.add('selection', function(Y) {
             if (br.size() === 1) {
                 br.item(0).remove();
                 var html = single.item(0).get('innerHTML');
-                if (html == '' || html == ' ') {
+                if (html === '' || html === ' ') {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);
@@ -693,7 +693,7 @@ YUI.add('selection', function(Y) {
                     }
                     newNode = Y.Node.create(html);
                     html = node.get('innerHTML').replace(/\n/gi, '');
-                    if (html == '' || html == '<br>') {
+                    if (html === '' || html === '<br>') {
                         node.append(newNode);
                     } else {
                         node.insert(newNode, 'before');

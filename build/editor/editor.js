@@ -141,7 +141,7 @@ YUI.add('frame', function(Y) {
             if (e.pageX > 0 || e.pageY > 0) {
                 if (e.type.substring(0, 3) !== 'key') {
                     node = this._instance.one('win');
-                    xy = this._iframe.getXY()
+                    xy = this._iframe.getXY();
                     e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
                     e.frameY = xy[1] + e.pageY - node.get('scrollTop');
                 }
@@ -185,7 +185,7 @@ YUI.add('frame', function(Y) {
             
             if (win.clipboardData) {
                 data = win.clipboardData.getData('Text');
-                if (data == '') { // Could be empty, or failed
+                if (data === '') { // Could be empty, or failed
                     // Verify failure
                     if (!win.clipboardData.setData('Text', data)) {
                         data = null;
@@ -1043,7 +1043,7 @@ YUI.add('selection', function(Y) {
             if (br.size() === 1) {
                 br.item(0).remove();
                 var html = single.item(0).get('innerHTML');
-                if (html == '' || html == ' ') {
+                if (html === '' || html === ' ') {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);
@@ -1486,7 +1486,7 @@ YUI.add('selection', function(Y) {
                     }
                     newNode = Y.Node.create(html);
                     html = node.get('innerHTML').replace(/\n/gi, '');
-                    if (html == '' || html == '<br>') {
+                    if (html === '' || html === '<br>') {
                         node.append(newNode);
                     } else {
                         node.insert(newNode, 'before');
@@ -1716,6 +1716,11 @@ YUI.add('exec-command', function(Y) {
         };
 
         Y.extend(ExecCommand, Y.Base, {
+            /**
+            * An internal reference to the keyCode of the last key that was pressed.
+            * @private
+            * @property _lastKey
+            */
             _lastKey: null,
             /**
             * An internal reference to the instance of the frame plugged into.
@@ -1902,10 +1907,10 @@ YUI.add('exec-command', function(Y) {
                     return (new inst.Selection()).getSelected().removeClass(cls);
                 },
                 /**
-                * Adds a background color to the current selection, or creates a new element and applies it
-                * @method COMMANDS.backcolor
+                * Adds a forecolor to the current selection, or creates a new element and applies it
+                * @method COMMANDS.forecolor
                 * @static
-                * @param {String} cmd The command executed: backcolor
+                * @param {String} cmd The command executed: forecolor
                 * @param {String} val The color value to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
@@ -1936,6 +1941,14 @@ YUI.add('exec-command', function(Y) {
                         this._command('styleWithCSS', false);
                     }
                 },
+                /**
+                * Adds a background color to the current selection, or creates a new element and applies it
+                * @method COMMANDS.backcolor
+                * @static
+                * @param {String} cmd The command executed: backcolor
+                * @param {String} val The color value to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
@@ -2020,7 +2033,12 @@ YUI.add('exec-command', function(Y) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection();
                     
-                    if (sel.isCollapsed && (this._lastKey != 32)) {
+                    if (sel.isCollapsed && sel.anchorNode && (this._lastKey != 32)) {
+                        if (Y.UA.webkit) {
+                            if (sel.anchorNode.getStyle('lineHeight')) {
+                                sel.anchorNode.setStyle('lineHeight', '');
+                            }
+                        }
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('size', val);
                         } else if (Y.UA.gecko) {
@@ -2273,6 +2291,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _lastBookmark: null,
+
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -2281,7 +2300,7 @@ YUI.add('editor-base', function(Y) {
         */
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
-            var inst = this.getInstance(), sel,
+            var inst = this.getInstance(), sel, cur,
                 btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
@@ -2307,9 +2326,9 @@ YUI.add('editor-base', function(Y) {
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
                         e.changedEvent.preventDefault();
 
-                        var sel = new inst.Selection();
+                        sel = new inst.Selection();
                         sel.setCursor();
-                        var cur = sel.getCursor();
+                        cur = sel.getCursor();
                         cur.insert(EditorBase.TABKEY, 'before');
                         sel.focusCursor();
                     }
@@ -2409,7 +2428,8 @@ YUI.add('editor-base', function(Y) {
                     }
                 }
 
-                fsize = n.getStyle('fontSize');
+                fsize = EditorBase.NORMALIZE_FONTSIZE(n);
+
 
                 var cls = el.className.split(' ');
 
@@ -2531,14 +2551,6 @@ YUI.add('editor-base', function(Y) {
             
             this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
-            /*
-            this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
-            this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
-            */
-            //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
-
-
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
             if (Y.UA.ie) {
@@ -2591,7 +2603,17 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _currentSelection: null,
+        /**
+        * Holds the timer for selection clearing
+        * @property _currentSelectionTimer
+        * @private
+        */
         _currentSelectionTimer: null,
+        /**
+        * Flag to determine if we can clear the selection or not.
+        * @property _currentSelectionClear
+        * @private
+        */
         _currentSelectionClear: null,
         /**
         * Fires nodeChange event
@@ -2599,6 +2621,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyDown: function(e) {
+            var inst, sel;
             if (!this._currentSelection) {
                 if (this._currentSelectionTimer) {
                     this._currentSelectionTimer.cancel();
@@ -2606,17 +2629,19 @@ YUI.add('editor-base', function(Y) {
                 this._currentSelectionTimer = Y.later(850, this, function() {
                     this._currentSelectionClear = true;
                 });
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection(e);
+                
+                inst = this.frame.getInstance();
+                sel = new inst.Selection(e);
 
                 this._currentSelection = sel;
             } else {
-                var sel = this._currentSelection;
+                sel = this._currentSelection;
             }
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
 
-                this._currentSelection = sel;
+            inst = this.frame.getInstance();
+            sel = new inst.Selection();
+
+            this._currentSelection = sel;
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e.frameEvent });
@@ -2760,6 +2785,44 @@ YUI.add('editor-base', function(Y) {
             return html;
         }
     }, {
+        /**
+        * @static
+        * @method NORMALIZE_FONTSIZE
+        * @description Pulls the fontSize from a node, then checks for string values (x-large, x-small)
+        * and converts them to pixel sizes. If the parsed size is different from the original, it calls
+        * node.setStyle to update the node with a pixel size for normalization.
+        */
+        NORMALIZE_FONTSIZE: function(n) {
+            var size = n.getStyle('fontSize'), oSize = size;
+            
+            switch (size) {
+                case '-webkit-xxx-large':
+                    size = '48px';
+                    break;
+                case 'xx-large':
+                    size = '32px';
+                    break;
+                case 'x-large':
+                    size = '24px';
+                    break;
+                case 'large':
+                    size = '18px';
+                    break;
+                case 'medium':
+                    size = '16px';
+                    break;
+                case 'small':
+                    size = '13px';
+                    break;
+                case 'x-small':
+                    size = '10px';
+                    break;
+            }
+            if (oSize !== size) {
+                n.setStyle('fontSize', size);
+            }
+            return size;
+        },
         /**
         * @static
         * @property TABKEY
@@ -3506,8 +3569,24 @@ YUI.add('editor-para', function(Y) {
                                 p = p.ancestor(P);
                             }
                             if (p) {
-                                if (!p.previous()) {
+                                if (!p.previous() && p.get('parentNode').test(BODY)) {
                                     e.changedEvent.frameEvent.halt();
+                                }
+                            }
+                        }
+                        if (Y.UA.webkit) {
+                            if (e.changedNode) {
+                                item = e.changedNode;
+                                if (item.test('li') && (!item.previous() && !item.next())) {
+                                    html = item.get('innerHTML').replace('<br>', '');
+                                    if (html === '') {
+                                        if (item.get('parentNode')) {
+                                            item.get('parentNode').replace(inst.Node.create('<br>'));
+                                            e.changedEvent.frameEvent.halt();
+                                            e.preventDefault();
+                                            inst.Selection.filterBlocks();
+                                        }
+                                    }
                                 }
                             }
                         }
