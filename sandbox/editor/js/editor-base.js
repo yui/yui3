@@ -87,6 +87,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _lastBookmark: null,
+
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -225,7 +226,8 @@ YUI.add('editor-base', function(Y) {
                     }
                 }
 
-                fsize = n.getStyle('fontSize');
+                fsize = EditorBase.NORMALIZE_FONTSIZE(n);
+
 
                 var cls = el.className.split(' ');
 
@@ -348,14 +350,6 @@ YUI.add('editor-base', function(Y) {
             
             this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
-            /*
-            this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
-            this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
-            */
-            //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
-
-
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
             if (Y.UA.ie) {
@@ -409,7 +403,17 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _currentSelection: null,
+        /**
+        * Holds the timer for selection clearing
+        * @property _currentSelectionTimer
+        * @private
+        */
         _currentSelectionTimer: null,
+        /**
+        * Flag to determine if we can clear the selection or not.
+        * @property _currentSelectionClear
+        * @private
+        */
         _currentSelectionClear: null,
         /**
         * Fires nodeChange event
@@ -578,6 +582,44 @@ YUI.add('editor-base', function(Y) {
             return html;
         }
     }, {
+        /**
+        * @static
+        * @method NORMALIZE_FONTSIZE
+        * @description Pulls the fontSize from a node, then checks for string values (x-large, x-small)
+        * and converts them to pixel sizes. If the parsed size is different from the original, it calls
+        * node.setStyle to update the node with a pixel size for normalization.
+        */
+        NORMALIZE_FONTSIZE: function(n) {
+            var size = oSize = n.getStyle('fontSize');
+            
+            switch (size) {
+                case '-webkit-xxx-large':
+                    size = '48px';
+                    break;
+                case 'xx-large':
+                    size = '32px';
+                    break;
+                case 'x-large':
+                    size = '24px';
+                    break;
+                case 'large':
+                    size = '18px';
+                    break;
+                case 'medium':
+                    size = '16px';
+                    break;
+                case 'small':
+                    size = '13px';
+                    break;
+                case 'x-small':
+                    size = '10px';
+                    break;
+            }
+            if (oSize !== size) {
+                n.setStyle('fontSize', size);
+            }
+            return size;
+        },
         /**
         * @static
         * @property TABKEY
