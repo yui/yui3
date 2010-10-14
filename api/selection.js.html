@@ -516,7 +516,6 @@
 <span class="cm">    * @static</span>
 <span class="cm">    * @property CURSOR</span>
 <span class="cm">    */</span>
-    <span class="c1">//Y.Selection.CURSOR = &#39;&lt;span id=&quot;&#39; + Y.Selection.CURID + &#39;&quot;&gt;&lt;span id=&quot;&#39; + Y.Selection.CUR_WRAPID + &#39;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/span&gt;&#39;;</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">=</span> <span class="s1">&#39;&lt;span id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURID</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;br class=&quot;yui-cursor&quot;&gt;&lt;/span&gt;&#39;</span><span class="p">;</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">hasCursor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -531,18 +530,28 @@
 <span class="cm">    * @method cleanCursor</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CUR_WRAPID</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;br.yui-cursor&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nx">cur</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">==</span> <span class="s1">&#39;&amp;nbsp;&#39;</span> <span class="o">||</span> <span class="nx">html</span> <span class="o">==</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">previous</span><span class="p">()</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">next</span><span class="p">())</span> <span class="p">{</span>
-                        <span class="nx">c</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-                    <span class="p">}</span>
+            <span class="nx">cur</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode.parentNode.childNodes&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">b</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
                 <span class="p">}</span>
             <span class="p">});</span>
         <span class="p">}</span>
-        
+        <span class="cm">/*</span>
+<span class="cm">        var cur = Y.all(&#39;#&#39; + Y.Selection.CUR_WRAPID);</span>
+<span class="cm">        if (cur.size()) {</span>
+<span class="cm">            cur.each(function(c) {</span>
+<span class="cm">                var html = c.get(&#39;innerHTML&#39;);</span>
+<span class="cm">                if (html == &#39;&amp;nbsp;&#39; || html == &#39;&lt;br&gt;&#39;) {</span>
+<span class="cm">                    if (c.previous() || c.next()) {</span>
+<span class="cm">                        c.remove();</span>
+<span class="cm">                    }</span>
+<span class="cm">                }</span>
+<span class="cm">            });</span>
+<span class="cm">        }</span>
+<span class="cm">        */</span>
     <span class="p">};</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
@@ -908,7 +917,6 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">keep</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">cur</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
-                    <span class="c1">//cur.set(&#39;innerHTML&#39;, &#39;&lt;span id=&quot;&#39; + Y.Selection.CUR_WRAPID + &#39;&quot;&gt;&amp;nbsp;&lt;/span&gt;&#39;);</span>
                     <span class="nx">cur</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;br class=&quot;yui-cursor&quot;&gt;&#39;</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">cur</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
