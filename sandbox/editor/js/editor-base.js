@@ -97,7 +97,7 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
             //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
-            var inst = this.getInstance(), sel,
+            var inst = this.getInstance(), sel, cur,
                 btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
@@ -124,9 +124,9 @@ YUI.add('editor-base', function(Y) {
                         e.changedEvent.preventDefault();
 
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
-                        var sel = new inst.Selection();
+                        sel = new inst.Selection();
                         sel.setCursor();
-                        var cur = sel.getCursor();
+                        cur = sel.getCursor();
                         cur.insert(EditorBase.TABKEY, 'before');
                         sel.focusCursor();
                     }
@@ -421,6 +421,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyDown: function(e) {
+            var inst, sel;
             if (!this._currentSelection) {
                 if (this._currentSelectionTimer) {
                     this._currentSelectionTimer.cancel();
@@ -428,17 +429,19 @@ YUI.add('editor-base', function(Y) {
                 this._currentSelectionTimer = Y.later(850, this, function() {
                     this._currentSelectionClear = true;
                 });
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection(e);
+                
+                inst = this.frame.getInstance();
+                sel = new inst.Selection(e);
 
                 this._currentSelection = sel;
             } else {
-                var sel = this._currentSelection;
+                sel = this._currentSelection;
             }
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
 
-                this._currentSelection = sel;
+            inst = this.frame.getInstance();
+            sel = new inst.Selection();
+
+            this._currentSelection = sel;
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e.frameEvent });
@@ -590,7 +593,7 @@ YUI.add('editor-base', function(Y) {
         * node.setStyle to update the node with a pixel size for normalization.
         */
         NORMALIZE_FONTSIZE: function(n) {
-            var size = oSize = n.getStyle('fontSize');
+            var size = n.getStyle('fontSize'), oSize = size;
             
             switch (size) {
                 case '-webkit-xxx-large':
