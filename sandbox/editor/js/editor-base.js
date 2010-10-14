@@ -87,6 +87,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _lastBookmark: null,
+
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -96,7 +97,7 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
             //Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
-            var inst = this.getInstance(), sel,
+            var inst = this.getInstance(), sel, cur,
                 btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
@@ -115,16 +116,17 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.Selection.cleanCursor();
+                    inst.later(100, inst, inst.Selection.cleanCursor);
+                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
                         e.changedEvent.preventDefault();
 
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
-                        var sel = new inst.Selection();
+                        sel = new inst.Selection();
                         sel.setCursor();
-                        var cur = sel.getCursor();
+                        cur = sel.getCursor();
                         cur.insert(EditorBase.TABKEY, 'before');
                         sel.focusCursor();
                     }
@@ -224,7 +226,8 @@ YUI.add('editor-base', function(Y) {
                     }
                 }
 
-                fsize = n.getStyle('fontSize');
+                fsize = EditorBase.NORMALIZE_FONTSIZE(n);
+
 
                 var cls = el.className.split(' ');
 
@@ -347,14 +350,6 @@ YUI.add('editor-base', function(Y) {
             
             this.frame.on('dom:mouseup', Y.bind(this._onFrameMouseUp, this));
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
-            /*
-            this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
-            this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
-            this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
-            */
-            //this.frame.on('dom:keydown', Y.throttle(Y.bind(this._onFrameKeyDown, this), 500));
-
-
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
             if (Y.UA.ie) {
@@ -408,7 +403,17 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _currentSelection: null,
+        /**
+        * Holds the timer for selection clearing
+        * @property _currentSelectionTimer
+        * @private
+        */
         _currentSelectionTimer: null,
+        /**
+        * Flag to determine if we can clear the selection or not.
+        * @property _currentSelectionClear
+        * @private
+        */
         _currentSelectionClear: null,
         /**
         * Fires nodeChange event
@@ -416,6 +421,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyDown: function(e) {
+            var inst, sel;
             if (!this._currentSelection) {
                 if (this._currentSelectionTimer) {
                     this._currentSelectionTimer.cancel();
@@ -423,17 +429,19 @@ YUI.add('editor-base', function(Y) {
                 this._currentSelectionTimer = Y.later(850, this, function() {
                     this._currentSelectionClear = true;
                 });
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection(e);
+                
+                inst = this.frame.getInstance();
+                sel = new inst.Selection(e);
 
                 this._currentSelection = sel;
             } else {
-                var sel = this._currentSelection;
+                sel = this._currentSelection;
             }
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
 
-                this._currentSelection = sel;
+            inst = this.frame.getInstance();
+            sel = new inst.Selection();
+
+            this._currentSelection = sel;
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e.frameEvent });
@@ -577,6 +585,44 @@ YUI.add('editor-base', function(Y) {
             return html;
         }
     }, {
+        /**
+        * @static
+        * @method NORMALIZE_FONTSIZE
+        * @description Pulls the fontSize from a node, then checks for string values (x-large, x-small)
+        * and converts them to pixel sizes. If the parsed size is different from the original, it calls
+        * node.setStyle to update the node with a pixel size for normalization.
+        */
+        NORMALIZE_FONTSIZE: function(n) {
+            var size = n.getStyle('fontSize'), oSize = size;
+            
+            switch (size) {
+                case '-webkit-xxx-large':
+                    size = '48px';
+                    break;
+                case 'xx-large':
+                    size = '32px';
+                    break;
+                case 'x-large':
+                    size = '24px';
+                    break;
+                case 'large':
+                    size = '18px';
+                    break;
+                case 'medium':
+                    size = '16px';
+                    break;
+                case 'small':
+                    size = '13px';
+                    break;
+                case 'x-small':
+                    size = '10px';
+                    break;
+            }
+            if (oSize !== size) {
+                n.setStyle('fontSize', size);
+            }
+            return size;
+        },
         /**
         * @static
         * @property TABKEY

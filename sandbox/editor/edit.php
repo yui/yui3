@@ -211,8 +211,8 @@ var yConfig = {
         augment: true,
         get: true,
         loader: true,
-        Selector: true//,
-        //selection: true
+        Selector: true,
+        selection: true
     },
     throwFail: true
 };
@@ -291,7 +291,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     s_cont.delegate('click', function(e) {
         var img = e.currentTarget, inst = editor.getInstance();
         editor.focus(function() {
-            editor.execCommand('insertandfocus', '<span>:)</span>');
+            editor.execCommand('inserthtml', '<img src="' + img.get('src') + '">');
         });
         /*
         editor.focus(function() {

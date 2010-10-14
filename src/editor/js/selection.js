@@ -239,7 +239,7 @@
             if (br.size() === 1) {
                 br.item(0).remove();
                 var html = single.item(0).get('innerHTML');
-                if (html == '' || html == ' ') {
+                if (html === '' || html === ' ') {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);
@@ -467,7 +467,6 @@
     * @static
     * @property CURSOR
     */
-    //Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
     Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><br class="yui-cursor"></span>';
 
     Y.Selection.hasCursor = function() {
@@ -482,6 +481,16 @@
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
+        var cur = Y.all('br.yui-cursor');
+        if (cur.size()) {
+            cur.each(function(b) {
+                var c = b.get('parentNode.parentNode.childNodes');
+                if (c.size() > 1) {
+                    b.remove();
+                }
+            });
+        }
+        /*
         var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
         if (cur.size()) {
             cur.each(function(c) {
@@ -493,7 +502,7 @@
                 }
             });
         }
-        
+        */
     };
 
     Y.Selection.prototype = {
@@ -682,7 +691,7 @@
                     }
                     newNode = Y.Node.create(html);
                     html = node.get('innerHTML').replace(/\n/gi, '');
-                    if (html == '' || html == '<br>') {
+                    if (html === '' || html === '<br>') {
                         node.append(newNode);
                     } else {
                         node.insert(newNode, 'before');
@@ -859,7 +868,6 @@
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    //cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
                     cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {
                     cur.remove();
