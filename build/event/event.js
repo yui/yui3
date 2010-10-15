@@ -1220,11 +1220,13 @@ Event._poll();
 
 /**
  * Executes the callback as soon as the specified element
- * is detected in the DOM.
+ * is detected in the DOM.  This function expects a selector
+ * string for the element(s) to detect.  If you already have
+ * an element reference, you don't need this event.
  * @event available
  * @param type {string} 'available'
  * @param fn {function} the callback function to execute.
- * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param el {string} an selector for the element(s) to attach
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  * These arguments will be added after the event object.
@@ -1241,11 +1243,14 @@ Y.Env.evt.plugins.available = {
 /**
  * Executes the callback as soon as the specified element
  * is detected in the DOM with a nextSibling property
- * (indicating that the element's children are available)
+ * (indicating that the element's children are available).
+ * This function expects a selector
+ * string for the element(s) to detect.  If you already have
+ * an element reference, you don't need this event.
  * @event contentready
  * @param type {string} 'contentready'
  * @param fn {function} the callback function to execute.
- * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param el {string} an selector for the element(s) to attach.
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  * These arguments will be added after the event object.
