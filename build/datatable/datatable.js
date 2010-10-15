@@ -575,7 +575,7 @@ Y.extend(DTBase, Y.Widget, {
     // UI
     renderUI: function() {
         // TABLE
-        var ok = this._addTableNode() &&
+        var ok = this._addTableNode(this.get("contentBox")) &&
             // COLGROUP
             this._addColgroupNode(this._tableNode) &&
             // THEAD
@@ -590,9 +590,9 @@ Y.extend(DTBase, Y.Widget, {
         return ok;
     },
 
-    _addTableNode: function() {
+    _addTableNode: function(containerNode) {
         if (!this._tableNode) {
-            this._tableNode = this.get("contentBox").appendChild(Ycreate(TEMPLATE_TABLE));
+            this._tableNode = containerNode.appendChild(Ycreate(TEMPLATE_TABLE));
         }
         return this._tableNode;
     },
@@ -1081,7 +1081,37 @@ Y.namespace('Plugin').DataTableColResize = DataTableColResize;
 
 }, '@VERSION@' ,{requires:['plugin','dd','datatable-base']});
 
+YUI.add('datatable-scroll', function(Y) {
+
+function DatatableScroll() {
+    DatatableScroll.superclass.constructor.apply(this, arguments);
+}
+
+Y.mix(DatatableScroll, {
+
+    NS: "scroll",
+
+    NAME: "dataTableScroll",
+
+    ATTRS: {
+
+    }
+});
+
+Y.extend(DatatableScroll, Y.Plugin.Base, {
+
+    initializer: function(config) {
+        
+    }
+});
+
+Y.namespace('Plugin').DatatableScroll = DatatableScroll;
 
 
-YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize']});
+
+}, '@VERSION@' ,{requires:['plugin','datatable-base']});
+
+
+
+YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize','datatable-scroll']});
 

@@ -104,8 +104,24 @@ YUI.add('editor-para', function(Y) {
                                 p = p.ancestor(P);
                             }
                             if (p) {
-                                if (!p.previous()) {
+                                if (!p.previous() && p.get('parentNode').test(BODY)) {
                                     e.changedEvent.frameEvent.halt();
+                                }
+                            }
+                        }
+                        if (Y.UA.webkit) {
+                            if (e.changedNode) {
+                                item = e.changedNode;
+                                if (item.test('li') && (!item.previous() && !item.next())) {
+                                    html = item.get('innerHTML').replace('<br>', '');
+                                    if (html === '') {
+                                        if (item.get('parentNode')) {
+                                            item.get('parentNode').replace(inst.Node.create('<br>'));
+                                            e.changedEvent.frameEvent.halt();
+                                            e.preventDefault();
+                                            inst.Selection.filterBlocks();
+                                        }
+                                    }
                                 }
                             }
                         }

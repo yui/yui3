@@ -17,6 +17,11 @@ YUI.add('exec-command', function(Y) {
         };
 
         Y.extend(ExecCommand, Y.Base, {
+            /**
+            * An internal reference to the keyCode of the last key that was pressed.
+            * @private
+            * @property _lastKey
+            */
             _lastKey: null,
             /**
             * An internal reference to the instance of the frame plugged into.
@@ -206,10 +211,10 @@ YUI.add('exec-command', function(Y) {
                     return (new inst.Selection()).getSelected().removeClass(cls);
                 },
                 /**
-                * Adds a background color to the current selection, or creates a new element and applies it
-                * @method COMMANDS.backcolor
+                * Adds a forecolor to the current selection, or creates a new element and applies it
+                * @method COMMANDS.forecolor
                 * @static
-                * @param {String} cmd The command executed: backcolor
+                * @param {String} cmd The command executed: forecolor
                 * @param {String} val The color value to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
@@ -240,6 +245,14 @@ YUI.add('exec-command', function(Y) {
                         this._command('styleWithCSS', false);
                     }
                 },
+                /**
+                * Adds a background color to the current selection, or creates a new element and applies it
+                * @method COMMANDS.backcolor
+                * @static
+                * @param {String} cmd The command executed: backcolor
+                * @param {String} val The color value to apply
+                * @return {NodeList} NodeList of the items touched by this command.
+                */
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection(), n;
@@ -324,7 +337,12 @@ YUI.add('exec-command', function(Y) {
                     var inst = this.getInstance(),
                         sel = new inst.Selection();
                     
-                    if (sel.isCollapsed && (this._lastKey != 32)) {
+                    if (sel.isCollapsed && sel.anchorNode && (this._lastKey != 32)) {
+                        if (Y.UA.webkit) {
+                            if (sel.anchorNode.getStyle('lineHeight')) {
+                                sel.anchorNode.setStyle('lineHeight', '');
+                            }
+                        }
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('size', val);
                         } else if (Y.UA.gecko) {

@@ -191,6 +191,7 @@
 
 	        this.get(HOST).on('drag:start', Y.bind(this._handleStart, this));
 	        this.get(HOST).after('drag:align', Y.bind(this.align, this));
+	        this.get(HOST).after('drag:drag', Y.bind(this.drag, this));
 	    },
 	    /**
 	    * @private
@@ -375,9 +376,16 @@
 	        _xy = this._checkTicks(_xy, r);
 
 	        host.actXY = _xy;
-
-			var xt = this.get('tickX'),
-				yt = this.get('tickY');
+	    },
+	    /**
+	    * @method drag
+	    * @description Fires after drag:drag. Handle the tickX and tickX align events.
+	    */
+		drag: function(event) {
+			var host = this.get(HOST),
+				xt = this.get('tickX'),
+				yt = this.get('tickY'),
+				_xy = [host.actXY[0], host.actXY[1]];
 
 			if ((Y.Lang.isNumber(xt) || this.get(TICK_X_ARRAY)) && (this._lastTickXFired !== _xy[0])) {
 				this._tickAlignX();
@@ -388,7 +396,7 @@
 				this._tickAlignY();
 				this._lastTickYFired = _xy[1];
 			}
-	    },
+		},
 	    /**
 	    * @private
 	    * @method _checkTicks
