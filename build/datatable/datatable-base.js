@@ -182,7 +182,6 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
-
 var Lang = Y.Lang;
 
 function Columnset(config) {
@@ -491,7 +490,6 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
-
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -1292,7 +1290,6 @@ Y.extend(DTBase, Y.Widget, {
 });
 
 Y.namespace("DataTable").Base = DTBase;
-
 
 
 }, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset']});
