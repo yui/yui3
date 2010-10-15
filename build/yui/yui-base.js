@@ -16,7 +16,16 @@ if (typeof YUI != 'undefined') {
  * namespaces are preserved.  It is the constructor for the object
  * the end user interacts with.  As indicated below, each instance
  * has full custom event support, but only if the event system
- * is available.
+ * is available.  This is a self-instantiable factory function.  You
+ * can invoke it directly like this:
+ *
+ * YUI().use('*', function(Y) {
+ *   // ready
+ * });
+ *
+ * But it also works like this:
+ *
+ * var Y = YUI();
  *
  * @class YUI
  * @constructor
