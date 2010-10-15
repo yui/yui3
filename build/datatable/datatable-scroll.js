@@ -25,4 +25,5 @@ Y.extend(DatatableScroll, Y.Plugin.Base, {
 Y.namespace('Plugin').DatatableScroll = DatatableScroll;
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base']});
