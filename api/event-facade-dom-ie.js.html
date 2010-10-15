@@ -94,6 +94,19 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
 
+        <span class="k">switch</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">button</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">which</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">4</span><span class="o">:</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">which</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">which</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">button</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">which</span><span class="p">;</span>
+
     <span class="p">},</span>
 
     <span class="nx">stopPropagation</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>

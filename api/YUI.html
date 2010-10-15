@@ -2189,7 +2189,9 @@ YUI().use('yui2-datatable', function(Y) &#123;&#125);.
                                         
                                         <div class="description" property="yui:description">
                                             Executes the callback as soon as the specified element
-is detected in the DOM.
+is detected in the DOM.  This function expects a selector
+string for the element(s) to detect.  If you already have
+an element reference, you don't need this event.
                                         </div>
 
                                         <div class="description">
@@ -2213,9 +2215,9 @@ is detected in the DOM.
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">el</span>
-                                                                &lt;<span property="yui:type">string|HTMLElement|collection</span>&gt;
+                                                                &lt;<span property="yui:type">string</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  the element(s) to attach</span>
+                                                            <span property="yui:description">  an selector for the element(s) to attach</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
@@ -2280,7 +2282,10 @@ These arguments will be added after the event object.</span>
                                         <div class="description" property="yui:description">
                                             Executes the callback as soon as the specified element
 is detected in the DOM with a nextSibling property
-(indicating that the element's children are available)
+(indicating that the element's children are available).
+This function expects a selector
+string for the element(s) to detect.  If you already have
+an element reference, you don't need this event.
                                         </div>
 
                                         <div class="description">
@@ -2304,9 +2309,9 @@ is detected in the DOM with a nextSibling property
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">el</span>
-                                                                &lt;<span property="yui:type">string|HTMLElement|collection</span>&gt;
+                                                                &lt;<span property="yui:type">string</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  the element(s) to attach</span>
+                                                            <span property="yui:description">  an selector for the element(s) to attach.</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
