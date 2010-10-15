@@ -134,7 +134,7 @@ ScrollbarsPlugin.ATTRS = {
      */
     horizontalNode: {
 		setter: '_setNode',
-        valueFn: 'defaultNode'
+        valueFn: '_defaultNode'
     }
 };
 
