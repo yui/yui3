@@ -1785,6 +1785,16 @@ L.sub = function(s, o) {
 };
 
 /**
+ * Returns the current time in milliseconds.
+ * @method now
+ * @return {int} the current date
+ * @since 3.3.0
+ */
+L.now = Date.now || function () {
+  return new Date().getTime();
+};
+
+/**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
  * core utilities for the library.
@@ -3983,10 +3993,10 @@ Y.throttle = function(fn, ms) {
         });
     }
 
-    var last = (new Date()).getTime();
+    var last = Y.Lang.now();
 
     return (function() {
-        var now = (new Date()).getTime();
+        var now = Y.Lang.now();
         if (now - last > ms) {
             last = now;
             fn.apply(null, arguments);

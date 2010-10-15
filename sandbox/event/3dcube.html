@@ -9,6 +9,8 @@
     #nav {
       -webkit-perspective-origin: 50% 200px;
       -webkit-perspective: 900;
+      -moz-perspective-origin: 50% 200px;
+      -moz-perspective: 900;
     }
 
     #cube {
@@ -16,6 +18,8 @@
       margin: 0 auto;
       -webkit-transform-style: preserve-3d;
       -webkit-transition: -webkit-transform 0.3s linear;
+      -moz-transform-style: preserve-3d;
+      -moz-transition: -moz-transform 0.3s linear;
       height: 200px;
       width: 500px;
     }
@@ -35,22 +39,28 @@
     #cube .top  {
       visibility: hidden
       -webkit-transform: rotateX(90deg) translateZ(200px);
+      -moz-transform: rotateX(90deg) translateZ(200px);
     }
     #cube .one {
       -webkit-transform: translateZ(250px);
+      -moz-transform: translateZ(250px);
     }
     #cube .two {
       -webkit-transform: rotateY(90deg) translateZ(250px);
+      -moz-transform: rotateY(90deg) translateZ(250px);
     }
     #cube .three {
       -webkit-transform: rotateY(180deg) translateZ(250px);
+      -moz-transform: rotateY(180deg) translateZ(250px);
     }
     #cube .four {
       -webkit-transform: rotateY(-90deg) translateZ(250px);
+      -moz-transform: rotateY(-90deg) translateZ(250px);
     }
     #cube .bottom {
       visibility: hidden
       -webkit-transform: rotateX(-90deg) rotate(180deg) translateZ(200px) ;
+      -moz-transform: rotateX(-90deg) rotate(180deg) translateZ(200px) ;
     }
   </style>
 </head>
@@ -130,8 +140,7 @@
 
         cube.on('gesturemovestart', function(e) {
             e.preventDefault(); Y.log('gesturemovestart');
-            startX = e.pageX;
-            startY = e.pageY;
+            startX = e.pageX; startY = e.pageY;
         });
 
         cube.on('gesturemoveend', function(e) {
