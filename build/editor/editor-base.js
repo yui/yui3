@@ -117,17 +117,19 @@ YUI.add('editor-base', function(Y) {
             switch (e.changedType) {
                 case 'keydown':
                     inst.later(100, inst, inst.Selection.cleanCursor);
-                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        e.changedEvent.preventDefault();
-
-                        sel = new inst.Selection();
-                        sel.setCursor();
-                        cur = sel.getCursor();
-                        cur.insert(EditorBase.TABKEY, 'before');
-                        sel.focusCursor();
+                        e.changedEvent.frameEvent.preventDefault();
+                        if (Y.UA.webkit) {
+                            this.execCommand('inserttext', '\t');
+                        } else {
+                            sel = new inst.Selection();
+                            sel.setCursor();
+                            cur = sel.getCursor();
+                            cur.insert(EditorBase.TABKEY, 'before');
+                            sel.focusCursor();
+                        }
                     }
                     break;
                 case 'enter-up':

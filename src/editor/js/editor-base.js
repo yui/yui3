@@ -116,18 +116,20 @@
             switch (e.changedType) {
                 case 'keydown':
                     inst.later(100, inst, inst.Selection.cleanCursor);
-                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        e.changedEvent.preventDefault();
-
+                        e.changedEvent.frameEvent.preventDefault();
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
-                        sel = new inst.Selection();
-                        sel.setCursor();
-                        cur = sel.getCursor();
-                        cur.insert(EditorBase.TABKEY, 'before');
-                        sel.focusCursor();
+                        if (Y.UA.webkit) {
+                            this.execCommand('inserttext', '\t');
+                        } else {
+                            sel = new inst.Selection();
+                            sel.setCursor();
+                            cur = sel.getCursor();
+                            cur.insert(EditorBase.TABKEY, 'before');
+                            sel.focusCursor();
+                        }
                     }
                     break;
                 case 'enter-up':
