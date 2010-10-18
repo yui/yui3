@@ -10,7 +10,8 @@ for the preview release.
 
 3.3.0
 
-* Fixed shared scrollbar node across multiple instances
+* Fixed shared scrollbar node across multiple instances.
+* Changed async call to _uiDimensionsChange after render to a sync call.
 
 3.2.0
 

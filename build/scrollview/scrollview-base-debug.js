@@ -159,8 +159,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             'scrollYChange' : this._afterScrollYChange,
             'scrollXChange' : this._afterScrollXChange,
             'heightChange'  : this._afterHeightChange,
-            'widthChange'   : this._afterWidthChange,
-            'renderedChange': function() { Y.later(0, this, '_uiDimensionsChange'); } 
+            'widthChange'   : this._afterWidthChange 
         });
     },
     
@@ -171,6 +170,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method bindUI
      */
     syncUI: function() {
+        this._uiDimensionsChange();
         this.scrollTo(this.get(SCROLL_X), this.get(SCROLL_Y));
     },
 
