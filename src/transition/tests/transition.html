@@ -28,6 +28,52 @@ YUI({
         var suite = new Y.Test.Suite('Transition Tests');
 
     
+        suite.add(new Y.Test.Case({
+            name: 'Named Transition Tests',
+
+/* serial effects not yet implemented
+            'should run named effects in serial': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition(['fadeOut', 'fadeIn'], function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
+                    });
+                });
+
+                test.wait(3000);
+            },
+*/
+
+            'should run named effect': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition('fadeOut', function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                    });
+                });
+
+                test.wait(1000);
+            },
+
+            'should override named effect property': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition('fadeIn', {duration: 2}, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                    });
+                });
+
+                test.wait(3000);
+            }
+
+        }));
 
         suite.add(new Y.Test.Case({
             name: 'Multiple Transition Tests',
@@ -446,6 +492,7 @@ YUI({
             }
 
         }));           
+
         //return it
         return suite;
     
