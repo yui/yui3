@@ -85,6 +85,7 @@ var Lang    = Y.Lang,
     isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
     isObject   = Lang.isObject,
+    isString   = Lang.isString,
     trim       = Lang.trim,
 
     INVALID_VALUE = Y.Attribute.INVALID_VALUE,
@@ -422,7 +423,7 @@ AutoCompleteBase.ATTRS = {
      * @type Function|null
      */
     resultHighlighter: {
-        validator: _FUNCTION_VALIDATOR
+        setter: '_setResultHighlighter'
     },
 
     /**
@@ -1175,22 +1176,74 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Setter for the <code>resultFilters</code> attribute. Receives
-     * <code>null</code>, a filter function, or an array of filter functions,
-     * and returns an array of filter functions (empty if <i>filters</i> is
-     * <code>null</code>).
+     * Setter for the <code>resultFilters</code> attribute.
      *
      * @method _setResultFilters
-     * @param {Array|Function|null} filters
-     * @return {Array}
+     * @param {Array|Function|String|null} filters <code>null</code>, a filter
+     *   function, an array of filter functions, or a string or array of strings
+     *   representing the names of methods on
+     *   <code>Y.AutoCompleteFilters</code>.
+     * @return {Array} Array of filter functions (empty if <i>filters</i> is
+     *   <code>null</code>).
      * @protected
      */
     _setResultFilters: function (filters) {
+        var acFilters, getFilterFunction;
+
         if (filters === null) {
             return [];
         }
 
-        return isArray(filters) ? filters : [filters];
+        acFilters = Y.AutoCompleteFilters;
+
+        getFilterFunction = function (filter) {
+            if (isFunction(filter)) {
+                return filter;
+            }
+
+            if (isString(filter) && acFilters &&
+                    isFunction(acFilters[filter])) {
+                return acFilters[filter];
+            }
+
+            return false;
+        };
+
+        if (isArray(filters)) {
+            filters = YArray.map(filters, getFilterFunction);
+            return YArray.every(filters, function (f) { return !!f; }) ?
+                    filters : INVALID_VALUE;
+        } else {
+            filters = getFilterFunction(filters);
+            return filters ? [filters] : INVALID_VALUE;
+        }
+    },
+
+    /**
+     * Setter for the <code>resultHighlighter</code> attribute.
+     *
+     * @method _setResultHighlighter
+     * @param {Function|String|null} highlighter <code>null</code>, a
+     *   highlighter function, or a string representing the name of a method on
+     *   <code>Y.AutoCompleteHighlighters</code>.
+     * @return {Function|null}
+     * @protected
+     */
+    _setResultHighlighter: function (highlighter) {
+        var acHighlighters;
+
+        if (this._functionValidator(highlighter)) {
+            return highlighter;
+        }
+
+        acHighlighters = Y.AutoCompleteHighlighters;
+
+        if (isString(highlighter) && acHighlighters &&
+                isFunction(acHighlighters[highlighter])) {
+            return acHighlighters[highlighter];
+        }
+
+        return INVALID_VALUE;
     },
 
     /**

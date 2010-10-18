@@ -243,7 +243,7 @@ function setFilters() {
     });
 
     Y.Array.each(filterNames, function (name) {
-        filters.push(Y.AutoCompleteFilters[name]);
+        filters.push(name);
     });
 
     autoComplete.set('resultFilters', filters);
@@ -255,8 +255,7 @@ function setHighlighter() {
 
         if (input.get('checked')) {
             name = input.get('value');
-            autoComplete.set('resultHighlighter', name === 'none' ? null :
-                    Y.AutoCompleteHighlighters[name]);
+            autoComplete.set('resultHighlighter', name === 'none' ? null : name);
             return true;
         }
     });
