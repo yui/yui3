@@ -2,7 +2,7 @@ YUI.add('event-valuechange-test', function (Y) {
 
 var Assert = Y.Assert,
 
-    ignoreFocus = Y.UA.ie && Y.UA.ie < 9,
+    ignoreFocus = Y.UA.ie && Y.UA.ie < 10,
     suite       = new Y.Test.Suite('Y.ValueChange');
 
 // -- Lifecycle ----------------------------------------------------------------
@@ -171,9 +171,9 @@ suite.add(new Y.Test.Case({
 
                 this.wait(function () {
                     Assert.isTrue(fired);
-                }, 60);
-            }, 60);
-        }, 60);
+                }, 100);
+            }, 100);
+        }, 100);
     },
 
     'valueChange should stop polling after timeout': function () {
