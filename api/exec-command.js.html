@@ -307,7 +307,7 @@
                         <span class="nx">cmd</span> <span class="o">=</span> <span class="s1">&#39;hilitecolor&#39;</span><span class="p">;</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;styleWithCSS&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">);</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;useCSS&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">hasCursor</span><span class="p">())</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
@@ -316,7 +316,6 @@
                                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">;</span>
                             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                                 <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;span style=&quot;background-color: &#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">+</span> <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="p">);</span>
-
                                 <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
                             <span class="p">}</span>
                             <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
@@ -324,19 +323,7 @@
                             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                         <span class="p">}</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">&amp;&amp;</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;span id=&quot;yui3-bcolor&quot; style=&quot;background-color: &#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/span&gt;&#39;</span><span class="p">);</span>
-                            <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#yui3-bcolor&#39;</span><span class="p">);</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">c</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-                                <span class="nx">c</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
-                            <span class="p">}</span>
-                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                            <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="s1">&#39;styleWithCSS&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
                 <span class="cm">/**</span>
