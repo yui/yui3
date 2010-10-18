@@ -624,7 +624,7 @@ YUI.add('frame', function(Y) {
         * @description The default css used when creating the document.
         * @type String
         */
-        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; } .yui-cursor { *line-height: 0px; *height: 0px; *width: 0px; *font-size: 0px; *overflow: hidden; zoom: 1; *position: absolute; *content: ""; *display: none; }',
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
         /**
         * @static
         * @property HTML
@@ -632,7 +632,6 @@ YUI.add('frame', function(Y) {
         * @type String
         */
         HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
-        //HTML: '<iframe border="0" frameBorder="0" width="100%" height="99%"></iframe>',
         /**
         * @static
         * @property PAGE_HTML
@@ -1957,7 +1956,7 @@ YUI.add('exec-command', function(Y) {
                         cmd = 'hilitecolor';
                     }
                     if (!Y.UA.ie) {
-                        this._command('styleWithCSS', 'true');
+                        this._command('useCSS', false);
                     }
                     if (inst.Selection.hasCursor()) {
                         if (sel.isCollapsed) {
@@ -1966,7 +1965,6 @@ YUI.add('exec-command', function(Y) {
                                 n = sel.anchorNode;
                             } else {
                                 n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.Selection.CURSOR + '</span>');
-
                                 sel.focusCursor(true, true);
                             }
                             return n;
@@ -1974,19 +1972,7 @@ YUI.add('exec-command', function(Y) {
                             return this._command(cmd, val);
                         }
                     } else {
-                        if (Y.UA.gecko && sel.isCollapsed) {
-                            this._command('inserthtml', '<span id="yui3-bcolor" style="background-color: ' + val + '"></span>');
-                            var c = inst.one('#yui3-bcolor');
-                            if (c) {
-                                c.set('id', '');
-                                c.removeAttribute('id');
-                            }
-                        } else {
-                            this._command(cmd, val);
-                        }
-                    }
-                    if (!Y.UA.ie) {
-                        this._command('styleWithCSS', false);
+                        this._command(cmd, val);
                     }
                 },
                 /**
@@ -2304,10 +2290,12 @@ YUI.add('editor-base', function(Y) {
                 btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
-    	        sel = inst.config.doc.selection.createRange();
-                if (sel.getBookmark) {
-                    this._lastBookmark = sel.getBookmark();
-                }
+                try {
+                    sel = inst.config.doc.selection.createRange();
+                    if (sel.getBookmark) {
+                        this._lastBookmark = sel.getBookmark();
+                    }
+                } catch (ie) {}
             }
 
             /*
@@ -2320,17 +2308,19 @@ YUI.add('editor-base', function(Y) {
             switch (e.changedType) {
                 case 'keydown':
                     inst.later(100, inst, inst.Selection.cleanCursor);
-                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        e.changedEvent.preventDefault();
-
-                        sel = new inst.Selection();
-                        sel.setCursor();
-                        cur = sel.getCursor();
-                        cur.insert(EditorBase.TABKEY, 'before');
-                        sel.focusCursor();
+                        e.changedEvent.frameEvent.preventDefault();
+                        if (Y.UA.webkit) {
+                            this.execCommand('inserttext', '\t');
+                        } else {
+                            sel = new inst.Selection();
+                            sel.setCursor();
+                            cur = sel.getCursor();
+                            cur.insert(EditorBase.TABKEY, 'before');
+                            sel.focusCursor();
+                        }
                     }
                     break;
                 case 'enter-up':
@@ -2572,13 +2562,15 @@ YUI.add('editor-base', function(Y) {
         */
         _onFrameActivate: function() {
             if (this._lastBookmark) {
-                var inst = this.getInstance(),
-                    sel = inst.config.doc.selection.createRange(),
-                    bk = sel.moveToBookmark(this._lastBookmark);
+                try {
+                    var inst = this.getInstance(),
+                        sel = inst.config.doc.selection.createRange(),
+                        bk = sel.moveToBookmark(this._lastBookmark);
 
-                //sel.collapse(true);
-                sel.select();
-                this._lastBookmark = null;
+                    sel.select();
+                    this._lastBookmark = null;
+                } catch (e) {
+                }
             }
         },
         /**

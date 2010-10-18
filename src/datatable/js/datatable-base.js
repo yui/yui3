@@ -149,7 +149,7 @@ Y.extend(DTBase, Y.Widget, {
     // UI
     renderUI: function() {
         // TABLE
-        var ok = this._addTableNode() &&
+        var ok = this._addTableNode(this.get("contentBox")) &&
             // COLGROUP
             this._addColgroupNode(this._tableNode) &&
             // THEAD
@@ -164,9 +164,9 @@ Y.extend(DTBase, Y.Widget, {
         return ok;
     },
 
-    _addTableNode: function() {
+    _addTableNode: function(containerNode) {
         if (!this._tableNode) {
-            this._tableNode = this.get("contentBox").appendChild(Ycreate(TEMPLATE_TABLE));
+            this._tableNode = containerNode.appendChild(Ycreate(TEMPLATE_TABLE));
         }
         return this._tableNode;
     },

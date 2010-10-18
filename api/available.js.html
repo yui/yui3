@@ -55,11 +55,13 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Executes the callback as soon as the specified element</span>
-<span class="cm"> * is detected in the DOM.</span>
+<span class="cm"> * is detected in the DOM.  This function expects a selector</span>
+<span class="cm"> * string for the element(s) to detect.  If you already have</span>
+<span class="cm"> * an element reference, you don&#39;t need this event.</span>
 <span class="cm"> * @event available</span>
 <span class="cm"> * @param type {string} &#39;available&#39;</span>
 <span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
+<span class="cm"> * @param el {string} an selector for the element(s) to attach</span>
 <span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
 <span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
 <span class="cm"> * These arguments will be added after the event object.</span>
@@ -76,11 +78,14 @@
 <span class="cm">/**</span>
 <span class="cm"> * Executes the callback as soon as the specified element</span>
 <span class="cm"> * is detected in the DOM with a nextSibling property</span>
-<span class="cm"> * (indicating that the element&#39;s children are available)</span>
+<span class="cm"> * (indicating that the element&#39;s children are available).</span>
+<span class="cm"> * This function expects a selector</span>
+<span class="cm"> * string for the element(s) to detect.  If you already have</span>
+<span class="cm"> * an element reference, you don&#39;t need this event.</span>
 <span class="cm"> * @event contentready</span>
 <span class="cm"> * @param type {string} &#39;contentready&#39;</span>
 <span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
+<span class="cm"> * @param el {string} an selector for the element(s) to attach.</span>
 <span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
 <span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
 <span class="cm"> * These arguments will be added after the event object.</span>

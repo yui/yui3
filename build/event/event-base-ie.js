@@ -88,6 +88,19 @@ Y.extend(IEEventFacade, Y.DOM2EventFacade, {
 
         this.relatedTarget = resolve(t);
 
+        switch (e.button) {
+            case 2:
+                this.which = 3;
+                break;
+            case 4:
+                this.which = 2;
+                break;
+            default:
+                this.which = e.button;
+        }
+
+        this.button = this.which;
+
     },
 
     stopPropagation: function() {

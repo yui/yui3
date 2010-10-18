@@ -114,6 +114,7 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
+
 var Lang = Y.Lang;
 
 function Columnset(config) {
@@ -422,6 +423,7 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
+
 var YLang = Y.Lang,
     Ysubstitute = Y.Lang.substitute,
     YNode = Y.Node,
@@ -573,7 +575,7 @@ Y.extend(DTBase, Y.Widget, {
     // UI
     renderUI: function() {
         // TABLE
-        var ok = this._addTableNode() &&
+        var ok = this._addTableNode(this.get("contentBox")) &&
             // COLGROUP
             this._addColgroupNode(this._tableNode) &&
             // THEAD
@@ -588,9 +590,9 @@ Y.extend(DTBase, Y.Widget, {
         return ok;
     },
 
-    _addTableNode: function() {
+    _addTableNode: function(containerNode) {
         if (!this._tableNode) {
-            this._tableNode = this.get("contentBox").appendChild(Ycreate(TEMPLATE_TABLE));
+            this._tableNode = containerNode.appendChild(Ycreate(TEMPLATE_TABLE));
         }
         return this._tableNode;
     },
@@ -903,4 +905,5 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-}, '@VERSION@' ,{requires:['intl','substitute','widget','recordset'], lang:['en']});
+
+}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset']});

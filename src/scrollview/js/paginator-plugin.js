@@ -88,12 +88,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Designated initializer
      *
      * @method initializer
-     */    
+     */
     initializer: function() {
         var host;
 
         host = this._host = this.get('host');
-        
+
         this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
         this.beforeHostMethod('_flickFrame', this._flickFrame);
         this.afterHostEvent('scrollEnd', this._scrollEnded);

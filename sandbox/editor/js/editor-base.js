@@ -101,10 +101,12 @@ YUI.add('editor-base', function(Y) {
                 btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
-    	        sel = inst.config.doc.selection.createRange();
-                if (sel.getBookmark) {
-                    this._lastBookmark = sel.getBookmark();
-                }
+                try {
+                    sel = inst.config.doc.selection.createRange();
+                    if (sel.getBookmark) {
+                        this._lastBookmark = sel.getBookmark();
+                    }
+                } catch (ie) {}
             }
 
             /*
@@ -117,18 +119,20 @@ YUI.add('editor-base', function(Y) {
             switch (e.changedType) {
                 case 'keydown':
                     inst.later(100, inst, inst.Selection.cleanCursor);
-                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        e.changedEvent.preventDefault();
-
+                        e.changedEvent.frameEvent.preventDefault();
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
-                        sel = new inst.Selection();
-                        sel.setCursor();
-                        cur = sel.getCursor();
-                        cur.insert(EditorBase.TABKEY, 'before');
-                        sel.focusCursor();
+                        if (Y.UA.webkit) {
+                            this.execCommand('inserttext', '\t');
+                        } else {
+                            sel = new inst.Selection();
+                            sel.setCursor();
+                            cur = sel.getCursor();
+                            cur.insert(EditorBase.TABKEY, 'before');
+                            sel.focusCursor();
+                        }
                     }
                     break;
                 case 'enter-up':
@@ -371,14 +375,17 @@ YUI.add('editor-base', function(Y) {
         */
         _onFrameActivate: function() {
             if (this._lastBookmark) {
-                Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
-                var inst = this.getInstance(),
-                    sel = inst.config.doc.selection.createRange(),
-                    bk = sel.moveToBookmark(this._lastBookmark);
+                try {
+                    Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
+                    var inst = this.getInstance(),
+                        sel = inst.config.doc.selection.createRange(),
+                        bk = sel.moveToBookmark(this._lastBookmark);
 
-                //sel.collapse(true);
-                sel.select();
-                this._lastBookmark = null;
+                    sel.select();
+                    this._lastBookmark = null;
+                } catch (e) {
+                    Y.log('IE Activate handler, FAILED', 'warn', 'editor');
+                }
             }
         },
         /**

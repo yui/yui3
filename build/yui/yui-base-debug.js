@@ -16,7 +16,16 @@ if (typeof YUI != 'undefined') {
  * namespaces are preserved.  It is the constructor for the object
  * the end user interacts with.  As indicated below, each instance
  * has full custom event support, but only if the event system
- * is available.
+ * is available.  This is a self-instantiable factory function.  You
+ * can invoke it directly like this:
+ *
+ * YUI().use('*', function(Y) {
+ *   // ready
+ * });
+ *
+ * But it also works like this:
+ *
+ * var Y = YUI();
  *
  * @class YUI
  * @constructor
@@ -1787,6 +1796,16 @@ L.sub = function(s, o) {
     return ((s.replace) ? s.replace(SUBREGEX, function(match, key) {
         return (!L.isUndefined(o[key])) ? o[key] : match;
     }) : s);
+};
+
+/**
+ * Returns the current time in milliseconds.
+ * @method now
+ * @return {int} the current date
+ * @since 3.3.0
+ */
+L.now = Date.now || function () {
+  return new Date().getTime();
 };
 
 /**
