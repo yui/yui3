@@ -69,27 +69,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method initializer
      */
     initializer: function() {
-        this._createEvents();
-
-        // Cache - they're write once, and not going to change
-        this._cb = this.get(CONTENT_BOX);
-        this._bb = this.get(BOUNDING_BOX);
-    },
-
-    /** 
-     * Publishes events which occur during the scroll lifecycle
-     *
-     * @method _createEvents
-     * @private
-     */    
-    _createEvents: function() {
         /**
          * Notification event fired at the end of a scroll transition
          * 
          * @event scrollEnd
          * @param e {EventFacade} The default event facade.
          */
-        this.publish(EV_SCROLL_END);
 
         /**
          * Notification event fired at the end of a flick gesture (the flick animation may still be in progress)
@@ -97,7 +82,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @event flick
          * @param e {EventFacade} The default event facade.
          */
-        this.publish(EV_SCROLL_FLICK);
+        
+        // Cache - they're write once, and not going to change
+        this._cb = this.get(CONTENT_BOX);
+        this._bb = this.get(BOUNDING_BOX);
     },
 
     /** 
