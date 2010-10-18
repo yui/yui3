@@ -220,6 +220,14 @@ var yConfig = {
 YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
 
+    var bCount = 0,
+        bColors = [
+            '#33CC99',
+            'purple',
+            'orange',
+            'yellow'
+        ];
+
     Y.delegate('mousedown', function(e) {
         e.halt();
         e.target.toggleClass('selected');
@@ -240,10 +248,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
             case 'backcolor':
-                val = '#33CC99';
-                break;
             case 'forecolor':
-                val = '#0000FF';
+                val = bColors[bCount];
+                if (bCount === (bColors.length - 1)) {
+                    bCount = 0;
+                } else {
+                    bCount++;
+                }
                 break;
         }
         editor.focus(function() {
