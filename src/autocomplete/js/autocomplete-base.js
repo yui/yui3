@@ -167,8 +167,8 @@ function AutoCompleteBase() {
     });
 
     /**
-     * Fires after query results are received from the DataSource. If no
-     * DataSource has been set, this event will not fire.
+     * Fires after query results are received from the <code>source</code>. If
+     * source has been set, this event will not fire.
      *
      * @event results
      * @param {EventFacade} e Event facade with the following additional
@@ -199,7 +199,7 @@ function AutoCompleteBase() {
      *       <dt>raw (mixed)</dt>
      *       <dd>
      *         Raw, unformatted result in whatever form it was provided by the
-     *         DataSource.
+     *         <code>source</code>.
      *       </dd>
      *
      *       <dt>text (String)</dt>
@@ -334,10 +334,10 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * <p>
-     * DataSource request template. This can be a function that accepts a
-     * query as a parameter and returns a request string, or it can be a
-     * string containing the placeholder "{query}", which will be replaced
-     * with the actual URI-encoded query.
+     * Source request template. This can be a function that accepts a query as a
+     * parameter and returns a request string, or it can be a string containing
+     * the placeholder "{query}", which will be replaced with the actual
+     * URI-encoded query.
      * </p>
      *
      * <p>
@@ -372,7 +372,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * If no DataSource is set, result filters will not be called.
+     * If no <code>source</code> is set, result filters will not be called.
      * </p>
      *
      * @attribute resultFilters
@@ -395,7 +395,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * If no DataSource is set, the formatter will not be called.
+     * If no <code>source</code> is set, the formatter will not be called.
      * </p>
      *
      * @attribute resultFormatter
@@ -415,7 +415,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * If no DataSource is set, the highlighter will not be called.
+     * If no <code>source</code> is set, the highlighter will not be called.
      * </p>
      *
      * @attribute resultHighlighter
@@ -1195,12 +1195,12 @@ AutoCompleteBase.prototype = {
 
     /**
      * Setter for the <code>source</code> attribute. Returns a DataSource or
-     * a DataSource-like function depending on the type of <i>source</i>.
+     * a DataSource-like object depending on the type of <i>source</i>.
      *
      * @method _setSource
      * @param {Array|DataSource|Object|String} source AutoComplete source. See
      *   the <code>source</code> attribute for details.
-     * @return {DataSource|Function}
+     * @return {DataSource|Object}
      * @protected
      */
     _setSource: function (source) {
@@ -1370,7 +1370,7 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Handles DataSource responses and fires the <code>results</code> event.
+     * Handles source responses and fires the <code>results</code> event.
      *
      * @method _onResponse
      * @param {EventFacade} e
@@ -1399,7 +1399,7 @@ AutoCompleteBase.prototype = {
 
     /**
      * Default <code>query</code> event handler. Sets the <code>query</code>
-     * property and sends a request to the DataSource if one is configured.
+     * property and sends a request to the source if one is configured.
      *
      * @method _defQueryFn
      * @param {EventFacade} e
