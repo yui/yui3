@@ -371,13 +371,15 @@ YUI.add('editor-base', function(Y) {
         */
         _onFrameActivate: function() {
             if (this._lastBookmark) {
-                var inst = this.getInstance(),
-                    sel = inst.config.doc.selection.createRange(),
-                    bk = sel.moveToBookmark(this._lastBookmark);
+                try {
+                    var inst = this.getInstance(),
+                        sel = inst.config.doc.selection.createRange(),
+                        bk = sel.moveToBookmark(this._lastBookmark);
 
-                //sel.collapse(true);
-                sel.select();
-                this._lastBookmark = null;
+                    sel.select();
+                    this._lastBookmark = null;
+                } catch (e) {
+                }
             }
         },
         /**
