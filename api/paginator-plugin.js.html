@@ -137,12 +137,12 @@
 <span class="cm">     * Designated initializer</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method initializer</span>
-<span class="cm">     */</span>    
+<span class="cm">     */</span>
     <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">host</span><span class="p">;</span>
 
         <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">);</span>
-        
+
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_calculatePageOffsets</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">beforeHostMethod</span><span class="p">(</span><span class="s1">&#39;_flickFrame&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_flickFrame</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollEnded</span><span class="p">);</span>
