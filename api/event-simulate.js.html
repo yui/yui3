@@ -205,32 +205,8 @@
     <span class="c1">//try to create a mouse event</span>
     <span class="kd">var</span> <span class="nx">customEvent</span> <span class="cm">/*:MouseEvent*/</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">)){</span> <span class="c1">//IE</span>
-
-        <span class="c1">//create an IE event object</span>
-        <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">();</span>
-
-        <span class="c1">//assign available properties</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="nx">bubbles</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">cancelable</span> <span class="o">=</span> <span class="nx">cancelable</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="nx">view</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">ctrlKey</span> <span class="o">=</span> <span class="nx">ctrlKey</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">altKey</span> <span class="o">=</span> <span class="nx">altKey</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">shiftKey</span> <span class="o">=</span> <span class="nx">shiftKey</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">metaKey</span> <span class="o">=</span> <span class="nx">metaKey</span><span class="p">;</span>
-
-        <span class="cm">/*</span>
-<span class="cm">         * IE doesn&#39;t support charCode explicitly. CharCode should</span>
-<span class="cm">         * take precedence over any keyCode value for accurate</span>
-<span class="cm">         * representation.</span>
-<span class="cm">         */</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">=</span> <span class="p">(</span><span class="nx">charCode</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">charCode</span> <span class="o">:</span> <span class="nx">keyCode</span><span class="p">;</span>
-
-        <span class="c1">//fire the event</span>
-        <span class="nx">target</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">);</span>
-
     <span class="c1">//check for DOM-compliant browsers first</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">)){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">)){</span>
 
         <span class="k">try</span> <span class="p">{</span>
 
@@ -290,6 +266,29 @@
         <span class="c1">//fire the event</span>
         <span class="nx">target</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">customEvent</span><span class="p">);</span>
 
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">)){</span> <span class="c1">//IE</span>
+
+        <span class="c1">//create an IE event object</span>
+        <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">();</span>
+
+        <span class="c1">//assign available properties</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="nx">bubbles</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">cancelable</span> <span class="o">=</span> <span class="nx">cancelable</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="nx">view</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">ctrlKey</span> <span class="o">=</span> <span class="nx">ctrlKey</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">altKey</span> <span class="o">=</span> <span class="nx">altKey</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">shiftKey</span> <span class="o">=</span> <span class="nx">shiftKey</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">metaKey</span> <span class="o">=</span> <span class="nx">metaKey</span><span class="p">;</span>
+
+        <span class="cm">/*</span>
+<span class="cm">         * IE doesn&#39;t support charCode explicitly. CharCode should</span>
+<span class="cm">         * take precedence over any keyCode value for accurate</span>
+<span class="cm">         * representation.</span>
+<span class="cm">         */</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">=</span> <span class="p">(</span><span class="nx">charCode</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">charCode</span> <span class="o">:</span> <span class="nx">keyCode</span><span class="p">;</span>
+
+        <span class="c1">//fire the event</span>
+        <span class="nx">target</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">);</span>
 
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;simulateKeyEvent(): No event simulation framework present.&quot;</span><span class="p">);</span>
@@ -415,55 +414,13 @@
         <span class="nx">button</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="p">}</span>
 
+    <span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">relatedTarget</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+
     <span class="c1">//try to create a mouse event</span>
     <span class="kd">var</span> <span class="nx">customEvent</span> <span class="cm">/*:MouseEvent*/</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">)){</span> <span class="c1">//IE</span>
-
-        <span class="c1">//create an IE event object</span>
-        <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">();</span>
-
-        <span class="c1">//assign available properties</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="nx">bubbles</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">cancelable</span> <span class="o">=</span> <span class="nx">cancelable</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="nx">view</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">detail</span> <span class="o">=</span> <span class="nx">detail</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">screenX</span> <span class="o">=</span> <span class="nx">screenX</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">screenY</span> <span class="o">=</span> <span class="nx">screenY</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">=</span> <span class="nx">clientX</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">=</span> <span class="nx">clientY</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">ctrlKey</span> <span class="o">=</span> <span class="nx">ctrlKey</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">altKey</span> <span class="o">=</span> <span class="nx">altKey</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">metaKey</span> <span class="o">=</span> <span class="nx">metaKey</span><span class="p">;</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">shiftKey</span> <span class="o">=</span> <span class="nx">shiftKey</span><span class="p">;</span>
-
-        <span class="c1">//fix button property for IE&#39;s wacky implementation</span>
-        <span class="k">switch</span><span class="p">(</span><span class="nx">button</span><span class="p">){</span>
-            <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
-                <span class="nx">customEvent</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
-                <span class="nx">customEvent</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
-                <span class="c1">//leave as is</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">default</span><span class="o">:</span>
-                <span class="nx">customEvent</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="cm">/*</span>
-<span class="cm">         * Have to use relatedTarget because IE won&#39;t allow assignment</span>
-<span class="cm">         * to toElement or fromElement on generic events. This keeps</span>
-<span class="cm">         * YAHOO.util.customEvent.getRelatedTarget() functional.</span>
-<span class="cm">         */</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">relatedTarget</span><span class="p">;</span>
-
-        <span class="c1">//fire the event</span>
-        <span class="nx">target</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">);</span>
-
     <span class="c1">//check for DOM-compliant browsers first</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">)){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">)){</span>
 
         <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s2">&quot;MouseEvents&quot;</span><span class="p">);</span>
 
@@ -511,6 +468,50 @@
 
         <span class="c1">//fire the event</span>
         <span class="nx">target</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">customEvent</span><span class="p">);</span>
+
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">)){</span> <span class="c1">//IE</span>
+
+        <span class="c1">//create an IE event object</span>
+        <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">();</span>
+
+        <span class="c1">//assign available properties</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="nx">bubbles</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">cancelable</span> <span class="o">=</span> <span class="nx">cancelable</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="nx">view</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">detail</span> <span class="o">=</span> <span class="nx">detail</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">screenX</span> <span class="o">=</span> <span class="nx">screenX</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">screenY</span> <span class="o">=</span> <span class="nx">screenY</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">=</span> <span class="nx">clientX</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">=</span> <span class="nx">clientY</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">ctrlKey</span> <span class="o">=</span> <span class="nx">ctrlKey</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">altKey</span> <span class="o">=</span> <span class="nx">altKey</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">metaKey</span> <span class="o">=</span> <span class="nx">metaKey</span><span class="p">;</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">shiftKey</span> <span class="o">=</span> <span class="nx">shiftKey</span><span class="p">;</span>
+
+        <span class="c1">//fix button property for IE&#39;s wacky implementation</span>
+        <span class="k">switch</span><span class="p">(</span><span class="nx">button</span><span class="p">){</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+                <span class="nx">customEvent</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+                <span class="nx">customEvent</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+                <span class="c1">//leave as is</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+                <span class="nx">customEvent</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="cm">/*</span>
+<span class="cm">         * Have to use relatedTarget because IE won&#39;t allow assignment</span>
+<span class="cm">         * to toElement or fromElement on generic events. This keeps</span>
+<span class="cm">         * YAHOO.util.customEvent.getRelatedTarget() functional.</span>
+<span class="cm">         */</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">relatedTarget</span><span class="p">;</span>
+
+        <span class="c1">//fire the event</span>
+        <span class="nx">target</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">);</span>
 
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;simulateMouseEvent(): No event simulation framework present.&quot;</span><span class="p">);</span>
@@ -583,8 +584,17 @@
         <span class="nx">detail</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">//usually not used but defaulted to this</span>
     <span class="p">}</span>
 
+    <span class="c1">//check for DOM-compliant browsers first</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">)){</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">)){</span> <span class="c1">//IE</span>
+        <span class="c1">//just a generic UI Event object is needed</span>
+        <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s2">&quot;UIEvents&quot;</span><span class="p">);</span>
+        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">initUIEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">bubbles</span><span class="p">,</span> <span class="nx">cancelable</span><span class="p">,</span> <span class="nx">view</span><span class="p">,</span> <span class="nx">detail</span><span class="p">);</span>
+
+        <span class="c1">//fire the event</span>
+        <span class="nx">target</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">customEvent</span><span class="p">);</span>
+
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">)){</span> <span class="c1">//IE</span>
 
         <span class="c1">//create an IE event object</span>
         <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEventObject</span><span class="p">();</span>
@@ -597,17 +607,6 @@
 
         <span class="c1">//fire the event</span>
         <span class="nx">target</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">customEvent</span><span class="p">);</span>
-
-    <span class="c1">//check for DOM-compliant browsers first</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">)){</span>
-
-
-        <span class="c1">//just a generic UI Event object is needed</span>
-        <span class="nx">customEvent</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s2">&quot;UIEvents&quot;</span><span class="p">);</span>
-        <span class="nx">customEvent</span><span class="p">.</span><span class="nx">initUIEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">bubbles</span><span class="p">,</span> <span class="nx">cancelable</span><span class="p">,</span> <span class="nx">view</span><span class="p">,</span> <span class="nx">detail</span><span class="p">);</span>
-
-        <span class="c1">//fire the event</span>
-        <span class="nx">target</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">customEvent</span><span class="p">);</span>
 
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;simulateUIEvent(): No event simulation framework present.&quot;</span><span class="p">);</span>
