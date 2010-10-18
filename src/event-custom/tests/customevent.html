@@ -743,7 +743,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 var count = 0,
                     called = null,
                     fn = function() {
-                        console.log('defaultFn: ' + this.name);
                         called = this.name;
                     },
                     config = {
@@ -766,28 +765,24 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 root.publish('test:foo', { defaultFn: fn});
 
                 leaf.on('test:foo', function(e) {
-                    console.log('leaf on');
                     Y.Assert.areEqual(0, count, 'leaf.on should be first');
                     Y.Assert.isNull(called, 'leaf.on should be executed before any default function');
                     count++;
                 });
 
                 branch.on('test:foo', function() {
-                    console.log('branch on');
                     Y.Assert.areEqual(1, count, 'branch.on should be second');
                     Y.Assert.isNull(called, 'branch.on should be executed before any default function');
                     count++;
                 });
 
                 root.on('test:foo', function() {
-                    console.log('root on');
                     Y.Assert.areEqual(2, count, 'root.on should be third');
                     Y.Assert.isNull(called, 'root.on should be executed before any default function');
                     count++;
                 });
 
                 leaf.after('test:foo', function(e) {
-                    console.log('leaf after');
                     Y.Assert.areEqual(3, count, 'leaf.after should be fourth');
                     // Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
                     Y.Assert.areEqual('leaf', called, 'leaf.after should be executed after the root default function');
@@ -795,7 +790,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 });
 
                 branch.after('test:foo', function() {
-                    console.log('branch after');
                     Y.Assert.areEqual(4, count, 'branch.after should be fifth');
                     // Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
                     Y.Assert.areEqual('leaf', called, 'leaf.after should be executed after the root default function');
@@ -803,7 +797,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 });
 
                 root.after('test:foo', function() {
-                    console.log('root after');
                     Y.Assert.areEqual(5, count, 'root.after should be sixth and last');
                     // Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
                     Y.Assert.areEqual('leaf', called, 'leaf.after should be executed after the root default function');
