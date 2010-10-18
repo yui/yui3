@@ -50,7 +50,7 @@
         <div id="a">
             <p>Div A</p>
             <div id="b" class="remove">
-                <p>Div B</p>
+                <p>Div B <em id="b2" class="remove">I'm a span!</em></p>
                 <div id="c" class="remove">
                     <p>Div C</p>
                 </div>
@@ -392,9 +392,9 @@
 					Y.Event.simulate(Y.one('#div-1-2-1-1 em')._node, 'click');
 
                     Y.Assert.areSame(3, ids.length, "Delegate handler should have fired three times, once for each div in #div-1");
-                    Y.Assert.areSame('div-1-2', ids[0], "First delegate callback should be from the highest div in the subtree");
+                    Y.Assert.areSame('div-1-2-1-1', ids[0], "First delegate callback should be from the deepest div in the subtree");
                     Y.Assert.areSame('div-1-2-1', ids[1]);
-                    Y.Assert.areSame('div-1-2-1-1', ids[2]);
+                    Y.Assert.areSame('div-1-2', ids[2]);
                 },
 
                 test_removing_parent_in_subscriber: function () {
@@ -405,7 +405,7 @@
                         count++;
                     }, '.remove');
 
-                    click('c');
+                    click('b2');
 
                     Y.Assert.areSame(2, count);
                 },
