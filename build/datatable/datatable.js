@@ -1547,7 +1547,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("_addTheadNode", this._setUpParentTheadNode); 
 		this.afterHostMethod("_addTbodyNode", this._setUpParentTbodyNode);
 		this.afterHostMethod("_addMessageNode", this._setUpParentMessageNode);
-		
+       	
 		this.afterHostMethod("renderUI", this.renderUI);
 		
 		this.beforeHostMethod('_attachTheadThNode', this._attachTheadThNode);
@@ -1601,14 +1601,15 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	},
 	
 	_createBodyContainer: function() {
-		var	bd = YNode.create(CONTAINER_BODY);
+		var	bd = YNode.create(CONTAINER_BODY),
+			onScrollFn = Y.bind("_onScroll", this);
 		bd.setStyle("width", this.get('width'));
 		bd.setStyle('height', this.get('height'));
 			
 		bd.appendChild(this._parentTableNode);
 		this._parentContainer.appendChild(bd);
-		
-		this._bodyContainerNode = bd;
+		this._bodyContainerNode = bd;		
+		bd.on('scroll', onScrollFn);
 	},
 	
 	_createHeaderContainer: function() {
@@ -1620,81 +1621,84 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this._parentContainer.appendChild(hd);
 		
 		this._headerContainerNode = hd;
-	}
+	},
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
 	// Scroll Syncing
 	//
 	/////////////////////////////////////////////////////////////////////////////
+	_onScroll: function() {
+		this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+	},
 	
+	_syncScroll : function() {
+		    this._syncScrollX();
+		    this._syncScrollY();
+		    //this._syncScrollOverhang();
+		    // if(YUA.opera) {
+		    // 	        // Bug 1925874
+		    // 	        this._headerContainer.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+		    // 	        if(!this.get("width")) {
+		    // 	            // Bug 1926125
+		    // 	            document.body.style += '';
+		    // 	        }
+		    // 	    }
+		 },
 	
-	// _syncScroll : function() {
-	// 	    this._syncScrollX();
-	// 	    this._syncScrollY();
-	// 	    //this._syncScrollOverhang();
-	// 	    // if(YUA.opera) {
-	// 	    // 	        // Bug 1925874
-	// 	    // 	        this._headerContainer.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
-	// 	    // 	        if(!this.get("width")) {
-	// 	    // 	            // Bug 1926125
-	// 	    // 	            document.body.style += '';
-	// 	    // 	        }
-	// 	    // 	    }
-	// 	 },
-	// 
-	// 	/**
-	// 	 * Snaps container width for y-scrolling tables.
-	// 	 *
-	// 	 * @method _syncScrollY
-	// 	 * @private
-	// 	 */
-	// 	_syncScrollY : function() {
-	// 	    var tBody = this._parentTbodyNode,
-	// 	        tBodyContainer = this._bodyContainerNode,
-	// 			w;
-	// 
-	// 	    // X-scrolling not enabled
-	// 	    if(!this.get("width")) {
-	// 	        // Snap outer container width to content
-	// 	        w = 
-	// 	                (tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) ?
-	// 	                // but account for y-scrollbar since it is visible
-	// 	                (tBody.get('parentNode').get('clientWidth') + 19) + "px" :
-	// 	                // no y-scrollbar, just borders
-	// 	                (tBody.get('parentNode').get('clientWidth') + 2) + "px";
-	// 			tBodyContainer.setStyle('width', w);
-	// 	    }
-	// 	},
-	// 	
-	// 	/**
-	// 	 * Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
-	// 	 * Taken from YUI2 ScrollingDataTable.js
-	// 	 *
-	// 	 * @method _syncScrollX
-	// 	 * @private
-	// 	 */
-	// 	_syncScrollX: function() {
-	// 		var tBody = this._parentTbodyNode,
-	// 			tBodyContainer = this._bodyContainerNode,
-	// 			w;
-	// 		
-	// 		// if(!this.get('height') && (YUA.ie)) {
-	// 		// 			w = (tBodyContainer.get('scrollWidth') > tBodyContainer.get('offsetWidth')) ?
-	// 		//             (tBody.get('parentNode').get('offsetHeight') + 18) + "px" : 
-	// 		//             tBody.get('parentNode').get('offsetHeight') + "px";
-	// 		// 			
-	// 		// 			tBodyContainer.setStyle('height', w);
-	// 		// 		}
-	// 		
-	// 		if (tBody.get('rows').length === 0) {
-	// 			this._parentMsgNode.get('parentNode').setStyle('width', this._parentTheadNode.get('parentNode').get('offsetWidth')+'px');
-	// 		}
-	// 		else {
-	// 			this._parentMsgNode.get('parentNode').setStyle('width', "");
-	// 		}
-	// 		
-	// 	}
+		/**
+		 * Snaps container width for y-scrolling tables.
+		 *
+		 * @method _syncScrollY
+		 * @private
+		 */
+		_syncScrollY : function() {
+		    var tBody = this._parentTbodyNode,
+		        tBodyContainer = this._bodyContainerNode,
+				w;
+	
+		    // X-scrolling not enabled
+		    if(!this.get("width")) {
+		        // Snap outer container width to content
+		        w = 
+		                (tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) ?
+		                // but account for y-scrollbar since it is visible
+		                (tBody.get('parentNode').get('clientWidth') + 19) + "px" :
+		                // no y-scrollbar, just borders
+		                (tBody.get('parentNode').get('clientWidth') + 2) + "px";
+				tBodyContainer.setStyle('width', w);
+		    }
+		},
+		
+		/**
+		 * Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
+		 * Taken from YUI2 ScrollingDataTable.js
+		 *
+		 * @method _syncScrollX
+		 * @private
+		 */
+		_syncScrollX: function() {
+			var tBody = this._parentTbodyNode,
+				tBodyContainer = this._bodyContainerNode,
+				w;
+				this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+			
+			// if(!this.get('height') && (YUA.ie)) {
+			// 			w = (tBodyContainer.get('scrollWidth') > tBodyContainer.get('offsetWidth')) ?
+			//             (tBody.get('parentNode').get('offsetHeight') + 18) + "px" : 
+			//             tBody.get('parentNode').get('offsetHeight') + "px";
+			// 			
+			// 			tBodyContainer.setStyle('height', w);
+			// 		}
+			
+			if (tBody.get('rows').length === 0) {
+				this._parentMsgNode.get('parentNode').setStyle('width', this._parentTheadNode.get('parentNode').get('offsetWidth')+'px');
+			}
+			else {
+				this._parentMsgNode.get('parentNode').setStyle('width', "");
+			}
+			
+		}
 	
 	/**
 	 * Adds/removes Column header overhang as necesary.
