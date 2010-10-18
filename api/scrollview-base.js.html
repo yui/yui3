@@ -116,27 +116,12 @@
 <span class="cm">     * @method initializer</span>
 <span class="cm">     */</span>
     <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_createEvents</span><span class="p">();</span>
-
-        <span class="c1">// Cache - they&#39;re write once, and not going to change</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/** </span>
-<span class="cm">     * Publishes events which occur during the scroll lifecycle</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _createEvents</span>
-<span class="cm">     * @private</span>
-<span class="cm">     */</span>    
-    <span class="nx">_createEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="cm">/**</span>
 <span class="cm">         * Notification event fired at the end of a scroll transition</span>
 <span class="cm">         * </span>
 <span class="cm">         * @event scrollEnd</span>
 <span class="cm">         * @param e {EventFacade} The default event facade.</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Notification event fired at the end of a flick gesture (the flick animation may still be in progress)</span>
@@ -144,7 +129,10 @@
 <span class="cm">         * @event flick</span>
 <span class="cm">         * @param e {EventFacade} The default event facade.</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">EV_SCROLL_FLICK</span><span class="p">);</span>
+        
+        <span class="c1">// Cache - they&#39;re write once, and not going to change</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/** </span>
@@ -206,8 +194,7 @@
             <span class="s1">&#39;scrollYChange&#39;</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterScrollYChange</span><span class="p">,</span>
             <span class="s1">&#39;scrollXChange&#39;</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterScrollXChange</span><span class="p">,</span>
             <span class="s1">&#39;heightChange&#39;</span>  <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterHeightChange</span><span class="p">,</span>
-            <span class="s1">&#39;widthChange&#39;</span>   <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterWidthChange</span><span class="p">,</span>
-            <span class="s1">&#39;renderedChange&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">);</span> <span class="p">}</span> 
+            <span class="s1">&#39;widthChange&#39;</span>   <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterWidthChange</span> 
         <span class="p">});</span>
     <span class="p">},</span>
     
@@ -218,6 +205,7 @@
 <span class="cm">     * @method bindUI</span>
 <span class="cm">     */</span>
     <span class="nx">syncUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_uiDimensionsChange</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">));</span>
     <span class="p">},</span>
 
