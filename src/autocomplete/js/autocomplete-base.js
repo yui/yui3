@@ -823,9 +823,9 @@ AutoCompleteBase.prototype = {
      * <p>
      * Creates a DataSource-like object that calls the specified JSONP
      * URL or executes the specified YQL query for results. If the string starts
-     * with "select " (case-insensitive), it's assumed to be a YQL query;
-     * otherwise, it's assumed to be a URL (which may be absolute or relative).
-     * See the <code>source</code> attribute for more details.
+     * with "select ", "use ", or "set " (case-insensitive), it's assumed to be
+     * a YQL query; otherwise, it's assumed to be a URL (which may be absolute
+     * or relative). See the <code>source</code> attribute for more details.
      * </p>
      *
      * <p>
@@ -842,7 +842,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _createStringSource: function (source) {
-        if (/^select\s+/i.test(source)) {
+        if (/^(?:select|use|set)\s+/i.test(source)) {
             // Looks like a YQL query.
             if (Y.YQLRequest) {
                 return this._createYQLSource(source);
