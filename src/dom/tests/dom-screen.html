@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>DOM Test Suite</title>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="dom-region-test.js"></script>
+<script type="text/javascript">
+YUI({
+    base: "../../../build/",
+    filter: 'raw',
+    combine: false,
+    useConsole: true
+}).use('console', 'test', 'dom-region-test', function (Y) {
+    //create the logger
+
+    var logger = new Y.Console({
+        height: '800px'
+    }).render();
+    
+    //add the tests
+    /*
+    Y.Test.Runner.on("complete", function(){
+        var coverage = Y.Test.Runner.getCoverage(),
+            data = Y.Test.Runner.getCoverage(Y.Coverage.Format.JSON);
+
+        Y.DOM.byId("coverage-data").value = data;
+    });
+    */
+    Y.Test.Runner.run();
+});
+</script>
+<style>
+#ft {
+    opacity: 0.75;
+}
+
+.yui-skin-sam .yui-console-entry-cat {
+    color: white;
+    font-weight: bold;
+}
+
+.yui-skin-sam .yui-console-entry-src,
+.yui-skin-sam .yui-console-entry-time {
+    display: none;
+}
+
+.yui-skin-sam .yui-console-entry {
+}
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-content {
+    text-align:right;
+}
+
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background-color: green;
+}
+
+.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background-color: red;
+}
+
+</style>
+
+</head>
+<body class="yui3-skin-sam">
+</body>
+</html>

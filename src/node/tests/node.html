@@ -1256,6 +1256,22 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             inner.ancestor('td');
         },
 
+        test_ancestors: function() {
+            var node = document.createElement('node');
+            node.className = 'foo';
+            document.body.appendChild(node);
+            nodelist = Y.one(node).ancestors();
+            ArrayAssert.itemsAreEqual([document.documentElement, document.body], nodelist._nodes);
+
+            nodelist = Y.one(node).ancestors('.foo', true);
+            ArrayAssert.itemsAreEqual([node], nodelist._nodes);
+
+            nodelist = Y.one(node).ancestors('body', true);
+            ArrayAssert.itemsAreEqual([document.body], nodelist._nodes);
+
+            document.body.removeChild(node);
+        },
+
         test_nodelistEvent: function() {
             var nodelist = Y.all('div'),
                 item = nodelist.item(0),

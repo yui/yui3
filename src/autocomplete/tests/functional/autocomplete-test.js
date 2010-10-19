@@ -136,7 +136,7 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
-    'resultFilters should accept a filter, array of filters, or null': function () {
+    'resultFilters should accept a filter, array of filters, string, array of strings, or null': function () {
         var filter = function () {};
 
         this.ac.set('resultFilters', filter);
@@ -147,6 +147,16 @@ baseSuite.add(new Y.Test.Case({
 
         this.ac.set('resultFilters', [filter]);
         ArrayAssert.itemsAreSame([filter], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', 'phraseMatch');
+        ArrayAssert.itemsAreSame([Y.AutoCompleteFilters.phraseMatch], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', ['phraseMatch', 'charMatch']);
+        ArrayAssert.itemsAreSame([Y.AutoCompleteFilters.phraseMatch, Y.AutoCompleteFilters.charMatch], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', null);
+        this.ac.set('resultFilters', ['foo', 'bar']);
+        ArrayAssert.isEmpty(this.ac.get('resultFilters'));
     },
 
     // -- Generic setters and validators ---------------------------------------
