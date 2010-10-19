@@ -70,7 +70,7 @@ var DOT = '.',
     _wrapFn = function(fn) {
         var ret = null;
         if (fn) {
-            ret = (typeof fn === 'string') ?
+            ret = (typeof fn == 'string') ?
             function(n) {
                 return Y.Selector.test(n, fn);
             } :
@@ -192,7 +192,7 @@ Y_Node.getDOMNode = function(node) {
  */
 Y_Node.scrubVal = function(val, node) {
     if (node && val) { // only truthy values are risky
-         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
+         if (typeof val == 'object' || typeof val == 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y_DOM.isWindow(val)) {// node || window
                 val = Y.one(val);
             } else if ((val.item && !val._nodes) || // dom collection or Node instance
@@ -200,7 +200,7 @@ Y_Node.scrubVal = function(val, node) {
                 val = Y.all(val);
             }
         }
-    } else if (val === undefined) {
+    } else if (typeof val === 'undefined') {
         val = node; // for chaining
     } else if (val === null) {
         val = null; // IE: DOM null not the same as null
@@ -221,7 +221,7 @@ Y_Node.scrubVal = function(val, node) {
  * @return {any} Depends on what is returned from the DOM node.
  */
 Y_Node.addMethod = function(name, fn, context) {
-    if (name && fn && typeof fn === 'function') {
+    if (name && fn && typeof fn == 'function') {
         Y_Node.prototype[name] = function() {
             context = context || this;
             var args = _slice.call(arguments),
@@ -242,7 +242,7 @@ Y_Node.addMethod = function(name, fn, context) {
                 ret = Y_Node.scrubVal(ret, this);
             }
 
-            (typeof ret !== 'undefined') || (ret = this);
+            (typeof ret != 'undefined') || (ret = this);
             return ret;
         };
     } else {
@@ -260,7 +260,7 @@ Y_Node.addMethod = function(name, fn, context) {
  * @param {Object} context An optional context to call the method with
  */
 Y_Node.importMethod = function(host, name, altName) {
-    if (typeof name === 'string') {
+    if (typeof name == 'string') {
         altName = altName || name;
         Y_Node.addMethod(altName, host[name], host);
     } else {
@@ -286,7 +286,7 @@ Y_Node.one = function(node) {
         uid;
 
     if (node) {
-        if (typeof node === 'string') {
+        if (typeof node == 'string') {
             if (node.indexOf('doc') === 0) { // doc OR document
                 node = Y.config.doc;
             } else if (node.indexOf('win') === 0) { // win OR window
@@ -442,7 +442,7 @@ Y_Node.DEFAULT_SETTER = function(name, val) {
         name = name.split(DOT);
         // only allow when defined on node
         Y.Object.setValue(node, name, val);
-    } else if (node[name] !== undefined) { // pass thru DOM properties
+    } else if (typeof node[name] != 'undefined') { // pass thru DOM properties
         node[name] = val;
     }
 
@@ -463,7 +463,7 @@ Y_Node.DEFAULT_GETTER = function(name) {
 
     if (name.indexOf && name.indexOf(DOT) > -1) {
         val = Y.Object.getValue(node, name.split(DOT));
-    } else if (node[name] !== undefined) { // pass thru from DOM
+    } else if (typeof node[name] != 'undefined') { // pass thru from DOM
         val = node[name];
     }
 
@@ -821,7 +821,7 @@ Y.mix(Y_Node.prototype, {
      */
     replace: function(newNode) {
         var node = this._node;
-        if (typeof (newNode) === 'string') {
+        if (typeof (newNode) == 'string') {
             newNode = Y.Node.create(newNode);
         }
         node.parentNode.replaceChild(Y_Node.getDOMNode(newNode), node);
@@ -953,13 +953,13 @@ Y.mix(Y_Node.prototype, {
         var node = this._node;
 
         if (content) {
-            if (typeof where === 'number') { // allow index
+            if (typeof where == 'number') { // allow index
                 where = this._node.childNodes[where];
             } else if (where && where._node) { // Node
                 where = where._node;
             }
 
-            if (typeof content !== 'string') { // allow Node or NodeList/Array instances
+            if (typeof content != 'string') { // allow Node or NodeList/Array instances
                 if (content._node) { // Node
                     content = content._node;
                 } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
@@ -1120,8 +1120,8 @@ Y.mix(Y_Node.prototype, {
     hasMethod: function(method) {
         var node = this._node;
         return !!(node && method in node &&
-                typeof node[method] !== 'unknown' &&
-            (typeof node[method] === 'function' ||
+                typeof node[method] != 'unknown' &&
+            (typeof node[method] == 'function' ||
                 String(node[method]).indexOf('function') === 1)); // IE reports as object, prepends space
     },
 
