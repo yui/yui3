@@ -203,6 +203,29 @@
         <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">PARENT_NODE</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
     <span class="p">},</span>
 
+    <span class="cm">/*</span>
+<span class="cm">     * Finds the ancestors of the element.</span>
+<span class="cm">     * @method ancestors</span>
+<span class="cm">     * @param {HTMLElement} element The html element.</span>
+<span class="cm">     * @param {Function} fn optional An optional boolean test to apply.</span>
+<span class="cm">     * The optional function is passed the current DOM node being tested as its only argument.</span>
+<span class="cm">     * If no function is given, all ancestors are returned.</span>
+<span class="cm">     * @param {Boolean} testSelf optional Whether or not to include the element in the scan </span>
+<span class="cm">     * @return {Array} An array containing all matching DOM nodes.</span>
+<span class="cm">     */</span>
+    <span class="nx">ancestors</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">testSelf</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ancestor</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">),</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ancestor</span><span class="p">)</span> <span class="o">?</span> <span class="p">[</span><span class="nx">ancestor</span><span class="p">]</span> <span class="o">:</span> <span class="p">[];</span>
+
+        <span class="k">while</span> <span class="p">((</span><span class="nx">ancestor</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="nx">ancestor</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ancestor</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">ancestor</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Searches the element by the given axis for the first matching element.</span>
 <span class="cm">     * @method elementByAxis</span>
