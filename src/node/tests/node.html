@@ -1447,6 +1447,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             var node = Y.Node.create('<div/>').append('<span><em>foo</em></span>').one('em');
             node.unwrap();
             Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should return true for fragment': function() {
+            var node = Y.Node.create('<span>foo</span><em>bar</em>');
+            Assert.isTrue(node.isFragment());
         }
     })); 
 

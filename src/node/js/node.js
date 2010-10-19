@@ -1147,6 +1147,10 @@ Y.mix(Y_Node.prototype, {
 
     _hide: function() {
         this.setStyle('display', 'none');
+    },
+
+    isFragment: function() {
+        return (this.get('nodeType') === 11);
     }
 
 }, true);
