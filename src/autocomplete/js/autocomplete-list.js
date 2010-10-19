@@ -554,16 +554,19 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _afterActiveItemChange: function (e) {
-        var newVal  = e.newVal,
-            prevVal = e.prevVal;
+        var inputNode = this._inputNode,
+            newVal    = e.newVal,
+            prevVal   = e.prevVal;
 
         if (prevVal) {
             prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
         }
 
         if (newVal) {
-            newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
-            this._inputNode.set('aria-activedescendant', newVal.get(ID));
+            newVal.addClass(this[_CLASS_ITEM_ACTIVE]).scrollIntoView();
+            inputNode.set('aria-activedescendant', newVal.get(ID));
+        } else {
+            inputNode.scrollIntoView();
         }
     },
 
@@ -663,10 +666,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _onInputBlur: function (e) {
         // Hide the list on inputNode blur events, unless the mouse is currently
         // over the list (which indicates that the user is probably interacting
-        // with it) or the tab key was pressed.
-        if (this._mouseOverList && this._lastInputKey !== KEY_TAB) {
-            this._inputNode.focus();
-        } else {
+        // with it).
+        if (!this._mouseOverList || this._lastInputKey === KEY_TAB) {
             this.hide();
         }
     },
