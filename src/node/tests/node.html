@@ -1452,6 +1452,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         'should return true for fragment': function() {
             var node = Y.Node.create('<span>foo</span><em>bar</em>');
             Assert.isTrue(node.isFragment());
+        },
+
+        'should create a caption element': function() {
+            var node = Y.Node.create('<table/>');
+            node.createCaption();
+            Assert.areEqual('CAPTION', node.get('firstChild.tagName'));
         }
     })); 
 
