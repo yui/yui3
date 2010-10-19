@@ -683,8 +683,8 @@ Y.extend(HistoryHash, HistoryBase, {
 
     // -- Protected Methods ----------------------------------------------------
     _change: function (src, state, options) {
-        // Stringify all values to ensure that comparisons don't fail when
-        // after they're coerced to strings in the location hash.
+        // Stringify all values to ensure that comparisons don't fail after
+        // they're coerced to strings in the location hash.
         YObject.each(state, function (value, key) {
             if (Lang.isValue(value)) {
                 state[key] = value.toString();
