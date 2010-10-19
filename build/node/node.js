@@ -821,11 +821,26 @@ Y.mix(Y_Node.prototype, {
      */
     replace: function(newNode) {
         var node = this._node;
-        if (typeof (newNode) == 'string') {
-            newNode = Y.Node.create(newNode);
+        if (typeof newNode == 'string') {
+            newNode = Y_Node.create(newNode);
         }
         node.parentNode.replaceChild(Y_Node.getDOMNode(newNode), node);
         return this;
+    },
+
+    /**
+     * @method replaceChild
+     * @for Node
+     * @param {String | HTMLElement | Node} node Node to be inserted 
+     * @param {HTMLElement | Node} refNode Node to be replaced 
+     * @return {Node} The replaced node
+     */
+    replaceChild: function(node, refNode) {
+        if (typeof node == 'string') {
+            node = Y_DOM.create(node);
+        }
+
+        return Y.one(this._node.replaceChild(Y_Node.getDOMNode(node), Y_Node.getDOMNode(refNode)));
     },
 
     /**
@@ -1625,16 +1640,6 @@ Y.all = function(nodes) {
 
 Y.Node.all = Y.all;
 Y.Array.each([
-    /**
-     * Passes through to DOM method.
-     * @method replaceChild
-     * @for Node
-     * @param {HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
-     * @return {Node} The replaced node 
-     */
-    'replaceChild',
-
     /**
      * Passes through to DOM method.
      * @method appendChild

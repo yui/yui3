@@ -1,16 +1,6 @@
 Y.Array.each([
     /**
      * Passes through to DOM method.
-     * @method replaceChild
-     * @for Node
-     * @param {HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
-     * @return {Node} The replaced node 
-     */
-    'replaceChild',
-
-    /**
-     * Passes through to DOM method.
      * @method appendChild
      * @param {HTMLElement | Node} node Node to be appended 
      * @return {Node} The appended node 

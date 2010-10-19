@@ -1476,6 +1476,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             var node = Y.Node.create('<div><span>foo</span></div>');
             node.one('span').replace('<em>bar</em>');
             Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html and return the replaced node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node = node.replaceChild('<em>bar</em>', node.one('span'));
+            Assert.areEqual('SPAN', node.get('tagName'));
         }
     })); 
 
