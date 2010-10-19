@@ -440,9 +440,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _keyTab: function () {
+        var item;
+
         if (this.get('tabSelect')) {
-            this.selectItem();
+            item = this.get('activeItem');
+
+            if (item) {
+                this.selectItem(item);
+                return true;
+            }
         }
+
+        return false;
     },
 
     /**
