@@ -127,8 +127,9 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	/////////////////////////////////////////////////////////////////////////////
 	
 	renderUI: function() {
-		this._createHeaderContainer();
 		this._createBodyContainer();
+		this._createHeaderContainer();
+		this._setContentBoxDimenions();
 	},
 	
 	syncUI: function() {
@@ -137,14 +138,14 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	//Before attaching the Th nodes, add the appropriate width to the liner divs.
 	_attachTheadThNode: function(o) {
-		var width = this.get('columnWidth');
+		var width = o.column.get('width') || "auto";
 		o.th.get('firstChild').setStyle('width', width);
 		return o;
 	},
 	
 	//Before attaching the td nodes, add the appropriate width to the liner divs.
 	_attachTbodyTdNode: function(o) {
-		var width = this.get('columnWidth');
+		var width = o.column.get('width') || "auto";
 		o.td.get('firstChild').setStyle('width', width);
 		return o;
 	},
@@ -166,7 +167,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		hd.setStyle('backgroundColor',this.get("COLOR_COLUMNFILLER"));
 		this._setOverflowForThead();
 		hd.appendChild(this._parentTheadNode);
-		this._parentContainer.appendChild(hd);
+		this._parentContainer.prepend(hd);
 		
 	},
 	
@@ -174,17 +175,25 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		var dir = this.get('scroll'),
 			w = this.get('width') || "",
 			h = this.get('height') || "",
-			el = this._bodyContainerNode;
-		
-		el.setStyles({'width':w, 'height':h});
-		
+			el = this._bodyContainerNode,
+			styles = {'width':"", 'height':h};
+				
 		if (dir === 'x') {
-			el.setStyles({'overflow-y':'hidden'});
+			styles['overflowY'] = 'hidden';
+			styles['width'] = w;
+			//el.setStyles({'overflow-y':'hidden'});
 		}
 		else if (dir === 'y') {
-			el.setStyles({'overflow-x':'hidden'});
+			//el.setStyles({'overflow-x':'hidden', "width": ""});
+			styles['overflowX'] = 'hidden';
 		}
 		
+		//assume xy
+		else {
+			styles['width'] = w;
+		}
+		
+		el.setStyles(styles);
 		return el;
 	},
 	
@@ -193,11 +202,14 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			w = this.get('width'),
 			el = this._headerContainerNode;
 		
-		if (dir === 'y') {
-			el.setStyle('width', 'auto');
-		}
-		else {
+		if (dir !== 'y') {
 			el.setStyle('width', w);
+		}
+	},
+	
+	_setContentBoxDimenions: function() {
+		if (this.get('scroll') === 'y') {
+			this._parentContainer.setStyle('width', 'auto');
 		}
 	},
 	
@@ -222,7 +234,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		 		// 		    	        document.body.style += '';
 		 		// 		    	    }
 		 		// }
-		 },
+	},
 	
 		/**
 		 * Snaps container width for y-scrolling tables.
@@ -230,23 +242,21 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		 * @method _syncScrollY
 		 * @private
 		 */
-		_syncScrollY : function() {
-		    var tBody = this._parentTbodyNode,
-		        tBodyContainer = this._bodyContainerNode,
-				w;
-	
+	_syncScrollY : function() {
+		var tBody = this._parentTbodyNode,
+		    tBodyContainer = this._bodyContainerNode,
+			w;
 		    // X-scrolling not enabled
-		    if(!this.get("width")) {
+			if(!this.get("width")) {
 		        // Snap outer container width to content
-		        w = 
-		                (tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) ?
-		                // but account for y-scrollbar since it is visible
-		                (tBody.get('parentNode').get('clientWidth') + 19) + "px" :
-		                // no y-scrollbar, just borders
-		                (tBody.get('parentNode').get('clientWidth') + 2) + "px";
-				tBodyContainer.setStyle('width', w);
-		    }
-		},
+		        w = (tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) ?
+		    	// but account for y-scrollbar since it is visible
+					(tBody.get('parentNode').get('clientWidth') + 19) + "px" :
+		     		// no y-scrollbar, just borders
+            		(tBody.get('parentNode').get('clientWidth') + 2) + "px";
+				this._parentContainer.setStyle('width', w);
+		}
+	},
 		
 		/**
 		 * Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
@@ -255,11 +265,11 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		 * @method _syncScrollX
 		 * @private
 		 */
-		_syncScrollX: function() {
-			var tBody = this._parentTbodyNode,
-				tBodyContainer = this._bodyContainerNode,
-				w;
-				this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+	_syncScrollX: function() {
+		var tBody = this._parentTbodyNode,
+			tBodyContainer = this._bodyContainerNode,
+			w;
+			this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
 			
 			// if(!this.get('height') && (YUA.ie)) {
 			// 			w = (tBodyContainer.get('scrollWidth') > tBodyContainer.get('offsetWidth')) ?
@@ -269,14 +279,14 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			// 			tBodyContainer.setStyle('height', w);
 			// 		}
 			
-			if (tBody.get('rows').length === 0) {
-				this._parentMsgNode.get('parentNode').setStyle('width', this._parentTheadNode.get('parentNode').get('offsetWidth')+'px');
-			}
-			else {
-				this._parentMsgNode.get('parentNode').setStyle('width', "");
-			}
+		if (tBody.get('rows').length === 0) {
+			this._parentMsgNode.get('parentNode').setStyle('width', this._parentTheadNode.get('parentNode').get('offsetWidth')+'px');
+		}
+		else {
+			this._parentMsgNode.get('parentNode').setStyle('width', "");
+		}
 			
-		},
+	},
 	
 	/**
 	 * Adds/removes Column header overhang as necesary.
@@ -320,6 +330,11 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	    // 	    }
 	    // 	    this._parentTheadNode.setStyle('display', '');
 	}
+	
+	
+	
+	
+	
 	
 	// setColumnWidth: function(col, width) {
 	// 	colWidth = col.get('minWidth');
