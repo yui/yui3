@@ -102,10 +102,12 @@ YUI.add('editor-base', function(Y) {
                 btag = inst.Selection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
-    	        sel = inst.config.doc.selection.createRange();
-                if (sel.getBookmark) {
-                    this._lastBookmark = sel.getBookmark();
-                }
+                try {
+                    sel = inst.config.doc.selection.createRange();
+                    if (sel.getBookmark) {
+                        this._lastBookmark = sel.getBookmark();
+                    }
+                } catch (ie) {}
             }
 
             /*
@@ -374,14 +376,17 @@ YUI.add('editor-base', function(Y) {
         */
         _onFrameActivate: function() {
             if (this._lastBookmark) {
-                Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
-                var inst = this.getInstance(),
-                    sel = inst.config.doc.selection.createRange(),
-                    bk = sel.moveToBookmark(this._lastBookmark);
+                try {
+                    Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
+                    var inst = this.getInstance(),
+                        sel = inst.config.doc.selection.createRange(),
+                        bk = sel.moveToBookmark(this._lastBookmark);
 
-                //sel.collapse(true);
-                sel.select();
-                this._lastBookmark = null;
+                    sel.select();
+                    this._lastBookmark = null;
+                } catch (e) {
+                    Y.log('IE Activate handler, FAILED', 'warn', 'editor');
+                }
             }
         },
         /**

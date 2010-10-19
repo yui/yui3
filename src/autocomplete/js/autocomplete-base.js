@@ -85,6 +85,7 @@ var Lang    = Y.Lang,
     isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
     isObject   = Lang.isObject,
+    isString   = Lang.isString,
     trim       = Lang.trim,
 
     INVALID_VALUE = Y.Attribute.INVALID_VALUE,
@@ -167,8 +168,8 @@ function AutoCompleteBase() {
     });
 
     /**
-     * Fires after query results are received from the DataSource. If no
-     * DataSource has been set, this event will not fire.
+     * Fires after query results are received from the <code>source</code>. If
+     * source has been set, this event will not fire.
      *
      * @event results
      * @param {EventFacade} e Event facade with the following additional
@@ -199,7 +200,7 @@ function AutoCompleteBase() {
      *       <dt>raw (mixed)</dt>
      *       <dd>
      *         Raw, unformatted result in whatever form it was provided by the
-     *         DataSource.
+     *         <code>source</code>.
      *       </dd>
      *
      *       <dt>text (String)</dt>
@@ -334,10 +335,10 @@ AutoCompleteBase.ATTRS = {
 
     /**
      * <p>
-     * DataSource request template. This can be a function that accepts a
-     * query as a parameter and returns a request string, or it can be a
-     * string containing the placeholder "{query}", which will be replaced
-     * with the actual URI-encoded query.
+     * Source request template. This can be a function that accepts a query as a
+     * parameter and returns a request string, or it can be a string containing
+     * the placeholder "{query}", which will be replaced with the actual
+     * URI-encoded query.
      * </p>
      *
      * <p>
@@ -372,7 +373,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * If no DataSource is set, result filters will not be called.
+     * If no <code>source</code> is set, result filters will not be called.
      * </p>
      *
      * @attribute resultFilters
@@ -395,7 +396,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * If no DataSource is set, the formatter will not be called.
+     * If no <code>source</code> is set, the formatter will not be called.
      * </p>
      *
      * @attribute resultFormatter
@@ -415,14 +416,14 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <p>
-     * If no DataSource is set, the highlighter will not be called.
+     * If no <code>source</code> is set, the highlighter will not be called.
      * </p>
      *
      * @attribute resultHighlighter
      * @type Function|null
      */
     resultHighlighter: {
-        validator: _FUNCTION_VALIDATOR
+        setter: '_setResultHighlighter'
     },
 
     /**
@@ -576,7 +577,7 @@ AutoCompleteBase.ATTRS = {
      *     <p>
      *     <strong>The <code>jsonp</code> module must be loaded in order for URL
      *     sources to work.</strong> If the <code>jsonp</code> module is not
-     *     loaded, an error will be logged and autocomplete requests will fail.
+     *     already loaded, it will be loaded on demand if possible.
      *     </p>
      *   </dd>
      *
@@ -587,16 +588,16 @@ AutoCompleteBase.ATTRS = {
      *     </p>
      *
      *     <p>
-     *     If a YQL "SELECT" query is provided, it will be used to make a YQL
-     *     request. The <code>{query}</code> placeholder will be replaced with
-     *     the current autocomplete query. This placeholder must appear in the
-     *     YQL query, or the request will fail.
+     *     If a YQL query is provided, it will be used to make a YQL request.
+     *     The <code>{query}</code> placeholder will be replaced with the
+     *     current autocomplete query. This placeholder must appear in the YQL
+     *     query, or the request will fail.
      *     </p>
      *
      *     <p>
      *     <strong>The <code>yql</code> module must be loaded in order for YQL
      *     sources to work.</strong> If the <code>yql</code> module is not
-     *     loaded, an error will be logged and autocomplete requests will fail.
+     *     already loaded, it will be loaded on demand if possible.
      *     </p>
      *   </dd>
      * </dl>
@@ -769,31 +770,61 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _createJSONPSource: function (source) {
-        var cache = {},
-            that  = this;
+        var cache       = {},
+            jsonpSource = {},
+            that        = this,
+            lastRequest, loading;
 
-        return {sendRequest: function (request) {
-            var query = request.request;
+        jsonpSource.sendRequest = function (request) {
+            var _sendRequest = function (request) {
+                var query = request.request;
 
-            if (cache[query]) {
-                that[_SOURCE_SUCCESS](cache[query], request);
-            } else {
-                // Hack alert: JSONPRequest currently doesn't support
-                // per-request callbacks, so we're reaching into the protected
-                // _config object to make it happen.
-                //
-                // This limitation is mentioned in the following JSONP
-                // enhancement ticket:
-                //
-                // http://yuilibrary.com/projects/yui3/ticket/2529371
-                source._config.on.success = function (data) {
-                    cache[query] = data;
-                    that[_SOURCE_SUCCESS](data, request);
-                };
+                if (cache[query]) {
+                    that[_SOURCE_SUCCESS](cache[query], request);
+                } else {
+                    // Hack alert: JSONPRequest currently doesn't support
+                    // per-request callbacks, so we're reaching into the protected
+                    // _config object to make it happen.
+                    //
+                    // This limitation is mentioned in the following JSONP
+                    // enhancement ticket:
+                    //
+                    // http://yuilibrary.com/projects/yui3/ticket/2529371
+                    source._config.on.success = function (data) {
+                        cache[query] = data;
+                        that[_SOURCE_SUCCESS](data, request);
+                    };
 
-                source.send(query);
+                    source.send(query);
+                }
+            };
+
+            // Keep track of the most recent request in case there are multiple
+            // requests while we're waiting for the JSONP module to load. Only
+            // the most recent request will be sent.
+            lastRequest = request;
+
+            if (!loading) {
+                loading = true;
+
+                // Lazy-load the JSONP module if necessary, then overwrite the
+                // sendRequest method to bypass this check in the future.
+                Y.use('jsonp', function () {
+                    // Turn the source into a JSONPRequest instance if it isn't
+                    // one already.
+                    if (!(source instanceof Y.JSONPRequest)) {
+                        source = new Y.JSONPRequest(source, {
+                            format: Y.bind(that._jsonpFormatter, that)
+                        });
+                    }
+
+                    jsonpSource.sendRequest = _sendRequest;
+                    _sendRequest(lastRequest);
+                });
             }
-        }};
+        };
+
+        return jsonpSource;
     },
 
     /**
@@ -819,21 +850,11 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * <p>
      * Creates a DataSource-like object that calls the specified JSONP
      * URL or executes the specified YQL query for results. If the string starts
-     * with "select " (case-insensitive), it's assumed to be a YQL query;
-     * otherwise, it's assumed to be a URL (which may be absolute or relative).
-     * See the <code>source</code> attribute for more details.
-     * </p>
-     *
-     * <p>
-     * Note: depending on the string format, either the <code>jsonp</code>
-     * module or the <code>yql</code> module (both optional dependencies) will
-     * be required. If the necessary module is not loaded,
-     * <code>Y.Attribute.INVALID_VALUE</code> will be returned and an error will
-     * be logged.
-     * </p>
+     * with "select ", "use ", or "set " (case-insensitive), it's assumed to be
+     * a YQL query; otherwise, it's assumed to be a URL (which may be absolute
+     * or relative). See the <code>source</code> attribute for more details.
      *
      * @method _createStringSource
      * @param {String} source JSONP URL or YQL query.
@@ -841,24 +862,12 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _createStringSource: function (source) {
-        if (/^select\s+/i.test(source)) {
+        if (/^(?:select|use|set)\s+/i.test(source)) {
             // Looks like a YQL query.
-            if (Y.YQLRequest) {
-                return this._createYQLSource(source);
-            } else {
-                Y.error('yql module is not loaded');
-                return INVALID_VALUE;
-            }
+            return this._createYQLSource(source);
         } else {
             // Doesn't look like a YQL query, so assume it's a URL.
-            if (Y.JSONPRequest) {
-                return this._createJSONPSource(new Y.JSONPRequest(source, {
-                    format: Y.bind(this._jsonpFormatter, this)
-                }));
-            } else {
-                Y.error('jsonp module is not loaded');
-                return INVALID_VALUE;
-            }
+            return this._createJSONPSource(source);
         }
     },
 
@@ -875,29 +884,51 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _createYQLSource: function (source) {
-        var cache = {},
-            that  = this;
+        var cache     = {},
+            yqlSource = {},
+            that      = this,
+            lastRequest, loading;
 
         if (!this.get(RESULT_LIST_LOCATOR)) {
             this.set(RESULT_LIST_LOCATOR, this._defaultYQLLocator);
         }
 
-        return {sendRequest: function (request) {
-            var query = request.request;
+        yqlSource.sendRequest = function (request) {
+            var _sendRequest = function (request) {
+                var query = request.request;
 
-            if (!that.get(REQUEST_TEMPLATE)) {
-                query = encodeURIComponent(query);
-            }
+                if (!that.get(REQUEST_TEMPLATE)) {
+                    query = encodeURIComponent(query);
+                }
 
-            if (cache[query]) {
-                that[_SOURCE_SUCCESS](cache[query], request);
-            } else {
-                Y.YQL(Lang.sub(source, {query: query}), function (data) {
-                    cache[query] = data;
-                    that[_SOURCE_SUCCESS](data, request);
+                if (cache[query]) {
+                    that[_SOURCE_SUCCESS](cache[query], request);
+                } else {
+                    Y.YQL(Lang.sub(source, {query: query}), function (data) {
+                        cache[query] = data;
+                        that[_SOURCE_SUCCESS](data, request);
+                    });
+                }
+            };
+
+            // Keep track of the most recent request in case there are multiple
+            // requests while we're waiting for the YQL module to load. Only the
+            // most recent request will be sent.
+            lastRequest = request;
+
+            if (!loading) {
+                // Lazy-load the YQL module if necessary, then overwrite the
+                // sendRequest method to bypass this check in the future.
+                loading = true;
+
+                Y.use('yql', function () {
+                    yqlSource.sendRequest = _sendRequest;
+                    _sendRequest(lastRequest);
                 });
             }
-        }};
+        };
+
+        return yqlSource;
     },
 
     /**
@@ -1175,32 +1206,84 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Setter for the <code>resultFilters</code> attribute. Receives
-     * <code>null</code>, a filter function, or an array of filter functions,
-     * and returns an array of filter functions (empty if <i>filters</i> is
-     * <code>null</code>).
+     * Setter for the <code>resultFilters</code> attribute.
      *
      * @method _setResultFilters
-     * @param {Array|Function|null} filters
-     * @return {Array}
+     * @param {Array|Function|String|null} filters <code>null</code>, a filter
+     *   function, an array of filter functions, or a string or array of strings
+     *   representing the names of methods on
+     *   <code>Y.AutoCompleteFilters</code>.
+     * @return {Array} Array of filter functions (empty if <i>filters</i> is
+     *   <code>null</code>).
      * @protected
      */
     _setResultFilters: function (filters) {
+        var acFilters, getFilterFunction;
+
         if (filters === null) {
             return [];
         }
 
-        return isArray(filters) ? filters : [filters];
+        acFilters = Y.AutoCompleteFilters;
+
+        getFilterFunction = function (filter) {
+            if (isFunction(filter)) {
+                return filter;
+            }
+
+            if (isString(filter) && acFilters &&
+                    isFunction(acFilters[filter])) {
+                return acFilters[filter];
+            }
+
+            return false;
+        };
+
+        if (isArray(filters)) {
+            filters = YArray.map(filters, getFilterFunction);
+            return YArray.every(filters, function (f) { return !!f; }) ?
+                    filters : INVALID_VALUE;
+        } else {
+            filters = getFilterFunction(filters);
+            return filters ? [filters] : INVALID_VALUE;
+        }
+    },
+
+    /**
+     * Setter for the <code>resultHighlighter</code> attribute.
+     *
+     * @method _setResultHighlighter
+     * @param {Function|String|null} highlighter <code>null</code>, a
+     *   highlighter function, or a string representing the name of a method on
+     *   <code>Y.AutoCompleteHighlighters</code>.
+     * @return {Function|null}
+     * @protected
+     */
+    _setResultHighlighter: function (highlighter) {
+        var acHighlighters;
+
+        if (this._functionValidator(highlighter)) {
+            return highlighter;
+        }
+
+        acHighlighters = Y.AutoCompleteHighlighters;
+
+        if (isString(highlighter) && acHighlighters &&
+                isFunction(acHighlighters[highlighter])) {
+            return acHighlighters[highlighter];
+        }
+
+        return INVALID_VALUE;
     },
 
     /**
      * Setter for the <code>source</code> attribute. Returns a DataSource or
-     * a DataSource-like function depending on the type of <i>source</i>.
+     * a DataSource-like object depending on the type of <i>source</i>.
      *
      * @method _setSource
      * @param {Array|DataSource|Object|String} source AutoComplete source. See
      *   the <code>source</code> attribute for details.
-     * @return {DataSource|Function}
+     * @return {DataSource|Object}
      * @protected
      */
     _setSource: function (source) {
@@ -1208,7 +1291,7 @@ AutoCompleteBase.prototype = {
             // Quacks like a DataSource instance (or null). Make it so!
             return source;
 
-        } else if (typeof source === 'string') {
+        } else if (isString(source)) {
             // Assume the string is a JSONP URL or a YQL query.
             return this._createStringSource(source);
 
@@ -1370,7 +1453,7 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Handles DataSource responses and fires the <code>results</code> event.
+     * Handles source responses and fires the <code>results</code> event.
      *
      * @method _onResponse
      * @param {EventFacade} e
@@ -1399,7 +1482,7 @@ AutoCompleteBase.prototype = {
 
     /**
      * Default <code>query</code> event handler. Sets the <code>query</code>
-     * property and sends a request to the DataSource if one is configured.
+     * property and sends a request to the source if one is configured.
      *
      * @method _defQueryFn
      * @param {EventFacade} e

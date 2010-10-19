@@ -66,8 +66,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             Y.error('No inputNode specified.');
         }
 
-        this._events    = [];
-        this._inputNode = inputNode;
+        this._inputNode  = inputNode;
+        this._listEvents = [];
 
         // This ensures that the list is rendered inside the same parent as the
         // input node by default, which is necessary for proper ARIA support.
@@ -128,8 +128,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     destructor: function () {
-        while (this._events.length) {
-            this._events.pop().detach();
+        while (this._listEvents.length) {
+            this._listEvents.pop().detach();
         }
     },
 
@@ -304,7 +304,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _bindInput: function () {
         var inputNode = this._inputNode;
 
-        this._events.concat([
+        this._listEvents.concat([
             inputNode.on('blur', this._onInputBlur, this),
             inputNode.on(Y.UA.gecko ? 'keypress' : 'keydown', this._onInputKey, this)
         ]);
@@ -317,7 +317,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _bindList: function () {
-        this._events.concat([
+        this._listEvents.concat([
             this.after('mouseover', this._afterMouseOver),
             this.after('mouseout', this._afterMouseOut),
 
