@@ -1494,6 +1494,20 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
                 newNode = node.insertBefore('<em>bar</em>', node.one('*'));
 
             Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should fire the handler once': function() {
+            var i = 0,
+                test = this,
+                node = Y.all('body');
+
+            node.once('click', function() {
+                i++;
+                Assert.areEqual(1, i);
+            });
+
+            node.item(0).simulate('click');
+            node.item(0).simulate('click');
         }
     })); 
 
