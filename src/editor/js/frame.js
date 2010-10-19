@@ -60,6 +60,8 @@
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
 
+            this._iframe.set('height', '99%');
+
 
             var html = '',
                 extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
@@ -630,6 +632,8 @@
         * @type Object
         */
         DOM_EVENTS: {
+            dblclick: 1,
+            click: 1,
             paste: 1,
             mouseup: 1,
             mousedown: 1,
@@ -648,13 +652,15 @@
         * @description The default css used when creating the document.
         * @type String
         */
-        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
+        //DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
+        DEFAULT_CSS: 'body { background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
         /**
         * @static
         * @property HTML
         * @description The template string used to create the iframe
         * @type String
         */
+        //HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
         HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
         /**
         * @static
@@ -676,8 +682,8 @@
         * @description The meta-tag for Content-Type to add to the dynamic document
         * @type String
         */
-        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
-        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME

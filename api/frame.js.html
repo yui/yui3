@@ -109,6 +109,8 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">));</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;container&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">);</span>
 
+            <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;99%&#39;</span><span class="p">);</span>
+
 
             <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                 <span class="nx">extra_css</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;extracss&#39;</span><span class="p">))</span> <span class="o">?</span> <span class="s1">&#39;&lt;style id=&quot;extra_css&quot;&gt;&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;extracss&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/style&gt;&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
@@ -679,6 +681,8 @@
 <span class="cm">        * @type Object</span>
 <span class="cm">        */</span>
         <span class="nx">DOM_EVENTS</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">dblclick</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nx">click</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">paste</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">mouseup</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">mousedown</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -697,13 +701,15 @@
 <span class="cm">        * @description The default css used when creating the document.</span>
 <span class="cm">        * @type String</span>
 <span class="cm">        */</span>
-        <span class="nx">DEFAULT_CSS</span><span class="o">:</span> <span class="s1">&#39;html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }&#39;</span><span class="p">,</span>
+        <span class="c1">//DEFAULT_CSS: &#39;html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }&#39;,</span>
+        <span class="nx">DEFAULT_CSS</span><span class="o">:</span> <span class="s1">&#39;body { background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }&#39;</span><span class="p">,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @static</span>
 <span class="cm">        * @property HTML</span>
 <span class="cm">        * @description The template string used to create the iframe</span>
 <span class="cm">        * @type String</span>
 <span class="cm">        */</span>
+        <span class="c1">//HTML: &#39;&lt;iframe border=&quot;0&quot; frameBorder=&quot;0&quot; marginWidth=&quot;0&quot; marginHeight=&quot;0&quot; leftMargin=&quot;0&quot; topMargin=&quot;0&quot; allowTransparency=&quot;true&quot; width=&quot;100%&quot; height=&quot;99%&quot;&gt;&lt;/iframe&gt;&#39;,</span>
         <span class="nx">HTML</span><span class="o">:</span> <span class="s1">&#39;&lt;iframe border=&quot;0&quot; frameBorder=&quot;0&quot; marginWidth=&quot;0&quot; marginHeight=&quot;0&quot; leftMargin=&quot;0&quot; topMargin=&quot;0&quot; allowTransparency=&quot;true&quot; width=&quot;100%&quot; height=&quot;99%&quot;&gt;&lt;/iframe&gt;&#39;</span><span class="p">,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @static</span>
@@ -725,8 +731,8 @@
 <span class="cm">        * @description The meta-tag for Content-Type to add to the dynamic document</span>
 <span class="cm">        * @type String</span>
 <span class="cm">        */</span>
-        <span class="nx">META</span><span class="o">:</span> <span class="s1">&#39;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;/&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=EmulateIE7&quot;&gt;&#39;</span><span class="p">,</span>
-        <span class="c1">//META: &#39;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;/&gt;&#39;,</span>
+        <span class="c1">//META: &#39;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;/&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=EmulateIE7&quot;&gt;&#39;,</span>
+        <span class="nx">META</span><span class="o">:</span> <span class="s1">&#39;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;/&gt;&#39;</span><span class="p">,</span>
         <span class="cm">/**</span>
 <span class="cm">        * @static</span>
 <span class="cm">        * @property NAME</span>
@@ -924,6 +930,7 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
