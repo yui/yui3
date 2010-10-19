@@ -5,6 +5,7 @@ Documentation: http://developer.yahoo.com/yui/3/test
 3.3.0
 
     * Added output for ignored tests to console. (trac# 2529195)
+    * Updated resume() to throw an error if not waiting.
 
 
 3.2.0
