@@ -189,6 +189,13 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual(text, Y.DOM.getText(node));
         },
 
+        'should return the text content of the given text node': function() {
+            var text = 'foo bar',
+                node = document.createTextNode(text);
+
+            Assert.areEqual(text, Y.DOM.getText(node));
+        },
+
         'should return empty string when no text found' : function() {
             var node = document.createElement('div');
             Assert.areEqual('', Y.DOM.getText(node));

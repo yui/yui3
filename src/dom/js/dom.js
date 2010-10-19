@@ -83,7 +83,7 @@ Y.DOM = {
         } : function(element) {
             var ret = '';
             if (element) {
-                ret = element.innerText;
+                ret = element.innerText || element.nodeValue; // might be a textNode
             }
             return ret || '';
         },
