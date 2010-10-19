@@ -45,11 +45,12 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
             width: 0
         });
         node.show('sizeIn', {
-            height: '200px'
-        }, function(e) {
-            Y.log(e);
-            Y.log('callback 1');
-            node.hide(true);
+            height: '200px',
+            onend: function(e) {
+                Y.log(e);
+                Y.log('callback 1');
+                node.hide(true);
+            }
         });
     };
 

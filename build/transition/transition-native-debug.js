@@ -107,7 +107,6 @@ Transition.prototype = {
             anim._count = 0; // track number of animated properties
             anim._running = false;
 
-            this.initAttrs(config);
         }
 
         return anim;
@@ -208,6 +207,12 @@ Transition.prototype = {
 
             anim._node.fire('transition:start', data);
 
+            if (config.on && config.on.start) {
+                config.on.start.call(node, data);
+            }
+
+            anim.initAttrs(anim._config);
+
             anim._callback = callback;
             anim._start();
         }
@@ -292,15 +297,27 @@ Transition.prototype = {
         var anim = this,
             node = anim._node,
             callback = anim._callback,
+            config = anim._config,
             data = {
                 type: 'transition:end',
-                config: anim._config,
+                config: config,
                 elapsedTime: elapsed 
             };
 
         anim._running = false;
-        if (callback) {
-            anim._callback = null;
+        anim._callback = null;
+
+        if (config.on && config.on.end) {
+            setTimeout(function() { // IE: allow previous update to finish
+                config.on.end.call(node, data);
+
+                // nested to ensure proper fire order
+                if (callback) {
+                    callback.call(node, data);
+                }
+
+            }, 1);
+        } else if (callback) {
             setTimeout(function() { // IE: allow previous update to finish
                 callback.call(node, data);
             }, 1);
@@ -523,6 +540,40 @@ Transition.add({
         opacity: 1,
         duration: 0.5,
         easing: 'ease-in'
+    },
+
+    sizeOut: {
+        height: 0,
+        width: 0,
+        duration: 0.75,
+        easing: 'ease-out'
+    },
+
+    sizeIn: {
+        height: function(node) {
+            return node.get('scrollHeight') + 'px';
+        },
+        width: function(node) {
+            return node.get('scrollWidth') + 'px';
+        },
+        duration: 0.5,
+        easing: 'ease-in',
+        
+        on: {
+            start: function() {
+                var overflow = this.getStyle('overflow');
+                if (overflow !== 'hidden') { // enable scrollHeight/Width
+                    this.setStyle('overflow', 'hidden');
+                    this._transitionOverflow = overflow;
+                }
+            },
+
+            end: function() {
+                if (this._transitionOverflow) { // revert overridden value
+                    this.setStyle('overflow', this._transitionOverflow);
+                }
+            }
+        } 
     }
 });
 
