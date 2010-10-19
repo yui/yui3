@@ -150,12 +150,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             contentBox.append(listNode);
         }
 
-        inputNode.addClass(this.getClassName('input'))
-            .set('aria-autocomplete', LIST);
+        inputNode.addClass(this.getClassName('input')).setAttrs({
+            'aria-autocomplete': LIST,
+            role: 'textbox'
+        });
 
         // ARIA node must be outside the widget or announcements won't be made
         // when the widget is hidden.
-        parentNode.set('role', 'combobox').append(ariaNode);
+        parentNode.setAttrs({
+            'aria-expanded': false,
+            'aria-owns'    : listNode.get('id'),
+            role           : 'combobox'
+        }).append(ariaNode);
 
         this._ariaNode   = ariaNode;
         this._contentBox = contentBox;
@@ -355,8 +361,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var ariaNode = Node.create(this.ARIA_TEMPLATE);
 
         return ariaNode.addClass(this.getClassName('aria')).setAttrs({
-            role       : 'status',
-            'aria-live': 'polite'
+            'aria-live': 'polite',
+            role       : 'status'
         });
     },
 
@@ -512,14 +518,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _syncVisibility: function (visible) {
         if (this.get(ALWAYS_SHOW_LIST)) {
-            this.set(VISIBLE, true);
-            return;
+            visible = true;
+            this.set(VISIBLE, visible);
         }
 
         if (typeof visible === 'undefined') {
             visible = this.get(VISIBLE);
         }
 
+        this._parentNode.set('aria-expanded', visible);
         this._contentBox.set('aria-hidden', !visible);
 
         if (!visible) {
