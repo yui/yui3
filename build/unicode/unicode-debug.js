@@ -117,11 +117,11 @@ AccentFold = {
      *
      * @method fold
      * @param {String|Array} input String or array of strings to be folded.
-     * @return {String|Array} Folded string or array of string.
+     * @return {String|Array} Folded string or array of strings.
      * @static
      */
     fold: function (input) {
-        if (YArray.test(input)) {
+        if (Y.Lang.isArray(input)) {
             return YArray.map(input, AccentFold.fold);
         }
 
@@ -138,7 +138,7 @@ AccentFold = {
 Unicode.AccentFold = AccentFold;
 
 
-}, '@VERSION@' ,{requires:['collection', 'unicode-data-accentfold']});
+}, '@VERSION@' ,{requires:['array-extras', 'unicode-data-accentfold']});
 YUI.add('unicode-data-accentfold', function(Y) {
 
 /**
@@ -169,43 +169,42 @@ YUI.add('unicode-data-accentfold', function(Y) {
 // http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:toNFKD%3D/^a/:]&abb=on
 
 Y.namespace('Unicode.Data').AccentFold = {
-    0:  /[⁰₀⓪０]/gi,
-    1:  /[¹₁①１]/gi,
-    2:  /[²₂②２]/gi,
-    3:  /[³₃③３]/gi,
-    4:  /[⁴₄④４]/gi,
-    5:  /[⁵₅⑤５]/gi,
-    6:  /[⁶₆⑥６]/gi,
-    7:  /[⁷₇⑦７]/gi,
-    8:  /[⁸₈⑧８]/gi,
-    9:  /[⁹₉⑨９]/gi,
-    a:  /[ªà-åāăąǎǟǡǻȁȃȧᵃḁẚạảấầẩẫậắằẳẵặⓐａ]/gi,
-    ae: /[æǣǽӕ]/gi, // http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:name%3D/\b(AE|A+IE)\b/:]&abb=on
-    b:  /[ᵇḃḅḇⓑｂ]/gi,
-    c:  /[çćĉċčᶜḉⓒｃ]/gi,
-    d:  /[ďᵈḋḍḏḑḓⅾⓓｄ]/gi,
-    e:  /[è-ëēĕėęěȅȇȩᵉḕḗḙḛḝẹẻẽếềểễệₑℯⓔｅ]/gi,
-    f:  /[ᶠḟⓕｆ]/gi,
-    g:  /[ĝğġģǧǵᵍḡℊⓖｇ]/gi,
-    h:  /[ĥȟʰḣḥḧḩḫẖℎⓗｈ]/gi,
-    i:  /[ì-ïĩīĭįĳǐȉȋᵢḭḯỉịⁱℹⅰⓘｉ]/gi,
-    j:  /[ĵǰʲⓙⱼｊ]/gi,
-    k:  /[ķǩᵏḱḳḵⓚｋ]/gi,
-    l:  /[ĺļľŀǉˡḷḹḻḽℓⅼⓛｌ]/gi,
-    m:  /[ᵐḿṁṃⅿⓜｍ]/gi,
-    n:  /[ñńņňǹṅṇṉṋⁿⓝｎ]/gi,
-    o:  /[ºò-öōŏőơǒǫǭȍȏȫȭȯȱᵒṍṏṑṓọỏốồổỗộớờởỡợₒℴⓞｏ]/gi,
-    p:  /[ᵖṕṗⓟｐ]/gi,
-    q:  /[ʠⓠｑ]/gi,
-    r:  /[ŕŗřȑȓʳᵣṙṛṝṟⓡｒ]/gi,
-    s:  /[śŝşšſșˢṡṣṥṧṩẛⓢｓ]/gi,
-    t:  /[ţťțᵗṫṭṯṱẗⓣｔ]/gi,
-    u:  /[ù-üũūŭůűųưǔǖǘǚǜȕȗᵘᵤṳṵṷṹṻụủứừửữựⓤｕ]/gi,
-    v:  /[ᵛᵥṽṿⅴⓥｖ]/gi,
-    w:  /[ŵʷẁẃẅẇẉẘⓦｗ]/gi,
-    x:  /[ˣẋẍₓⅹⓧｘ]/gi,
-    y:  /[ýÿŷȳʸẏẙỳỵỷỹⓨｙ]/gi,
-    z:  /[źżžᶻẑẓẕⓩｚ]/gi
+    0: /[⁰₀⓪０]/gi,
+    1: /[¹₁①１]/gi,
+    2: /[²₂②２]/gi,
+    3: /[³₃③３]/gi,
+    4: /[⁴₄④４]/gi,
+    5: /[⁵₅⑤５]/gi,
+    6: /[⁶₆⑥６]/gi,
+    7: /[⁷₇⑦７]/gi,
+    8: /[⁸₈⑧８]/gi,
+    9: /[⁹₉⑨９]/gi,
+    a: /[ªà-åāăąǎǟǡǻȁȃȧᵃḁẚạảấầẩẫậắằẳẵặⓐａ]/gi,
+    b: /[ᵇḃḅḇⓑｂ]/gi,
+    c: /[çćĉċčᶜḉⓒｃ]/gi,
+    d: /[ďᵈḋḍḏḑḓⅾⓓｄ]/gi,
+    e: /[è-ëēĕėęěȅȇȩᵉḕḗḙḛḝẹẻẽếềểễệₑℯⓔｅ]/gi,
+    f: /[ᶠḟⓕｆ]/gi,
+    g: /[ĝğġģǧǵᵍḡℊⓖｇ]/gi,
+    h: /[ĥȟʰḣḥḧḩḫẖℎⓗｈ]/gi,
+    i: /[ì-ïĩīĭįĳǐȉȋᵢḭḯỉịⁱℹⅰⓘｉ]/gi,
+    j: /[ĵǰʲⓙⱼｊ]/gi,
+    k: /[ķǩᵏḱḳḵⓚｋ]/gi,
+    l: /[ĺļľŀǉˡḷḹḻḽℓⅼⓛｌ]/gi,
+    m: /[ᵐḿṁṃⅿⓜｍ]/gi,
+    n: /[ñńņňǹṅṇṉṋⁿⓝｎ]/gi,
+    o: /[ºò-öōŏőơǒǫǭȍȏȫȭȯȱᵒṍṏṑṓọỏốồổỗộớờởỡợₒℴⓞｏ]/gi,
+    p: /[ᵖṕṗⓟｐ]/gi,
+    q: /[ʠⓠｑ]/gi,
+    r: /[ŕŗřȑȓʳᵣṙṛṝṟⓡｒ]/gi,
+    s: /[śŝşšſșˢṡṣṥṧṩẛⓢｓ]/gi,
+    t: /[ţťțᵗṫṭṯṱẗⓣｔ]/gi,
+    u: /[ù-üũūŭůűųưǔǖǘǚǜȕȗᵘᵤṳṵṷṹṻụủứừửữựⓤｕ]/gi,
+    v: /[ᵛᵥṽṿⅴⓥｖ]/gi,
+    w: /[ŵʷẁẃẅẇẉẘⓦｗ]/gi,
+    x: /[ˣẋẍₓⅹⓧｘ]/gi,
+    y: /[ýÿŷȳʸẏẙỳỵỷỹⓨｙ]/gi,
+    z: /[źżžᶻẑẓẕⓩｚ]/gi
 };
 
 
@@ -242,9 +241,9 @@ Y.namespace('Unicode.Data').WordBreak = {
     midnumlet  : "['\\.‘’․﹒＇．]",
     midletter  : '[:··״‧︓﹕：]',
     midnum     : '[,;;։،؍٬߸⁄︐︔﹐﹔，；]',
-    numeric    : '[0-9]', // Subset only.
-    cr         : '\r',
-    lf         : '\n',
+    numeric    : '\\d', // Subset only (except in FF <=2).
+    cr         : '\\r',
+    lf         : '\\n',
     newline    : '[\u000B\u000C\u0085\u2028\u2029]',
     extend     : '[\u0300-\u036F\u0483-\u0489\u1DC0-\u1DE6\u1DFE-\u1DFF\u200C\u200D\u20D0-\u20DC\u20DD-\u20F0\u2DE0-\u2DFF]', // Subset only.
     format     : '[\u00AD\u0600-\u0603\u06DD\u070F\u17B4\u17B5\u200E\u200F\u202A-\u202E\u2060-\u2064\u206A-\u206F\uFEFF\uFFF9-\uFFFB]',
@@ -271,8 +270,7 @@ YUI.add('unicode-wordbreak', function(Y) {
  * @static
  */
 
-var YArray  = Y.Array,
-    Unicode = Y.Unicode,
+var Unicode = Y.Unicode,
     WBData  = Unicode.Data.WordBreak,
 
 // Constants representing code point classifications.
@@ -365,7 +363,7 @@ WordBreak = {
     },
 
     getUniqueWords: function (string, options) {
-        return YArray.unique(WordBreak.getWords(string, options));
+        return Y.Array.unique(WordBreak.getWords(string, options));
     },
 
     isWordBoundary: function (string, index) {
@@ -487,7 +485,7 @@ WordBreak = {
 Unicode.WordBreak = WordBreak;
 
 
-}, '@VERSION@' ,{requires:['collection', 'unicode-data-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'unicode-data-wordbreak']});
 
 
 YUI.add('unicode', function(Y){}, '@VERSION@' ,{use:['unicode-accentfold', 'unicode-wordbreak']});

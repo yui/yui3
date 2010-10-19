@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html debug="true">
 <head>
-<style type="text/css"> 
+<style type="text/css">
 body {
 	margin:0;
 	padding:0;
 }
-</style> 
-<style id="styleoverrides"> 
+</style>
+<style id="styleoverrides">
     .yui-skin-sam .yui-toolbar-container .yui-toolbar-flickr span.yui-toolbar-icon {
         background-image: url( ../../../yui2-docs/templates/examples/editor/assets/flickr_default.gif );
         background-position: 1px 0px;
@@ -18,13 +18,13 @@ body {
         background-position: 1px 0px;
         left: 5px;
     }
- 
+
         #gutter1 {
             overflow: hidden;
             visibility: hidden;
             text-align: left;
         }
- 
+
         #gutter1 .bd {
             border:1px solid #808080;
             border-left: none;
@@ -35,7 +35,7 @@ body {
             margin-top: 10px;
             padding-left: .25em;
         }
- 
+
         #gutter1 ul {
             list-style-type: none;
         }
@@ -45,7 +45,7 @@ body {
             float:left;
             display:inline;
         }
- 
+
         #gutter1 .bd h2 {
             font-size: 120%;
             font-weight: bold;
@@ -53,34 +53,34 @@ body {
             color: #000;
             border: none;
         }
- 
+
         #gutter1 img {
             margin: 0 .5em;
             border:1px solid #808080;
             height: 50px;
             width: 50px;
         }
- 
+
         #flickr_results {
             height: 75%;
             overflow: auto;
             position:static;
         }
- 
+
         #flickr_results p {
             padding: .5em;
             margin-bottom: 1em;
         }
- 
+
         #flickr_results div.yui-ac-content {
             width: 225px;
         }
- 
+
         .yui-skin-sam .yui-ac-input {
             position: static;
             width: 12em;
         }
- 
+
         #gutter1 .tip {
             display:block;
             font-size:85%;
@@ -89,7 +89,7 @@ body {
             position:relative;
             text-align:left;
         }
- 
+
         #gutter1 .tip span.icon-info {
             background-position:-106px -32px;
             background-image:url(../../../yui2-docs/templates/examples/editor/css/sprite.png);
@@ -101,22 +101,23 @@ body {
             top:0pt;
             width:20px;
         }
-</style> 
-<style> 
+</style>
+<style>
 .yui-toolbar-group-insertitem {
     *width: auto;
 }
-</style> 
+</style>
 <title>use('yui2-rte') and then get dependencies</title>
 <!--
-<script src="http://yui.yahooapis.com/3.1.0pr2/build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+<script src="http://yui.yahooapis.com/3.1.0pr2/build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>
 -->
-<script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
-<script type="text/javascript" charset="utf-8">                                                                                                                 
+<script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
 YUI({
     insertBefore: 'styleoverrides',
     combine: true, // running locally, so I need to force combo handling
-    yui2: '2.8.1'
+    yui2: '2.8.1',
+    '2in3': '4'
     // gallery: 'gallery-2010.02.22-22'
 }).use('yui2-animation', 'yui2-connection', 'yui2-autocomplete', 'yui2-editor', function (Y) {
     var YAHOO = Y.YUI2;
@@ -124,7 +125,7 @@ YUI({
 (function() {
     var Dom = YAHOO.util.Dom,
         Event = YAHOO.util.Event;
- 
+
     YAHOO.gutter = function() {
         return {
             status: false,
@@ -140,7 +141,7 @@ YUI({
                 });
                 this.gutter.hideEvent.subscribe(function() {
                     myEditor.toolbar.deselectButton('flickr');
-                    Dom.setStyle('gutter1', 'visibility', 'visible');                
+                    Dom.setStyle('gutter1', 'visibility', 'visible');
                     var anim = new YAHOO.util.Anim('gutter1', {
                         width: {
                             from: 300,
@@ -151,7 +152,7 @@ YUI({
                             to: 0
                         }
                     }, 1);
-                    anim.onComplete.subscribe(function() {  
+                    anim.onComplete.subscribe(function() {
                         Dom.setStyle('gutter1', 'visibility', 'hidden');
                     });
                     anim.animate();
@@ -199,10 +200,10 @@ YUI({
             }
         }
     }
-    
+
 })();
- 
- 
+
+
 YAHOO.util.Event.onAvailable('flickr_search', function() {
     YAHOO.log('onAvailable: #flickr_search', 'info', 'example');
     YAHOO.util.Event.on('flickr_results', 'mousedown', function(ev) {
@@ -226,11 +227,11 @@ YAHOO.util.Event.onAvailable('flickr_search', function() {
     oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_XML;
     oACDS.maxCacheEntries = 0;
     oACDS.scriptQueryAppend = "method=flickr.photos.search";
- 
+
     // Instantiate AutoComplete
     oAutoComp = new YAHOO.widget.AutoComplete('flickr_search','flickr_results', oACDS);
     oAutoComp.autoHighlight = false;
-    oAutoComp.alwaysShowContainer = true; 
+    oAutoComp.alwaysShowContainer = true;
     oAutoComp.formatResult = function(oResultItem, sQuery) {
         // This was defined by the schema array of the data source
         var sTitle = oResultItem[0];
@@ -246,9 +247,9 @@ YAHOO.util.Event.onAvailable('flickr_search', function() {
         return (sMarkup);
     };
 });
- 
+
 var gutter = null;
- 
+
 var myConfig = {
     height: '300px',
     width: '600px',
@@ -256,22 +257,22 @@ var myConfig = {
     dompath: true,
     focusAtStart: true
 };
- 
+
 YAHOO.log('Editor loaded..', 'info', 'example');
 var myEditor = new YAHOO.widget.Editor('editor', myConfig);
- 
-myEditor.on('toolbarLoaded', function() { 
+
+myEditor.on('toolbarLoaded', function() {
     YAHOO.log('Toolbar loaded, add button and create gutter', 'info', 'example');
     gutter = new YAHOO.gutter();
- 
+
     var flickrConfig = {
             type: 'push',
             label: 'Insert Flickr Image',
             value: 'flickr'
     }
-   
+
     myEditor.toolbar.addButtonToGroup(flickrConfig, 'insertitem');
- 
+
     myEditor.toolbar.on('flickrClick', function(ev) {
         YAHOO.log('flickrClick: ' + YAHOO.lang.dump(ev), 'info', 'example');
         this._focusWindow();
@@ -286,16 +287,16 @@ myEditor.on('toolbarLoaded', function() {
     gutter.createGutter();
 });
 myEditor.render();
- 
+
 
 });
-</script>     
+</script>
 </head>
 <body class="yui-skin-sam">
-<form method="post" action="#" id="form1"> 
-<textarea id="editor" name="editor" rows="20" cols="75"> 
-This is some more test text. <font face="Times New Roman">This is some more test text. This is some more <b>test <i>text</i></b></font>. This is some more test text. This is some more test text. This is some more test text. This is some more test text. This is some more test text. This is some more test text. 
-</textarea> 
-</form> 
+<form method="post" action="#" id="form1">
+<textarea id="editor" name="editor" rows="20" cols="75">
+This is some more test text. <font face="Times New Roman">This is some more test text. This is some more <b>test <i>text</i></b></font>. This is some more test text. This is some more test text. This is some more test text. This is some more test text. This is some more test text. This is some more test text.
+</textarea>
+</form>
 </body>
 </html>

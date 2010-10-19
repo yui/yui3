@@ -5,14 +5,14 @@ YUI.add('autocomplete-highlighters', function(Y) {
  *
  * @module autocomplete
  * @submodule autocomplete-highlighters
- * @class AutoComplete.Highlighters
+ * @class AutoCompleteHighlighters
  * @static
  */
 
 var YArray    = Y.Array,
     Highlight = Y.Highlight,
 
-Highlighters = Y.mix(Y.namespace('AutoComplete.Highlighters'), {
+Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
     // -- Public Methods -------------------------------------------------------
 
     /**
@@ -157,4 +157,4 @@ Highlighters = Y.mix(Y.namespace('AutoComplete.Highlighters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'collection', 'highlight-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'highlight-base']});

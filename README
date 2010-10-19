@@ -2,21 +2,28 @@ YUI 3.x Library Source
 
 * Documentation: http://developer.yahoo.com/yui/3/
 * License: http://developer.yahoo.com/yui/license.html
-* Latest Stable Release: http://yuilibrary.com/downloads/
+* Latest Production Release: http://yuilibrary.com/downloads/#yui3
 * Discuss: http://yuilibrary.com/forum/
 * Contributor Info: http://developer.yahoo.com/yui/community/contribute.html
 
-Welcome to YUI.
+Welcome to YUI 3.
 
 The YUI Library is a set of utilities and controls, written in JavaScript,
 for building richly interactive web applications using techniques such 
-as DOM scripting, DHTML and AJAX. YUI is available under a BSD license 
-and is free for all uses.
+as DOM scripting, DHTML and AJAX.  It is available under a BSD license 
+and is free for all uses.  YUI 3 is the next generation implementation of
+the YUI Library that is leveraged for the development of many Yahoo! sites 
+including the Yahoo! homepage.
 
-This is the source tree for YUI's 3.x codeline which is has been released
-as a technical preview and is not considered ready for production use.
-The production codeline for YUI is YUI 2.x; http://developer.yahoo.com/yui/
-is the main YUI website.
+This is the active working source tree for the YUI 3 codeline.  It contains 
+work in progress towards the next YUI 3 library release.  Additions and
+changes to this repository may undergo modifications ahead of the next official
+YUI 3 release.  Therefore, we encourage you to use source in this tree for
+evaluation purposes in order to test recent fixes to your bug reports as well
+as evaluate and provide feedback on new functionality being added for the 
+next release.  Please refer to the Latest Production Release link above
+if you are looking for the latest fully qualified version of the YUI 3 library 
+recommended for production code. 
 
 The source tree for YUI includes the following directories:
 

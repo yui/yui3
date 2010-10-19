@@ -19,6 +19,7 @@ YUI.add('history-hash', function(Y) {
 var HistoryBase = Y.HistoryBase,
     Lang        = Y.Lang,
     YArray      = Y.Array,
+    YObject     = Y.Object,
     GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
     SRC_HASH    = 'hash',
@@ -54,15 +55,32 @@ Y.extend(HistoryHash, HistoryBase, {
     },
 
     // -- Protected Methods ----------------------------------------------------
+    _change: function (src, state, options) {
+        // Stringify all values to ensure that comparisons don't fail when
+        // after they're coerced to strings in the location hash.
+        YObject.each(state, function (value, key) {
+            if (Lang.isValue(value)) {
+                state[key] = value.toString();
+            }
+        });
+
+        return HistoryHash.superclass._change.call(this, src, state, options);
+    },
+
     _storeState: function (src, newState) {
-        var newHash = HistoryHash.createHash(newState);
+        var decode  = HistoryHash.decode,
+            newHash = HistoryHash.createHash(newState);
 
         HistoryHash.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes, but only if the new hash
         // actually differs from the current hash (this avoids creating multiple
         // history entries for a single state).
-        if (HistoryHash.getHash() !== newHash) {
+        //
+        // We always compare decoded hashes, since it's possible that the hash
+        // could be set incorrectly to a non-encoded value outside of
+        // HistoryHash.
+        if (src !== SRC_HASH && decode(HistoryHash.getHash()) !== decode(newHash)) {
             HistoryHash[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
         }
     },
@@ -145,7 +163,7 @@ Y.extend(HistoryHash, HistoryBase, {
         var encode = HistoryHash.encode,
             hash   = [];
 
-        Y.Object.each(params, function (value, key) {
+        YObject.each(params, function (value, key) {
             if (Lang.isValue(value)) {
                 hash.push(encode(key) + '=' + encode(value));
             }
@@ -433,7 +451,7 @@ if (HistoryBase.nativeHashChange) {
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                YArray.each(hashNotifiers, function (notifier) {
+                YArray.each(hashNotifiers.concat(), function (notifier) {
                     notifier.fire({
                         oldHash: oldHash,
                         oldUrl : oldUrl,

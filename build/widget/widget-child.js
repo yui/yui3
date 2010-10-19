@@ -135,7 +135,7 @@ Child.ATTRS = {
                     criteria = parent;
 
                 if (FnRootType) {
-                    criteria = (parent && (parent instanceof FnRootType));
+                    criteria = (parent && Y.instanceOf(parent, FnRootType));
                 }
 
                 return (criteria ? getParent(parent) : child);

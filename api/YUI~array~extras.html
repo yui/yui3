@@ -114,19 +114,19 @@ a truthy value.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to iterate</span>
+                                                        <span property="yui:description"> the array to iterate.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        <span property="yui:description"> the function to execute on each item.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Optional context object</span>
+                                                        <span property="yui:description"> Optional context object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -175,9 +175,8 @@ from the supplied function.</dd>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Executes the supplied function on each item in the array.
-Returns a new array containing the items that the supplied
-function returned true for.
+                                            Executes the supplied function on each item in the array. Returns a new array
+containing the items for which the supplied function returned a truthy value.
                                         </div>
 
                                         <div class="description">
@@ -188,19 +187,19 @@ function returned true for.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to iterate</span>
+                                                        <span property="yui:description"> Array to filter.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        <span property="yui:description"> Function to execute on each item.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Optional context object</span>
+                                                        <span property="yui:description"> Optional context object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -209,9 +208,8 @@ function returned true for.
                                                     <code property="yui:return">
                                                             Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The items on which the supplied function
-returned true. If no items matched an empty array is 
-returned.</dd>
+                                                    <dd property="yui:returnInfo">Array of items for which the supplied function returned a
+truthy value (empty if it never returned a truthy value).</dd>
                                                 </dl>
 
 
@@ -263,13 +261,13 @@ function.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to search</span>
+                                                        <span property="yui:description"> the array to search.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute on each item. 
+                                                        <span property="yui:description"> the function to execute on each item.
 Iteration is stopped as soon as this function returns true
 on an item.</span>
                                                         </dd>
@@ -277,7 +275,7 @@ on an item.</span>
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Optional context object</span>
+                                                        <span property="yui:description"> Optional context object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -287,8 +285,39 @@ on an item.</span>
                                                             object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the first item that the supplied function
-returns true for, or null if it never returns true</dd>
+returns true for, or null if it never returns true.</dd>
                                                 </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.forEach">
+                                    <h4>
+                                        <a name="method_Array.forEach">Array.forEach</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">Array.forEach</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            forEach is an alias of Array.each.  This is part of the
+collection module.
+                                        </div>
+
+                                        <div class="description">
+
+
 
 
              
@@ -334,14 +363,14 @@ that match the supplied regular expression
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  a collection to iterate over</span>
+                                                        <span property="yui:description"> a collection to iterate over.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">pattern</span>
                                                         &lt;<span property="yui:type">RegExp</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The regular expression to test against 
-each item</span>
+                                                        <span property="yui:description"> The regular expression to test against
+each item.</span>
                                                         </dd>
                                                 </dl>
 
@@ -350,8 +379,8 @@ each item</span>
                                                     <code property="yui:return">
                                                             Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">All the items in the collection that 
-produce a match against the supplied regular expression. 
+                                                    <dd property="yui:returnInfo">All the items in the collection that
+produce a match against the supplied regular expression.
 If no items match, an empty array is returned.</dd>
                                                 </dl>
 
@@ -371,7 +400,7 @@ If no items match, an empty array is returned.</dd>
                                         
                                          static 
                                         
-                                        int
+                                        Number
                                             <strong property="yui:name">Array.lastIndexOf</strong>
                                            (
                                                 
@@ -383,13 +412,16 @@ If no items match, an empty array is returned.</dd>
                                                          val
                                                     
                                                 
+                                                        , 
+                                                         fromIndex
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the index of the last item in the array
-that contains the specified value, -1 if the
-value isn't found.
+                                            Returns the index of the last item in the array that contains the specified
+value, or -1 if the value isn't found.
                                         </div>
 
                                         <div class="description">
@@ -400,22 +432,32 @@ value isn't found.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to search</span>
+                                                        <span property="yui:description"> Array to search in.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">val</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">any</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the value to search for</span>
+                                                        <span property="yui:description"> Value to search for.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fromIndex</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (optional) Index at which to start searching
+backwards. Defaults to the array's length - 1. If negative, it will be
+taken as an offset from the end of the array. If the calculated index is
+less than 0, the array will not be searched and -1 will be returned.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                            int
+                                                            Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the index of hte item that contains the value or -1</dd>
+                                                    <dd property="yui:returnInfo">Index of the item that contains the value, or -1 if not
+found.</dd>
                                                 </dl>
 
 
@@ -465,19 +507,19 @@ value isn't found.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to iterate</span>
+                                                        <span property="yui:description"> the array to iterate.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        <span property="yui:description"> the function to execute on each item.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Optional context object</span>
+                                                        <span property="yui:description"> Optional context object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -507,12 +549,16 @@ array.</dd>
                                         
                                          static 
                                         
-                                        
+                                        object
                                             <strong property="yui:name">Array.partition</strong>
                                            (
                                                 
                                                         
                                                          a
+                                                    
+                                                
+                                                        , 
+                                                         f
                                                     
                                                 
                                                         , 
@@ -536,7 +582,14 @@ do not.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  a collection to iterate over</span>
+                                                        <span property="yui:description"> a collection to iterate over.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> a function that will receive each item
+in the collection and its index.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
@@ -549,9 +602,10 @@ do not.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">An object with two members, 'matches' and 'rejects',
-that are arrays containing the items that were selected or 
+that are arrays containing the items that were selected or
 rejected by the test function (or an empty array).</dd>
                                                 </dl>
 
@@ -571,7 +625,7 @@ rejected by the test function (or an empty array).</dd>
                                         
                                          static 
                                         
-                                        
+                                        any
                                             <strong property="yui:name">Array.reduce</strong>
                                            (
                                                 
@@ -598,8 +652,8 @@ rejected by the test function (or an empty array).</dd>
                                             Executes the supplied function on each item in the array.
 Reduce "folds" the array into a single value.  The callback
 function receives four arguments:
-the value from the previous callback call (or the initial value), 
-the value of the current element, the current index, and 
+the value from the previous callback call (or the initial value),
+the value of the current element, the current index, and
 the array over which iteration is occurring.
                                         </div>
 
@@ -611,19 +665,19 @@ the array over which iteration is occurring.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to iterate</span>
+                                                        <span property="yui:description"> the array to iterate.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">init</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">any</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The initial value to start from</span>
+                                                        <span property="yui:description"> The initial value to start from.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute on each item. It
+                                                        <span property="yui:description"> the function to execute on each item. It
 is responsible for returning the updated value of the
 computation.</span>
                                                         </dd>
@@ -631,13 +685,14 @@ computation.</span>
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Optional context object</span>
+                                                        <span property="yui:description"> Optional context object.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            any
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A value that results from iteratively applying the
 supplied function to each element in the array.</dd>
@@ -679,7 +734,7 @@ supplied function to each element in the array.</dd>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            The inverse of filter. Executes the supplied function on each item. 
+                                            The inverse of filter. Executes the supplied function on each item.
 Returns a new array containing the items that the supplied
 function returned *false* for.
                                         </div>
@@ -692,19 +747,19 @@ function returned *false* for.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to iterate</span>
+                                                        <span property="yui:description"> the array to iterate.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        <span property="yui:description"> the function to execute on each item.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Optional context object</span>
+                                                        <span property="yui:description"> Optional context object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -741,15 +796,11 @@ returned false.</dd>
                                                          a
                                                     
                                                 
-                                                        , 
-                                                         sort
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns a copy of the array with the duplicate entries removed
+                                            Returns a copy of the specified array with duplicate items removed.
                                         </div>
 
                                         <div class="description">
@@ -760,13 +811,7 @@ returned false.</dd>
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the array to find the subset of uniques for</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">sort</span>
-                                                        &lt;<span property="yui:type">bool</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  flag to denote if the array is sorted or not. Defaults to false, the more general operation</span>
+                                                        <span property="yui:description"> Array to dedupe.</span>
                                                         </dd>
                                                 </dl>
 
@@ -775,7 +820,7 @@ returned false.</dd>
                                                     <code property="yui:return">
                                                             Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">a copy of the array with duplicate entries removed</dd>
+                                                    <dd property="yui:returnInfo">Copy of the array with duplicate items removed.</dd>
                                                 </dl>
 
 
@@ -794,7 +839,7 @@ returned false.</dd>
                                         
                                          static 
                                         
-                                        
+                                        array
                                             <strong property="yui:name">Array.zip</strong>
                                            (
                                                 
@@ -822,23 +867,24 @@ elements of two arrays together into a new array.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  a collection to iterate over</span>
+                                                        <span property="yui:description"> a collection to iterate over.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">a2</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  another collection whose members will be 
-paired with members of the first parameter</span>
+                                                        <span property="yui:description"> another collection whose members will be
+paired with members of the first parameter.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">An array of arrays formed by pairing each element 
-of the first collection with an item in the second collection 
+                                                    <dd property="yui:returnInfo">An array of arrays formed by pairing each element
+of the first collection with an item in the second collection
 having the corresponding index.</dd>
                                                 </dl>
 
@@ -974,6 +1020,7 @@ having the corresponding index.</dd>
                                 <li class=""><a href="#method_Array.every" title="Array.every">Array.every</a></li>
                                 <li class=""><a href="#method_Array.filter" title="Array.filter">Array.filter</a></li>
                                 <li class=""><a href="#method_Array.find" title="Array.find">Array.find</a></li>
+                                <li class=""><a href="#method_Array.forEach" title="Array.forEach">Array.forEach</a></li>
                                 <li class=""><a href="#method_Array.grep" title="Array.grep">Array.grep</a></li>
                                 <li class=""><a href="#method_Array.lastIndexOf" title="Array.lastIndexOf">Array.lastIndexOf</a></li>
                                 <li class=""><a href="#method_Array.map" title="Array.map">Array.map</a></li>
@@ -997,7 +1044,7 @@ having the corresponding index.</dd>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.forEach", "url": "YUI~array~extras.html#method_Array.forEach", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}];
 </script>
 </body>
 </html>

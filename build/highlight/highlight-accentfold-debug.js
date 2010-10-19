@@ -12,8 +12,7 @@ YUI.add('highlight-accentfold', function(Y) {
  * @static
  */
 
-var Unicode    = Y.Unicode,
-    AccentFold = Unicode.AccentFold,
+var AccentFold = Y.Unicode.AccentFold,
     Escape     = Y.Escape,
 
     EMPTY_OBJECT = {},
@@ -44,49 +43,43 @@ Highlight = Y.mix(Y.Highlight, {
      * @static
      */
     allFold: function (haystack, needles, options) {
-        var aeRegex        = Unicode.Data.AccentFold.ae,
-            foldedHaystack = AccentFold.fold(haystack),
-            foldedNeedles  = AccentFold.fold(needles),
-            offset         = 0,
-            replacement,
-            result         = [],
-            startPos       = 0;
+        var template = Highlight._TEMPLATE,
+            result   = [],
+            startPos = 0;
 
         options = Y.merge({
             // While the highlight regex operates on the accent-folded strings,
             // this replacer will highlight the matched positions in the
             // original string.
-            replacer: function (substring, p1, pos) {
-                pos -= offset;
+            //
+            // Note: this implementation doesn't handle multi-character folds,
+            // like "æ" -> "ae". Doing so correctly would be prohibitively
+            // expensive both in terms of code size and runtime performance, so
+            // I've chosen to take the pragmatic route and just not do it at
+            // all. This is one of many reasons why accent folding is best done
+            // on the server.
+            replacer: function (match, p1, foldedNeedle, pos) {
+                var len;
 
-                var len   = p1.length,
-                    chunk = haystack.substr(pos, len),
-                    aePos = chunk.search(aeRegex);
-
-                // Edge case: if the chunk contains "æ" or a variant thereof, we
-                // need to adjust the length to compensate, since "æ" is a
-                // single char that folds into two chars.
-                if (aePos !== -1 && aePos !== len - 1) {
-                    offset += 1;
-                    chunk   = haystack.substr(pos, --len);
+                // Ignore matches inside HTML entities.
+                if (p1 && !(/\s/).test(foldedNeedle)) {
+                    return match;
                 }
 
+                len = foldedNeedle.length;
+
                 result.push(haystack.substring(startPos, pos) +
-                        replacement.replace('$1', chunk));
+                        template.replace(/\{s\}/g, haystack.substr(pos, len)));
 
                 startPos = pos + len;
             }
         }, options || EMPTY_OBJECT);
 
-        // Respect the replacement template constants defined by the base
-        // highlight module.
-        replacement = options.startsWith ? Highlight._START_REPLACE :
-                Highlight._REPLACE;
-
         // Run the highlighter on the folded strings. We don't care about the
         // output; our replacer function will build the canonical highlighted
         // string, with original accented characters.
-        Highlight.all(foldedHaystack, foldedNeedles, options);
+        Highlight.all(AccentFold.fold(haystack), AccentFold.fold(needles),
+                options);
 
         // Tack on the remainder of the haystack that wasn't highlighted, if
         // any.
@@ -124,12 +117,12 @@ Highlight = Y.mix(Y.Highlight, {
      * @static
      */
     wordsFold: function (haystack, needles) {
-        var replacement = Highlight._WORD_REPLACE;
+        var template = Highlight._TEMPLATE;
 
         return Highlight.words(haystack, AccentFold.fold(needles), {
             mapper: function (word, needles) {
                 if (needles.hasOwnProperty(AccentFold.fold(word))) {
-                    return replacement.replace('$1', Escape.html(word));
+                    return template.replace(/\{s\}/g, Escape.html(word));
                 }
 
                 return Escape.html(word);

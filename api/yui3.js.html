@@ -97,6 +97,7 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;arraysort&quot;</span><span class="o">:</span> <span class="p">{},</span> 
     <span class="s2">&quot;async-queue&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;event-custom&quot;</span>
@@ -117,50 +118,59 @@
         <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;autocomplete&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;autocomplete-filters&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;collection&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-wordbreak&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;autocomplete-filters-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;collection&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-accentfold&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-wordbreak&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;autocomplete-highlighters&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;collection&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;highlight-base&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;autocomplete-highlighters-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;collection&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;highlight-accentfold&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;autocomplete-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;node-pluginhost&quot;</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">},</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;autocomplete-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;jsonp&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;yql&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;autocomplete-filters&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span> 
+                    <span class="s2">&quot;autocomplete-filters-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-accentfold-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;unicode-accentfold&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span> 
+                    <span class="s2">&quot;autocomplete-highlighters&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-highlighters-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;highlight-base&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span> 
+                    <span class="s2">&quot;autocomplete-highlighters-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-highlighters-accentfold-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;highlight-accentfold&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;base-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;event-valuechange&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-base&quot;</span>
                 <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;autocomplete-list&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget-position&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget-position-align&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget-stack&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
@@ -414,6 +424,30 @@
                     <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;dataschema-xml&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;datatable&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;datatable-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;recordset&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datatable-scroll&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datatable-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datatable-sort&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datatable-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;recordset-sort&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -721,8 +755,20 @@
     <span class="p">},</span> 
     <span class="s2">&quot;escape&quot;</span><span class="o">:</span> <span class="p">{},</span> 
     <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;event-base-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-base&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;event-touch&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;node-base&quot;</span>
@@ -731,7 +777,7 @@
         <span class="p">},</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;event-base&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;event-custom-base&quot;</span>
                 <span class="p">]</span>
@@ -769,7 +815,7 @@
             <span class="s2">&quot;event-synthetic&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;event-custom&quot;</span>
+                    <span class="s2">&quot;event-custom-complex&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -778,8 +824,7 @@
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;event-custom-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;oop&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;yui-later&quot;</span>
+                    <span class="s2">&quot;oop&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;event-custom-complex&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -828,7 +873,7 @@
             <span class="p">},</span> 
             <span class="s2">&quot;highlight-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;collection&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;escape&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;unicode-wordbreak&quot;</span>
                 <span class="p">]</span>
@@ -966,24 +1011,6 @@
             <span class="s2">&quot;oop&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
-    <span class="s2">&quot;loader&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;get&quot;</span>
-        <span class="p">],</span> 
-        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;loader-base&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;loader-rollup&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;loader-base&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;loader-yui3&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;loader-base&quot;</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">},</span> 
     <span class="s2">&quot;node&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;align-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1016,10 +1043,6 @@
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">},</span> 
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;dom&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;event-base&quot;</span>
-        <span class="p">],</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;node-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -1150,6 +1173,34 @@
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;event-custom&quot;</span>
         <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;recordset&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;recordset-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;arraylist&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;recordset-filter&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;recordset-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;array-extras&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;recordset-indexer&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;recordset-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;recordset-sort&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;arraysort&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;recordset-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;scrollview&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1296,7 +1347,7 @@
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;unicode-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;collection&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;unicode-data-accentfold&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
@@ -1304,7 +1355,7 @@
             <span class="s2">&quot;unicode-data-wordbreak&quot;</span><span class="o">:</span> <span class="p">{},</span> 
             <span class="s2">&quot;unicode-wordbreak&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;collection&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;unicode-data-wordbreak&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
@@ -1406,22 +1457,47 @@
     <span class="p">},</span> 
     <span class="s2">&quot;yui&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;features&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;get&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;intl-base&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;features&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;get&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;intl-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;rls&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;get&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;features&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;yui-base&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;yui-later&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;yui-log&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;yui-throttle&quot;</span><span class="o">:</span> <span class="p">{}</span>
+            <span class="s2">&quot;yui-later&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;yui-log&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;yui-throttle&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;d1e508fbc6907c32448266f75916c03d&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;af22a015d64d4228aaddc08bfb2d3a09&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>

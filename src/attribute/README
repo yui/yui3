@@ -4,6 +4,10 @@ get and set methods to your class for attribute access, in
 addition to supporting change events allowing you to listen 
 for changes in attribute values.
 
+3.3.0
+
+* Changed instanceof to Y.instanceOf, to prevent leaks in IE7
+
 3.2.0
 
 * Added protected helper method (_getAttrCfg) to return the configuration

@@ -1,6 +1,13 @@
 YUI Collection Utilities
-    Provides functionality beyond what is is the YUI core
-    for collection management.
+    Provides collection management functionality beyond what's in the YUI core.
+
+3.3.0
+  * Array.lastIndexOf now supports the fromIndex parameter as specified in ES5.
+  * Improved the performance of Array.filter, Array.map, Array.reduce, and
+    Array.unique, especially in browsers without native ES5 array extras.
+  * The sort parameter of Array.unique has been deprecated. It still works, but
+    you're encouraged not to use it as it will be removed from a future version
+    of YUI.
 
 3.2.0
   * No change.

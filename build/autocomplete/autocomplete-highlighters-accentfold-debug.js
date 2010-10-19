@@ -17,14 +17,14 @@ YUI.add('autocomplete-highlighters-accentfold', function(Y) {
  */
 
 /**
- * @class AutoComplete.Highlighters
+ * @class AutoCompleteHighlighters
  * @static
  */
 
 var Highlight = Y.Highlight,
     YArray    = Y.Array;
 
-Y.mix(Y.namespace('AutoComplete.Highlighters'), {
+Y.mix(Y.namespace('AutoCompleteHighlighters'), {
     /**
      * Accent-folding version of <code>charMatch()</code>.
      *
@@ -91,4 +91,4 @@ Y.mix(Y.namespace('AutoComplete.Highlighters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'collection', 'highlight-accentfold']});
+}, '@VERSION@' ,{requires:['array-extras', 'highlight-accentfold']});

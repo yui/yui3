@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Accessible Toolbar</title>
+ 
+<style type="text/css">
+/*margin and padding on body element
+  can introduce errors in determining
+  element position and are not recommended;
+  we turn them off as a foundation for YUI
+  CSS treatments. */
+body {
+    margin:0;
+    padding:0;
+}
+</style>
+ 
+<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css" />
+<script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
+ 
+ 
+<!--begin custom header content for this example-->
+<style type="text/css">
+ 
+    .yui3-toolbar {
+        border: solid 1px #999;
+        background-color: #ccc;
+        margin: .25em;
+        overflow: auto;
+    }
+ 
+    .yui3-toolbar-button {
+        display: inline-block;
+        border-width: 1px 0;
+        border-style: solid;
+        border-color: #808080;
+        background-color: #dfdfdf;
+        margin: .25em;
+        font-size: 85%;  /* 11px */
+    }
+ 
+    .first-child {
+        margin-left: .5em;
+    }
+ 
+    .yui3-toolbar-button span {
+        display: inline-block;
+        border-width: 0 1px;
+        border-style: solid;
+        border-color: #808080;
+        margin: 0 -1px;
+        *position: relative;    /* Necessary to get negative margins working in IE */
+        *left: -1px;
+    }
+ 
+    .yui3-toolbar-button span span {
+        display: inline-block;
+        border: solid 1px #b6b6b6;
+        margin: 0;
+        *position: static;
+    }
+ 
+    .yui3-toolbar-button input {
+        border: none;
+        margin: 0;
+        padding: 4px 4px 4px 24px;
+        *overflow: visible; /* Remove superfluous padding for IE */
+        background: transparent url(assets/icons.png) no-repeat;
+    }
+ 
+    #add-btn input {
+        background-position: 4px -102px;
+        *background-position: 4px -100px;
+    }
+ 
+    #edit-btn input {
+        background-position: 4px -78px;
+        *background-position: 4px -76px;
+    }
+ 
+    #print-btn input {
+        background-position: 4px -54px;
+        *background-position: 4px -52px;
+    }
+ 
+    #open-btn input {
+        background-position: 4px -30px;
+        *background-position: 4px -28px;
+    }
+ 
+    #delete-btn input {
+        background-position: 4px -126px;
+        *background-position: 4px -124px;
+    }
+ 
+    #save-btn input {
+        background-position: 4px -6px;
+        *background-position: 4px -4px;
+    }
+ 
+ 
+    /*  Augment the browser's default styling of the focus state by changing the
+        background color of the button when it is focused.  */
+ 
+    .yui3-toolbar-button input.focus {
+        background-color: #B3D4FF;
+    }
+ 
+</style>
+<!--end custom header content for this example-->
+ 
+</head>
+ 
+<body class="yui3-skin-sam  yui-skin-sam">
+ 
+<h1>Accessible Toolbar</h1>
+ 
+<div class="exampleIntro">
+    <p>
+This example illustrates how to create an accessible toolbar using the
+Focus Manager Node Plugin and Node's support for the
+<a href="http://www.w3.org/TR/wai-aria/">WAI-ARIA Roles and States</a>.
+</p>
+</div>
+ 
+<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+ 
+<div id="toolbar-1" class="yui3-toolbar">
+    <span id="add-btn" class="yui3-toolbar-button first-child"><span><span><input type="button" name="btn-add" value="Add"></span></span></span>
+    <span id="edit-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-edit" value="Edit"></span></span></span>
+    <span id="print-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-print" value="Print"></span></span></span>
+    <span id="delete-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-delete" value="Delete"></span></span></span>
+    <span id="open-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-open" value="Open"></span></span></span>
+    <span id="save-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-save" value="Save"></span></span></span>
+</div>
+ 
+<script type="text/javascript">
+ 
+    YUI().use("node-focusmanager", function(Y) {
+ 
+        //  Retrieve the Node instance representing the toolbar
+        //  (<div id="toolbar">) and call the "plug" method
+        //  passing in a reference to the Focus Manager Node Plugin.
+ 
+        var toolbar = Y.Node.get("#toolbar-1");
+ 
+        toolbar.plug(Y.Plugin.NodeFocusManager, {
+ 
+                descendants: "input",
+                keys: { next: "down:39", // Right arrow
+                        previous: "down:37" },  //  Left arrow
+                focusClass: "focus",
+                circular: false
+ 
+             });
+ 
+ 
+        //  Set the ARIA "role" attribute of the Node instance representing the
+        //  toolbar to "toolbar" to improve the semantics of the markup for
+        //  users of screen readers.
+ 
+        toolbar.set("role", "toolbar");
+ 
+ 
+        //  Listen for the click event on each button via the use of the
+        //  "delegate" method
+ 
+        toolbar.delegate("click", function (event) {
+ 
+            alert("You clicked " + this.query("input").get("value"));
+ 
+        }, ".yui3-toolbar-button");
+ 
+    });
+ 
+</script>
+ 
+<!--END SOURCE CODE FOR EXAMPLE =============================== -->
+ 
+</body>
+</html>

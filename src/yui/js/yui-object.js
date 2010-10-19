@@ -1,10 +1,10 @@
 /**
- * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * The YUI module contains the components required for building the YUI
+ * seed file.  This includes the script loading mechanism, a simple queue,
+ * and the core utilities for the library.
  * @module yui
  * @submodule yui-base
  */
-(function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
@@ -12,35 +12,34 @@
  */
 
 /**
- * Y.Object(o) returns a new object based upon the supplied object.  
- * @TODO Use native Object.create() when available
+ * Y.Object(o) returns a new object based upon the supplied object.
  * @method ()
  * @static
- * @param o the supplier object
- * @return {Object} the new object
+ * @param o the supplier object.
+ * @return {Object} the new object.
  */
-Y.Object = function(o) {
-    var F = function() {};
+var F = function() {},
+
+O = Object.create || function(o) {
     F.prototype = o;
     return new F();
-}; 
+},
 
-var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED,
+UNDEF,
 
 /**
  * Extracts the keys, values, or size from an object
- * 
+ *
  * @method _extract
- * @param o the object
- * @param what what to extract (0: keys, 1: values, 2: size)
- * @return {boolean|Array} the extracted info
+ * @param o the object.
+ * @param what what to extract (0: keys, 1: values, 2: size).
+ * @return {boolean|Array} the extracted info.
  * @static
  * @private
  */
@@ -60,39 +59,38 @@ _extract = function(o, what) {
     return out;
 };
 
+Y.Object = O;
+
 /**
  * Returns an array containing the object's keys
- * @TODO use native Object.keys() if available
  * @method keys
  * @static
- * @param o an object
- * @return {string[]} the keys
+ * @param o an object.
+ * @return {string[]} the keys.
  */
-O.keys = function(o) {
+O.keys = Object.keys || function(o) {
     return _extract(o);
 };
 
 /**
  * Returns an array containing the object's values
- * @TODO use native Object.values() if available
  * @method values
  * @static
- * @param o an object
- * @return {Array} the values
+ * @param o an object.
+ * @return {Array} the values.
  */
-O.values = function(o) {
+O.values = Object.values || function(o) {
     return _extract(o, 1);
 };
 
 /**
  * Returns the size of an object
- * @TODO use native Object.size() if available
  * @method size
  * @static
- * @param o an object
- * @return {int} the size
+ * @param o an object.
+ * @return {int} the size.
  */
-O.size = function(o) {
+O.size = Object.size || function(o) {
     return _extract(o, 2);
 };
 
@@ -100,18 +98,18 @@ O.size = function(o) {
  * Returns true if the object contains a given key
  * @method hasKey
  * @static
- * @param o an object
- * @param k the key to query
- * @return {boolean} true if the object contains the key
+ * @param o an object.
+ * @param k the key to query.
+ * @return {boolean} true if the object contains the key.
  */
 O.hasKey = owns;
 /**
  * Returns true if the object contains a given value
  * @method hasValue
  * @static
- * @param o an object
- * @param v the value to query
- * @return {boolean} true if the object contains the value
+ * @param o an object.
+ * @param v the value to query.
+ * @return {boolean} true if the object contains the value.
  */
 O.hasValue = function(o, v) {
     return (Y.Array.indexOf(O.values(o), v) > -1);
@@ -124,9 +122,9 @@ O.hasValue = function(o, v) {
  *
  * @method owns
  * @static
- * @param o {any} The object being testing
- * @param p {string} the property to look for
- * @return {boolean} true if the object has the property on the instance
+ * @param o {any} The object being testing.
+ * @param p {string} the property to look for.
+ * @return {boolean} true if the object has the property on the instance.
  */
 O.owns = owns;
 
@@ -136,14 +134,14 @@ O.owns = owns;
  * as parameters (in that order).
  * @method each
  * @static
- * @param o the object to iterate
- * @param f {Function} the function to execute on each item. The function 
+ * @param o the object to iterate.
+ * @param f {Function} the function to execute on each item. The function
  * receives three arguments: the value, the the key, the full object.
- * @param c the execution context
- * @param proto {boolean} include proto
- * @return {YUI} the YUI instance
+ * @param c the execution context.
+ * @param proto {boolean} include proto.
+ * @return {YUI} the YUI instance.
  */
-O.each = function (o, f, c, proto) {
+O.each = function(o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
@@ -161,14 +159,15 @@ O.each = function (o, f, c, proto) {
  * as paramters (in that order).
  * @method some
  * @static
- * @param o the object to iterate
- * @param f {Function} the function to execute on each item. The function 
+ * @param o the object to iterate.
+ * @param f {Function} the function to execute on each item. The function
  * receives three arguments: the value, the the key, the full object.
- * @param c the execution context
- * @param proto {boolean} include proto
- * @return {boolean} true if any execution of the function returns true, false otherwise
+ * @param c the execution context.
+ * @param proto {boolean} include proto.
+ * @return {boolean} true if any execution of the function returns true,
+ * false otherwise.
  */
-O.some = function (o, f, c, proto) {
+O.some = function(o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
@@ -186,23 +185,24 @@ O.some = function (o, f, c, proto) {
  * from the value object provided.
  *
  * @method getValue
- * @param o The object from which to extract the property value
+ * @static
+ * @param o The object from which to extract the property value.
  * @param path {Array} A path array, specifying the object traversal path
  * from which to obtain the sub value.
  * @return {Any} The value stored in the path, undefined if not found,
- * undefined if the source is not an object.  Returns the source object 
+ * undefined if the source is not an object.  Returns the source object
  * if an empty path is provided.
  */
-O.getValue = function (o, path) {
+O.getValue = function(o, path) {
     if (!Y.Lang.isObject(o)) {
-        return UNDEFINED;
+        return UNDEF;
     }
 
     var i,
-        p = Y.Array(path), 
+        p = Y.Array(path),
         l = p.length;
 
-    for (i=0; o !== UNDEFINED && i < l; i++) {
+    for (i = 0; o !== UNDEF && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -210,33 +210,34 @@ O.getValue = function (o, path) {
 };
 
 /**
- * Sets the sub-attribute value at the provided path on the 
- * value object.  Returns the modified value object, or 
+ * Sets the sub-attribute value at the provided path on the
+ * value object.  Returns the modified value object, or
  * undefined if the path is invalid.
  *
  * @method setValue
+ * @static
  * @param o             The object on which to set the sub value.
  * @param path {Array}  A path array, specifying the object traversal path
  *                      at which to set the sub value.
  * @param val {Any}     The new value for the sub-attribute.
- * @return {Object}     The modified object, with the new sub value set, or 
+ * @return {Object}     The modified object, with the new sub value set, or
  *                      undefined, if the path was invalid.
  */
 O.setValue = function(o, path, val) {
-    var i, 
-        p       = Y.Array(path), 
-        leafIdx = p.length-1, 
-        ref     = o;
+    var i,
+        p = Y.Array(path),
+        leafIdx = p.length - 1,
+        ref = o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== UNDEFINED && i < leafIdx; i++) {
+        for (i = 0; ref !== UNDEF && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
-        if (ref !== UNDEFINED) {
+        if (ref !== UNDEF) {
             ref[p[i]] = val;
         } else {
-            return UNDEFINED;
+            return UNDEF;
         }
     }
 
@@ -246,7 +247,8 @@ O.setValue = function(o, path, val) {
 /**
  * Returns true if the object has no properties of its own
  * @method isEmpty
- * @return {boolean} true if the object is empty
+ * @static
+ * @return {boolean} true if the object is empty.
  * @since 3.2.0
  */
 O.isEmpty = function(o) {
@@ -257,5 +259,3 @@ O.isEmpty = function(o) {
     }
     return true;
 };
-
-})();

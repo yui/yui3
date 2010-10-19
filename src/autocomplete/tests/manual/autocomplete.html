@@ -1,35 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!--
+    Note: if you're viewing source to learn how to use AutoComplete, you should
+    be aware that this is a much more complex example than you'd ever be likely
+    to implement in a real-world use case, since this manual test page tries to
+    cover the majority of AutoComplete's available functionality.
+
+    Please don't let this scare you off!
+    -->
     <meta charset="utf-8">
     <title>AutoComplete manual test</title>
+    <!-- <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css">
+    <link rel="stylesheet" href="../../../../build/cssbase/base-min.css"> -->
     <link rel="stylesheet" href="../assets/test-console.css">
+    <!-- for design iteration -->
+    <!-- <link rel="stylesheet" href="../../assets/autocomplete-list-core.css">
+    <link rel="stylesheet" href="../../assets/skins/sam/autocomplete-list-skin.css"> -->
     <style>
+    html {
+        background: #fff;
+        color: #333;
+        font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+        font-size: 13px;
+    }
+
     body { width: 60%; }
 
     fieldset {
         border: 1px solid #afafaf;
-        margin-bottom: 1em;
+        margin-top: 1em;
     }
 
     fieldset label { margin-right: 0.5em; }
 
-    #ac { width: 17em; }
+    #ac-input {
+        margin: 5px 0 10px;
+        width: 300px;
+    }
+
     #log { margin-top: 4em; }
+
+    .flickr {
+        height: 32px;
+        overflow: hidden;
+        padding: 2px;
+        text-decoration: none;
+    }
+
+    .flickr img {
+        float: left;
+        height: 32px;
+        margin: 0 4px;
+        width: 32px;
+    }
+
+    .twitter {
+        clear: both;
+        margin: 4px 0;
+        padding: 2px 0;
+    }
+
+    .twitter .hd {
+        float: left;
+    }
+
+    .twitter .bd,
+    .twitter .ft {
+        margin-left: 52px;
+    }
+
+    .twitter .ft {
+        color: #cfcfcf;
+        font-size: 11px;
+    }
+
+    .twitter .photo {
+        height: 48px;
+        margin-top: 3px;
+        width: 48px;
+    }
+
+    .twitter .user { margin-right: 6px; }
+
     </style>
 </head>
 <body class="yui3-skin-sam">
 
 <h1>AutoComplete manual test</h1>
 
-<form>
-    <p>
-        <label for="ac">Type things here! Try the name of a US state.</label><br>
-        <input type="text" id="ac">
-    </p>
+<form id="ac-form">
+    <div id="ac">
+        <label for="ac-input">Type things here! Try the name of a US state.</label><br>
+        <input type="text" id="ac-input">
+    </div>
 
     <fieldset id="data-sources">
-        <legend>DataSource</legend>
+        <legend>Source</legend>
         <div>
             <input type="radio" id="ds-none" name="ds" value="none">
             <label for="ds-none">None</label>
@@ -37,23 +104,36 @@
             <input type="radio" id="ds-local" name="ds" value="local" checked="checked">
             <label for="ds-local">Local</label>
 
-            <input type="radio" id="ds-remote" name="ds" value="remote">
-            <label for="ds-remote">Remote (JSONP)</label>
+            <input type="radio" id="ds-flickr" name="ds" value="flickr">
+            <label for="ds-flickr">Remote (Flickr)</label>
+
+            <input type="radio" id="ds-search" name="ds" value="search">
+            <label for="ds-search">Remote (Y! Search)</label>
+
+            <input type="radio" id="ds-twitter" name="ds" value="twitter">
+            <label for="ds-twitter">Remote (Twitter Search)</label>
         </div>
     </fieldset>
 
     <fieldset id="filters">
-      <legend>Result Filters</legend>
-      <div>
-      </div>
+        <legend>Result Filters</legend>
+        <div></div>
     </fieldset>
 
     <fieldset id="highlighters">
-      <legend>Result Highlighters</legend>
-      <div>
-          <input type="radio" class="highlighter" name="highlighter" id="highlighter_none" value="none" checked="checked">
-          <label for="highlighter_none">None</label>
-      </div>
+        <legend>Result Highlighters</legend>
+        <div>
+            <input type="radio" class="highlighter" name="highlighter" id="highlighter_none" value="none" checked="checked">
+            <label for="highlighter_none">None</label>
+        </div>
+    </fieldset>
+
+    <fieldset id="other">
+        <legend>Other Settings</legend>
+        <div>
+            <label for="delimiter">Query delimiter:</label>
+            <input type="text" id="delimiter">
+        </div>
     </fieldset>
 </form>
 
@@ -61,31 +141,32 @@
 
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../../unicode/js/unicode-data-wordbreak.js"></script>
-<script src="../../../unicode/js/unicode-wordbreak.js"></script>
-<script src="../../../escape/js/escape.js"></script>
-<script src="../../../highlight/js/highlight.js"></script>
-<script src="../../js/autocomplete-base.js"></script>
-<script src="../../js/autocomplete-filters.js"></script>
-<script src="../../js/autocomplete-highlighters.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
     filters: {
-        'autocomplete': 'debug'
+        'autocomplete': 'debug',
+        'autocomplete-base': 'debug',
+        'autocomplete-list': 'debug'
     },
-    useBrowserConsole: false
+
+    useBrowserConsole: false,
+
+    // For design iteration.
+    ignore: [
+        // 'skin-sam-autocomplete',
+        // 'skin-sam-autocomplete-list'
+    ]
 }).use(
-    'autocomplete-base',
+    'autocomplete',
     'autocomplete-filters',
     'autocomplete-highlighters',
     'console-filters',
-    'datasource-get',
-    'datasource-jsonschema',
-    'datasource-local',
     'dump',
     'event-delegate',
-    function (Y) {
+function (Y) {
+
+Y.one('#ac-form').reset();
 
 // -- Console setup ------------------------------------------------------------
 new Y.Console({
@@ -94,56 +175,35 @@ new Y.Console({
 }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
 // -- AutoComplete setup -------------------------------------------------------
-var dataSourceLocal = new Y.DataSource.Local({
-        source: ExampleData.arrayStates
-    }),
-
-    dataSourceRemote = new Y.DataSource.Get({
-        source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
-    }),
-
-    autoComplete = new Y.AutoComplete({inputNode: '#ac'});
-
-dataSourceRemote.plug({
-    fn: Y.Plugin.DataSourceJSONSchema,
-    cfg: {
-        schema: {
-            resultListLocator: 'query.results.Result'
-        }
-    }
-});
-
-autoComplete.on('results', function (e) {
-    Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete');
-});
+var autoComplete = new Y.AutoComplete({inputNode: '#ac-input'});
 
 // For easier debugging.
-Y.autoComplete = autoComplete;
+Y.ac = autoComplete;
 
 // -- UI stuff -----------------------------------------------------------------
 var filtersDiv      = Y.one('#filters>div'),
     highlightersDiv = Y.one('#highlighters>div');
 
 // Create filter checkboxes.
-Y.Object.each(Y.AutoComplete.Filters, function (filter, name) {
+Y.Object.each(Y.AutoCompleteFilters, function (filter, name) {
     if (name.indexOf('_') === 0) {
         return;
     }
 
     filtersDiv.append(
-        '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'startsWith' ? ' checked="checked"' : '') + '>' +
+        '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'phraseMatch' ? ' checked="checked"' : '') + '>' +
         '<label for="filter_' + name + '">' + name + '</label>'
     );
 });
 
 // Create highlighter radio buttons.
-Y.Object.each(Y.AutoComplete.Highlighters, function (highlighter, name) {
+Y.Object.each(Y.AutoCompleteHighlighters, function (highlighter, name) {
     if (name.indexOf('_') === 0) {
         return;
     }
 
     highlightersDiv.append(
-        '<input type="radio" class="highlighter" name="highlighter" id="highlighter_' + name + '" value="' + name + '">' +
+        '<input type="radio" class="highlighter" name="highlighter" id="highlighter_' + name + '" value="' + name + '"' + (name === 'phraseMatch' ? ' checked="checked"' : '') + '>' +
         '<label for="highlighter_' + name + '">' + name + '</label>'
     );
 });
@@ -159,8 +219,16 @@ Y.delegate('click', function (e) {
         useLocal();
         break;
 
-    case 'remote':
-        useRemote();
+    case 'flickr':
+        useFlickr();
+        break;
+
+    case 'search':
+        useSearch();
+        break;
+
+    case 'twitter':
+        useTwitter();
         break;
     }
 }, '#data-sources', 'input[type="radio"]');
@@ -171,13 +239,59 @@ Y.delegate('click', setFilters, '#filters', 'input[type="checkbox"]');
 // Handle clicks on highlighters.
 Y.delegate('click', setHighlighter, '#highlighters', 'input[type="radio"]');
 
+// Handle delimiter changes.
+Y.on('change', setDelimiter, '#delimiter');
+
 useLocal();
 setFilters();
 setHighlighter();
 
+autoComplete.render();
 autoComplete.get('inputNode').focus();
 
 // -- UI functions -------------------------------------------------------------
+function flickrFormatter(query, raw, highlighted) {
+    return Y.Array.map(raw, function (result, i) {
+        var imgUrl = Y.Lang.sub('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result);
+
+        result.linkUrl = Y.Lang.sub('http://www.flickr.com/photos/{owner}/{id}', result);
+
+        return '<div class="flickr">' +
+                 '<img src="' + imgUrl + '" alt="thumbnail">' +
+                 '<span class="title">' + highlighted[i] + '</span>' +
+               '</div>';
+    });
+}
+
+function twitterFormatter(query, raw, highlighted) {
+    return Y.Array.map(raw, function (result, i) {
+        return Y.Lang.sub(
+            '<div class="twitter" data-tweet-id="{id}">' +
+              '<div class="hd">' +
+                '<img src="{imgurl}" class="photo" alt="Profile photo for {user}">' +
+              '</div>' +
+              '<div class="bd">' +
+                '<strong class="user">{user}</strong>' +
+                '<span class="tweet-text">{text}</span>' +
+              '</div>' +
+              '<div class="ft">' +
+                '{time}' +
+              '</div>' +
+            '</div>'
+        , {
+            id    : result.id,
+            imgurl: result.profile_image_url,
+            text  : highlighted[i],
+            time  : result.created_at,
+            user  : result.from_user
+        });
+    });
+}
+
+function setDelimiter(e) {
+    autoComplete.set('queryDelimiter', e.target.get('value'));
+}
+
 function setFilters() {
     var filters     = [],
         filterNames = [];
@@ -189,7 +303,7 @@ function setFilters() {
     });
 
     Y.Array.each(filterNames, function (name) {
-        filters.push(Y.AutoComplete.Filters[name]);
+        filters.push(name);
     });
 
     autoComplete.set('resultFilters', filters);
@@ -201,8 +315,7 @@ function setHighlighter() {
 
         if (input.get('checked')) {
             name = input.get('value');
-            autoComplete.set('resultHighlighter', name === 'none' ? null :
-                    Y.AutoComplete.Highlighters[name]);
+            autoComplete.set('resultHighlighter', name === 'none' ? null : name);
             return true;
         }
     });
@@ -210,26 +323,68 @@ function setHighlighter() {
 
 // -- DataSource functions -----------------------------------------------------
 function useLocal() {
-    Y.log('using local data source', 'info', 'autocomplete');
+    Y.log('using local array source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
-    autoComplete.set('dataSource', dataSourceLocal);
-    autoComplete.set('requestTemplate', function (q) { return q; });
+
+    autoComplete.setAttrs({
+        resultFormatter  : null,
+        resultListLocator: null,
+        resultTextLocator: null,
+        source           : ExampleData.arrayStates
+    });
 }
 
 function useNone() {
-    Y.log('using no data source', 'info', 'autocomplete');
+    Y.log('using no source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
-    autoComplete.set('dataSource', null);
+
+    autoComplete.setAttrs({
+        resultFormatter  : null,
+        resultListLocator: null,
+        resultTextLocator: null,
+        source           : null
+    });
 }
 
-function useRemote() {
-    Y.log('using remote data source', 'info', 'autocomplete');
+function useFlickr() {
+    Y.log('using remote Flickr YQL source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
-    autoComplete.set('dataSource', dataSourceRemote);
-    autoComplete.set('requestTemplate', 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'));
+
+    autoComplete.setAttrs({
+        resultFormatter  : flickrFormatter,
+        resultListLocator: null,
+        resultTextLocator: 'title',
+        source           : 'select * from flickr.photos.search where tags="{query}"'
+    });
+}
+
+function useSearch() {
+    Y.log('using remote Y! Search YQL source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        resultFormatter  : null,
+        resultListLocator: null,
+        resultTextLocator: null,
+        source           : 'select * from search.suggest where query="{query}"'
+    });
+}
+
+function useTwitter() {
+    Y.log('using remote Twitter JSONP source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        resultFormatter  : twitterFormatter,
+        resultListLocator: 'results',
+        resultTextLocator: 'text',
+        source           : 'http://search.twitter.com/search.json?q={query}&callback={callback}&result_type=recent'
+    });
 }
 
 });

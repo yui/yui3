@@ -248,7 +248,9 @@
 
     <span class="nx">HTML_PARSER</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">selected</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">selectedTab</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">selectedTab</span><span class="p">))</span> <span class="o">?</span>
+                        <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 

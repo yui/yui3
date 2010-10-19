@@ -10,7 +10,7 @@
 
             "highlight-base": {
                 "requires": [
-                    "collection",
+                    "array-extras",
                     "escape",
                     "unicode-wordbreak"
                 ]

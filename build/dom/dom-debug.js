@@ -85,7 +85,7 @@ Y.DOM = {
         } : function(element) {
             var ret = '';
             if (element) {
-                ret = element.innerText;
+                ret = element.innerText || element.nodeValue; // might be a textNode
             }
             return ret || '';
         },
@@ -140,7 +140,6 @@ Y.DOM = {
     /*
      * Finds the ancestor of the element.
      * @method ancestor
-     * @deprecated Use elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
@@ -155,6 +154,29 @@ Y.DOM = {
 
         }
         return ret || Y.DOM.elementByAxis(element, PARENT_NODE, fn, null);
+    },
+
+    /*
+     * Finds the ancestors of the element.
+     * @method ancestors
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, all ancestors are returned.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @return {Array} An array containing all matching DOM nodes.
+     */
+    ancestors: function(element, fn, testSelf) {
+        var ancestor = Y.DOM.ancestor.apply(Y.DOM, arguments),
+            ret = (ancestor) ? [ancestor] : [];
+
+        while ((ancestor = Y.DOM.ancestor(ancestor, fn))) {
+            if (ancestor) {
+                ret.unshift(ancestor);
+            }
+        }
+
+        return ret;
     },
 
     /**
@@ -349,10 +371,11 @@ Y.DOM = {
      * @param {String} val The value of the attribute.
      */
     setAttribute: function(el, attr, val, ieAttr) {
-        if (el && el.setAttribute) {
+        if (el && attr && el.setAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             el.setAttribute(attr, val, ieAttr);
         }
+        else { Y.log('bad input to setAttribute', 'warn', 'dom'); }
     },
 
 
@@ -366,7 +389,7 @@ Y.DOM = {
     getAttribute: function(el, attr, ieAttr) {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
-        if (el && el.getAttribute) {
+        if (el && attr && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             ret = el.getAttribute(attr, ieAttr);
 
@@ -374,11 +397,12 @@ Y.DOM = {
                 ret = ''; // per DOM spec
             }
         }
+        else { Y.log('bad input to getAttribute', 'warn', 'dom'); }
         return ret;
     },
 
     isWindow: function(obj) {
-        return obj.alert && obj.document;
+        return !!(obj && obj.alert && obj.document);
     },
 
     _fragClones: {},
@@ -601,27 +625,27 @@ Y.DOM = {
     },
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
-        fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
+        fn = (typeof fn === 'string') ? Y.DOM[fn] : fn;
         var result,
-            ret = [];
+            args = Array.prototype.slice.call(arguments, 2),
+            i = 0,
+            node,
+            ret;
 
         if (fn && nodes) {
-            Y.each(nodes, function(node) {
-                if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
-                    ret[ret.length] = result;
+            while ((node = nodes[i++])) {
+                result = result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc);
+                if (typeof result !== 'undefined') {
+                    (ret) || (ret = []);
+                    ret.push(result);
                 }
-            });
+            }
         }
 
-        return ret.length ? ret : nodes;
+        return (typeof ret !== 'undefined') ? ret : nodes;
     },
 
-    creators: {},
-
-    _IESimpleCreate: function(html, doc) {
-        doc = doc || Y.config.doc;
-        return doc.createElement(html);
-    }
+    creators: {}
 };
 
 
@@ -686,7 +710,7 @@ Y.DOM = {
             }
         });
 
-        Y.DOM.creators.style = Y.DOM.creators.script;
+        Y.DOM.creators.col = Y.DOM.creators.link = Y.DOM.creators.style = Y.DOM.creators.script;
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -1011,7 +1035,7 @@ Y.mix(Y_DOM, {
         var val = '',
             doc = node[OWNER_DOCUMENT];
 
-        if (node[STYLE]) {
+        if (node[STYLE] && doc[DEFAULT_VIEW] && doc[DEFAULT_VIEW][GET_COMPUTED_STYLE]) {
             val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
         }
         return val;
@@ -1328,6 +1352,7 @@ Y.mix(Y_DOM, {
                     bLeft, bTop,
                     mode,
                     doc,
+                    inDoc,
                     rootNode;
 
                 if (node && node.tagName) {

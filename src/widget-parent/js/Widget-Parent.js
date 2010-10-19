@@ -241,7 +241,7 @@ Parent.prototype = {
                 selectedVal = 2;    //  Assume partially selected, confirm otherwise
 
 
-                if ((selection instanceof Y.ArrayList) && 
+                if (Y.instanceOf(selection, Y.ArrayList) && 
                     (selection.size() === this.size())) {
 
                     selectedVal = 1;    //  Fully selected
@@ -566,7 +566,7 @@ Parent.prototype = {
         }
         else {
 
-            if (child instanceof Y.Widget) {
+            if (Y.instanceOf(child, Y.Widget)) {
                 oChild = child;
             }
             else {

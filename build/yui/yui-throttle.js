@@ -6,20 +6,19 @@ YUI.add('yui-throttle', function(Y) {
  * @submodule yui-throttle
  */
 
+/*! Based on work by Simon Willison: http://gist.github.com/292562 */
 /**
  * Throttles a call to a method based on the time between calls.
  * @method throttle
  * @for YUI
  * @param fn {function} The function call to throttle.
- * @param ms {int} The number of milliseconds to throttle the method call. Can set
- * globally with Y.config.throttleTime or by call. Passing a -1 will disable the throttle. Defaults to 150
+ * @param ms {int} The number of milliseconds to throttle the method call.
+ * Can set globally with Y.config.throttleTime or by call. Passing a -1 will
+ * disable the throttle. Defaults to 150.
  * @return {function} Returns a wrapped function that calls fn throttled.
  * @since 3.1.0
  */
-
-/*! Based on work by Simon Willison: http://gist.github.com/292562 */
-
-var throttle = function(fn, ms) {
+Y.throttle = function(fn, ms) {
     ms = (ms) ? ms : (Y.config.throttleTime || 150);
 
     if (ms === -1) {
@@ -28,23 +27,16 @@ var throttle = function(fn, ms) {
         });
     }
 
-    var last = (new Date()).getTime();
+    var last = Y.Lang.now();
 
     return (function() {
-        var now = (new Date()).getTime();
+        var now = Y.Lang.now();
         if (now - last > ms) {
             last = now;
             fn.apply(null, arguments);
         }
     });
 };
-
-Y.throttle = throttle;
-
-// We added the redundant definition to later for backwards compatibility.
-// I don't think we need to do the same thing here
-// Y.Lang.throttle = throttle;
-
 
 
 }, '@VERSION@' ,{requires:['yui-base']});

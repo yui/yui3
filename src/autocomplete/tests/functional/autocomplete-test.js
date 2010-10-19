@@ -3,14 +3,26 @@ YUI.add('autocomplete-test', function (Y) {
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
 
-    AutoComplete = Y.AutoComplete,
-    Filters      = AutoComplete.Filters,
-    Hi           = AutoComplete.Highlighters,
+    ACBase,
+    Filters      = Y.AutoCompleteFilters,
+    Hi           = Y.AutoCompleteHighlighters,
 
     suite,
     baseSuite,
     filtersSuite,
     highlightSuite;
+
+// Simple, bare AutoCompleteBase implementation for testing.
+ACBase = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
+    initializer: function () {
+        this._bindUIACBase();
+        this._syncUIACBase();
+    },
+
+    destructor: function () {
+        this._destructorACBase();
+    }
+});
 
 // -- Global Suite -------------------------------------------------------------
 suite = new Y.Test.Suite('Y.AutoComplete');
@@ -24,7 +36,7 @@ baseSuite.add(new Y.Test.Case({
 
     _should: {
         error: {
-            'Initializer should require an inputNode': 'No input node specified.'
+            'Initializer should require an inputNode': 'No inputNode specified.'
         }
     },
 
@@ -39,30 +51,16 @@ baseSuite.add(new Y.Test.Case({
     },
 
     'Initializer should accept an inputNode': function () {
-        var ac = new AutoComplete({inputNode: this.inputNode});
+        var ac = new ACBase({inputNode: this.inputNode});
         Assert.areSame(this.inputNode, ac.get('inputNode'));
 
-        ac = new AutoComplete({inputNode: '#ac'});
+        ac = new ACBase({inputNode: '#ac'});
         Assert.areSame(this.inputNode, ac.get('inputNode'));
     },
 
     'Initializer should require an inputNode': function () {
         // Should fail.
-        var ac = new AutoComplete();
-    },
-
-    'Browser autocomplete should be off by default': function () {
-        var ac = new AutoComplete({inputNode: this.inputNode});
-        Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
-    },
-
-    'Browser autocomplete should be turned on when enabled': function () {
-        var ac = new AutoComplete({
-            inputNode: this.inputNode,
-            allowBrowserAutocomplete: true
-        });
-
-        Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
+        var ac = new ACBase();
     }
 }));
 
@@ -74,7 +72,7 @@ baseSuite.add(new Y.Test.Case({
         this.inputNode = Y.Node.create('<input id="ac" type="text">');
         Y.one(Y.config.doc.body).append(this.inputNode);
 
-        this.ac = new AutoComplete({inputNode: this.inputNode});
+        this.ac = new ACBase({inputNode: this.inputNode});
     },
 
     tearDown: function () {
@@ -85,28 +83,31 @@ baseSuite.add(new Y.Test.Case({
         delete this.inputNode;
     },
 
-    'dataSource should only accept dataSource-like objects and null': function () {
-        var ds = {sendRequest: function () {}};
+    'Browser autocomplete should be off by default': function () {
+        Assert.isFalse(this.ac.get('allowBrowserAutocomplete'));
+        Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
+    },
 
-        Assert.isUndefined(this.ac.get('dataSource'));
+    'Browser autocomplete should be turned on when enabled': function () {
+        var ac = new ACBase({
+            inputNode: this.inputNode,
+            allowBrowserAutocomplete: true
+        });
 
-        this.ac.set('dataSource', {});
-        Assert.isUndefined(this.ac.get('dataSource'));
+        Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
+    },
 
-        this.ac.set('dataSource', ds);
-        Assert.areSame(ds, this.ac.get('dataSource'));
+    'Browser autocomplete should be settable after init': function () {
+        var ac = new ACBase({inputNode: this.inputNode});
+        Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
 
-        this.ac.set('dataSource', null);
-        Assert.isNull(this.ac.get('dataSource'));
+        ac.set('allowBrowserAutocomplete', true);
+        Assert.areSame('on', this.inputNode.getAttribute('autocomplete'));
     },
 
     'inputNode should be writable only on init': function () {
         this.ac.set('inputNode', Y.Node.create('<input>'));
         Assert.areSame(this.inputNode, this.ac.get('inputNode'));
-    },
-
-    'requestTemplate should be encodeURIComponent by default': function () {
-        Assert.areSame(encodeURIComponent, this.ac.get('requestTemplate'));
     },
 
     'requestTemplate should accept a custom template function': function () {
@@ -135,9 +136,66 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
-    'requestTemplate function should replace \\{query} with the literal string {query}': function () {
-        this.ac.set('requestTemplate', 'foo\\{query}bar');
-        Assert.areSame('foo{query}bar', this.ac.get('requestTemplate')('test'));
+    'resultFilters should accept a filter, array of filters, string, array of strings, or null': function () {
+        var filter = function () {};
+
+        this.ac.set('resultFilters', filter);
+        ArrayAssert.itemsAreSame([filter], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', null);
+        ArrayAssert.isEmpty(this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', [filter]);
+        ArrayAssert.itemsAreSame([filter], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', 'phraseMatch');
+        ArrayAssert.itemsAreSame([Y.AutoCompleteFilters.phraseMatch], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', ['phraseMatch', 'charMatch']);
+        ArrayAssert.itemsAreSame([Y.AutoCompleteFilters.phraseMatch, Y.AutoCompleteFilters.charMatch], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', null);
+        this.ac.set('resultFilters', ['foo', 'bar']);
+        ArrayAssert.isEmpty(this.ac.get('resultFilters'));
+    },
+
+    // -- Generic setters and validators ---------------------------------------
+    '_functionValidator() should accept a function or null': function () {
+        Assert.isTrue(this.ac._functionValidator(function () {}));
+        Assert.isTrue(this.ac._functionValidator(null));
+        Assert.isFalse(this.ac._functionValidator('foo'));
+    },
+
+    '_setSource() should accept a DataSource': function () {
+        var ds = new Y.DataSource.Local({source: []});
+        Assert.areSame(ds, this.ac._setSource(ds));
+    },
+
+    '_setSource() should accept an array': function () {
+        Assert.isFunction(this.ac._setSource(['foo']).sendRequest);
+    },
+
+    '_setSource() should accept an object': function () {
+        Assert.isFunction(this.ac._setSource({foo: ['bar']}).sendRequest);
+    },
+
+    '_setSource() should accept a URL string': function () {
+        Assert.isFunction(this.ac._setSource('http://example.com/').sendRequest);
+    },
+
+    '_setSource() should accept a YQL string': function () {
+        Assert.isFunction(this.ac._setSource('select * from foo where query="{query}"').sendRequest);
+    },
+
+    '_setSource() should accept a Y.JSONPRequest instance': function () {
+        Assert.isFunction(this.ac._setSource(new Y.JSONPRequest('http://example.com/')).sendRequest);
+    },
+
+    // -- Miscellaneous protected methods that aren't testable otherwise -------
+    '_jsonpFormatter should correctly format URLs both with and without a requestTemplate set': function () {
+        Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo?q={query}&cb={callback}', 'callback', 'bar baz'));
+        this.ac.set('requestTemplate', '?q={query}&cb={callback}');
+        Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo', 'callback', 'bar baz'));
     }
 }));
 
@@ -503,6 +561,7 @@ Y.Test.Runner.add(suite);
     requires: [
         'autocomplete-base', 'autocomplete-filters',
         'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-        'autocomplete-highlighters-accentfold', 'node', 'test'
+        'autocomplete-highlighters-accentfold', 'datasource-local', 'node',
+        'jsonp', 'test', 'yql'
     ]
 });

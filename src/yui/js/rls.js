@@ -1,8 +1,9 @@
 /**
  * Implentation for building the remote loader service url.
  * @method _rls
- * @param what {Array} the requested modules
+ * @param {Array} what the requested modules.
  * @since 3.2.0
+ * @return {string} the url for the remote loader service call.
  */
 Y._rls = function(what) {
 
@@ -10,16 +11,16 @@ Y._rls = function(what) {
 
         // the configuration
         rls = config.rls || {
-            m:       1, // required in the template
-            v:       Y.version,
-            gv:      config.gallery,
-            env:     1, // required in the template
-            lang:    config.lang,
+            m: 1, // required in the template
+            v: Y.version,
+            gv: config.gallery,
+            env: 1, // required in the template
+            lang: config.lang,
             '2in3v': config['2in3'],
-            '2v':    config.yui2,
-            filt:    config.filter,
-            filts:   config.filters,
-            tests:   1 // required in the template
+            '2v': config.yui2,
+            filt: config.filter,
+            filts: config.filters,
+            tests: 1 // required in the template
         },
 
         // The rls base path
@@ -35,13 +36,13 @@ Y._rls = function(what) {
             }
             // console.log('rls_tmpl: ' + s);
             return s;
-        }(), 
-        
+        }(),
+
         url;
 
     // update the request
-    rls.m     = what;
-    rls.env   = Y.Object.keys(YUI.Env.mods);
+    rls.m = what;
+    rls.env = Y.Object.keys(YUI.Env.mods);
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);

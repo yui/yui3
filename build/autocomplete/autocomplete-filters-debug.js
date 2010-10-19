@@ -5,7 +5,7 @@ YUI.add('autocomplete-filters', function(Y) {
  *
  * @module autocomplete
  * @submodule autocomplete-filters
- * @class AutoComplete.Filters
+ * @class AutoCompleteFilters
  * @static
  */
 
@@ -13,7 +13,7 @@ var YArray     = Y.Array,
     YObject    = Y.Object,
     WordBreak  = Y.Unicode.WordBreak,
 
-Filters = Y.mix(Y.namespace('AutoComplete.Filters'), {
+Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     // -- Public Methods -------------------------------------------------------
 
     /**
@@ -172,4 +172,4 @@ Filters = Y.mix(Y.namespace('AutoComplete.Filters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'collection', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'unicode-wordbreak']});

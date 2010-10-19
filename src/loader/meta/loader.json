@@ -1,10 +1,11 @@
 {
     "loader": {
-        "requires": [
-            "get"
-        ],
         "submodules": {
-            "loader-base": {}, 
+            "loader-base": {
+                "requires": [
+                    "get"
+                ],
+            },
             "loader-rollup": {
                 "requires": [
                     "loader-base"

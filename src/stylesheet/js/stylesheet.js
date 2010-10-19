@@ -23,7 +23,7 @@ var d      = Y.config.doc,
 _unsetOpacity = (OPACITY in workerStyle) ?
     function (style) { style.opacity = EMPTY; } :
     function (style) { style.filter = EMPTY; };
-        
+
 // Normalizes the removal of an assigned style for a given property.  Expands
 // shortcut properties if necessary and handles the various names for the float
 // property.
@@ -65,7 +65,7 @@ _unsetProperty = workerStyle.borderLeft ?
             }
         }
     };
-    
+
 /**
  * Create an instance of StyleSheet to encapsulate a css stylesheet.
  * The constructor can be called using function or constructor syntax.
@@ -94,7 +94,7 @@ _unsetProperty = workerStyle.borderLeft ?
  * <p>The optional second parameter is a string name to register the sheet as.
  * This param is largely useful when providing a node id/ref or chunk of css
  * text to create a populated instance.</p>
- * 
+ *
  * @class StyleSheet
  * @constructor
  * @param seed {String|HTMLElement|Node} a style or link node, its id, or a
@@ -113,7 +113,7 @@ function StyleSheet(seed, name) {
         i,r,sel;
 
     // Factory or constructor
-    if (!(this instanceof StyleSheet)) {
+    if (!(Y.instanceOf(this, StyleSheet))) {
         return new StyleSheet(seed,name);
     }
 
@@ -361,7 +361,7 @@ function StyleSheet(seed, name) {
                         remove = true;
                     }
                 }
-                
+
                 if (remove) { // remove the rule altogether
                     rules = sheet[_rules];
                     for (i = rules.length - 1; i >= 0; --i) {

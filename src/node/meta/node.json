@@ -3,19 +3,19 @@
         "plugins": {
             "align-plugin": {
                 "requires": [
-                    "node-screen", 
+                    "node-screen",
                     "node-pluginhost"
                 ]
-            }, 
+            },
             "node-event-simulate": {
                 "requires": [
-                    "node-base", 
+                    "node-base",
                     "event-simulate"
                 ]
-            }, 
+            },
             "shim-plugin": {
                 "requires": [
-                    "node-style", 
+                    "node-style",
                     "node-pluginhost"
                 ]
             },
@@ -30,40 +30,36 @@
                     "node-style"
                 ]
             }
-        }, 
-        "requires": [
-            "dom", 
-            "event-base"
-        ], 
+        },
         "submodules": {
             "node-base": {
                 "requires": [
-                    "dom-base", 
-                    "selector-css2", 
+                    "dom-base",
+                    "selector-css2",
                     "event-base"
                 ]
-            }, 
+            },
             "node-event-delegate": {
                 "requires": [
-                    "node-base", 
+                    "node-base",
                     "event-delegate"
                 ]
-            }, 
+            },
             "node-pluginhost": {
                 "requires": [
-                    "node-base", 
+                    "node-base",
                     "pluginhost"
                 ]
-            }, 
+            },
             "node-screen": {
                 "requires": [
-                    "dom-screen", 
+                    "dom-screen",
                     "node-base"
                 ]
-            }, 
+            },
             "node-style": {
                 "requires": [
-                    "dom-style", 
+                    "dom-style",
                     "node-base"
                 ]
             }

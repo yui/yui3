@@ -1,19 +1,24 @@
 /**
- * Binds an AutoComplete instance to a Node instance.
+ * Binds an AutoCompleteList instance to a Node instance.
  *
  * @module autocomplete
- * @submodule autocomplete-plugin
- * @class Plugin.AutoComplete
- * @extends AutoComplete
+ * @submodule autocomplete-list-plugin
+ * @class Plugin.AutoCompleteList
+ * @extends AutoCompleteList
  */
 
-function AutoCompletePlugin(config) {
+var Plugin = Y.namespace('Plugin');
+
+function ACListPlugin(config) {
     config = Y.mix({}, config, true); // fast shallow clone
     config.inputNode = config.host;
     AutoCompletePlugin.superclass.constructor.apply(this, arguments);
 }
 
-Y.namespace('Plugin').AutoComplete = Y.extend(AutoCompletePlugin, Y.AutoComplete, {}, {
-    NAME: 'autocompletePlugin',
-    NS  : 'ac'
+Y.extend(ACListPlugin, Y.AutoCompleteList, {}, {
+    NAME: 'autocompleteListPlugin',
+    NS  : 'aclist'
 });
+
+Plugin.AutoComplete     = ACListPlugin;
+Plugin.AutoCompleteList = ACListPlugin;

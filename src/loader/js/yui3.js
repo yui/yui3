@@ -48,6 +48,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "arraysort": {}, 
     "async-queue": {
         "requires": [
             "event-custom"
@@ -68,50 +69,59 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "autocomplete": {
-        "plugins": {
-            "autocomplete-filters": {
-                "requires": [
-                    "autocomplete-base", 
-                    "collection", 
-                    "unicode-wordbreak"
-                ]
-            }, 
-            "autocomplete-filters-accentfold": {
-                "requires": [
-                    "autocomplete-base", 
-                    "collection", 
-                    "unicode-accentfold", 
-                    "unicode-wordbreak"
-                ]
-            }, 
-            "autocomplete-highlighters": {
-                "requires": [
-                    "autocomplete-base", 
-                    "collection", 
-                    "highlight-base"
-                ]
-            }, 
-            "autocomplete-highlighters-accentfold": {
-                "requires": [
-                    "autocomplete-base", 
-                    "collection", 
-                    "highlight-accentfold"
-                ]
-            }, 
-            "autocomplete-plugin": {
-                "requires": [
-                    "autocomplete-base", 
-                    "node-pluginhost"
-                ]
-            }
-        }, 
         "submodules": {
             "autocomplete-base": {
+                "optional": [
+                    "jsonp", 
+                    "yql"
+                ], 
+                "plugins": {
+                    "autocomplete-filters": {
+                        "path": "autocomplete/autocomplete-filters-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "unicode-wordbreak"
+                        ]
+                    }, 
+                    "autocomplete-filters-accentfold": {
+                        "path": "autocomplete/autocomplete-filters-accentfold-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "unicode-accentfold", 
+                            "unicode-wordbreak"
+                        ]
+                    }, 
+                    "autocomplete-highlighters": {
+                        "path": "autocomplete/autocomplete-highlighters-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "highlight-base"
+                        ]
+                    }, 
+                    "autocomplete-highlighters-accentfold": {
+                        "path": "autocomplete/autocomplete-highlighters-accentfold-min.js", 
+                        "requires": [
+                            "array-extras", 
+                            "highlight-accentfold"
+                        ]
+                    }
+                }, 
                 "requires": [
-                    "base-base", 
+                    "array-extras", 
+                    "base-build", 
                     "event-valuechange", 
                     "node-base"
                 ]
+            }, 
+            "autocomplete-list": {
+                "requires": [
+                    "autocomplete-base", 
+                    "widget", 
+                    "widget-position", 
+                    "widget-position-align", 
+                    "widget-stack"
+                ], 
+                "skinnable": true
             }
         }
     }, 
@@ -365,6 +375,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
+                ]
+            }
+        }
+    }, 
+    "datatable": {
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset", 
+                    "widget"
+                ], 
+                "skinnable": true
+            }, 
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base", 
+                    "plugin"
+                ]
+            }, 
+            "datatable-sort": {
+                "requires": [
+                    "datatable-base", 
+                    "plugin", 
+                    "recordset-sort"
                 ]
             }
         }
@@ -672,8 +706,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "escape": {}, 
     "event": {
-        "expound": "node-base", 
+        "after": "node-base", 
         "plugins": {
+            "event-base-ie": {
+                "after": [
+                    "event-base"
+                ], 
+                "condition": {
+                    "trigger": "node-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "event-touch": {
                 "requires": [
                     "node-base"
@@ -682,7 +728,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "submodules": {
             "event-base": {
-                "expound": "node-base", 
+                "after": "node-base", 
                 "requires": [
                     "event-custom-base"
                 ]
@@ -720,7 +766,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-synthetic": {
                 "requires": [
                     "node-base", 
-                    "event-custom"
+                    "event-custom-complex"
                 ]
             }
         }
@@ -729,8 +775,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "event-custom-base": {
                 "requires": [
-                    "oop", 
-                    "yui-later"
+                    "oop"
                 ]
             }, 
             "event-custom-complex": {
@@ -779,7 +824,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "highlight-base": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "escape", 
                     "unicode-wordbreak"
                 ]
@@ -917,24 +962,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "oop"
         ]
     }, 
-    "loader": {
-        "requires": [
-            "get"
-        ], 
-        "submodules": {
-            "loader-base": {}, 
-            "loader-rollup": {
-                "requires": [
-                    "loader-base"
-                ]
-            }, 
-            "loader-yui3": {
-                "requires": [
-                    "loader-base"
-                ]
-            }
-        }
-    }, 
     "node": {
         "plugins": {
             "align-plugin": {
@@ -967,10 +994,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }
         }, 
-        "requires": [
-            "dom", 
-            "event-base"
-        ], 
         "submodules": {
             "node-base": {
                 "requires": [
@@ -1055,9 +1078,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "pluginhost": {
-        "requires": [
-            "yui-base"
-        ]
+        "submodules": {
+            "pluginhost-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "pluginhost-config": {
+                "requires": [
+                    "pluginhost-base"
+                ]
+            }
+        }
     }, 
     "profiler": {
         "requires": [
@@ -1101,6 +1133,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-custom"
         ]
+    }, 
+    "recordset": {
+        "submodules": {
+            "recordset-base": {
+                "requires": [
+                    "base", 
+                    "arraylist"
+                ]
+            }, 
+            "recordset-filter": {
+                "requires": [
+                    "recordset-base", 
+                    "array-extras"
+                ]
+            }, 
+            "recordset-indexer": {
+                "requires": [
+                    "recordset-base", 
+                    "plugin"
+                ]
+            }, 
+            "recordset-sort": {
+                "requires": [
+                    "arraysort", 
+                    "recordset-base"
+                ]
+            }
+        }
     }, 
     "scrollview": {
         "plugins": {
@@ -1247,7 +1307,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "unicode-accentfold": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "unicode-data-accentfold"
                 ]
             }, 
@@ -1255,7 +1315,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "unicode-data-wordbreak": {}, 
             "unicode-wordbreak": {
                 "requires": [
-                    "collection", 
+                    "array-extras", 
                     "unicode-data-wordbreak"
                 ]
             }
@@ -1357,19 +1417,44 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "yui": {
         "submodules": {
-            "features": {}, 
-            "get": {}, 
-            "intl-base": {}, 
+            "features": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "get": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "intl-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
             "rls": {
                 "requires": [
+                    "get", 
                     "features"
                 ]
             }, 
             "yui-base": {}, 
-            "yui-later": {}, 
-            "yui-log": {}, 
-            "yui-throttle": {}
+            "yui-later": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-log": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "yui-throttle": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 };
-YUI.Env[Y.version].md5 = 'd1e508fbc6907c32448266f75916c03d';
+YUI.Env[Y.version].md5 = 'e1ddc5e9bba536f5e8bd2d74e2023225';

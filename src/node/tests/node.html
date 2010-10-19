@@ -1211,6 +1211,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Assert.areEqual('foo', node.getData('foo'),
                 "node.setData('foo', 'foo')");
 
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData()");
+
             node.setData({'bar': 'bar', 'baz': 'baz'});
             Assert.areEqual('bar', node.getData('bar'),
                 "node.setData({'bar': 'bar', 'baz': 'baz'})");
@@ -1228,6 +1232,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.clearData();
             Assert.areEqual(undefined, node.getData('baz'),
                 "node.clearData()");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData() after cleared");
         },
 
         test_appendStyle: function() {
@@ -1246,6 +1254,22 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node = Y.Node.create('<div><div><table><tbody><tr></tr><tr></tr><tr><td><div><div class="inner"></div></div></td></tr></tbody></table></div></div>');
             var inner = node.one('.inner');
             inner.ancestor('td');
+        },
+
+        test_ancestors: function() {
+            var node = document.createElement('node');
+            node.className = 'foo';
+            document.body.appendChild(node);
+            nodelist = Y.one(node).ancestors();
+            ArrayAssert.itemsAreEqual([document.documentElement, document.body], nodelist._nodes);
+
+            nodelist = Y.one(node).ancestors('.foo', true);
+            ArrayAssert.itemsAreEqual([node], nodelist._nodes);
+
+            nodelist = Y.one(node).ancestors('body', true);
+            ArrayAssert.itemsAreEqual([document.body], nodelist._nodes);
+
+            document.body.removeChild(node);
         },
 
         test_nodelistEvent: function() {
@@ -1358,6 +1382,28 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.destroy();
             Assert.isNull(node._node);
 
+        },
+
+        test_prependFrag: function() {
+            var html = '<link id="dyn-link-1" href="#" rel="stylesheet"><link id="dyn-link-2" href="#" rel="stylesheet">';
+            Y.one('head').prepend(html);
+            //Y.one('head').prepend(Y.Node.create(html));
+            Assert.isNotNull(document.getElementById('dyn-link-1'));
+            Assert.isNotNull(document.getElementById('dyn-link-2'));
+
+            html = '<link id="dyn-link-3" href="#" rel="stylesheet">'
+            Y.one('head').prepend(html);
+            Assert.isNotNull(document.getElementById('dyn-link-3'));
+        },
+
+        test_focus: function () {
+            var button = document.createElement('button');
+            button.style.visibility = 'hidden';
+            document.body.appendChild(button);
+
+            // This will throw in IE, but the focus() wrapper should catch the
+            // exception.
+            Y.one(button).focus();
         }
 
     })); 

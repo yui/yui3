@@ -1,6 +1,7 @@
 /**
- * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * The YUI module contains the components required for building the YUI
+ * seed file.  This includes the script loading mechanism, a simple queue,
+ * and the core utilities for the library.
  * @module yui
  * @submodule yui-base
  */
@@ -10,7 +11,8 @@
  * removed using next().
  *
  * @class Queue
- * @param item* {MIXED} 0..n items to seed the queue
+ * @constructor
+ * @param {MIXED} item* 0..n items to seed the queue.
  */
 function Queue() {
     this._init();
@@ -24,12 +26,12 @@ Queue.prototype = {
      * @method _init
      * @protected
      */
-    _init: function () {
+    _init: function() {
         /**
          * The collection of enqueued items
          *
          * @property _q
-         * @type {Array}
+         * @type Array
          * @protected
          */
         this._q = [];
@@ -39,43 +41,44 @@ Queue.prototype = {
      * Get the next item in the queue. FIFO support
      *
      * @method next
-     * @return {MIXED} the next item in the queue
+     * @return {MIXED} the next item in the queue.
      */
-    next: function () {
+    next: function() {
         return this._q.shift();
     },
 
     /**
-     * Get the last in the queue. LIFO support
+     * Get the last in the queue. LIFO support.
      *
      * @method last
-     * @return {MIXED} the last item in the queue
+     * @return {MIXED} the last item in the queue.
      */
-    last: function () {
+    last: function() {
         return this._q.pop();
     },
 
     /**
-     * Add 0..n items to the end of the queue
+     * Add 0..n items to the end of the queue.
      *
      * @method add
-     * @param item* {MIXED} 0..n items
+     * @param {MIXED} item* 0..n items.
+     * @return {object} this queue.
      */
-    add: function () {
-        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
+    add: function() {
+        Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
             this._q.push(fn);
-        },this);
+        }, this);
 
         return this;
     },
 
     /**
-     * Returns the current number of queued items
+     * Returns the current number of queued items.
      *
      * @method size
-     * @return {Number}
+     * @return {Number} The size.
      */
-    size: function () {
+    size: function() {
         return this._q.length;
     }
 };

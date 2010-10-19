@@ -58,10 +58,10 @@
 
         var myConsole = new Y.Console().render();
         Y.log('{}');
- 
+
         var testEventTarget = new Y.Test.Case({
             name: "Custom event tests",
-        
+
             testAugment: function() {
 
                 var fired = false;
@@ -353,7 +353,7 @@
                 };
 
                 // configure chaining via global default or on the event target
-                YUI({ /* chain: true */ 
+                YUI({ /* chain: true */
                     base:'../../../build/',
                     logInclude: {
                         test: true
@@ -369,7 +369,7 @@
                     // @TODO an error here is throwing an uncaught exception rather than failing the test
                     // Y2.after('p:e', f1).on('p:e', f2).on('p:e2', f3).on('detach, p:e', f4).detach('detach, p:e').fire('p:e').fire('p:e2');
 
-                    // with event target prefix manipulation ('e' is the same event as 'foo:e', 
+                    // with event target prefix manipulation ('e' is the same event as 'foo:e',
                     // but 'pre:e' is a different event only accessible by using that exact name)
 o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('detach,e').fire('foo:e').fire('e2').on('pre:e', f5).fire('pre:e');
 
@@ -378,7 +378,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     Y.Assert.isTrue(fired3);  // verifies no interaction between events, and prefix manipulation
                     Y.Assert.isFalse(fired4); // verifies detach works (regardless of spaces after comma)
                     Y.Assert.isTrue(fired5);  // verifies custom prefix
-                    
+
                 });
 
             },
@@ -404,14 +404,14 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                         emitFacade: true,
                         bubbles: true
                     },
-                    a = new Y.EventTarget(config), 
+                    a = new Y.EventTarget(config),
                     b = new Y.EventTarget(config);
-                    
+
                 b.addTarget(a);
 
                 // this should not be necessary // fixed
                 // b.publish('test:foo');
-                    
+
                 a.on('test:foo', function(e) {
                     count++;
                     // we will fire this on the parent, so that should be the target
@@ -667,14 +667,14 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                         emitFacade: true,
                         bubbles: true
                     },
-                    leaf = new Y.EventTarget(config), 
-                    branch = new Y.EventTarget(config), 
+                    leaf = new Y.EventTarget(config),
+                    branch = new Y.EventTarget(config),
                     root = new Y.EventTarget(config);
 
                 leaf.name = 'leaf';
                 branch.name = 'branch';
                 root.name = 'root';
-                    
+
                 leaf.addTarget(branch);
                 branch.addTarget(root);
 
@@ -749,14 +749,14 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                         emitFacade: true,
                         bubbles: true
                     },
-                    leaf = new Y.EventTarget(config), 
-                    branch = new Y.EventTarget(config), 
+                    leaf = new Y.EventTarget(config),
+                    branch = new Y.EventTarget(config),
                     root = new Y.EventTarget(config);
 
                 leaf.name = 'leaf';
                 branch.name = 'branch';
                 root.name = 'root';
-                    
+
                 leaf.addTarget(branch);
                 branch.addTarget(root);
 
@@ -816,10 +816,10 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                         bubbles: true,
                         prefix: 'stars'
                     },
-                    z = new Y.EventTarget(config), 
-                    a = new Y.EventTarget(config), 
+                    z = new Y.EventTarget(config),
+                    a = new Y.EventTarget(config),
                     b = new Y.EventTarget(config);
-                    
+
                 b.addTarget(a);
                 a.addTarget(z);
 
@@ -866,10 +866,10 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                         bubbles: true,
                         prefix: 'stars'
                     },
-                    z = new Y.EventTarget(config), 
-                    a = new Y.EventTarget(config), 
+                    z = new Y.EventTarget(config),
+                    a = new Y.EventTarget(config),
                     b = new Y.EventTarget(config);
-                    
+
                 b.addTarget(a);
                 a.addTarget(z);
 
@@ -918,7 +918,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.fire('foo', 'foo');
                 Y.fire('bar', 'bar');
-                
+
                 Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
 
                 handle1.detach();
@@ -936,8 +936,8 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     b = new Y.EventTarget(),
                     result;
 
-                a.publish("foo", { 
-                    emitFacade: true 
+                a.publish("foo", {
+                    emitFacade: true
                 });
                 a.addTarget(b);
 
@@ -946,12 +946,12 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 });
 
                 a.fire("foo");
-                
+
                 Y.Assert.isTrue(result);
 
             }
         });
-        
+
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });

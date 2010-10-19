@@ -3,57 +3,10 @@
 
 <title>Test</title>
 <!-- <script src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-min.js" type="text/javascript"></script>
-     
+
 <script src="../../build/loader/loader-debug.js"></script>
      -->
 <script src="../../build/yui/yui-debug.js"></script>
-<script>
-
-/*
-
-YUI.add('lib1', function (Y) {
-    Y.lib1 = true;
-    Y.replace('blah', 'blah');
-}, '@VERSION@');
-
-YUI({
-    modules: {
-
-        lib2: {
-            requires: ['yui'],
-            fullpath: 'js/lib2.js'
-        },
-
-        lib3: {
-            requires: ['yui'],
-            fullpath: 'js/lib3.js'
-        }
-
-    }, errorFn: function(msg, e, data) {
-        console.log('error: ' + msg + ', ' + data);
-        return true;
-    } 
-    // , throwFail: false
-}).use('lib1', function (Y) {
-
-    Y.replace('boo', 'boo');
-
-    Y.use('lib2', function (Y) {
-        Y.log("lib2: " + Y.lib2);
-    });
-
-    Y.use('lib3', function (Y) {
-        Y.log("lib3: " + Y.lib3);
-    });
-});
-
-YUI().use(function(Y) {
-    Y.log('successful continue');
-});
-*/
-
-</script>
-
 
 </head>
 <body>
@@ -80,120 +33,40 @@ YUI().use(function(Y) {
 
 // Create the first YUI instance
 YUI({
+    // filter: 'debug'
+}).use('lib1', 'sort', 'dd', function (Y) {
+
+    Y.applyConfig({
 
     modules: {
 
-        lib2: {
+        lib1: {
             requires: ['yui'],
-            fullpath: 'js/lib2.js',
-            condition: {
-                trigger: 'node-base',
-                ua: 'gecko'
-                // test: function(Y, req) {
-                //     return Y.UA.gecko;
-                // }
-            }
+            fullpath: 'js/lib1.js'
         },
-
 
         lib3: {
             requires: ['yui'],
-            fullpath: 'js/lib3.js',
-            condition: {
-                trigger: 'event-base',
-                test: function(Y, req) {
-                    return Y.UA.gecko;
-                }
-            }
+            fullpath: 'js/lib3.js'
         }
-        
-        /*
-        ,
+    }});
 
 
-        lib4: {
-            requires: ['yui'],
-            fullpath: 'js/lib4.js',
-            condition: {
-                trigger: 'dom-style',
-                ua: 'gecko'
-            }
-        }
-        */
-    },
+    console.log('used', Y.Env._used['lib1']);
+    console.log('attached', Y.Env._attached['lib1']);
+    console.log('serviced', Y.Env.serviced['lib1']);
+    console.log('_loaded', YUI.Env._loaded['lib1']);
 
-    filter: 'debug'
-
-}).use('dom', 'sort', 'dd', function (Y) {
+    Y.use('lib1', function() {
+        console.log(Y.lib1);
+    });
 
     console.log('1111');
-    
-    // Y.one( "#yui1" ).on( "click", function () {
-    //     Y.log( "Message from YUI instance #1" );
-    // });
-
-    // console.log(Y.merge(YUI));
-    console.log(Y);
-
-/*
-    Y.use('node', function (Y) {
-        Y.log('2');
-        // console.log(Y.one( "#yui2" ));
-        Y.one( "#yui2" ).on( "click", function () {
-            Y.log( "I'm from the second use in the first instance" );
-        });
-    });
-    */
-
-});
-
-/*
-// Create the second YUI instance
-YUI().use('node', function (Y) {
-
-    console.log('2');
-
-    console.log(Y.one( "#yui2" ));
-
-    Y.one( "#yui2" ).on( "click", function () {
-        console.log( "I'm the second YUI instance" );
-    });
-
-});
-*/
-
-/*
-// Create a third YUI instance
-YUI({
-    filter: 'debug'
-}).use('event', function (Y) {
-
-    Y.log('3');
-    // console.log(Y.merge(YUI));
-
-    Y.one( "#yui3" ).on( "click", function () {
-        Y.log( "And this is #3 YUI" );
-    });
-
-});
-
-// Create a separate YUI instance to listen to all instances' logging
-YUI().use("console", function (Y) {
-
-    Y.log('univ');
 
     console.log(Y);
 
-    // Configure the Console's logSource to Y.Global to make it universal
-    new Y.Console({
-        logSource: Y.Global,
-        style: 'block',
-        newestOnTop: false,
-        width: "250px"
-    }).render( "#yconsole" );
 
 });
-*/
 
 </script>
 

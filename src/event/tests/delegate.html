@@ -28,8 +28,8 @@
             <li id="list-2-li-3"><em>Item Three</em>
                 <ul id="list-3">
                     <li id="list-3-li-1"><em>Item Three - One</em></li>
-                    <li id="list-3-li-1"><em>Item Three - Two</em></li>
-                    <li id="list-3-li-1"><em>Item Three - Three</em></li>
+                    <li id="list-3-li-2"><em>Item Three - Two</em></li>
+                    <li id="list-3-li-3"><em>Item Three - Three</em></li>
                 </ul>            
             </li>        
         </ul>
@@ -50,7 +50,7 @@
         <div id="a">
             <p>Div A</p>
             <div id="b" class="remove">
-                <p>Div B</p>
+                <p>Div B <em id="b2" class="remove">I'm a span!</em></p>
                 <div id="c" class="remove">
                     <p>Div C</p>
                 </div>
@@ -392,9 +392,9 @@
 					Y.Event.simulate(Y.one('#div-1-2-1-1 em')._node, 'click');
 
                     Y.Assert.areSame(3, ids.length, "Delegate handler should have fired three times, once for each div in #div-1");
-                    Y.Assert.areSame('div-1-2', ids[0], "First delegate callback should be from the highest div in the subtree");
+                    Y.Assert.areSame('div-1-2-1-1', ids[0], "First delegate callback should be from the deepest div in the subtree");
                     Y.Assert.areSame('div-1-2-1', ids[1]);
-                    Y.Assert.areSame('div-1-2-1-1', ids[2]);
+                    Y.Assert.areSame('div-1-2', ids[2]);
                 },
 
                 test_removing_parent_in_subscriber: function () {
@@ -405,7 +405,7 @@
                         count++;
                     }, '.remove');
 
-                    click('c');
+                    click('b2');
 
                     Y.Assert.areSame(2, count);
                 },
@@ -551,10 +551,11 @@
                 // Existing unfixed bugs
                 _should: {
                     fail: {
+                        //test_filter_function_for_focus_from_body: 2529142,
+                        //"stopPropagation should stop multiple matches": 2529388
                     }
                 },
 
-                // http://yuilibrary.com/projects/yui3/ticket/2529142
                 test_filter_function_for_focus_from_body: function () {
                     var count = 0,
                         handle;
@@ -572,6 +573,40 @@
                         Y.log("Window is not focused.  Can't properly test.",
                             "warn", "TestRunner");
                     }
+                },
+
+                "stopPropagation should stop multiple matches": function () {
+                    var count = 0,
+                        stop = false,
+                        halt = false,
+                        handle;
+
+                    handle = Y.delegate('click', function (e) {
+                        count++;
+                        if (halt) {
+                            e.halt();
+                        } else if (stop) {
+                            e.stopPropagation();
+                        }
+                    }, '#doc', 'ul');
+
+                    click('list-3-li-2');
+
+                    Y.Assert.isTrue((count > 1));
+
+                    count = 0;
+                    stop = true;
+
+                    click('list-3-li-2');
+
+                    Y.Assert.areSame(1, count);
+
+                    count = 0;
+                    halt = true;
+
+                    click('list-3-li-2');
+
+                    Y.Assert.areSame(1, count);
                 }
             }));
 

@@ -30,6 +30,18 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
+Transition._fx = {};
+
+Transition.add = function(name, config) {
+    if (typeof name !== 'string') {
+        Y.Object.each(name, function(v, n) {
+            Transition.add(n, v);
+        });
+    } else {
+        Transition._fx[name] = config;
+    }
+};
+
 Transition._toCamel = function(property) {
     property = property.replace(/-([a-z])/gi, function(m0, m1) {
         return m1.toUpperCase();
@@ -368,9 +380,38 @@ Y.TransitionNative = Transition; // TODO: remove
  *   @param {Function} callback A function to run after the transition has completed. 
  *   @chainable
 */
-Y.Node.prototype.transition = function(config, callback) {
-    var anim = this._transition;
+Y.Node.prototype.transition = function(name, config, callback) {
+    var anim = this._transition,
+        fxConfig,
+        prop;
     
+    if (typeof name === 'string') { // named effect, pull config from registry
+        if (typeof config === 'function') {
+            callback = config;
+            config = null;
+        }
+
+        fxConfig = Transition._fx[name];
+
+        if (config) {
+            config = Y.clone(config);
+
+            for (prop in fxConfig) {
+                if (fxConfig.hasOwnProperty(prop)) {
+                    if (! (prop in config)) {
+                        config[prop] = fxConfig[prop]; 
+                    }
+                }
+            }
+        } else {
+            config = fxConfig;
+        }
+
+    } else { // name is a config, config is a callback or undefined
+        callback = config;
+        config = name;
+    }
+
     if (anim && !anim._running) {
         anim.init(this, config);
     } else {
@@ -414,6 +455,20 @@ Y.NodeList.prototype.transition = function(config, callback) {
 
     return this;
 };
+
+Transition.add({
+    fadeOut: {
+        opacity: 0,
+        duration: 0.75,
+        easing: 'ease-out'
+    },
+
+    fadeIn: {
+        opacity: 1,
+        duration: 0.5,
+        easing: 'ease-in'
+    }
+});
 
 
 }, '@VERSION@' ,{requires:['node-base']});

@@ -170,7 +170,7 @@
 <span class="cm">     */</span>
     <span class="nx">verticalNode</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setNode&#39;</span><span class="p">,</span>
-        <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">ScrollbarsPlugin</span><span class="p">.</span><span class="nx">SCROLLBAR_TEMPLATE</span><span class="p">)</span>
+        <span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_defaultNode&#39;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -181,7 +181,7 @@
 <span class="cm">     */</span>
     <span class="nx">horizontalNode</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setNode&#39;</span><span class="p">,</span>
-        <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">ScrollbarsPlugin</span><span class="p">.</span><span class="nx">SCROLLBAR_TEMPLATE</span><span class="p">)</span>
+        <span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_defaultNode&#39;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
@@ -588,6 +588,18 @@
 
         <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
     <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates default node instances for scrollbars</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defaultNode</span>
+<span class="cm">     * @return {Node} The Y.Node instance for the scrollbar</span>
+<span class="cm">     * </span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defaultNode</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">ScrollbarsPlugin</span><span class="p">.</span><span class="nx">SCROLLBAR_TEMPLATE</span><span class="p">);</span>
+    <span class="p">},</span>    
 
     <span class="nx">_basic</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&lt;=</span> <span class="mi">8</span>
 

@@ -1450,6 +1450,9 @@ Y.mix(Widget.prototype, {
                 } else {
                     if (Lang.isArray(v)) {
                         val = srcNode.all(v[0]);
+                        if (val.isEmpty()) {
+                            val = null;
+                        }
                     } else {
                         val = srcNode.one(v);
                     }

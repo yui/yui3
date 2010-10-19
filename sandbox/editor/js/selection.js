@@ -150,17 +150,19 @@ YUI.add('selection', function(Y) {
         var endTime1 = (new Date()).getTime();
         Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'selection');
 
+        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
+
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
-                el.className = 'hr yui-non';
+                el.className = 'hr yui-non yui-skip';
                 el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
                 el.setAttribute('readonly', true);
                 el.setAttribute('contenteditable', false); //Keep it from being Edited
                 if (hr.parentNode) {
                     hr.parentNode.replaceChild(el, hr);
                 }
-
         });
+        
 
         Y.each(classNames, function(v, k) {
             cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';
@@ -231,14 +233,14 @@ YUI.add('selection', function(Y) {
             wrapped = Y.Selection._wrapBlock(wrapped);
         }
 
-        single = Y.all('p');
+        single = Y.all(Y.Selection.DEFAULT_BLOCK_TAG);
         if (single.size() === 1) {
-            Y.log('Only One Paragragh, focus it..', 'info', 'selection');
+            Y.log('Only One default block tag (' + Y.Selection.DEFAULT_BLOCK_TAG + '), focus it..', 'info', 'selection');
             br = single.item(0).all('br');
             if (br.size() === 1) {
                 br.item(0).remove();
                 var html = single.item(0).get('innerHTML');
-                if (html == '' || html == ' ') {
+                if (html === '' || html === ' ') {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);
@@ -255,6 +257,7 @@ YUI.add('selection', function(Y) {
         }
         
         if (!Y.UA.ie) {
+            /*
             divs = Y.all('div, p');
             divs.each(function(d) {
                 if (d.hasClass('yui-non')) {
@@ -262,25 +265,27 @@ YUI.add('selection', function(Y) {
                 }
                 var html = d.get('innerHTML');
                 if (html === '') {
-                    //Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
+                    Y.log('Empty DIV/P Tag Found, Removing It', 'info', 'selection');
                     d.remove();
                 } else {
-                    //Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
+                    Y.log('DIVS/PS Count: ' + d.get('childNodes').size(), 'info', 'selection');
                     if (d.get('childNodes').size() == 1) {
-                        //Y.log('This Div/P only has one Child Node', 'info', 'selection');
+                        Y.log('This Div/P only has one Child Node', 'info', 'selection');
                         if (d.ancestor('p')) {
-                            //Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
+                            Y.log('This Div/P is a child of a paragraph, remove it..', 'info', 'selection');
                             d.replace(d.get('firstChild'));
                         }
                     }
                 }
-            });
+            });*/
 
+            /** Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
             Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
             spans.each(function(s) {
                 s.setAttribute('style', '');
             });
+            */
         }
 
 
@@ -302,6 +307,13 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
 
+    /**
+    * Regular Expression to remove all HTML from a string
+    * @static
+    * @property REG_NOHTML
+    */
+    Y.Selection.REG_NOHTML = /<\S[^><]*>/g;
+
 
     /**
     * Wraps an array of elements in a Block level tag
@@ -311,7 +323,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection._wrapBlock = function(wrapped) {
         if (wrapped) {
-            var newChild = Y.Node.create('<p></p>'),
+            var newChild = Y.Node.create('<' + Y.Selection.DEFAULT_BLOCK_TAG + '></' + Y.Selection.DEFAULT_BLOCK_TAG + '>'),
                 firstChild = Y.one(wrapped[0]), i;
 
             for (i = 1; i < wrapped.length; i++) {
@@ -331,7 +343,8 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.unfilter = function() {
         var nodes = Y.all('body [class]'),
-            html = '', nons, ids;
+            html = '', nons, ids,
+            body = Y.one('body');
         
         Y.log('UnFiltering nodes', 'info', 'selection');
         
@@ -348,10 +361,10 @@ YUI.add('selection', function(Y) {
 
         nons = Y.all('.yui-non');
         nons.each(function(n) {
-            if (n.get('innerHTML') === '') {
+            if (!n.hasClass('yui-skip') && n.get('innerHTML') === '') {
                 n.remove();
             } else {
-                n.removeClass('yui-non');
+                n.removeClass('yui-non').removeClass('yui-skip');
             }
         });
 
@@ -362,9 +375,13 @@ YUI.add('selection', function(Y) {
                 n.removeAttribute('_yuid');
             }
         });
-
-        html = Y.one('body').get('innerHTML');
         
+        if (body) {
+            html = body.get('innerHTML');
+        }
+        
+        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
+
         nodes.each(function(n) {
             n.addClass(n._yuid);
             n.setStyle(FONT_FAMILY, '');
@@ -397,14 +414,14 @@ YUI.add('selection', function(Y) {
     * @return {String} The string of text
     */
     Y.Selection.getText = function(node) {
-        var t = node.get('innerHTML').replace(Y.Selection.STRIP_HTML, ''),
-            c = t.match(Y.Selection.REG_CHAR),
-            s = t.match(Y.Selection.REG_NON);
-            if (c === null && s) {
-                t = '';
-            }
-        return t;
+        var txt = node.get('innerHTML').replace(Y.Selection.REG_NOHTML, '');
+        //Clean out the cursor subs to see if the Node is empty
+        txt = txt.replace('<span><br></span>', '').replace('<br>', '');
+        return txt;
     };
+
+    //Y.Selection.DEFAULT_BLOCK_TAG = 'div';
+    Y.Selection.DEFAULT_BLOCK_TAG = 'p';
 
     /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]
@@ -412,13 +429,6 @@ YUI.add('selection', function(Y) {
     * @property ALL
     */
     Y.Selection.ALL = '[style],font[face]';
-
-    /**
-    * RegExp used to strip HTML tags from a string
-    * @static
-    * @property STRIP_HTML
-    */
-    Y.Selection.STRIP_HTML = /<\S[^><]*>/g;
 
     /**
     * The selector to use when looking for block level items.
@@ -458,7 +468,13 @@ YUI.add('selection', function(Y) {
     * @static
     * @property CURSOR
     */
-    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span></span>';
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '"><br class="yui-cursor"></span>';
+
+    Y.Selection.hasCursor = function() {
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        Y.log('Has Cursor: ' + cur.size(), 'info', 'selection');
+        return cur.size();
+    };
 
     /**
     * Called from Editor keydown to remove the "extra" space before the cursor.
@@ -466,28 +482,28 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
-        /*
-        var cur = Y.config.doc.getElementById(Y.Selection.CUR_WRAPID);
-        if (cur) {
-            cur.id = '';
-            if (cur.innerHTML == '&nbsp;' || cur.innerHTML == '<br>') {
-                if (cur.parentNode) {
-                    cur.parentNode.removeChild(cur);
-                }
-            }
-        }
-        */
-        
-        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
-        if (cur.size) {
-            cur.each(function(c) {
-                var html = c.get('innerHTML');
-                if (html == '&nbsp' || html == '<br>') {
-                    c.remove();
+        var cur = Y.all('br.yui-cursor');
+        if (cur.size()) {
+            cur.each(function(b) {
+                var c = b.get('parentNode.parentNode.childNodes');
+                if (c.size() > 1) {
+                    b.remove();
                 }
             });
         }
-        
+        /*
+        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        if (cur.size()) {
+            cur.each(function(c) {
+                var html = c.get('innerHTML');
+                if (html == '&nbsp;' || html == '<br>') {
+                    if (c.previous() || c.next()) {
+                        c.remove();
+                    }
+                }
+            });
+        }
+        */
     };
 
     Y.Selection.prototype = {
@@ -588,7 +604,7 @@ YUI.add('selection', function(Y) {
                 items = [];
             
             nodes.each(function(n, k) {
-                if (n.getStyle(FONT_FAMILY, Y.Selection.TMP)) {
+                if (n.getStyle(FONT_FAMILY) ==  Y.Selection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
                     n.removeAttribute('face');
                     if (n.getAttribute('style') === '') {
@@ -676,7 +692,7 @@ YUI.add('selection', function(Y) {
                     }
                     newNode = Y.Node.create(html);
                     html = node.get('innerHTML').replace(/\n/gi, '');
-                    if (html == '' || html == '<br>') {
+                    if (html === '' || html === '<br>') {
                         node.append(newNode);
                     } else {
                         node.insert(newNode, 'before');
@@ -853,7 +869,7 @@ YUI.add('selection', function(Y) {
             if (cur) {
                 if (keep) {
                     cur.removeAttribute('id');
-                    cur.set('innerHTML', '<span id="' + Y.Selection.CUR_WRAPID + '">&nbsp;</span>');
+                    cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {
                     cur.remove();
                 }

@@ -30,6 +30,31 @@ suite.add(new Y.Test.Case({
         );
     },
 
+    'all() should not highlight matches inside HTML entities': function () {
+        Assert.areSame(
+            '&amp;',
+            Hi.all('&', 'amp')
+        );
+
+        Assert.areSame(
+            '&#x2F;<b class="yui3-highlight">m</b>&amp;<b class="yui3-highlight">m</b>&#x2F;',
+            Hi.all('/m&m/', ['a', 'm', 'x'])
+        );
+    },
+
+    'all() should highlight complete HTML entities when part of a match': function () {
+        Assert.areSame(
+            '<b class="yui3-highlight">&amp;</b>',
+            Hi.all('&', '&')
+        );
+
+        Assert.areSame(
+            'foo <b class="yui3-highlight">&amp;</b> bar',
+            Hi.all('foo & bar', '&')
+        );
+
+    },
+
     'all() should be case-insensitive by default': function () {
         Assert.areSame(
             'f<b class="yui3-highlight">oo</b> <b class="yui3-highlight">BA</b>R <b class="yui3-highlight">ba</b>z',
@@ -81,23 +106,6 @@ suite.add(new Y.Test.Case({
         Assert.areSame(
             'foo <b class="yui3-highlight">bar</b> baz',
             Hi.allFold('foo bar baz', ['bár'])
-        );
-    },
-
-    'allFold() should not choke when single chars are folded into multiple chars': function () {
-        Assert.areSame(
-            'encyclo<b class="yui3-highlight">pædia</b> set',
-            Hi.allFold('encyclopædia set', ['paedia'])
-        );
-
-        Assert.areSame(
-            'encyclo<b class="yui3-highlight">paedia</b> set',
-            Hi.allFold('encyclopaedia set', ['pædia'])
-        );
-
-        Assert.areSame(
-            '<b class="yui3-highlight">ae</b><b class="yui3-highlight">ae</b><b class="yui3-highlight">ae</b>bbb<b class="yui3-highlight">ae</b><b class="yui3-highlight">ae</b><b class="yui3-highlight">ae</b>',
-            Hi.allFold('aeaeaebbbaeaeae', ['æ'])
         );
     },
 
@@ -174,6 +182,18 @@ suite.add(new Y.Test.Case({
         );
     },
 
+    'words() should not highlight matches inside HTML entities': function () {
+        Assert.areSame(
+            '&amp;',
+            Hi.words('&', 'amp')
+        );
+
+        Assert.areSame(
+            '&#x2F;<b class="yui3-highlight">m</b>&amp;<b class="yui3-highlight">m</b>&#x2F;',
+            Hi.words('/m&m/', ['a', 'm', 'x'])
+        );
+    },
+
     'words() should be case-insensitive by default': function () {
         Assert.areSame(
             'foo <b class="yui3-highlight">BAR</b> baz',
@@ -226,18 +246,6 @@ suite.add(new Y.Test.Case({
         Assert.areSame(
             '<b class="yui3-highlight">foo</b> <b class="yui3-highlight">bar</b> baz',
             Hi.wordsFold('foo bar baz', ['föo', 'bár'])
-        );
-    },
-
-    'wordsFold() should not choke when single chars are folded into multiple chars': function () {
-        Assert.areSame(
-            '<b class="yui3-highlight">Encyclopædia</b> <b class="yui3-highlight">Brittænicæ</b>',
-            Hi.wordsFold('Encyclopædia Brittænicæ', 'encyclopaedia brittaenicae')
-        );
-
-        Assert.areSame(
-            '<b class="yui3-highlight">Encyclopaedia</b> <b class="yui3-highlight">Brittaenicae</b>',
-            Hi.wordsFold('Encyclopaedia Brittaenicae', 'encyclopædia brittænicæ')
         );
     }
 }));

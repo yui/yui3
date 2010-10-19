@@ -1,11 +1,10 @@
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
  * @module event-custom
  * @submodule event-custom-base
  */
-(function() {
 
 /**
  * Allows for the insertion of methods that are executed before or after
@@ -14,8 +13,8 @@
  * @static
  */
 
-var BEFORE = 0,
-    AFTER = 1;
+var DO_BEFORE = 0,
+    DO_AFTER = 1;
 
 Y.Do = {
 
@@ -46,7 +45,7 @@ Y.Do = {
             f = Y.rbind.apply(Y, a);
         }
 
-        return this._inject(BEFORE, f, obj, sFn);
+        return this._inject(DO_BEFORE, f, obj, sFn);
     },
 
     /**
@@ -67,7 +66,7 @@ Y.Do = {
             f = Y.rbind.apply(Y, a);
         }
 
-        return this._inject(AFTER, f, obj, sFn);
+        return this._inject(DO_AFTER, f, obj, sFn);
     },
 
     /**
@@ -99,7 +98,7 @@ Y.Do = {
             o[sFn] = new Y.Do.Method(obj, sFn);
 
             // re-route the method to our wrapper
-            obj[sFn] = 
+            obj[sFn] =
                 function() {
                     return o[sFn].exec.apply(o[sFn], arguments);
                 };
@@ -184,8 +183,8 @@ Y.Do.Method.prototype._delete = function (sid) {
  */
 Y.Do.Method.prototype.exec = function () {
 
-    var args = Y.Array(arguments, 0, true), 
-        i, ret, newRet, 
+    var args = Y.Array(arguments, 0, true),
+        i, ret, newRet,
         bf = this.before,
         af = this.after,
         prevented = false;
@@ -288,4 +287,3 @@ Y.Do.Error = Y.Do.Halt;
 
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
-})();

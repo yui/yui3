@@ -18,35 +18,35 @@ Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
 var _eventenv = Y.Env.evt,
-config = Y.config,
-win = config.win,
-add = YUI.Env.add,
-remove = YUI.Env.remove,
+    config = Y.config,
+    win = config.win,
+    add = YUI.Env.add,
+    remove = YUI.Env.remove,
 
-onLoad = function() {
-    YUI.Env.windowLoaded = true;
-    Y.Event._load();
-    remove(win, "load", onLoad);
-},
+    onLoad = function() {
+        YUI.Env.windowLoaded = true;
+        Y.Event._load();
+        remove(win, "load", onLoad);
+    },
 
-onUnload = function() {
-    Y.Event._unload();
-    remove(win, "unload", onUnload);
-},
+    onUnload = function() {
+        Y.Event._unload();
+    },
 
-EVENT_READY = 'domready',
+    EVENT_READY = 'domready',
 
-COMPAT_ARG = '~yui|2|compat~',
+    COMPAT_ARG = '~yui|2|compat~',
 
-shouldIterate = function(o) {
-    try {
-        return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !o.alert);
-    } catch(ex) {
-        Y.log("collection check failure", "warn", "event");
-        return false;
-    }
+    shouldIterate = function(o) {
+        try {
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) &&
+                    !o.tagName && !o.alert);
+        } catch(ex) {
+            Y.log("collection check failure", "warn", "event");
+            return false;
+        }
 
-},
+    },
 
 Event = function() {
 
@@ -78,7 +78,7 @@ Event = function() {
     _avail = [],
 
     /**
-     * Custom event wrappers for DOM events.  Key is 
+     * Custom event wrappers for DOM events.  Key is
      * 'event:' + Element uid stamp + event type
      * @property _wrappers
      * @type Y.Event.Custom
@@ -90,7 +90,7 @@ Event = function() {
     _windowLoadKey = null,
 
     /**
-     * Custom event wrapper map DOM events.  Key is 
+     * Custom event wrapper map DOM events.  Key is
      * Element uid stamp.  Each item is a hash of custom event
      * wrappers as provided in the _wrappers collection.  This
      * provides the infrastructure for getListeners.
@@ -166,7 +166,7 @@ Event = function() {
          */
         startInterval: function() {
             if (!Event._interval) {
-Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
+Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             }
         },
 
@@ -203,19 +203,19 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             // Y.log('onAvailable registered for: ' + id);
 
             for (i=0; i<a.length; i=i+1) {
-                _avail.push({ 
-                    id:         a[i], 
-                    fn:         fn, 
-                    obj:        p_obj, 
-                    override:   p_override, 
+                _avail.push({
+                    id:         a[i],
+                    fn:         fn,
+                    obj:        p_obj,
+                    override:   p_override,
                     checkReady: checkContent,
-                    compat:     compat 
+                    compat:     compat
                 });
             }
             _retryCount = this.POLL_RETRYS;
 
             // We want the first test to be immediate, but async
-            setTimeout(Y.bind(Event._poll, Event), 0);
+            setTimeout(Event._poll, 0);
 
             availHandle = new Y.EventHandle({
 
@@ -255,9 +255,9 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          *
          * @param {string}   id the id of the element to look for.
          * @param {function} fn what to execute when the element is ready.
-         * @param {object}   p_obj an optional object to be passed back as
+         * @param {object}   obj an optional object to be passed back as
          *                   a parameter to fn.
-         * @param {boolean|object}  p_override If set to true, fn will execute
+         * @param {boolean|object}  override If set to true, fn will execute
          *                   in the context of p_obj.  If an object, fn will
          *                   exectute in the context of that object
          *
@@ -265,8 +265,8 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          * @deprecated Use Y.on("contentready")
          */
         // @TODO fix arguments
-        onContentReady: function(id, fn, p_obj, p_override, compat) {
-            return this.onAvailable(id, fn, p_obj, p_override, true, compat);
+        onContentReady: function(id, fn, obj, override, compat) {
+            return Event.onAvailable(id, fn, obj, override, true, compat);
         },
 
         /**
@@ -276,13 +276,13 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
          *
          * @param {String}   type     The type of event to append
          * @param {Function} fn        The method the event invokes
-         * @param {String|HTMLElement|Array|NodeList} el An id, an element 
-         *  reference, or a collection of ids and/or elements to assign the 
+         * @param {String|HTMLElement|Array|NodeList} el An id, an element
+         *  reference, or a collection of ids and/or elements to assign the
          *  listener to.
          * @param {Object}   context optional context object
          * @param {Boolean|object}  args 0..n arguments to pass to the callback
          * @return {EventHandle} an object to that can be used to detach the listener
-         *                     
+         *
          * @static
          */
 
@@ -305,7 +305,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
 
 
             cewrapper = _wrappers[key];
-            
+
 
             if (!cewrapper) {
                 // create CE wrapper
@@ -323,7 +323,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 });
 
                 cewrapper.overrides = {};
-            
+
                 // for later removeListener calls
                 cewrapper.el = el;
                 cewrapper.key = key;
@@ -333,35 +333,35 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                     cewrapper.fire(Event.getEvent(e, el, (compat || (false === facade))));
                 };
                 cewrapper.capture = capture;
-            
+
                 if (el == win && type == "load") {
                     // window load happens once
                     cewrapper.fireOnce = true;
                     _windowLoadKey = key;
                 }
-            
+
                 _wrappers[key] = cewrapper;
                 _el_events[ek] = _el_events[ek] || {};
                 _el_events[ek][key] = cewrapper;
-            
+
                 add(el, type, cewrapper.fn, capture);
             }
 
             return cewrapper;
-            
+
         },
 
         _attach: function(args, conf) {
 
-            var compat, 
-                handles, oEl, cewrapper, context, 
+            var compat,
+                handles, oEl, cewrapper, context,
                 fireNow = false, ret,
                 type = args[0],
                 fn = args[1],
                 el = args[2] || win,
                 facade = conf && conf.facade,
                 capture = conf && conf.capture,
-                overrides = conf && conf.overrides; 
+                overrides = conf && conf.overrides;
 
             if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -378,7 +378,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             if (shouldIterate(el)) {
 
                 handles=[];
-                
+
                 Y.each(el, function(v, k) {
                     args[2] = v;
                     handles.push(Event._attach(args, conf));
@@ -387,9 +387,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // return (handles.length === 1) ? handles[0] : handles;
                 return new Y.EventHandle(handles);
 
-            // If the el argument is a string, we assume it is 
+            // If the el argument is a string, we assume it is
             // actually the id of the element.  If the page is loaded
-            // we convert el to the actual element, otherwise we 
+            // we convert el to the actual element, otherwise we
             // defer attaching the event until the element is
             // ready
             } else if (Y.Lang.isString(el)) {
@@ -423,9 +423,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 } else {
 
                     // Y.log(el + ' not found');
-                    ret = this.onAvailable(el, function() {
+                    ret = Event.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
-                        
+
                         ret.handle = Event._attach(args, conf);
 
                     }, Event, true, false, compat);
@@ -441,11 +441,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
-            if (Y.Node && el instanceof Y.Node) {
+            if (Y.Node && Y.instanceOf(el, Y.Node)) {
                 el = Y.Node.getDOMNode(el);
             }
 
-            cewrapper = this._createWrapper(el, type, capture, compat, facade);
+            cewrapper = Event._createWrapper(el, type, capture, compat, facade);
             if (overrides) {
                 Y.mix(cewrapper.overrides, overrides);
             }
@@ -487,10 +487,10 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          *
          * @param {String} type the type of event to remove.
          * @param {Function} fn the method the event invokes.  If fn is
-         * undefined, then all event handlers for the type of event are 
+         * undefined, then all event handlers for the type of event are
          * removed.
-         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An 
-         * event handle, an id, an element reference, or a collection 
+         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An
+         * event handle, an id, an element reference, or a collection
          * of ids and/or elements to remove the listener from.
          * @return {boolean} true if the unbind was successful, false otherwise.
          * @static
@@ -525,8 +525,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     }
                 }
                 // return Event.detach.apply(Event, args);
-            } 
-            
+            }
+
             if (!el) {
                 return false;
             }
@@ -546,7 +546,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             if (!type || !fn || !fn.call) {
-                return this.purgeElement(el, false, type);
+                return Event.purgeElement(el, false, type);
             }
 
             id = 'event:' + Y.stamp(el) + type;
@@ -569,18 +569,18 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @method getEvent
          * @param {Event} e the event parameter from the handler
          * @param {HTMLElement} el the element the listener was attached to
-         * @return {Event} the event 
+         * @return {Event} the event
          * @static
          */
         getEvent: function(e, el, noFacade) {
             var ev = e || win.event;
 
-            return (noFacade) ? ev : 
+            return (noFacade) ? ev :
                 new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
         },
 
         /**
-         * Generates an unique ID for the element if it does not already 
+         * Generates an unique ID for the element if it does not already
          * have one.
          * @method generateId
          * @param el the element to create the id for
@@ -600,9 +600,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
         /**
          * We want to be able to use getElementsByTagName as a collection
-         * to attach a group of events to.  Unfortunately, different 
+         * to attach a group of events to.  Unfortunately, different
          * browsers return different types of collections.  This function
-         * tests to determine if the object is array-like.  It will also 
+         * tests to determine if the object is array-like.  It will also
          * fail if the object is an array, but is empty.
          * @method _isValidCollection
          * @param o the object to test
@@ -639,15 +639,15 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
         },
 
         /**
-         * Polling function that runs before the onload event fires, 
-         * attempting to attach to DOM Nodes as soon as they are 
+         * Polling function that runs before the onload event fires,
+         * attempting to attach to DOM Nodes as soon as they are
          * available
          * @method _poll
          * @static
          * @private
          */
         _poll: function() {
-            if (this.locked) {
+            if (Event.locked) {
                 return;
             }
 
@@ -655,16 +655,16 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // Hold off if DOMReady has not fired and check current
                 // readyState to protect against the IE operation aborted
                 // issue.
-                this.startInterval();
+                Event.startInterval();
                 return;
             }
 
-            this.locked = true;
+            Event.locked = true;
 
             // Y.log.debug("poll");
-            // keep trying until after the page is loaded.  We need to 
-            // check the page load state prior to trying to bind the 
-            // elements so that we can be certain all elements have been 
+            // keep trying until after the page is loaded.  We need to
+            // check the page load state prior to trying to bind the
+            // elements so that we can be certain all elements have been
             // tested appropriately
             var i, len, item, el, notAvail, executeItem,
                 tryAgain = !_loadComplete;
@@ -739,13 +739,13 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             if (tryAgain) {
                 // we may need to strip the nulled out items here
-                this.startInterval();
+                Event.startInterval();
             } else {
-                clearInterval(this._interval);
-                this._interval = null;
+                clearInterval(Event._interval);
+                Event._interval = null;
             }
 
-            this.locked = false;
+            Event.locked = false;
 
             return;
 
@@ -766,7 +766,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len, props, children, child;
+                lis = Event.getListeners(oEl, type), i, len, props, children, child;
 
             if (recurse && oEl) {
                 lis = lis || [];
@@ -774,7 +774,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 i = 0;
                 len = children.length;
                 for (; i < len; ++i) {
-                    child = this.getListeners(children[i], type);
+                    child = Event.getListeners(children[i], type);
                     if (child) {
                         lis = lis.concat(child);
                     }
@@ -800,12 +800,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * Returns all listeners attached to the given element via addListener.
          * Optionally, you can specify a specific type of event to return.
          * @method getListeners
-         * @param el {HTMLElement|string} the element or element id to inspect 
+         * @param el {HTMLElement|string} the element or element id to inspect
          * @param type {string} optional type of listener to return. If
          * left out, all listeners will be returned
          * @return {Y.Custom.Event} the custom event wrapper for the DOM event(s)
          * @static
-         */           
+         */
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
                 results=[] , key = (type) ? 'event:' + ek + type : null,
@@ -841,7 +841,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
         },
 
         /**
-         * Removes all listeners registered by pe.event.  Called 
+         * Removes all listeners registered by pe.event.  Called
          * automatically during the unload event.
          * @method _unload
          * @static
@@ -854,9 +854,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 delete _wrappers[k];
                 delete _el_events[v.domkey][k];
             });
+            remove(win, "unload", onUnload);
         },
 
-        
         /**
          * Adds a DOM event directly without the caching, cleanup, context adj, etc
          *
@@ -896,10 +896,10 @@ if (config.injected || YUI.Env.windowLoaded) {
 
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
 if (Y.UA.ie) {
-    Y.on(EVENT_READY, Event._poll, Event, true);
+    Y.on(EVENT_READY, Event._poll);
 }
 
-Y.on("unload", onUnload);
+add(win, "unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;

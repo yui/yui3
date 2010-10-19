@@ -1,24 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html debug="true">
 <head>
-<style type="text/css"> 
+<style type="text/css">
 body {
 	margin:0;
 	padding:0;
 }
   #container { position: relative; padding: 6px; background-color: #eeeeee; width: 420px; height:220px; }
   /* custom styles for this example */
-.yui-skin-sam .yui-dt-liner { white-space:nowrap; } 
-</style> 
+.yui-skin-sam .yui-dt-liner { white-space:nowrap; }
+</style>
 <title>use('yui2-datatable') and then get dependencies</title>
-<script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+<script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>
 <!--
-<script type="text/javascript" src="../../../yui2-docs/templates/examples/datatable/assets/js/data.js"></script> 
+<script type="text/javascript" src="../../../yui2-docs/templates/examples/datatable/assets/js/data.js"></script>
 -->
-<script type="text/javascript" charset="utf-8">                                                                                                                 
+<script type="text/javascript" charset="utf-8">
 YUI({
     combine: true, // running locally, so I need to force combo handling
     yui2: '2.8.1',
+    '2in3': '4',
+
+    groups: {
+        yui2: {
+            base: '../../../2in3/dist/2.8.1/build/',
+            patterns:  {
+                'yui2-': {
+                    configFn: function(me) {
+                        if(/-skin|reset|fonts|grids|base/.test(me.name)) {
+                            me.type = 'css';
+                            me.path = me.path.replace(/\.js/, '.css');
+                            me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
+                        }
+                    }
+                }
+            }
+        }
+    },
+
     modules: {
         // this file creates 'YAHOO.example.Data' when loaded, so it can't be used inline
         // or dyamically loaded until a YAHOO global has been created (which we don't
@@ -56,16 +75,16 @@ YUI({
                 {key:"amount", formatter:YAHOO.widget.DataTable.formatCurrency, sortable:true, resizeable:true},
                 {key:"title", sortable:true, resizeable:true}
             ];
-     
+
             var myDataSource = new YAHOO.util.DataSource(YAHOO.example.Data.bookorders);
             myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
             myDataSource.responseSchema = {
                 fields: ["id","date","quantity","amount","title"]
             };
-     
+
             var myDataTable = new YAHOO.widget.DataTable("basic",
                     myColumnDefs, myDataSource, {caption:"DataTable Caption"});
-                    
+
             return {
                 oDS: myDataSource,
                 oDT: myDataTable
@@ -74,9 +93,9 @@ YUI({
         });
     // });
 });
-</script>     
+</script>
 </head>
 <body class="yui-skin-sam">
-<div id="basic"></div> 
+<div id="basic"></div>
 </body>
 </html>

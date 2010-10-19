@@ -219,6 +219,10 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.Assert.areSame('apple', this.history.get('a'));
         Y.Assert.areSame('bumblebee', this.history.get('b'));
+
+        this.history.add({foo: 'bar/baz'}, {merge: false});
+        Y.Assert.areSame('bar/baz', this.history.get('foo'));
+        Y.Assert.areSame('foo=bar%2Fbaz', Y.HistoryHash.getHash());
     },
 
     'replace() should replace the hash': function () {
@@ -226,6 +230,50 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.Assert.areSame('aardvark', this.history.get('a'));
         Y.Assert.areSame('boomerang', this.history.get('b'));
+    },
+
+    // -- Bugs -----------------------------------------------------------------
+
+    // http://yuilibrary.com/projects/yui3/ticket/2529399
+    'Setting an unencoded hash value outside of HistoryHash should not result in two history entries': function () {
+        // Necessary to avoid catching a late-firing event from a previous test.
+        this.wait(function () {
+            var changes = 0,
+
+            event = Y.on('hashchange', function (e) {
+                changes += 1;
+            }, win);
+
+            location.href = '#foo=bar/baz';
+
+            this.wait(function () {
+                event.detach();
+                Y.Assert.areSame(1, changes);
+            }, 105);
+        }, 51);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2529436
+    'Setting a non-string value should not result in two history entries': function () {
+        this.wait(function () {
+            var changes = 0,
+
+            event = this.history.on('change', function (e) {
+                changes += 1;
+            });
+
+            this.history.addValue('foo', '1');
+
+            this.wait(function () {
+                Y.Assert.areSame(1, changes);
+                this.history.addValue('foo', 1);
+
+                this.wait(function () {
+                    event.detach();
+                    Y.Assert.areSame(1, changes);
+                }, 105);
+            }, 105);
+        }, 51);
     }
 }));
 

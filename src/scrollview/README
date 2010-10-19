@@ -8,6 +8,12 @@ The scrollview/tests/manual folder contains basic
 examples of vertical, horizontal and paged scrolling 
 for the preview release.
 
-3.2
+3.3.0
+
+* Fixed shared scrollbar node across multiple instances.
+* Changed async call to _uiDimensionsChange after render to a sync call.
+* Corrected skin prefix to be yui3-skin-sam instead yui-skin-sam.
+
+3.2.0
 
 * New beta component

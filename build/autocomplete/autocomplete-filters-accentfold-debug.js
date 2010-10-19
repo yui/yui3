@@ -17,7 +17,7 @@ YUI.add('autocomplete-filters-accentfold', function(Y) {
  */
 
 /**
- * @class AutoComplete.Filters
+ * @class AutoCompleteFilters
  * @static
  */
 
@@ -26,7 +26,7 @@ var AccentFold = Y.Unicode.AccentFold,
     YArray     = Y.Array,
     YObject    = Y.Object;
 
-Y.mix(Y.namespace('AutoComplete.Filters'), {
+Y.mix(Y.namespace('AutoCompleteFilters'), {
     /**
      * Accent folding version of <code>charMatch()</code>.
      *
@@ -104,4 +104,4 @@ Y.mix(Y.namespace('AutoComplete.Filters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'collection', 'unicode-accentfold', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'unicode-accentfold', 'unicode-wordbreak']});

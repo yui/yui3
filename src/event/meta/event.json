@@ -1,44 +1,44 @@
 {
     "event": {
-        "expound": "node-base", 
+        "after": "node-base",
         "submodules": {
             "event-base": {
-                "expound": "node-base", 
+                "after": "node-base",
                 "requires": [
                     "event-custom-base"
                 ]
-            }, 
+            },
             "event-synthetic": {
                 "requires": [
                     "node-base",
-                    "event-custom"
+                    "event-custom-complex"
                 ]
             },
             "event-delegate": {
                 "requires": [
                     "node-base"
                 ]
-            }, 
+            },
             "event-focus": {
                 "requires": [
                     "event-synthetic"
                 ]
-            }, 
+            },
             "event-key": {
                 "requires": [
                     "event-synthetic"
                 ]
-            }, 
+            },
             "event-mouseenter": {
                 "requires": [
                     "event-synthetic"
                 ]
-            }, 
+            },
             "event-mousewheel": {
                 "requires": [
                     "event-synthetic"
                 ]
-            }, 
+            },
             "event-resize": {
                 "requires": [
                     "event-synthetic"
@@ -50,6 +50,18 @@
                 "requires" : [
                      "node-base"
                 ]
+            },
+            "event-base-ie": {
+                "requires": [
+                    "node-base"
+                ],
+                "after": [
+                    "event-base"
+                ],
+                "condition": {
+                   "trigger": "node-base",
+                   "ua": "ie"
+                }
             }
         }
     }

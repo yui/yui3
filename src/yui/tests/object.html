@@ -14,18 +14,19 @@
 (function() {
     YUI({
         logExclude: {
-            attribute: true, 
-            dom: true, 
-            node: true, 
-            event: true, 
+            attribute: true,
+            dom: true,
+            node: true,
+            event: true,
             // deprecated: true,
-            base: true, 
-            widget: true, 
+            base: true,
+            widget: true,
             selector: true
         }
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
-        var button = Y.one('#btnRun');
+        var button = Y.one('#btnRun'),
+            NOOP = function(){};
 
         // Set up the page
         button.set("disabled", false);
@@ -42,21 +43,21 @@
                 }
             },
             b1: {
-                b2: 'b' 
+                b2: 'b'
             },
             c1: 'c'
         }
- 
+
         var testCase = new Y.Test.Case({
             name: "Object tests",
-        
+
             test_deep_getValue: function() {
                 Y.Assert.areEqual('c', Y.Object.getValue(o, 'c1'));
                 Y.Assert.areEqual('a', Y.Object.getValue(o, ['a1', 'a2', 'a3']));
                 Y.Assert.areEqual(undefined, Y.Object.getValue(o, ['b1', 'b2', 'b3']));
                 Y.Assert.areEqual(undefined, Y.Object.getValue(null, ['b1', 'b2', 'b3']));
             },
-            
+
             test_deep_setValue: function() {
 
                 Y.Object.setValue(o, 'c1', 'changed_c');
@@ -80,16 +81,33 @@
                 Y.Assert.areEqual(0, Y.Object.values({}), 'values should not count proto additions');
                 Y.Assert.isFalse(Y.Object.hasValue({}, 'hello!'), 'hasValue should not look at proto additions');
 
-                Y.Object.each({}, function () { 
-                    count++; 
+                Y.Object.each({}, function () {
+                    count++;
                 });
 
                 Y.Assert.areEqual(0, count, 'each should not iterate proto props unless asked to do so.');
 
+            },
+
+            test_create_multi: function() {
+                var a = {o: {a: 1}, y: {a: 1}},
+                    b = {o: {b: 1}, x: {b: 1}},
+                    c = Y.Object(a),
+                    d = Y.Object(b);
+
+                Y.ObjectAssert.areEqual({a: 1}, c.o);
+                Y.ObjectAssert.areEqual({a: 1}, c.y);
+                Y.Assert.isUndefined(c.x);
+
+                Y.ObjectAssert.areEqual({b: 1}, d.o);
+                Y.ObjectAssert.areEqual({b: 1}, d.x);
+                Y.Assert.isUndefined(d.y);
+
             }
 
+
         });
-        
+
 
         Y.Test.Runner.add(testCase);
         Y.Test.Runner.run();

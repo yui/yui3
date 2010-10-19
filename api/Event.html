@@ -105,7 +105,7 @@ registers during the unload event.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Custom event wrapper map DOM events.  Key is 
+                                            Custom event wrapper map DOM events.  Key is
 Element uid stamp.  Each item is a hash of custom event
 wrappers as provided in the _wrappers collection.  This
 provides the infrastructure for getListeners.
@@ -170,7 +170,7 @@ the page load.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Custom event wrappers for DOM events.  Key is 
+                                            Custom event wrappers for DOM events.  Key is
 'event:' + Element uid stamp + event type
                                         </div>
                                     </div>
@@ -276,9 +276,9 @@ for 40 seconds or until all outstanding handlers are bound
                                         
                                         <div class="description" property="yui:description">
                                             We want to be able to use getElementsByTagName as a collection
-to attach a group of events to.  Unfortunately, different 
+to attach a group of events to.  Unfortunately, different
 browsers return different types of collections.  This function
-tests to determine if the object is array-like.  It will also 
+tests to determine if the object is array-like.  It will also
 fail if the object is an array, but is empty.
                                         </div>
 
@@ -358,8 +358,8 @@ fail if the object is an array, but is empty.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Polling function that runs before the onload event fires, 
-attempting to attach to DOM Nodes as soon as they are 
+                                            Polling function that runs before the onload event fires,
+attempting to attach to DOM Nodes as soon as they are
 available
                                         </div>
 
@@ -390,7 +390,7 @@ available
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Removes all listeners registered by pe.event.  Called 
+                                            Removes all listeners registered by pe.event.  Called
 automatically during the unload event.
                                         </div>
 
@@ -465,8 +465,8 @@ automatically during the unload event.
                                                         <code><span property="yui:name">el</span>
                                                         &lt;<span property="yui:type">String|HTMLElement|Array|NodeList</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An id, an element 
-reference, or a collection of ids and/or elements to assign the 
+                                                        <span property="yui:description"> An id, an element
+reference, or a collection of ids and/or elements to assign the
 listener to.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
@@ -547,15 +547,15 @@ that is returned when using Y.on
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> the method the event invokes.  If fn is
-undefined, then all event handlers for the type of event are 
+undefined, then all event handlers for the type of event are
 removed.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">el</span>
                                                         &lt;<span property="yui:type">String|HTMLElement|Array|NodeList|EventHandle</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An 
-event handle, an id, an element reference, or a collection 
+                                                        <span property="yui:description"> An
+event handle, an id, an element reference, or a collection
 of ids and/or elements to remove the listener from.</span>
                                                         </dd>
                                                 </dl>
@@ -755,7 +755,7 @@ handle event subscriptions of this type</dd>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Generates an unique ID for the element if it does not already 
+                                            Generates an unique ID for the element if it does not already
 have one.
                                         </div>
 
@@ -1182,11 +1182,11 @@ will execute in the context of that object</span>
                                                     
                                                 
                                                         , 
-                                                         p_obj
+                                                         obj
                                                     
                                                 
                                                         , 
-                                                         p_override
+                                                         override
                                                     
                                                 
                                             )
@@ -1217,14 +1217,14 @@ the custom object parameter, if provided.</p>
                                                         <span property="yui:description"> what to execute when the element is ready.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">p_obj</span>
+                                                        <code><span property="yui:name">obj</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> an optional object to be passed back as
 a parameter to fn.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">p_override</span>
+                                                        <code><span property="yui:name">override</span>
                                                         &lt;<span property="yui:type">boolean|object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> If set to true, fn will execute
@@ -1518,7 +1518,9 @@ left out, all listeners will be removed</span>
                                 <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
                                 <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
+                                <li class=""><a href="event-facade-dom-ie.js.html" title="event-facade-dom-ie.js">event-facade-dom-ie.js</a></li>
                                 <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
+                                <li class=""><a href="event-ready-base-ie.js.html" title="event-ready-base-ie.js">event-ready-base-ie.js</a></li>
                                 <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
                                 <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>

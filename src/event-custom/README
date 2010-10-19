@@ -1,26 +1,29 @@
 YUI Custom Events
     Custom event system
 
+3.3.0
+    - Undocumented and poorly named 'each' method on EventHandle changed to 'batch'.
+
 3.2.0
     - Fixed defaultTargetOnly publish configuration
     - Detach now decrements subCount/afterCount
     - Detaching via category no longer affects subscriptions on other objects
 
 3.1.1
-    - No changes 
+    - No changes
 
 3.1.0
-    - Wildcard prefix subscriptions supported: 
-      target.on('*:click', ... will be notified when 'tree:click', 
+    - Wildcard prefix subscriptions supported:
+      target.on('*:click', ... will be notified when 'tree:click',
       'tab:click', etc are fired.
     - Added EventTarget::once, which is equivalent to on(), except the listener
       automatically detaches itself once executed.
     - Added event monitoring.  When configured, an event target will
-      emit events for publish, attach, fire, and detach operations on 
+      emit events for publish, attach, fire, and detach operations on
       the hosted events.
     - EventTarget::on's type parameter is overloaded to accept arrays and objects
       for attaching multiple types at once.
-    - EventTarget::detach returns the event target like the API docs 
+    - EventTarget::detach returns the event target like the API docs
       already stated.
     - Events can now be configured to execute the defaultFn only on the
       targeted object, not on the bubble targets.
@@ -39,7 +42,7 @@ YUI Custom Events
 3.0.0beta1
     - Implemented the broadcast flag.  broadcast = 1: local, accessible
       via Y.on('prefix:event'). broadcast = 2: global, accessible
-      via Y.on or globally via Y.Global.on('prefix:event).  Broadcast 
+      via Y.on or globally via Y.Global.on('prefix:event).  Broadcast
       listeners cannot effect the defaultFn or host subscribers (so
       are in effect, after listeners), although this is still possible
       by added either Y or Y.Global as event targets.
@@ -52,11 +55,11 @@ YUI Custom Events
       the after moment, and 'detach' for unsubscribe.  subscribe,
       before, unsubscribe, and corresponding methods are deprecated.
     - Event type accepts a event category which can be used to
-      detach events.  
+      detach events.
       Y.on('category|prefix:event', fn);
       Y.detach('category|prefix:event');
       Y.detach('category|*');
-    - Added 'chain' config to events that makes the return value the 
+    - Added 'chain' config to events that makes the return value the
       event target rather than a detach handle.  Use with the detach
       category prefix.
     - The type parameter can be an object containing multiple events to attach
