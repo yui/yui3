@@ -1064,9 +1064,18 @@
         ]
     }, 
     "pluginhost": {
-        "requires": [
-            "yui-base"
-        ]
+        "submodules": {
+            "pluginhost-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "pluginhost-config": {
+                "requires": [
+                    "pluginhost-base"
+                ]
+            }
+        }
     }, 
     "profiler": {
         "requires": [
