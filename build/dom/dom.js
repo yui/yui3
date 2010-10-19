@@ -1319,6 +1319,7 @@ Y.mix(Y_DOM, {
                     bLeft, bTop,
                     mode,
                     doc,
+                    inDoc,
                     rootNode;
 
                 if (node && node.tagName) {
