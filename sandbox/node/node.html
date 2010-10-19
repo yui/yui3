@@ -10,7 +10,7 @@
 
 }
 </style>
-<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
 </head>
 
 <body>
@@ -20,9 +20,11 @@
 <script type="text/javascript">
 
 
-YUI({filter:'debug'}).use('node', function(Y) {
-    var node = Y.Node.create('foo bar');
-    alert(node.get('text'));
+YUI({filter:'raw'}).use('node', function(Y) {
+    var node = Y.Node.create('<div><p>foo<span><strong><em>bar</em></strong></span></p></div>'),
+        nodes = node.all('*');
+
+    Y.log(nodes.item(nodes.size() - 1));
 });
 
 

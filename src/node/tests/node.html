@@ -1435,6 +1435,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         'should append to the given DOM node': function() {
             var node = Y.Node.create('<div/>');
             node.appendTo(document.body);
+        },
+
+        'should wrap the node with the given html': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap('<div/>');
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should remove the node from its parent': function() {
+            var node = Y.Node.create('<div/>').append('<span><em>foo</em></span>').one('em');
+            node.unwrap();
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
         }
     })); 
 

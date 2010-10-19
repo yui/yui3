@@ -1771,7 +1771,11 @@ Y.Node.importMethod(Y.DOM, [
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
-    'getAttribute'
+    'getAttribute',
+
+    'wrap',
+
+    'unwrap'
 ]);
 
 /**

@@ -32,9 +32,9 @@ var NODE_TYPE = 'nodeType',
 
     documentElement = Y.config.doc.documentElement,
 
-    re_tag = /<([a-z]+)/i;
+    re_tag = /<([a-z]+)/i,
 
-Y.DOM = {
+Y_DOM = {
     /**
      * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).
      * @method byId         
@@ -44,7 +44,7 @@ Y.DOM = {
      */
     byId: function(id, doc) {
         // handle dupe IDs and IE name collision
-        return Y.DOM.allById(id, doc)[0] || null;
+        return Y_DOM.allById(id, doc)[0] || null;
     },
 
     // @deprecated
@@ -122,7 +122,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
     previous: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
+        return Y_DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
     },
 
     /*
@@ -137,7 +137,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
     next: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
+        return Y_DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
     },
 
     /*
@@ -156,7 +156,7 @@ Y.DOM = {
             ret = (!fn || fn(element)) ? element : null;
 
         }
-        return ret || Y.DOM.elementByAxis(element, PARENT_NODE, fn, null);
+        return ret || Y_DOM.elementByAxis(element, PARENT_NODE, fn, null);
     },
 
     /*
@@ -170,10 +170,10 @@ Y.DOM = {
      * @return {Array} An array containing all matching DOM nodes.
      */
     ancestors: function(element, fn, testSelf) {
-        var ancestor = Y.DOM.ancestor.apply(Y.DOM, arguments),
+        var ancestor = Y_DOM.ancestor.apply(Y_DOM, arguments),
             ret = (ancestor) ? [ancestor] : [];
 
-        while ((ancestor = Y.DOM.ancestor(ancestor, fn))) {
+        while ((ancestor = Y_DOM.ancestor(ancestor, fn))) {
             if (ancestor) {
                 ret.unshift(ancestor);
             }
@@ -218,7 +218,7 @@ Y.DOM = {
             if (Y.UA.opera || needle[NODE_TYPE] === 1) { // IE & SAF contains fail if needle not an ELEMENT_NODE
                 ret = element[CONTAINS](needle);
             } else {
-                ret = Y.DOM._bruteContains(element, needle); 
+                ret = Y_DOM._bruteContains(element, needle); 
             }
         } else if (element[COMPARE_DOCUMENT_POSITION]) { // gecko
             if (element === needle || !!(element[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
@@ -249,7 +249,7 @@ Y.DOM = {
             if (rootNode && rootNode.contains && element.tagName) {
                 ret = rootNode.contains(element);
             } else {
-                ret = Y.DOM.contains(rootNode, element);
+                ret = Y_DOM.contains(rootNode, element);
             }
         }
 
@@ -281,7 +281,7 @@ Y.DOM = {
                 }
             }
         } else {
-            ret = [Y.DOM._getDoc(root).getElementById(id)];
+            ret = [Y_DOM._getDoc(root).getElementById(id)];
         }
     
         return ret;
@@ -304,8 +304,8 @@ Y.DOM = {
 
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
-            create = Y.DOM._create,
-            custom = Y.DOM.creators,
+            create = Y_DOM._create,
+            custom = Y_DOM.creators,
             ret = null,
             tag, nodes;
 
@@ -327,10 +327,10 @@ Y.DOM = {
                     ret = nodes[0].nextSibling;
                 } else {
                     nodes[0].parentNode.removeChild(nodes[0]); 
-                     ret = Y.DOM._nl2frag(nodes, doc);
+                     ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
-                 ret = Y.DOM._nl2frag(nodes, doc);
+                 ret = Y_DOM._nl2frag(nodes, doc);
             }
         }
 
@@ -375,7 +375,7 @@ Y.DOM = {
      */
     setAttribute: function(el, attr, val, ieAttr) {
         if (el && attr && el.setAttribute) {
-            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            attr = Y_DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             el.setAttribute(attr, val, ieAttr);
         }
         else { Y.log('bad input to setAttribute', 'warn', 'dom'); }
@@ -393,7 +393,7 @@ Y.DOM = {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
         if (el && attr && el.getAttribute) {
-            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            attr = Y_DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             ret = el.getAttribute(attr, ieAttr);
 
             if (ret === null) {
@@ -413,11 +413,11 @@ Y.DOM = {
     _create: function(html, doc, tag) {
         tag = tag || 'div';
 
-        var frag = Y.DOM._fragClones[tag];
+        var frag = Y_DOM._fragClones[tag];
         if (frag) {
             frag = frag.cloneNode(false);
         } else {
-            frag = Y.DOM._fragClones[tag] = doc.createElement(tag);
+            frag = Y_DOM._fragClones[tag] = doc.createElement(tag);
         }
         frag.innerHTML = html;
         return frag;
@@ -458,7 +458,7 @@ Y.DOM = {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
-                newNode = Y.DOM.create(content);
+                newNode = Y_DOM.create(content);
             }
         }
 
@@ -506,7 +506,7 @@ Y.DOM = {
             getter;
 
         if (node && node[TAG_NAME]) {
-            getter = Y.DOM.VALUE_GETTERS[node[TAG_NAME].toLowerCase()];
+            getter = Y_DOM.VALUE_GETTERS[node[TAG_NAME].toLowerCase()];
 
             if (getter) {
                 ret = getter(node);
@@ -528,7 +528,7 @@ Y.DOM = {
         var setter;
 
         if (node && node[TAG_NAME]) {
-            setter = Y.DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
+            setter = Y_DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
 
             if (setter) {
                 setter(node, val);
@@ -588,11 +588,11 @@ Y.DOM = {
      */
     _getRegExp: function(str, flags) {
         flags = flags || '';
-        Y.DOM._regexCache = Y.DOM._regexCache || {};
-        if (!Y.DOM._regexCache[str + flags]) {
-            Y.DOM._regexCache[str + flags] = new RegExp(str, flags);
+        Y_DOM._regexCache = Y_DOM._regexCache || {};
+        if (!Y_DOM._regexCache[str + flags]) {
+            Y_DOM._regexCache[str + flags] = new RegExp(str, flags);
         }
-        return Y.DOM._regexCache[str + flags];
+        return Y_DOM._regexCache[str + flags];
     },
 
 // TODO: make getDoc/Win true privates?
@@ -623,12 +623,12 @@ Y.DOM = {
      * @return {Object} The window for the given element or the default window. 
      */
     _getWin: function(element) {
-        var doc = Y.DOM._getDoc(element);
+        var doc = Y_DOM._getDoc(element);
         return doc[DEFAULT_VIEW] || doc[PARENT_WINDOW] || Y.config.win;
     },
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
-        fn = (typeof fn === 'string') ? Y.DOM[fn] : fn;
+        fn = (typeof fn === 'string') ? Y_DOM[fn] : fn;
         var result,
             args = Array.prototype.slice.call(arguments, 2),
             i = 0,
@@ -637,7 +637,7 @@ Y.DOM = {
 
         if (fn && nodes) {
             while ((node = nodes[i++])) {
-                result = result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc);
+                result = result = fn.call(Y_DOM, node, arg1, arg2, arg3, etc);
                 if (typeof result !== 'undefined') {
                     (ret) || (ret = []);
                     ret.push(result);
@@ -648,13 +648,49 @@ Y.DOM = {
         return (typeof ret !== 'undefined') ? ret : nodes;
     },
 
+    wrap: function(node, html) {
+        var parent = Y.DOM.create(html),
+            nodes = parent.getElementsByTagName('*');
+
+        if (nodes.length) {
+            parent = nodes[nodes.length - 1];
+        }
+
+        if (node.parentNode) { 
+            node.parentNode.replaceChild(parent, node);
+        }
+        parent.appendChild(node);
+    },
+
+    unwrap: function(node) {
+        var parent = node.parentNode,
+            lastChild = parent.lastChild,
+            node = parent.firstChild,
+            next = node,
+            grandparent;
+
+        if (parent) {
+            grandparent = parent.parentNode;
+            if (grandparent) {
+                while (node !== lastChild) {
+                    next = node.nextSibling;
+                    grandparent.insertBefore(node, parent);
+                    node = next;
+                }
+                grandparent.replaceChild(lastChild, parent);
+            } else {
+                parent.removeChild(node);
+            }
+        }
+    },
+
     creators: {}
 };
 
 
 (function(Y) {
-    var creators = Y.DOM.creators,
-        create = Y.DOM.create,
+    var creators = Y_DOM.creators,
+        create = Y_DOM.create,
         re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
 
         TABLE_OPEN = '<table>',
@@ -684,13 +720,13 @@ Y.DOM = {
 
         }, true);
 
-        Y.mix(Y.DOM.VALUE_GETTERS, {
+        Y.mix(Y_DOM.VALUE_GETTERS, {
             button: function(node) {
                 return (node.attributes && node.attributes.value) ? node.attributes.value.value : '';
             }
         });
 
-        Y.mix(Y.DOM.VALUE_SETTERS, {
+        Y.mix(Y_DOM.VALUE_SETTERS, {
             // IE: node.value changes the button text, which should be handled via innerHTML
             button: function(node, val) {
                 var attr = node.attributes.value;
@@ -705,15 +741,15 @@ Y.DOM = {
             select: function(node, val) {
                 for (var i = 0, options = node.getElementsByTagName('option'), option;
                         option = options[i++];) {
-                    if (Y.DOM.getValue(option) === val) {
-                        Y.DOM.setAttribute(option, 'selected', true);
+                    if (Y_DOM.getValue(option) === val) {
+                        Y_DOM.setAttribute(option, 'selected', true);
                         break;
                     }
                 }
             }
         });
 
-        Y.DOM.creators.col = Y.DOM.creators.link = Y.DOM.creators.style = Y.DOM.creators.script;
+        Y_DOM.creators.col = Y_DOM.creators.link = Y_DOM.creators.style = Y_DOM.creators.script;
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -747,7 +783,7 @@ Y.DOM = {
         });
     }
 
-    Y.mix(Y.DOM.VALUE_GETTERS, {
+    Y.mix(Y_DOM.VALUE_GETTERS, {
         option: function(node) {
             var attrs = node.attributes;
             return (attrs.value && attrs.value.specified) ? node.value : node.text;
@@ -762,7 +798,7 @@ Y.DOM = {
                 if (node.multiple) {
                     Y.log('multiple select normalization not implemented', 'warn', 'DOM');
                 } else {
-                    val = Y.DOM.getValue(options[node.selectedIndex]);
+                    val = Y_DOM.getValue(options[node.selectedIndex]);
                 }
             }
 
@@ -771,6 +807,7 @@ Y.DOM = {
     });
 })(Y);
 
+Y.DOM = Y_DOM;
 })(Y);
 var addClass, hasClass, removeClass;
 
