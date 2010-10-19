@@ -414,6 +414,64 @@ YUI.add('dom-core-test', function(Y) {
     }));
 
     Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.DOM.ancestors',
+
+        'should return an array of one (documentElement)': function() {
+            ArrayAssert.itemsAreEqual([document.documentElement],
+                    Y.DOM.ancestors(document.body));
+        },
+
+        'should include the starting node': function() {
+            var node = document.createElement('div');
+            document.body.appendChild(node);
+            ArrayAssert.itemsAreEqual([document.documentElement, document.body, node],
+                    Y.DOM.ancestors(node, null, true));
+
+            document.body.removeChild(node);
+        },
+
+        'should omit the starting node': function() {
+            var node = document.createElement('div');
+            document.body.appendChild(node);
+            ArrayAssert.itemsAreEqual([document.documentElement, document.body],
+                    Y.DOM.ancestors(node));
+
+            document.body.removeChild(node);
+        },
+
+        'should return the matching ancestors': function() {
+            var node = document.createElement('div'),
+                fn = function(node) {
+                    return node.tagName !== 'HTML';
+                };
+
+            document.body.appendChild(node);
+            ArrayAssert.itemsAreEqual([document.body], Y.DOM.ancestors(node, fn));
+            document.body.removeChild(node);
+        },
+
+        'should return the matching ancestors (test self match)': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'EM';
+                };
+
+            ArrayAssert.itemsAreEqual([node], Y.DOM.ancestors(node, fn, true));
+        },
+
+        'should return the matching ancestors (test self not matched)': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'BODY';
+                };
+
+            ArrayAssert.itemsAreEqual([document.body], Y.DOM.ancestors(node, fn, true));
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.DOM.contains',
 
         'html element should contain body element': function() {
