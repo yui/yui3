@@ -604,6 +604,7 @@ Y.DOM = {
         var result,
             args = Array.prototype.slice.call(arguments, 2),
             i = 0,
+            node,
             ret;
 
         if (fn && nodes) {
