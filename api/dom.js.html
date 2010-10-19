@@ -79,9 +79,9 @@
 
     <span class="nx">documentElement</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
 
-    <span class="nx">re_tag</span> <span class="o">=</span> <span class="sr">/&lt;([a-z]+)/i</span><span class="p">;</span>
+    <span class="nx">re_tag</span> <span class="o">=</span> <span class="sr">/&lt;([a-z]+)/i</span><span class="p">,</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span> <span class="o">=</span> <span class="p">{</span>
+<span class="nx">Y_DOM</span> <span class="o">=</span> <span class="p">{</span>
     <span class="cm">/**</span>
 <span class="cm">     * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).</span>
 <span class="cm">     * @method byId         </span>
@@ -91,7 +91,7 @@
 <span class="cm">     */</span>
     <span class="nx">byId</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// handle dupe IDs and IE name collision</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="c1">// @deprecated</span>
@@ -169,7 +169,7 @@
 <span class="cm">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
 <span class="cm">     */</span>
     <span class="nx">previous</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">PREVIOUS_SIBLING</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">PREVIOUS_SIBLING</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/*</span>
@@ -184,7 +184,7 @@
 <span class="cm">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
 <span class="cm">     */</span>
     <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">NEXT_SIBLING</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">NEXT_SIBLING</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/*</span>
@@ -203,7 +203,7 @@
             <span class="nx">ret</span> <span class="o">=</span> <span class="p">(</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">element</span><span class="p">))</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
 
         <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">PARENT_NODE</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">PARENT_NODE</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/*</span>
@@ -217,10 +217,10 @@
 <span class="cm">     * @return {Array} An array containing all matching DOM nodes.</span>
 <span class="cm">     */</span>
     <span class="nx">ancestors</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">testSelf</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">ancestor</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">),</span>
+        <span class="kd">var</span> <span class="nx">ancestor</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">),</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ancestor</span><span class="p">)</span> <span class="o">?</span> <span class="p">[</span><span class="nx">ancestor</span><span class="p">]</span> <span class="o">:</span> <span class="p">[];</span>
 
-        <span class="k">while</span> <span class="p">((</span><span class="nx">ancestor</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="nx">ancestor</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">((</span><span class="nx">ancestor</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="nx">ancestor</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">ancestor</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">ret</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">ancestor</span><span class="p">);</span>
             <span class="p">}</span>
@@ -265,7 +265,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="nx">needle</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// IE &amp; SAF contains fail if needle not an ELEMENT_NODE</span>
                 <span class="nx">ret</span> <span class="o">=</span> <span class="nx">element</span><span class="p">[</span><span class="nx">CONTAINS</span><span class="p">](</span><span class="nx">needle</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_bruteContains</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">needle</span><span class="p">);</span> 
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_bruteContains</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">needle</span><span class="p">);</span> 
             <span class="p">}</span>
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="p">])</span> <span class="p">{</span> <span class="c1">// gecko</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">element</span> <span class="o">===</span> <span class="nx">needle</span> <span class="o">||</span> <span class="o">!!</span><span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="p">](</span><span class="nx">needle</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">16</span><span class="p">))</span> <span class="p">{</span> 
@@ -296,7 +296,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">rootNode</span> <span class="o">&amp;&amp;</span> <span class="nx">rootNode</span><span class="p">.</span><span class="nx">contains</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">ret</span> <span class="o">=</span> <span class="nx">rootNode</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">element</span><span class="p">);</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">element</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -328,7 +328,7 @@
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">root</span><span class="p">).</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">)];</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">[</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">root</span><span class="p">).</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">)];</span>
         <span class="p">}</span>
     
         <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
@@ -351,8 +351,8 @@
 
         <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">re_tag</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">html</span><span class="p">),</span>
-            <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_create</span><span class="p">,</span>
-            <span class="nx">custom</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">,</span>
+            <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_create</span><span class="p">,</span>
+            <span class="nx">custom</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">,</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
             <span class="nx">tag</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">;</span>
 
@@ -374,10 +374,10 @@
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">nextSibling</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span> 
-                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// return multiple nodes as a fragment</span>
-                 <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+                 <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -422,7 +422,7 @@
 <span class="cm">     */</span>
     <span class="nx">setAttribute</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">ieAttr</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">attr</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
+            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
             <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">ieAttr</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;bad input to setAttribute&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;dom&#39;</span><span class="p">);</span> <span class="p">}</span>
@@ -440,7 +440,7 @@
         <span class="nx">ieAttr</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ieAttr</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="nx">ieAttr</span> <span class="o">:</span> <span class="mi">2</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">attr</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
+            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">,</span> <span class="nx">ieAttr</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
@@ -460,11 +460,11 @@
     <span class="nx">_create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;div&#39;</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_fragClones</span><span class="p">[</span><span class="nx">tag</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_fragClones</span><span class="p">[</span><span class="nx">tag</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">frag</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">frag</span> <span class="o">=</span> <span class="nx">frag</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_fragClones</span><span class="p">[</span><span class="nx">tag</span><span class="p">]</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">tag</span><span class="p">);</span>
+            <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_fragClones</span><span class="p">[</span><span class="nx">tag</span><span class="p">]</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">tag</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">frag</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">html</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">frag</span><span class="p">;</span>
@@ -505,7 +505,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// domNode</span>
                 <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// create from string and cache</span>
-                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -553,7 +553,7 @@
             <span class="nx">getter</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">getter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">[</span><span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">()];</span>
+            <span class="nx">getter</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">[</span><span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">()];</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">getter</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">ret</span> <span class="o">=</span> <span class="nx">getter</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
@@ -575,7 +575,7 @@
         <span class="kd">var</span> <span class="nx">setter</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">setter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_SETTERS</span><span class="p">[</span><span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">()];</span>
+            <span class="nx">setter</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">VALUE_SETTERS</span><span class="p">[</span><span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">()];</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">setter</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">setter</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
@@ -635,11 +635,11 @@
 <span class="cm">     */</span>
     <span class="nx">_getRegExp</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">flags</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">flags</span> <span class="o">=</span> <span class="nx">flags</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">flags</span><span class="p">);</span>
+        <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_regexCache</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_regexCache</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">flags</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">];</span>
+        <span class="k">return</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">];</span>
     <span class="p">},</span>
 
 <span class="c1">// TODO: make getDoc/Win true privates?</span>
@@ -670,12 +670,12 @@
 <span class="cm">     * @return {Object} The window for the given element or the default window. </span>
 <span class="cm">     */</span>
     <span class="nx">_getWin</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">DEFAULT_VIEW</span><span class="p">]</span> <span class="o">||</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">PARENT_WINDOW</span><span class="p">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="nx">_batch</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">,</span> <span class="nx">etc</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">fn</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">fn</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">fn</span><span class="p">]</span> <span class="o">:</span> <span class="nx">fn</span><span class="p">;</span>
+        <span class="nx">fn</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">fn</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">fn</span><span class="p">]</span> <span class="o">:</span> <span class="nx">fn</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">result</span><span class="p">,</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
             <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -684,7 +684,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">fn</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">while</span> <span class="p">((</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">]))</span> <span class="p">{</span>
-                <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">,</span> <span class="nx">etc</span><span class="p">);</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">,</span> <span class="nx">etc</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">result</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="p">(</span><span class="nx">ret</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">=</span> <span class="p">[]);</span>
                     <span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
@@ -695,13 +695,49 @@
         <span class="k">return</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">ret</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">ret</span> <span class="o">:</span> <span class="nx">nodes</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="nx">wrap</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">),</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">parent</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span> 
+            <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">parent</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">unwrap</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span>
+            <span class="nx">lastChild</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">lastChild</span><span class="p">,</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">,</span>
+            <span class="nx">next</span> <span class="o">=</span> <span class="nx">node</span><span class="p">,</span>
+            <span class="nx">grandparent</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">grandparent</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">grandparent</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">while</span> <span class="p">(</span><span class="nx">node</span> <span class="o">!==</span> <span class="nx">lastChild</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">next</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">;</span>
+                    <span class="nx">grandparent</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
+                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">next</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">grandparent</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">lastChild</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">parent</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
     <span class="nx">creators</span><span class="o">:</span> <span class="p">{}</span>
 <span class="p">};</span>
 
 
 <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">creators</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">,</span>
-        <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">creators</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">,</span>
+        <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">,</span>
         <span class="nx">re_tbody</span> <span class="o">=</span> <span class="sr">/(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)&gt;)+\s*&lt;tbody/</span><span class="p">,</span>
 
         <span class="nx">TABLE_OPEN</span> <span class="o">=</span> <span class="s1">&#39;&lt;table&gt;&#39;</span><span class="p">,</span>
@@ -731,13 +767,13 @@
 
         <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">button</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">});</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_SETTERS</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">VALUE_SETTERS</span><span class="p">,</span> <span class="p">{</span>
             <span class="c1">// IE: node.value changes the button text, which should be handled via innerHTML</span>
             <span class="nx">button</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
@@ -752,15 +788,15 @@
             <span class="nx">select</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">),</span> <span class="nx">option</span><span class="p">;</span>
                         <span class="nx">option</span> <span class="o">=</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">];)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">option</span><span class="p">)</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">option</span><span class="p">,</span> <span class="s1">&#39;selected&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">option</span><span class="p">)</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">option</span><span class="p">,</span> <span class="s1">&#39;selected&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
                         <span class="k">break</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">});</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">col</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">link</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">style</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">script</span><span class="p">;</span>
+        <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">col</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">link</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">style</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">script</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
@@ -794,7 +830,7 @@
         <span class="p">});</span>
     <span class="p">}</span>
 
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">,</span> <span class="p">{</span>
         <span class="nx">option</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">;</span>
             <span class="k">return</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">attrs</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">specified</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span>
@@ -809,7 +845,7 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">multiple</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;multiple select normalization not implemented&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;DOM&#39;</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">options</span><span class="p">[</span><span class="nx">node</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">]);</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">options</span><span class="p">[</span><span class="nx">node</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">]);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
@@ -818,6 +854,7 @@
     <span class="p">});</span>
 <span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">;</span>
 <span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
