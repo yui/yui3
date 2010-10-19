@@ -1458,6 +1458,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             var node = Y.Node.create('<table/>');
             node.createCaption();
             Assert.areEqual('CAPTION', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>'));
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given dom node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>')._node);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace('<em>bar</em>');
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
         }
     })); 
 

@@ -821,6 +821,9 @@ Y.mix(Y_Node.prototype, {
      */
     replace: function(newNode) {
         var node = this._node;
+        if (typeof (newNode) === 'string') {
+            newNode = Y.Node.create(newNode);
+        }
         node.parentNode.replaceChild(Y_Node.getDOMNode(newNode), node);
         return this;
     },
