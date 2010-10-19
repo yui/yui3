@@ -149,9 +149,12 @@
                 <span class="nx">element</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;innerText&#39;</span> <span class="k">in</span> <span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">element</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;nodeValue&#39;</span> <span class="k">in</span> <span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">element</span><span class="p">.</span><span class="nx">nodeValue</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
             <span class="p">}</span>
+
         <span class="p">},</span>
 
     <span class="cm">/*</span>
