@@ -1503,6 +1503,16 @@ Y.mix(DataTableScroll, {
 		
 		columnWidth: {
 			value: undefined
+		},
+		
+		COLOR_COLUMNFILLER: {
+			value: '#f2f2f2',
+			validator: YLang.isString,
+			setter: function(param) {
+				if (this._headerContainerNode) {
+					this._headerContainerNode.setStyle('backgroundColor', param);
+				}
+			}
 		}
     }
 });
@@ -1549,6 +1559,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("_addMessageNode", this._setUpParentMessageNode);
        	
 		this.afterHostMethod("renderUI", this.renderUI);
+		this.afterHostMethod("syncUI", this.syncUI);
 		
 		this.beforeHostMethod('_attachTheadThNode', this._attachTheadThNode);
 		this.beforeHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);        
@@ -1582,9 +1593,11 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	renderUI: function() {
 		this._createHeaderContainer();
 		this._createBodyContainer();
-		//this._syncScroll();
 	},
 	
+	syncUI: function() {
+		this._syncScroll();
+	},
 	
 	//Before attaching the Th nodes, add the appropriate width to the liner divs.
 	_attachTheadThNode: function(o) {
@@ -1603,24 +1616,53 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	_createBodyContainer: function() {
 		var	bd = YNode.create(CONTAINER_BODY),
 			onScrollFn = Y.bind("_onScroll", this);
-		bd.setStyle("width", this.get('width'));
-		bd.setStyle('height', this.get('height'));
-			
+		this._bodyContainerNode = bd;		
+		this._setOverflowForTbody();
 		bd.appendChild(this._parentTableNode);
 		this._parentContainer.appendChild(bd);
-		this._bodyContainerNode = bd;		
 		bd.on('scroll', onScrollFn);
 	},
 	
 	_createHeaderContainer: function() {
 		var hd = YNode.create(CONTAINER_HEADER);
-		hd.setStyle("width", this.get('width'));
-		hd.appendChild(this._parentTheadNode);
+		this._headerContainerNode = hd;
 		
-		console.log(this._parentTheadNode);
+		hd.setStyle('backgroundColor',this.get("COLOR_COLUMNFILLER"));
+		this._setOverflowForThead();
+		hd.appendChild(this._parentTheadNode);
 		this._parentContainer.appendChild(hd);
 		
-		this._headerContainerNode = hd;
+	},
+	
+	_setOverflowForTbody: function() {
+		var dir = this.get('scroll'),
+			w = this.get('width') || "",
+			h = this.get('height') || "",
+			el = this._bodyContainerNode;
+		
+		el.setStyles({'width':w, 'height':h});
+		
+		if (dir === 'x') {
+			el.setStyles({'overflow-y':'hidden'});
+		}
+		else if (dir === 'y') {
+			el.setStyles({'overflow-x':'hidden'});
+		}
+		
+		return el;
+	},
+	
+	_setOverflowForThead: function() {
+		var dir = this.get('scroll'),
+			w = this.get('width'),
+			el = this._headerContainerNode;
+		
+		if (dir === 'y') {
+			el.setStyle('width', 'auto');
+		}
+		else {
+			el.setStyle('width', w);
+		}
 	},
 	
 	/////////////////////////////////////////////////////////////////////////////
@@ -1635,15 +1677,15 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	_syncScroll : function() {
 		    this._syncScrollX();
 		    this._syncScrollY();
-		    //this._syncScrollOverhang();
-		    // if(YUA.opera) {
-		    // 	        // Bug 1925874
-		    // 	        this._headerContainer.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
-		    // 	        if(!this.get("width")) {
-		    // 	            // Bug 1926125
-		    // 	            document.body.style += '';
-		    // 	        }
-		    // 	    }
+		    this._syncScrollOverhang();
+		 		// 		    if(YUA.opera) {
+		 		// 		    	// Bug 1925874
+		 		// 		    	this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+		 		// 		    		if(!this.get("width")) {
+		 		// 		    	    	// Bug 1926125
+		 		// 		    	        document.body.style += '';
+		 		// 		    	    }
+		 		// }
 		 },
 	
 		/**
@@ -1698,7 +1740,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 				this._parentMsgNode.get('parentNode').setStyle('width', "");
 			}
 			
-		}
+		},
 	
 	/**
 	 * Adds/removes Column header overhang as necesary.
@@ -1707,31 +1749,41 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	 * @method _syncScrollOverhang
 	 * @private
 	 */
-	// _syncScrollOverhang: function() {
-	// 	var tBodyContainer = this._bodyContainerNode,
-	// 		padding = 1;
-	// 	
-	// 	if ((tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) && (tBodyContainer.get('scrollWidth') > tBodyContainer.get('clientWidth'))) {
-	// 		padding = 18;
-	// 	}
-	// 	
-	// this._setOverhangValue(padding);
-	// },
+	_syncScrollOverhang: function() {
+		var tBodyContainer = this._bodyContainerNode,
+			padding = 1;
+		
+		if ((tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) && (tBodyContainer.get('scrollWidth') > tBodyContainer.get('clientWidth'))) {
+			padding = 18;
+		}
+		
+		this._setOverhangValue(padding);
+	},
 	
-	// _setOverhangValue: function(borderWidth) {
-	// 	var host = this.get('host'),
-	// 		colset = host.get('columnset'),
-	// 	 	lastHeaders = colset.headers[colset.headers.length-1] || [],
-	//         len = lastHeaders.length,
-	//         prefix = this._yuid+"-fixedth-",
-	//         value = borderWidth + "px solid grey"; // + this.get("COLOR_COLUMNFILLER")
-	// 
-	//     this._parentTheadNode.setStyle('display', 'none');
-	//     // for(var i=0; i<len; i++) {
-	//     //     YNode.one(sPrefix+aLastHeaders[i]).style.borderRight = sValue;
-	//     // }
-	//     this._parentTheadNode.style.display = "";
-	// }
+	
+	/**
+	 * Sets Column header overhang to given width.
+	 * Taken from YUI2 ScrollingDataTable.js with minor modifications
+	 *
+	 * @method _setOverhangValue
+	 * @param nBorderWidth {Number} Value of new border for overhang. 
+	 * @private
+	 */ 
+	_setOverhangValue: function(borderWidth) {
+		var host = this.get('host'),
+			cols = host.get('columnset').get('columns'),
+		 	lastHeaders = cols[cols.length-1] || [],
+	        len = cols.length,
+	        value = borderWidth + "px solid " + this.get("COLOR_COLUMNFILLER"),
+			children = this._parentTheadNode.get('children').get('children')[0]._nodes; //hack here to get to the array of TH elements
+	
+	    //this._parentTheadNode.setStyle('display', 'none');
+		YNode.one('#'+children[len-1].id).setStyle('borderRight', value);
+	    // for(var i=0; i<len; i++) {
+	    // 			YNode.one('#'+children[i]._yuid).setStyle('borderRight', value);
+	    // 	    }
+	    // 	    this._parentTheadNode.setStyle('display', '');
+	}
 	
 	// setColumnWidth: function(col, width) {
 	// 	colWidth = col.get('minWidth');
