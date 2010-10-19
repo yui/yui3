@@ -848,6 +848,41 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
+     * @method appendChild
+     * @param {String | HTMLElement | Node} node Node to be appended 
+     * @return {Node} The appended node 
+     */
+    appendChild: function(node) {
+        if (typeof node == 'string') {
+            node = Y_DOM.create(node);
+        }
+
+        return Y.one(this._node.appendChild(Y_Node.getDOMNode(node)));
+    },
+
+    /**
+     * @method insertBefore
+     * @param {String | HTMLElement | Node} newNode Node to be appended 
+     * @param {HTMLElement | Node} refNode Node to be inserted before 
+     * @return {Node} The inserted node 
+     */
+    insertBefore: function(newNode, refNode) {
+        var node = this._node;
+        if (typeof newNode == 'string') {
+            newNode = Y_DOM.create(newNode);
+        }
+        refNode = Y_Node.getDOMNode(refNode);
+        newNode = Y_Node.getDOMNode(newNode);
+
+        if (refNode) {
+            node.insertBefore(newNode, refNode);
+        } else { // IE errors when no refNode
+            node.appendChild(newNode);
+        }
+        return Y.one(newNode);
+    },
+
+    /**
      * Removes event listeners from the node and (optionally) its subtree
      * @method purge
      * @param {Boolean} recurse (optional) Whether or not to remove listeners from the
@@ -1650,23 +1685,6 @@ Y.all = function(nodes) {
 
 Y.Node.all = Y.all;
 Y.Array.each([
-    /**
-     * Passes through to DOM method.
-     * @method appendChild
-     * @param {HTMLElement | Node} node Node to be appended 
-     * @return {Node} The appended node 
-     */
-    'appendChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method insertBefore
-     * @param {HTMLElement | Node} newNode Node to be appended 
-     * @param {HTMLElement | Node} refNode Node to be inserted before 
-     * @return {Node} The inserted node 
-     */
-    'insertBefore',
-
     /**
      * Passes through to DOM method.
      * @method removeChild
