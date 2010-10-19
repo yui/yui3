@@ -632,6 +632,8 @@
         * @type Object
         */
         DOM_EVENTS: {
+            dblclick: 1,
+            click: 1,
             paste: 1,
             mouseup: 1,
             mousedown: 1,
