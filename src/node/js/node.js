@@ -1001,6 +1001,16 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
+     * Appends the node to the given node. 
+     * @method appendTo
+     * @param {Y.Node | HTMLElement} node The node to append to
+     * @chainable
+     */
+    appendTo: function(node) {
+        Y.one(node).append(this);
+    },
+
+    /**
      * Replaces the node's current content with the content.
      * @method setContent
      * @param {String | Y.Node | HTMLElement} content The content to insert
