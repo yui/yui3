@@ -246,6 +246,14 @@ YUI.add('dom-core-test', function(Y) {
 
             Y.DOM.setText(node, content);
             Assert.areEqual(content, Y.DOM.getText(node, content));
+        },
+
+        'should set text for text node': function() {
+            var node = document.createTextNode(''),
+                content = 'testing text content';
+
+            Y.DOM.setText(node, content);
+            Assert.areEqual(content, Y.DOM.getText(node, content));
         }
     }));
 

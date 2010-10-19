@@ -100,9 +100,12 @@ Y.DOM = {
                 element.textContent = content;
             }
         } : function(element, content) {
-            if (element) {
+            if ('innerText' in element) {
                 element.innerText = content;
+            } else if ('nodeValue' in element) {
+                element.nodeValue = content;
             }
+
         },
 
     /*
