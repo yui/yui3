@@ -69,7 +69,7 @@ Transition._toHyphen = function(property) {
 };
 
 
-Transition._reKeywords = /^(?:node|duration|iterations|easing|delay)$/;
+Transition._reKeywords = /^(?:node|duration|iterations|easing|delay|on|onstart|onend)$/i;
 
 Transition.useNative = false;
 
@@ -107,8 +107,7 @@ Transition.prototype = {
             anim._count = 0; // track number of animated properties
             anim._running = false;
 
-            anim.initAttrs(config);
-
+            this.initAttrs(config);
         }
 
         return anim;
@@ -195,19 +194,24 @@ Transition.prototype = {
      * @private
      */    
     run: function(callback) {
-        var anim = this;
+        var anim = this,
+            node = anim._node,
+            config = anim._config,
+            data = {
+                type: 'transition:start',
+                config: config
+            };
+
 
         if (!anim._running) {
             anim._running = true;
 
-            anim._node.fire('transition:start', {
-                type: 'transition:start',
-                config: anim._config
-            });
+            anim._node.fire('transition:start', data);
 
-            anim._start();
             anim._callback = callback;
+            anim._start();
         }
+
 
         return anim;
     },
@@ -393,7 +397,7 @@ Y.Node.prototype.transition = function(name, config, callback) {
 
         fxConfig = Transition._fx[name];
 
-        if (config) {
+        if (config && typeof config !== 'boolean') {
             config = Y.clone(config);
 
             for (prop in fxConfig) {
@@ -421,6 +425,56 @@ Y.Node.prototype.transition = function(name, config, callback) {
     anim.run(callback);
     return this;
 };
+
+Y.Node.prototype.show = function(name, config, callback) {
+    this._show(); // show prior to transition
+    if (name && Y.Transition) {
+        if (typeof name !== 'string' && !name.push) { // named effect or array of effects supercedes default
+            if (typeof config === 'function') {
+                callback = config;
+                config = name;
+            }
+            name = this.SHOW_TRANSITION; 
+        }    
+        this.transition(name, config, callback);
+    }    
+    return this;
+};
+
+var _wrapCallBack = function(callback, fn) {
+    return function() {
+        if (fn) {
+            fn.call(this);
+        }
+        callback.apply(this, arguments);
+    }
+};
+
+Y.Node.prototype.hide = function(name, config, callback) {
+    if (name && Y.Transition) {
+        if (typeof config === 'function') {
+            callback = config;
+            config = null;
+        }
+
+        if (callback) { // need to hide when transition ends
+            callback = _wrapCallBack(callback, this._hide); // wrap with existing callback
+        } else {
+            callback = this._hide;
+        }    
+        if (typeof name !== 'string' && !name.push) { // named effect or array of effects supercedes default
+            if (typeof config === 'function') {
+                callback = config;
+                config = name;
+            }
+            name = this.HIDE_TRANSITION; 
+        }    
+        this.transition(name, config, callback);
+    } else {
+        this._hide();
+    }    
+    return this;
+}; 
 
 /** 
  *   Animate one or more css properties to a given value. Requires the "transition" module.
@@ -459,7 +513,7 @@ Y.NodeList.prototype.transition = function(config, callback) {
 Transition.add({
     fadeOut: {
         opacity: 0,
-        duration: 0.75,
+        duration: 0.5,
         easing: 'ease-out'
     },
 

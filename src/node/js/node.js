@@ -59,6 +59,9 @@ var DOT = '.',
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
+
+        this.SHOW_TRANSITION = Y_Node.SHOW_TRANSITION;
+        this.HIDE_TRANSITION = Y_Node.HIDE_TRANSITION;
     },
 
     // used with previous/next/ancestor tests
@@ -89,6 +92,9 @@ Y_Node.NAME = 'node';
  * The pattern used to identify ARIA attributes
  */
 Y_Node.re_aria = /^(?:role$|aria-)/;
+
+Y_Node.SHOW_TRANSITION = 'fadeIn';
+Y_Node.HIDE_TRANSITION = 'fadeOut';
 
 /**
  * List of events that route to DOM events
@@ -1110,7 +1116,29 @@ Y.mix(Y_Node.prototype, {
                 typeof node[method] !== 'unknown' &&
             (typeof node[method] === 'function' ||
                 String(node[method]).indexOf('function') === 1)); // IE reports as object, prepends space
+    },
+
+    SHOW_TRANSITION: null,
+    HIDE_TRANSITION: null,
+
+    show: function(name, config, callback) {
+        this._show();
+        return this;
+    },
+
+    _show: function() {
+        this.setStyle('display', '');
+    },
+
+    hide: function(name, config, callback) {
+        this._hide();
+        return this;
+    },
+
+    _hide: function() {
+        this.setStyle('display', 'none');
     }
+
 }, true);
 
 Y.Node = Y_Node;

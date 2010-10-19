@@ -10,7 +10,7 @@
 
 }
 </style>
-<script type="text/javascript" src="../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 </head>
 
 <body>
@@ -20,18 +20,9 @@
 <script type="text/javascript">
 
 
-YUI({filter:'raw'}).use('node', function(Y) {
-    var node = Y.Node.create('<div></div>'),
-        node2 = Y.Node.create('<input></input>'),
-        node2parent;
-
-    node2parent = node2.get('parentNode');
-        
-
-    //alert(null instanceof Y.Node);
-    //alert(node2parent === null);
-
-    //alert(node.compareTo(node2parent));
+YUI({filter:'debug'}).use('node', function(Y) {
+    var node = Y.Node.create('foo bar');
+    alert(node.get('text'));
 });
 
 
@@ -39,4 +30,3 @@ YUI({filter:'raw'}).use('node', function(Y) {
 </script>
 </body>
 </html>
-

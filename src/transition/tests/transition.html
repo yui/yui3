@@ -11,21 +11,133 @@
     width: 200px;
     height: 200px;
 }
+
+.demo div {
+    width: 200px;
+    height: 200px;
+}
 </style>
 </head>
 <body class="yui3-skin-sam">
     <h1>Transition Tests</h1>
-    <div class="demo"></div>
-    <div class="demo"></div>
+    <div class="demo"><div></div></div>
+    <div class="demo"><div></div></div>
 
 <script type="text/javascript">  
 YUI({
-    filter: "debug",
+    filter: "raw",
     logInclude: { TestRunner: true }
 }).use('transition', 'test', 'console', function (Y) {
     Y.namespace('Tests');
     Y.Tests.Transition = (function(){
         var suite = new Y.Test.Suite('Transition Tests');
+
+        suite.add(new Y.Test.Case({
+            name: 'onstart Tests',
+
+            'should run the onstart prior to setting target values': function() {
+                var node = Y.one('.demo'),
+                    test = this,
+                    h = node.getComputedStyle('height'),
+                    onstart = function() {
+                        this.setStyle('height', 0);
+                    };
+
+                node.setStyle('height', h);
+                node.transition({
+                    height: function() {
+                        return h;
+                    },
+
+                    on: {
+                        start: onstart
+                    }
+                }, function() {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(h, node.getComputedStyle('height'));
+                    });
+                }); 
+
+                test.wait(2000);
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'Show Transition Tests',
+
+            'should show the node with the default transition': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('display', 'none');
+                node.setStyle('opacity', '0');
+                node.show(true, function() {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                        Y.Assert.areEqual('block', node.getStyle('display'));
+                    });
+                });
+
+                test.wait(2000);
+            },
+
+            'should show the node with the named transition': function() {
+                var node = Y.one('.demo'),
+                    test = this,
+                    h = node.getComputedStyle('height'),
+                    w = node.getComputedStyle('width');
+
+                node.setStyles({
+                    height: 0,
+                    width: 0
+                });
+                node.show('sizeIn', function() {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(h, node.getComputedStyle('height')); 
+                        Y.Assert.areEqual(w, node.getComputedStyle('width')); 
+                    });
+                });
+                test.wait(2000);
+            },
+
+            'should override the named transition default duration': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('opacity', 0);
+
+                var start = new Date();
+                node.show({duration: 1}, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                    });
+                });
+                test.wait(2000);
+            }
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'Hide Transition Tests',
+
+            'should hide the node with the default transition': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.hide(true, function() {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                        Y.Assert.areEqual('none', node.getStyle('display'));
+                        node.setStyle('display', 'block');
+                        node.setStyle('opacity', '1');
+                    });
+                });
+
+                Y.Assert.areEqual('block', node.getStyle('display'));
+                test.wait(1000);
+            }
+
+        }));
 
     
         suite.add(new Y.Test.Case({
@@ -59,7 +171,7 @@ YUI({
                 test.wait(1000);
             },
 
-            'should override named effect property': function() {
+            'should override effect duration': function() {
                 var node = Y.one('.demo'),
                     test = this;
 
