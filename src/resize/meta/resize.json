@@ -1,0 +1,26 @@
+{
+    "resize": {
+        "submodules": {
+
+            "resize-base": {
+                "requires": [
+					"widget",
+					"substitute",
+					"event",
+					"oop",
+					"dd-drag",
+					"dd-delegate",
+					"dd-drop"
+                ],
+                "skinnable": true
+            },
+
+            "resize-constrain": {
+                "requires": [
+	                "plugin",
+	                "resize-base"
+				]
+            }
+        }
+    }
+}
