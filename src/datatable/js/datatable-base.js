@@ -1,3 +1,24 @@
+/**
+ * The DataTable widget provides a progressively enhanced DHTML control for
+ * displaying tabular data across A-grade browsers.
+ *
+ * @module datatable
+ */
+
+/**
+ * Provides the base DataTable implementation, which can be extended to add
+ * additional functionality, such as sorting or scrolling.
+ *
+ * @module datatable
+ * @submodule datatable-base
+ */
+
+/**
+ * Base class for the DataTable widget.
+ * @class DataSource.Base
+ * @extends Widget
+ * @constructor
+ */
 var YLang = Y.Lang,
     Ysubstitute = Y.Lang.substitute,
     YNode = Y.Node,
@@ -33,123 +54,262 @@ var YLang = Y.Lang,
     TEMPLATE_VALUE = '{value}',
     TEMPLATE_MSG = '<tbody class="'+CLASS_MSG+'"></tbody>';
 
+
 function DTBase(config) {
     DTBase.superclass.constructor.apply(this, arguments);
 }
 
-/*
- * Required NAME static field, to identify the Widget class and
- * used as an event prefix, to generate class names etc. (set to the
- * class name in camel case).
- */
-DTBase.NAME = "dataTable";
+/////////////////////////////////////////////////////////////////////////////
+//
+// STATIC PROPERTIES
+//
+/////////////////////////////////////////////////////////////////////////////
+Y.mix(DTBase, {
 
-/*
- * The attribute configuration for the widget. This defines the core user facing state of the widget
- */
-DTBase.ATTRS = {
-    columnset: {
-        setter: "_setColumnset"
-    },
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "dataSourceLocal"
+     */
+    NAME:  "dataTable",
 
-    //@type Recordset or Array
-    recordset: {
-        setter: "_setRecordset"
-    },
+/////////////////////////////////////////////////////////////////////////////
+//
+// ATTRIBUTES
+//
+/////////////////////////////////////////////////////////////////////////////
+    ATTRS: {
+        /**
+        * @attribute columnset
+        * @description Pointer to Columnset instance.
+        * @type Array | Y.Columnset
+        */
+        columnset: {
+            setter: "_setColumnset"
+        },
 
-    state: {
-        value: new Y.State(),
-        readOnly: true
+        /**
+        * @attribute recordset
+        * @description Pointer to Recordset instance.
+        * @type Array | Y.Recordset
+        */
+        recordset: {
+            setter: "_setRecordset"
+        },
 
-    },
+        /*TODO
+        * @attribute state
+        * @description Internal state.
+        * @readonly
+        * @type
+        */
+        /*state: {
+            value: new Y.State(),
+            readOnly: true
 
-    strings: {
-        valueFn: function() {
-            return Y.Intl.get("datatable-base");
+        },*/
+
+        /**
+        * @attribute strings
+        * @description The collection of localizable strings used to label
+        * elements of the UI.
+        * @type Object
+        */
+        strings: {
+            valueFn: function() {
+                return Y.Intl.get("datatable-base");
+            }
+        },
+
+        /**
+        * @attribute thValueTemplate
+        * @description Tokenized markup template for TH value.
+        * @type String
+        * @default '{value}'
+        */
+        thValueTemplate: {
+            value: TEMPLATE_VALUE
+        },
+
+        /**
+        * @attribute tdValueTemplate
+        * @description Tokenized markup template for TD value.
+        * @type String
+        * @default '{value}'
+        */
+        tdValueTemplate: {
+            value: TEMPLATE_VALUE
+        },
+
+        /**
+        * @attribute trTemplate
+        * @description Tokenized markup template for TR node creation.
+        * @type String
+        * @default '<tr id="{id}"></tr>'
+        */
+        trTemplate: {
+            value: TEMPLATE_TR
         }
     },
 
-    thValueTemplate: {
-        value: TEMPLATE_VALUE
-    },
-
-    tdValueTemplate: {
-        value: TEMPLATE_VALUE
-    },
-
-    trTemplate: {
-        value: TEMPLATE_TR
+/////////////////////////////////////////////////////////////////////////////
+//
+// TODO: HTML_PARSER
+//
+/////////////////////////////////////////////////////////////////////////////
+    HTML_PARSER: {
+        /*caption: function (srcNode) {
+            
+        }*/
     }
-};
+});
 
-/*
- * The HTML_PARSER static constant is used if the Widget supports progressive enhancement, and is
- * used to populate the configuration for the DTBase instance from markup already on the page.
- */
-DTBase.HTML_PARSER = {
-
-    attrA: function (srcNode) {
-        // If progressive enhancement is to be supported, return the value of "attrA" based on the contents of the srcNode
-    }
-
-};
-
-/* DTBase extends the base Widget class */
+/////////////////////////////////////////////////////////////////////////////
+//
+// PROTOTYPE
+//
+/////////////////////////////////////////////////////////////////////////////
 Y.extend(DTBase, Y.Widget, {
-    // Properties
+    /**
+    * @property thTemplate
+    * @description Tokenized markup template for TH node creation.
+    * @type String
+    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'">{value}</div></th>'
+    */
     thTemplate: TEMPLATE_TH,
 
+    /**
+    * @property tdTemplate
+    * @description Tokenized markup template for TD node creation.
+    * @type String
+    * @default '<td headers="{headers}"><div class="'+CLASS_LINER+'">{value}</div></td>'
+    */
     tdTemplate: TEMPLATE_TD,
     
+    /**
+    * @property _theadNode
+    * @description Pointer to THEAD node.
+    * @type Y.Node
+    * @private
+    */
     _theadNode: null,
     
+    /**
+    * @property _tbodyNode
+    * @description Pointer to TBODY node.
+    * @type Y.Node
+    * @private
+    */
     _tbodyNode: null,
     
+    /**
+    * @property _msgNode
+    * @description Pointer to message display node.
+    * @type Y.Node
+    * @private
+    */
     _msgNode: null,
 
-    // Attributes
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTE HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * @property _setColumnset
+    * @description Converts Array to Y.Columnset.
+    * @param columns {Array | Y.Columnset}
+    * @returns Y.Columnset
+    * @private
+    */
     _setColumnset: function(columns) {
         return YLang.isArray(columns) ? new Y.Columnset({columns:columns}) : columns;
     },
 
-    _setRecordset: function(recordset) {
-        if(YLang.isArray(recordset)) {
-            recordset = new Y.Recordset({records:recordset});
+    /**
+     * Updates the UI if changes are made to Columnset.
+     *
+     * @method _afterColumnsetChange
+     * @param e {Event} Custom event for the attribute change.
+     * @private
+     */
+    _afterColumnsetChange: function (e) {
+        this._uiSetColumnset(e.newVal);
+    },
+
+    /**
+    * @property _setRecordset
+    * @description Converts Array to Y.Recordset.
+    * @param records {Array | Y.Recordset}
+    * @returns Y.Recordset
+    * @private
+    */
+    _setRecordset: function(rs) {
+        if(YLang.isArray(rs)) {
+            rs = new Y.Recordset({records:rs});
         }
 
-        recordset.addTarget(this);
-        return recordset;
+        rs.addTarget(this);
+        return rs;
     },
 
-    // Initialization
-    initializer: function() {
-        // Custom events wrap DOM events. Simply pass through DOM event facades.
-        //TODO: do we need queuable=true?
-        this.publish("theadCellClick", {defaultFn: this._defTheadCellClickFn, emitFacade:false, queuable:true});
-        this.publish("theadRowClick", {defaultFn: this._defTheadRowClickFn, emitFacade:false, queuable:true});
-        this.publish("theadClick", {defaultFn: this._defTheadClickFn, emitFacade:false, queuable:true});
+    /**
+    * @property _afterRecordsetChange
+    * @description Adds bubble target.
+    * @param records {Array | Y.Recordset}
+    * @returns Y.Recordset
+    * @private
+    */
+    _afterRecordsetChange: function (e) {
+        this._uiSetRecordset(e.newVal);
     },
 
-    _defTheadCellClickFn: function(e) {
-        this.fire("theadRowClick", e);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // METHODS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Initializer.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
+    initializer: function(config) {
     },
 
-    _defTheadRowClickFn: function(e) {
-        this.fire("theadClick", e);
-    },
-
-    _defTheadClickFn: function(e) {
-    },
-
-    // Destruction
+    /**
+    * Destructor.
+    *
+    * @method destructor
+    * @private
+    */
     destructor: function() {
          this.get("recordset").removeTarget(this);
     },
 
-    // UI
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // RENDER
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+    * Renders UI.
+    *
+    * @method renderUI
+    * @private
+    */
     renderUI: function() {
-        // TABLE
-        var ok = this._addTableNode(this.get("contentBox")) &&
+        var ok =
+            // TABLE
+            this._addTableNode(this.get("contentBox")) &&
             // COLGROUP
             this._addColgroupNode(this._tableNode) &&
             // THEAD
@@ -160,10 +320,16 @@ Y.extend(DTBase, Y.Widget, {
             this._addMessageNode(this._tableNode) &&
             // CAPTION
             this._addCaptionNode(this._tableNode);
+   },
 
-        return ok;
-    },
-
+    /**
+    * Creates and attaches TABLE element to given container.
+    *
+    * @method _addTableNode
+    * @param containerNode {Y.Node} Parent node.
+    * @protected
+    * @returns Y.Node
+    */
     _addTableNode: function(containerNode) {
         if (!this._tableNode) {
             this._tableNode = containerNode.appendChild(Ycreate(TEMPLATE_TABLE));
@@ -171,6 +337,14 @@ Y.extend(DTBase, Y.Widget, {
         return this._tableNode;
     },
 
+    /**
+    * Creates and attaches COLGROUP element to given TABLE.
+    *
+    * @method _addColgroupNode
+    * @param tableNode {Y.Node} Parent node.
+    * @protected
+    * @returns Y.Node
+    */
     _addColgroupNode: function(tableNode) {
         // Add COLs to DOCUMENT FRAGMENT
         var len = this.get("columnset").get("keys").length,
@@ -189,6 +363,14 @@ Y.extend(DTBase, Y.Widget, {
         return this._colgroupNode;
     },
 
+    /**
+    * Creates and attaches THEAD element to given container.
+    *
+    * @method _addTheadNode
+    * @param tableNode {Y.Node} Parent node.
+    * @protected
+    * @returns Y.Node
+    */
     _addTheadNode: function(tableNode) {
         if(tableNode) {
             this._theadNode = tableNode.insertBefore(Ycreate(TEMPLATE_THEAD), this._colgroupNode.next());
@@ -196,22 +378,58 @@ Y.extend(DTBase, Y.Widget, {
         }
     },
 
+    /**
+    * Creates and attaches TBODY element to given container.
+    *
+    * @method _addTbodyNode
+    * @param tableNode {Y.Node} Parent node.
+    * @protected
+    * @returns Y.Node
+    */
     _addTbodyNode: function(tableNode) {
         this._tbodyNode = tableNode.appendChild(Ycreate(TEMPLATE_TBODY));
         return this._tbodyNode;
     },
 
+    /**
+    * Creates and attaches message display element to given container.
+    *
+    * @method _addMessageNode
+    * @param tableNode {Y.Node} Parent node.
+    * @protected
+    * @returns Y.Node
+    */
     _addMessageNode: function(tableNode) {
         this._msgNode = tableNode.insertBefore(Ycreate(TEMPLATE_MSG), this._tbodyNode);
         return this._msgNode;
     },
 
+    /**
+    * Creates and attaches CAPTION element to given container.
+    *
+    * @method _addCaptionNode
+    * @param tableNode {Y.Node} Parent node.
+    * @protected
+    * @returns Y.Node
+    */
     _addCaptionNode: function(tableNode) {
+        //TODO: node.createCaption
         this._captionNode = tableNode.invoke("createCaption");
         return this._captionNode;
     },
 
-    // Events
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // BIND
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+    * Binds events.
+    *
+    * @method bindUI
+    * @private
+    */
     bindUI: function() {
         var tableNode = this._tableNode,
             contentBox = this.get("contentBox"),
@@ -219,85 +437,135 @@ Y.extend(DTBase, Y.Widget, {
             tbodyFilter ="tbody."+CLASS_DATA+">tr>td",
             msgFilter = "tbody."+CLASS_MSG+">tr>td";
             
-            
+        // Define custom events that wrap DOM events. Simply pass through DOM
+        // event facades.
+        //TODO: do we need queuable=true?
+        //TODO: All the other events.
+        this.publish("theadCellClick", {defaultFn: this._defTheadCellClickFn, emitFacade:false, queuable:true});
+        this.publish("theadRowClick", {defaultFn: this._defTheadRowClickFn, emitFacade:false, queuable:true});
+        this.publish("theadClick", {defaultFn: this._defTheadClickFn, emitFacade:false, queuable:true});
 
-        // DOM event delegation for THEAD
-        
-        tableNode.delegate(FOCUS, this._onEvent, theadFilter, this, "theadCellFocus");
-        tableNode.delegate(KEYDOWN, this._onEvent, theadFilter, this, "theadCellKeydown");
-        tableNode.delegate(MOUSEOVER, this._onEvent, theadFilter, this, "theadCellMousedown");
-        tableNode.delegate(MOUSEOUT, this._onEvent, theadFilter, this, "theadCellMouseout");
-        tableNode.delegate(MOUSEUP, this._onEvent, theadFilter, this, "theadCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onEvent, theadFilter, this, "theadCellMousedown");
-        tableNode.delegate(CLICK, this._onEvent, theadFilter, this, "theadCellClick");
+        // Bind to THEAD DOM events
+        tableNode.delegate(FOCUS, this._onDomEvent, theadFilter, this, "theadCellFocus");
+        tableNode.delegate(KEYDOWN, this._onDomEvent, theadFilter, this, "theadCellKeydown");
+        tableNode.delegate(MOUSEOVER, this._onDomEvent, theadFilter, this, "theadCellMousedown");
+        tableNode.delegate(MOUSEOUT, this._onDomEvent, theadFilter, this, "theadCellMouseout");
+        tableNode.delegate(MOUSEUP, this._onDomEvent, theadFilter, this, "theadCellMouseup");
+        tableNode.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "theadCellMousedown");
+        tableNode.delegate(CLICK, this._onDomEvent, theadFilter, this, "theadCellClick");
         // Since we can't listen for click and dblclick on the same element...
         contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "theadCellDoubleclick");
 
-        // DOM event delegation for TBODY
-        tableNode.delegate(FOCUS, this._onEvent, theadFilter, this, "tbodyCellFocus");
-        tableNode.delegate(KEYDOWN, this._onEvent, theadFilter, this, "tbodyCellKeydown");
-        tableNode.delegate(MOUSEOVER, this._onEvent, theadFilter, this, "tbodyCellMouseover");
-        tableNode.delegate(MOUSEOUT, this._onEvent, theadFilter, this, "tbodyCellMouseout");
-        tableNode.delegate(MOUSEUP, this._onEvent, theadFilter, this, "tbodyCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onEvent, theadFilter, this, "tbodyCellMousedown");
-        tableNode.delegate(CLICK, this._onEvent, theadFilter, this, "tbodyCellClick");
+        // Bind to TBODY DOM events
+        tableNode.delegate(FOCUS, this._onDomEvent, theadFilter, this, "tbodyCellFocus");
+        tableNode.delegate(KEYDOWN, this._onDomEvent, theadFilter, this, "tbodyCellKeydown");
+        tableNode.delegate(MOUSEOVER, this._onDomEvent, theadFilter, this, "tbodyCellMouseover");
+        tableNode.delegate(MOUSEOUT, this._onDomEvent, theadFilter, this, "tbodyCellMouseout");
+        tableNode.delegate(MOUSEUP, this._onDomEvent, theadFilter, this, "tbodyCellMouseup");
+        tableNode.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "tbodyCellMousedown");
+        tableNode.delegate(CLICK, this._onDomEvent, theadFilter, this, "tbodyCellClick");
         // Since we can't listen for click and dblclick on the same element...
         contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "tbodyCellDoubleclick");
 
-        // DOM event delegation for MSG TBODY
-        tableNode.delegate(FOCUS, this._onEvent, msgFilter, this, "msgCellFocus");
-        tableNode.delegate(KEYDOWN, this._onEvent, msgFilter, this, "msgCellKeydown");
-        tableNode.delegate(MOUSEOVER, this._onEvent, msgFilter, this, "msgCellMouseover");
-        tableNode.delegate(MOUSEOUT, this._onEvent, msgFilter, this, "msgCellMouseout");
-        tableNode.delegate(MOUSEUP, this._onEvent, msgFilter, this, "msgCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onEvent, msgFilter, this, "msgCellMousedown");
-        tableNode.delegate(CLICK, this._onEvent, msgFilter, this, "msgCellClick");
+        // Bind to message TBODY DOM events
+        tableNode.delegate(FOCUS, this._onDomEvent, msgFilter, this, "msgCellFocus");
+        tableNode.delegate(KEYDOWN, this._onDomEvent, msgFilter, this, "msgCellKeydown");
+        tableNode.delegate(MOUSEOVER, this._onDomEvent, msgFilter, this, "msgCellMouseover");
+        tableNode.delegate(MOUSEOUT, this._onDomEvent, msgFilter, this, "msgCellMouseout");
+        tableNode.delegate(MOUSEUP, this._onDomEvent, msgFilter, this, "msgCellMouseup");
+        tableNode.delegate(MOUSEDOWN, this._onDomEvent, msgFilter, this, "msgCellMousedown");
+        tableNode.delegate(CLICK, this._onDomEvent, msgFilter, this, "msgCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onEvent, msgFilter, this, "msgCellDoubleclick");
+        contentBox.delegate(DOUBLECLICK, this._onDomEvent, msgFilter, this, "msgCellDoubleclick");
     },
     
-    _onEvent: function(e, type) {
+    /**
+    * On DOM event, fires corresponding custom event.
+    *
+    * @method _onDomEvent
+    * @param e {DOMEvent} The original DOM event facade.
+    * @param type {String} Corresponding custom event to fire.
+    * @private
+    */
+    _onDomEvent: function(e, type) {
         this.fire(type, e);
     },
 
+    //TODO: abstract this out
+    _defTheadCellClickFn: function(e) {
+        this.fire("theadRowClick", e);
+    },
+
+    _defTheadRowClickFn: function(e) {
+        this.fire("theadClick", e);
+    },
+
+    _defTheadClickFn: function(e) {
+    },
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // SYNC
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+    * Syncs UI to intial state.
+    *
+    * @method syncUI
+    * @private
+    */
     syncUI: function() {
-        /*
-         * syncUI is intended to be used by the Widget subclass to
-         * update the UI to reflect the initial state of the widget,
-         * after renderUI. From there, the event listeners we bound above
-         * will take over.
-         */
-        // STRINGS
-        this._uiSetStrings(this.get("strings"));
         // THEAD ROWS
         this._uiSetColumnset(this.get("columnset"));
         // DATA ROWS
         this._uiSetRecordset(this.get("recordset"));
+        // STRINGS
+        this._uiSetStrings(this.get("strings"));
     },
-
-    /* Listeners, UI update methods */
 
     /**
      * Updates the UI if changes are made to any of the strings in the strings
      * attribute.
      *
      * @method _afterStringsChange
-     * @param e {Event} Custom event for the attribute change
+     * @param e {Event} Custom event for the attribute change.
      * @protected
      */
     _afterStringsChange: function (e) {
         this._uiSetStrings(e.newVal);
     },
 
+    /**
+     * Updates all strings.
+     *
+     * @method _uiSetStrings
+     * @param strings {Object} Collection of new strings.
+     * @protected
+     */
     _uiSetStrings: function (strings) {
         this._uiSetSummary(strings.summary);
         this._uiSetCaption(strings.caption);
     },
 
+    /**
+     * Updates summary.
+     *
+     * @method _uiSetSummary
+     * @param val {String} New summary.
+     * @protected
+     */
     _uiSetSummary: function(val) {
         this._tableNode.set("summary", val);
     },
 
+    /**
+     * Updates caption.
+     *
+     * @method _uiSetCaption
+     * @param val {String} New caption.
+     * @protected
+     */
     _uiSetCaption: function(val) {
         this._captionNode.setContent(val);
     },
@@ -305,14 +573,16 @@ Y.extend(DTBase, Y.Widget, {
 
     ////////////////////////////////////////////////////////////////////////////
     //
-    // THEAD FUNCTIONALITY
+    // THEAD/COLUMNSET FUNCTIONALITY
     //
     ////////////////////////////////////////////////////////////////////////////
-    
-    _afterColumnsetChange: function (e) {
-        this._uiSetColumnset(e.newVal);
-    },
-
+        /**
+     * Updates THEAD.
+     *
+     * @method _uiSetColumnset
+     * @param cs {Y.Columnset} New Columnset.
+     * @protected
+     */
     _uiSetColumnset: function(cs) {
         var tree = cs.get("tree"),
             thead = this._theadNode,
@@ -335,12 +605,31 @@ Y.extend(DTBase, Y.Widget, {
 
      },
      
+    /**
+    * Creates and attaches header row element.
+    *
+    * @method _addTheadTrNode
+    * @param o {Object} {thead, columns}.
+    * @param isFirst {Boolean} Is first row.
+    * @param isFirst {Boolean} Is last row.
+    * @protected
+    */
      _addTheadTrNode: function(o, isFirst, isLast) {
         o.tr = this._createTheadTrNode(o, isFirst, isLast);
         this._attachTheadTrNode(o);
      },
      
 
+    /**
+    * Creates header row element.
+    *
+    * @method _createTheadTrNode
+    * @param o {Object} {thead, columns}.
+    * @param isFirst {Boolean} Is first row.
+    * @param isLast {Boolean} Is last row.
+    * @protected
+    * @returns Y.Node
+    */
     _createTheadTrNode: function(o, isFirst, isLast) {
         //TODO: custom classnames
         var tr = Ycreate(Ysubstitute(this.get("trTemplate"), o)),
@@ -365,15 +654,37 @@ Y.extend(DTBase, Y.Widget, {
         return tr;
     },
 
+    /**
+    * Attaches header row element.
+    *
+    * @method _attachTheadTrNode
+    * @param o {Object} {thead, columns, tr}.
+    * @protected
+    */
     _attachTheadTrNode: function(o) {
         o.thead.appendChild(o.tr);
     },
 
+    /**
+    * Creates and attaches header cell element.
+    *
+    * @method _addTheadThNode
+    * @param o {Object} {value, column, tr}.
+    * @protected
+    */
     _addTheadThNode: function(o) {
         o.th = this._createTheadThNode(o);
         this._attachTheadThNode(o);
     },
 
+    /**
+    * Creates header cell element.
+    *
+    * @method _createTheadThNode
+    * @param o {Object} {value, column, tr}.
+    * @protected
+    * @returns Y.Node
+    */
     _createTheadThNode: function(o) {
         var column = o.column;
         
@@ -397,14 +708,22 @@ Y.extend(DTBase, Y.Widget, {
         return Ycreate(Ysubstitute(this.thTemplate, o));
     },
 
+    /**
+    * Attaches header cell element.
+    *
+    * @method _attachTheadTrNode
+    * @param o {Object} {value, column, tr}.
+    * @protected
+    */
     _attachTheadThNode: function(o) {
         o.tr.appendChild(o.th);
     },
 
-    _afterRecordsetChange: function (e) {
-        this._uiSetRecordset(e.newVal);
-    },
-
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // TBODY/RECORDSET FUNCTIONALITY
+    //
+    ////////////////////////////////////////////////////////////////////////////
     _uiSetRecordset: function(rs) {
         var i = 0,//TODOthis.get("state.offsetIndex")
             len = rs.getLength(), //TODOthis.get("state.pageLength")
