@@ -967,6 +967,8 @@ Y.Loader.prototype = {
             o.path = _path(name, name, o.type);
         }
 
+        o.supersedes = o.supersedes || o.use;
+
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
         o.requires = o.requires || [];
 
