@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: shim-plugin   (YUI Library)</title>
+	<title>API: pluginhost-base   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>shim-plugin&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>pluginhost-base&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_shim-plugin.html" title="shim-plugin">shim-plugin</a>
+            &gt; <a href="./module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a>
                 
                 
         <form onsubmit="return false">
@@ -44,14 +44,13 @@
             </form>
 
                    
-                    <h3>Module: shim-plugin
+                    <h3>Module: pluginhost-base
                     
 
 
                     </h3>
                     <div class="description summary">
-                        Provides shimming support for Node via a Plugin.
-This fixes SELECT bleedthrough for IE6 & Mac scrollbars
+                        Provides the augmentable PluginHost interface, which can be added to any class.
                     </div>
 
 
@@ -61,11 +60,11 @@ This fixes SELECT bleedthrough for IE6 & Mac scrollbars
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Node plugin which can be used to add shim support.", "guessedname": "Plugin.Shim", "name": "Plugin.Shim"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nAn augmentable class, which provides the augmented class with the ability to host plugins.\nIt adds <a href=\"#method_plug\">plug</a> and <a href=\"#method_unplug\">unplug</a> methods to the augmented class, which can \nbe used to add or remove plugins from instances of the class.\n</p>\n<p>Plugins can also be added through the constructor configuration object passed to the host class' constructor using\nthe \"plugins\" property. Supported values for the \"plugins\" property are those defined by the <a href=\"#method_plug\">plug</a> method. \nFor example the following code would add the AnimPlugin and IOPlugin to Overlay (the plugin host):\n<xmp>\nvar o = new Overlay({plugins: [ AnimPlugin, {fn:IOPlugin, cfg:{section:\"header\"}}]});\n</xmp>\n</p>\n<p>\nPlug.Host's protected <a href=\"#method_initPlugins\">_initPlugins</a> and <a href=\"#method_destroyPlugins\">_destroyPlugins</a> \nmethods should be invoked by the host class at the appropriate point in the host's lifecyle.  \n</p>", "guessedname": "Plugin.Host", "name": "Plugin.Host"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
-                                    <li><a href="Plugin.Shim.html" title="Plugin.Shim" id="class_0">Plugin.Shim</a></li>
+                                    <li><a href="Plugin.Host.html" title="Plugin.Host" id="class_0">Plugin.Host</a></li>
                                 </ul>
                             </div>
                     </div>
@@ -122,7 +121,7 @@ This fixes SELECT bleedthrough for IE6 & Mac scrollbars
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
-                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class="selected"><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
@@ -130,7 +129,7 @@ This fixes SELECT bleedthrough for IE6 & Mac scrollbars
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
-                                <li class="selected"><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
@@ -159,10 +158,16 @@ This fixes SELECT bleedthrough for IE6 & Mac scrollbars
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Plugin.Shim.html" title="Plugin.Shim">Plugin.Shim</a></li>
+                                <li class=""><a href="Plugin.Host.html" title="Plugin.Host">Plugin.Host</a></li>
                         </ul>
                     </div>
 
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="PluginHostConfig.js.html" title="PluginHostConfig.js">PluginHostConfig.js</a></li>
+                        </ul>
+                    </div>
 
 
 
@@ -178,7 +183,7 @@ This fixes SELECT bleedthrough for IE6 & Mac scrollbars
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Shim", "name": "destroy", "url": "Plugin.Shim.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.CLASS_NAME", "url": "Plugin.Shim.html#property_Shim.CLASS_NAME", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.TEMPLATE", "url": "Plugin.Shim.html#property_Shim.TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "sync", "url": "Plugin.Shim.html#method_sync", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Plugin.Host", "name": "_destroyPlugins", "url": "Plugin.Host.html#method__destroyPlugins", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "hasPlugin", "url": "Plugin.Host.html#method_hasPlugin", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_initPlugins", "url": "Plugin.Host.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "plug", "url": "Plugin.Host.html#method_plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "PluginHost", "url": "Plugin.Host.html#property_PluginHost", "type": "property"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.plug", "url": "Plugin.Host.html#method_Plugin.Host.plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.unplug", "url": "Plugin.Host.html#method_Plugin.Host.unplug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "unplug", "url": "Plugin.Host.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>

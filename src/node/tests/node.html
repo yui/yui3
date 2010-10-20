@@ -1404,8 +1404,97 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             // This will throw in IE, but the focus() wrapper should catch the
             // exception.
             Y.one(button).focus();
-        }
+        },
 
+        'should hide the node': function() {
+            var node = Y.one('body');
+            node.hide();
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node': function() {
+            var node = Y.one('body');
+            node.setStyle('display', 'none');
+            node.show(1);
+            Assert.areEqual('block', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should set text for textNode': function() {
+            var node = Y.one(document.createElement('text'));
+            node.set('text', 'foo');
+            Assert.areEqual('foo', node.get('text'));
+        },
+
+        'should append to the given node': function() {
+            var node = Y.Node.create('<div/>');
+            node.appendTo(Y.one('body'));
+        },
+
+        'should append to the given DOM node': function() {
+            var node = Y.Node.create('<div/>');
+            node.appendTo(document.body);
+        },
+
+        'should wrap the node with the given html': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap('<div/>');
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should remove the node from its parent': function() {
+            var node = Y.Node.create('<div/>').append('<span><em>foo</em></span>').one('em');
+            node.unwrap();
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should return true for fragment': function() {
+            var node = Y.Node.create('<span>foo</span><em>bar</em>');
+            Assert.isTrue(node.isFragment());
+        },
+
+        'should create a caption element': function() {
+            var node = Y.Node.create('<table/>');
+            node.createCaption();
+            Assert.areEqual('CAPTION', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>'));
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given dom node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>')._node);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace('<em>bar</em>');
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html and return the replaced node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node = node.replaceChild('<em>bar</em>', node.one('span'));
+            Assert.areEqual('SPAN', node.get('tagName'));
+        },
+
+        'should append the given html and return the new node': function() {
+            var node = Y.Node.create('<div></div>').appendChild('<em>foo</em>');
+            Assert.areEqual('EM', node.get('tagName'));
+        },
+
+        'should insert the given html and return the new node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>'),
+                newNode = node.insertBefore('<em>bar</em>', node.one('*'));
+
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        }
     })); 
 
     Y.Test.Runner.add(suite);

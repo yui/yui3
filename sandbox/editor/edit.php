@@ -374,7 +374,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
-        defaultblock: 'div'//,
+        defaultblock: 'div',
         /*
         linkedcss: [
             'http://yui.yahooapis.com/2.8.1/build/reset/reset.css',
@@ -382,7 +382,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             'http://yui.yahooapis.com/2.8.1/build/grids/grids.css'
         ],
         */
-        //extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; }'
+        extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; }'
     });
 
     /*
