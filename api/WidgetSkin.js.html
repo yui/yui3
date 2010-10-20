@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget-locale   (YUI Library)</title>
+	<title>API: widget-locale   WidgetSkin.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget-locale.html" title="widget-locale">widget-locale</a>
                 
-                
+                 &gt; WidgetSkin.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,27 +43,43 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: widget-locale
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
+    <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="p">,</span>
+    <span class="nx">SKIN</span> <span class="o">=</span> <span class="s2">&quot;skin&quot;</span><span class="p">,</span>
+    <span class="nx">_getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Returns the name of the skin that&#39;s currently applied to the widget.</span>
+<span class="cm"> * This is only really useful after the widget&#39;s DOM structure is in the</span>
+<span class="cm"> * document, either by render or by progressive enhancement.  Searches up</span>
+<span class="cm"> * the Widget&#39;s ancestor axis for a class yui3-skin-(name), and returns the</span>
+<span class="cm"> * (name) portion.  Otherwise, returns null.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method getSkinName</span>
+<span class="cm"> * @return {String} the name of the skin, or null (yui3-skin-sam =&gt; sam)</span>
+<span class="cm"> */</span>
 
-                    </h3>
-                    <div class="description summary">
-                        Provides string support for widget with BCP 47 language tag lookup. This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP 47 language tag support with externalization.
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getSkinName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">CONTENT_BOX</span> <span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">BOUNDING_BOX</span> <span class="p">),</span>
+        <span class="nx">search</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span> <span class="s1">&#39;\\b&#39;</span> <span class="o">+</span> <span class="nx">_getClassName</span><span class="p">(</span> <span class="nx">SKIN</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-(\\S+)&#39;</span> <span class="p">),</span>
+        <span class="nx">match</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span> <span class="nx">root</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">root</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">node</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">match</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;className&#39;</span> <span class="p">).</span><span class="nx">match</span><span class="p">(</span> <span class="nx">search</span> <span class="p">);</span>
+            <span class="k">return</span> <span class="nx">match</span><span class="p">;</span>
+        <span class="p">}</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">(</span> <span class="nx">match</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                    </div>
-                    <div class="yui-u">
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -150,7 +166,7 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="WidgetSkin.js.html" title="WidgetSkin.js">WidgetSkin.js</a></li>
+                                <li class="selected"><a href="WidgetSkin.js.html" title="WidgetSkin.js">WidgetSkin.js</a></li>
                                 <li class=""><a href="WidgetUIEvents.js.html" title="WidgetUIEvents.js">WidgetUIEvents.js</a></li>
                         </ul>
                     </div>

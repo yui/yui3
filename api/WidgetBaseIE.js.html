@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget   WidgetLocale.js  (YUI Library)</title>
+	<title>API: widget   WidgetBaseIE.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget.html" title="widget">widget</a>
                 
-                 &gt; WidgetLocale.js (source view) 
+                 &gt; WidgetBaseIE.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,171 +47,35 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Provides string support for widget with BCP 47 language tag lookup. This module has been deprecated. It&#39;s replaced by the &quot;intl&quot; module which provides generic internationalization and BCP 47 language tag support with externalization.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @module widget-locale</span>
-<span class="cm"> * @deprecated This module has been deprecated. It&#39;s replaced by the &quot;intl&quot; module which provides generic internationalization and BCP 47 language tag support with externalization.</span>
-<span class="cm"> */</span>
-<span class="kd">var</span> <span class="nx">TRUE</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nx">LOCALE</span> <span class="o">=</span> <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
-    <span class="nx">INIT_VALUE</span> <span class="o">=</span> <span class="s2">&quot;initValue&quot;</span><span class="p">,</span>
-    <span class="nx">HYPHEN</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
+    <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="p">,</span>
+    <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span>
+    <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="p">,</span>
     <span class="nx">EMPTY_STR</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">;</span>
+    <span class="nx">heightReallyMinHeight</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="nx">bbTempExpanding</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="s2">&quot;tmp&quot;</span><span class="p">,</span> <span class="s2">&quot;forcesize&quot;</span><span class="p">);</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * @attribute locale</span>
-<span class="cm"> * @deprecated Use Y.config.lang and Y.Intl externalization support</span>
-<span class="cm"> * @description</span>
-<span class="cm"> * The default locale for the widget. NOTE: Using get/set on the &quot;strings&quot; attribute will</span>
-<span class="cm"> * return/set strings for this locale.</span>
-<span class="cm"> * @default &quot;en&quot;</span>
-<span class="cm"> * @type String</span>
-<span class="cm"> */</span>
-<span class="nx">Widget</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">[</span><span class="nx">LOCALE</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;en&quot;</span>
-<span class="p">};</span>
+    <span class="c1">// borderBoxSupported = this._bbs = !(IE &amp;&amp; IE &lt; 8 &amp;&amp; doc.compatMode != &quot;BackCompat&quot;)</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_uiSizeCB</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">expand</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Sets strings for a particular locale, merging with any existing</span>
-<span class="cm">     * strings which may already be defined for the locale.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _setStrings</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     * @param {Object} strings The hash of string key/values to set</span>
-<span class="cm">     * @param {Object} locale The locale for the string values being set</span>
-<span class="cm">     */</span>
-    <span class="nx">_setStrings</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strings</span><span class="p">,</span> <span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_strs</span><span class="p">;</span>
-        <span class="nx">locale</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">),</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">expand</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">heightReallyMinHeight</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bb</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">bbTempExpanding</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">],</span> <span class="nx">strings</span><span class="p">,</span> <span class="nx">TRUE</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">];</span>
-    <span class="p">},</span>
+        <span class="nx">cb</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">,</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">));</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Returns the strings key/value hash for a paricular locale, without locale lookup applied.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _getStrings</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     * @param {Object} locale</span>
-<span class="cm">     */</span>
-    <span class="nx">_getStrings</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()];</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Gets the entire strings hash for a particular locale, performing locale lookup.</span>
-<span class="cm">     * &lt;p&gt;</span>
-<span class="cm">     * If no values of the key are defined for a particular locale the value for the </span>
-<span class="cm">     * default locale (in initial locale set for the class) is returned.</span>
-<span class="cm">     * &lt;/p&gt;</span>
-<span class="cm">     * @method getStrings</span>
-<span class="cm">     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.</span>
-<span class="cm">     */</span>
-    <span class="c1">// TODO: Optimize/Cache. Clear cache on _setStrings call.</span>
-    <span class="nx">getStrings</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
-    
-        <span class="nx">locale</span> <span class="o">=</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">)).</span><span class="nx">toLowerCase</span><span class="p">();</span>
-    
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getStrings: For &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
-    
-        <span class="kd">var</span> <span class="nx">defLocale</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDefaultLocale</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">(),</span>
-            <span class="nx">defStrs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">defLocale</span><span class="p">),</span>
-            <span class="nx">strs</span> <span class="o">=</span> <span class="p">(</span><span class="nx">defStrs</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">defStrs</span><span class="p">)</span> <span class="o">:</span> <span class="p">{},</span>
-            <span class="nx">localeSegments</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">HYPHEN</span><span class="p">),</span>
-            <span class="nx">localeStrs</span><span class="p">,</span>
-            <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span>
-            <span class="nx">lookup</span><span class="p">;</span>
-    
-        <span class="c1">// If locale is different than the default, or needs lookup support</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">!==</span> <span class="nx">defLocale</span> <span class="o">||</span> <span class="nx">localeSegments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">lookup</span> <span class="o">=</span> <span class="nx">EMPTY_STR</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">localeSegments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">lookup</span> <span class="o">+=</span> <span class="nx">localeSegments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-    
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getStrings: Merging in strings from: &quot;</span> <span class="o">+</span> <span class="nx">lookup</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
-    
-                <span class="nx">localeStrs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">lookup</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">localeStrs</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">strs</span><span class="p">,</span> <span class="nx">localeStrs</span><span class="p">,</span> <span class="nx">TRUE</span><span class="p">);</span>
-                <span class="p">}</span>
-                <span class="nx">lookup</span> <span class="o">+=</span> <span class="nx">HYPHEN</span><span class="p">;</span>
-            <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">heightReallyMinHeight</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bb</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">bbTempExpanding</span><span class="p">);</span>
         <span class="p">}</span>
-    
-        <span class="k">return</span> <span class="nx">strs</span><span class="p">;</span>
-    <span class="p">},</span>
-    
-    <span class="cm">/**</span>
-<span class="cm">     * Gets the string for a particular key, for a particular locale, performing locale lookup.</span>
-<span class="cm">     * &lt;p&gt;</span>
-<span class="cm">     * If no values if defined for the key, for the given locale, the value for the </span>
-<span class="cm">     * default locale (in initial locale set for the class) is returned.</span>
-<span class="cm">     * &lt;/p&gt;</span>
-<span class="cm">     * @method getString</span>
-<span class="cm">     * @param {String} key The key.</span>
-<span class="cm">     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.</span>
-<span class="cm">     */</span>
-    <span class="nx">getString</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="nx">locale</span> <span class="o">=</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">)).</span><span class="nx">toLowerCase</span><span class="p">();</span>
-    
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getString: For &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
-    
-        <span class="kd">var</span> <span class="nx">defLocale</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getDefaultLocale</span><span class="p">()).</span><span class="nx">toLowerCase</span><span class="p">(),</span>
-            <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">defLocale</span><span class="p">)</span> <span class="o">||</span> <span class="p">{},</span>
-            <span class="nx">str</span> <span class="o">=</span> <span class="nx">strs</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span>
-            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">HYPHEN</span><span class="p">);</span>
-    
-        <span class="c1">// If locale is different than the default, or needs lookup support</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">!==</span> <span class="nx">defLocale</span> <span class="o">||</span> <span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">do</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getString: Performing lookup for: &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
-    
-                <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">locale</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">strs</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">strs</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">str</span> <span class="o">=</span> <span class="nx">strs</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-                    <span class="k">break</span><span class="p">;</span>
-                <span class="p">}</span>
-                <span class="nx">idx</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">HYPHEN</span><span class="p">);</span>
-                <span class="c1">// Chop of last locale segment</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">locale</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">idx</span><span class="p">);</span>
-                <span class="p">}</span>
-    
-            <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-        <span class="p">}</span>
-    
-        <span class="k">return</span> <span class="nx">str</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Returns the default locale for the widget (the locale value defined by the</span>
-<span class="cm">     * widget class, or provided by the user during construction).</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method getDefaultLocale</span>
-<span class="cm">     * @return {String} The default locale for the widget</span>
-<span class="cm">     */</span>
-    <span class="nx">getDefaultLocale</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">,</span> <span class="nx">INIT_VALUE</span><span class="p">);</span>
-    <span class="p">},</span>
-    
-    <span class="nx">_strSetter</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setStrings</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="nx">_strGetter</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">));</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">,</span> <span class="nx">EMPTY_STR</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+<span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -308,9 +172,9 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
-                                <li class=""><a href="WidgetBaseIE.js.html" title="WidgetBaseIE.js">WidgetBaseIE.js</a></li>
+                                <li class="selected"><a href="WidgetBaseIE.js.html" title="WidgetBaseIE.js">WidgetBaseIE.js</a></li>
                                 <li class=""><a href="WidgetHTMLParser.js.html" title="WidgetHTMLParser.js">WidgetHTMLParser.js</a></li>
-                                <li class="selected"><a href="WidgetLocale.js.html" title="WidgetLocale.js">WidgetLocale.js</a></li>
+                                <li class=""><a href="WidgetLocale.js.html" title="WidgetLocale.js">WidgetLocale.js</a></li>
                         </ul>
                     </div>
 
