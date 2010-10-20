@@ -29,6 +29,13 @@
                     "transition-native",
                     "node-style"
                 ]
+            },
+
+            "node-load": {
+                "requires": [
+                    "node-base",
+                    "io-base"
+                ]
             }
         },
         "submodules": {

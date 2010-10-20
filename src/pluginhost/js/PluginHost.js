@@ -64,13 +64,13 @@
                     this.plug(Plugin[i]);
                 }
             } else {
-                if (!L.isFunction(Plugin)) {
+                if (Plugin && !L.isFunction(Plugin)) {
                     config = Plugin.cfg;
                     Plugin = Plugin.fn;
                 }
 
                 // Plugin should be fn by now
-                if (Plugin.NS) {
+                if (Plugin && Plugin.NS) {
                     ns = Plugin.NS;
         
                     config = config || {};
@@ -85,6 +85,7 @@
                         this._plugins[ns] = Plugin;
                     }
                 }
+                else { Y.log("Attempt to plug in an invalid plugin. Host:" + this + ", Plugin:" + Plugin); }
             }
             return this;
         },

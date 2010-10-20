@@ -1,33 +1,6 @@
 Y.Array.each([
     /**
      * Passes through to DOM method.
-     * @method replaceChild
-     * @for Node
-     * @param {HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
-     * @return {Node} The replaced node 
-     */
-    'replaceChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method appendChild
-     * @param {HTMLElement | Node} node Node to be appended 
-     * @return {Node} The appended node 
-     */
-    'appendChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method insertBefore
-     * @param {HTMLElement | Node} newNode Node to be appended 
-     * @param {HTMLElement | Node} refNode Node to be inserted before 
-     * @return {Node} The inserted node 
-     */
-    'insertBefore',
-
-    /**
-     * Passes through to DOM method.
      * @method removeChild
      * @param {HTMLElement | Node} node Node to be removed 
      * @return {Node} The removed node 
@@ -116,7 +89,16 @@ Y.Array.each([
      * @method select
      * @chainable
      */
-     'select'
+     'select',
+
+    /**
+     * Passes through to DOM method.
+     * Only valid on TABLE elements
+     * @method createCaption
+     * @chainable
+     */
+    'createCaption',
+
 ], function(method) {
     Y.Node.prototype[method] = function(arg1, arg2, arg3) {
     Y.log('adding: ' + method, 'info', 'node');
@@ -153,7 +135,11 @@ Y.Node.importMethod(Y.DOM, [
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
-    'getAttribute'
+    'getAttribute',
+
+    'wrap',
+
+    'unwrap'
 ]);
 
 /**

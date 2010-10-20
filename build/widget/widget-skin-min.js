@@ -1,0 +1,1 @@
+YUI.add("widget-skin",function(E){var D="boundingBox",B="contentBox",A="skin",C=E.ClassNameManager.getClassName;E.Widget.prototype.getSkinName=function(){var F=this.get(B)||this.get(D),H=new RegExp("\\b"+C(A)+"-(\\S+)"),G;if(F){F.ancestor(function(I){G=I.get("className").match(H);return G;});}return(G)?G[1]:null;};},"@VERSION@",{requires:["widget-base"]});

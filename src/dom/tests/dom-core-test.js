@@ -246,6 +246,14 @@ YUI.add('dom-core-test', function(Y) {
 
             Y.DOM.setText(node, content);
             Assert.areEqual(content, Y.DOM.getText(node, content));
+        },
+
+        'should set text for text node': function() {
+            var node = document.createTextNode(''),
+                content = 'testing text content';
+
+            Y.DOM.setText(node, content);
+            Assert.areEqual(content, Y.DOM.getText(node, content));
         }
     }));
 
@@ -1717,5 +1725,58 @@ YUI.add('dom-core-test', function(Y) {
             document.body.removeChild(node);
         }
     }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.DOM.wrap',
+
+        'should wrap the node with the given html': function() {
+            var node = document.createElement('span');
+            Y.DOM.wrap(node, '<p></p>');
+            Assert.areEqual('P', node.parentNode.tagName);
+        },
+
+        'should wrap the node with the given complex html': function() {
+            var node = document.createElement('span');
+            Y.DOM.wrap(node, '<p><em><strong><span></span></strong></em></p>');
+            Assert.areEqual('SPAN', node.parentNode.tagName);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.DOM.unwrap',
+
+        'should remove the node\'s parent': function() {
+            var node = document.createElement('span').appendChild(document.createElement('em'));
+            Y.DOM.unwrap(node);
+            Assert.isTrue(!node.parentNode || node.parentNode.nodeType !== 1);
+        },
+
+        'should remove the node\'s parent and replace in DOM': function() {
+            var parent = document.createElement('span'),
+                node = parent.appendChild(document.createElement('strong')).
+                        appendChild(document.createElement('em'));
+
+            document.body.insertBefore(parent, document.body.firstChild);
+            Y.DOM.unwrap(node);
+            Assert.areEqual('SPAN', node.parentNode.tagName);
+            document.body.removeChild(node.parentNode);
+        },
+
+        'should remove the node\'s parent and replace in DOM with siblings': function() {
+            var parent = document.createElement('div'),
+                node;
+
+            parent.innerHTML = '<p><span>foo</span><em>bar</em><strong>baz</strong></p>';
+            node = parent.getElementsByTagName('em')[0];
+
+            Y.DOM.unwrap(node);
+            Assert.areEqual('DIV', node.parentNode.tagName);
+            Assert.areEqual('SPAN', node.previousSibling.tagName);
+            Assert.areEqual('DIV', node.previousSibling.parentNode.tagName);
+            Assert.areEqual('STRONG', node.nextSibling.tagName);
+            Assert.areEqual('DIV', node.nextSibling.parentNode.tagName);
+        }
+    }));
+
 
 }, '@VERSION@' ,{requires:['dom-base', 'dom-deprecated', 'test']});
