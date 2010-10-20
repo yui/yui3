@@ -174,9 +174,7 @@ YUI.add('editor-base', function(Y) {
                             cur = sel.getCursor();
                             cur.insert(EditorBase.TABKEY, 'before');
                             sel.focusCursor();
-                            if (Y.UA.gecko) {
-                                inst.Selection.cleanCursor();
-                            }
+                            inst.Selection.cleanCursor();
                         }
                     }
                     break;
