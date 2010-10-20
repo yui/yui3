@@ -105,7 +105,6 @@ YUI.add('editor-para', function(Y) {
                             }
                             if (p) {
                                 if (!p.previous() && p.get('parentNode').test(BODY)) {
-                                    console.log(p);
                                     Y.log('Stopping the backspace event', 'warn', 'editor-para');
                                     e.changedEvent.frameEvent.halt();
                                 }
