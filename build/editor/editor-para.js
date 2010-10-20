@@ -106,7 +106,6 @@ YUI.add('editor-para', function(Y) {
                             }
                             if (p) {
                                 if (!p.previous() && p.get('parentNode').test(BODY)) {
-                                    console.log(p);
                                     e.changedEvent.frameEvent.halt();
                                 }
                             }
