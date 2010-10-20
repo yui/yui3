@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Base.build</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui.js"></script-->
+
+    <script type="text/javascript">
+        YUI({filter:"raw"}).use("base", "plugin", function(Y) {
+
+            // ----- Main Class -----
+    
+            function MainPlugin() {}
+    
+            MainPlugin.NS = "mainplugin";
+            MainPlugin.NAME = "mainplugin";
+            Y.extend(MainPlugin, Y.Plugin.Base);
+    
+            function Main(config) {
+                Main.superclass.constructor.apply(this, arguments);
+            }
+    
+            Main.NAME = "main";
+    
+            Main.ATTRS = {
+                mainA : {
+                    value: "mainA"
+                },
+                mainB : {
+                    value: "mainB"
+                }
+            };
+    
+            Main.CLASSNAMES = {
+                main: "yui-main"
+            };
+    
+            Main.PLUGINS = [
+                MainPlugin
+            ];
+    
+            Y.extend(Main, Y.Base, {
+                methodA : function() {
+                    Y.log("methodA called - Attr value:" + this.get("mainA"));
+                },
+    
+                methodB : function() {
+                    Y.log("Main methodB called - Attr value:" + this.get("mainB"));
+                },
+    
+                initializer : function() {
+                    Y.log("Main initializer");
+                }
+            });
+    
+            // ----- ExtOne --
+    
+            function ExtOnePlugin() {}
+            ExtOnePlugin.NS = "extoneplugin";
+            ExtOnePlugin.NAME = "extoneplugin";
+            Y.extend(ExtOnePlugin, Y.Plugin.Base);
+    
+            function ExtOne() {
+                Y.log("ExtOne initializer");
+            }
+    
+            ExtOne.NAME = "extone";
+    
+            ExtOne.ATTRS = {
+                extOne : {
+                    value: "extOne"
+                }
+            };
+    
+            ExtOne.CLASSNAMES = {
+                extOne : "yui-extone"
+            };
+    
+            ExtOne.PLUGINS = [
+                ExtOnePlugin
+            ];
+    
+            ExtOne.prototype = {
+                methodB : function() {
+                    Y.log("ExtOne methodB called - Attr value:" + this.get("extOne"));
+                },
+    
+                methodC : function() {
+                    Y.log("methodC called - Attr value:" + this.get("extOne"));
+                },
+    
+                methodD : function() {
+                    Y.log("methodD called - Attr value:" + this.get("extOne"));
+                }
+            };
+    
+            // ----- ExtTwo --
+    
+            function ExtTwoPlugin() {}
+            ExtTwoPlugin.NS = "exttwoplugin";
+            ExtTwoPlugin.NAME = "exttwoplugin";
+            Y.extend(ExtTwoPlugin, Y.Plugin.Base);
+    
+            function ExtTwo() {
+                Y.log("ExtTwo initializer");
+            }
+    
+            ExtTwo.NAME = "exttwo";
+    
+            ExtTwo.ATTRS = {
+                extTwo : {
+                    value: "extTwo"
+                }
+            };
+    
+            ExtTwo.CLASSNAMES = {
+                extTwo : "yui-exttwo"
+            };
+    
+            ExtTwo.PLUGINS = [
+                ExtTwoPlugin
+            ];
+    
+            ExtTwo.prototype = {
+    
+                methodB : function() {
+                    Y.log("ExtTwo methodB called - Attr value:" + this.get("extTwo"));
+                },
+    
+                methodE : function() {
+                    Y.log("methodE called - Attr value:" + this.get("extTwo"));
+                },
+    
+                methodF : function() {
+                    Y.log("methodF called - Attr value:" + this.get("extTwo"));
+                }
+            };
+
+            var CustMain = Y.Base.build("custmain", Main, [ExtOne, ExtTwo], {aggregates:["PLUGINS", "CLASSNAMES"]});
+            var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
+
+            c.methodA();
+            c.methodB();
+            c.methodC();
+            c.methodD();
+            c.methodE();
+            c.methodF();
+
+            Y.log("CustMain === Main [false]:" + (CustMain === Main));
+            Y.log("CustMain.superclass === Main [true]:" + (CustMain.superclass.constructor === Main));
+            Y.log("Main.superclass === Y.Base [true]:" + (Main.superclass.constructor === Y.Base));
+
+            Y.log("c instanceof Main [true]:" + (c instanceof Main));
+            Y.log("c instanceof CustMain [true]:" + (c instanceof CustMain));
+            Y.log("c instanceof Base [true]:" + (c instanceof Y.Base));
+    
+            Y.log("c.hasImpl(Main) [false]:" + (c.hasImpl(Main)));
+            Y.log("c.hasImpl(ExtOne) [true]:" + (c.hasImpl(ExtOne)));
+            Y.log("c.hasImpl(ExtTwo) [true]:" + (c.hasImpl(ExtTwo)));
+            
+            Y.log("CustMain.PLUGINS.length [3]:" + (CustMain.PLUGINS.length));
+
+            var main = new Main();
+            Y.log('main.methodA [true]' + !!(main.methodA));
+            Y.log('main.methodB [true]' + !!(main.methodB));
+            Y.log('main.methodC [false]' + !!(main.methodC));
+            Y.log('main.methodD [false]' + !!(main.methodD));                        
+            Y.log('main.methodE [false]' + !!(main.methodE));
+            Y.log('main.methodF [false]' + !!(main.methodF));
+
+            function checkClass(clz) {
+                var p;
+
+                Y.log("========");
+                Y.log(clz.NAME);
+                Y.log("========");
+                
+                Y.log("# Methods");
+                for (p in clz.prototype) {
+                    if (clz.prototype.hasOwnProperty(p)) {
+                        Y.log(p);
+                    }
+                }
+                Y.log("# ATTRS");
+                for (p in clz.ATTRS) {
+                    if (clz.ATTRS.hasOwnProperty(p)) {
+                        Y.log(p);
+                    }
+                }
+                /*
+                Y.log("# PLUGINS");
+                for (p in clz.PLUGINS) {
+                    if (clz.PLUGINS.hasOwnProperty(p)) {
+                        Y.log(p);
+                    }
+                }*/
+            }
+
+            checkClass(Main);
+            checkClass(CustMain);
+            checkClass(ExtOne);
+            checkClass(ExtOne);
+            checkClass(Y.Base);
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

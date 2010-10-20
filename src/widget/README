@@ -16,6 +16,10 @@ It provides the following pieces of core functionality:
   are found, when using the [selector] syntax, so that the default value
   will be applied for the attribute.
 
+* UI_EVENTS support and skin util methods (only getSkinName currently) 
+  broken out of widget-base into separate submodules, widget-uievents and 
+  widget-skin
+
 3.2.0
 
 * Minimized widget dependencies from the complete node, base rollups,
