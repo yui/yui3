@@ -1587,6 +1587,19 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
             ArrayAssert.itemsAreEqual(nodes, nodelist1._nodes);
             ArrayAssert.itemsAreEqual(spliced1, spliced2);
+        },
+
+        'should empty the node': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>');
+            node.empty();
+            Assert.areEqual(0, node.get('childNodes').size());
+        },
+
+        'should empty the nodelist': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><span>strong>bar</strong></span></div>');
+            node.all('span').empty();
+            Assert.areEqual(0, node.get('childNodes').item(0).get('childNodes').size());
+            Assert.areEqual(0, node.get('childNodes').item(1).get('childNodes').size());
         }
     })); 
 

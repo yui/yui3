@@ -1204,6 +1204,10 @@ Y.mix(Y_Node.prototype, {
 
     isFragment: function() {
         return (this.get('nodeType') === 11);
+    },
+
+    empty: function(destroy) {
+        this.get('childNodes').remove(destroy);
     }
 
 }, true);

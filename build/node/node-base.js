@@ -1198,6 +1198,10 @@ Y.mix(Y_Node.prototype, {
 
     isFragment: function() {
         return (this.get('nodeType') === 11);
+    },
+
+    empty: function(destroy) {
+        this.get('childNodes').remove(destroy);
     }
 
 }, true);
@@ -1596,6 +1600,12 @@ NodeList.importMethod(Y.Node.prototype, [
      */
     'append',
 
+    /** Called on each Node instance
+      * @method destroy
+      * @see Node.destroy
+      */
+    'destroy',
+
     /**
       * Called on each Node instance
       * @method detach
@@ -1610,8 +1620,14 @@ NodeList.importMethod(Y.Node.prototype, [
     'detachAll',
 
     /** Called on each Node instance
+      * @method empty
+      * @see Node.empty
+      */
+    'empty',
+
+    /** Called on each Node instance
       * @method insert
-      * @see NodeInsert
+      * @see Node.insert
       */
     'insert',
 
