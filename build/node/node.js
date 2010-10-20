@@ -191,7 +191,7 @@ Y_Node.getDOMNode = function(node) {
  * @return {Y.Node | Y.NodeList | any} Depends on what is returned from the DOM node.
  */
 Y_Node.scrubVal = function(val, node) {
-    if (node && val) { // only truthy values are risky
+    if (val) { // only truthy values are risky
          if (typeof val == 'object' || typeof val == 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y_DOM.isWindow(val)) {// node || window
                 val = Y.one(val);
@@ -1198,6 +1198,10 @@ Y.mix(Y_Node.prototype, {
 
     isFragment: function() {
         return (this.get('nodeType') === 11);
+    },
+
+    empty: function(destroy) {
+        this.get('childNodes').remove(destroy);
     }
 
 }, true);
@@ -1514,6 +1518,20 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
+     * Applies an one-time event listener to each Node bound to the NodeList.
+     * @method once
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance.
+     * @return {Object} Returns an event handle that can later be use to detach().
+     * @see Event.on
+     */
+    once: function(type, fn, context) {
+        return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
+    },
+
+    /**
      * Applies an event listener to each Node bound to the NodeList.
      * The handler is called only after all on() handlers are called
      * and the event is not prevented.
@@ -1582,6 +1600,12 @@ NodeList.importMethod(Y.Node.prototype, [
      */
     'append',
 
+    /** Called on each Node instance
+      * @method destroy
+      * @see Node.destroy
+      */
+    'destroy',
+
     /**
       * Called on each Node instance
       * @method detach
@@ -1596,8 +1620,14 @@ NodeList.importMethod(Y.Node.prototype, [
     'detachAll',
 
     /** Called on each Node instance
+      * @method empty
+      * @see Node.empty
+      */
+    'empty',
+
+    /** Called on each Node instance
       * @method insert
-      * @see NodeInsert
+      * @see Node.insert
       */
     'insert',
 
@@ -2034,6 +2064,25 @@ Y.mix(Y.Node.prototype, {
             offsetHeight: h
         });
     }
+});
+var Y_NodeList = Y.NodeList,
+    ArrayProto = Array.prototype,
+    ArrayMethods = [
+        'concat', 'pop', 'push', 'shift', 'slice', 'splice', 'unshift'
+    ];
+
+
+Y.Array.each(ArrayMethods, function(name) {
+    Y_NodeList.prototype[name] = function() {
+        var args = [],
+            i = 0,
+            arg;
+
+        while ((arg = arguments[i++])) { // use DOM nodes/nodeLists 
+            args.push(arg._node || arg._nodes || arg);
+        }
+        return Y.Node.scrubVal(ArrayProto[name].apply(this._nodes, args));
+    };
 });
 
 

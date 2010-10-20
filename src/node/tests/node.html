@@ -1494,6 +1494,112 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
                 newNode = node.insertBefore('<em>bar</em>', node.one('*'));
 
             Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should fire the handler once': function() {
+            var i = 0,
+                test = this,
+                node = Y.all('body');
+
+            node.once('click', function() {
+                i++;
+                Assert.areEqual(1, i);
+            });
+
+            node.item(0).simulate('click');
+            node.item(0).simulate('click');
+        },
+
+        'should pop the nodelist': function() {
+            var nodes = Y.all('div'),
+                node = nodes.pop();
+            
+            Assert.areEqual(Y.all('div').item(Y.all('div').size() - 1), node);
+            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
+        },
+
+        'should shift the nodelist': function() {
+            var nodes = Y.all('div'),
+                node = nodes.shift();
+            
+            Assert.areEqual(Y.one('div'), node);
+            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
+        },
+
+        'should push the node on nodelist': function() {
+            var nodes = Y.all('div'),
+                node = Y.one(document.createElement('div'));
+            
+            Assert.areEqual(nodes.size() + 1, nodes.push(node));
+            Assert.areEqual(nodes.item(nodes.size() - 1), node);
+            Assert.areEqual(node._node, nodes._nodes[nodes.size() - 1]);
+        },
+
+        'should unshift the node on nodelist': function() {
+            var nodes = Y.all('div'),
+                size = nodes.size(),
+                node = Y.one(document.createElement('div'));
+            
+            nodes.unshift(node);
+            Assert.areEqual(size + 1, nodes.size());
+            Assert.areEqual(nodes.item(0), node);
+            Assert.areEqual(node._node, nodes._nodes[0]);
+        },
+
+        'should unshift the dom node on nodelist': function() {
+            var nodes = Y.all('div'),
+                size = nodes.size(),
+                node = document.createElement('div');
+            
+            nodes.unshift(node);
+            Assert.areEqual(size + 1, nodes.size());
+            Assert.areEqual(nodes.item(0), Y.one(node));
+            Assert.areEqual(node, nodes._nodes[0]);
+        },
+
+        'should concat the nodelists': function() {
+            var nodelist1 = Y.all('div'),
+                nodelist2 = Y.all('li'),
+                nodelist3 = nodelist1.concat(nodelist2);
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(nodelist2._nodes), nodelist3._nodes);
+        },
+
+        'should concat the nodes': function() {
+            var nodelist1 = Y.all('div');
+                nodelist2 = nodelist1.concat(Y.one('ul'), Y.one('li'));
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(Y.one('ul')._node, Y.one('li')._node), nodelist2._nodes);
+        },
+
+        'should slice the nodes': function() {
+            var nodelist1 = Y.all('div');
+                nodelist2 = nodelist1.slice(1, 4);
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(1, 4), nodelist2._nodes);
+        },
+
+        'should splice the nodes': function() {
+            var nodelist1 = Y.all('div'),
+                nodes = Y.all('div')._nodes,
+                spliced1 = nodes.splice(1, 2),
+                spliced2 = nodelist1.splice(1, 2)._nodes;
+
+            ArrayAssert.itemsAreEqual(nodes, nodelist1._nodes);
+            ArrayAssert.itemsAreEqual(spliced1, spliced2);
+        },
+
+        'should empty the node': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>');
+            node.empty();
+            Assert.areEqual(0, node.get('childNodes').size());
+        },
+
+        'should empty the nodelist': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><span>strong>bar</strong></span></div>');
+            node.all('span').empty();
+            Assert.areEqual(0, node.get('childNodes').item(0).get('childNodes').size());
+            Assert.areEqual(0, node.get('childNodes').item(1).get('childNodes').size());
         }
     })); 
 
