@@ -142,13 +142,13 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			for (i=0, len = th.size(); i<len; i++) {
 				
 				//If a width has not been already set on the TD:
-				//if (td.item(i).get('firstChild').getStyle('width') === "auto") {
+				if (td.item(i).get('firstChild').getStyle('width') === "auto") {
 					
 					thLiner = th.item(i).get('firstChild'); //TODO: use liner API
 					tdLiner = td.item(i).get('firstChild');
 					
 					thWidth = thLiner.get('clientWidth');
-					tdWidth = td.item(i).get('clientWidth');
+					tdWidth = td.item(i).get('clientWidth'); /* TODO: for some reason, using tdLiner.get('clientWidth') doesn't work - why not? */
 										
 					//if TH is bigger than TD, enlarge TD Liner
 					if (thWidth > tdWidth) {
@@ -161,22 +161,36 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 					}
 				}
 
-			//}
+			}
 			
 	},
 	
 	//Before attaching the Th nodes, add the appropriate width to the liner divs.
 	_attachTheadThNode: function(o) {
-		var width = o.column.get('width') || "auto";
-		o.th.get('firstChild').setStyle('width', width);
+		var width = o.column.get('width') || 'auto';
+		
+		if (width !== 'auto') {
+			o.th.get('firstChild').setStyles({'width': width, 'overflow':'hidden'});
+		}
+		else {
+			//o.th.get('firstChild').setStyles({'overflow':'visible'});
+		}
 		return o;
 	},
 	
 	//Before attaching the td nodes, add the appropriate width to the liner divs.
 	_attachTbodyTdNode: function(o) {
-		var width = o.column.get('width') || "auto";
-		o.td.get('firstChild').setStyle('width', width);
-		o.td.setStyle('width', width);
+		var width = o.column.get('width') || 'auto';
+		
+		if (width !== 'auto') {
+			o.td.get('firstChild').setStyles({'width': width, 'overflow': 'hidden'});
+			o.td.setStyles({'width': width, 'overflow': 'hidden'});
+		}
+		else {
+			o.td.get('firstChild').setStyles({'width': width, 'overflow': 'visible'});
+			o.td.setStyles({'width': width, 'overflow': 'visible'});
+		}
+
 		return o;
 	},
 	
@@ -242,6 +256,10 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	_setContentBoxDimenions: function() {
 		if (this.get('scroll') === 'y') {
 			this._parentContainer.setStyle('width', 'auto');
+		}
+		
+		else if (YUA.ie) {
+			this._parentContainer.setStyle('width', this.get('width') || 'auto');
 		}
 	},
 	
