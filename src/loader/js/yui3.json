@@ -962,6 +962,12 @@
                     "event-simulate"
                 ]
             }, 
+            "node-load": {
+                "requires": [
+                    "node-base", 
+                    "io-base"
+                ]
+            }, 
             "shim-plugin": {
                 "requires": [
                     "node-style", 

@@ -3273,6 +3273,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "event-simulate"
                 ]
             }, 
+            "node-load": {
+                "requires": [
+                    "node-base", 
+                    "io-base"
+                ]
+            }, 
             "shim-plugin": {
                 "requires": [
                     "node-style", 
@@ -3769,7 +3775,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'c0cf1a38b2168b6deae33f04cb41b5bd';
+YUI.Env[Y.version].md5 = 'aea8fc766bec5ce6b390e947a7cf409e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

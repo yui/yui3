@@ -1070,13 +1070,11 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     setContent: function(content) {
-        if (content) {
-            if (content._node) { // map to DOMNode
-                content = content._node;
-            } else if (content._nodes) { // convert DOMNodeList to documentFragment
-                content = Y_DOM._nl2frag(content._nodes);
-            }
+        var node = Y.Node.getDOMNode(content) ||
+                Y_DOM._nl2frag(Y.NodeList.getDOMNodes(content));
 
+        if (node) {
+            content = node;
         }
 
         Y_DOM.addHTML(this._node, content, 'replace');
