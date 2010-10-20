@@ -73,7 +73,7 @@ YUI.add('editor-para', function(Y) {
                 case 'backspace-down':
                 case 'delete-up':
                     if (!Y.UA.ie) {
-                        var ps = inst.all(FIRST_P), br, item, html, txt, p;
+                        var ps = inst.all(FIRST_P), br, item, html, txt, p, imgs;
                         item = inst.one(BODY);
                         if (ps.item(0)) {
                             item = ps.item(0);
@@ -86,8 +86,9 @@ YUI.add('editor-para', function(Y) {
 
                         txt = inst.Selection.getText(item);
                         txt = txt.replace(/ /g, '').replace(/\n/g, '');
+                        imgs = item.all('img');
                         
-                        if (txt.length === 0) {
+                        if (txt.length === 0 && !imgs.size()) {
                             //God this is horrible..
                             if (!item.test(P)) {
                                 this._fixFirstPara();

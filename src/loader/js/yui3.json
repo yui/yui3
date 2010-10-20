@@ -672,7 +672,7 @@
             }, 
             "editor-para": {
                 "requires": [
-                    "editor-base"
+                    "node"
                 ]
             }, 
             "exec-command": {
@@ -962,6 +962,12 @@
                     "event-simulate"
                 ]
             }, 
+            "node-load": {
+                "requires": [
+                    "node-base", 
+                    "io-base"
+                ]
+            }, 
             "shim-plugin": {
                 "requires": [
                     "node-style", 
@@ -1064,9 +1070,18 @@
         ]
     }, 
     "pluginhost": {
-        "requires": [
-            "yui-base"
-        ]
+        "submodules": {
+            "pluginhost-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "pluginhost-config": {
+                "requires": [
+                    "pluginhost-base"
+                ]
+            }
+        }
     }, 
     "profiler": {
         "requires": [
@@ -1362,13 +1377,28 @@
                     "base-pluginhost", 
                     "node-base", 
                     "node-style", 
-                    "node-event-delegate", 
                     "classnamemanager"
+                ]
+            }, 
+            "widget-base-ie": {
+                "requires": [
+                    "widget-base"
                 ]
             }, 
             "widget-htmlparser": {
                 "requires": [
                     "widget-base"
+                ]
+            }, 
+            "widget-skin": {
+                "requires": [
+                    "widget-base"
+                ]
+            }, 
+            "widget-uievents": {
+                "requires": [
+                    "widget-base", 
+                    "node-event-delegate"
                 ]
             }
         }

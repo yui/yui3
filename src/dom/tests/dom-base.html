@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>DOM Test Suite</title>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="dom-core-test.js"></script>
+<script type="text/javascript" src="dom-class-test.js"></script>
+<script type="text/javascript">
+YUI({
+    base: "../../../build/",
+    filter: 'raw',
+    combine: false,
+    useConsole: true
+}).use('console', 'test', 'dom-core-test', function (Y) {
+    //create the logger
+
+    var logger = new Y.Console({
+        height: '800px'
+    }).render();
+    
+    //add the tests
+    /*
+    Y.Test.Runner.on("complete", function(){
+        var coverage = Y.Test.Runner.getCoverage(),
+            data = Y.Test.Runner.getCoverage(Y.Coverage.Format.JSON);
+
+        Y.DOM.byId("coverage-data").value = data;
+    });
+    */
+    Y.Test.Runner.run();
+});
+</script>
+<style>
+
+h1, h2, h3, h4, h5, h6, p, ul, ol, li {
+    Xmargin:0;
+    Xpadding:0;
+}
+
+form {
+    width: 30em;
+}
+
+#doc {
+    border:5px solid #000;
+    margin:10px;
+    padding:10px;
+}
+
+#hd {
+    background:#ccc;
+}
+
+#foo {
+    float:left; /* required for getStyle test */
+}
+
+#ft {
+    opacity: 0.75;
+}
+
+.yui-skin-sam .yui-console-entry-cat {
+    color: white;
+    font-weight: bold;
+}
+
+.yui-skin-sam .yui-console-entry-src,
+.yui-skin-sam .yui-console-entry-time {
+    display: none;
+}
+
+.yui-skin-sam .yui-console-entry {
+}
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-content {
+    text-align:right;
+}
+
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background-color: green;
+}
+
+.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background-color: red;
+}
+
+</style>
+
+</head>
+<body class="yui3-skin-sam">
+
+<div id="test-id"></div>
+
+<div id="test-dupe-ids">
+    <span id="test-dupe-id"></span>
+    <div id="test-dupe-root">
+        <span id="test-dupe-id"></span>
+        <span id="test-dupe-id"></span>
+    </div>
+</div>
+
+
+<form id="test-names">
+    <input id="test-name-id1" name="test-name-id2">
+    <input id="test-name-id2" name="test-name-id1">
+    <input name="test-names">
+    <input name="id">
+    <input id="test-text-value" value="test value">
+    <input id="test-text-no-value">
+    <input id="test-text-empty-value" value="">
+    <label for="id" id="for-id"></label>
+    <input name="foo" id="id">
+
+    <textarea id="test-textarea-value" value="textarea value"></textarea>
+    <textarea id="test-textarea-no-value"></textarea>
+    <textarea id="test-textarea-text-value">textarea test</textarea>
+
+    <select id="test-select-value">
+        <option id="test-option-value" value="option value">option text</option>
+        <option id="test-option-value-text">option text</option>
+        <option id="test-option-empty-value-text" value="">empty value</option>
+        <option id="test-option-empty-value" value=""></option>
+        <option id="test-option-no-value"></option>
+    </select>
+
+    <select id="test-select-no-value">
+    </select>
+
+    <select id="test-select-text-value">
+        <option>option text</option>
+    </select>
+
+    <select id="test-select-empty-value-text">
+        <option value="">option text</option>
+    </select>
+
+    <select id="test-select-empty-value">
+        <option value=""></option>
+    </select>
+
+    <button id="test-button-value" value="button value">button</button>
+    <button id="test-button-no-value"></button>
+    <button id="test-button-empty-value" value="">button</button>
+    <button id="test-button-text-value">button text</button>
+
+</form>
+
+<iframe id="test-frame" src="test-frame.html"></iframe>
+
+<div id="test-children">
+    foo
+    <span>bar</span>
+    <span>baz</span>
+</div>
+
+<div id="test-get-text">
+    foo<span>bar</span>baz
+</div>
+
+<div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em>
+</div>
+</body>
+</html>

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>base&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>base&nbsp; <span class="subtitle">3.3.0int1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_base.html" title="base">base</a>
                 
@@ -166,13 +166,16 @@
         <span class="nx">_ctor</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
 
            <span class="kd">var</span> <span class="nx">dynamic</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="kc">false</span> <span class="o">===</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">dynamic</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-                <span class="nx">builtClass</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="o">?</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_tmpl</span><span class="p">(</span><span class="nx">main</span><span class="p">)</span> <span class="o">:</span> <span class="nx">main</span><span class="p">;</span>
+               <span class="nx">builtClass</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="o">?</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_tmpl</span><span class="p">(</span><span class="nx">main</span><span class="p">)</span> <span class="o">:</span> <span class="nx">main</span><span class="p">,</span>
+               <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">;</span>
 
-            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">id</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="nx">exts</span> <span class="o">:</span> <span class="p">[],</span>
-                <span class="nx">dynamic</span><span class="o">:</span> <span class="nx">dynamic</span>
-            <span class="p">};</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">buildCfg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="p">}</span>
+
+            <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">exts</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">exts</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">dynamic</span><span class="p">;</span>
 
             <span class="k">return</span> <span class="nx">builtClass</span><span class="p">;</span>
         <span class="p">},</span>
@@ -392,6 +395,7 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>

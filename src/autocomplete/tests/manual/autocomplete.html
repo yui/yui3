@@ -54,6 +54,35 @@
         margin: 0 4px;
         width: 32px;
     }
+
+    .twitter {
+        clear: both;
+        margin: 4px 0;
+        padding: 2px 0;
+    }
+
+    .twitter .hd {
+        float: left;
+    }
+
+    .twitter .bd,
+    .twitter .ft {
+        margin-left: 52px;
+    }
+
+    .twitter .ft {
+        color: #cfcfcf;
+        font-size: 11px;
+    }
+
+    .twitter .photo {
+        height: 48px;
+        margin-top: 3px;
+        width: 48px;
+    }
+
+    .twitter .user { margin-right: 6px; }
+
     </style>
 </head>
 <body class="yui3-skin-sam">
@@ -80,6 +109,9 @@
 
             <input type="radio" id="ds-search" name="ds" value="search">
             <label for="ds-search">Remote (Y! Search)</label>
+
+            <input type="radio" id="ds-twitter" name="ds" value="twitter">
+            <label for="ds-twitter">Remote (Twitter Search)</label>
         </div>
     </fieldset>
 
@@ -132,7 +164,6 @@ var Y = YUI({
     'console-filters',
     'dump',
     'event-delegate',
-    'yql',
 function (Y) {
 
 Y.one('#ac-form').reset();
@@ -195,6 +226,10 @@ Y.delegate('click', function (e) {
     case 'search':
         useSearch();
         break;
+
+    case 'twitter':
+        useTwitter();
+        break;
     }
 }, '#data-sources', 'input[type="radio"]');
 
@@ -228,6 +263,31 @@ function flickrFormatter(query, raw, highlighted) {
     });
 }
 
+function twitterFormatter(query, raw, highlighted) {
+    return Y.Array.map(raw, function (result, i) {
+        return Y.Lang.sub(
+            '<div class="twitter" data-tweet-id="{id}">' +
+              '<div class="hd">' +
+                '<img src="{imgurl}" class="photo" alt="Profile photo for {user}">' +
+              '</div>' +
+              '<div class="bd">' +
+                '<strong class="user">{user}</strong>' +
+                '<span class="tweet-text">{text}</span>' +
+              '</div>' +
+              '<div class="ft">' +
+                '{time}' +
+              '</div>' +
+            '</div>'
+        , {
+            id    : result.id,
+            imgurl: result.profile_image_url,
+            text  : highlighted[i],
+            time  : result.created_at,
+            user  : result.from_user
+        });
+    });
+}
+
 function setDelimiter(e) {
     autoComplete.set('queryDelimiter', e.target.get('value'));
 }
@@ -243,7 +303,7 @@ function setFilters() {
     });
 
     Y.Array.each(filterNames, function (name) {
-        filters.push(Y.AutoCompleteFilters[name]);
+        filters.push(name);
     });
 
     autoComplete.set('resultFilters', filters);
@@ -255,8 +315,7 @@ function setHighlighter() {
 
         if (input.get('checked')) {
             name = input.get('value');
-            autoComplete.set('resultHighlighter', name === 'none' ? null :
-                    Y.AutoCompleteHighlighters[name]);
+            autoComplete.set('resultHighlighter', name === 'none' ? null : name);
             return true;
         }
     });
@@ -264,7 +323,7 @@ function setHighlighter() {
 
 // -- DataSource functions -----------------------------------------------------
 function useLocal() {
-    Y.log('using local data source', 'info', 'autocomplete');
+    Y.log('using local array source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
 
@@ -277,7 +336,7 @@ function useLocal() {
 }
 
 function useNone() {
-    Y.log('using no data source', 'info', 'autocomplete');
+    Y.log('using no source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
 
@@ -290,7 +349,7 @@ function useNone() {
 }
 
 function useFlickr() {
-    Y.log('using remote Flickr data source', 'info', 'autocomplete');
+    Y.log('using remote Flickr YQL source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
 
@@ -303,7 +362,7 @@ function useFlickr() {
 }
 
 function useSearch() {
-    Y.log('using remote Y! Search data source', 'info', 'autocomplete');
+    Y.log('using remote Y! Search YQL source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
 
@@ -312,6 +371,19 @@ function useSearch() {
         resultListLocator: null,
         resultTextLocator: null,
         source           : 'select * from search.suggest where query="{query}"'
+    });
+}
+
+function useTwitter() {
+    Y.log('using remote Twitter JSONP source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        resultFormatter  : twitterFormatter,
+        resultListLocator: 'results',
+        resultTextLocator: 'text',
+        source           : 'http://search.twitter.com/search.json?q={query}&callback={callback}&result_type=recent'
     });
 }
 

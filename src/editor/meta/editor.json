@@ -41,7 +41,7 @@
             },
             "editor-para": {
                 "requires": [
-                    "editor-base"
+                    "node"
                 ]
             },
             "createlink-base": {

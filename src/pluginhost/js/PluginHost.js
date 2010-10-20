@@ -4,6 +4,11 @@
      */
 
     /**
+     * Provides the augmentable PluginHost interface, which can be added to any class.
+     * @module pluginhost-base
+     */
+
+    /**
      * <p>
      * An augmentable class, which provides the augmented class with the ability to host plugins.
      * It adds <a href="#method_plug">plug</a> and <a href="#method_unplug">unplug</a> methods to the augmented class, which can 
@@ -40,7 +45,7 @@
          *
          * @method plug
          * @chainable
-         * @param p {Function | Object |Array} Accepts the plugin class, or an 
+         * @param P {Function | Object |Array} Accepts the plugin class, or an 
          * object with a "fn" property specifying the plugin class and 
          * a "cfg" property specifying the configuration for the Plugin.
          * <p>
@@ -51,18 +56,36 @@
          * can be the configuration for the plugin.
          * @return {Base} A reference to the host object
          */
+        plug: function(Plugin, config) {
+            var i, ln, ns;
 
-        plug: function(p, config) {
-            if (p) {
-                if (L.isFunction(p)) {
-                    this._plug(p, config);
-                } else if (L.isArray(p)) {
-                    for (var i = 0, ln = p.length; i < ln; i++) {
-                        this.plug(p[i]);
-                    }
-                } else {
-                    this._plug(p.fn, p.cfg);
+            if (L.isArray(Plugin)) {
+                for (i = 0, ln = Plugin.length; i < ln; i++) {
+                    this.plug(Plugin[i]);
                 }
+            } else {
+                if (Plugin && !L.isFunction(Plugin)) {
+                    config = Plugin.cfg;
+                    Plugin = Plugin.fn;
+                }
+
+                // Plugin should be fn by now
+                if (Plugin && Plugin.NS) {
+                    ns = Plugin.NS;
+        
+                    config = config || {};
+                    config.host = this;
+        
+                    if (this.hasPlugin(ns)) {
+                        // Update config
+                        this[ns].setAttrs(config);
+                    } else {
+                        // Create new instance
+                        this[ns] = new Plugin(config);
+                        this._plugins[ns] = Plugin;
+                    }
+                }
+                else { Y.log("Attempt to plug in an invalid plugin. Host:" + this + ", Plugin:" + Plugin); }
             }
             return this;
         },
@@ -78,13 +101,30 @@
          * @chainable
          */
         unplug: function(plugin) {
+            var ns = plugin, 
+                plugins = this._plugins;
+            
             if (plugin) {
-                this._unplug(plugin);
+                if (L.isFunction(plugin)) {
+                    ns = plugin.NS;
+                    if (ns && (!plugins[ns] || plugins[ns] !== plugin)) {
+                        ns = null;
+                    }
+                }
+        
+                if (ns) {
+                    if (this[ns]) {
+                        this[ns].destroy();
+                        delete this[ns];
+                    }
+                    if (plugins[ns]) {
+                        delete plugins[ns];
+                    }
+                }
             } else {
-                var ns;
                 for (ns in this._plugins) {
                     if (this._plugins.hasOwnProperty(ns)) {
-                        this._unplug(ns);
+                        this.unplug(ns);
                     }
                 }
             }
@@ -111,43 +151,12 @@
          * @param {Config} config The configuration object with property name/value pairs.
          * @private
          */
+        
         _initPlugins: function(config) {
             this._plugins = this._plugins || {};
 
-            // Class Configuration
-            var classes = (this._getClasses) ? this._getClasses() : [this.constructor],
-                plug = [],
-                unplug = {},
-                constructor, i, classPlug, classUnplug, pluginClassName;
-
-            //TODO: Room for optimization. Can we apply statically/unplug in same pass?
-            for (i = classes.length - 1; i >= 0; i--) {
-                constructor = classes[i];
-
-                classUnplug = constructor._UNPLUG;
-                if (classUnplug) {
-                    // subclasses over-write
-                    Y.mix(unplug, classUnplug, true);
-                }
-
-                classPlug = constructor._PLUG;
-                if (classPlug) {
-                    // subclasses over-write
-                    Y.mix(plug, classPlug, true);
-                }
-            }
-    
-            for (pluginClassName in plug) {
-                if (plug.hasOwnProperty(pluginClassName)) {
-                    if (!unplug[pluginClassName]) {
-                        this.plug(plug[pluginClassName]);
-                    }
-                }
-            }
-    
-            // User Configuration
-            if (config && config.plugins) {
-                this.plug(config.plugins);
+            if (this._initConfigPlugins) {
+                this._initConfigPlugins(config);
             }
         },
 
@@ -158,126 +167,6 @@
          */
         _destroyPlugins: function() {
             this.unplug();
-        },
-
-        /**
-         * Private method used to instantiate and attach plugins to the host
-         *
-         * @method _plug
-         * @param {Function} PluginClass The plugin class to instantiate
-         * @param {Object} config The configuration object for the plugin
-         * @private
-         */
-        _plug: function(PluginClass, config) {
-            if (PluginClass && PluginClass.NS) {
-                var ns = PluginClass.NS;
-    
-                config = config || {};
-                config.host = this;
-    
-                if (this.hasPlugin(ns)) {
-                    // Update config
-                    this[ns].setAttrs(config);
-                } else {
-                    // Create new instance
-                    this[ns] = new PluginClass(config);
-                    this._plugins[ns] = PluginClass;
-                }
-            }
-        },
-
-        /**
-         * Unplugs and destroys a plugin already instantiated with the host.
-         *
-         * @method _unplug
-         * @private
-         * @param {String | Function} plugin The namespace for the plugin, or a plugin class with the static NS property defined.
-         */
-        _unplug : function(plugin) {
-            var ns = plugin, 
-                plugins = this._plugins;
-    
-            if (L.isFunction(plugin)) {
-                ns = plugin.NS;
-                if (ns && (!plugins[ns] || plugins[ns] !== plugin)) {
-                    ns = null;
-                }
-            }
-    
-            if (ns) {
-                if (this[ns]) {
-                    this[ns].destroy();
-                    delete this[ns];
-                }
-                if (plugins[ns]) {
-                    delete plugins[ns];
-                }
-            }
-        }
-    };
-    
-    /**
-     * Registers plugins to be instantiated at the class level (plugins 
-     * which should be plugged into every instance of the class by default).
-     *
-     * @method Plugin.Host.plug
-     * @static
-     *
-     * @param {Function} hostClass The host class on which to register the plugins
-     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
-     * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
-     */
-    PluginHost.plug = function(hostClass, plugin, config) {
-        // Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]
-        var p, i, l, name;
-    
-        if (hostClass !== Y.Base) {
-            hostClass._PLUG = hostClass._PLUG || {};
-    
-            if (!L.isArray(plugin)) {
-                if (config) {
-                    plugin = {fn:plugin, cfg:config};
-                }
-                plugin = [plugin];
-            }
-    
-            for (i = 0, l = plugin.length; i < l;i++) {
-                p = plugin[i];
-                name = p.NAME || p.fn.NAME;
-                hostClass._PLUG[name] = p;
-            }
-        }
-    };
-
-    /**
-     * Unregisters any class level plugins which have been registered by the host class, or any
-     * other class in the hierarchy.
-     *
-     * @method Plugin.Host.unplug
-     * @static
-     *
-     * @param {Function} hostClass The host class from which to unregister the plugins
-     * @param {Function | Array} plugin The plugin class, or an array of plugin classes
-     */
-    PluginHost.unplug = function(hostClass, plugin) {
-        var p, i, l, name;
-    
-        if (hostClass !== Y.Base) {
-            hostClass._UNPLUG = hostClass._UNPLUG || {};
-    
-            if (!L.isArray(plugin)) {
-                plugin = [plugin];
-            }
-    
-            for (i = 0, l = plugin.length; i < l; i++) {
-                p = plugin[i];
-                name = p.NAME;
-                if (!hostClass._PLUG[name]) {
-                    hostClass._UNPLUG[name] = p;
-                } else {
-                    delete hostClass._PLUG[name];
-                }
-            }
         }
     };
 

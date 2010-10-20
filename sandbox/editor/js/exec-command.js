@@ -222,7 +222,7 @@ YUI.add('exec-command', function(Y) {
                         sel = new inst.Selection(), n;
 
                     if (!Y.UA.ie) {
-                        this._command('styleWithCSS', 'true');
+                        this._command('useCSS', false);
                     }
                     if (inst.Selection.hasCursor()) {
                         if (sel.isCollapsed) {
@@ -239,9 +239,6 @@ YUI.add('exec-command', function(Y) {
                         }
                     } else {
                         this._command(cmd, val);
-                    }
-                    if (!Y.UA.ie) {
-                        this._command('styleWithCSS', false);
                     }
                 },
                 /**

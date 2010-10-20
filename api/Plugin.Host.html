@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: pluginhost  Plugin.Host   (YUI Library)</title>
+	<title>API: pluginhost-base  Plugin.Host   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>pluginhost&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>pluginhost-base&nbsp; <span class="subtitle">3.3.0int1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_pluginhost.html" title="pluginhost">pluginhost</a>
+            &gt; <a href="./module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a>
                  &gt; Plugin.Host 
                 
         <form onsubmit="return false">
@@ -79,6 +79,26 @@ methods should be invoked by the host class at the appropriate point in the host
 
                     
                     <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_PluginHost">
+                                    <h4><a name="property_PluginHost" property="yui:name">PluginHost</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constructor and static configuration support for plugins
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -162,104 +182,6 @@ instance through the "plugins" configuration property.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__plug">
-                                    <h4>
-                                        <a name="method__plug">_plug</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_plug</strong>
-                                           (
-                                                
-                                                        
-                                                         PluginClass
-                                                    
-                                                
-                                                        , 
-                                                         config
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Private method used to instantiate and attach plugins to the host
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">PluginClass</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The plugin class to instantiate</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">config</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The configuration object for the plugin</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__unplug">
-                                    <h4>
-                                        <a name="method__unplug">_unplug</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_unplug</strong>
-                                           (
-                                                
-                                                        
-                                                         plugin
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Unplugs and destroys a plugin already instantiated with the host.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">plugin</span>
-                                                        &lt;<span property="yui:type">String | Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The namespace for the plugin, or a plugin class with the static NS property defined.</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_hasPlugin">
                                     <h4>
                                         <a name="method_hasPlugin">hasPlugin</a></h4>
@@ -324,7 +246,7 @@ instance through the "plugins" configuration property.
                                            (
                                                 
                                                         
-                                                         p
+                                                         P
                                                     
                                                 
                                                         , 
@@ -344,7 +266,7 @@ plugin and attach it to the configured namespace on the host object.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">p</span>
+                                                        <code><span property="yui:name">P</span>
                                                         &lt;<span property="yui:type">Function | Object |Array</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  Accepts the plugin class, or an 
@@ -620,7 +542,8 @@ all registered plugins are unplugged.</span>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
-                                <li class="selected"><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class="selected"><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
@@ -664,18 +587,22 @@ all registered plugins are unplugged.</span>
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="PluginHost.js.html" title="PluginHost.js">PluginHost.js</a></li>
+                                <li class=""><a href="PluginHostConfig.js.html" title="PluginHostConfig.js">PluginHostConfig.js</a></li>
                         </ul>
                     </div>
 
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_PluginHost" title="PluginHost">PluginHost</a></li>
+                        </ul>
+                    </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#method__destroyPlugins" title="_destroyPlugins">_destroyPlugins</a></li>
                                 <li class="private"><a href="#method__initPlugins" title="_initPlugins">_initPlugins</a></li>
-                                <li class="private"><a href="#method__plug" title="_plug">_plug</a></li>
-                                <li class="private"><a href="#method__unplug" title="_unplug">_unplug</a></li>
                                 <li class=""><a href="#method_hasPlugin" title="hasPlugin">hasPlugin</a></li>
                                 <li class=""><a href="#method_plug" title="plug">plug</a></li>
                                 <li class=""><a href="#method_Plugin.Host.plug" title="Plugin.Host.plug">Plugin.Host.plug</a></li>
@@ -696,7 +623,7 @@ all registered plugins are unplugged.</span>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "Plugin.Host", "name": "_destroyPlugins", "url": "Plugin.Host.html#method__destroyPlugins", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "hasPlugin", "url": "Plugin.Host.html#method_hasPlugin", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_initPlugins", "url": "Plugin.Host.html#method__initPlugins", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_plug", "url": "Plugin.Host.html#method__plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "plug", "url": "Plugin.Host.html#method_plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.plug", "url": "Plugin.Host.html#method_Plugin.Host.plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.unplug", "url": "Plugin.Host.html#method_Plugin.Host.unplug", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_unplug", "url": "Plugin.Host.html#method__unplug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "unplug", "url": "Plugin.Host.html#method_unplug", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Plugin.Host", "name": "_destroyPlugins", "url": "Plugin.Host.html#method__destroyPlugins", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "hasPlugin", "url": "Plugin.Host.html#method_hasPlugin", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_initPlugins", "url": "Plugin.Host.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "plug", "url": "Plugin.Host.html#method_plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "PluginHost", "url": "Plugin.Host.html#property_PluginHost", "type": "property"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.plug", "url": "Plugin.Host.html#method_Plugin.Host.plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.unplug", "url": "Plugin.Host.html#method_Plugin.Host.unplug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "unplug", "url": "Plugin.Host.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>
