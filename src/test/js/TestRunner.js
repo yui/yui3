@@ -965,7 +965,11 @@
              * @static
              */
             resume : function (segment) {
-                this._resumeTest(segment || function(){});
+                if (Y.Test.Runner._waiting){
+                    this._resumeTest(segment || function(){});
+                } else {
+                    throw new Error("resume() called without wait().");
+                }
             },
         
             /**

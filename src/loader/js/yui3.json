@@ -1371,13 +1371,28 @@
                     "base-pluginhost", 
                     "node-base", 
                     "node-style", 
-                    "node-event-delegate", 
                     "classnamemanager"
+                ]
+            }, 
+            "widget-base-ie": {
+                "requires": [
+                    "widget-base"
                 ]
             }, 
             "widget-htmlparser": {
                 "requires": [
                     "widget-base"
+                ]
+            }, 
+            "widget-skin": {
+                "requires": [
+                    "widget-base"
+                ]
+            }, 
+            "widget-uievents": {
+                "requires": [
+                    "widget-base", 
+                    "node-event-delegate"
                 ]
             }
         }

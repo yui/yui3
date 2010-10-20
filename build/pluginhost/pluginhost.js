@@ -66,13 +66,13 @@ YUI.add('pluginhost-base', function(Y) {
                     this.plug(Plugin[i]);
                 }
             } else {
-                if (!L.isFunction(Plugin)) {
+                if (Plugin && !L.isFunction(Plugin)) {
                     config = Plugin.cfg;
                     Plugin = Plugin.fn;
                 }
 
                 // Plugin should be fn by now
-                if (Plugin.NS) {
+                if (Plugin && Plugin.NS) {
                     ns = Plugin.NS;
         
                     config = config || {};

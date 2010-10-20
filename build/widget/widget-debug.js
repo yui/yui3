@@ -36,7 +36,6 @@ var L = Y.Lang,
     CONTENT_BOX = "contentBox",
     PARENT_NODE = "parentNode",
     OWNER_DOCUMENT = "ownerDocument",
-    OFFSET_HEIGHT = "offsetHeight",
     AUTO = "auto",
     SRC_NODE = "srcNode",
     BODY = "body",
@@ -49,13 +48,11 @@ var L = Y.Lang,
     DIV = "<div></div>",
     CHANGE = "Change",
     LOADING = "loading",
+ 
     _UISET = "_uiSet",
 
     EMPTY_STR = "",
     EMPTY_FN = function() {},
-
-    UI_EVENT_REGEX = /(\w+):(\w+)/,
-    UI_EVENT_REGEX_REPLACE = "$2",
 
     TRUE = true,
     FALSE = false,
@@ -65,13 +62,6 @@ var L = Y.Lang,
     UI_ATTRS = [VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED],
 
     WEBKIT = Y.UA.webkit,
-    IE = Y.UA.ie,
-
-    ContentUpdate = "contentUpdate",
-
-    //  Map of Node instances serving as a delegation containers for a specific
-    //  event type to Widget instances using that delegation container.
-    _delegates = {},
 
     // Widget nodeguid-to-instance map.
     _instances = {};
@@ -96,19 +86,25 @@ var L = Y.Lang,
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
 
-    this._strs = {};
+    // kweight
+    var widget = this,
+        parentNode,
+        render, 
+        constructor = widget.constructor; 
 
-    this._cssPrefix = this.constructor.CSS_PREFIX || _getClassName(this.constructor.NAME.toLowerCase());
+    widget._strs = {};
+    widget._cssPrefix = constructor.CSS_PREFIX || _getClassName(constructor.NAME.toLowerCase());
 
-    Widget.superclass.constructor.apply(this, arguments);
+    Widget.superclass.constructor.apply(widget, arguments);
 
-    var render = this.get(RENDER), parentNode;
+    render = widget.get(RENDER);
+
     if (render) {
         // Render could be a node or boolean
         if (render !== TRUE) {
             parentNode = render;
         }
-        this.render(parentNode);
+        widget.render(parentNode);
     }
 }
 
@@ -357,51 +353,26 @@ Widget.getByNode = function(node) {
 
 Y.extend(Widget, Y.Base, {
 
-	/**
-	 * Returns a class name prefixed with the the value of the 
-	 * <code>YUI.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
-	 * Uses <code>YUI.config.classNameDelimiter</code> attribute to delimit the provided strings.
-	 * e.g. 
-	 * <code>
-	 * <pre>
-	 *    // returns "yui-slider-foo-bar", for a slider instance
-	 *    var scn = slider.getClassName('foo','bar');
-	 *
-	 *    // returns "yui-overlay-foo-bar", for an overlay instance
-	 *    var ocn = overlay.getClassName('foo','bar');
-	 * </pre>
-	 * </code>
-	 *
-	 * @method getClassName
-	 * @param {String}+ One or more classname bits to be joined and prefixed
-	 */
-	getClassName: function () {
-        return _getClassName.apply(ClassNameManager, [this._cssPrefix].concat(Y.Array(arguments), true));
-	},
-
     /**
-     * Returns the name of the skin that's currently applied to the widget.
-     * This is only really useful after the widget's DOM structure is in the
-     * document, either by render or by progressive enhancement.  Searches up
-     * the Widget's ancestor axis for a class yui3-skin-(name), and returns the
-     * (name) portion.  Otherwise, returns null.
+     * Returns a class name prefixed with the the value of the 
+     * <code>YUI.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
+     * Uses <code>YUI.config.classNameDelimiter</code> attribute to delimit the provided strings.
+     * e.g. 
+     * <code>
+     * <pre>
+     *    // returns "yui-slider-foo-bar", for a slider instance
+     *    var scn = slider.getClassName('foo','bar');
      *
-     * @method getSkinName
-     * @return {String} the name of the skin, or null (yui3-skin-sam => sam)
+     *    // returns "yui-overlay-foo-bar", for an overlay instance
+     *    var ocn = overlay.getClassName('foo','bar');
+     * </pre>
+     * </code>
+     *
+     * @method getClassName
+     * @param {String}+ One or more classname bits to be joined and prefixed
      */
-    getSkinName: function () {
-        var root = this.get( CONTENT_BOX ) || this.get( BOUNDING_BOX ),
-            search = new RegExp( '\\b' + _getClassName( 'skin' ) + '-(\\S+)' ),
-            match;
-
-        if ( root ) {
-            root.ancestor( function ( node ) {
-                match = node.get( 'className' ).match( search );
-                return match;
-            } );
-        }
-
-        return ( match ) ? match[1] : null;
+    getClassName: function () {
+        return _getClassName.apply(ClassNameManager, [this._cssPrefix].concat(Y.Array(arguments), true));
     },
 
     /**
@@ -428,7 +399,6 @@ Y.extend(Widget, Y.Base, {
          * @preventable false
          * @param {EventFacade} e The Event Facade
          */
-        this.publish(ContentUpdate, { preventable:FALSE });
 
         if (this._applyParser) {
             this._applyParser(config);
@@ -447,31 +417,15 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX),
-            bbGuid = Y.stamp(boundingBox, TRUE),
-            widgetGuid = Y.stamp(this, TRUE);
+            bbGuid = Y.stamp(boundingBox, TRUE);
 
         if (bbGuid in _instances) {
             delete _instances[bbGuid];
         }
 
-        Y.each(_delegates, function (info, key) {
-            if (info.instances[widgetGuid]) {
-                //  Unregister this Widget instance as needing this delegated
-                //  event listener.
-                delete info.instances[widgetGuid];
-
-                //  There are no more Widget instances using this delegated 
-                //  event listener, so detach it.
-
-                if (Y.Object.isEmpty(info.instances)) {
-                    info.handle.detach();
-
-                    if (_delegates[key]) {
-                        delete _delegates[key];
-                    }
-                }
-            }
-        });
+        if (this.UI_EVENTS) {
+            this._destroyUIEvents();
+        }
 
         this._unbindUI(boundingBox);
         boundingBox.remove(TRUE);
@@ -508,7 +462,7 @@ Y.extend(Widget, Y.Base, {
 
         if (!this.get(DESTROYED) && !this.get(RENDERED)) {
              /**
-              * Lifcyle event for the render phase, fired prior to rendering the UI 
+              * Lifecycle event for the render phase, fired prior to rendering the UI 
               * for the widget (prior to invoking the widget's renderer method).
               * <p>
               * Subscribers to the "on" moment of this event, will be notified 
@@ -562,14 +516,17 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     renderer: function() {
-        this._renderUI();
-        this.renderUI();
+        // kweight
+        var widget = this;
 
-        this._bindUI();
-        this.bindUI();
+        widget._renderUI();
+        widget.renderUI();
 
-        this._syncUI();
-        this.syncUI();
+        widget._bindUI();
+        widget.bindUI();
+
+        widget._syncUI();
+        widget.syncUI();
     },
 
     /**
@@ -583,7 +540,7 @@ Y.extend(Widget, Y.Base, {
      */
     bindUI: EMPTY_FN,
 
-    /**
+    /**å
      * Adds nodes to the DOM 
      * 
      * This method is not called by framework and is not chained 
@@ -668,32 +625,7 @@ Y.extend(Widget, Y.Base, {
      * @param {boolean} expand
      */
     _uiSizeCB : function(expand) {
-
-        var bb = this.get(BOUNDING_BOX),
-            cb = this.get(CONTENT_BOX),
-
-            bbTempExpanding = _getWidgetClassName("tmp", "forcesize"),
-
-            borderBoxSupported = this._bbs,
-            heightReallyMinHeight = IE && IE < 7;
-
-        if (borderBoxSupported) {
-            cb.toggleClass(_getWidgetClassName(CONTENT, "expanded"), expand);
-        } else {
-            if (expand) {
-                if (heightReallyMinHeight) {
-                    bb.addClass(bbTempExpanding);
-                }
-
-                cb.set(OFFSET_HEIGHT, bb.get(OFFSET_HEIGHT));
-
-                if (heightReallyMinHeight) {
-                    bb.removeClass(bbTempExpanding);
-                }
-            } else {
-                cb.setStyle(HEIGHT, EMPTY_STR);
-            }
-        }
+        this.get(CONTENT_BOX).toggleClass(_getWidgetClassName(CONTENT, "expanded"), expand);        
     },
 
     /**
@@ -711,11 +643,12 @@ Y.extend(Widget, Y.Base, {
     _renderBox: function(parentNode) {
 
         // TODO: Performance Optimization [ More effective algo to reduce Node refs, compares, replaces? ]
-
-        var contentBox = this.get(CONTENT_BOX),
-            boundingBox = this.get(BOUNDING_BOX),
-            srcNode = this.get(SRC_NODE),
-            defParentNode = this.DEF_PARENT_NODE,
+        
+        var widget = this, // kweight
+            contentBox = widget.get(CONTENT_BOX),
+            boundingBox = widget.get(BOUNDING_BOX),
+            srcNode = widget.get(SRC_NODE),
+            defParentNode = widget.DEF_PARENT_NODE,
 
             doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT);
 
@@ -739,8 +672,6 @@ Y.extend(Widget, Y.Base, {
         } else if (!boundingBox.inDoc(doc)) {
             Node.one(BODY).insert(boundingBox, 0);
         }
-
-        this._bbs = !(IE && IE < 8 && doc.compatMode != "BackCompat");
     },
 
     /**
@@ -835,7 +766,6 @@ Y.extend(Widget, Y.Base, {
         this.get(CONTENT_BOX).addClass(this.getClassName(CONTENT));
     },
 
-
     /**
      * Removes class names representative of the widget's loading state from 
      * the boundingBox.
@@ -846,14 +776,15 @@ Y.extend(Widget, Y.Base, {
     _removeLoadingClassNames: function () {
 
         var boundingBox = this.get(BOUNDING_BOX),
-            contentBox = this.get(CONTENT_BOX);
+            contentBox = this.get(CONTENT_BOX),
+            instClass = this.getClassName(LOADING),
+            widgetClass = _getWidgetClassName(LOADING);
 
-        boundingBox.removeClass(_getWidgetClassName(LOADING));
-        boundingBox.removeClass(this.getClassName(LOADING));
-        
-        contentBox.removeClass(_getWidgetClassName(LOADING));
-        contentBox.removeClass(this.getClassName(LOADING));
-        
+        boundingBox.removeClass(widgetClass)
+                   .removeClass(instClass);
+
+        contentBox.removeClass(widgetClass)
+                  .removeClass(instClass);
     },
 
     /**
@@ -863,7 +794,7 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindUI: function() {
-        this._bindAttrUI(this._BIND_UI_ATTRS);
+        this._bindAttrUI(this._UI_ATTRS.BIND);
         this._bindDOM();
     },
 
@@ -918,7 +849,7 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _syncUI: function() {
-        this._syncAttrUI(this._SYNC_UI_ATTRS);
+        this._syncAttrUI(this._UI_ATTRS.SYNC);
     },
 
     /**
@@ -985,8 +916,8 @@ Y.extend(Widget, Y.Base, {
      */
     _uiSetFocused: function(val, src) {
          var boundingBox = this.get(BOUNDING_BOX);
-
          boundingBox.toggleClass(this.getClassName(FOCUSED), val);
+
          if (src !== UI) {
             if (val) {
                 boundingBox.focus();  
@@ -1021,7 +952,7 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} evt The event facade for the DOM focus event
 	 */
 	_onDocMouseDown: function (evt) {
-		if (this._hasDOMFocus) {
+		if (this._domFocus) {
  			this._onDocFocus(evt);
 		}
 	},
@@ -1034,10 +965,8 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} evt The event facade for the DOM focus event
      */
     _onDocFocus: function (evt) {
-		var bFocused = this.get(BOUNDING_BOX).contains(evt.target); // contains() checks invoking node also
-
-		this._hasDOMFocus = bFocused;
-        this._set(FOCUSED, bFocused, { src: UI });
+		this._domFocus = this.get(BOUNDING_BOX).contains(evt.target); // contains() checks invoking node also
+        this._set(FOCUSED, this._domFocus, { src: UI });
     },
 
     /**
@@ -1047,7 +976,8 @@ Y.extend(Widget, Y.Base, {
      * @return {String} The default string value for the widget [ displays the NAME of the instance, and the unique id ]
      */
     toString: function() {
-        return this.constructor.NAME + "[" + this.get(ID) + "]";
+        // Using deprecated name prop for kweight squeeze.
+        return this.name + "[" + this.get(ID) + "]";
     },
 
     /**
@@ -1180,22 +1110,94 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * The list of UI attributes to bind for Widget's _bindUI implementation
+     * The lists of UI attributes to bind and sync for widget's _bindUI and _syncUI implementations
      *
-     * @property _BIND_UI_ATTRS
-     * @type Array
+     * @property _UI_ATTRS
+     * @type Object
      * @private
      */
-    _BIND_UI_ATTRS : UI_ATTRS,
+    _UI_ATTRS : {
+        BIND: UI_ATTRS,
+        SYNC: UI_ATTRS.concat(TAB_INDEX)
+    }
+});
 
-    /**
-     * The list of UI attributes to sync for Widget's _syncUI implementation
-     *
-     * @property _SYNC_UI_ATTRS
-     * @type Array
-     * @private
-     */
-    _SYNC_UI_ATTRS : UI_ATTRS.concat(TAB_INDEX),
+Y.Widget = Widget;
+
+
+}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'node-event-delegate', 'classnamemanager']});
+YUI.add('widget-base-ie', function(Y) {
+
+var BOUNDING_BOX = "boundingBox",
+    CONTENT_BOX = "contentBox",
+    HEIGHT = "height",
+    OFFSET_HEIGHT = "offsetHeight",
+    EMPTY_STR = "",
+    heightReallyMinHeight = Y.UA.ie && Y.UA.ie < 7,
+    bbTempExpanding = Y.Widget.getClassName("tmp", "forcesize");
+
+    // borderBoxSupported = this._bbs = !(IE && IE < 8 && doc.compatMode != "BackCompat")
+
+Y.Widget.prototype._uiSizeCB = function(expand) {
+
+    var bb = this.get(BOUNDING_BOX),
+        cb = this.get(CONTENT_BOX);
+
+    if (expand) {
+        if (heightReallyMinHeight) {
+            bb.addClass(bbTempExpanding);
+        }
+
+        cb.set(OFFSET_HEIGHT, bb.get(OFFSET_HEIGHT));
+
+        if (heightReallyMinHeight) {
+            bb.removeClass(bbTempExpanding);
+        }
+    } else {
+        cb.setStyle(HEIGHT, EMPTY_STR);
+    }
+};
+
+
+}, '@VERSION@' ,{requires:['widget-base']});
+YUI.add('widget-uievents', function(Y) {
+
+var UI_EVENT_REGEX = /(\w+):(\w+)/,
+    UI_EVENT_REGEX_REPLACE = "$2",
+    BOUNDING_BOX = "boundingBox",
+    PARENT_NODE = "parentNode",
+    Widget = Y.Widget,
+    RENDER = "render",
+    L = Y.Lang;
+
+Y.mix(Widget.prototype, {
+
+    _destroyUIEvents: function() {
+
+        var widgetGuid = Y.stamp(this, true),
+            uievts = this._uievts;
+
+        if (uievts) {
+            Y.each(uievts, function (info, key) {
+                if (info.instances[widgetGuid]) {
+                    //  Unregister this Widget instance as needing this delegated
+                    //  event listener.
+                    delete info.instances[widgetGuid];
+    
+                    //  There are no more Widget instances using this delegated 
+                    //  event listener, so detach it.
+    
+                    if (Y.Object.isEmpty(info.instances)) {
+                        info.handle.detach();
+    
+                        if (uievts[key]) {
+                            delete uievts[key];
+                        }
+                    }
+                }
+            });
+        }
+    },
 
     /**
      * Map of DOM events that should be fired as Custom Events by the  
@@ -1230,8 +1232,11 @@ Y.extend(Widget, Y.Base, {
         var uiEvtNode = this._getUIEventNode(),
             parentNode = uiEvtNode.get(PARENT_NODE),
             key = (Y.stamp(parentNode) + type),
-            info = _delegates[key],
+            info,
             handle;
+
+        this._uievts = this._uievts || {};
+        info = this._uievts[key];
 
         //  For each Node instance: Ensure that there is only one delegated
         //  event listener used to fire Widget UI events.
@@ -1246,9 +1251,9 @@ Y.extend(Widget, Y.Base, {
                 //  so that developers still have access to it.
                 widget.fire(evt.type, { domEvent: evt });
 
-            }, "." + _getWidgetClassName());
+            }, "." + Y.Widget.getClassName());
 
-            _delegates[key] = info = { instances: {}, handle: handle };
+            this._uievts[key] = info = { instances: {}, handle: handle };
         }
 
         //  Register this Widget as using this Node as a delegation container.
@@ -1331,12 +1336,10 @@ Y.extend(Widget, Y.Base, {
         return Widget.superclass.publish.apply(this, arguments);
     }
 
-});
-
-Y.Widget = Widget;
+}, true); // overwrite existing EventTarget methods
 
 
-}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'node-event-delegate', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['widget-base', 'node-event-delegate']});
 YUI.add('widget-htmlparser', function(Y) {
 
 /**
@@ -1500,7 +1503,42 @@ Y.mix(Widget.prototype, {
 
 
 }, '@VERSION@' ,{requires:['widget-base']});
+YUI.add('widget-skin', function(Y) {
+
+var BOUNDING_BOX = "boundingBox",
+    CONTENT_BOX = "contentBox",
+    SKIN = "skin",
+    _getClassName = Y.ClassNameManager.getClassName;
+
+/**
+ * Returns the name of the skin that's currently applied to the widget.
+ * This is only really useful after the widget's DOM structure is in the
+ * document, either by render or by progressive enhancement.  Searches up
+ * the Widget's ancestor axis for a class yui3-skin-(name), and returns the
+ * (name) portion.  Otherwise, returns null.
+ *
+ * @method getSkinName
+ * @return {String} the name of the skin, or null (yui3-skin-sam => sam)
+ */
+
+Y.Widget.prototype.getSkinName = function () {
+    var root = this.get( CONTENT_BOX ) || this.get( BOUNDING_BOX ),
+        search = new RegExp( '\\b' + _getClassName( SKIN ) + '-(\\S+)' ),
+        match;
+
+    if ( root ) {
+        root.ancestor( function ( node ) {
+            match = node.get( 'className' ).match( search );
+            return match;
+        } );
+    }
+
+    return ( match ) ? match[1] : null;
+};
 
 
-YUI.add('widget', function(Y){}, '@VERSION@' ,{use:['widget-base', 'widget-htmlparser' ]});
+}, '@VERSION@' ,{requires:['widget-base']});
+
+
+YUI.add('widget', function(Y){}, '@VERSION@' ,{use:['widget-base', 'widget-base-ie', 'widget-uievents', 'widget-htmlparser', 'widget-skin']});
 
