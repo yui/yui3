@@ -853,8 +853,7 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} The appended node 
      */
     appendChild: function(node) {
-        node = node._node || node._nodes || node;
-        return Y_Node.scrubVal(Y.DOM.addHTML(this._node, node));
+        return Y_Node.scrubVal(this._insert(node));
     },
 
     /**
@@ -982,7 +981,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content before the reference node.
      * @method insert
-     * @param {String | Y.Node | HTMLElement} content The content to insert
+     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
      * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
      * Possible "where" arguments
      * <dl>
@@ -1004,23 +1003,25 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     insert: function(content, where) {
+        this._insert(content, where);
+        return this;
+    },
+
+    _insert: function(content, where) {
         var node = this._node;
 
-        if (content) {
-            if (typeof where == 'number') { // allow index
-                where = this._node.childNodes[where];
-            } else if (where && where._node) { // Node
-                where = where._node;
-            }
-
-            if (typeof content != 'string') { // allow Node or NodeList/Array instances
-                content = content._node || content._nodes || content;
-            }
-            Y_DOM.addHTML(node, content, where);
-        } else  {
-            Y.log('unable to insert content ' + content, 'warn', 'node');
+        if (typeof where == 'number') { // allow index
+            where = this._node.childNodes[where];
+        } else if (where && where._node) { // Node
+            where = where._node;
         }
-        return this;
+
+        if (content && typeof content != 'string') { // allow Node or NodeList/Array instances
+            content = content._node || content._nodes || content;
+        }
+        ret = Y_DOM.addHTML(node, content, where);
+
+        return ret;
     },
 
     /**
@@ -1060,14 +1061,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     setContent: function(content) {
-        var node = Y.Node.getDOMNode(content) ||
-                Y_DOM._nl2frag(Y.NodeList.getDOMNodes(content));
-
-        if (node) {
-            content = node;
-        }
-
-        Y_DOM.addHTML(this._node, content, 'replace');
+        this._insert(content, 'replace');
         return this;
     },
 

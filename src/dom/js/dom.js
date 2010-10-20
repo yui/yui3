@@ -453,7 +453,7 @@ Y_DOM = {
             i = 0,
             item,
             ret = content,
-            newNode = content;
+            newNode;
             
         if (content != undefined && !content.nodeType) { // not null or undefined or a DOM node
             if (typeof content == 'string' || typeof content == 'number') {

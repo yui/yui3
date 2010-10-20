@@ -1470,6 +1470,40 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual('SPAN', node.childNodes[2].nodeName);
         },
 
+        'should replace the existing content (empty string)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, '', 'replace');
+            Assert.areEqual(0, node.childNodes.length);
+        },
+
+        'should replace the existing content (null)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, null, 'replace');
+            Assert.areEqual(0, node.childNodes.length);
+        },
+
+        'should replace the existing content (undefined)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, undefined, 'replace');
+            Assert.areEqual(0, node.childNodes.length);
+        },
+
+        'should replace the existing content (0)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, 0, 'replace');
+            Assert.areEqual(1, node.childNodes.length);
+            Assert.areEqual(3, node.firstChild.nodeType);
+        },
+
+
         'should append the given nodelist': function() {
             var node = document.createElement('div'),
                 node2 = document.createElement('div'),
