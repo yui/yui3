@@ -1533,11 +1533,7 @@ var Lang   = Y.Lang,
     YArray = Y.Array,
 
     // keyCode constants.
-    KEY_DOWN  = 40,
-    KEY_ENTER = 13,
-    KEY_ESC   = 27,
-    KEY_TAB   = 9,
-    KEY_UP    = 38,
+    KEY_TAB = 9,
 
     // String shorthand.
     _CLASS_ITEM        = '_CLASS_ITEM',
@@ -1573,9 +1569,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
-        var keys        = {},
-            keysVisible = {},
-            inputNode   = this.get('inputNode');
+        var inputNode = this.get('inputNode');
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
@@ -1587,19 +1581,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // This ensures that the list is rendered inside the same parent as the
         // input node by default, which is necessary for proper ARIA support.
         this.DEF_PARENT_NODE = inputNode.get('parentNode');
-
-        // Register keyboard command handlers. _keys contains handlers that will
-        // always be called; _keysVisible contains handlers that will only be
-        // called when the list is visible.
-        keys[KEY_DOWN] = this._keyDown;
-
-        keysVisible[KEY_ENTER] = this._keyEnter;
-        keysVisible[KEY_ESC]   = this._keyEsc;
-        keysVisible[KEY_TAB]   = this._keyTab;
-        keysVisible[KEY_UP]    = this._keyUp;
-
-        this._keys        = keys;
-        this._keysVisible = keysVisible;
 
         // Cache commonly used classnames and selectors for performance.
         this[_CLASS_ITEM]        = this.getClassName(ITEM);
@@ -1665,12 +1646,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             contentBox.append(listNode);
         }
 
-        inputNode.addClass(this.getClassName('input'))
-            .set('aria-autocomplete', LIST);
+        inputNode.addClass(this.getClassName('input')).setAttrs({
+            'aria-autocomplete': LIST,
+            role: 'textbox'
+        });
 
         // ARIA node must be outside the widget or announcements won't be made
         // when the widget is hidden.
-        parentNode.set('role', 'combobox').append(ariaNode);
+        parentNode.setAttrs({
+            'aria-expanded': false,
+            'aria-owns'    : listNode.get('id'),
+            role           : 'combobox'
+        }).append(ariaNode);
 
         this._ariaNode   = ariaNode;
         this._contentBox = contentBox;
@@ -1817,12 +1804,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _bindInput: function () {
-        var inputNode = this._inputNode;
-
-        this._listEvents.concat([
-            inputNode.on('blur', this._onInputBlur, this),
-            inputNode.on(Y.UA.gecko ? 'keypress' : 'keydown', this._onInputKey, this)
-        ]);
+        this._listEvents.push(this._inputNode.on('blur', this._onInputBlur, this));
     },
 
     /**
@@ -1870,8 +1852,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var ariaNode = Node.create(this.ARIA_TEMPLATE);
 
         return ariaNode.addClass(this.getClassName('aria')).setAttrs({
-            role       : 'status',
-            'aria-live': 'polite'
+            'aria-live': 'polite',
+            role       : 'status'
         });
     },
 
@@ -1906,62 +1888,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             id  : Y.stamp(listNode),
             role: 'listbox'
         });
-    },
-
-    /**
-     * Called when the down arrow key is pressed.
-     *
-     * @method _keyDown
-     * @protected
-     */
-    _keyDown: function () {
-        if (this.get(VISIBLE)) {
-            this._activateNextItem();
-        } else {
-            this.show();
-        }
-    },
-
-    /**
-     * Called when the enter key is pressed.
-     *
-     * @method _keyEnter
-     * @protected
-     */
-    _keyEnter: function () {
-        this.selectItem();
-    },
-
-    /**
-     * Called when the escape key is pressed.
-     *
-     * @method _keyEsc
-     * @protected
-     */
-    _keyEsc: function () {
-        this.hide();
-    },
-
-    /**
-     * Called when the tab key is pressed.
-     *
-     * @method _keyTab
-     * @protected
-     */
-    _keyTab: function () {
-        if (this.get('tabSelect')) {
-            this.selectItem();
-        }
-    },
-
-    /**
-     * Called when the up arrow key is pressed.
-     *
-     * @method _keyUp
-     * @protected
-     */
-    _keyUp: function () {
-        this._activatePrevItem();
     },
 
     /**
@@ -2027,14 +1953,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _syncVisibility: function (visible) {
         if (this.get(ALWAYS_SHOW_LIST)) {
-            this.set(VISIBLE, true);
-            return;
+            visible = true;
+            this.set(VISIBLE, visible);
         }
 
         if (typeof visible === 'undefined') {
             visible = this.get(VISIBLE);
         }
 
+        this._parentNode.set('aria-expanded', visible);
         this._contentBox.set('aria-hidden', !visible);
 
         if (!visible) {
@@ -2053,16 +1980,19 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _afterActiveItemChange: function (e) {
-        var newVal  = e.newVal,
-            prevVal = e.prevVal;
+        var inputNode = this._inputNode,
+            newVal    = e.newVal,
+            prevVal   = e.prevVal;
 
         if (prevVal) {
             prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
         }
 
         if (newVal) {
-            newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
-            this._inputNode.set('aria-activedescendant', newVal.get(ID));
+            newVal.addClass(this[_CLASS_ITEM_ACTIVE]).scrollIntoView();
+            inputNode.set('aria-activedescendant', newVal.get(ID));
+        } else {
+            inputNode.scrollIntoView();
         }
     },
 
@@ -2162,41 +2092,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _onInputBlur: function (e) {
         // Hide the list on inputNode blur events, unless the mouse is currently
         // over the list (which indicates that the user is probably interacting
-        // with it) or the tab key was pressed.
-        if (this._mouseOverList && this._lastInputKey !== KEY_TAB) {
-            this._inputNode.focus();
-        } else {
+        // with it). The _lastInputKey property comes from the
+        // autocomplete-list-keys module.
+        if (!this._mouseOverList || this._lastInputKey === KEY_TAB) {
             this.hide();
-        }
-    },
-
-    /**
-     * Handles <code>inputNode</code> key events.
-     *
-     * @method _onInputKey
-     * @param {EventTarget} e
-     * @protected
-     */
-    _onInputKey: function (e) {
-        var handler,
-            keyCode = e.keyCode;
-
-        this._lastInputKey = keyCode;
-
-        if (this.get(RESULTS).length) {
-            handler = this._keys[keyCode];
-
-            if (!handler && this.get(VISIBLE)) {
-                handler = this._keysVisible[keyCode];
-            }
-
-            if (handler) {
-                // A handler may return false to indicate that it doesn't wish
-                // to prevent the default key behavior.
-                if (handler.call(this, e) !== false) {
-                    e.preventDefault();
-                }
-            }
         }
     },
 
