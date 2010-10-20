@@ -97,11 +97,11 @@
 <span class="cm"> * @method NodeList.getDOMNodes</span>
 <span class="cm"> * @static</span>
 <span class="cm"> *</span>
-<span class="cm"> * @param {Y.NodeList} node The NodeList instance</span>
+<span class="cm"> * @param {Y.NodeList} nodelist The NodeList instance</span>
 <span class="cm"> * @return {Array} The array of DOM nodes bound to the NodeList</span>
 <span class="cm"> */</span>
-<span class="nx">NodeList</span><span class="p">.</span><span class="nx">getDOMNodes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nodeList</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">nodeList</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">;</span>
+<span class="nx">NodeList</span><span class="p">.</span><span class="nx">getDOMNodes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nodelist</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">nodelist</span> <span class="o">&amp;&amp;</span> <span class="nx">nodelist</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">)</span> <span class="o">?</span> <span class="nx">nodelist</span><span class="p">.</span><span class="nx">_nodes</span> <span class="o">:</span> <span class="nx">nodelist</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">NodeList</span><span class="p">.</span><span class="nx">each</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
@@ -644,6 +644,7 @@
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
                                 <li class=""><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
                                 <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
+                                <li class=""><a href="node-load.js.html" title="node-load.js">node-load.js</a></li>
                                 <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
                                 <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>

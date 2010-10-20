@@ -1119,13 +1119,11 @@
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">setContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// map to DOMNode</span>
-                <span class="nx">content</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// convert DOMNodeList to documentFragment</span>
-                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
-            <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="o">||</span>
+                <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">getDOMNodes</span><span class="p">(</span><span class="nx">content</span><span class="p">));</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">content</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">addHTML</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">);</span>
@@ -1364,6 +1362,7 @@
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
                                 <li class=""><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
                                 <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
+                                <li class=""><a href="node-load.js.html" title="node-load.js">node-load.js</a></li>
                                 <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
                                 <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
