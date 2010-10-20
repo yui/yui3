@@ -48,9 +48,9 @@ var YLang = Y.Lang,
     TEMPLATE_COL = '<col></col>',
     TEMPLATE_THEAD = '<thead class="'+CLASS_COLUMNS+'"></thead>',
     TEMPLATE_TBODY = '<tbody class="'+CLASS_DATA+'"></tbody>',
-    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'">{value}</div></th>',
+    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></th>',
     TEMPLATE_TR = '<tr id="{id}"></tr>',
-    TEMPLATE_TD = '<td headers="{headers}"><div class="'+CLASS_LINER+'">{value}</div></td>',
+    TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></td>',
     TEMPLATE_VALUE = '{value}',
     TEMPLATE_MSG = '<tbody class="'+CLASS_MSG+'"></tbody>';
 
@@ -693,7 +693,7 @@ Y.extend(DTBase, Y.Widget, {
         o.colspan = column.get("colspan");
         o.rowspan = column.get("rowspan");
         //TODO o.abbr = column.get("abbr");
-        //TODO o.classnames
+        o.classnames = column.get("classnames");
         o.value = Ysubstitute(this.get("thValueTemplate"), o);
 
         /*TODO
@@ -778,7 +778,9 @@ Y.extend(DTBase, Y.Widget, {
     
     _createTbodyTdNode: function(o) {
         var column = o.column;
+        //TODO: attributes? or methods?
         o.headers = column.get("headers");
+        o.classnames = column.get("classnames");
         o.value = this.formatDataCell(o);
         return Ycreate(Ysubstitute(this.tdTemplate, o));
     },
