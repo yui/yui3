@@ -431,7 +431,7 @@ Y_DOM = {
      * Inserts content in a node at the given location 
      * @method addHTML
      * @param {HTMLElement} node The node to insert into
-     * @param {String | HTMLElement} content The content to be inserted 
+     * @param {String | HTMLElement | Array | HTMLCollection} content The content to be inserted 
      * @param {String | HTMLElement} where Where to insert the content
      * If no "where" is given, content is appended to the node
      * Possible values for "where"
@@ -450,13 +450,19 @@ Y_DOM = {
      */
     addHTML: function(node, content, where) {
         var nodeParent = node.parentNode,
-            newNode;
+            i = 0,
+            item,
+            ret = content,
+            newNode = content;
             
-        if (content !== undefined && content !== null) {
-            if (content.nodeType) { // domNode
-                newNode = content;
-            } else { // create from string and cache
-                newNode = Y_DOM.create(content);
+        if (content != undefined && !content.nodeType) { // not null or undefined or a DOM node
+            if (typeof content == 'string' || typeof content == 'number') {
+                ret = newNode = Y_DOM.create(content);
+            } else if (content[0] && content[0].nodeType) { // array or collection 
+                newNode = Y.config.doc.createDocumentFragment();
+                while ((item = content[i++])) {
+                    newNode.appendChild(item);
+                }
             }
         }
 
@@ -492,7 +498,7 @@ Y_DOM = {
             node.appendChild(newNode);
         }
 
-        return newNode;
+        return ret;
     },
 
     VALUE_SETTERS: {},

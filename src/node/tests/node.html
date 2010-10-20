@@ -1489,6 +1489,14 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Assert.areEqual('EM', node.get('tagName'));
         },
 
+        'should append the given nodelist': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div/>');
+
+            node.append(nodelist);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
         'should insert the given html and return the new node': function() {
             var node = Y.Node.create('<div><span>foo</span></div>'),
                 newNode = node.insertBefore('<em>bar</em>', node.one('*'));

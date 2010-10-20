@@ -1017,16 +1017,7 @@ Y.mix(Y_Node.prototype, {
             }
 
             if (typeof content != 'string') { // allow Node or NodeList/Array instances
-                if (content._node) { // Node
-                    content = content._node;
-                } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
-                    content = Y.all(content);
-                    Y.each(content._nodes, function(n) {
-                        Y_DOM.addHTML(node, n, where);
-                    });
-
-                    return this; // NOTE: early return
-                }
+                content = content._node || content._nodes || content;
             }
             Y_DOM.addHTML(node, content, where);
         } else  {
@@ -1068,7 +1059,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Replaces the node's current content with the content.
      * @method setContent
-     * @param {String | Y.Node | HTMLElement} content The content to insert
+     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
      * @chainable
      */
     setContent: function(content) {
@@ -1081,6 +1072,15 @@ Y.mix(Y_Node.prototype, {
 
         Y_DOM.addHTML(this._node, content, 'replace');
         return this;
+    },
+
+    /**
+     * Returns the node's current content (e.g. innerHTML) 
+     * @method getContent
+     * @return {String} The current content
+     */
+    getContent: function(content) {
+        return this.get('innerHTML');
     },
 
     /**
