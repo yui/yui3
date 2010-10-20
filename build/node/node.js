@@ -849,11 +849,8 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} The appended node 
      */
     appendChild: function(node) {
-        if (typeof node == 'string') {
-            node = Y_DOM.create(node);
-        }
-
-        return Y.one(this._node.appendChild(Y_Node.getDOMNode(node)));
+        node = node._node || node._nodes || node;
+        return Y_Node.scrubVal(Y.DOM.addHTML(this._node, node));
     },
 
     /**
