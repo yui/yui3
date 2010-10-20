@@ -1,7 +1,7 @@
 var YDo = Y.Do,
 	YNode = Y.Node,
 	YLang = Y.Lang,
-	//YUA = Y.UA,
+	YUA = Y.UA,
 	YgetClassName = Y.ClassNameManager.getClassName,
 	DATATABLE = "datatable",
 	CLASS_HEADER = YgetClassName(DATATABLE, "hd"),
@@ -33,10 +33,6 @@ Y.mix(DataTableScroll, {
 		
 		scroll: {
 			value: 'y'
-		},
-		
-		columnWidth: {
-			value: undefined
 		},
 		
 		COLOR_COLUMNFILLER: {
@@ -102,20 +98,20 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	_setUpParentTableNode: function() {
 		this._parentTableNode = this.get('host')._tableNode;
-		console.log(this._parentTableNode);
+		//console.log(this._parentTableNode);
 	},
 	
 	_setUpParentTheadNode: function() {
 		this._parentTheadNode = this.get('host')._theadNode;
-		console.log(this._parentTheadNode);
+		//console.log(this._parentTheadNode);
 	},
 	_setUpParentTbodyNode: function() {
 		this._parentTbodyNode = this.get('host')._tbodyNode;
-		console.log(this._parentTbodyNode);
+		//console.log(this._parentTbodyNode);
 	},
 	_setUpParentMessageNode: function() {
 		this._parentMsgNode = this.get('host')._msgNode;
-		console.log(this._parentMsgNode);
+		//console.log(this._parentMsgNode);
 	},
 	
 	/////////////////////////////////////////////////////////////////////////////
@@ -132,6 +128,41 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	syncUI: function() {
 		this._syncScroll();
+		this._syncTh();
+	},
+	
+	_syncTh: function() {
+		var th = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-hd table thead th'),
+			//td = this._parentTbodyNode.get('children')._nodes[0].children,
+			td = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-bd table tr td'),
+			i,
+			len,
+			thWidth, tdWidth, thLiner, tdLiner;
+			
+			for (i=0, len = th.size(); i<len; i++) {
+				
+				//If a width has not been already set on the TD:
+				//if (td.item(i).get('firstChild').getStyle('width') === "auto") {
+					
+					thLiner = th.item(i).get('firstChild'); //TODO: use liner API
+					tdLiner = td.item(i).get('firstChild');
+					
+					thWidth = thLiner.get('clientWidth');
+					tdWidth = td.item(i).get('clientWidth');
+										
+					//if TH is bigger than TD, enlarge TD Liner
+					if (thWidth > tdWidth) {
+						tdLiner.setStyle('width', thWidth - 20 + 'px');
+					}
+					
+					//if TD is bigger than TH, enlarge TH Liner
+					else if (tdWidth > thWidth) {
+						thLiner.setStyle('width', tdWidth - 20 + 'px');
+					}
+				}
+
+			//}
+			
 	},
 	
 	//Before attaching the Th nodes, add the appropriate width to the liner divs.
@@ -145,6 +176,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	_attachTbodyTdNode: function(o) {
 		var width = o.column.get('width') || "auto";
 		o.td.get('firstChild').setStyle('width', width);
+		o.td.setStyle('width', width);
 		return o;
 	},
 	
@@ -159,12 +191,14 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	},
 	
 	_createHeaderContainer: function() {
-		var hd = YNode.create(CONTAINER_HEADER);
+		var hd = YNode.create(CONTAINER_HEADER),
+			tbl = YNode.create('<table></table>');
 		this._headerContainerNode = hd;
 		
 		hd.setStyle('backgroundColor',this.get("COLOR_COLUMNFILLER"));
 		this._setOverflowForThead();
-		hd.appendChild(this._parentTheadNode);
+		tbl.appendChild(this._parentTheadNode);
+		hd.appendChild(tbl);
 		this._parentContainer.prepend(hd);
 		
 	},
@@ -201,7 +235,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			el = this._headerContainerNode;
 		
 		if (dir !== 'y') {
-			el.setStyle('width', w);
+			el.setStyles({'width': w, 'overflow': 'hidden'});
 		}
 	},
 	
@@ -224,14 +258,14 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		    this._syncScrollX();
 		    this._syncScrollY();
 		    this._syncScrollOverhang();
-		 		// 		    if(YUA.opera) {
-		 		// 		    	// Bug 1925874
-		 		// 		    	this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
-		 		// 		    		if(!this.get("width")) {
-		 		// 		    	    	// Bug 1926125
-		 		// 		    	        document.body.style += '';
-		 		// 		    	    }
-		 		// }
+		 				    if(YUA.opera) {
+			 				    	// Bug 1925874
+			 				    	this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+			 				    		if(!this.get("width")) {
+			 				    	    	// Bug 1926125
+			 				    	        document.body.style += '';
+			 				    	    }
+			 		}
 	},
 	
 		/**
@@ -269,13 +303,13 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			w;
 			this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
 			
-			// if(!this.get('height') && (YUA.ie)) {
-			// 			w = (tBodyContainer.get('scrollWidth') > tBodyContainer.get('offsetWidth')) ?
-			//             (tBody.get('parentNode').get('offsetHeight') + 18) + "px" : 
-			//             tBody.get('parentNode').get('offsetHeight') + "px";
-			// 			
-			// 			tBodyContainer.setStyle('height', w);
-			// 		}
+			if(!this.get('height') && (YUA.ie)) {
+						w = (tBodyContainer.get('scrollWidth') > tBodyContainer.get('offsetWidth')) ?
+			            (tBody.get('parentNode').get('offsetHeight') + 18) + "px" : 
+			            tBody.get('parentNode').get('offsetHeight') + "px";
+						
+						tBodyContainer.setStyle('height', w);
+					}
 			
 		if (tBody.get('rows').length === 0) {
 			this._parentMsgNode.get('parentNode').setStyle('width', this._parentTheadNode.get('parentNode').get('offsetWidth')+'px');
@@ -297,7 +331,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		var tBodyContainer = this._bodyContainerNode,
 			padding = 1;
 		
-		if ((tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) && (tBodyContainer.get('scrollWidth') > tBodyContainer.get('clientWidth'))) {
+		if ((tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) || (tBodyContainer.get('scrollWidth') > tBodyContainer.get('clientWidth'))) {
 			padding = 18;
 		}
 		
