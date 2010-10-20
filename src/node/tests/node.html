@@ -1452,6 +1452,48 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         'should return true for fragment': function() {
             var node = Y.Node.create('<span>foo</span><em>bar</em>');
             Assert.isTrue(node.isFragment());
+        },
+
+        'should create a caption element': function() {
+            var node = Y.Node.create('<table/>');
+            node.createCaption();
+            Assert.areEqual('CAPTION', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>'));
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given dom node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>')._node);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace('<em>bar</em>');
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html and return the replaced node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node = node.replaceChild('<em>bar</em>', node.one('span'));
+            Assert.areEqual('SPAN', node.get('tagName'));
+        },
+
+        'should append the given html and return the new node': function() {
+            var node = Y.Node.create('<div></div>').appendChild('<em>foo</em>');
+            Assert.areEqual('EM', node.get('tagName'));
+        },
+
+        'should insert the given html and return the new node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>'),
+                newNode = node.insertBefore('<em>bar</em>', node.one('*'));
+
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
         }
     })); 
 

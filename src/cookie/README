@@ -1,6 +1,10 @@
 Module Name: "cookie"
 Documentation: http://developer.yahoo.com/yui/3/cookie
 
+3.3.0
+
+  * No changes.
+
 3.2.0
 
   * Introduced private method for setting document to use in tests.
