@@ -681,7 +681,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "editor-para": {
                 "requires": [
-                    "editor-base"
+                    "node"
                 ]
             }, 
             "exec-command": {
@@ -1478,4 +1478,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'aea8fc766bec5ce6b390e947a7cf409e';
+YUI.Env[Y.version].md5 = 'b41d406198326bbf8c6ecad79af3ea96';
