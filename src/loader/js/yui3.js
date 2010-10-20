@@ -1385,13 +1385,28 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "base-pluginhost", 
                     "node-base", 
                     "node-style", 
-                    "node-event-delegate", 
                     "classnamemanager"
+                ]
+            }, 
+            "widget-base-ie": {
+                "requires": [
+                    "widget-base"
                 ]
             }, 
             "widget-htmlparser": {
                 "requires": [
                     "widget-base"
+                ]
+            }, 
+            "widget-skin": {
+                "requires": [
+                    "widget-base"
+                ]
+            }, 
+            "widget-uievents": {
+                "requires": [
+                    "widget-base", 
+                    "node-event-delegate"
                 ]
             }
         }
@@ -1457,4 +1472,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'e1ddc5e9bba536f5e8bd2d74e2023225';
+YUI.Env[Y.version].md5 = 'c0cf1a38b2168b6deae33f04cb41b5bd';

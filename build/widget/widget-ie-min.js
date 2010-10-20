@@ -1,0 +1,1 @@
+YUI.add("widget-ie",function(F){var D="boundingBox",C="contentBox",E="height",H="offsetHeight",B="",G=F.UA.ie&&F.UA.ie<7,A=F.Widget.getClassName("tmp","forcesize");F.Widget.prototype._uiSizeCB=function(J){var K=this.get(D),I=this.get(C);if(J){if(G){K.addClass(A);}I.set(H,K.get(H));if(G){K.removeClass(A);}}else{I.setStyle(E,B);}};},"@VERSION@",{requires:["widget-base"]});

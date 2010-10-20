@@ -47,22 +47,40 @@
         },
 
         "skinnable": true,
-         
+
         "submodules": {
             "widget-base": {
                 "requires": [
-                    "attribute", 
+                    "attribute",
                     "event-focus", 
                     "base-base",
                     "base-pluginhost",
                     "node-base",
                     "node-style",
-                    "node-event-delegate",
                     "classnamemanager"
                 ]
             },
 
             "widget-htmlparser": {
+                "requires": [
+                    "widget-base"
+                ]
+            },
+
+            "widget-base-ie": {
+                "requires": [
+                    "widget-base"
+                ]
+            },
+
+            "widget-uievents": {
+                "requires": [
+                    "widget-base",
+                    "node-event-delegate"
+                ]
+            },
+
+            "widget-skin": {
                 "requires": [
                     "widget-base"
                 ]
