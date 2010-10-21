@@ -1279,6 +1279,8 @@ YUI.add('event-delegate', function(Y) {
 var toArray          = Y.Array,
     YLang            = Y.Lang,
     isString         = YLang.isString,
+    isObject         = YLang.isObject,
+    isArray          = YLang.isArray,
     selectorTest     = Y.Selector.test,
     detachCategories = Y.Env.evt.handles;
 
@@ -1320,8 +1322,36 @@ var toArray          = Y.Array,
 function delegate(type, fn, el, filter) {
     var args     = toArray(arguments, 0, true),
         query    = isString(el) ? el : null,
-        typeBits = type.split(/\|/),
-        synth, container, categories, cat, handle;
+        typeBits, synth, container, categories, cat, i, len, handles, handle;
+
+    // Support Y.delegate({ click: fnA, key: fnB }, context, filter, ...);
+    // and Y.delegate(['click', 'key'], fn, context, filter, ...);
+    if (isObject(type)) {
+        handles = [];
+
+        if (isArray(type)) {
+            for (i = 0, len = type.length; i < len; ++i) {
+                args[0] = type[i];
+                handles.push(Y.delegate.apply(Y, args));
+            }
+        } else {
+            // Y.delegate({'click', fn}, context, filter) =>
+            // Y.delegate('click', fn, context, filter)
+            args.unshift(null); // one arg becomes two; need to make space
+
+            for (i in type) {
+                if (type.hasOwnProperty(i)) {
+                    args[0] = i;
+                    args[1] = type[i];
+                    handles.push(Y.delegate.apply(Y, args));
+                }
+            }
+        }
+
+        return new Y.EventHandle(handles);
+    }
+
+    typeBits = type.split(/\|/);
 
     if (typeBits.length > 1) {
         cat  = typeBits.shift();
@@ -1330,7 +1360,7 @@ function delegate(type, fn, el, filter) {
 
     synth = Y.Node.DOM_EVENTS[type];
 
-    if (YLang.isObject(synth) && synth.delegate) {
+    if (isObject(synth) && synth.delegate) {
         handle = synth.delegate.apply(synth, arguments);
     }
 
