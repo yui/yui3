@@ -1514,4 +1514,4 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'event-valuechange', 'node-base'], optional:['jsonp', 'yql']});
+}, '@VERSION@' ,{optional:['jsonp', 'yql'], requires:['array-extras', 'base-build', 'event-valuechange', 'node-base']});
