@@ -129,8 +129,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	},
 	
 	syncUI: function() {
-		this._syncScroll();
 		this._syncTh();
+		this._syncScroll();
 	},
 	
 	_syncTh: function() {
@@ -144,24 +144,36 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			for (i=0, len = th.size(); i<len; i++) {
 				
 				//If a width has not been already set on the TD:
-				if (td.item(i).get('firstChild').getStyle('width') === "auto") {
+				//if (td.item(i).get('firstChild').getStyle('width') === "auto") {
 					
 					thLiner = th.item(i).get('firstChild'); //TODO: use liner API
 					tdLiner = td.item(i).get('firstChild');
 					
-					thWidth = thLiner.get('clientWidth');
-					tdWidth = td.item(i).get('clientWidth'); /* TODO: for some reason, using tdLiner.get('clientWidth') doesn't work - why not? */
+					if (YUA.ie) {
+						thWidth = thLiner.get('offsetWidth');
+						tdWidth = td.item(i).get('offsetWidth'); /* TODO: for some reason, using tdLiner.get('clientWidth') doesn't work - why not? */
+					}
+					else {
+						thWidth = thLiner.get('clientWidth');
+						tdWidth = td.item(i).get('clientWidth');
+					}
 										
 					//if TH is bigger than TD, enlarge TD Liner
 					if (thWidth > tdWidth) {
-						tdLiner.setStyle('width', thWidth - 20 + 'px');
+						tdLiner.setStyle('width', (thWidth - 20 + 'px'));
+						//tdLiner.setContent('1st - tdwidth is ' +tdWidth +' and thWidth is ' + thWidth);
 					}
 					
 					//if TD is bigger than TH, enlarge TH Liner
 					else if (tdWidth > thWidth) {
-						thLiner.setStyle('width', tdWidth - 20 + 'px');
+						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
+						//tdLiner.setContent('2nd - tdwidth is ' +tdWidth +' and thWidth is ' + thWidth);
 					}
-				}
+					
+					else {
+						tdLiner.setContent('3rd');
+					}
+				//}
 
 			}
 			
@@ -173,9 +185,6 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 		if (width !== 'auto') {
 			o.th.get('firstChild').setStyles({'width': width, 'overflow':'hidden'});
-		}
-		else {
-			//o.th.get('firstChild').setStyles({'overflow':'visible'});
 		}
 		return o;
 	},
@@ -189,8 +198,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			o.td.setStyles({'width': width, 'overflow': 'hidden'});
 		}
 		else {
-			o.td.get('firstChild').setStyles({'width': width, 'overflow': 'visible'});
-			o.td.setStyles({'width': width, 'overflow': 'visible'});
+			//o.td.get('firstChild').setStyles({'width': width, 'overflow': 'visible'});
+			//o.td.setStyles({'width': width, 'overflow': 'visible'});
 		}
 
 		return o;
