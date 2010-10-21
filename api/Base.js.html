@@ -608,13 +608,13 @@
 
         <span class="cm">/**</span>
 <span class="cm">         * Default toString implementation. Provides the constructor NAME</span>
-<span class="cm">         * and the instance ID.</span>
+<span class="cm">         * and the instance guid, if set.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method toString</span>
 <span class="cm">         * @return {String} String representation for this object</span>
 <span class="cm">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">;</span>
         <span class="p">}</span>
 
     <span class="p">};</span>
