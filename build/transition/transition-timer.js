@@ -53,12 +53,7 @@ Y.mix(Transition.prototype, {
             customAttr = Transition.behaviors,
             done = false,
             allDone = false,
-            data = {
-                type: 'propertyEnd',
-                propertyName: name,
-                config: config,
-                elapsedTime: elapsed
-            },
+            data,
             name,
             attribute,
             setter,
@@ -75,6 +70,13 @@ Y.mix(Transition.prototype, {
                 delay = attribute.delay;
                 elapsed = (time - delay) / 1000;
                 t = time;
+                data = {
+                    type: 'propertyEnd',
+                    propertyName: name,
+                    config: config,
+                    elapsedTime: elapsed
+                };
+
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
                         customAttr[i].set : Transition.DEFAULT_SETTER;
 
