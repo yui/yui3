@@ -1679,6 +1679,17 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
                 });
             });
             test.wait(1000);
+        },
+
+        'should call method with node context': function() {
+           Y.Node.addMethod('testThis', function() {
+                return this.get('id');
+            });
+
+            var node1 = Y.Node.create('<div id="foo"/>');
+            var node2 = Y.Node.create('<div id="bar"/>');
+            Assert.areEqual('foo', node1.testThis());
+            Assert.areEqual('bar', node2.testThis());
         }
     })); 
 

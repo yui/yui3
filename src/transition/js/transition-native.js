@@ -343,17 +343,24 @@ Transition.prototype = {
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
             attr = attrs[name],
-            anim = (attr) ? attr.transition : null;
+            anim = (attr) ? attr.transition : null,
+            data = {
+                type: 'propertyEnd',
+                propertyName: name,
+                elapsedTime: elapsed
+            },
+            config;
 
         if (anim) {
             anim.removeProperty(name);
             anim._endNative(name);
+            config = anim._config[name];
 
-            node.fire('transition:propertyEnd', {
-                type: 'propertyEnd',
-                propertyName: name,
-                elapsedTime: elapsed
-            });
+            if (config && config.on && config.on.end) {
+                config.on.end.call(node, data);
+            }
+
+            node.fire('transition:propertyEnd', data);
 
             if (anim._count <= 0)  { // after propertEnd fires
                 anim._end(elapsed);
