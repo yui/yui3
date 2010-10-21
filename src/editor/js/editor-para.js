@@ -103,7 +103,7 @@
                                 p = p.ancestor(P);
                             }
                             if (p) {
-                                if (!p.previous() && p.get('parentNode').test(BODY)) {
+                                if (!p.previous() && p.get('parentNode') && p.get('parentNode').test(BODY)) {
                                     Y.log('Stopping the backspace event', 'warn', 'editor-para');
                                     e.changedEvent.frameEvent.halt();
                                 }
@@ -125,6 +125,18 @@
                                 }
                             }
                         }
+                    }
+                    if (Y.UA.gecko) {
+                        /**
+                        * This forced FF to redraw the content on backspace.
+                        * On some occasions FF will leave a cursor residue after content has been deleted.
+                        * Dropping in the empty textnode and then removing it causes FF to redraw and
+                        * remove the "ghost cursors"
+                        */
+                        var d = e.changedNode,
+                            t = inst.config.doc.createTextNode(' ');
+                        d.appendChild(t);
+                        d.removeChild(t);
                     }
                     break;
             }
