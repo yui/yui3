@@ -608,6 +608,8 @@ YUI.add('frame', function(Y) {
         * @type Object
         */
         DOM_EVENTS: {
+            dblclick: 1,
+            click: 1,
             paste: 1,
             mouseup: 1,
             mousedown: 1,
@@ -807,7 +809,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1699,7 +1701,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('exec-command', function(Y) {
 
 
@@ -1922,7 +1924,7 @@ YUI.add('exec-command', function(Y) {
                         sel = new inst.Selection(), n;
 
                     if (!Y.UA.ie) {
-                        this._command('styleWithCSS', 'true');
+                        this._command('useCSS', false);
                     }
                     if (inst.Selection.hasCursor()) {
                         if (sel.isCollapsed) {
@@ -1939,9 +1941,6 @@ YUI.add('exec-command', function(Y) {
                         }
                     } else {
                         this._command(cmd, val);
-                    }
-                    if (!Y.UA.ie) {
-                        this._command('styleWithCSS', false);
                     }
                 },
                 /**
@@ -2047,7 +2046,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -2117,7 +2116,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -2179,6 +2178,13 @@ YUI.add('createlink-base', function(Y) {
                     if (a) {
                         out.item(0).replace(a);
                     }
+                    if (Y.UA.gecko) {
+                        if (a.get('parentNode').test('span')) {
+                            if (a.get('parentNode').one('br.yui-cursor')) {
+                                a.get('parentNode').insert(a, 'before');
+                            }
+                        }
+                    }
                 } else {
                     //No selection, insert a new node..
                     this.get('host').execCommand('inserthtml', '<a href="' + url + '">' + url + '</a>');
@@ -2190,7 +2196,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-base', function(Y) {
 
 
@@ -2209,7 +2215,7 @@ YUI.add('editor-base', function(Y) {
     
     var EditorBase = function() {
         EditorBase.superclass.constructor.apply(this, arguments);
-    };
+    }, LAST_CHILD = ':last-child', BODY = 'body';
 
     Y.extend(EditorBase, Y.Base, {
         /**
@@ -2281,7 +2287,47 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _lastBookmark: null,
+        /**
+        * Resolves the e.changedNode in the nodeChange event if it comes from the document. If
+        * the event came from the document, it will get the last child of the last child of the document
+        * and return that instead.
+        * @method _resolveChangedNode
+        * @param {Node} n The node to resolve
+        * @private
+        */
+        _resolveChangedNode: function(n) {
+            var inst = this.getInstance();
+            if (inst && n.test('html')) {
+                var lc = inst.one(BODY).one(LAST_CHILD), found, lc2;
+                while (!found) {
+                    if (lc) {
+                        lc2 = lc.one(LAST_CHILD);
+                        if (lc2) {
+                            lc = lc2;
+                        } else {
+                            found = true;
+                        }
+                    } else {
+                        found = true;
+                    }
+                }
+                if (lc) {
+                    if (lc.test('br')) {
+                        if (lc.previous()) {
+                            lc = lc.previous();
+                        } else {
+                            lc = lc.get('parentNode');
+                        }
+                    }
+                    if (lc) {
+                        n = lc;
+                    }
+                }
+                
 
+            }
+            return n;
+        },
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -2301,6 +2347,8 @@ YUI.add('editor-base', function(Y) {
                     }
                 } catch (ie) {}
             }
+
+            e.changedNode = this._resolveChangedNode(e.changedNode);
 
             /*
             * @TODO
@@ -2324,6 +2372,7 @@ YUI.add('editor-base', function(Y) {
                             cur = sel.getCursor();
                             cur.insert(EditorBase.TABKEY, 'before');
                             sel.focusCursor();
+                            inst.Selection.cleanCursor();
                         }
                     }
                     break;
@@ -2350,10 +2399,10 @@ YUI.add('editor-base', function(Y) {
                     if (para.test(btag)) {
                         var prev = para.previous(), lc, lc2, found = false;
                         if (prev) {
-                            lc = prev.one(':last-child');
+                            lc = prev.one(LAST_CHILD);
                             while (!found) {
                                 if (lc) {
-                                    lc2 = lc.one(':last-child');
+                                    lc2 = lc.one(LAST_CHILD);
                                     if (lc2) {
                                         lc = lc2;
                                     } else {
@@ -3015,7 +3064,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -3183,7 +3232,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -3458,7 +3507,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
 YUI.add('editor-para', function(Y) {
 
 
@@ -3535,7 +3584,7 @@ YUI.add('editor-para', function(Y) {
                 case 'backspace-down':
                 case 'delete-up':
                     if (!Y.UA.ie) {
-                        var ps = inst.all(FIRST_P), br, item, html, txt, p;
+                        var ps = inst.all(FIRST_P), br, item, html, txt, p, imgs;
                         item = inst.one(BODY);
                         if (ps.item(0)) {
                             item = ps.item(0);
@@ -3548,8 +3597,9 @@ YUI.add('editor-para', function(Y) {
 
                         txt = inst.Selection.getText(item);
                         txt = txt.replace(/ /g, '').replace(/\n/g, '');
+                        imgs = item.all('img');
                         
-                        if (txt.length === 0) {
+                        if (txt.length === 0 && !imgs.size()) {
                             //God this is horrible..
                             if (!item.test(P)) {
                                 this._fixFirstPara();
@@ -3666,7 +3716,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});

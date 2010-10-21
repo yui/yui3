@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>history&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>history&nbsp; <span class="subtitle">3.3.0int1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
                 
@@ -103,8 +103,8 @@
 
     <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
     <span class="nx">_change</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Stringify all values to ensure that comparisons don&#39;t fail when</span>
-        <span class="c1">// after they&#39;re coerced to strings in the location hash.</span>
+        <span class="c1">// Stringify all values to ensure that comparisons don&#39;t fail after</span>
+        <span class="c1">// they&#39;re coerced to strings in the location hash.</span>
         <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">state</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>

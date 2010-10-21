@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.09.29-18-36',
+            GALLERY_VERSION = 'gallery-2010.10.20-19-33',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.8.1',
@@ -966,6 +966,8 @@ Y.Loader.prototype = {
         if (!o.path && !o.fullpath) {
             o.path = _path(name, name, o.type);
         }
+
+        o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
         o.requires = o.requires || [];

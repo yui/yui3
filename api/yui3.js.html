@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.3.0int1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -163,6 +163,32 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;autocomplete-list&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;autocomplete-list-keys&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Only add keyboard support to autocomplete-list if this doesn&#39;t appear to</span>
+    <span class="c1">// be an iOS or Android-based mobile device.</span>
+    <span class="c1">//</span>
+    <span class="c1">// There&#39;s currently no feasible way to actually detect whether a device has</span>
+    <span class="c1">// a hardware keyboard, so this sniff will have to do. It can easily be</span>
+    <span class="c1">// overridden by manually loading the autocomplete-list-keys module.</span>
+    <span class="c1">//</span>
+    <span class="c1">// Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari</span>
+    <span class="c1">// doesn&#39;t fire the keyboard events used by AutoCompleteList, so there&#39;s</span>
+    <span class="c1">// no point loading the -keys module even when a bluetooth keyboard may be</span>
+    <span class="c1">// available.</span>
+    <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ios</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">android</span><span class="p">);</span>
+<span class="p">},</span> 
+                            <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete-list&quot;</span>
+                        <span class="p">},</span> 
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-list-keys-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;autocomplete-list&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;base-build&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
@@ -730,7 +756,7 @@
             <span class="p">},</span> 
             <span class="s2">&quot;editor-para&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;editor-base&quot;</span>
+                    <span class="s2">&quot;node&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;exec-command&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1023,6 +1049,12 @@
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;event-simulate&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;node-load&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;io-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;shim-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1521,7 +1553,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;c0cf1a38b2168b6deae33f04cb41b5bd&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;125d186662061c5fadd39f49d1a983a8&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>

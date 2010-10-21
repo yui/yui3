@@ -1064,13 +1064,11 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     setContent: function(content) {
-        if (content) {
-            if (content._node) { // map to DOMNode
-                content = content._node;
-            } else if (content._nodes) { // convert DOMNodeList to documentFragment
-                content = Y_DOM._nl2frag(content._nodes);
-            }
+        var node = Y.Node.getDOMNode(content) ||
+                Y_DOM._nl2frag(Y.NodeList.getDOMNodes(content));
 
+        if (node) {
+            content = node;
         }
 
         Y_DOM.addHTML(this._node, content, 'replace');
@@ -1259,11 +1257,11 @@ NodeList.NAME = 'NodeList';
  * @method NodeList.getDOMNodes
  * @static
  *
- * @param {Y.NodeList} node The NodeList instance
+ * @param {Y.NodeList} nodelist The NodeList instance
  * @return {Array} The array of DOM nodes bound to the NodeList
  */
-NodeList.getDOMNodes = function(nodeList) {
-    return nodeList._nodes;
+NodeList.getDOMNodes = function(nodelist) {
+    return (nodelist && nodelist._nodes) ? nodelist._nodes : nodelist;
 };
 
 NodeList.each = function(instance, fn, context) {

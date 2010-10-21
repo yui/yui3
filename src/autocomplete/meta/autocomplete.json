@@ -55,6 +55,22 @@
             },
 
             "autocomplete-list": {
+                "plugins": {
+                    "autocomplete-list-keys": {
+                        "path": "autocomplete/autocomplete-list-keys-min.js",
+
+                        "condition": {
+                            "trigger": "autocomplete-list",
+                            "test": "autocomplete-list-keys-sniff.js"
+                        },
+
+                        "requires": [
+                            "autocomplete-list",
+                            "base-build"
+                        ]
+                    }
+                },
+
                 "requires": [
                     "autocomplete-base",
                     "widget",

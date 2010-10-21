@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>yui&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>yui&nbsp; <span class="subtitle">3.3.0int1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
                 
@@ -54,8 +54,26 @@
     <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
     <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
 <span class="p">});</span>
-<span class="c1">// history-hash-ie-test.js</span>
+<span class="c1">// autocomplete-list-keys-sniff.js</span>
 <span class="nx">add</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Only add keyboard support to autocomplete-list if this doesn&#39;t appear to</span>
+    <span class="c1">// be an iOS or Android-based mobile device.</span>
+    <span class="c1">//</span>
+    <span class="c1">// There&#39;s currently no feasible way to actually detect whether a device has</span>
+    <span class="c1">// a hardware keyboard, so this sniff will have to do. It can easily be</span>
+    <span class="c1">// overridden by manually loading the autocomplete-list-keys module.</span>
+    <span class="c1">//</span>
+    <span class="c1">// Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari</span>
+    <span class="c1">// doesn&#39;t fire the keyboard events used by AutoCompleteList, so there&#39;s</span>
+    <span class="c1">// no point loading the -keys module even when a bluetooth keyboard may be</span>
+    <span class="c1">// available.</span>
+    <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ios</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">android</span><span class="p">);</span>
+<span class="p">},</span> 
+    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete-list&quot;</span>
+<span class="p">});</span>
+<span class="c1">// history-hash-ie-test.js</span>
+<span class="nx">add</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">docMode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span><span class="p">;</span>
 
@@ -65,7 +83,7 @@
     <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;history-hash&quot;</span>
 <span class="p">});</span>
 <span class="c1">// dd-gestures-test.js</span>
-<span class="nx">add</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">add</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="s1">&#39;ontouchstart&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">chrome</span><span class="p">));</span>
 <span class="p">},</span> 

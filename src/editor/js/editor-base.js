@@ -14,7 +14,7 @@
     
     var EditorBase = function() {
         EditorBase.superclass.constructor.apply(this, arguments);
-    };
+    }, LAST_CHILD = ':last-child', BODY = 'body';
 
     Y.extend(EditorBase, Y.Base, {
         /**
@@ -86,7 +86,47 @@
         * @private
         */
         _lastBookmark: null,
+        /**
+        * Resolves the e.changedNode in the nodeChange event if it comes from the document. If
+        * the event came from the document, it will get the last child of the last child of the document
+        * and return that instead.
+        * @method _resolveChangedNode
+        * @param {Node} n The node to resolve
+        * @private
+        */
+        _resolveChangedNode: function(n) {
+            var inst = this.getInstance();
+            if (inst && n.test('html')) {
+                var lc = inst.one(BODY).one(LAST_CHILD), found, lc2;
+                while (!found) {
+                    if (lc) {
+                        lc2 = lc.one(LAST_CHILD);
+                        if (lc2) {
+                            lc = lc2;
+                        } else {
+                            found = true;
+                        }
+                    } else {
+                        found = true;
+                    }
+                }
+                if (lc) {
+                    if (lc.test('br')) {
+                        if (lc.previous()) {
+                            lc = lc.previous();
+                        } else {
+                            lc = lc.get('parentNode');
+                        }
+                    }
+                    if (lc) {
+                        n = lc;
+                    }
+                }
+                
 
+            }
+            return n;
+        },
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -107,6 +147,8 @@
                     }
                 } catch (ie) {}
             }
+
+            e.changedNode = this._resolveChangedNode(e.changedNode);
 
             /*
             * @TODO
@@ -131,6 +173,7 @@
                             cur = sel.getCursor();
                             cur.insert(EditorBase.TABKEY, 'before');
                             sel.focusCursor();
+                            inst.Selection.cleanCursor();
                         }
                     }
                     break;
@@ -157,10 +200,10 @@
                     if (para.test(btag)) {
                         var prev = para.previous(), lc, lc2, found = false;
                         if (prev) {
-                            lc = prev.one(':last-child');
+                            lc = prev.one(LAST_CHILD);
                             while (!found) {
                                 if (lc) {
-                                    lc2 = lc.one(':last-child');
+                                    lc2 = lc.one(LAST_CHILD);
                                     if (lc2) {
                                         lc = lc2;
                                     } else {

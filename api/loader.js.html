@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.3.0int1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -926,6 +926,8 @@
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">fullpath</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">o</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
         <span class="p">}</span>
+
+        <span class="nx">o</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
 
         <span class="nx">o</span><span class="p">.</span><span class="nx">ext</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ext&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">ext</span> <span class="o">:</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_internal</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
         <span class="nx">o</span><span class="p">.</span><span class="nx">requires</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">requires</span> <span class="o">||</span> <span class="p">[];</span>

@@ -634,6 +634,8 @@ YUI.add('frame', function(Y) {
         * @type Object
         */
         DOM_EVENTS: {
+            dblclick: 1,
+            click: 1,
             paste: 1,
             mouseup: 1,
             mousedown: 1,
@@ -833,4 +835,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});

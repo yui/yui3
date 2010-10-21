@@ -107,6 +107,19 @@
                 ]
             }, 
             "autocomplete-list": {
+                "plugins": {
+                    "autocomplete-list-keys": {
+                        "condition": {
+                            "test": "autocomplete-list-keys-sniff.js", 
+                            "trigger": "autocomplete-list"
+                        }, 
+                        "path": "autocomplete/autocomplete-list-keys-min.js", 
+                        "requires": [
+                            "autocomplete-list", 
+                            "base-build"
+                        ]
+                    }
+                }, 
                 "requires": [
                     "autocomplete-base", 
                     "widget", 
@@ -672,7 +685,7 @@
             }, 
             "editor-para": {
                 "requires": [
-                    "editor-base"
+                    "node"
                 ]
             }, 
             "exec-command": {
@@ -960,6 +973,12 @@
                 "requires": [
                     "node-base", 
                     "event-simulate"
+                ]
+            }, 
+            "node-load": {
+                "requires": [
+                    "node-base", 
+                    "io-base"
                 ]
             }, 
             "shim-plugin": {

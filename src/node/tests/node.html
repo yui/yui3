@@ -169,7 +169,7 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', 'node-event-simulate', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', 'node-event-simulate', 'node-load', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
@@ -1600,6 +1600,34 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.all('span').empty();
             Assert.areEqual(0, node.get('childNodes').item(0).get('childNodes').size());
             Assert.areEqual(0, node.get('childNodes').item(1).get('childNodes').size());
+        },
+
+        'should load the content from the given url into the node': function() {
+            var node = Y.Node.create('<div></div>'),
+                test = this;
+            node.set('id', 'test-loading');
+            node.appendTo('body');
+            node.load('test-frame.html', function(code, response) {
+                test.resume(function() {
+                    Assert.areEqual(1, node.all('div').size());
+                    node.remove();
+                });
+            });
+            test.wait(1000);
+        },
+
+        'should load the query result from the given url into the node': function() {
+            var node = Y.Node.create('<div></div>'),
+                test = this;
+            node.set('id', 'test-loading');
+            node.appendTo('body');
+            node.load('test-frame.html', 'ul', function(code, response) {
+                test.resume(function() {
+                    Assert.areEqual(1, node.all('ul').size());
+                    node.remove();
+                });
+            });
+            test.wait(1000);
         }
     })); 
 

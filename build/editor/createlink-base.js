@@ -59,6 +59,13 @@ YUI.add('createlink-base', function(Y) {
                     if (a) {
                         out.item(0).replace(a);
                     }
+                    if (Y.UA.gecko) {
+                        if (a.get('parentNode').test('span')) {
+                            if (a.get('parentNode').one('br.yui-cursor')) {
+                                a.get('parentNode').insert(a, 'before');
+                            }
+                        }
+                    }
                 } else {
                     //No selection, insert a new node..
                     this.get('host').execCommand('inserthtml', '<a href="' + url + '">' + url + '</a>');
@@ -70,4 +77,4 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
