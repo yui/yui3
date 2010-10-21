@@ -1742,6 +1742,13 @@ YUI.add('exec-command', function(Y) {
             */
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
+                
+                Y.later(0, this, function() {
+                    var inst = this.getInstance();
+                    if (inst && inst.Selection) {
+                        inst.Selection.cleanCursor();
+                    }
+                });
 
                 if (fn) {
                     return fn.call(this, action, value);
@@ -2031,7 +2038,7 @@ YUI.add('exec-command', function(Y) {
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('size', val);
                         } else if (Y.UA.gecko) {
-                            var p = sel.anchorNode.ancestor('p');
+                            var p = sel.anchorNode.ancestor(inst.Selection.DEFAULT_BLOCK_TAG);
                             if (p) {
                                 p.setStyle('fontSize', '');
                             }
@@ -2168,6 +2175,7 @@ YUI.add('createlink-base', function(Y) {
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);
 
             if (url) {
+                url = escape(url);
 
                 this.get('host')._execCommand(cmd, url);
                 sel = new inst.Selection();
@@ -3615,7 +3623,7 @@ YUI.add('editor-para', function(Y) {
                                 p = p.ancestor(P);
                             }
                             if (p) {
-                                if (!p.previous() && p.get('parentNode').test(BODY)) {
+                                if (!p.previous() && p.get('parentNode') && p.get('parentNode').test(BODY)) {
                                     e.changedEvent.frameEvent.halt();
                                 }
                             }
@@ -3636,6 +3644,18 @@ YUI.add('editor-para', function(Y) {
                                 }
                             }
                         }
+                    }
+                    if (Y.UA.gecko) {
+                        /**
+                        * This forced FF to redraw the content on backspace.
+                        * On some occasions FF will leave a cursor residue after content has been deleted.
+                        * Dropping in the empty textnode and then removing it causes FF to redraw and
+                        * remove the "ghost cursors"
+                        */
+                        var d = e.changedNode,
+                            t = inst.config.doc.createTextNode(' ');
+                        d.appendChild(t);
+                        d.removeChild(t);
                     }
                     break;
             }

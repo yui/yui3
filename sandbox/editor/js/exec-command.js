@@ -37,6 +37,13 @@ YUI.add('exec-command', function(Y) {
             */
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
+                
+                Y.later(0, this, function() {
+                    var inst = this.getInstance();
+                    if (inst && inst.Selection) {
+                        inst.Selection.cleanCursor();
+                    }
+                });
 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
@@ -329,7 +336,7 @@ YUI.add('exec-command', function(Y) {
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('size', val);
                         } else if (Y.UA.gecko) {
-                            var p = sel.anchorNode.ancestor('p');
+                            var p = sel.anchorNode.ancestor(inst.Selection.DEFAULT_BLOCK_TAG);
                             if (p) {
                                 p.setStyle('fontSize', '');
                             }

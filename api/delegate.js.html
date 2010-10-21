@@ -57,6 +57,8 @@
 <span class="kd">var</span> <span class="nx">toArray</span>          <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
     <span class="nx">YLang</span>            <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
     <span class="nx">isString</span>         <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isString</span><span class="p">,</span>
+    <span class="nx">isObject</span>         <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">,</span>
+    <span class="nx">isArray</span>          <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">,</span>
     <span class="nx">selectorTest</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">,</span>
     <span class="nx">detachCategories</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">handles</span><span class="p">;</span>
 
@@ -98,8 +100,36 @@
 <span class="kd">function</span> <span class="nx">delegate</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">args</span>     <span class="o">=</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
         <span class="nx">query</span>    <span class="o">=</span> <span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-        <span class="nx">typeBits</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\|/</span><span class="p">),</span>
-        <span class="nx">synth</span><span class="p">,</span> <span class="nx">container</span><span class="p">,</span> <span class="nx">categories</span><span class="p">,</span> <span class="nx">cat</span><span class="p">,</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="nx">typeBits</span><span class="p">,</span> <span class="nx">synth</span><span class="p">,</span> <span class="nx">container</span><span class="p">,</span> <span class="nx">categories</span><span class="p">,</span> <span class="nx">cat</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">handles</span><span class="p">,</span> <span class="nx">handle</span><span class="p">;</span>
+
+    <span class="c1">// Support Y.delegate({ click: fnA, key: fnB }, context, filter, ...);</span>
+    <span class="c1">// and Y.delegate([&#39;click&#39;, &#39;key&#39;], fn, context, filter, ...);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">handles</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">type</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// Y.delegate({&#39;click&#39;, fn}, context, filter) =&gt;</span>
+            <span class="c1">// Y.delegate(&#39;click&#39;, fn, context, filter)</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="c1">// one arg becomes two; need to make space</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+                    <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">type</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">handles</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">typeBits</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\|/</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">typeBits</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">cat</span>  <span class="o">=</span> <span class="nx">typeBits</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
@@ -108,7 +138,7 @@
 
     <span class="nx">synth</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">YLang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">synth</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">synth</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">handle</span> <span class="o">=</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">synth</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -220,8 +250,8 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Walks up the parent axis of an event&#39;s target, and tests each element</span>
-<span class="cm"> * against a supplied filter function.  If any Nodes satisfy the filter, the</span>
-<span class="cm"> * delegated callback will be triggered for each.</span>
+<span class="cm"> * against a supplied filter function.  If any Nodes, including the container,</span>
+<span class="cm"> * satisfy the filter, the delegated callback will be triggered for each.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method delegate._applyFilter</span>
 <span class="cm"> * @param filter {Function} boolean function to test for inclusion in event</span>
@@ -234,9 +264,9 @@
 <span class="nx">delegate</span><span class="p">.</span><span class="nx">_applyFilter</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">e</span>         <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="nx">container</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="c1">// facadeless events in IE, have no e.currentTarget</span>
-        <span class="c1">//container = e.currentTarget,</span>
         <span class="nx">target</span>    <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">srcElement</span><span class="p">,</span>
-        <span class="nx">match</span>     <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">match</span>     <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">isContainer</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
     <span class="c1">// Resolve text nodes to their containing element</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">target</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
@@ -249,21 +279,33 @@
     <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">filter</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">selectorTest</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">container</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">isContainer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">target</span> <span class="o">===</span> <span class="nx">container</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">selectorTest</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="p">(</span><span class="nx">isContainer</span> <span class="o">?</span><span class="kc">null</span><span class="o">:</span> <span class="nx">container</span><span class="p">)))</span> <span class="p">{</span>
                 <span class="nx">match</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
             <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isContainer</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+
             <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="c1">// filter functions are implementer code and should receive wrappers</span>
         <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
         <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">container</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
-        <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// filter(target, e, extra args...) - this === target</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">args</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">match</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
             <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">target</span> <span class="o">===</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+
             <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
             <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
         <span class="p">}</span>
