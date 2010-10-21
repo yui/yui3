@@ -482,15 +482,11 @@ Y.Resize = Y.extend(
 
 			// unwrap node
 			if (instance.get(WRAP)) {
-				node.setStyles({
-					margin: wrapper.getStyle(MARGIN),
-					position: wrapper.getStyle(POSITION)
-				});
+				instance._copyStyles(wrapper, node);
 
 				if (pNode) {
 					pNode.insertBefore(node, wrapper);
 				}
-				// wrapper.placeBefore(node);
 
 				wrapper.remove(true);
 			}
@@ -1124,7 +1120,6 @@ Y.Resize = Y.extend(
 				if (pNode) {
 					pNode.insertBefore(wrapper, node);
 				}
-				// node.placeBefore(wrapper);
 
 				wrapper.append(node);
 
