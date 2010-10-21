@@ -221,8 +221,8 @@ Y_Node.scrubVal = function(val, node) {
 Y_Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn == 'function') {
         Y_Node.prototype[name] = function() {
-            context = context || this;
             var args = _slice.call(arguments),
+                node = this,
                 ret;
 
             if (args[0] && Y.instanceOf(args[0], Y_Node)) {
@@ -232,15 +232,15 @@ Y_Node.addMethod = function(name, fn, context) {
             if (args[1] && Y.instanceOf(args[1], Y_Node)) {
                 args[1] = args[1]._node;
             }
-            args.unshift(this._node);
+            args.unshift(node._node);
 
-            ret = fn.apply(context, args);
+            ret = fn.apply(node, args);
 
             if (ret) { // scrub truthy
-                ret = Y_Node.scrubVal(ret, this);
+                ret = Y_Node.scrubVal(ret, node);
             }
 
-            (typeof ret != 'undefined') || (ret = this);
+            (typeof ret != 'undefined') || (ret = node);
             return ret;
         };
     } else {
