@@ -133,21 +133,20 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         inputNode.addClass(this.getClassName('input')).setAttrs({
             'aria-autocomplete': LIST,
-            role: 'textbox'
+            'aria-expanded'    : false,
+            'aria-owns'        : listNode.get('id'),
+            role               : 'combobox'
         });
 
         // ARIA node must be outside the widget or announcements won't be made
         // when the widget is hidden.
-        parentNode.setAttrs({
-            'aria-expanded': false,
-            'aria-owns'    : listNode.get('id'),
-            role           : 'combobox'
-        }).append(ariaNode);
+        parentNode.append(ariaNode);
 
-        this._ariaNode   = ariaNode;
-        this._contentBox = contentBox;
-        this._listNode   = listNode;
-        this._parentNode = parentNode;
+        this._ariaNode    = ariaNode;
+        this._boundingBox = this.get('boundingBox');
+        this._contentBox  = contentBox;
+        this._listNode    = listNode;
+        this._parentNode  = parentNode;
     },
 
     syncUI: function () {
@@ -376,18 +375,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Gets the last item node in the list, or <code>null</code> if the list is
-     * empty.
-     *
-     * @method _getLastItemNode
-     * @return {Node|null}
-     * @protected
-     */
-    _getLastItemNode: function () {
-        return this._listNode.one(this[_SELECTOR_ITEM] + ':last-child');
-    },
-
-    /**
      * Gets the first item node in the list, or <code>null</code> if the list is
      * empty.
      *
@@ -397,6 +384,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _getFirstItemNode: function () {
         return this._listNode.one(this[_SELECTOR_ITEM]);
+    },
+
+    /**
+     * Gets the last item node in the list, or <code>null</code> if the list is
+     * empty.
+     *
+     * @method _getLastItemNode
+     * @return {Node|null}
+     * @protected
+     */
+    _getLastItemNode: function () {
+        return this._listNode.one(this[_SELECTOR_ITEM] + ':last-child');
     },
 
     /**
@@ -446,8 +445,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             visible = this.get(VISIBLE);
         }
 
-        this._parentNode.set('aria-expanded', visible);
-        this._contentBox.set('aria-hidden', !visible);
+        this._inputNode.set('aria-expanded', visible);
+        this._boundingBox.set('aria-hidden', !visible);
 
         if (!visible) {
             this.set(ACTIVE_ITEM, null);
