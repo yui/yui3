@@ -95,9 +95,9 @@
         * @private
         */
         _resolveChangedNode: function(n) {
-            var inst = this.getInstance();
+            var inst = this.getInstance(), lc, lc2, found;
             if (inst && n.test('html')) {
-                var lc = inst.one(BODY).one(LAST_CHILD), found, lc2;
+                lc = inst.one(BODY).one(LAST_CHILD);
                 while (!found) {
                     if (lc) {
                         lc2 = lc.one(LAST_CHILD);
@@ -123,7 +123,6 @@
                     }
                 }
                 
-
             }
             return n;
         },
@@ -159,7 +158,8 @@
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.later(100, inst, inst.Selection.cleanCursor);
+                    //inst.later(100, inst, inst.Selection.cleanCursor);
+                    inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
