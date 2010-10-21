@@ -219,4 +219,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
