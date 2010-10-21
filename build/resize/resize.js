@@ -298,7 +298,7 @@ Y.mix(Resize, {
 		 */
 		wrapTypes: {
 			readOnly: true,
-			value: /canvas|textarea|input|select|button|img/i
+			value: /^canvas|textarea|input|select|button|img|iframe|table|embed$/i
 		},
 
 		/**
