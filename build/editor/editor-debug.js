@@ -2223,6 +2223,7 @@ YUI.add('createlink-base', function(Y) {
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);
 
             if (url) {
+                url = escape(url);
                 Y.log('Adding link: ' + url, 'info', 'createLinkBase');
 
                 this.get('host')._execCommand(cmd, url);
