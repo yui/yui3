@@ -480,7 +480,7 @@
 <span class="cm">     * Inserts content in a node at the given location </span>
 <span class="cm">     * @method addHTML</span>
 <span class="cm">     * @param {HTMLElement} node The node to insert into</span>
-<span class="cm">     * @param {String | HTMLElement} content The content to be inserted </span>
+<span class="cm">     * @param {String | HTMLElement | Array | HTMLCollection} content The content to be inserted </span>
 <span class="cm">     * @param {String | HTMLElement} where Where to insert the content</span>
 <span class="cm">     * If no &quot;where&quot; is given, content is appended to the node</span>
 <span class="cm">     * Possible values for &quot;where&quot;</span>
@@ -499,19 +499,27 @@
 <span class="cm">     */</span>
     <span class="nx">addHTML</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">nodeParent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">item</span><span class="p">,</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">content</span><span class="p">,</span>
             <span class="nx">newNode</span><span class="p">;</span>
             
-        <span class="k">if</span> <span class="p">(</span><span class="nx">content</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">content</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// domNode</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">content</span> <span class="o">!=</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// not null or undefined (maybe 0)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// DOM node, just add it</span>
                 <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// create from string and cache</span>
-                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">content</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">content</span> <span class="o">==</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">content</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// array or collection </span>
+                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createDocumentFragment</span><span class="p">();</span>
+                <span class="k">while</span> <span class="p">((</span><span class="nx">item</span> <span class="o">=</span> <span class="nx">content</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">]))</span> <span class="p">{</span>
+                    <span class="nx">newNode</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span> <span class="c1">// append to fragment for insertion</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">where</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// insert regardless of relationship to node</span>
-                <span class="c1">// TODO: check if node.contains(where)?</span>
                 <span class="nx">where</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="k">switch</span> <span class="p">(</span><span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
@@ -537,11 +545,11 @@
                         <span class="nx">node</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">newNode</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">newNode</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="nx">VALUE_SETTERS</span><span class="o">:</span> <span class="p">{},</span>
