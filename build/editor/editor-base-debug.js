@@ -97,9 +97,9 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _resolveChangedNode: function(n) {
-            var inst = this.getInstance();
+            var inst = this.getInstance(), lc, lc2, found;
             if (inst && n.test('html')) {
-                var lc = inst.one(BODY).one(LAST_CHILD), found, lc2;
+                lc = inst.one(BODY).one(LAST_CHILD);
                 while (!found) {
                     if (lc) {
                         lc2 = lc.one(LAST_CHILD);
@@ -125,7 +125,6 @@ YUI.add('editor-base', function(Y) {
                     }
                 }
                 
-
             }
             return n;
         },
@@ -161,7 +160,8 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.later(100, inst, inst.Selection.cleanCursor);
+                    //inst.later(100, inst, inst.Selection.cleanCursor);
+                    inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -871,4 +871,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
