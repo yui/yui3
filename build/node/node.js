@@ -2478,11 +2478,12 @@ YUI.add('node-event-delegate', function(Y) {
  * @return {EventHandle} the detach handle
  * @for Node
  */
-Y.Node.prototype.delegate = function(type, fn, selector) {
+Y.Node.prototype.delegate = function(type) {
 
-    var args = Y.Array(arguments, 0, true);
+    var args = Y.Array(arguments, 0, true),
+        index = (Y.Lang.isObject(type) && !Y.Lang.isArray(type)) ? 1 : 2;
 
-    args.splice(2, 0, this._node);
+    args.splice(index, 0, this._node);
 
     return Y.delegate.apply(Y, args);
 };
@@ -2491,5 +2492,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
 
