@@ -762,6 +762,13 @@ Y.Resize = Y.extend(
 				position: position
 			};
 
+			// store top/left from the nodes involved
+			// apply top/left from node to the wrapper
+			Y.each([ TOP, LEFT ], function(name) {
+				nodeStyle[name] = wrapper.getStyle(name);
+				wrapperStyle[name] = node.getStyle(name);
+			});
+
 			// store margin(Top,Right,Bottom,Left) from the nodes involved
 			// apply margin from node to the wrapper
 			Y.each([ TOP, RIGHT, BOTTOM, LEFT ], function(dir) {
@@ -1237,7 +1244,7 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_defResizeStartFn: function(event) {
-			var instance = this, proxyNode;
+			var instance = this;
 
 			instance.set(RESIZING, true);
 

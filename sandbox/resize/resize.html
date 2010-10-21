@@ -46,6 +46,9 @@ p, ul, li {
 #r7 {
 	height: 121px;
 	width: 182px;
+	position: absolute;
+	top: 100px;
+	left: 100px;
 }
 
 #r7Container {
@@ -173,8 +176,7 @@ YUI({filter: 'raw'}).use('resize', function(Y) {
 	var r3 = new Y.Resize({
 		node: '#r3',
 		proxy: true,
-		// wrap: true,
-		proxyEl: Y.Node.create('<div>sdsdfsd</div>')
+		wrap: true
 	});
 
 	var r4 = new Y.Resize({
@@ -208,7 +210,7 @@ YUI({filter: 'raw'}).use('resize', function(Y) {
 		minWidth: 50
 	});
 
-	Y.one('#r3btn').on('click', function() { r3.destroy(); });
+	// Y.one('#r3btn').on('click', function() { r3.destroy(); });
 });
 </script>
 </html>
