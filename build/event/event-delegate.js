@@ -202,8 +202,8 @@ delegate.compileFilter = Y.cached(function (selector) {
 
 /**
  * Walks up the parent axis of an event's target, and tests each element
- * against a supplied filter function.  If any Nodes satisfy the filter, the
- * delegated callback will be triggered for each.
+ * against a supplied filter function.  If any Nodes, including the container,
+ * satisfy the filter, the delegated callback will be triggered for each.
  *
  * @method delegate._applyFilter
  * @param filter {Function} boolean function to test for inclusion in event
@@ -216,9 +216,9 @@ delegate.compileFilter = Y.cached(function (selector) {
 delegate._applyFilter = function (filter, args, ce) {
     var e         = args[0],
         container = ce.el, // facadeless events in IE, have no e.currentTarget
-        //container = e.currentTarget,
         target    = e.target || e.srcElement,
-        match     = [];
+        match     = [],
+        isContainer = false;
 
     // Resolve text nodes to their containing element
     if (target.nodeType === 3) {
@@ -231,21 +231,33 @@ delegate._applyFilter = function (filter, args, ce) {
     args.unshift(target);
 
     if (isString(filter)) {
-        while (target && target !== container) {
-            if (selectorTest(target, filter, container)) {
+        while (target) {
+            isContainer = (target === container);
+            if (selectorTest(target, filter, (isContainer ?null: container))) {
                 match.push(target);
             }
+
+            if (isContainer) {
+                break;
+            }
+
             target = target.parentNode;
         }
     } else {
         // filter functions are implementer code and should receive wrappers
         args[0] = Y.one(target);
         args[1] = new Y.DOMEventFacade(e, container, ce);
-        while (target && target !== container) {
+
+        while (target) {
             // filter(target, e, extra args...) - this === target
             if (filter.apply(args[0], args)) {
                 match.push(target);
             }
+
+            if (target === container) {
+                break;
+            }
+
             target = target.parentNode;
             args[0] = Y.one(target);
         }
