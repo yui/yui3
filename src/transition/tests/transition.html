@@ -33,6 +33,33 @@ YUI({
         var suite = new Y.Test.Suite('Transition Tests');
 
         suite.add(new Y.Test.Case({
+            name: 'property onend Tests',
+
+            'should run the onend for the property': function() {
+
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    height: {
+                        value: 0,
+                        on: {
+                            end: function() {
+                                test.resume(function() {
+                                    Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                                    node.setStyle('height', '');
+                                });
+                            }
+                        }
+                    }
+                });
+
+                test.wait(2000);
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
             name: 'onstart Tests',
 
             'should run the onstart prior to setting target values': function() {

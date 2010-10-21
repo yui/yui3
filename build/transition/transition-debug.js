@@ -345,17 +345,24 @@ Transition.prototype = {
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
             attr = attrs[name],
-            anim = (attr) ? attr.transition : null;
+            anim = (attr) ? attr.transition : null,
+            data = {
+                type: 'propertyEnd',
+                propertyName: name,
+                elapsedTime: elapsed
+            },
+            config;
 
         if (anim) {
             anim.removeProperty(name);
             anim._endNative(name);
+            config = anim._config[name];
 
-            node.fire('transition:propertyEnd', {
-                type: 'propertyEnd',
-                propertyName: name,
-                elapsedTime: elapsed
-            });
+            if (config && config.on && config.on.end) {
+                config.on.end.call(node, data);
+            }
+
+            node.fire('transition:propertyEnd', data);
 
             if (anim._count <= 0)  { // after propertEnd fires
                 anim._end(elapsed);
@@ -628,11 +635,18 @@ Y.mix(Transition.prototype, {
     _runAttrs: function(time) {
         var anim = this,
             node = anim._node,
+            config = anim._config,
             uid = Y.stamp(node),
             attrs = Transition._nodeAttrs[uid],
             customAttr = Transition.behaviors,
             done = false,
             allDone = false,
+            data = {
+                type: 'propertyEnd',
+                propertyName: name,
+                config: config,
+                elapsedTime: elapsed
+            },
             name,
             attribute,
             setter,
@@ -666,12 +680,11 @@ Y.mix(Transition.prototype, {
                         delete attrs[name];
                         anim._count--;
 
-                        node.fire('transition:propertyEnd', {
-                            type: 'propertyEnd',
-                            propertyName: name,
-                            config: anim._config,
-                            elapsedTime: elapsed
-                        });
+                        if (config[name] && config[name].on && config[name].on.end) {
+                            config[name].on.end.call(node, data);
+                        }
+
+                        node.fire('transition:propertyEnd', data);
 
                         if (!allDone && anim._count <= 0) {
                             allDone = true;
