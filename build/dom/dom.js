@@ -452,22 +452,24 @@ Y_DOM = {
             i = 0,
             item,
             ret = content,
-            newNode = content;
+            newNode;
             
-        if (content != undefined && !content.nodeType) { // not null or undefined or a DOM node
-            if (typeof content == 'string' || typeof content == 'number') {
+
+        if (content != undefined) { // not null or undefined (maybe 0)
+            if (content.nodeType) { // DOM node, just add it
+                newNode = content;
+            } else if (typeof content == 'string' || typeof content == 'number') {
                 ret = newNode = Y_DOM.create(content);
             } else if (content[0] && content[0].nodeType) { // array or collection 
                 newNode = Y.config.doc.createDocumentFragment();
                 while ((item = content[i++])) {
-                    newNode.appendChild(item);
+                    newNode.appendChild(item); // append to fragment for insertion
                 }
             }
         }
 
         if (where) {
             if (where.nodeType) { // insert regardless of relationship to node
-                // TODO: check if node.contains(where)?
                 where.parentNode.insertBefore(newNode, where);
             } else {
                 switch (where) {
@@ -493,7 +495,7 @@ Y_DOM = {
                         node.appendChild(newNode);
                 }
             }
-        } else {
+        } else if (newNode) {
             node.appendChild(newNode);
         }
 

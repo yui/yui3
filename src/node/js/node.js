@@ -861,19 +861,7 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} The inserted node 
      */
     insertBefore: function(newNode, refNode) {
-        var node = this._node;
-        if (typeof newNode == 'string') {
-            newNode = Y_DOM.create(newNode);
-        }
-        refNode = Y_Node.getDOMNode(refNode);
-        newNode = Y_Node.getDOMNode(newNode);
-
-        if (refNode) {
-            node.insertBefore(newNode, refNode);
-        } else { // IE errors when no refNode
-            node.appendChild(newNode);
-        }
-        return Y.one(newNode);
+        return Y.Node.scrubVal(this._insert(newNode, refNode, 'before'));
     },
 
     /**
@@ -1006,7 +994,8 @@ Y.mix(Y_Node.prototype, {
     },
 
     _insert: function(content, where) {
-        var node = this._node;
+        var node = this._node,
+            ret = null;
 
         if (typeof where == 'number') { // allow index
             where = this._node.childNodes[where];

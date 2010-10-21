@@ -1257,7 +1257,9 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         },
 
         test_ancestors: function() {
-            var node = document.createElement('node');
+            var node = document.createElement('node'),
+                nodelist;
+
             node.className = 'foo';
             document.body.appendChild(node);
             nodelist = Y.one(node).ancestors();
@@ -1511,6 +1513,38 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
                 newNode = node.insertBefore('<em>bar</em>', node.one('*'));
 
             Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should insert the given nodelist before the given node and return the nodelist': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                nodelist2 = node.insertBefore(nodelist, node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual(4, childNodes.size());
+            Assert.areEqual('EM', childNodes.item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('SPAN', childNodes.item(0).get('tagName'));
+        },
+
+        'should insert the node before the given node and return the new node': function() {
+            var node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                node2 = node.insertBefore(Y.Node.create('<em>foo</em>'), node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual('EM', childNodes.item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('EM', node2.get('tagName'));
+        },
+
+        'should insert the given node before the given dom node and return the new node': function() {
+            var node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                node2 = node.insertBefore(document.createElement('em'), node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual('EM', node.get('childNodes').item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('EM', node2.get('tagName'));
         },
 
         'should fire the handler once': function() {
