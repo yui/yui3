@@ -172,7 +172,9 @@ YUI({filter: 'raw'}).use('resize', function(Y) {
 
 	var r3 = new Y.Resize({
 		node: '#r3',
-		proxy: true
+		proxy: true,
+		// wrap: true,
+		proxyEl: Y.Node.create('<div>sdsdfsd</div>')
 	});
 
 	var r4 = new Y.Resize({

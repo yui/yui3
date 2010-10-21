@@ -18,7 +18,7 @@ var Lang = Y.Lang,
 
 	ACTIVE = 'active',
 	ACTIVE_HANDLE = 'activeHandle',
-	ACTIVE_HANDLE_EL = 'activeHandleEl',
+	ACTIVE_HANDLE_NODE = 'activeHandleNode',
 	ALL = 'all',
 	AUTO_HIDE = 'autoHide',
 	BOTTOM = 'bottom',
@@ -39,7 +39,7 @@ var Lang = Y.Lang,
 	PARENT_NODE = 'parentNode',
 	POSITION = 'position',
 	PROXY = 'proxy',
-	PROXY_EL = 'proxyEl',
+	PROXY_NODE = 'proxyNode',
 	RELATIVE = 'relative',
 	RESIZE = 'resize',
 	RESIZING = 'resizing',
@@ -104,9 +104,9 @@ var Lang = Y.Lang,
 					'<div class="'+concat(CSS_RESIZE_HANDLE_INNER, CSS_RESIZE_HANDLE_INNER_PLACEHOLDER)+'">&nbsp;</div>' +
 				 '</div>',
 
-	TPL_PROXY_EL = '<div class="' + CSS_RESIZE_PROXY + '"></div>',
+	TPL_PROXY_NODE = '<div class="' + CSS_RESIZE_PROXY + '"></div>',
 
-	TPL_WRAP_EL = '<div class="' + CSS_RESIZE_WRAPPER + '"></div>',
+	TPL_WRAP_NODE = '<div class="' + CSS_RESIZE_WRAPPER + '"></div>',
 
 	ALL_HANDLES = [ T, TR, R, BR, B, BL, L, TL ];
 
@@ -185,12 +185,12 @@ Y.mix(Resize, {
 		/**
 		 * Stores the active handle element during the resize.
 		 *
-		 * @attribute activeHandleEl
+		 * @attribute activeHandleNode
 		 * @default null
 		 * @private
 		 * @type Node
 		 */
-		activeHandleEl: {
+		activeHandleNode: {
 			value: null,
 			validator: isNode
 		},
@@ -246,14 +246,14 @@ Y.mix(Resize, {
 		/**
          * The Resize proxy element.
          *
-         * @attribute proxyEl
+         * @attribute proxyNode
          * @default Generated using an internal HTML markup
          * @type String | Node
          */
-		proxyEl: {
+		proxyNode: {
 			setter: Y.one,
 			valueFn: function() {
-				return Y.Node.create(TPL_PROXY_EL);
+				return Y.Node.create(TPL_PROXY_NODE);
 			}
 		},
 
@@ -423,7 +423,6 @@ Y.Resize = Y.extend(
 			var instance = this;
 
 			instance._renderHandles();
-			instance._renderProxy();
 		},
 
 	    /**
@@ -678,7 +677,7 @@ Y.Resize = Y.extend(
 		},
 
 	    /**
-	      * Render the <a href="Resize.html#config_proxyEl">proxyEl</a> element and
+	      * Render the <a href="Resize.html#config_proxyNode">proxyNode</a> element and
 	      * make it sibling of the <a href="Resize.html#config_node">node</a>.
 	      *
 	      * @method _renderProxy
@@ -686,11 +685,13 @@ Y.Resize = Y.extend(
 	      */
 		_renderProxy: function() {
 			var instance = this,
-				proxyEl = instance.get(PROXY_EL);
+				proxyNode = instance.get(PROXY_NODE);
 
-			instance.get(WRAPPER).get(PARENT_NODE).append(
-				proxyEl.hide()
-			);
+			if (!proxyNode.inDoc()) {
+				instance.get(WRAPPER).get(PARENT_NODE).append(
+					proxyNode.hide()
+				);
+			}
 		},
 
 	    /**
@@ -943,17 +944,17 @@ Y.Resize = Y.extend(
 		_syncProxyUI: function() {
 			var instance = this,
 				info = instance.info,
-				activeHandleEl = instance.get(ACTIVE_HANDLE_EL),
-				proxyEl = instance.get(PROXY_EL),
-				cursor = activeHandleEl.getStyle(CURSOR);
+				activeHandleNode = instance.get(ACTIVE_HANDLE_NODE),
+				proxyNode = instance.get(PROXY_NODE),
+				cursor = activeHandleNode.getStyle(CURSOR);
 
-			proxyEl.show().setStyle(CURSOR, cursor);
+			proxyNode.show().setStyle(CURSOR, cursor);
 
 			instance.delegate.dd.set(DRAG_CURSOR, cursor);
 
-			instance._setOffset(proxyEl, info.offsetWidth, info.offsetHeight);
+			instance._setOffset(proxyNode, info.offsetWidth, info.offsetHeight);
 
-			proxyEl.setXY([ info.left, info.top ]);
+			proxyNode.setXY([ info.left, info.top ]);
 		},
 
 		/**
@@ -994,9 +995,9 @@ Y.Resize = Y.extend(
 	     */
 		_setActiveHandlesUI: function(val) {
 			var instance = this,
-				activeHandleEl = instance.get(ACTIVE_HANDLE_EL);
+				activeHandleNode = instance.get(ACTIVE_HANDLE_NODE);
 
-			if (activeHandleEl) {
+			if (activeHandleNode) {
 				if (val) {
 					// remove CSS_RESIZE_HANDLE_ACTIVE from all handles before addClass on the active
 					instance.eachHandle(
@@ -1005,10 +1006,10 @@ Y.Resize = Y.extend(
 						}
 					);
 
-					activeHandleEl.addClass(CSS_RESIZE_HANDLE_ACTIVE);
+					activeHandleNode.addClass(CSS_RESIZE_HANDLE_ACTIVE);
 				}
 				else {
-					activeHandleEl.removeClass(CSS_RESIZE_HANDLE_ACTIVE);
+					activeHandleNode.removeClass(CSS_RESIZE_HANDLE_ACTIVE);
 				}
 			}
 		},
@@ -1109,7 +1110,7 @@ Y.Resize = Y.extend(
 
 			// if the node is listed on the wrapTypes or wrap is set to true, create another wrapper
 			if (instance.get(WRAP)) {
-				wrapper = Y.Node.create(TPL_WRAP_EL);
+				wrapper = Y.Node.create(TPL_WRAP_NODE);
 
 				if (pNode) {
 					pNode.insertBefore(wrapper, node);
@@ -1216,14 +1217,14 @@ Y.Resize = Y.extend(
 			if (instance.get(PROXY)) {
 				instance._syncProxyUI();
 
-				instance.get(PROXY_EL).hide();
+				instance.get(PROXY_NODE).hide();
 			}
 
 			// syncUI when resize end
 			instance._syncUI();
 
 			instance.set(ACTIVE_HANDLE, null);
-			instance.set(ACTIVE_HANDLE_EL, null);
+			instance.set(ACTIVE_HANDLE_NODE, null);
 
 			instance._setActiveHandlesUI(false);
 		},
@@ -1236,7 +1237,7 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_defResizeStartFn: function(event) {
-			var instance = this;
+			var instance = this, proxyNode;
 
 			instance.set(RESIZING, true);
 
@@ -1244,6 +1245,10 @@ Y.Resize = Y.extend(
 			instance.originalInfo = instance._getInfo(instance.get(WRAPPER), event);
 
 			instance._updateInfo(event);
+
+			if (instance.get(PROXY)) {
+				instance._renderProxy();
+			}
 		},
 
 	    /**
@@ -1345,7 +1350,7 @@ Y.Resize = Y.extend(
 
 			if (!instance.get(RESIZING)) {
 				instance.set(ACTIVE_HANDLE, handle);
-				instance.set(ACTIVE_HANDLE_EL, node);
+				instance.set(ACTIVE_HANDLE_NODE, node);
 
 				instance._setActiveHandlesUI(true);
 				instance._updateChangeHandleInfo(handle);
