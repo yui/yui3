@@ -25,19 +25,7 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
         running = false;
 
     document.onclick = function() {
-        nodes.transition({
-            on: {
-                start: function() {
-                    //this.setStyle('width', this.getComputedStyle('width'));
-                }
-            },
-            width: {
-              value: 0
-            }
-        });
-        nodes.transition({
-            //width: '10px'
-        });
+        nodes.toggleView('fade');
     };
 });
  
