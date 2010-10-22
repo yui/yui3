@@ -16,6 +16,20 @@
 		background: #FFFCB6;
 		border:1px solid #C9C675;
 	}
+	
+	#results dt {
+		font-weight:bold;
+		padding:3px;
+		display:block;
+	}
+	#results dd {
+		font-weight:normal;
+		color:grey;
+	}
+	#results dd span {
+		color: red;
+		font-weight:bold;
+	}
 </style>
 </head>
 
@@ -59,7 +73,7 @@
         filter: "debug",
         logInclude:{"TestRunner":true},
         useConsole: true
-    }).use("console", "test", "dump", "datatable", "profiler","node","json", function(Y) {
+    }).use("console", "test", "dump", "datatable", "profiler","node","json-parse", function(Y) {
 	
 
         // Set up the page
@@ -112,15 +126,8 @@
 				
 				
 				
-				
 				//large or small dataset.
 				data: small,
-
-
-
-
-
-
 
 
 
@@ -150,24 +157,59 @@
 		    _should: {
 		        ignore: {
 					//ignore following tests (good to do if you are doing a large dataset)
-		            testBaseDatatable: 				false,
-		 			testXYDatatable: 				false,
+		            testBaseDatatable: 				true,
+		 			testXYDatatable: 				true,
 					testXDatatable: 				false,
-					testYDatatable_FixedCol: 		false,
-					testYDatatable_AutoCol: 		false,
-					testXYDatatable_BigHeaders: 	false
+					testYDatatable_FixedCol: 		true,
+					testYDatatable_AutoCol: 		true,
+					testXYDatatable_BigHeaders: 	true
 		        }
 		    },
 		
+			/////////////////////////////////////////////////////////////////////////////
+			//
+			//  Displaying Report
+			//
+			/////////////////////////////////////////////////////////////////////////////
 		
+			displayReport: function(data) {
+				
+				var dl = Y.Node.create('<dl></dl>');
+				Y.each(data, function(v,k,o) {
+					var dt = Y.Node.create('<dt>'+k+'</dt>');
+					var dd = Y.Node.create('<dd>' + v.calls + ' call(s) at ' + v.avg + ' ms/call = <span>' + Math.round(v.avg*v.calls) + '</span> ms total</dd>');
+					 
+					dt.appendChild(dd);
+					dl.appendChild(dt);
+				});
+				//console.log(data);
+				Y.one('#results').appendChild(dl);
+			},
+		
+			reportParser: function(report) {
+				return (report.calls > 0 && report.avg > 0.2);
+			},
+			
+			
+			/////////////////////////////////////////////////////////////////////////////
+			//
+			// Tests
+			//
+			/////////////////////////////////////////////////////////////////////////////
+			
+			
 			
 			testBaseDatatable: function() {
 				var sel = "#base";
 				Y.Profiler.start('dtBase');
-				this.dt = new Y.DataTable.Base({columnset:this.cols, recordset:this.data, caption:"Base"});  
+				this.dt = new Y.DataTable.Base({columnset:this.cols, recordset:this.data, caption:"Base"}); 
+				Y.Profiler.registerObject('dt', this.dt); 
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtBase');
 				var msg = Y.Profiler.getAverage('dtBase') + 'ms taken to display';
+				var report = Y.Profiler.getFullReport(this.reportParser);
+				this.displayReport(report);
+				Y.Profiler.unregisterObject('dt');
 				Y.log(msg, "time");
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
 			},
@@ -176,12 +218,15 @@
 				var sel = '#scrolling-xy';
 				Y.Profiler.start('dtXY');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption: "ScrollingDataTable"});  
-				this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px", scroll:"xy"});    
+				Y.Profiler.registerObject('dt', this.dt);    
+				this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px", scroll:"xy"});
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtXY');
-				
 				var msg = Y.Profiler.getAverage('dtXY') + 'ms taken to display';
-
+				
+				var report = Y.Profiler.getFullReport(this.reportParser);
+				this.displayReport(report);
+				Y.Profiler.unregisterObject('dt');
 				Y.log(msg, "time");
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
 				
@@ -192,12 +237,16 @@
 				
 				Y.Profiler.start('dtX');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, caption:"ScrollingDataTable"});
+				Y.Profiler.registerObject('dt', this.dt);
 				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px", scroll:"x"});    
 				
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtX');
 				
 				var msg = Y.Profiler.getAverage('dtX') + 'ms taken to display';
+				var report = Y.Profiler.getFullReport(this.reportParser);
+				this.displayReport(report);
+				Y.Profiler.unregisterObject('dt');
 				Y.log(msg, "time");
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
 				
@@ -208,11 +257,20 @@
 				
 				Y.Profiler.start('dtY1');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+				Y.Profiler.registerObject('dt', this.dt);    
 				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px", scroll:"y"});    
-				
 			    this.dt.render(sel);
+			
+			
 				Y.Profiler.stop('dtY1');
 				var msg = Y.Profiler.getAverage('dtY1') + 'ms taken to display';
+				
+				
+				var report = Y.Profiler.getFullReport(this.reportParser);
+
+				this.displayReport(report);
+				Y.Profiler.unregisterObject('dt');
+				    
 				Y.log(msg, 'time');
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
 			},
@@ -222,11 +280,16 @@
 				
 				Y.Profiler.start('dtY2');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+				Y.Profiler.registerObject('dt', this.dt);    
 				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", scroll:"y"});    
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtY2');
 				
 				var msg = Y.Profiler.getAverage('dtY2') + 'ms taken to display';
+				var report = Y.Profiler.getFullReport(this.reportParser);
+
+				this.displayReport(report);
+				Y.Profiler.unregisterObject('dt');
 				Y.log(msg, 'time');
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
 			},
@@ -236,11 +299,16 @@
 				
 				Y.Profiler.start('dtHeaders');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+				Y.Profiler.registerObject('dt', this.dt);    
 				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px", scroll:"xy"});    
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtHeaders');
 				
 				var msg = Y.Profiler.getAverage('dtHeaders') + 'ms taken to display';
+				var report = Y.Profiler.getFullReport(this.reportParser);
+
+				this.displayReport(report);
+				Y.Profiler.unregisterObject('dt');
 				Y.log(msg, 'time');
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
 			}
