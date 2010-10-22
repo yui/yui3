@@ -809,7 +809,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1281,12 +1281,18 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
-        var cur = Y.all('br.yui-cursor');
+        var cur, sel = 'br.yui-cursor';
+        cur = Y.all(sel);
         if (cur.size()) {
             cur.each(function(b) {
-                var c = b.get('parentNode.parentNode.childNodes');
+                var c = b.get('parentNode.parentNode.childNodes'), html;
                 if (c.size() > 1) {
                     b.remove();
+                } else {
+                    html = Y.Selection.getText(c.item(0));
+                    if (html !== '') {
+                        b.remove();
+                    }
                 }
             });
         }
@@ -1701,7 +1707,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
 YUI.add('exec-command', function(Y) {
 
 
@@ -2053,7 +2059,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['frame']});
+}, '@VERSION@' ,{requires:['frame'], skinnable:false});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -2123,7 +2129,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -2204,7 +2210,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
 
@@ -2304,9 +2310,9 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _resolveChangedNode: function(n) {
-            var inst = this.getInstance();
+            var inst = this.getInstance(), lc, lc2, found;
             if (inst && n.test('html')) {
-                var lc = inst.one(BODY).one(LAST_CHILD), found, lc2;
+                lc = inst.one(BODY).one(LAST_CHILD);
                 while (!found) {
                     if (lc) {
                         lc2 = lc.one(LAST_CHILD);
@@ -2332,7 +2338,6 @@ YUI.add('editor-base', function(Y) {
                     }
                 }
                 
-
             }
             return n;
         },
@@ -2367,7 +2372,8 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.later(100, inst, inst.Selection.cleanCursor);
+                    //inst.later(100, inst, inst.Selection.cleanCursor);
+                    inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -3072,7 +3078,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -3240,7 +3246,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -3515,7 +3521,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
 YUI.add('editor-para', function(Y) {
 
 
@@ -3736,8 +3742,8 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base', 'selection']});
+}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});
+YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base']});
 
