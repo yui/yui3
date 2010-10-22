@@ -12,9 +12,7 @@
 .yui3-tokeninput { width: 200px; }
 
 .yui3-tokeninput-content,
-.yui3-tokeninput-list {
-    width: 100%;
-}
+.yui3-tokeninput-list { width: 100%; }
 
 .yui3-tokeninput-input {
     border: 0;
@@ -25,9 +23,7 @@
     -webkit-appearance: none; /* prevents inner shadow on iOS */
 }
 
-.yui3-tokeninput-item { margin: 2px; }
-
-.yui3-tokeninput-editable { margin: 1px 2px; }
+.yui3-tokeninput-item { margin: 1px 2px; }
 
 .yui3-tokeninput-list {
     cursor: text;
