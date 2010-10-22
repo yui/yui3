@@ -1,6 +1,10 @@
 Node TokenInput Plugin
 ======================
 
+Node plugin that turns a text input field into a tokenized input field similar
+to Cocoa's NSTokenField control.
+
+
 Known Issues
 ------------
 
