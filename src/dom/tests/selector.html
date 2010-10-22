@@ -478,6 +478,9 @@ onload = function() {
                 Assert.areEqual(node, Y.Selector.ancestor(node, 'p', true));
                 Assert.areEqual(document.body, Y.Selector.ancestor(node, 'body', true));
                 Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
+
+                node = document.getElementById('fg_theGrid_ctl02_listLink');
+                Assert.areEqual(document.getElementById('(0:0-50998#154896, 122)'), Y.Selector.ancestor(node, 'TR'), true);
             },
 
             testChecked: function() {
@@ -581,5 +584,12 @@ onload = function() {
     <div id="test:colon"><h2>test</h2></div>
     <div id="test-custom-attr" foo="bar" foo-bar="bar">custom attribute</div>
 
+    <table class="FrameGrid" id="fg_theGrid">
+        <tr class="GridRow" id="(0:0-50998#154896, 122)" oid="50998">
+            <td>
+                <a href="javascript:void(0);" id="fg_theGrid_ctl02_listLink">50998</a>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

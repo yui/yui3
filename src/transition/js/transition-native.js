@@ -135,21 +135,20 @@ Transition.prototype = {
             if (attr.transition !== anim) {
                 attr.transition._count--; // remapping attr to this transition
             }
-        } else {
+        } /* else {
             // when size is auto or % webkit starts from zero instead of computed 
             // (https://bugs.webkit.org/show_bug.cgi?id=16020)
             // workaround by setting to current value
             // TODO: move to run
-/*
             if (prop == 'height' || prop == 'width') {
                 // avoid setting if already set or transitioning
                 // TODO: handle inline percent / auto
-                if (!node._node.style[prop] && !node.getStyle(TRANSITION_PROPERTY_CAMEL) == 'prop') {
+                if (!node._node.style[prop] && /(?:^|\s|;)prop(?:;|\s|$)/.test(
+                            node.getStyle(TRANSITION_PROPERTY_CAMEL))) {
                     node.setStyle(prop, node.getComputedStyle(prop));
                 }
             }
-*/
-        }
+        } */
 
         anim._count++; // properties per transition
 
