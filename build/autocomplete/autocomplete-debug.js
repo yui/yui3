@@ -64,10 +64,6 @@ YUI.add('autocomplete-base', function(Y) {
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._syncUIACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;},
  * &nbsp;
- * &nbsp;&nbsp;&nbsp;&nbsp;destructor: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._destructorACBase();
- * &nbsp;&nbsp;&nbsp;&nbsp;}
- * &nbsp;
  * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
  * &nbsp;&nbsp;}, {
  * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
@@ -618,6 +614,19 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
+     * If the <code>inputNode</code> specified at instantiation time has a
+     * <code>node-tokeninput</code> plugin attached to it, this attribute will
+     * be a reference to the <code>Y.Plugin.TokenInput</code> instance.
+     *
+     * @attribute tokenInput
+     * @type Plugin.TokenInput
+     * @readonly
+     */
+    tokenInput: {
+        readOnly: true
+    },
+
+    /**
      * Current value of the input node.
      *
      * @attribute value
@@ -695,17 +704,28 @@ AutoCompleteBase.prototype = {
     // -- Protected Lifecycle Methods ------------------------------------------
 
     /**
-     * Attaches AutoCompleteBase event listeners.
+     * Attaches event listeners and behaviors.
      *
      * @method _bindUIACBase
      * @protected
      */
     _bindUIACBase: function () {
-        var inputNode = this.get(INPUT_NODE);
+        var inputNode  = this.get(INPUT_NODE),
+            tokenInput = inputNode && inputNode.tokenInput;
+
+        // If the inputNode has a node-tokeninput plugin attached, bind to the
+        // plugin's inputNode instead.
+        if (tokenInput) {
+            inputNode = tokenInput.get(INPUT_NODE);
+            this._set('tokenInput', tokenInput);
+        }
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
+            return;
         }
+
+        this._inputNode = inputNode;
 
         this._acBaseEvents = [
             // This is the valueChange event on the inputNode, provided by the
@@ -739,7 +759,9 @@ AutoCompleteBase.prototype = {
      */
     _syncUIACBase: function () {
         this._syncBrowserAutocomplete();
-        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
+
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE),
+                {src: AutoCompleteBase.UI_SRC});
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -1577,6 +1599,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
+            return;
         }
 
         this._inputNode  = inputNode;
@@ -1591,14 +1614,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
         this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
         this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
-
-        if (!this.get('align.node')) {
-            this.set('align.node', inputNode);
-        }
-
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, inputNode.get('offsetWidth'));
-        }
 
         /**
          * Fires when an autocomplete suggestion is selected from the list by
@@ -1801,13 +1816,29 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Binds <code>inputNode</code> events.
+     * Binds <code>inputNode</code> events and behavior.
      *
      * @method _bindInput
      * @protected
      */
     _bindInput: function () {
-        this._listEvents.push(this._inputNode.on('blur', this._onInputBlur, this));
+        var inputNode  = this._inputNode,
+            tokenInput = this.get('tokenInput'),
+            alignNode  = (tokenInput && tokenInput.get('boundingBox')) ||
+                            inputNode;
+
+        // If this is a tokenInput, align with its bounding box. Otherwise,
+        // align with the inputNode.
+        if (!this.get('align.node')) {
+            this.set('align.node', alignNode);
+        }
+
+        if (!this.get(WIDTH)) {
+            this.set(WIDTH, alignNode.get('offsetWidth'));
+        }
+
+        // Attach inputNode events.
+        this._listEvents.push(inputNode.on('blur', this._onInputBlur, this));
     },
 
     /**
@@ -1967,7 +1998,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._inputNode.set('aria-expanded', visible);
         this._boundingBox.set('aria-hidden', !visible);
 
-        if (!visible) {
+        if (visible) {
+            // Force WidgetPositionAlign to refresh its alignment.
+            this._syncUIPosAlign();
+        } else {
             this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
         }
