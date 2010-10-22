@@ -14,6 +14,7 @@ widgets, or Tree widgets, which contain TreeNode widgets.
   "type" is still supported but deprecated for backward compatibility,
   so it's only used to define a child widget type if "childType" is not
   provided.
+* Fixed remove(), to actually remove child from DOM also.
 
 3.2.0
 
