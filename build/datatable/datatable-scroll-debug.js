@@ -151,7 +151,9 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 					
 					if (YUA.ie) {
 						thWidth = thLiner.get('offsetWidth');
-						tdWidth = td.item(i).get('offsetWidth'); /* TODO: for some reason, using tdLiner.get('clientWidth') doesn't work - why not? */
+						tdWidth = td.item(i).get('offsetWidth');
+						//thWidth = parseFloat(thLiner.getComputedStyle('width').split('px')[0]);
+						//tdWidth = parseFloat(td.item(i).getComputedStyle('width').split('px')[0]); /* TODO: for some reason, using tdLiner.get('clientWidth') doesn't work - why not? */
 					}
 					else {
 						thWidth = thLiner.get('clientWidth');
@@ -161,20 +163,24 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 					//if TH is bigger than TD, enlarge TD Liner
 					if (thWidth > tdWidth) {
 						tdLiner.setStyle('width', (thWidth - 20 + 'px'));
-						//tdLiner.setContent('1st - tdwidth is ' +tdWidth +' and thWidth is ' + thWidth);
+						//tdLiner.setContent('1,'+tdWidth +',' + thWidth);
 					}
 					
 					//if TD is bigger than TH, enlarge TH Liner
 					else if (tdWidth > thWidth) {
 						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
-						//tdLiner.setContent('2nd - tdwidth is ' +tdWidth +' and thWidth is ' + thWidth);
+						//tdLiner.setContent('2,'+tdWidth +',' + thWidth);
 					}
 					
 					else {
-						tdLiner.setContent('3rd');
+						//tdLiner.setContent('3,'+tdWidth +',' + thWidth);
+						
 					}
 				//}
 
+			}
+			if (YUA.ie && this.get('scroll') === 'y') {
+				this._headerContainerNode.setStyle('width', this._parentContainer.get('offsetWidth')+ 15 +'px');
 			}
 			
 	},
@@ -269,9 +275,9 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			this._parentContainer.setStyle('width', 'auto');
 		}
 		
-		else if (YUA.ie) {
-			this._parentContainer.setStyle('width', this.get('width') || 'auto');
-		}
+		//else if (YUA.ie) {
+		//	this._parentContainer.setStyle('width', this.get('width') || 'auto');
+		//}
 	},
 	
 	/////////////////////////////////////////////////////////////////////////////
@@ -360,11 +366,14 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		var tBodyContainer = this._bodyContainerNode,
 			padding = 1;
 		
+		//when its both x and y scrolling
 		if ((tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) || (tBodyContainer.get('scrollWidth') > tBodyContainer.get('clientWidth'))) {
 			padding = 18;
 		}
 		
 		this._setOverhangValue(padding);
+		
+
 	},
 	
 	

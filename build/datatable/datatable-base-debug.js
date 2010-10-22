@@ -1292,4 +1292,4 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset']});
+}, '@VERSION@' ,{requires:['intl','substitute','widget','recordset'], lang:['en']});
