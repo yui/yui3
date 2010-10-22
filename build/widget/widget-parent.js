@@ -519,10 +519,9 @@ Parent.prototype = {
         children.splice(index, 1);
 
         child.removeTarget(this);
+        child._oldParent = child.get("parent");
         child._set("parent", null);
-        
     },
-
 
     /**
     * @method _add
@@ -756,7 +755,7 @@ Parent.prototype = {
     _afterRemoveChild: function (event) {
         var child = event.child;
 
-        if (child.get("parent") == this) {
+        if (child._oldParent == this) {
             this._uiRemoveChild(child);
         }
     },
