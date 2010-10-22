@@ -45,11 +45,13 @@ Y.mix(Transition.prototype, {
     _runAttrs: function(time) {
         var anim = this,
             node = anim._node,
+            config = anim._config,
             uid = Y.stamp(node),
             attrs = Transition._nodeAttrs[uid],
             customAttr = Transition.behaviors,
             done = false,
             allDone = false,
+            data,
             name,
             attribute,
             setter,
@@ -66,6 +68,13 @@ Y.mix(Transition.prototype, {
                 delay = attribute.delay;
                 elapsed = (time - delay) / 1000;
                 t = time;
+                data = {
+                    type: 'propertyEnd',
+                    propertyName: name,
+                    config: config,
+                    elapsedTime: elapsed
+                };
+
                 setter = (i in customAttr && 'set' in customAttr[i]) ?
                         customAttr[i].set : Transition.DEFAULT_SETTER;
 
@@ -83,12 +92,11 @@ Y.mix(Transition.prototype, {
                         delete attrs[name];
                         anim._count--;
 
-                        node.fire('transition:propertyEnd', {
-                            type: 'propertyEnd',
-                            propertyName: name,
-                            config: anim._config,
-                            elapsedTime: elapsed
-                        });
+                        if (config[name] && config[name].on && config[name].on.end) {
+                            config[name].on.end.call(node, data);
+                        }
+
+                        node.fire('transition:propertyEnd', data);
 
                         if (!allDone && anim._count <= 0) {
                             allDone = true;

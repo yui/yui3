@@ -59,6 +59,13 @@
 <span class="cm"> * Widget extension providing functionality enabling a Widget to be a </span>
 <span class="cm"> * parent of another Widget.</span>
 <span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;In addition to the set of attributes supported by WidgetParent, the constructor</span>
+<span class="cm"> * configuration object can also contain a &lt;code&gt;children&lt;/code&gt; which can be used</span>
+<span class="cm"> * to add child widgets to the parent during construction. The &lt;code&gt;children&lt;/code&gt;</span>
+<span class="cm"> * property is an array of either child widget instances or child widget configuration </span>
+<span class="cm"> * objects, and is sugar for the &lt;a href=&quot;#method_add&quot;&gt;add&lt;/a&gt; method. See the </span>
+<span class="cm"> * &lt;a href=&quot;#method_add&quot;&gt;add&lt;/a&gt; for details on the structure of the child widget </span>
+<span class="cm"> * configuration object.</span>
 <span class="cm"> * @class WidgetParent</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @uses ArrayList</span>
@@ -111,9 +118,6 @@
         <span class="nx">defaultTargetOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
         <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRemoveChildFn</span> 
     <span class="p">});</span>
-
-
-    <span class="c1">//  TO DO: Document ability to populate children via the constructor</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">_items</span> <span class="o">=</span> <span class="p">[];</span>
 
@@ -457,8 +461,10 @@
 <span class="cm">     * Creates an instance of a child Widget using the specified configuration.</span>
 <span class="cm">     * By default Widget instances will be created of the type specified </span>
 <span class="cm">     * by the &lt;code&gt;defaultChildType&lt;/code&gt; attribute.  Types can be explicitly</span>
-<span class="cm">     * defined via the &lt;code&gt;type&lt;/code&gt; property of the configuration object</span>
-<span class="cm">     * literal.</span>
+<span class="cm">     * defined via the &lt;code&gt;childType&lt;/code&gt; property of the configuration object</span>
+<span class="cm">     * literal. The use of the &lt;code&gt;type&lt;/code&gt; property has been deprecated, but </span>
+<span class="cm">     * will still be used as a fallback, if &lt;code&gt;childType&lt;/code&gt; is not defined,</span>
+<span class="cm">     * for backwards compatibility. </span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _createChild</span>
 <span class="cm">     * @protected</span>
@@ -468,29 +474,25 @@
     <span class="nx">_createChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">defaultType</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;defaultChildType&quot;</span><span class="p">),</span>
-            <span class="nx">altType</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
+            <span class="nx">altType</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">childType</span> <span class="o">||</span> <span class="nx">config</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
             <span class="nx">child</span><span class="p">,</span>
             <span class="nx">Fn</span><span class="p">,</span>
             <span class="nx">FnConstructor</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">altType</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="nx">Fn</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">altType</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">[</span><span class="nx">altType</span><span class="p">]</span> <span class="o">:</span> <span class="nx">altType</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">Fn</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">Fn</span><span class="p">;</span>
-            <span class="p">}</span>
-
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">defaultType</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">Fn</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">Fn</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">defaultType</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// defaultType is normalized to a function in it&#39;s setter </span>
             <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">defaultType</span><span class="p">;</span>
         <span class="p">}</span>
 
-
         <span class="k">if</span> <span class="p">(</span><span class="nx">FnConstructor</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">child</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FnConstructor</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;Could not create a child instance because its constructor is either undefined or invalid.&quot;</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -565,10 +567,9 @@
         <span class="nx">children</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 
         <span class="nx">child</span><span class="p">.</span><span class="nx">removeTarget</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="nx">child</span><span class="p">.</span><span class="nx">_oldParent</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
         <span class="nx">child</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-        
     <span class="p">},</span>
-
 
     <span class="cm">/**</span>
 <span class="cm">    * @method _add</span>
@@ -636,7 +637,13 @@
     <span class="cm">/**</span>
 <span class="cm">    * @method add</span>
 <span class="cm">    * @param child {Widget|Object} The Widget instance, or configuration </span>
-<span class="cm">    * object for the Widget to be added as a child.</span>
+<span class="cm">    * object for the Widget to be added as a child. The configuration object</span>
+<span class="cm">    * for the child can include a &lt;code&gt;childType&lt;/code&gt; property, which is either</span>
+<span class="cm">    * a constructor function or a string which names a constructor function on the </span>
+<span class="cm">    * Y instance (e.g. &quot;Tab&quot; would refer to Y.Tab) (&lt;code&gt;childType&lt;/code&gt; used to be </span>
+<span class="cm">    * named &lt;code&gt;type&lt;/code&gt;, support for which has been deprecated, but is still</span>
+<span class="cm">    * maintained for backward compatibility. &lt;code&gt;childType&lt;/code&gt; takes precedence</span>
+<span class="cm">    * over &lt;code&gt;type&lt;/code&gt; if both are defined.</span>
 <span class="cm">    * @param child {Array} Array of Widget instances, or configuration </span>
 <span class="cm">    * objects for the Widgets to be added as a children.</span>
 <span class="cm">    * @param index {Number} (Optional.)  Number representing the position at </span>
@@ -796,7 +803,7 @@
     <span class="nx">_afterRemoveChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">child</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">child</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">_oldParent</span> <span class="o">==</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_uiRemoveChild</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>

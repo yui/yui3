@@ -94,11 +94,13 @@
     <span class="nx">_runAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">config</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
             <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">uid</span><span class="p">],</span>
             <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
             <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">data</span><span class="p">,</span>
             <span class="nx">name</span><span class="p">,</span>
             <span class="nx">attribute</span><span class="p">,</span>
             <span class="nx">setter</span><span class="p">,</span>
@@ -115,6 +117,13 @@
                 <span class="nx">delay</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">delay</span><span class="p">;</span>
                 <span class="nx">elapsed</span> <span class="o">=</span> <span class="p">(</span><span class="nx">time</span> <span class="o">-</span> <span class="nx">delay</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
                 <span class="nx">t</span> <span class="o">=</span> <span class="nx">time</span><span class="p">;</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;propertyEnd&#39;</span><span class="p">,</span>
+                    <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+                    <span class="nx">config</span><span class="o">:</span> <span class="nx">config</span><span class="p">,</span>
+                    <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">elapsed</span>
+                <span class="p">};</span>
+
                 <span class="nx">setter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;set&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">?</span>
                         <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">set</span> <span class="o">:</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">DEFAULT_SETTER</span><span class="p">;</span>
 
@@ -132,12 +141,11 @@
                         <span class="k">delete</span> <span class="nx">attrs</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
                         <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span>
 
-                        <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;transition:propertyEnd&#39;</span><span class="p">,</span> <span class="p">{</span>
-                            <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;propertyEnd&#39;</span><span class="p">,</span>
-                            <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-                            <span class="nx">config</span><span class="o">:</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
-                            <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">elapsed</span>
-                        <span class="p">});</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+                        <span class="p">}</span>
+
+                        <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;transition:propertyEnd&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
 
                         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">allDone</span> <span class="o">&amp;&amp;</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>

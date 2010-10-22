@@ -62,10 +62,6 @@
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._syncUIACBase();
  * &nbsp;&nbsp;&nbsp;&nbsp;},
  * &nbsp;
- * &nbsp;&nbsp;&nbsp;&nbsp;destructor: function () {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._destructorACBase();
- * &nbsp;&nbsp;&nbsp;&nbsp;}
- * &nbsp;
  * &nbsp;&nbsp;&nbsp;&nbsp;// Custom prototype methods and properties.
  * &nbsp;&nbsp;}, {
  * &nbsp;&nbsp;&nbsp;&nbsp;// Custom static methods and properties.
@@ -616,6 +612,19 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
+     * If the <code>inputNode</code> specified at instantiation time has a
+     * <code>node-tokeninput</code> plugin attached to it, this attribute will
+     * be a reference to the <code>Y.Plugin.TokenInput</code> instance.
+     *
+     * @attribute tokenInput
+     * @type Plugin.TokenInput
+     * @readonly
+     */
+    tokenInput: {
+        readOnly: true
+    },
+
+    /**
      * Current value of the input node.
      *
      * @attribute value
@@ -693,17 +702,28 @@ AutoCompleteBase.prototype = {
     // -- Protected Lifecycle Methods ------------------------------------------
 
     /**
-     * Attaches AutoCompleteBase event listeners.
+     * Attaches event listeners and behaviors.
      *
      * @method _bindUIACBase
      * @protected
      */
     _bindUIACBase: function () {
-        var inputNode = this.get(INPUT_NODE);
+        var inputNode  = this.get(INPUT_NODE),
+            tokenInput = inputNode && inputNode.tokenInput;
+
+        // If the inputNode has a node-tokeninput plugin attached, bind to the
+        // plugin's inputNode instead.
+        if (tokenInput) {
+            inputNode = tokenInput.get(INPUT_NODE);
+            this._set('tokenInput', tokenInput);
+        }
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
+            return;
         }
+
+        this._inputNode = inputNode;
 
         this._acBaseEvents = [
             // This is the valueChange event on the inputNode, provided by the
@@ -737,7 +757,9 @@ AutoCompleteBase.prototype = {
      */
     _syncUIACBase: function () {
         this._syncBrowserAutocomplete();
-        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
+
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE),
+                {src: AutoCompleteBase.UI_SRC});
     },
 
     // -- Protected Prototype Methods ------------------------------------------

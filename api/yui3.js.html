@@ -163,6 +163,32 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;autocomplete-list&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;autocomplete-list-keys&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Only add keyboard support to autocomplete-list if this doesn&#39;t appear to</span>
+    <span class="c1">// be an iOS or Android-based mobile device.</span>
+    <span class="c1">//</span>
+    <span class="c1">// There&#39;s currently no feasible way to actually detect whether a device has</span>
+    <span class="c1">// a hardware keyboard, so this sniff will have to do. It can easily be</span>
+    <span class="c1">// overridden by manually loading the autocomplete-list-keys module.</span>
+    <span class="c1">//</span>
+    <span class="c1">// Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari</span>
+    <span class="c1">// doesn&#39;t fire the keyboard events used by AutoCompleteList, so there&#39;s</span>
+    <span class="c1">// no point loading the -keys module even when a bluetooth keyboard may be</span>
+    <span class="c1">// available.</span>
+    <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ios</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">android</span><span class="p">);</span>
+<span class="p">},</span> 
+                            <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete-list&quot;</span>
+                        <span class="p">},</span> 
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-list-keys-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;autocomplete-list&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;base-build&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
@@ -1111,6 +1137,19 @@
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;node-tokeninput&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;classnamemanager&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-focus&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-valuechange&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node-pluginhost&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;plugin&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;oop&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;yui-base&quot;</span>
@@ -1527,7 +1566,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;b41d406198326bbf8c6ecad79af3ea96&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;d2432980710953cda5e4c3e666c2e966&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>

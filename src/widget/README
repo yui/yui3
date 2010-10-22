@@ -20,6 +20,8 @@ It provides the following pieces of core functionality:
   broken out of widget-base into separate submodules, widget-uievents and 
   widget-skin
 
+* Fixed widget-locale support. Needed lazyAdd:false, for strings attribute
+
 3.2.0
 
 * Minimized widget dependencies from the complete node, base rollups,

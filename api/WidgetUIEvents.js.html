@@ -50,7 +50,6 @@
                         <div class="highlight"><pre><span class="kd">var</span> <span class="nx">UI_EVENT_REGEX</span> <span class="o">=</span> <span class="sr">/(\w+):(\w+)/</span><span class="p">,</span>
     <span class="nx">UI_EVENT_REGEX_REPLACE</span> <span class="o">=</span> <span class="s2">&quot;$2&quot;</span><span class="p">,</span>
     <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
-    <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s2">&quot;parentNode&quot;</span><span class="p">,</span>
     <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span>
     <span class="nx">RENDER</span> <span class="o">=</span> <span class="s2">&quot;render&quot;</span><span class="p">,</span>
     <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
@@ -115,8 +114,7 @@
     <span class="nx">_createUIEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">uiEvtNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getUIEventNode</span><span class="p">(),</span>
-            <span class="nx">parentNode</span> <span class="o">=</span> <span class="nx">uiEvtNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">),</span>
-            <span class="nx">key</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">)</span> <span class="o">+</span> <span class="nx">type</span><span class="p">),</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">uiEvtNode</span><span class="p">)</span> <span class="o">+</span> <span class="nx">type</span><span class="p">),</span>
             <span class="nx">info</span><span class="p">,</span>
             <span class="nx">handle</span><span class="p">;</span>
 
@@ -129,7 +127,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Creating delegate for the &quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; event.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span>
 
-            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">parentNode</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">uiEvtNode</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
 
                 <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">getByNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
                 <span class="c1">//  Make the DOM event a property of the custom event</span>

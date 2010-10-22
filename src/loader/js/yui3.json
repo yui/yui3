@@ -107,6 +107,19 @@
                 ]
             }, 
             "autocomplete-list": {
+                "plugins": {
+                    "autocomplete-list-keys": {
+                        "condition": {
+                            "test": "autocomplete-list-keys-sniff.js", 
+                            "trigger": "autocomplete-list"
+                        }, 
+                        "path": "autocomplete/autocomplete-list-keys-min.js", 
+                        "requires": [
+                            "autocomplete-list", 
+                            "base-build"
+                        ]
+                    }
+                }, 
                 "requires": [
                     "autocomplete-base", 
                     "widget", 
@@ -1045,6 +1058,19 @@
             "classnamemanager", 
             "plugin", 
             "node-focusmanager"
+        ], 
+        "skinnable": true
+    }, 
+    "node-tokeninput": {
+        "requires": [
+            "array-extras", 
+            "classnamemanager", 
+            "event-focus", 
+            "event-valuechange", 
+            "node-event-delegate", 
+            "node-pluginhost", 
+            "node-style", 
+            "plugin"
         ], 
         "skinnable": true
     }, 

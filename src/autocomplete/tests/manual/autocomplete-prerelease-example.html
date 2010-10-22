@@ -19,20 +19,19 @@
 </head>
 <body class="yui3-skin-sam">
 
-<h1>AutoComplete prerelease example</h1>
+<!-- <h1>AutoComplete prerelease example</h1>
 
 <p>
 This is a simple example of an autocomplete list widget that displays
 suggestions from Yahoo! Search. Begin typing a query in the input field below to
 see suggestions.
-</p>
+</p> -->
 
 <form id="ac-form" action="http://search.yahoo.com/search" method="get">
     <div id="ac">
-        <label for="ac-input">Yahoo! Search:</label><br>
+        <label for="ac-input">Search:</label><br>
         <input type="text" id="ac-input" name="p">
         <input type="submit" value="Search">
-        <div id="ac-list"></div>
     </div>
 </form>
 
@@ -41,21 +40,20 @@ fuji.jetpants.com provides a combo-hosted version of the latest YUI3 git master
 code, but it's for testing only. Please don't use it for production, as it is
 not a CDN and will occasionally be unavailable.
 -->
-<script src="http://fuji.jetpants.com/yui/combo/yui3?build/yui/yui-min.js&amp;build/loader/loader-min.js"></script>
+<script src="http://fuji.jetpants.com/yui/combo/yui3-dev?build/yui/yui-min.js&amp;build/loader/loader-min.js"></script>
 <!-- <script src="../../../../build/yui/yui-min.js"></script> -->
 <script>
 var Y = YUI({
-    comboBase: 'http://fuji.jetpants.com/yui/combo/yui3?',
+    comboBase: 'http://fuji.jetpants.com/yui/combo/yui3-dev?',
     combine  : true,
     root     : 'build/'
 }).use('autocomplete', 'autocomplete-highlighters', 'yql', function (Y) {
 
 // Assigning the instance to Y.ac for easier console tinkering.
 Y.ac = new Y.AutoCompleteList({
-    boundingBox      : '#ac-list',
     inputNode        : '#ac-input',
     render           : true,
-    resultHighlighter: Y.AutoCompleteHighlighters.phraseMatch,
+    resultHighlighter: 'phraseMatch',
     source           : 'select * from search.suggest where query="{query}"'
 });
 

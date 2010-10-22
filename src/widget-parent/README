@@ -7,6 +7,14 @@ widgets, or Tree widgets, which contain TreeNode widgets.
 3.3.0
 
 * Changed instanceof to Y.instanceOf, to prevent leaks in IE7
+* Renamed "type" in child configuration, to "childType", so that
+  children can have a "type" attribute for it's own context
+  (A FormElement widget for examplei, with a "type").
+
+  "type" is still supported but deprecated for backward compatibility,
+  so it's only used to define a child widget type if "childType" is not
+  provided.
+* Fixed remove(), to actually remove child from DOM also.
 
 3.2.0
 

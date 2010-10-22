@@ -114,6 +114,32 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "autocomplete-list": {
+                "plugins": {
+                    "autocomplete-list-keys": {
+                        "condition": {
+                            "test": function (Y) {
+    // Only add keyboard support to autocomplete-list if this doesn't appear to
+    // be an iOS or Android-based mobile device.
+    //
+    // There's currently no feasible way to actually detect whether a device has
+    // a hardware keyboard, so this sniff will have to do. It can easily be
+    // overridden by manually loading the autocomplete-list-keys module.
+    //
+    // Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari
+    // doesn't fire the keyboard events used by AutoCompleteList, so there's
+    // no point loading the -keys module even when a bluetooth keyboard may be
+    // available.
+    return !(Y.UA.ios || Y.UA.android);
+}, 
+                            "trigger": "autocomplete-list"
+                        }, 
+                        "path": "autocomplete/autocomplete-list-keys-min.js", 
+                        "requires": [
+                            "autocomplete-list", 
+                            "base-build"
+                        ]
+                    }
+                }, 
                 "requires": [
                     "autocomplete-base", 
                     "widget", 
@@ -1062,6 +1088,19 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "node-tokeninput": {
+        "requires": [
+            "array-extras", 
+            "classnamemanager", 
+            "event-focus", 
+            "event-valuechange", 
+            "node-event-delegate", 
+            "node-pluginhost", 
+            "node-style", 
+            "plugin"
+        ], 
+        "skinnable": true
+    }, 
     "oop": {
         "requires": [
             "yui-base"
@@ -1500,4 +1539,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3e4056d8478f8cc1bcf10c83119f596d';
+YUI.Env[Y.version].md5 = 'de474c4afa73610a43c056f5f1548fbf';

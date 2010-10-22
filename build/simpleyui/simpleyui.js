@@ -4412,9 +4412,9 @@ var NODE_TYPE = 'nodeType',
 
     documentElement = Y.config.doc.documentElement,
 
-    re_tag = /<([a-z]+)/i;
+    re_tag = /<([a-z]+)/i,
 
-Y.DOM = {
+Y_DOM = {
     /**
      * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).
      * @method byId         
@@ -4424,7 +4424,7 @@ Y.DOM = {
      */
     byId: function(id, doc) {
         // handle dupe IDs and IE name collision
-        return Y.DOM.allById(id, doc)[0] || null;
+        return Y_DOM.allById(id, doc)[0] || null;
     },
 
     // @deprecated
@@ -4465,7 +4465,7 @@ Y.DOM = {
         } : function(element) {
             var ret = '';
             if (element) {
-                ret = element.innerText;
+                ret = element.innerText || element.nodeValue; // might be a textNode
             }
             return ret || '';
         },
@@ -4482,9 +4482,12 @@ Y.DOM = {
                 element.textContent = content;
             }
         } : function(element, content) {
-            if (element) {
+            if ('innerText' in element) {
                 element.innerText = content;
+            } else if ('nodeValue' in element) {
+                element.nodeValue = content;
             }
+
         },
 
     /*
@@ -4499,7 +4502,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
     previous: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
+        return Y_DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
     },
 
     /*
@@ -4514,7 +4517,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
     next: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
+        return Y_DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
     },
 
     /*
@@ -4533,7 +4536,30 @@ Y.DOM = {
             ret = (!fn || fn(element)) ? element : null;
 
         }
-        return ret || Y.DOM.elementByAxis(element, PARENT_NODE, fn, null);
+        return ret || Y_DOM.elementByAxis(element, PARENT_NODE, fn, null);
+    },
+
+    /*
+     * Finds the ancestors of the element.
+     * @method ancestors
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, all ancestors are returned.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @return {Array} An array containing all matching DOM nodes.
+     */
+    ancestors: function(element, fn, testSelf) {
+        var ancestor = Y_DOM.ancestor.apply(Y_DOM, arguments),
+            ret = (ancestor) ? [ancestor] : [];
+
+        while ((ancestor = Y_DOM.ancestor(ancestor, fn))) {
+            if (ancestor) {
+                ret.unshift(ancestor);
+            }
+        }
+
+        return ret;
     },
 
     /**
@@ -4572,7 +4598,7 @@ Y.DOM = {
             if (Y.UA.opera || needle[NODE_TYPE] === 1) { // IE & SAF contains fail if needle not an ELEMENT_NODE
                 ret = element[CONTAINS](needle);
             } else {
-                ret = Y.DOM._bruteContains(element, needle); 
+                ret = Y_DOM._bruteContains(element, needle); 
             }
         } else if (element[COMPARE_DOCUMENT_POSITION]) { // gecko
             if (element === needle || !!(element[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
@@ -4603,7 +4629,7 @@ Y.DOM = {
             if (rootNode && rootNode.contains && element.tagName) {
                 ret = rootNode.contains(element);
             } else {
-                ret = Y.DOM.contains(rootNode, element);
+                ret = Y_DOM.contains(rootNode, element);
             }
         }
 
@@ -4635,7 +4661,7 @@ Y.DOM = {
                 }
             }
         } else {
-            ret = [Y.DOM._getDoc(root).getElementById(id)];
+            ret = [Y_DOM._getDoc(root).getElementById(id)];
         }
     
         return ret;
@@ -4658,8 +4684,8 @@ Y.DOM = {
 
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
-            create = Y.DOM._create,
-            custom = Y.DOM.creators,
+            create = Y_DOM._create,
+            custom = Y_DOM.creators,
             ret = null,
             tag, nodes;
 
@@ -4681,10 +4707,10 @@ Y.DOM = {
                     ret = nodes[0].nextSibling;
                 } else {
                     nodes[0].parentNode.removeChild(nodes[0]); 
-                     ret = Y.DOM._nl2frag(nodes, doc);
+                     ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
-                 ret = Y.DOM._nl2frag(nodes, doc);
+                 ret = Y_DOM._nl2frag(nodes, doc);
             }
         }
 
@@ -4728,7 +4754,7 @@ Y.DOM = {
      */
     setAttribute: function(el, attr, val, ieAttr) {
         if (el && attr && el.setAttribute) {
-            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            attr = Y_DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             el.setAttribute(attr, val, ieAttr);
         }
     },
@@ -4745,7 +4771,7 @@ Y.DOM = {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
         if (el && attr && el.getAttribute) {
-            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            attr = Y_DOM.CUSTOM_ATTRIBUTES[attr] || attr;
             ret = el.getAttribute(attr, ieAttr);
 
             if (ret === null) {
@@ -4764,11 +4790,11 @@ Y.DOM = {
     _create: function(html, doc, tag) {
         tag = tag || 'div';
 
-        var frag = Y.DOM._fragClones[tag];
+        var frag = Y_DOM._fragClones[tag];
         if (frag) {
             frag = frag.cloneNode(false);
         } else {
-            frag = Y.DOM._fragClones[tag] = doc.createElement(tag);
+            frag = Y_DOM._fragClones[tag] = doc.createElement(tag);
         }
         frag.innerHTML = html;
         return frag;
@@ -4809,7 +4835,7 @@ Y.DOM = {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
-                newNode = Y.DOM.create(content);
+                newNode = Y_DOM.create(content);
             }
         }
 
@@ -4857,7 +4883,7 @@ Y.DOM = {
             getter;
 
         if (node && node[TAG_NAME]) {
-            getter = Y.DOM.VALUE_GETTERS[node[TAG_NAME].toLowerCase()];
+            getter = Y_DOM.VALUE_GETTERS[node[TAG_NAME].toLowerCase()];
 
             if (getter) {
                 ret = getter(node);
@@ -4879,7 +4905,7 @@ Y.DOM = {
         var setter;
 
         if (node && node[TAG_NAME]) {
-            setter = Y.DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
+            setter = Y_DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
 
             if (setter) {
                 setter(node, val);
@@ -4939,11 +4965,11 @@ Y.DOM = {
      */
     _getRegExp: function(str, flags) {
         flags = flags || '';
-        Y.DOM._regexCache = Y.DOM._regexCache || {};
-        if (!Y.DOM._regexCache[str + flags]) {
-            Y.DOM._regexCache[str + flags] = new RegExp(str, flags);
+        Y_DOM._regexCache = Y_DOM._regexCache || {};
+        if (!Y_DOM._regexCache[str + flags]) {
+            Y_DOM._regexCache[str + flags] = new RegExp(str, flags);
         }
-        return Y.DOM._regexCache[str + flags];
+        return Y_DOM._regexCache[str + flags];
     },
 
 // TODO: make getDoc/Win true privates?
@@ -4974,20 +5000,21 @@ Y.DOM = {
      * @return {Object} The window for the given element or the default window. 
      */
     _getWin: function(element) {
-        var doc = Y.DOM._getDoc(element);
+        var doc = Y_DOM._getDoc(element);
         return doc[DEFAULT_VIEW] || doc[PARENT_WINDOW] || Y.config.win;
     },
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
-        fn = (typeof fn === 'string') ? Y.DOM[fn] : fn;
+        fn = (typeof fn === 'string') ? Y_DOM[fn] : fn;
         var result,
             args = Array.prototype.slice.call(arguments, 2),
             i = 0,
+            node,
             ret;
 
         if (fn && nodes) {
             while ((node = nodes[i++])) {
-                result = result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc);
+                result = result = fn.call(Y_DOM, node, arg1, arg2, arg3, etc);
                 if (typeof result !== 'undefined') {
                     (ret) || (ret = []);
                     ret.push(result);
@@ -4998,13 +5025,49 @@ Y.DOM = {
         return (typeof ret !== 'undefined') ? ret : nodes;
     },
 
+    wrap: function(node, html) {
+        var parent = Y.DOM.create(html),
+            nodes = parent.getElementsByTagName('*');
+
+        if (nodes.length) {
+            parent = nodes[nodes.length - 1];
+        }
+
+        if (node.parentNode) { 
+            node.parentNode.replaceChild(parent, node);
+        }
+        parent.appendChild(node);
+    },
+
+    unwrap: function(node) {
+        var parent = node.parentNode,
+            lastChild = parent.lastChild,
+            node = parent.firstChild,
+            next = node,
+            grandparent;
+
+        if (parent) {
+            grandparent = parent.parentNode;
+            if (grandparent) {
+                while (node !== lastChild) {
+                    next = node.nextSibling;
+                    grandparent.insertBefore(node, parent);
+                    node = next;
+                }
+                grandparent.replaceChild(lastChild, parent);
+            } else {
+                parent.removeChild(node);
+            }
+        }
+    },
+
     creators: {}
 };
 
 
 (function(Y) {
-    var creators = Y.DOM.creators,
-        create = Y.DOM.create,
+    var creators = Y_DOM.creators,
+        create = Y_DOM.create,
         re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
 
         TABLE_OPEN = '<table>',
@@ -5034,13 +5097,13 @@ Y.DOM = {
 
         }, true);
 
-        Y.mix(Y.DOM.VALUE_GETTERS, {
+        Y.mix(Y_DOM.VALUE_GETTERS, {
             button: function(node) {
                 return (node.attributes && node.attributes.value) ? node.attributes.value.value : '';
             }
         });
 
-        Y.mix(Y.DOM.VALUE_SETTERS, {
+        Y.mix(Y_DOM.VALUE_SETTERS, {
             // IE: node.value changes the button text, which should be handled via innerHTML
             button: function(node, val) {
                 var attr = node.attributes.value;
@@ -5055,15 +5118,15 @@ Y.DOM = {
             select: function(node, val) {
                 for (var i = 0, options = node.getElementsByTagName('option'), option;
                         option = options[i++];) {
-                    if (Y.DOM.getValue(option) === val) {
-                        Y.DOM.setAttribute(option, 'selected', true);
+                    if (Y_DOM.getValue(option) === val) {
+                        Y_DOM.setAttribute(option, 'selected', true);
                         break;
                     }
                 }
             }
         });
 
-        Y.DOM.creators.col = Y.DOM.creators.link = Y.DOM.creators.style = Y.DOM.creators.script;
+        Y_DOM.creators.col = Y_DOM.creators.link = Y_DOM.creators.style = Y_DOM.creators.script;
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -5097,7 +5160,7 @@ Y.DOM = {
         });
     }
 
-    Y.mix(Y.DOM.VALUE_GETTERS, {
+    Y.mix(Y_DOM.VALUE_GETTERS, {
         option: function(node) {
             var attrs = node.attributes;
             return (attrs.value && attrs.value.specified) ? node.value : node.text;
@@ -5111,7 +5174,7 @@ Y.DOM = {
                 // TODO: implement multipe select
                 if (node.multiple) {
                 } else {
-                    val = Y.DOM.getValue(options[node.selectedIndex]);
+                    val = Y_DOM.getValue(options[node.selectedIndex]);
                 }
             }
 
@@ -5120,6 +5183,7 @@ Y.DOM = {
     });
 })(Y);
 
+Y.DOM = Y_DOM;
 })(Y);
 var addClass, hasClass, removeClass;
 
@@ -5386,7 +5450,7 @@ Y.mix(Y_DOM, {
         var val = '',
             doc = node[OWNER_DOCUMENT];
 
-        if (node[STYLE]) {
+        if (node[STYLE] && doc[DEFAULT_VIEW] && doc[DEFAULT_VIEW][GET_COMPUTED_STYLE]) {
             val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
         }
         return val;
@@ -5699,6 +5763,7 @@ Y.mix(Y_DOM, {
                     bLeft, bTop,
                     mode,
                     doc,
+                    inDoc,
                     rootNode;
 
                 if (node && node.tagName) {
@@ -8986,8 +9051,9 @@ Y.extend(DOMEventFacade, Object, {
 
         this.keyCode = c;
         this.charCode = c;
-        this.button = e.which || e.button;
-        this.which = this.button;
+        this.which = e.which;
+        this.button = e.button;
+
         this.target = resolve(e.target);
         this.currentTarget = resolve(currentTarget);
         this.relatedTarget = resolve(e.relatedTarget);
@@ -9984,7 +10050,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             remove(win, "unload", onUnload);
         },
 
-
         /**
          * Adds a DOM event directly without the caching, cleanup, context adj, etc
          *
@@ -10047,11 +10112,13 @@ Event._poll();
 
 /**
  * Executes the callback as soon as the specified element
- * is detected in the DOM.
+ * is detected in the DOM.  This function expects a selector
+ * string for the element(s) to detect.  If you already have
+ * an element reference, you don't need this event.
  * @event available
  * @param type {string} 'available'
  * @param fn {function} the callback function to execute.
- * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param el {string} an selector for the element(s) to attach
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  * These arguments will be added after the event object.
@@ -10068,11 +10135,14 @@ Y.Env.evt.plugins.available = {
 /**
  * Executes the callback as soon as the specified element
  * is detected in the DOM with a nextSibling property
- * (indicating that the element's children are available)
+ * (indicating that the element's children are available).
+ * This function expects a selector
+ * string for the element(s) to detect.  If you already have
+ * an element reference, you don't need this event.
  * @event contentready
  * @param type {string} 'contentready'
  * @param fn {function} the callback function to execute.
- * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param el {string} an selector for the element(s) to attach.
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  * These arguments will be added after the event object.
@@ -10088,11 +10158,16 @@ Y.Env.evt.plugins.contentready = {
 
 
 }, '@VERSION@' ,{requires:['event-custom-base']});
-YUI.add('pluginhost', function(Y) {
+YUI.add('pluginhost-base', function(Y) {
 
     /**
      * Provides the augmentable PluginHost interface, which can be added to any class.
      * @module pluginhost
+     */
+
+    /**
+     * Provides the augmentable PluginHost interface, which can be added to any class.
+     * @module pluginhost-base
      */
 
     /**
@@ -10132,7 +10207,7 @@ YUI.add('pluginhost', function(Y) {
          *
          * @method plug
          * @chainable
-         * @param p {Function | Object |Array} Accepts the plugin class, or an 
+         * @param P {Function | Object |Array} Accepts the plugin class, or an 
          * object with a "fn" property specifying the plugin class and 
          * a "cfg" property specifying the configuration for the Plugin.
          * <p>
@@ -10143,17 +10218,34 @@ YUI.add('pluginhost', function(Y) {
          * can be the configuration for the plugin.
          * @return {Base} A reference to the host object
          */
+        plug: function(Plugin, config) {
+            var i, ln, ns;
 
-        plug: function(p, config) {
-            if (p) {
-                if (L.isFunction(p)) {
-                    this._plug(p, config);
-                } else if (L.isArray(p)) {
-                    for (var i = 0, ln = p.length; i < ln; i++) {
-                        this.plug(p[i]);
+            if (L.isArray(Plugin)) {
+                for (i = 0, ln = Plugin.length; i < ln; i++) {
+                    this.plug(Plugin[i]);
+                }
+            } else {
+                if (Plugin && !L.isFunction(Plugin)) {
+                    config = Plugin.cfg;
+                    Plugin = Plugin.fn;
+                }
+
+                // Plugin should be fn by now
+                if (Plugin && Plugin.NS) {
+                    ns = Plugin.NS;
+        
+                    config = config || {};
+                    config.host = this;
+        
+                    if (this.hasPlugin(ns)) {
+                        // Update config
+                        this[ns].setAttrs(config);
+                    } else {
+                        // Create new instance
+                        this[ns] = new Plugin(config);
+                        this._plugins[ns] = Plugin;
                     }
-                } else {
-                    this._plug(p.fn, p.cfg);
                 }
             }
             return this;
@@ -10170,13 +10262,30 @@ YUI.add('pluginhost', function(Y) {
          * @chainable
          */
         unplug: function(plugin) {
+            var ns = plugin, 
+                plugins = this._plugins;
+            
             if (plugin) {
-                this._unplug(plugin);
+                if (L.isFunction(plugin)) {
+                    ns = plugin.NS;
+                    if (ns && (!plugins[ns] || plugins[ns] !== plugin)) {
+                        ns = null;
+                    }
+                }
+        
+                if (ns) {
+                    if (this[ns]) {
+                        this[ns].destroy();
+                        delete this[ns];
+                    }
+                    if (plugins[ns]) {
+                        delete plugins[ns];
+                    }
+                }
             } else {
-                var ns;
                 for (ns in this._plugins) {
                     if (this._plugins.hasOwnProperty(ns)) {
-                        this._unplug(ns);
+                        this.unplug(ns);
                     }
                 }
             }
@@ -10203,43 +10312,12 @@ YUI.add('pluginhost', function(Y) {
          * @param {Config} config The configuration object with property name/value pairs.
          * @private
          */
+        
         _initPlugins: function(config) {
             this._plugins = this._plugins || {};
 
-            // Class Configuration
-            var classes = (this._getClasses) ? this._getClasses() : [this.constructor],
-                plug = [],
-                unplug = {},
-                constructor, i, classPlug, classUnplug, pluginClassName;
-
-            //TODO: Room for optimization. Can we apply statically/unplug in same pass?
-            for (i = classes.length - 1; i >= 0; i--) {
-                constructor = classes[i];
-
-                classUnplug = constructor._UNPLUG;
-                if (classUnplug) {
-                    // subclasses over-write
-                    Y.mix(unplug, classUnplug, true);
-                }
-
-                classPlug = constructor._PLUG;
-                if (classPlug) {
-                    // subclasses over-write
-                    Y.mix(plug, classPlug, true);
-                }
-            }
-    
-            for (pluginClassName in plug) {
-                if (plug.hasOwnProperty(pluginClassName)) {
-                    if (!unplug[pluginClassName]) {
-                        this.plug(plug[pluginClassName]);
-                    }
-                }
-            }
-    
-            // User Configuration
-            if (config && config.plugins) {
-                this.plug(config.plugins);
+            if (this._initConfigPlugins) {
+                this._initConfigPlugins(config);
             }
         },
 
@@ -10250,61 +10328,64 @@ YUI.add('pluginhost', function(Y) {
          */
         _destroyPlugins: function() {
             this.unplug();
-        },
+        }
+    };
 
-        /**
-         * Private method used to instantiate and attach plugins to the host
-         *
-         * @method _plug
-         * @param {Function} PluginClass The plugin class to instantiate
-         * @param {Object} config The configuration object for the plugin
-         * @private
-         */
-        _plug: function(PluginClass, config) {
-            if (PluginClass && PluginClass.NS) {
-                var ns = PluginClass.NS;
-    
-                config = config || {};
-                config.host = this;
-    
-                if (this.hasPlugin(ns)) {
-                    // Update config
-                    this[ns].setAttrs(config);
-                } else {
-                    // Create new instance
-                    this[ns] = new PluginClass(config);
-                    this._plugins[ns] = PluginClass;
-                }
-            }
-        },
+    Y.namespace("Plugin").Host = PluginHost;
 
-        /**
-         * Unplugs and destroys a plugin already instantiated with the host.
-         *
-         * @method _unplug
-         * @private
-         * @param {String | Function} plugin The namespace for the plugin, or a plugin class with the static NS property defined.
-         */
-        _unplug : function(plugin) {
-            var ns = plugin, 
-                plugins = this._plugins;
-    
-            if (L.isFunction(plugin)) {
-                ns = plugin.NS;
-                if (ns && (!plugins[ns] || plugins[ns] !== plugin)) {
-                    ns = null;
+
+}, '@VERSION@' ,{requires:['yui-base']});
+YUI.add('pluginhost-config', function(Y) {
+
+    /**
+     * Adds pluginhost constructor configuration and static configuration support
+     * @submodule pluginhost-config
+     */
+
+    /**
+     * Constructor and static configuration support for plugins
+     * 
+     * @for Plugin.Host
+     */
+    var PluginHost = Y.Plugin.Host,
+        L = Y.Lang;
+
+    PluginHost.prototype._initConfigPlugins = function(config) {
+
+        // Class Configuration
+        var classes = (this._getClasses) ? this._getClasses() : [this.constructor],
+            plug = [],
+            unplug = {},
+            constructor, i, classPlug, classUnplug, pluginClassName;
+
+        // TODO: Room for optimization. Can we apply statically/unplug in same pass?
+        for (i = classes.length - 1; i >= 0; i--) {
+            constructor = classes[i];
+
+            classUnplug = constructor._UNPLUG;
+            if (classUnplug) {
+                // subclasses over-write
+                Y.mix(unplug, classUnplug, true);
+            }
+
+            classPlug = constructor._PLUG;
+            if (classPlug) {
+                // subclasses over-write
+                Y.mix(plug, classPlug, true);
+            }
+        }
+
+        for (pluginClassName in plug) {
+            if (plug.hasOwnProperty(pluginClassName)) {
+                if (!unplug[pluginClassName]) {
+                    this.plug(plug[pluginClassName]);
                 }
             }
-    
-            if (ns) {
-                if (this[ns]) {
-                    this[ns].destroy();
-                    delete this[ns];
-                }
-                if (plugins[ns]) {
-                    delete plugins[ns];
-                }
-            }
+        }
+
+        // User Configuration
+        if (config && config.plugins) {
+            this.plug(config.plugins);
         }
     };
     
@@ -10373,10 +10454,12 @@ YUI.add('pluginhost', function(Y) {
         }
     };
 
-    Y.namespace("Plugin").Host = PluginHost;
+
+}, '@VERSION@' ,{requires:['pluginhost-base']});
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+YUI.add('pluginhost', function(Y){}, '@VERSION@' ,{use:['pluginhost-base', 'pluginhost-config']});
+
 YUI.add('node-base', function(Y) {
 
 /**
@@ -10440,13 +10523,16 @@ var DOT = '.',
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
+
+        this.SHOW_TRANSITION = Y_Node.SHOW_TRANSITION;
+        this.HIDE_TRANSITION = Y_Node.HIDE_TRANSITION;
     },
 
     // used with previous/next/ancestor tests
     _wrapFn = function(fn) {
         var ret = null;
         if (fn) {
-            ret = (typeof fn === 'string') ?
+            ret = (typeof fn == 'string') ?
             function(n) {
                 return Y.Selector.test(n, fn);
             } :
@@ -10470,6 +10556,9 @@ Y_Node.NAME = 'node';
  * The pattern used to identify ARIA attributes
  */
 Y_Node.re_aria = /^(?:role$|aria-)/;
+
+Y_Node.SHOW_TRANSITION = 'fadeIn';
+Y_Node.HIDE_TRANSITION = 'fadeOut';
 
 /**
  * List of events that route to DOM events
@@ -10564,8 +10653,8 @@ Y_Node.getDOMNode = function(node) {
  * @return {Y.Node | Y.NodeList | any} Depends on what is returned from the DOM node.
  */
 Y_Node.scrubVal = function(val, node) {
-    if (node && val) { // only truthy values are risky
-         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
+    if (val) { // only truthy values are risky
+         if (typeof val == 'object' || typeof val == 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y_DOM.isWindow(val)) {// node || window
                 val = Y.one(val);
             } else if ((val.item && !val._nodes) || // dom collection or Node instance
@@ -10573,7 +10662,7 @@ Y_Node.scrubVal = function(val, node) {
                 val = Y.all(val);
             }
         }
-    } else if (val === undefined) {
+    } else if (typeof val === 'undefined') {
         val = node; // for chaining
     } else if (val === null) {
         val = null; // IE: DOM null not the same as null
@@ -10594,7 +10683,7 @@ Y_Node.scrubVal = function(val, node) {
  * @return {any} Depends on what is returned from the DOM node.
  */
 Y_Node.addMethod = function(name, fn, context) {
-    if (name && fn && typeof fn === 'function') {
+    if (name && fn && typeof fn == 'function') {
         Y_Node.prototype[name] = function() {
             context = context || this;
             var args = _slice.call(arguments),
@@ -10615,7 +10704,7 @@ Y_Node.addMethod = function(name, fn, context) {
                 ret = Y_Node.scrubVal(ret, this);
             }
 
-            (typeof ret !== 'undefined') || (ret = this);
+            (typeof ret != 'undefined') || (ret = this);
             return ret;
         };
     } else {
@@ -10633,7 +10722,7 @@ Y_Node.addMethod = function(name, fn, context) {
  * @param {Object} context An optional context to call the method with
  */
 Y_Node.importMethod = function(host, name, altName) {
-    if (typeof name === 'string') {
+    if (typeof name == 'string') {
         altName = altName || name;
         Y_Node.addMethod(altName, host[name], host);
     } else {
@@ -10659,7 +10748,7 @@ Y_Node.one = function(node) {
         uid;
 
     if (node) {
-        if (typeof node === 'string') {
+        if (typeof node == 'string') {
             if (node.indexOf('doc') === 0) { // doc OR document
                 node = Y.config.doc;
             } else if (node.indexOf('win') === 0) { // win OR window
@@ -10815,7 +10904,7 @@ Y_Node.DEFAULT_SETTER = function(name, val) {
         name = name.split(DOT);
         // only allow when defined on node
         Y.Object.setValue(node, name, val);
-    } else if (node[name] !== undefined) { // pass thru DOM properties
+    } else if (typeof node[name] != 'undefined') { // pass thru DOM properties
         node[name] = val;
     }
 
@@ -10836,7 +10925,7 @@ Y_Node.DEFAULT_GETTER = function(name) {
 
     if (name.indexOf && name.indexOf(DOT) > -1) {
         val = Y.Object.getValue(node, name.split(DOT));
-    } else if (node[name] !== undefined) { // pass thru from DOM
+    } else if (typeof node[name] != 'undefined') { // pass thru from DOM
         val = node[name];
     }
 
@@ -11054,6 +11143,18 @@ Y.mix(Y_Node.prototype, {
         return Y.one(Y_DOM.ancestor(this._node, _wrapFn(fn), testSelf));
     },
 
+   /**
+     * Returns the ancestors that pass the test applied by supplied boolean method.
+     * @method ancestors
+     * @param {String | Function} fn A selector string or boolean method for testing elements.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
+     * If a function is used, it receives the current node being tested as the only argument.
+     * @return {NodeList} A NodeList instance containing the matching elements 
+     */
+    ancestors: function(fn, testSelf) {
+        return Y.all(Y_DOM.ancestors(this._node, _wrapFn(fn), testSelf));
+    },
+
     /**
      * Returns the previous matching sibling.
      * Returns the nearest element node sibling if no method provided.
@@ -11182,8 +11283,61 @@ Y.mix(Y_Node.prototype, {
      */
     replace: function(newNode) {
         var node = this._node;
+        if (typeof newNode == 'string') {
+            newNode = Y_Node.create(newNode);
+        }
         node.parentNode.replaceChild(Y_Node.getDOMNode(newNode), node);
         return this;
+    },
+
+    /**
+     * @method replaceChild
+     * @for Node
+     * @param {String | HTMLElement | Node} node Node to be inserted 
+     * @param {HTMLElement | Node} refNode Node to be replaced 
+     * @return {Node} The replaced node
+     */
+    replaceChild: function(node, refNode) {
+        if (typeof node == 'string') {
+            node = Y_DOM.create(node);
+        }
+
+        return Y.one(this._node.replaceChild(Y_Node.getDOMNode(node), Y_Node.getDOMNode(refNode)));
+    },
+
+    /**
+     * @method appendChild
+     * @param {String | HTMLElement | Node} node Node to be appended 
+     * @return {Node} The appended node 
+     */
+    appendChild: function(node) {
+        if (typeof node == 'string') {
+            node = Y_DOM.create(node);
+        }
+
+        return Y.one(this._node.appendChild(Y_Node.getDOMNode(node)));
+    },
+
+    /**
+     * @method insertBefore
+     * @param {String | HTMLElement | Node} newNode Node to be appended 
+     * @param {HTMLElement | Node} refNode Node to be inserted before 
+     * @return {Node} The inserted node 
+     */
+    insertBefore: function(newNode, refNode) {
+        var node = this._node;
+        if (typeof newNode == 'string') {
+            newNode = Y_DOM.create(newNode);
+        }
+        refNode = Y_Node.getDOMNode(refNode);
+        newNode = Y_Node.getDOMNode(newNode);
+
+        if (refNode) {
+            node.insertBefore(newNode, refNode);
+        } else { // IE errors when no refNode
+            node.appendChild(newNode);
+        }
+        return Y.one(newNode);
     },
 
     /**
@@ -11311,13 +11465,13 @@ Y.mix(Y_Node.prototype, {
         var node = this._node;
 
         if (content) {
-            if (typeof where === 'number') { // allow index
+            if (typeof where == 'number') { // allow index
                 where = this._node.childNodes[where];
             } else if (where && where._node) { // Node
                 where = where._node;
             }
 
-            if (typeof content !== 'string') { // allow Node or NodeList/Array instances
+            if (typeof content != 'string') { // allow Node or NodeList/Array instances
                 if (content._node) { // Node
                     content = content._node;
                 } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
@@ -11356,19 +11510,27 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
+     * Appends the node to the given node. 
+     * @method appendTo
+     * @param {Y.Node | HTMLElement} node The node to append to
+     * @chainable
+     */
+    appendTo: function(node) {
+        Y.one(node).append(this);
+    },
+
+    /**
      * Replaces the node's current content with the content.
      * @method setContent
      * @param {String | Y.Node | HTMLElement} content The content to insert
      * @chainable
      */
     setContent: function(content) {
-        if (content) {
-            if (content._node) { // map to DOMNode
-                content = content._node;
-            } else if (content._nodes) { // convert DOMNodeList to documentFragment
-                content = Y_DOM._nl2frag(content._nodes);
-            }
+        var node = Y.Node.getDOMNode(content) ||
+                Y_DOM._nl2frag(Y.NodeList.getDOMNodes(content));
 
+        if (node) {
+            content = node;
         }
 
         Y_DOM.addHTML(this._node, content, 'replace');
@@ -11468,10 +11630,40 @@ Y.mix(Y_Node.prototype, {
     hasMethod: function(method) {
         var node = this._node;
         return !!(node && method in node &&
-                typeof node[method] !== 'unknown' &&
-            (typeof node[method] === 'function' ||
+                typeof node[method] != 'unknown' &&
+            (typeof node[method] == 'function' ||
                 String(node[method]).indexOf('function') === 1)); // IE reports as object, prepends space
+    },
+
+    SHOW_TRANSITION: null,
+    HIDE_TRANSITION: null,
+
+    show: function(name, config, callback) {
+        this._show();
+        return this;
+    },
+
+    _show: function() {
+        this.setStyle('display', '');
+    },
+
+    hide: function(name, config, callback) {
+        this._hide();
+        return this;
+    },
+
+    _hide: function() {
+        this.setStyle('display', 'none');
+    },
+
+    isFragment: function() {
+        return (this.get('nodeType') === 11);
+    },
+
+    empty: function(destroy) {
+        this.get('childNodes').remove(destroy);
     }
+
 }, true);
 
 Y.Node = Y_Node;
@@ -11527,11 +11719,11 @@ NodeList.NAME = 'NodeList';
  * @method NodeList.getDOMNodes
  * @static
  *
- * @param {Y.NodeList} node The NodeList instance
+ * @param {Y.NodeList} nodelist The NodeList instance
  * @return {Array} The array of DOM nodes bound to the NodeList
  */
-NodeList.getDOMNodes = function(nodeList) {
-    return nodeList._nodes;
+NodeList.getDOMNodes = function(nodelist) {
+    return (nodelist && nodelist._nodes) ? nodelist._nodes : nodelist;
 };
 
 NodeList.each = function(instance, fn, context) {
@@ -11786,6 +11978,20 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
+     * Applies an one-time event listener to each Node bound to the NodeList.
+     * @method once
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance.
+     * @return {Object} Returns an event handle that can later be use to detach().
+     * @see Event.on
+     */
+    once: function(type, fn, context) {
+        return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
+    },
+
+    /**
      * Applies an event listener to each Node bound to the NodeList.
      * The handler is called only after all on() handlers are called
      * and the event is not prevented.
@@ -11854,6 +12060,12 @@ NodeList.importMethod(Y.Node.prototype, [
      */
     'append',
 
+    /** Called on each Node instance
+      * @method destroy
+      * @see Node.destroy
+      */
+    'destroy',
+
     /**
       * Called on each Node instance
       * @method detach
@@ -11868,8 +12080,14 @@ NodeList.importMethod(Y.Node.prototype, [
     'detachAll',
 
     /** Called on each Node instance
+      * @method empty
+      * @see Node.empty
+      */
+    'empty',
+
+    /** Called on each Node instance
       * @method insert
-      * @see NodeInsert
+      * @see Node.insert
       */
     'insert',
 
@@ -11947,33 +12165,6 @@ Y.all = function(nodes) {
 
 Y.Node.all = Y.all;
 Y.Array.each([
-    /**
-     * Passes through to DOM method.
-     * @method replaceChild
-     * @for Node
-     * @param {HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
-     * @return {Node} The replaced node 
-     */
-    'replaceChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method appendChild
-     * @param {HTMLElement | Node} node Node to be appended 
-     * @return {Node} The appended node 
-     */
-    'appendChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method insertBefore
-     * @param {HTMLElement | Node} newNode Node to be appended 
-     * @param {HTMLElement | Node} refNode Node to be inserted before 
-     * @return {Node} The inserted node 
-     */
-    'insertBefore',
-
     /**
      * Passes through to DOM method.
      * @method removeChild
@@ -12064,7 +12255,16 @@ Y.Array.each([
      * @method select
      * @chainable
      */
-     'select'
+     'select',
+
+    /**
+     * Passes through to DOM method.
+     * Only valid on TABLE elements
+     * @method createCaption
+     * @chainable
+     */
+    'createCaption',
+
 ], function(method) {
     Y.Node.prototype[method] = function(arg1, arg2, arg3) {
         var ret = this.invoke(method, arg1, arg2, arg3);
@@ -12100,7 +12300,11 @@ Y.Node.importMethod(Y.DOM, [
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
-    'getAttribute'
+    'getAttribute',
+
+    'wrap',
+
+    'unwrap'
 ]);
 
 /**
@@ -12320,6 +12524,25 @@ Y.mix(Y.Node.prototype, {
             offsetHeight: h
         });
     }
+});
+var Y_NodeList = Y.NodeList,
+    ArrayProto = Array.prototype,
+    ArrayMethods = [
+        'concat', 'pop', 'push', 'shift', 'slice', 'splice', 'unshift'
+    ];
+
+
+Y.Array.each(ArrayMethods, function(name) {
+    Y_NodeList.prototype[name] = function() {
+        var args = [],
+            i = 0,
+            arg;
+
+        while ((arg = arguments[i++])) { // use DOM nodes/nodeLists 
+            args.push(arg._node || arg._nodes || arg);
+        }
+        return Y.Node.scrubVal(ArrayProto[name].apply(this._nodes, args));
+    };
 });
 
 
@@ -12749,7 +12972,7 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 
 YUI.add('event-delegate', function(Y) {
 
@@ -14092,6 +14315,18 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
+Transition._fx = {};
+
+Transition.add = function(name, config) {
+    if (typeof name !== 'string') {
+        Y.Object.each(name, function(v, n) {
+            Transition.add(n, v);
+        });
+    } else {
+        Transition._fx[name] = config;
+    }
+};
+
 Transition._toCamel = function(property) {
     property = property.replace(/-([a-z])/gi, function(m0, m1) {
         return m1.toUpperCase();
@@ -14119,7 +14354,7 @@ Transition._toHyphen = function(property) {
 };
 
 
-Transition._reKeywords = /^(?:node|duration|iterations|easing|delay)$/;
+Transition._reKeywords = /^(?:node|duration|iterations|easing|delay|on|onstart|onend)$/i;
 
 Transition.useNative = false;
 
@@ -14156,8 +14391,6 @@ Transition.prototype = {
             anim._easing = config.easing || anim.constructor.DEFAULT_EASING;
             anim._count = 0; // track number of animated properties
             anim._running = false;
-
-            anim.initAttrs(config);
 
         }
 
@@ -14245,19 +14478,30 @@ Transition.prototype = {
      * @private
      */    
     run: function(callback) {
-        var anim = this;
+        var anim = this,
+            node = anim._node,
+            config = anim._config,
+            data = {
+                type: 'transition:start',
+                config: config
+            };
+
 
         if (!anim._running) {
             anim._running = true;
 
-            anim._node.fire('transition:start', {
-                type: 'transition:start',
-                config: anim._config
-            });
+            anim._node.fire('transition:start', data);
 
-            anim._start();
+            if (config.on && config.on.start) {
+                config.on.start.call(node, data);
+            }
+
+            anim.initAttrs(anim._config);
+
             anim._callback = callback;
+            anim._start();
         }
+
 
         return anim;
     },
@@ -14338,15 +14582,27 @@ Transition.prototype = {
         var anim = this,
             node = anim._node,
             callback = anim._callback,
+            config = anim._config,
             data = {
                 type: 'transition:end',
-                config: anim._config,
+                config: config,
                 elapsedTime: elapsed 
             };
 
         anim._running = false;
-        if (callback) {
-            anim._callback = null;
+        anim._callback = null;
+
+        if (config.on && config.on.end) {
+            setTimeout(function() { // IE: allow previous update to finish
+                config.on.end.call(node, data);
+
+                // nested to ensure proper fire order
+                if (callback) {
+                    callback.call(node, data);
+                }
+
+            }, 1);
+        } else if (callback) {
             setTimeout(function() { // IE: allow previous update to finish
                 callback.call(node, data);
             }, 1);
@@ -14430,9 +14686,38 @@ Y.TransitionNative = Transition; // TODO: remove
  *   @param {Function} callback A function to run after the transition has completed. 
  *   @chainable
 */
-Y.Node.prototype.transition = function(config, callback) {
-    var anim = this._transition;
+Y.Node.prototype.transition = function(name, config, callback) {
+    var anim = this._transition,
+        fxConfig,
+        prop;
     
+    if (typeof name === 'string') { // named effect, pull config from registry
+        if (typeof config === 'function') {
+            callback = config;
+            config = null;
+        }
+
+        fxConfig = Transition._fx[name];
+
+        if (config && typeof config !== 'boolean') {
+            config = Y.clone(config);
+
+            for (prop in fxConfig) {
+                if (fxConfig.hasOwnProperty(prop)) {
+                    if (! (prop in config)) {
+                        config[prop] = fxConfig[prop]; 
+                    }
+                }
+            }
+        } else {
+            config = fxConfig;
+        }
+
+    } else { // name is a config, config is a callback or undefined
+        callback = config;
+        config = name;
+    }
+
     if (anim && !anim._running) {
         anim.init(this, config);
     } else {
@@ -14442,6 +14727,56 @@ Y.Node.prototype.transition = function(config, callback) {
     anim.run(callback);
     return this;
 };
+
+Y.Node.prototype.show = function(name, config, callback) {
+    this._show(); // show prior to transition
+    if (name && Y.Transition) {
+        if (typeof name !== 'string' && !name.push) { // named effect or array of effects supercedes default
+            if (typeof config === 'function') {
+                callback = config;
+                config = name;
+            }
+            name = this.SHOW_TRANSITION; 
+        }    
+        this.transition(name, config, callback);
+    }    
+    return this;
+};
+
+var _wrapCallBack = function(callback, fn) {
+    return function() {
+        if (fn) {
+            fn.call(this);
+        }
+        callback.apply(this, arguments);
+    }
+};
+
+Y.Node.prototype.hide = function(name, config, callback) {
+    if (name && Y.Transition) {
+        if (typeof config === 'function') {
+            callback = config;
+            config = null;
+        }
+
+        if (callback) { // need to hide when transition ends
+            callback = _wrapCallBack(callback, this._hide); // wrap with existing callback
+        } else {
+            callback = this._hide;
+        }    
+        if (typeof name !== 'string' && !name.push) { // named effect or array of effects supercedes default
+            if (typeof config === 'function') {
+                callback = config;
+                config = name;
+            }
+            name = this.HIDE_TRANSITION; 
+        }    
+        this.transition(name, config, callback);
+    } else {
+        this._hide();
+    }    
+    return this;
+}; 
 
 /** 
  *   Animate one or more css properties to a given value. Requires the "transition" module.
@@ -14476,6 +14811,54 @@ Y.NodeList.prototype.transition = function(config, callback) {
 
     return this;
 };
+
+Transition.add({
+    fadeOut: {
+        opacity: 0,
+        duration: 0.5,
+        easing: 'ease-out'
+    },
+
+    fadeIn: {
+        opacity: 1,
+        duration: 0.5,
+        easing: 'ease-in'
+    },
+
+    sizeOut: {
+        height: 0,
+        width: 0,
+        duration: 0.75,
+        easing: 'ease-out'
+    },
+
+    sizeIn: {
+        height: function(node) {
+            return node.get('scrollHeight') + 'px';
+        },
+        width: function(node) {
+            return node.get('scrollWidth') + 'px';
+        },
+        duration: 0.5,
+        easing: 'ease-in',
+        
+        on: {
+            start: function() {
+                var overflow = this.getStyle('overflow');
+                if (overflow !== 'hidden') { // enable scrollHeight/Width
+                    this.setStyle('overflow', 'hidden');
+                    this._transitionOverflow = overflow;
+                }
+            },
+
+            end: function() {
+                if (this._transitionOverflow) { // revert overridden value
+                    this.setStyle('overflow', this._transitionOverflow);
+                }
+            }
+        } 
+    }
+});
 
 
 }, '@VERSION@' ,{requires:['node-base']});

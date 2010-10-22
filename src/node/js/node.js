@@ -221,8 +221,8 @@ Y_Node.scrubVal = function(val, node) {
 Y_Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn == 'function') {
         Y_Node.prototype[name] = function() {
-            context = context || this;
             var args = _slice.call(arguments),
+                node = this,
                 ret;
 
             if (args[0] && Y.instanceOf(args[0], Y_Node)) {
@@ -232,15 +232,15 @@ Y_Node.addMethod = function(name, fn, context) {
             if (args[1] && Y.instanceOf(args[1], Y_Node)) {
                 args[1] = args[1]._node;
             }
-            args.unshift(this._node);
+            args.unshift(node._node);
 
-            ret = fn.apply(context, args);
+            ret = fn.apply(node, args);
 
             if (ret) { // scrub truthy
-                ret = Y_Node.scrubVal(ret, this);
+                ret = Y_Node.scrubVal(ret, node);
             }
 
-            (typeof ret != 'undefined') || (ret = this);
+            (typeof ret != 'undefined') || (ret = node);
             return ret;
         };
     } else {
@@ -851,11 +851,7 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} The appended node 
      */
     appendChild: function(node) {
-        if (typeof node == 'string') {
-            node = Y_DOM.create(node);
-        }
-
-        return Y.one(this._node.appendChild(Y_Node.getDOMNode(node)));
+        return Y_Node.scrubVal(this._insert(node));
     },
 
     /**
@@ -865,19 +861,7 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} The inserted node 
      */
     insertBefore: function(newNode, refNode) {
-        var node = this._node;
-        if (typeof newNode == 'string') {
-            newNode = Y_DOM.create(newNode);
-        }
-        refNode = Y_Node.getDOMNode(refNode);
-        newNode = Y_Node.getDOMNode(newNode);
-
-        if (refNode) {
-            node.insertBefore(newNode, refNode);
-        } else { // IE errors when no refNode
-            node.appendChild(newNode);
-        }
-        return Y.one(newNode);
+        return Y.Node.scrubVal(this._insert(newNode, refNode, 'before'));
     },
 
     /**
@@ -983,7 +967,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content before the reference node.
      * @method insert
-     * @param {String | Y.Node | HTMLElement} content The content to insert
+     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
      * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
      * Possible "where" arguments
      * <dl>
@@ -1005,32 +989,26 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     insert: function(content, where) {
-        var node = this._node;
-
-        if (content) {
-            if (typeof where == 'number') { // allow index
-                where = this._node.childNodes[where];
-            } else if (where && where._node) { // Node
-                where = where._node;
-            }
-
-            if (typeof content != 'string') { // allow Node or NodeList/Array instances
-                if (content._node) { // Node
-                    content = content._node;
-                } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
-                    content = Y.all(content);
-                    Y.each(content._nodes, function(n) {
-                        Y_DOM.addHTML(node, n, where);
-                    });
-
-                    return this; // NOTE: early return
-                }
-            }
-            Y_DOM.addHTML(node, content, where);
-        } else  {
-            Y.log('unable to insert content ' + content, 'warn', 'node');
-        }
+        this._insert(content, where);
         return this;
+    },
+
+    _insert: function(content, where) {
+        var node = this._node,
+            ret = null;
+
+        if (typeof where == 'number') { // allow index
+            where = this._node.childNodes[where];
+        } else if (where && where._node) { // Node
+            where = where._node;
+        }
+
+        if (content && typeof content != 'string') { // allow Node or NodeList/Array instances
+            content = content._node || content._nodes || content;
+        }
+        ret = Y_DOM.addHTML(node, content, where);
+
+        return ret;
     },
 
     /**
@@ -1066,19 +1044,21 @@ Y.mix(Y_Node.prototype, {
     /**
      * Replaces the node's current content with the content.
      * @method setContent
-     * @param {String | Y.Node | HTMLElement} content The content to insert
+     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
      * @chainable
      */
     setContent: function(content) {
-        var node = Y.Node.getDOMNode(content) ||
-                Y_DOM._nl2frag(Y.NodeList.getDOMNodes(content));
-
-        if (node) {
-            content = node;
-        }
-
-        Y_DOM.addHTML(this._node, content, 'replace');
+        this._insert(content, 'replace');
         return this;
+    },
+
+    /**
+     * Returns the node's current content (e.g. innerHTML) 
+     * @method getContent
+     * @return {String} The current content
+     */
+    getContent: function(content) {
+        return this.get('innerHTML');
     },
 
     /**

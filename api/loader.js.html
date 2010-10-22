@@ -927,6 +927,8 @@
             <span class="nx">o</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
         <span class="p">}</span>
 
+        <span class="nx">o</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
+
         <span class="nx">o</span><span class="p">.</span><span class="nx">ext</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ext&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">ext</span> <span class="o">:</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_internal</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
         <span class="nx">o</span><span class="p">.</span><span class="nx">requires</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">requires</span> <span class="o">||</span> <span class="p">[];</span>
 
