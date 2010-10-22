@@ -73,6 +73,9 @@
     <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;en&quot;</span>
 <span class="p">};</span>
 
+<span class="c1">// Since strings support with locale needs the private _strs setup</span>
+<span class="nx">Widget</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">.</span><span class="nx">strings</span><span class="p">.</span><span class="nx">lazyAdd</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
 
     <span class="cm">/**</span>

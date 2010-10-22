@@ -86,7 +86,7 @@
     <span class="nx">AUTO</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="nx">SRC_NODE</span> <span class="o">=</span> <span class="s2">&quot;srcNode&quot;</span><span class="p">,</span>
     <span class="nx">BODY</span> <span class="o">=</span> <span class="s2">&quot;body&quot;</span><span class="p">,</span>
-	<span class="nx">TAB_INDEX</span> <span class="o">=</span> <span class="s2">&quot;tabIndex&quot;</span><span class="p">,</span>
+    <span class="nx">TAB_INDEX</span> <span class="o">=</span> <span class="s2">&quot;tabIndex&quot;</span><span class="p">,</span>
     <span class="nx">ID</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
     <span class="nx">RENDER</span> <span class="o">=</span> <span class="s2">&quot;render&quot;</span><span class="p">,</span>
     <span class="nx">RENDERED</span> <span class="o">=</span> <span class="s2">&quot;rendered&quot;</span><span class="p">,</span>
@@ -256,8 +256,8 @@
 <span class="cm"> * @default 0</span>
 <span class="cm"> */</span>
 <span class="nx">ATTRS</span><span class="p">[</span><span class="nx">TAB_INDEX</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-	<span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-	<span class="nx">validator</span><span class="o">:</span> <span class="s2">&quot;_validTabIndex&quot;</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nx">validator</span><span class="o">:</span> <span class="s2">&quot;_validTabIndex&quot;</span>
 <span class="p">};</span>
 
 <span class="cm">/**</span>
@@ -860,19 +860,19 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_bindDOM</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-		<span class="kd">var</span> <span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">OWNER_DOCUMENT</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">OWNER_DOCUMENT</span><span class="p">);</span>
 
         <span class="c1">// TODO: Perf Optimization: Use Widget.getByNode delegation, to get by </span>
         <span class="c1">// with just one _onDocFocus subscription per sandbox, instead of one per widget</span>
-		<span class="k">this</span><span class="p">.</span><span class="nx">_hDocFocus</span> <span class="o">=</span> <span class="nx">oDocument</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;focus&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onDocFocus</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_hDocFocus</span> <span class="o">=</span> <span class="nx">oDocument</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;focus&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onDocFocus</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
 
-		<span class="c1">//	Fix for Webkit:</span>
-		<span class="c1">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
-		<span class="c1">//	down on it, so the &quot;focused&quot; attribute won&#39;t get set to the </span>
-		<span class="c1">//	correct value.</span>
-		<span class="k">if</span> <span class="p">(</span><span class="nx">WEBKIT</span><span class="p">)</span> <span class="p">{</span>
-			<span class="k">this</span><span class="p">.</span><span class="nx">_hDocMouseDown</span> <span class="o">=</span> <span class="nx">oDocument</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;mousedown&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onDocMouseDown</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-		<span class="p">}</span>
+        <span class="c1">//	Fix for Webkit:</span>
+        <span class="c1">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
+        <span class="c1">//	down on it, so the &quot;focused&quot; attribute won&#39;t get set to the </span>
+        <span class="c1">//	correct value.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">WEBKIT</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_hDocMouseDown</span> <span class="o">=</span> <span class="nx">oDocument</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;mousedown&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onDocMouseDown</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -982,27 +982,27 @@
 <span class="cm">     * @param Number</span>
 <span class="cm">     */</span>
     <span class="nx">_uiSetTabIndex</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-		<span class="kd">var</span> <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
 
-		<span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
-			<span class="nx">boundingBox</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">,</span> <span class="nx">index</span><span class="p">);</span>
-		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-			<span class="nx">boundingBox</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">);</span>
-		<span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">,</span> <span class="nx">index</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
-	<span class="cm">/**</span>
-<span class="cm">	 * @method _onDocMouseDown</span>
-<span class="cm">	 * @description &quot;mousedown&quot; event handler for the owner document of the </span>
-<span class="cm">	 * widget&#39;s bounding box.</span>
-<span class="cm">	 * @protected</span>
+    <span class="cm">/**</span>
+<span class="cm">     * @method _onDocMouseDown</span>
+<span class="cm">     * @description &quot;mousedown&quot; event handler for the owner document of the </span>
+<span class="cm">     * widget&#39;s bounding box.</span>
+<span class="cm">     * @protected</span>
 <span class="cm">     * @param {EventFacade} evt The event facade for the DOM focus event</span>
-<span class="cm">	 */</span>
-	<span class="nx">_onDocMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_domFocus</span><span class="p">)</span> <span class="p">{</span>
- 			<span class="k">this</span><span class="p">.</span><span class="nx">_onDocFocus</span><span class="p">(</span><span class="nx">evt</span><span class="p">);</span>
-		<span class="p">}</span>
-	<span class="p">},</span>
+<span class="cm">     */</span>
+    <span class="nx">_onDocMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_domFocus</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_onDocFocus</span><span class="p">(</span><span class="nx">evt</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * DOM focus event handler, used to sync the state of the Widget with the DOM</span>
@@ -1012,7 +1012,7 @@
 <span class="cm">     * @param {EventFacade} evt The event facade for the DOM focus event</span>
 <span class="cm">     */</span>
     <span class="nx">_onDocFocus</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">this</span><span class="p">.</span><span class="nx">_domFocus</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">).</span><span class="nx">contains</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span> <span class="c1">// contains() checks invoking node also</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_domFocus</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">).</span><span class="nx">contains</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span> <span class="c1">// contains() checks invoking node also</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_domFocus</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
     <span class="p">},</span>
 
