@@ -324,8 +324,8 @@ Y.mix(Resize, {
 		 * @writeOnce
 		 */
 		wrapper: {
-			setter: '_setWrapper',
-			value: null,
+			readOnly: true,
+			valueFn: '_valueWrapper',
 			writeOnce: true
 		}
 	}
@@ -1186,43 +1186,6 @@ Y.Resize = Y.extend(
 		},
 
 	    /**
-	     * Setter for the wrapper attribute
-	     *
-	     * @method _setWrapper
-	     * @protected
-	     * @readOnly
-	     */
-		_setWrapper: function() {
-			var instance = this,
-				node = instance.get(NODE),
-				pNode = node.get(PARENT_NODE),
-				// by deafult the wrapper is always the node
-				wrapper = node;
-
-			// if the node is listed on the wrapTypes or wrap is set to true, create another wrapper
-			if (instance.get(WRAP)) {
-				wrapper = Y.Node.create(instance.WRAP_TEMPLATE);
-
-				if (pNode) {
-					pNode.insertBefore(wrapper, node);
-				}
-
-				wrapper.append(node);
-
-				instance._copyStyles(node, wrapper);
-
-				// remove positioning of wrapped node, the WRAPPER take care about positioning
-				node.setStyles({
-					position: STATIC,
-					left: 0,
-					top: 0
-				});
-			}
-
-			return wrapper;
-		},
-
-	    /**
 	     * Default resize:mouseUp handler
 	     *
 	     * @method _defMouseUpFn
@@ -1463,6 +1426,43 @@ Y.Resize = Y.extend(
 			if (!instance.get(RESIZING)) {
 				instance._setActiveHandlesUI(false);
 			}
+		},
+
+		/**
+	     * Default value for the wrapper attribute
+	     *
+	     * @method _valueWrapper
+	     * @protected
+	     * @readOnly
+	     */
+		_valueWrapper: function() {
+			var instance = this,
+				node = instance.get(NODE),
+				pNode = node.get(PARENT_NODE),
+				// by deafult the wrapper is always the node
+				wrapper = node;
+
+			// if the node is listed on the wrapTypes or wrap is set to true, create another wrapper
+			if (instance.get(WRAP)) {
+				wrapper = Y.Node.create(instance.WRAP_TEMPLATE);
+
+				if (pNode) {
+					pNode.insertBefore(wrapper, node);
+				}
+
+				wrapper.append(node);
+
+				instance._copyStyles(node, wrapper);
+
+				// remove positioning of wrapped node, the WRAPPER take care about positioning
+				node.setStyles({
+					position: STATIC,
+					left: 0,
+					top: 0
+				});
+			}
+
+			return wrapper;
 		}
 	}
 );
