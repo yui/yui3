@@ -18,7 +18,8 @@
 			"datatable-scroll": {
 				"requires": [
 					"datatable-base",
-					"plugin"
+					"plugin",
+					"stylesheet"
 				]
 			}
         }

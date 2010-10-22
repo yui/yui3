@@ -2128,7 +2128,7 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
-}, '@VERSION@' ,{requires:['plugin','datatable-base']});
+}, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
 
 
 YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize','datatable-scroll']});
