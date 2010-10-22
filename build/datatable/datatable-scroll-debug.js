@@ -1,5 +1,12 @@
 YUI.add('datatable-scroll', function(Y) {
 
+/**
+ * Extends DataTable base to enable x,y, and xy scrolling.
+ * @module datatable
+ * @submodule datatable-scroll
+ */
+
+
 var YDo = Y.Do,
 	YNode = Y.Node,
 	YLang = Y.Lang,
@@ -13,7 +20,8 @@ var YDo = Y.Do,
 	CONTAINER_HEADER = '<div class="'+CLASS_HEADER+'"></div>',
 	CONTAINER_BODY = '<div class="'+CLASS_BODY+'"></div>',
 	TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'" style="width:100px">{value}</div></th>',
-	TEMPLATE_TD = '<td headers="{headers}"><div class="'+CLASS_LINER+'" style="width:100px">{value}</div></td>';
+	TEMPLATE_TD = '<td headers="{headers}"><div class="'+CLASS_LINER+'" style="width:100px">{value}</div></td>',
+	TEMPLATE_TABLE = '<table></table>';
 	
 
 function DataTableScroll() {
@@ -26,17 +34,53 @@ Y.mix(DataTableScroll, {
     NAME: "dataTableScroll",
 
     ATTRS: {
+	
+		/**
+	    * @description The width for the table. Set to a string (ex: "200px", "20em")
+	    *
+	    * @attribute width
+	    * @public
+	    * @static
+	    * @type string
+	    */
         width: {
 			value: undefined
 		},
+		
+		/**
+	    * @description The height for the table. Set to a string (ex: "200px", "20em")
+	    *
+	    * @attribute height
+	    * @public
+	    * @static
+	    * @type string
+	    */
 		height: {
 			value: undefined
 		},
 		
+		
+		/**
+	    * @description The scrolling direction for the table. Can be set to 'x', 'y', or 'xy'
+	    *
+	    * @attribute scroll
+	    * @public
+	    * @static
+	    * @type string
+	    */
 		scroll: {
 			value: 'y'
 		},
 		
+		
+		/**
+	    * @description The hexadecimal colour value to set on the top-right of the table if a scrollbar exists. 
+	    *
+	    * @attribute COLOR_COLUMNFILLER
+	    * @public
+	    * @static
+	    * @type string
+	    */
 		COLOR_COLUMNFILLER: {
 			value: '#f2f2f2',
 			validator: YLang.isString,
@@ -51,23 +95,99 @@ Y.mix(DataTableScroll, {
 
 Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
+	/**
+    * @description The base template for a td DOM element.
+    *
+    * @property tdTemplate
+    * @type string
+    */
 	tdTemplate: TEMPLATE_TD,
 	
+	
+	/**
+    * @description The base template for a th DOM element.
+    *
+    * @property thTemplate
+    * @type string
+    */
 	thTemplate: TEMPLATE_TH,
 	
+	
+	/**
+    * @description The table node created in datatable-base
+    *
+    * @property _parentTableNode
+	* @private
+    * @type Y.Node
+    */
 	_parentTableNode: null,
 	
+	
+	/**
+    * @description The THEAD node which resides within the table node created in datatable-base
+    *
+    * @property _parentTheadNode
+	* @private
+    * @type Y.Node
+    */
 	_parentTheadNode: null,
 	
+	
+	/**
+    * @description The TBODY node which resides within the table node created in datatable-base
+    *
+    * @property _parentTbodyNode
+	* @private
+    * @type Y.Node
+    */
 	_parentTbodyNode: null,
 	
+	
+	/**
+    * @description The TBODY Message node which resides within the table node created in datatable-base
+    *
+    * @property _parentMsgNode
+	* @private
+    * @type Y.Node
+    */
 	_parentMsgNode: null,
 	
+	
+	/**
+    * @description The contentBox specified for the datatable in datatable-base
+    *
+    * @property _parentContainer
+	* @private
+    * @type Y.Node
+    */
 	_parentContainer: null,
 	
+	
+	/**
+    * @description The DIV node that contains all the scrollable elements (a table with a tbody on it)
+    *
+    * @property _bodyContainerNode
+	* @private
+    * @type Y.Node
+    */
 	_bodyContainerNode: null,
 	
+	
+	/**
+    * @description The DIV node that contains a table with a THEAD in it (which syncs its horizontal scroll with the _bodyContainerNode above)
+    *
+    * @property _headerContainerNode
+	* @private
+    * @type Y.Node
+    */
 	_headerContainerNode: null,
+	
+	
+	//--------------------------------------
+    //  Methods
+    //--------------------------------------
+
+
 	
 	initializer: function(config) {
         var dt = this.get("host");
@@ -81,7 +201,13 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	// Set up Table Nodes
 	//
 	/////////////////////////////////////////////////////////////////////////////
-				
+	
+	/**
+    * @description Set up methods to fire after host methods execute
+    *
+    * @method _setUpNodes
+    * @private
+    */			
 	_setUpNodes: function() {
 		var dt = this.get('host');
 		
@@ -93,27 +219,52 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("renderUI", this.renderUI);
 		this.afterHostMethod("syncUI", this.syncUI);
 		
-		this.beforeHostMethod('_attachTheadThNode', this._attachTheadThNode);
-		this.beforeHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);        
+		if (this.get('scroll') === 'y') {
+			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
+			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
+		}
 	},
 		
-	
+	/**
+    * @description Stores the main <table> node provided by the host as a private property
+    *
+    * @method _setUpParentTableNode
+    * @private
+    */
 	_setUpParentTableNode: function() {
 		this._parentTableNode = this.get('host')._tableNode;
-		//console.log(this._parentTableNode);
 	},
 	
+	
+	/**
+    * @description Stores the main <thead> node provided by the host as a private property
+    *
+    * @method _setUpParentTheadNode
+    * @private
+    */
 	_setUpParentTheadNode: function() {
 		this._parentTheadNode = this.get('host')._theadNode;
-		//console.log(this._parentTheadNode);
 	},
+	
+	/**
+    * @description Stores the main <tbody> node provided by the host as a private property
+    *
+    * @method _setUpParentTbodyNode
+    * @private
+    */
 	_setUpParentTbodyNode: function() {
 		this._parentTbodyNode = this.get('host')._tbodyNode;
-		//console.log(this._parentTbodyNode);
 	},
+	
+	
+	/**
+    * @description Stores the main <tbody> message node provided by the host as a private property
+    *
+    * @method _setUpParentMessageNode
+    * @private
+    */
 	_setUpParentMessageNode: function() {
 		this._parentMsgNode = this.get('host')._msgNode;
-		//console.log(this._parentMsgNode);
 	},
 	
 	/////////////////////////////////////////////////////////////////////////////
@@ -122,119 +273,202 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
+	/**
+    * @description Primary rendering method that takes the datatable rendered in
+    * the host, and splits it up into two separate <divs> each containing two 
+	* separate tables (one containing the head and one containing the body). 
+	* This method fires after renderUI is called on datatable-base.
+	* 
+    * @method renderUI
+    * @public
+    */
 	renderUI: function() {
+		//Y.Profiler.start('render');
 		this._createBodyContainer();
 		this._createHeaderContainer();
-		this._setContentBoxDimenions();
+		this._setContentBoxDimensions();
+		//Y.Profiler.stop('render');
+		//console.log(Y.Profiler.getReport("render"));
 	},
 	
+	
+	/**
+    * @description Post rendering method that is responsible for creating a column
+	* filler, and performing width and scroll synchronization between the <th> 
+	* elements and the <td> elements.
+	* This method fires after syncUI is called on datatable-base
+	* 
+    * @method syncUI
+    * @public
+    */
 	syncUI: function() {
-		this._syncTh();
+		//Y.Profiler.start('sync');
+		this._syncWidths();
 		this._syncScroll();
+		//Y.Profiler.stop('sync');
+		//console.log(Y.Profiler.getReport("sync"));
+		
 	},
 	
-	_syncTh: function() {
-		var th = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-hd table thead th'),
-			//td = this._parentTbodyNode.get('children')._nodes[0].children,
-			td = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-bd table tr td'),
+	
+	/**
+    * @description Adjusts the width of the TH and the TDs to make sure that the two are in sync
+	* 
+	* Implementation Details: 
+	* 	Compares the width of the TH liner div to the the width of the TD node. The TD liner width
+	*	is not actually used because the TD often stretches past the liner if the parent DIV is very
+	*	large. Measuring the TD width is more accurate.
+	*	
+	*	Instead of measuring via .get('width'), 'clientWidth' is used, as it returns a number, whereas
+	*	'width' returns a string, In IE6, 'clientWidth' is not supported, so 'offsetWidth' is used.
+	*	'offsetWidth' is not as accurate on Chrome,FF as 'clientWidth' - thus the need for the fork.
+	* 
+    * @method _syncWidths
+    * @public
+    */
+	_syncWidths: function() {
+		var th = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-hd table thead th'), //nodelist of all THs
+			td = YNode.one('#'+this._parentContainer.get('id')+' .yui3-datatable-bd table .yui3-datatable-data').get('firstChild').get('children'), //nodelist of all TDs in 1st row
 			i,
 			len,
-			thWidth, tdWidth, thLiner, tdLiner;
+			thWidth, tdWidth, thLiner, tdLiner,
+			ie = YUA.ie;
 			
-			for (i=0, len = th.size(); i<len; i++) {
+			/*
+			This for loop goes through the first row of TDs in the table.
+			In a table, the width of the row is equal to the width of the longest cell in that column.
+			Therefore, we can observe the widths of the cells in the first row only, as they will be the same in all the cells below (in each respective column)
+			*/
+			for (i=0, len = th.size(); i<len; i++) { 
 				
 				//If a width has not been already set on the TD:
 				//if (td.item(i).get('firstChild').getStyle('width') === "auto") {
 					
-					thLiner = th.item(i).get('firstChild'); //TODO: use liner API
+					//Get the liners for the TH and the TD cell in question
+					thLiner = th.item(i).get('firstChild'); //TODO: use liner API - how? this is a node.
 					tdLiner = td.item(i).get('firstChild');
 					
-					if (YUA.ie) {
+					/*
+					If browser is not IE - get the clientWidth of the Liner div and the TD.
+					Note: 	We are not getting the width of the TDLiner, we are getting the width of the actual cell.
+							Why? Because when the table is set to auto width, the cell will grow to try to fit the table in its container.
+							The liner could potentially be much smaller than the cell width.
+							
+							TODO: Explore if there is a better way using only LINERS widths
+					*/
+					if (!ie) {
+						thWidth = thLiner.get('clientWidth'); //TODO: this should actually be done with getComputedStyle('width') but this messes up columns. Explore this option.
+						tdWidth = td.item(i).get('clientWidth');
+					}
+					
+					//IE wasn't recognizing clientWidths, so we are using offsetWidths.
+					//TODO: should use getComputedStyle('width') because offsetWidth will screw up when padding is changed.
+					else {
 						thWidth = thLiner.get('offsetWidth');
 						tdWidth = td.item(i).get('offsetWidth');
 						//thWidth = parseFloat(thLiner.getComputedStyle('width').split('px')[0]);
 						//tdWidth = parseFloat(td.item(i).getComputedStyle('width').split('px')[0]); /* TODO: for some reason, using tdLiner.get('clientWidth') doesn't work - why not? */
 					}
-					else {
-						thWidth = thLiner.get('clientWidth');
-						tdWidth = td.item(i).get('clientWidth');
-					}
 										
 					//if TH is bigger than TD, enlarge TD Liner
 					if (thWidth > tdWidth) {
 						tdLiner.setStyle('width', (thWidth - 20 + 'px'));
-						//tdLiner.setContent('1,'+tdWidth +',' + thWidth);
 					}
 					
 					//if TD is bigger than TH, enlarge TH Liner
 					else if (tdWidth > thWidth) {
 						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
-						//tdLiner.setContent('2,'+tdWidth +',' + thWidth);
 					}
-					
-					else {
-						//tdLiner.setContent('3,'+tdWidth +',' + thWidth);
-						
-					}
+
 				//}
 
 			}
-			if (YUA.ie && this.get('scroll') === 'y') {
-				this._headerContainerNode.setStyle('width', this._parentContainer.get('offsetWidth')+ 15 +'px');
-			}
 			
+			//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
+			//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
+			
+			//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
+			if (ie && this.get('scroll') === 'y') {
+				this._headerContainerNode.setStyle('width', this._parentContainer.get('offsetWidth')+ 15 +'px');
+			}		
 	},
 	
-	//Before attaching the Th nodes, add the appropriate width to the liner divs.
+	/**
+    * @description Adds the approriate width to the liner divs of the TH nodes before they are appended to DOM
+	*
+    * @method _attachTheadThNode
+    * @public
+    */
 	_attachTheadThNode: function(o) {
-		var width = o.column.get('width') || 'auto';
+		var w = o.column.get('width') || 'auto';
 		
-		if (width !== 'auto') {
-			o.th.get('firstChild').setStyles({'width': width, 'overflow':'hidden'});
+		if (w !== 'auto') {
+			o.th.get('firstChild').setStyles({'width': w, 'overflow':'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
 		}
 		return o;
 	},
 	
-	//Before attaching the td nodes, add the appropriate width to the liner divs.
+	/**
+    * @description Adds the appropriate width to the liner divs of the TD nodes before they are appended to DOM
+	*
+    * @method _attachTbodyTdNode
+    * @public
+    */
 	_attachTbodyTdNode: function(o) {
-		var width = o.column.get('width') || 'auto';
+		var w = o.column.get('width') || 'auto';
 		
-		if (width !== 'auto') {
-			o.td.get('firstChild').setStyles({'width': width, 'overflow': 'hidden'});
-			o.td.setStyles({'width': width, 'overflow': 'hidden'});
+		if (w !== 'auto') {
+			o.td.get('firstChild').setStyles({'width': w, 'overflow': 'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
+			//o.td.setStyles({'width': width, 'overflow': 'hidden'});
 		}
-		else {
-			//o.td.get('firstChild').setStyles({'width': width, 'overflow': 'visible'});
-			//o.td.setStyles({'width': width, 'overflow': 'visible'});
-		}
-
 		return o;
 	},
 	
+	/**
+    * @description Creates the body DIV that contains all the data. 
+	*
+    * @method _createBodyContainer
+    * @private
+    */
 	_createBodyContainer: function() {
 		var	bd = YNode.create(CONTAINER_BODY),
 			onScrollFn = Y.bind("_onScroll", this);
+			
 		this._bodyContainerNode = bd;		
-		this._setOverflowForTbody();
+		this._setStylesForTbody();
+		
 		bd.appendChild(this._parentTableNode);
 		this._parentContainer.appendChild(bd);
 		bd.on('scroll', onScrollFn);
 	},
 	
+	/**
+    * @description Creates the DIV that contains a <table> with all the headers. 
+	*
+    * @method _createHeaderContainer
+    * @private
+    */
 	_createHeaderContainer: function() {
 		var hd = YNode.create(CONTAINER_HEADER),
-			tbl = YNode.create('<table></table>');
+			tbl = YNode.create(TEMPLATE_TABLE);
+			
 		this._headerContainerNode = hd;
 		
-		hd.setStyle('backgroundColor',this.get("COLOR_COLUMNFILLER"));
-		this._setOverflowForThead();
+		//hd.setStyle('backgroundColor',this.get("COLOR_COLUMNFILLER"));
+		this._setStylesForThead();
 		tbl.appendChild(this._parentTheadNode);
 		hd.appendChild(tbl);
 		this._parentContainer.prepend(hd);
 		
 	},
 	
-	_setOverflowForTbody: function() {
+	/**
+    * @description Creates styles for the TBODY based on what type of table it is.
+	*
+    * @method _setStylesForTbody
+    * @private
+    */
+	_setStylesForTbody: function() {
 		var dir = this.get('scroll'),
 			w = this.get('width') || "",
 			h = this.get('height') || "",
@@ -242,17 +476,17 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			styles = {'width':"", 'height':h};
 				
 		if (dir === 'x') {
+			//X-Scrolling tables should not have a Y-Scrollbar so overflow-y is hidden. THe width on x-scrolling tables must be set by user.
 			styles['overflowY'] = 'hidden';
 			styles['width'] = w;
-			//el.setStyles({'overflow-y':'hidden'});
 		}
 		else if (dir === 'y') {
-			//el.setStyles({'overflow-x':'hidden', "width": ""});
+			//Y-Scrolling tables should not have a X-Scrollbar so overflow-x is hidden. The width isn't neccessary because it can be auto.
 			styles['overflowX'] = 'hidden';
 		}
 		
-		//assume xy
 		else {
+			//assume xy - the width must be set on xy.
 			styles['width'] = w;
 		}
 		
@@ -260,9 +494,16 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		return el;
 	},
 	
-	_setOverflowForThead: function() {
+	
+	/**
+    * @description Creates styles for the THEAD based on what type of datatable it is.
+	*
+    * @method _setStylesForThead
+    * @private
+    */
+	_setStylesForThead: function() {
 		var dir = this.get('scroll'),
-			w = this.get('width'),
+			w = this.get('width') || "",
 			el = this._headerContainerNode;
 		
 		if (dir !== 'y') {
@@ -270,14 +511,18 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		}
 	},
 	
-	_setContentBoxDimenions: function() {
-		if (this.get('scroll') === 'y') {
+	/**
+    * @description Sets an auto width on the content box if it doesn't exist or if its a y-datatable.
+	*
+    * @method _setContentBoxDimensions
+    * @private
+    */
+	_setContentBoxDimensions: function() {
+		
+		if (this.get('scroll') === 'y' || (!this.get('width'))) {
 			this._parentContainer.setStyle('width', 'auto');
 		}
 		
-		//else if (YUA.ie) {
-		//	this._parentContainer.setStyle('width', this.get('width') || 'auto');
-		//}
 	},
 	
 	/////////////////////////////////////////////////////////////////////////////
@@ -285,30 +530,45 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	// Scroll Syncing
 	//
 	/////////////////////////////////////////////////////////////////////////////
+	
+	/**
+    * @description Ensures that scrolling is synced across the two tables
+	*
+    * @method _onScroll
+    * @private
+    */
 	_onScroll: function() {
 		this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
 	},
 	
+	/**
+	 * @description Syncs padding around scrollable tables, including Column header right-padding
+	 * and container width and height.
+	 *
+	 * @method _syncScroll
+	 * @private 
+	 */
 	_syncScroll : function() {
-		    this._syncScrollX();
-		    this._syncScrollY();
-		    this._syncScrollOverhang();
-		 				    if(YUA.opera) {
-			 				    	// Bug 1925874
-			 				    	this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
-			 				    		if(!this.get("width")) {
-			 				    	    	// Bug 1926125
-			 				    	        document.body.style += '';
-			 				    	    }
-			 		}
+		this._syncScrollX();
+		this._syncScrollY();
+		this._syncScrollOverhang();
+		if(YUA.opera) {
+			// Bug 1925874
+			this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+			
+			if(!this.get("width")) {
+		 		// Bug 1926125
+		 		document.body.style += '';
+		 	}
+		}
 	},
 	
-		/**
-		 * Snaps container width for y-scrolling tables.
-		 *
-		 * @method _syncScrollY
-		 * @private
-		 */
+	/**
+	* @description Snaps container width for y-scrolling tables.
+	*
+	* @method _syncScrollY
+	* @private
+	*/
 	_syncScrollY : function() {
 		var tBody = this._parentTbodyNode,
 		    tBodyContainer = this._bodyContainerNode,
@@ -325,13 +585,13 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		}
 	},
 		
-		/**
-		 * Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
-		 * Taken from YUI2 ScrollingDataTable.js
-		 *
-		 * @method _syncScrollX
-		 * @private
-		 */
+	/**
+	 * @description Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
+	 * Taken from YUI2 ScrollingDataTable.js
+	 *
+	 * @method _syncScrollX
+	 * @private
+	 */
 	_syncScrollX: function() {
 		var tBody = this._parentTbodyNode,
 			tBodyContainer = this._bodyContainerNode,
@@ -356,7 +616,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	},
 	
 	/**
-	 * Adds/removes Column header overhang as necesary.
+	 * @description Adds/removes Column header overhang as necesary.
 	 * Taken from YUI2 ScrollingDataTable.js
 	 *
 	 * @method _syncScrollOverhang
@@ -378,7 +638,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	
 	/**
-	 * Sets Column header overhang to given width.
+	 * @description Sets Column header overhang to given width.
 	 * Taken from YUI2 ScrollingDataTable.js with minor modifications
 	 *
 	 * @method _setOverhangValue
@@ -388,57 +648,13 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	_setOverhangValue: function(borderWidth) {
 		var host = this.get('host'),
 			cols = host.get('columnset').get('columns'),
-		 	lastHeaders = cols[cols.length-1] || [],
+		 	//lastHeaders = cols[cols.length-1] || [],
 	        len = cols.length,
 	        value = borderWidth + "px solid " + this.get("COLOR_COLUMNFILLER"),
-			children = this._parentTheadNode.get('children').get('children')[0]._nodes; //hack here to get to the array of TH elements
-	
-	    //this._parentTheadNode.setStyle('display', 'none');
-		YNode.one('#'+children[len-1].id).setStyle('borderRight', value);
-	    // for(var i=0; i<len; i++) {
-	    // 			YNode.one('#'+children[i]._yuid).setStyle('borderRight', value);
-	    // 	    }
-	    // 	    this._parentTheadNode.setStyle('display', '');
+			children = YNode.all('#'+this._parentContainer.get('id')+ ' .' + CLASS_HEADER + ' table thead th');
+
+		children.item(len-1).setStyle('borderRight', value);
 	}
-	
-	
-	
-	
-	
-	
-	// setColumnWidth: function(col, width) {
-	// 	colWidth = col.get('minWidth');
-	// 	if (YLang.isNumber(width)) {
-	// 		width = (width > colWidth) ? width : colWidth;
-	// 		col.set('width', width);
-	// 		
-	// 		//resize dom elements
-	// 		this._setColumnWidth(col, width+"px");
-	// 		
-	// 		this.fire('columnsetWidthEvent', {column: col, width: width});
-	// 		Y.log("Set width of Column " + oColumn + " to " + nWidth + "px", "info", this.toString());
-	// 	}
-	// 	
-	// 	else if (width === null) {
-	// 		col.set('width', width);
-	// 		this._setColumnWidth(col, "auto");
-	// 		this.fire('columnsetWidthEvent', {column: col});
-	// 		
-	// 	}
-	// 	else {
-	// 		Y.log("Could not set width of Column " + oColumn + " to " + nWidth + "px", "warn", this.toString());
-	// 	}
-	// },
-	// 
-	// _setColumnWidth: function(col, width, overflow) {
-	// 	if (col && (col.get('keyIndex') !== null)) {
-	// 		overflow = overflow || (((width === '') || (width === 'auto')) ? 'visible' : 'hidden');
-	// 		
-	// 	}
-	// }
-	
-	
-	
 	
 });
 
