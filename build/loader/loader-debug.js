@@ -2748,7 +2748,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "datatable-base": {
                 "requires": [
-                    "recordset", 
+                    "recordset-base", 
                     "widget"
                 ], 
                 "skinnable": true
@@ -3857,7 +3857,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'f7c1df7b7a36d4ea8a236b07efdf6e8f';
+YUI.Env[Y.version].md5 = 'c737351f2d066395161bd763cce52c75';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
