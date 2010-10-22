@@ -9,6 +9,7 @@ YUI.add('resize-base', function(Y) {
 var Lang = Y.Lang,
 	isArray = Lang.isArray,
 	isBoolean = Lang.isBoolean,
+	isNumber = Lang.isNumber,
 	isString = Lang.isString,
 
 	trim = Lang.trim,
@@ -27,6 +28,8 @@ var Lang = Y.Lang,
 	BOTTOM = 'bottom',
 	CLASS_NAME = 'className',
 	CURSOR = 'cursor',
+	DEF_MIN_HEIGHT = 'defMinHeight',
+	DEF_MIN_WIDTH = 'defMinWidth',
 	DRAG_CURSOR = 'dragCursor',
 	HANDLE = 'handle',
 	HANDLES = 'handles',
@@ -194,6 +197,32 @@ Y.mix(Resize, {
 		autoHide: {
 			value: false,
 			validator: isBoolean
+		},
+
+		/**
+         * The default minimum height of the element. Only used when
+		 * ResizeConstrained is not plugged.
+         *
+         * @attribute defMinHeight
+         * @default 15
+         * @type Number
+         */
+		defMinHeight: {
+			value: 15,
+			validator: isNumber
+		},
+
+		/**
+         * The default minimum width of the element. Only used when
+		 * ResizeConstrained is not plugged.
+         *
+         * @attribute defMinWidth
+         * @default 15
+         * @type Number
+         */
+		defMinWidth: {
+			value: 15,
+			validator: isNumber
 		},
 
         /**
@@ -1252,12 +1281,15 @@ Y.Resize = Y.extend(
 
 			// if Y.Plugin.ResizeConstrained is not plugged, check for min dimension
 			if (!instance.con) {
-				if (info.offsetHeight <= 15) {
-					instance._checkSize(OFFSET_HEIGHT, 15);
+				var defMinHeight = instance.get(DEF_MIN_HEIGHT);
+				var defMinWidth = instance.get(DEF_MIN_WIDTH);
+
+				if (info.offsetHeight <= defMinHeight) {
+					instance._checkSize(OFFSET_HEIGHT, defMinHeight);
 				}
 
-				if (info.offsetWidth <= 15) {
-					instance._checkSize(OFFSET_WIDTH, 15);
+				if (info.offsetWidth <= defMinWidth) {
+					instance._checkSize(OFFSET_WIDTH, defMinWidth);
 				}
 			}
 		},
