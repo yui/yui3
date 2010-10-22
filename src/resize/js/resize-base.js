@@ -25,10 +25,8 @@ var Lang = Y.Lang,
 	AUTO_HIDE = 'autoHide',
 	BOTTOM = 'bottom',
 	CLASS_NAME = 'className',
-	CURSOR = 'cursor',
 	DEF_MIN_HEIGHT = 'defMinHeight',
 	DEF_MIN_WIDTH = 'defMinWidth',
-	DRAG_CURSOR = 'dragCursor',
 	HANDLE = 'handle',
 	HANDLES = 'handles',
 	HIDDEN = 'hidden',
@@ -42,8 +40,6 @@ var Lang = Y.Lang,
 	OFFSET_WIDTH = 'offsetWidth',
 	PARENT_NODE = 'parentNode',
 	POSITION = 'position',
-	PROXY = 'proxy',
-	PROXY_NODE = 'proxyNode',
 	RELATIVE = 'relative',
 	RESIZE = 'resize',
 	RESIZING = 'resizing',
@@ -96,7 +92,6 @@ var Lang = Y.Lang,
 	CSS_RESIZE_HANDLE_INNER_PLACEHOLDER = getCN(RESIZE, HANDLE, INNER, HANDLE_SUB),
 	CSS_RESIZE_HANDLE_PLACEHOLDER = getCN(RESIZE, HANDLE, HANDLE_SUB),
 	CSS_RESIZE_HIDDEN_HANDLES = getCN(RESIZE, HIDDEN, HANDLES),
-	CSS_RESIZE_PROXY = getCN(RESIZE, PROXY),
 	CSS_RESIZE_WRAPPER = getCN(RESIZE, WRAPPER);
 
 /**
@@ -118,7 +113,6 @@ var Lang = Y.Lang,
  *
  * <pre><code>var instance = new Y.Resize({
  *  node: '#resize1',
- *  proxy: true,
  *  preserveRatio: true,
  *  wrap: true,
  *  maxHeight: 170,
@@ -247,32 +241,6 @@ Y.mix(Resize, {
 		},
 
 		/**
-         * Resize a proxy element instead of the real element.
-         *
-         * @attribute proxy
-         * @default false
-         * @type boolean
-         */
-		proxy: {
-			value: false,
-			validator: isBoolean
-		},
-
-		/**
-         * The Resize proxy element.
-         *
-         * @attribute proxyNode
-         * @default Generated using an internal HTML markup
-         * @type String | Node
-         */
-		proxyNode: {
-			setter: Y.one,
-			valueFn: function() {
-				return Y.Node.create(this.PROXY_TEMPLATE);
-			}
-		},
-
-		/**
          * True when the element is being Resized.
          *
          * @attribute resizing
@@ -327,6 +295,58 @@ Y.mix(Resize, {
 			readOnly: true,
 			valueFn: '_valueWrapper',
 			writeOnce: true
+		}
+	},
+
+	RULES: {
+		b: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.offsetHeight = originalInfo.offsetHeight + dy;
+		},
+
+		l: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.left = originalInfo.left + dx;
+			info.offsetWidth = originalInfo.offsetWidth - dx;
+		},
+
+		r: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.offsetWidth = originalInfo.offsetWidth + dx;
+		},
+
+		t: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.top = originalInfo.top + dy;
+			info.offsetHeight = originalInfo.offsetHeight - dy;
+		},
+
+		tr: function(instance, dx, dy) {
+			this.t.apply(this, arguments);
+			this.r.apply(this, arguments);
+		},
+
+		bl: function(instance, dx, dy) {
+			this.b.apply(this, arguments);
+			this.l.apply(this, arguments);
+		},
+
+		br: function(instance, dx, dy) {
+			this.b.apply(this, arguments);
+			this.r.apply(this, arguments);
+		},
+
+		tl: function(instance, dx, dy) {
+			this.t.apply(this, arguments);
+			this.l.apply(this, arguments);
 		}
 	}
 });
@@ -386,14 +406,6 @@ Y.Resize = Y.extend(
 	     * @type {String}
 	     */
 		WRAP_TEMPLATE: '<div class="'+CSS_RESIZE_WRAPPER+'"></div>',
-
-		/**
-	     * Template used to create the resize proxy.
-	     *
-	     * @property PROXY_TEMPLATE
-	     * @type {String}
-	     */
-		PROXY_TEMPLATE: '<div class="'+CSS_RESIZE_PROXY+'"></div>',
 
 		/**
 	     * Template used to create each resize handle.
@@ -758,24 +770,6 @@ Y.Resize = Y.extend(
 		},
 
 	    /**
-	      * Render the <a href="Resize.html#config_proxyNode">proxyNode</a> element and
-	      * make it sibling of the <a href="Resize.html#config_node">node</a>.
-	      *
-	      * @method _renderProxy
-	      * @protected
-	      */
-		_renderProxy: function() {
-			var instance = this,
-				proxyNode = instance.get(PROXY_NODE);
-
-			if (!proxyNode.inDoc()) {
-				instance.get(WRAPPER).get(PARENT_NODE).append(
-					proxyNode.hide()
-				);
-			}
-		},
-
-	    /**
 	     * Creates the handle element based on the handle name and initialize the
 	     * DragDrop on it.
 	     *
@@ -791,6 +785,24 @@ Y.Resize = Y.extend(
 					handle: handle
 				})
 			);
+		},
+
+	    /**
+	     * Basic resize calculations.
+	     *
+	     * @method _calcResize
+	     * @protected
+	     */
+		_calcResize: function() {
+			var instance = this,
+				handle = instance.handle,
+				info = instance.info,
+				originalInfo = instance.originalInfo,
+
+				dx = info.actXY[0] - originalInfo.actXY[0],
+				dy = info.actXY[1] - originalInfo.actXY[1];
+
+			Y.Resize.RULES[handle](instance, dx, dy);
 		},
 
 		/**
@@ -929,57 +941,6 @@ Y.Resize = Y.extend(
 			};
 		},
 
-	    /**
-	     * Basic resize calculations.
-	     *
-	     * @method _resize
-	     * @protected
-	     */
-		_resize: function() {
-			var instance = this,
-				handle = instance.get(ACTIVE_HANDLE),
-				info = instance.info,
-				originalInfo = instance.originalInfo,
-
-				dx = info.actXY[0] - originalInfo.actXY[0],
-				dy = info.actXY[1] - originalInfo.actXY[1],
-
-				rules = {
-					t: function() {
-						info.top = originalInfo.top + dy;
-						info.offsetHeight = originalInfo.offsetHeight - dy;
-					},
-					r: function() {
-						info.offsetWidth = originalInfo.offsetWidth + dx;
-					},
-					l: function() {
-						info.left = originalInfo.left + dx;
-						info.offsetWidth = originalInfo.offsetWidth - dx;
-					},
-					b: function() {
-						info.offsetHeight = originalInfo.offsetHeight + dy;
-					},
-					tr: function() {
-						this.t();
-						this.r();
-					},
-					br: function() {
-						this.b();
-						this.r();
-					},
-					tl: function() {
-						this.t();
-						this.l();
-					},
-					bl: function() {
-						this.b();
-						this.l();
-					}
-				};
-
-			rules[handle](dx, dy);
-		},
-
 		/**
 		 * Set offsetWidth and offsetHeight of the passed node.
 		 *
@@ -1022,29 +983,6 @@ Y.Resize = Y.extend(
 			if (Y.UA.webkit) {
 				node.setStyle(RESIZE, NONE);
 			}
-		},
-
-		/**
-	     * Sync the proxy UI with internal values from
-	     * <a href="Resize.html#property_info">info</a>.
-	     *
-	     * @method _syncProxyUI
-	     * @protected
-	     */
-		_syncProxyUI: function() {
-			var instance = this,
-				info = instance.info,
-				activeHandleNode = instance.get(ACTIVE_HANDLE_NODE),
-				proxyNode = instance.get(PROXY_NODE),
-				cursor = activeHandleNode.getStyle(CURSOR);
-
-			proxyNode.show().setStyle(CURSOR, cursor);
-
-			instance.delegate.dd.set(DRAG_CURSOR, cursor);
-
-			instance._setOffset(proxyNode, info.offsetWidth, info.offsetHeight);
-
-			proxyNode.setXY([ info.left, info.top ]);
 		},
 
 		/**
@@ -1208,16 +1146,23 @@ Y.Resize = Y.extend(
 		_defResizeFn: function(event) {
 			var instance = this;
 
+			instance._resize(event);
+		},
+
+		/**
+	     * Logic method for _defResizeFn. Allow AOP.
+	     *
+	     * @method _resize
+	     * @param {EventFacade} event The Event object
+	     * @protected
+	     */
+		_resize: function(event) {
+			var instance = this;
+
 			instance._handleResizeAlignEvent(event.dragEvent);
 
-			// if proxy is true _syncProxyUI instead of _syncUI
-			if (instance.get(PROXY)) {
-				instance._syncProxyUI();
-			}
-			else {
-				// _syncUI of the wrapper, not using proxy
-				instance._syncUI();
-			}
+			// _syncUI of the wrapper, not using proxy
+			instance._syncUI();
 		},
 
 		/**
@@ -1228,7 +1173,23 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_defResizeAlignFn: function(event) {
-			var instance = this, info;
+			var instance = this;
+
+			instance._resizeAlign(event);
+		},
+
+		/**
+	     * Logic method for _defResizeAlignFn. Allow AOP.
+	     *
+	     * @method _resizeAlign
+	     * @param {EventFacade} event The Event object
+	     * @protected
+	     */
+		_resizeAlign: function(event) {
+			var instance = this,
+				info,
+				defMinHeight,
+				defMinWidth;
 
 			instance.lastInfo = instance.info;
 
@@ -1238,12 +1199,12 @@ Y.Resize = Y.extend(
 			info = instance.info;
 
 			// basic resize calculations
-			instance._resize();
+			instance._calcResize();
 
 			// if Y.Plugin.ResizeConstrained is not plugged, check for min dimension
 			if (!instance.con) {
-				var defMinHeight = instance.get(DEF_MIN_HEIGHT),
-					defMinWidth = instance.get(DEF_MIN_WIDTH);
+				defMinHeight = instance.get(DEF_MIN_HEIGHT);
+				defMinWidth = instance.get(DEF_MIN_WIDTH);
 
 				if (info.offsetHeight <= defMinHeight) {
 					instance._checkSize(OFFSET_HEIGHT, defMinHeight);
@@ -1263,18 +1224,24 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_defResizeEndFn: function(event) {
+			var instance = this;
+
+			instance._resizeEnd(event);
+		},
+
+		/**
+	     * Logic method for _defResizeEndFn. Allow AOP.
+	     *
+	     * @method _resizeEnd
+	     * @param {EventFacade} event The Event object
+	     * @protected
+	     */
+		_resizeEnd: function(event) {
 			var instance = this,
 				drag = event.dragEvent.target;
 
 			// reseting actXY from drag when drag end
 			drag.actXY = [];
-
-			// if proxy is true, hide it on resize end
-			if (instance.get(PROXY)) {
-				instance._syncProxyUI();
-
-				instance.get(PROXY_NODE).hide();
-			}
 
 			// syncUI when resize end
 			instance._syncUI();
@@ -1283,6 +1250,8 @@ Y.Resize = Y.extend(
 			instance.set(ACTIVE_HANDLE_NODE, null);
 
 			instance._setActiveHandlesUI(false);
+
+			instance.handle = null;
 		},
 
 	    /**
@@ -1293,8 +1262,23 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_defResizeStartFn: function(event) {
+			var instance = this;
+
+			instance._resizeStart(event);
+		},
+
+		/**
+	     * Logic method for _defResizeStartFn. Allow AOP.
+	     *
+	     * @method _resizeStart
+	     * @param {EventFacade} event The Event object
+	     * @protected
+	     */
+		_resizeStart: function(event) {
 			var instance = this,
 				wrapper = instance.get(WRAPPER);
+
+			instance.handle = instance.get(ACTIVE_HANDLE);
 
 			instance.set(RESIZING, true);
 
@@ -1302,10 +1286,6 @@ Y.Resize = Y.extend(
 			instance.originalInfo = instance._getInfo(wrapper, event);
 
 			instance._updateInfo(event);
-
-			if (instance.get(PROXY)) {
-				instance._renderProxy();
-			}
 		},
 
 	    /**

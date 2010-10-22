@@ -175,21 +175,24 @@ YUI({filter: 'raw'}).use('resize', function(Y) {
 
 	var r3 = new Y.Resize({
 		node: '#r3',
-		proxy: true,
 		wrap: true
+	});
+
+	r3.plug(Y.Plugin.ResizeProxy, {
+		// proxyNode: Y.Node.create('<div class="aui-proxy"></div>')
 	});
 
 	var r4 = new Y.Resize({
 		node: '#r4',
-		autoHide: true,
-		proxy: true
-	});
+		autoHide: true
+	})
+	.plug(Y.Plugin.ResizeProxy);
 
 	var r5 = new Y.Resize({
 		node: '#r5',
-		autoHide: true,
-		proxy: true
-	});
+		autoHide: true
+	})
+	.plug(Y.Plugin.ResizeProxy);
 
 	var r6 = new Y.Resize({
 		node: '#r6'
