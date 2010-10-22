@@ -203,6 +203,10 @@ YUI({filter: 'raw'}).use('resize', function(Y) {
 		node: '#r7'
 	});
 
+	// r7.on('resize', function(event) {
+	// 	console.log( event.currentTarget.get('activeHandle') );
+	// });
+
 	r7.plug(Y.Plugin.ResizeConstrained, {
 		constrain: '#r7Container',
 		// preserveRatio: true,
