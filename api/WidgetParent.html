@@ -70,6 +70,13 @@
                     <div class="summary description" property="yui:description">
                         Widget extension providing functionality enabling a Widget to be a 
 parent of another Widget.
+<p>In addition to the set of attributes supported by WidgetParent, the constructor
+configuration object can also contain a <code>children</code> which can be used
+to add child widgets to the parent during construction. The <code>children</code>
+property is an array of either child widget instances or child widget configuration 
+objects, and is sugar for the <a href="#method_add">add</a> method. See the 
+<a href="#method_add">add</a> for details on the structure of the child widget 
+configuration object.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -451,8 +458,10 @@ using YUI's aop infrastructure.
                                             Creates an instance of a child Widget using the specified configuration.
 By default Widget instances will be created of the type specified 
 by the <code>defaultChildType</code> attribute.  Types can be explicitly
-defined via the <code>type</code> property of the configuration object
-literal.
+defined via the <code>childType</code> property of the configuration object
+literal. The use of the <code>type</code> property has been deprecated, but 
+will still be used as a fallback, if <code>childType</code> is not defined,
+for backwards compatibility.
                                         </div>
 
                                         <div class="description">
@@ -958,7 +967,13 @@ being added as a child.
                                                         &lt;<span property="yui:type">Widget|Object</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  The Widget instance, or configuration 
-object for the Widget to be added as a child.</span>
+object for the Widget to be added as a child. The configuration object
+for the child can include a <code>childType</code> property, which is either
+a constructor function or a string which names a constructor function on the 
+Y instance (e.g. "Tab" would refer to Y.Tab) (<code>childType</code> used to be 
+named <code>type</code>, support for which has been deprecated, but is still
+maintained for backward compatibility. <code>childType</code> takes precedence
+over <code>type</code> if both are defined.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">child</span>

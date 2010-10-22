@@ -96,6 +96,7 @@
                 <span class="nx">url</span> <span class="o">=</span> <span class="nx">prompt</span><span class="p">(</span><span class="nx">CreateLinkBase</span><span class="p">.</span><span class="nx">STRINGS</span><span class="p">.</span><span class="nx">PROMPT</span><span class="p">,</span> <span class="nx">CreateLinkBase</span><span class="p">.</span><span class="nx">STRINGS</span><span class="p">.</span><span class="nx">DEFAULT</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">url</span> <span class="o">=</span> <span class="nx">escape</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding link: &#39;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;createLinkBase&#39;</span><span class="p">);</span>
 
                 <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">).</span><span class="nx">_execCommand</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>

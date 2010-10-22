@@ -411,7 +411,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "datatable-base": {
                 "requires": [
-                    "recordset", 
+                    "recordset-base", 
                     "widget"
                 ], 
                 "skinnable": true
@@ -419,7 +419,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-scroll": {
                 "requires": [
                     "datatable-base", 
-                    "plugin"
+                    "plugin", 
+                    "stylesheet"
                 ]
             }, 
             "datatable-sort": {
@@ -1090,6 +1091,19 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "node-tokeninput": {
+        "requires": [
+            "array-extras", 
+            "classnamemanager", 
+            "event-focus", 
+            "event-valuechange", 
+            "node-event-delegate", 
+            "node-pluginhost", 
+            "node-style", 
+            "plugin"
+        ], 
+        "skinnable": true
+    }, 
     "oop": {
         "requires": [
             "yui-base"
@@ -1506,7 +1520,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '125d186662061c5fadd39f49d1a983a8';
+YUI.Env[Y.version].md5 = 'c737351f2d066395161bd763cce52c75';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

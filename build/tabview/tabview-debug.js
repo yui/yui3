@@ -54,7 +54,7 @@ var _queries = Y.TabviewBase._queries,
         if (tablist) {
             tablist.setAttrs({
                 //'aria-labelledby': 
-                role: tablist
+                role: 'tablist'
             });
         }
     },

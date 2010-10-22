@@ -295,7 +295,7 @@ YUI({
                                 Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                             });
                         });
-                        test.wait();
+                        test.wait(2000);
                     });
                 });
 
@@ -650,6 +650,7 @@ YUI({
                 test.wait(4000);
             },
 
+/* deprecated
             'transition:end should fire after longest duration': function() {
                 var node = Y.one('.demo'),
                     test = this,
@@ -680,6 +681,7 @@ YUI({
 
                 test.wait(4000);
             },
+*/
 
             'native transform should map to vendor prefix': function() {
                 var node = Y.one('.demo'),

@@ -26,6 +26,8 @@ Widget.ATTRS[LOCALE] = {
     value: "en"
 };
 
+Widget.ATTRS.strings.lazyAdd = false;
+
 Y.mix(Widget.prototype, {
 
     /**
