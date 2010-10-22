@@ -15,7 +15,12 @@ var doc = Y.config.doc,
     KEY_RIGHT     = 39,
     KEY_UP        = 38,
 
-    EMPTY_OBJECT = {};
+    EMPTY_OBJECT = {},
+
+    // String shorthand.
+    DELIMITER = 'delimiter',
+    TOKENS    = 'tokens',
+    VALUE     = 'value';
 
 function TokenInput() {
     TokenInput.superclass.constructor.apply(this, arguments);
@@ -28,6 +33,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
     INPUT_TEMPLATE  : '<input type="text" autocomplete="off">',
     ITEM_TEMPLATE   : '<li/>',
     LIST_TEMPLATE   : '<ul/>',
+    REMOVE_TEMPLATE : '<a href="#" title="Remove"><span role="img">\u00D7</span></a>',
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
@@ -57,7 +63,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         });
 
         if (initialTokens) {
-            this.set('tokens', this.get('tokens').concat(initialTokens));
+            this.set(TOKENS, this.get(TOKENS).concat(initialTokens));
         }
 
         this._render();
@@ -81,16 +87,16 @@ Y.extend(TokenInput, Y.Plugin.Base, {
      *
      * @method add
      * @param {Array|String} newTokens Token string or array of token strings.
-     * @param {Number} index (optional) Index at which to add the token.
+     * @param {Number} index (optional) 0-based index at which to add the token.
      * @chainable
      */
     add: function (newTokens, index) {
         var addTokens = [],
             items     = [],
-            tokens    = this.get('tokens');
+            tokens    = this.get(TOKENS);
 
         newTokens = Lang.isArray(newTokens) ? newTokens :
-                newTokens.split(this.get('delimiter'));
+                newTokens.split(this.get(DELIMITER));
 
         YArray.each(newTokens, function (token, i) {
             token = Lang.trim(token);
@@ -118,7 +124,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
             }
 
             this._tokenNodes.refresh();
-            this.set('tokens', tokens, {atomic: true});
+            this.set(TOKENS, tokens, {atomic: true});
         }
 
         return this;
@@ -134,7 +140,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         this._tokenNodes.remove(true);
         this._tokenNodes.refresh();
 
-        return this.set('tokens', [], {atomic: true});
+        return this.set(TOKENS, [], {atomic: true});
     },
 
     /**
@@ -145,14 +151,14 @@ Y.extend(TokenInput, Y.Plugin.Base, {
      * @chainable
      */
     remove: function (index) {
-        var tokens = this.get('tokens');
+        var tokens = this.get(TOKENS);
 
         tokens.splice(index, 1);
 
         this._tokenNodes.item(index).remove(true);
         this._tokenNodes.refresh();
 
-        return this.set('tokens', tokens, {atomic: true});
+        return this.set(TOKENS, tokens, {atomic: true});
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -172,18 +178,28 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         }
 
         this._events.concat([
-            this._boundingBox.after('blur', this._afterBlur, this),
-            this._boundingBox.after('focus', this._afterFocus, this),
+            this._boundingBox.after({
+                blur : this._afterBlur,
+                focus: this._afterFocus
+            }, null, this),
 
-            list.delegate('blur', this._onTokenBlur, selectors.token, this),
-            list.delegate('focus', this._onTokenFocus, selectors.token, this),
-            list.delegate('mouseover', this._onTokenMouseOver, selectors.token, this),
-            list.delegate('mouseout', this._onTokenMouseOut, selectors.token, this),
+            list.delegate({
+                blur     : this._onTokenBlur,
+                focus    : this._onTokenFocus,
+                mouseover: this._onTokenMouseOver,
+                mouseout : this._onTokenMouseOut
+            }, selectors.token, this),
 
             list.delegate(Y.UA.gecko ? 'keypress' : 'keydown', this._onKey,
                     selectors.input + ',' + selectors.token, this),
 
-            this.after('tokensChange', this._afterTokensChange)
+            list.delegate('click', this._onRemoveClick, selectors.remove, this),
+
+            this.after({
+                fauxInputChange   : this._afterFauxInputChange,
+                removeButtonChange: this._afterRemoveButtonChange,
+                tokensChange      : this._afterTokensChange
+            })
         ]);
     },
 
@@ -202,7 +218,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
     _createItem: function (options) {
         var classNames = TokenInput.CLASS_NAMES,
             item       = Node.create(this.ITEM_TEMPLATE),
-            input;
+            input, remove;
 
         if (!options) {
             options = EMPTY_OBJECT;
@@ -219,15 +235,24 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         if (options.editable) {
             input = Node.create(this.INPUT_TEMPLATE).addClass(classNames.input);
 
-            // Event will be purged when item is removed.
+            // Event will be purged when the item is removed.
             input.on('valueChange', this._afterInputValueChange, this);
 
             item.append(input);
         }
 
         if (options.token) {
-            item.set('tabIndex', -1);
-            item.set('text', options.text || '');
+            item.setAttrs({
+                tabIndex: 0,
+                text    : options.text || ''
+            });
+
+            if (this.get('removeButton')) {
+                item.addClass(classNames.hasremove).append(
+                    Node.create(this.REMOVE_TEMPLATE).addClass(
+                        classNames.remove).set('role', 'button')
+                );
+            }
         }
 
         return item;
@@ -351,7 +376,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
     },
 
     _keyEnter: function (e) {
-        var value = Lang.trim(this._inputNode.get('value'));
+        var value = Lang.trim(this._inputNode.get(VALUE));
 
         if (!this.get('tokenizeOnEnter') || !value) {
             return false;
@@ -446,7 +471,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
 
     _sync: function () {
         var items  = [],
-            tokens = this.get('tokens');
+            tokens = this.get(TOKENS);
 
         this._contentBox[this.get('fauxInput') ? 'addClass' : 'removeClass'](
                 TokenInput.CLASS_NAMES.fauxinput);
@@ -473,7 +498,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
     },
 
     _syncHost: function () {
-        this._host.set('value', this.get('tokens').join(this.get('delimiter')));
+        this._host.set(VALUE, this.get(TOKENS).join(this.get(DELIMITER)));
     },
 
     _tokenizeValue: function (node, value, options) {
@@ -488,10 +513,10 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         }
 
         if (!value && value !== '') {
-            value = node.get('value');
+            value = node.get(VALUE);
         }
 
-        tokens = value.split(this.get('delimiter'));
+        tokens = value.split(this.get(DELIMITER));
 
         if (options.all || tokens.length > 1) {
             if (options.all) {
@@ -502,7 +527,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
             }
 
             if (options.updateUI) {
-                node.set('value', value);
+                node.set(VALUE, value);
 
                 if (tokens.length) {
                     // All other items are added as tokens.
@@ -527,6 +552,10 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         }
     },
 
+    _afterFauxInputChange: function (e) {
+        this._sync();
+    },
+
     _afterFocus: function (e) {
         var that = this;
 
@@ -542,6 +571,10 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         this._tokenizeValue(e.currentTarget, e.newVal);
     },
 
+    _afterRemoveButtonChange: function (e) {
+        this._sync();
+    },
+
     _afterTokensChange: function (e) {
         // Only do a full sync for non-atomic changes (i.e., changes that are
         // made via some means other than the add()/remove() methods).
@@ -550,6 +583,24 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         } else {
             this._sync();
         }
+    },
+
+    _onKey: function (e) {
+        var handler = this._keys[e.keyCode];
+
+        if (handler) {
+            // A handler may return false to indicate that it doesn't wish
+            // to prevent the default key behavior.
+            if (handler.call(this, e) !== false) {
+                e.preventDefault();
+            }
+        }
+    },
+
+    _onRemoveClick: function (e) {
+        var item = e.currentTarget.ancestor(this._selectors.item);
+        e.preventDefault();
+        this.remove(this._tokenNodes.indexOf(item));
     },
 
     _onTokenBlur: function (e) {
@@ -566,18 +617,6 @@ Y.extend(TokenInput, Y.Plugin.Base, {
 
     _onTokenMouseOver: function (e) {
         e.currentTarget.addClass(TokenInput.CLASS_NAMES.hover);
-    },
-
-    _onKey: function (e) {
-        var handler = this._keys[e.keyCode];
-
-        if (handler) {
-            // A handler may return false to indicate that it doesn't wish
-            // to prevent the default key behavior.
-            if (handler.call(this, e) !== false) {
-                e.preventDefault();
-            }
-        }
     }
 }, {
     NAME: 'pluginTokenInput',
@@ -608,6 +647,10 @@ Y.extend(TokenInput, Y.Plugin.Base, {
             readOnly: true
         },
 
+        removeButton: {
+            value: !!Y.UA.mobile
+        },
+
         tokenizeOnBlur: {
             value: true
         },
@@ -627,6 +670,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         content  : getClassName('content'),
         editable : getClassName('editable'),
         fauxinput: getClassName('fauxinput'),
+        hasremove: getClassName('hasremove'),
         hidden   : getClassName('hidden'),
         host     : getClassName('host'),
         hover    : getClassName('hover'),
@@ -634,6 +678,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         input    : getClassName('input'),
         item     : getClassName('item'),
         list     : getClassName('list'),
+        remove   : getClassName('remove'),
         token    : getClassName('token')
     }
 });
