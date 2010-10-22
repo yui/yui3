@@ -57,7 +57,7 @@
     <span class="nx">EVENT_NAME</span>   <span class="o">=</span> <span class="s1">&#39;onreadystatechange&#39;</span><span class="p">,</span>
     <span class="nx">pollInterval</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pollInterval</span> <span class="o">||</span> <span class="mi">40</span><span class="p">;</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ieready</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">docElement</span><span class="p">.</span><span class="nx">doScroll</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ieready</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ieready</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ready</span><span class="p">();</span>
     <span class="p">};</span>
