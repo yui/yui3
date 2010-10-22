@@ -296,6 +296,58 @@ Y.mix(Resize, {
 			valueFn: '_valueWrapper',
 			writeOnce: true
 		}
+	},
+
+	RULES: {
+		b: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.offsetHeight = originalInfo.offsetHeight + dy;
+		},
+
+		l: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.left = originalInfo.left + dx;
+			info.offsetWidth = originalInfo.offsetWidth - dx;
+		},
+
+		r: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.offsetWidth = originalInfo.offsetWidth + dx;
+		},
+
+		t: function(instance, dx, dy) {
+			var info = instance.info,
+				originalInfo = instance.originalInfo;
+
+			info.top = originalInfo.top + dy;
+			info.offsetHeight = originalInfo.offsetHeight - dy;
+		},
+
+		tr: function(instance, dx, dy) {
+			this.t.apply(this, arguments);
+			this.r.apply(this, arguments);
+		},
+
+		bl: function(instance, dx, dy) {
+			this.b.apply(this, arguments);
+			this.l.apply(this, arguments);
+		},
+
+		br: function(instance, dx, dy) {
+			this.b.apply(this, arguments);
+			this.r.apply(this, arguments);
+		},
+
+		tl: function(instance, dx, dy) {
+			this.t.apply(this, arguments);
+			this.l.apply(this, arguments);
+		}
 	}
 });
 
@@ -743,47 +795,14 @@ Y.Resize = Y.extend(
 	     */
 		_calcResize: function() {
 			var instance = this,
-				handle = instance.get(ACTIVE_HANDLE),
+				handle = instance.handle,
 				info = instance.info,
 				originalInfo = instance.originalInfo,
 
 				dx = info.actXY[0] - originalInfo.actXY[0],
-				dy = info.actXY[1] - originalInfo.actXY[1],
+				dy = info.actXY[1] - originalInfo.actXY[1];
 
-				rules = {
-					t: function() {
-						info.top = originalInfo.top + dy;
-						info.offsetHeight = originalInfo.offsetHeight - dy;
-					},
-					r: function() {
-						info.offsetWidth = originalInfo.offsetWidth + dx;
-					},
-					l: function() {
-						info.left = originalInfo.left + dx;
-						info.offsetWidth = originalInfo.offsetWidth - dx;
-					},
-					b: function() {
-						info.offsetHeight = originalInfo.offsetHeight + dy;
-					},
-					tr: function() {
-						this.t();
-						this.r();
-					},
-					br: function() {
-						this.b();
-						this.r();
-					},
-					tl: function() {
-						this.t();
-						this.l();
-					},
-					bl: function() {
-						this.b();
-						this.l();
-					}
-				};
-
-			rules[handle](dx, dy);
+			Y.Resize.RULES[handle](instance, dx, dy);
 		},
 
 		/**
@@ -1231,6 +1250,8 @@ Y.Resize = Y.extend(
 			instance.set(ACTIVE_HANDLE_NODE, null);
 
 			instance._setActiveHandlesUI(false);
+
+			instance.handle = null;
 		},
 
 	    /**
@@ -1256,6 +1277,8 @@ Y.Resize = Y.extend(
 		_resizeStart: function(event) {
 			var instance = this,
 				wrapper = instance.get(WRAPPER);
+
+			instance.handle = instance.get(ACTIVE_HANDLE);
 
 			instance.set(RESIZING, true);
 

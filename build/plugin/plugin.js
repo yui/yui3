@@ -194,7 +194,6 @@ YUI.add('plugin', function(Y) {
          * @return handle {EventHandle} The detach handle for the injected function. 
          */
         beforeHostMethod : function(strMethod, fn, context) {
-	console.log('beforeHostMethod', arguments);
             var handle = Y.Do.before(fn, this.get("host"), strMethod, context || this);
             this._handles.push(handle);
             return handle;
