@@ -3,7 +3,6 @@ YUI.add('widget-uievents', function(Y) {
 var UI_EVENT_REGEX = /(\w+):(\w+)/,
     UI_EVENT_REGEX_REPLACE = "$2",
     BOUNDING_BOX = "boundingBox",
-    PARENT_NODE = "parentNode",
     Widget = Y.Widget,
     RENDER = "render",
     L = Y.Lang;
@@ -68,8 +67,7 @@ Y.mix(Widget.prototype, {
     _createUIEvent: function (type) {
 
         var uiEvtNode = this._getUIEventNode(),
-            parentNode = uiEvtNode.get(PARENT_NODE),
-            key = (Y.stamp(parentNode) + type),
+            key = (Y.stamp(uiEvtNode) + type),
             info,
             handle;
 
@@ -81,7 +79,7 @@ Y.mix(Widget.prototype, {
 
         if (!info) {
 
-            handle = parentNode.delegate(type, function (evt) {
+            handle = uiEvtNode.delegate(type, function (evt) {
 
                 var widget = Widget.getByNode(this);
                 //  Make the DOM event a property of the custom event
