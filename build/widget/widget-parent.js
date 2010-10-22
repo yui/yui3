@@ -12,6 +12,13 @@ var Lang = Y.Lang;
  * Widget extension providing functionality enabling a Widget to be a 
  * parent of another Widget.
  *
+ * <p>In addition to the set of attributes supported by WidgetParent, the constructor
+ * configuration object can also contain a <code>children</code> which can be used
+ * to add child widgets to the parent during construction. The <code>children</code>
+ * property is an array of either child widget instances or child widget configuration 
+ * objects, and is sugar for the <a href="#method_add">add</a> method. See the 
+ * <a href="#method_add">add</a> for details on the structure of the child widget 
+ * configuration object.
  * @class WidgetParent
  * @constructor
  * @uses ArrayList
@@ -64,9 +71,6 @@ function Parent(config) {
         defaultTargetOnly: true,
         defaultFn: this._defRemoveChildFn 
     });
-
-
-    //  TO DO: Document ability to populate children via the constructor
 
     this._items = [];
 
@@ -409,8 +413,10 @@ Parent.prototype = {
      * Creates an instance of a child Widget using the specified configuration.
      * By default Widget instances will be created of the type specified 
      * by the <code>defaultChildType</code> attribute.  Types can be explicitly
-     * defined via the <code>type</code> property of the configuration object
-     * literal.
+     * defined via the <code>childType</code> property of the configuration object
+     * literal. The use of the <code>type</code> property has been deprecated, but 
+     * will still be used as a fallback, if <code>childType</code> is not defined,
+     * for backwards compatibility. 
      *
      * @method _createChild
      * @protected
@@ -420,29 +426,25 @@ Parent.prototype = {
     _createChild: function (config) {
 
         var defaultType = this.get("defaultChildType"),
-            altType = config.type,
+            altType = config.childType || config.type,
             child,
             Fn,
             FnConstructor;
 
         if (altType) {
-
             Fn = Lang.isString(altType) ? Y[altType] : altType;
-
-            if (Lang.isFunction(Fn)) {
-                FnConstructor = Fn;
-            }
-
         }
-        else if (defaultType) {
+
+        if (Lang.isFunction(Fn)) {
+            FnConstructor = Fn;
+        } else if (defaultType) {
+            // defaultType is normalized to a function in it's setter 
             FnConstructor = defaultType;
         }
 
-
         if (FnConstructor) {
             child = new FnConstructor(config);
-        }
-        else {
+        } else {
             Y.error("Could not create a child instance because its constructor is either undefined or invalid.");
         }
 
@@ -517,10 +519,9 @@ Parent.prototype = {
         children.splice(index, 1);
 
         child.removeTarget(this);
+        child._oldParent = child.get("parent");
         child._set("parent", null);
-        
     },
-
 
     /**
     * @method _add
@@ -588,7 +589,13 @@ Parent.prototype = {
     /**
     * @method add
     * @param child {Widget|Object} The Widget instance, or configuration 
-    * object for the Widget to be added as a child.
+    * object for the Widget to be added as a child. The configuration object
+    * for the child can include a <code>childType</code> property, which is either
+    * a constructor function or a string which names a constructor function on the 
+    * Y instance (e.g. "Tab" would refer to Y.Tab) (<code>childType</code> used to be 
+    * named <code>type</code>, support for which has been deprecated, but is still
+    * maintained for backward compatibility. <code>childType</code> takes precedence
+    * over <code>type</code> if both are defined.
     * @param child {Array} Array of Widget instances, or configuration 
     * objects for the Widgets to be added as a children.
     * @param index {Number} (Optional.)  Number representing the position at 
@@ -748,7 +755,7 @@ Parent.prototype = {
     _afterRemoveChild: function (event) {
         var child = event.child;
 
-        if (child.get("parent") == this) {
+        if (child._oldParent == this) {
             this._uiRemoveChild(child);
         }
     },
