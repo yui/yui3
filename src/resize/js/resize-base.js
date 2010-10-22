@@ -1293,12 +1293,13 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_defResizeStartFn: function(event) {
-			var instance = this;
+			var instance = this,
+				wrapper = instance.get(WRAPPER);
 
 			instance.set(RESIZING, true);
 
 			// create an originalInfo information for reference
-			instance.originalInfo = instance._getInfo(instance.get(WRAPPER), event);
+			instance.originalInfo = instance._getInfo(wrapper, event);
 
 			instance._updateInfo(event);
 
