@@ -11,6 +11,7 @@ var YDo = Y.Do,
 	YNode = Y.Node,
 	YLang = Y.Lang,
 	YUA = Y.UA,
+	YStyleSheet = Y.StyleSheet,
 	YgetClassName = Y.ClassNameManager.getClassName,
 	DATATABLE = "datatable",
 	CLASS_HEADER = YgetClassName(DATATABLE, "hd"),
@@ -333,6 +334,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			len,
 			thWidth, tdWidth, thLiner, tdLiner,
 			ie = YUA.ie;
+			//stylesheet = new YStyleSheet('columnsSheet'),
+			//className;
 			
 			/*
 			This for loop goes through the first row of TDs in the table.
@@ -341,6 +344,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			*/
 			for (i=0, len = th.size(); i<len; i++) { 
 				
+				//className = '.'+td.item(i).get('classList')._nodes[0];
 				//If a width has not been already set on the TD:
 				//if (td.item(i).get('firstChild').getStyle('width') === "auto") {
 					
@@ -373,16 +377,20 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 					//if TH is bigger than TD, enlarge TD Liner
 					if (thWidth > tdWidth) {
 						tdLiner.setStyle('width', (thWidth - 20 + 'px'));
+						//stylesheet.set(className,{'width': (thWidth - 20 + 'px')});
 					}
 					
 					//if TD is bigger than TH, enlarge TH Liner
 					else if (tdWidth > thWidth) {
 						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
+						//stylesheet.set(className,{'width': (tdWidth - 20 + 'px')});
 					}
-
+					
 				//}
 
 			}
+			
+			//stylesheet.enable();
 			
 			//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
 			//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
