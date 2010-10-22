@@ -4,6 +4,7 @@
 .yui3-tokeninput-list {
     display: inline-block;
     padding: 0;
+    vertical-align: bottom;
     zoom: 1;
     *display: inline;
 }
@@ -32,13 +33,11 @@
     cursor: text;
     list-style: none;
     margin: 0;
+    overflow: hidden;
     padding: 1px 0;
 }
 
-.yui3-tokeninput-token {
-    cursor: pointer;
-    padding: 0 10px 0;
-}
+.yui3-tokeninput-token { cursor: pointer; }
 
 .yui3-tokeninput-hidden,
 .yui3-tokeninput-host { display: none; }
