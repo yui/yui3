@@ -1279,8 +1279,8 @@ Y.Resize = Y.extend(
 
 			// if Y.Plugin.ResizeConstrained is not plugged, check for min dimension
 			if (!instance.con) {
-				var defMinHeight = instance.get(DEF_MIN_HEIGHT);
-				var defMinWidth = instance.get(DEF_MIN_WIDTH);
+				var defMinHeight = instance.get(DEF_MIN_HEIGHT),
+					defMinWidth = instance.get(DEF_MIN_WIDTH);
 
 				if (info.offsetHeight <= defMinHeight) {
 					instance._checkSize(OFFSET_HEIGHT, defMinHeight);
