@@ -96,7 +96,7 @@ Y.mix(Transition.prototype, {
                             config[name].on.end.call(node, data);
                         }
 
-                        node.fire('transition:propertyEnd', data);
+                        //node.fire('transition:propertyEnd', data);
 
                         if (!allDone && anim._count <= 0) {
                             allDone = true;

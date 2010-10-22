@@ -213,7 +213,7 @@ Transition.prototype = {
         if (!anim._running) {
             anim._running = true;
 
-            anim._node.fire('transition:start', data);
+            //anim._node.fire('transition:start', data);
 
             if (config.on && config.on.start) {
                 config.on.start.call(node, data);
@@ -334,7 +334,7 @@ Transition.prototype = {
             }, 1);
         }
 
-        node.fire('transition:end', data);
+        //node.fire('transition:end', data);
     },
 
     _endNative: function(name) {
@@ -376,7 +376,7 @@ Transition.prototype = {
                 config.on.end.call(node, data);
             }
 
-            node.fire('transition:propertyEnd', data);
+            //node.fire('transition:propertyEnd', data);
 
             if (anim._count <= 0)  { // after propertEnd fires
                 anim._end(elapsed);
