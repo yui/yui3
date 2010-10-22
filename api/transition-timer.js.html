@@ -145,7 +145,7 @@
                             <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
                         <span class="p">}</span>
 
-                        <span class="nx">node</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;transition:propertyEnd&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+                        <span class="c1">//node.fire(&#39;transition:propertyEnd&#39;, data);</span>
 
                         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">allDone</span> <span class="o">&amp;&amp;</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
