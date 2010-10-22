@@ -23,7 +23,11 @@
     background: #d6e0f7;
     border: 1px solid #93ace9;
     border-radius: 8px;
+    padding: 0 10px 1px;
+    position: relative;
 }
+
+.yui3-tokeninput-hasremove { padding-right: 16px; }
 
 .yui3-tokeninput-hover {
     background: #adc1ef;
@@ -36,3 +40,17 @@
     color: #fff;
     outline: none;
 }
+
+.yui3-tokeninput-remove {
+    color: #97a2c1;
+    font-weight: bold;
+    line-height: 1;
+    margin-top: 1px;
+    position: absolute;
+    right: 4px;
+    text-decoration: none;
+}
+
+.yui3-tokeninput-windows .yui3-tokeninput-remove { margin-top: 2px; }
+.yui3-tokeninput-remove:hover { color: #333; }
+.yui3-tokeninput-focus .yui3-tokeninput-remove { color: #fff; }
