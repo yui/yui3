@@ -9,7 +9,7 @@ var stateChangeListener,
     EVENT_NAME   = 'onreadystatechange',
     pollInterval = config.pollInterval || 40;
 
-if (!GLOBAL_ENV._ieready) {
+if (docElement.doScroll && !GLOBAL_ENV._ieready) {
     GLOBAL_ENV._ieready = function() {
         GLOBAL_ENV._ready();
     };

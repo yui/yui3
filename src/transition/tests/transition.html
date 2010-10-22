@@ -33,6 +33,33 @@ YUI({
         var suite = new Y.Test.Suite('Transition Tests');
 
         suite.add(new Y.Test.Case({
+            name: 'property onend Tests',
+
+            'should run the onend for the property': function() {
+
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    height: {
+                        value: 0,
+                        on: {
+                            end: function() {
+                                test.resume(function() {
+                                    Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                                    node.setStyle('height', '');
+                                });
+                            }
+                        }
+                    }
+                });
+
+                test.wait(2000);
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
             name: 'onstart Tests',
 
             'should run the onstart prior to setting target values': function() {
@@ -268,7 +295,7 @@ YUI({
                                 Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                             });
                         });
-                        test.wait();
+                        test.wait(2000);
                     });
                 });
 
@@ -514,7 +541,7 @@ YUI({
                         Y.Assert.areEqual(1, parseInt(e.elapsedTime));
                     });
                 });
-                test.wait();
+                test.wait(4000);
             }
 
 
@@ -546,7 +573,32 @@ YUI({
                 test.wait(4000);
             },
 
-            'should end at final values': function() {
+            'should end at both final values': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                   opacity: {
+                      easing: 'ease-out',
+                      duration: 1.25,
+                      value: 0
+                    },
+                    height: {
+                      delay:1.25,
+                      easing: 'ease-out',
+                      value: 0
+                    }
+                }, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                        Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
+                    });
+                });
+
+                test.wait(4000);
+            },
+
+            'should end at all final values': function() {
                 var node = Y.one('.demo'),
                     test = this;
 
@@ -598,6 +650,7 @@ YUI({
                 test.wait(4000);
             },
 
+/* deprecated
             'transition:end should fire after longest duration': function() {
                 var node = Y.one('.demo'),
                     test = this,
@@ -628,6 +681,7 @@ YUI({
 
                 test.wait(4000);
             },
+*/
 
             'native transform should map to vendor prefix': function() {
                 var node = Y.one('.demo'),

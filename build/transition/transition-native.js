@@ -9,7 +9,8 @@ YUI.add('transition-native', function(Y) {
 */
 
 var TRANSITION = '-webkit-transition',
-    TRANSITION_PROPERTY_CAMEL = 'WebkitTransition',
+    TRANSITION_CAMEL = 'WebkitTransition',
+    TRANSITION_PROPERTY_CAMEL = 'WebkitTransitionProperty',
     TRANSITION_PROPERTY = '-webkit-transition-property',
     TRANSITION_DURATION = '-webkit-transition-duration',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
@@ -30,17 +31,10 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
-Transition._fx = {};
+Transition.fx = {};
+Transition.toggles = {};
 
-Transition.add = function(name, config) {
-    if (typeof name !== 'string') {
-        Y.Object.each(name, function(v, n) {
-            Transition.add(n, v);
-        });
-    } else {
-        Transition._fx[name] = config;
-    }
-};
+Transition._hasEnd = {};
 
 Transition._toCamel = function(property) {
     property = property.replace(/-([a-z])/gi, function(m0, m1) {
@@ -92,8 +86,8 @@ Transition.prototype = {
     constructor: Transition,
     init: function(node, config) {
         var anim = this;
-        if (!anim._running) {
-            anim._node = node;
+        anim._node = node;
+        if (!anim._running && config) {
             anim._config = config;
             node._transition = anim; // cache for reuse
 
@@ -138,10 +132,25 @@ Transition.prototype = {
             val = val.call(node, node);
         }
 
-        // take control if another transition owns this property
-        if (attr && attr.transition && attr.transition !== anim) {
-            attr.transition._count--; // remapping attr to this transition
-        }
+        if (attr && attr.transition) {
+            // take control if another transition owns this property
+            if (attr.transition !== anim) {
+                attr.transition._count--; // remapping attr to this transition
+            }
+        } /* else {
+            // when size is auto or % webkit starts from zero instead of computed 
+            // (https://bugs.webkit.org/show_bug.cgi?id=16020)
+            // workaround by setting to current value
+            // TODO: move to run
+            if (prop == 'height' || prop == 'width') {
+                // avoid setting if already set or transitioning
+                // TODO: handle inline percent / auto
+                if (!node._node.style[prop] && /(?:^|\s|;)prop(?:;|\s|$)/.test(
+                            node.getStyle(TRANSITION_PROPERTY_CAMEL))) {
+                    node.setStyle(prop, node.getComputedStyle(prop));
+                }
+            }
+        } */
 
         anim._count++; // properties per transition
 
@@ -205,7 +214,7 @@ Transition.prototype = {
         if (!anim._running) {
             anim._running = true;
 
-            anim._node.fire('transition:start', data);
+            //anim._node.fire('transition:start', data);
 
             if (config.on && config.on.start) {
                 config.on.start.call(node, data);
@@ -271,6 +280,7 @@ Transition.prototype = {
 
                     transitionText += hyphy + ',';
                     cssText += hyphy + ': ' + attr.value + '; ';
+
                 } else {
                     this.removeProperty(name);
                 }
@@ -283,13 +293,15 @@ Transition.prototype = {
         delay = delay.replace(/,$/, ';');
 
         // only one native end event per node
-        if (!node._hasTransitionEnd) {
+        if (!Transition._hasEnd[uid]) {
             anim._detach = node.on(TRANSITION_END, anim._onNativeEnd);
-            node._hasTransitionEnd = true;
+            Transition._hasEnd[uid] = true;
 
         }
 
-        style.cssText += transitionText + duration + easing + delay + cssText;
+        //setTimeout(function() { // allow updates to apply (size fix, onstart, etc)
+            style.cssText += transitionText + duration + easing + delay + cssText;
+        //}, 1);
 
     },
 
@@ -323,7 +335,7 @@ Transition.prototype = {
             }, 1);
         }
 
-        node.fire('transition:end', data);
+        //node.fire('transition:end', data);
     },
 
     _endNative: function(name) {
@@ -333,7 +345,7 @@ Transition.prototype = {
         if (typeof value === 'string') {
             value = value.replace(new RegExp('(?:^|,\\s)' + name + ',?'), ',');
             value = value.replace(/^,|,$/, '');
-            node.setStyle(TRANSITION_PROPERTY_CAMEL, value);
+            node.setStyle(TRANSITION_CAMEL, value);
         }
     },
 
@@ -345,22 +357,31 @@ Transition.prototype = {
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
             attr = attrs[name],
-            anim = (attr) ? attr.transition : null;
+            anim = (attr) ? attr.transition : null,
+            data,
+            config;
 
         if (anim) {
             anim.removeProperty(name);
             anim._endNative(name);
+            config = anim._config[name];
 
-            node.fire('transition:propertyEnd', {
+            data = {
                 type: 'propertyEnd',
                 propertyName: name,
-                elapsedTime: elapsed
-            });
+                elapsedTime: elapsed,
+                config: config
+            };
+
+            if (config && config.on && config.on.end) {
+                config.on.end.call(node, data);
+            }
+
+            //node.fire('transition:propertyEnd', data);
 
             if (anim._count <= 0)  { // after propertEnd fires
                 anim._end(elapsed);
             }
-
         }
     },
 
@@ -402,7 +423,9 @@ Y.TransitionNative = Transition; // TODO: remove
  *   @chainable
 */
 Y.Node.prototype.transition = function(name, config, callback) {
-    var anim = this._transition,
+    var 
+        transitionAttrs = Transition._nodeAttrs[Y.stamp(this)],
+        anim = (transitionAttrs) ? transitionAttrs.transition || null : null,
         fxConfig,
         prop;
     
@@ -412,7 +435,7 @@ Y.Node.prototype.transition = function(name, config, callback) {
             config = null;
         }
 
-        fxConfig = Transition._fx[name];
+        fxConfig = Transition.fx[name];
 
         if (config && typeof config !== 'boolean') {
             config = Y.clone(config);
@@ -458,13 +481,15 @@ Y.Node.prototype.show = function(name, config, callback) {
     return this;
 };
 
-var _wrapCallBack = function(callback, fn) {
+var _wrapCallBack = function(fn, callback) {
     return function() {
         if (fn) {
             fn.call(this);
         }
-        callback.apply(this, arguments);
-    }
+        if (callback) {
+            callback.apply(this, arguments);
+        }
+    };
 };
 
 Y.Node.prototype.hide = function(name, config, callback) {
@@ -474,11 +499,7 @@ Y.Node.prototype.hide = function(name, config, callback) {
             config = null;
         }
 
-        if (callback) { // need to hide when transition ends
-            callback = _wrapCallBack(callback, this._hide); // wrap with existing callback
-        } else {
-            callback = this._hide;
-        }    
+        callback = _wrapCallBack(this._hide, callback); // wrap with existing callback
         if (typeof name !== 'string' && !name.push) { // named effect or array of effects supercedes default
             if (typeof config === 'function') {
                 callback = config;
@@ -520,14 +541,53 @@ Y.Node.prototype.hide = function(name, config, callback) {
  *   @chainable
 */
 Y.NodeList.prototype.transition = function(config, callback) {
-    this.each(function(node) {
-        node.transition(config, callback);
-    });
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).transition(config, callback);
+    }
 
     return this;
 };
 
-Transition.add({
+Y.Node.prototype.toggleView = function(name, on) {
+    var callback;
+    this._toggles = this._toggles || [];
+
+    if (typeof name == 'boolean') { // no transition, just toggle
+        on = name;
+    }
+    if (typeof on === 'undefined' && name in this._toggles) {
+        on = ! this._toggles[name];
+    }
+
+    on = (on) ? 1 : 0;
+
+    if (on) {
+        this._show();
+    }  else {
+        callback = _wrapCallBack(this._hide);
+    }
+
+    this._toggles[name] = on;
+    this.transition(Y.Transition.toggles[name][on], callback);
+};
+
+Y.NodeList.prototype.toggleView = function(config, callback) {
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).toggleView(config, callback);
+    }
+
+    return this;
+};
+
+Y.mix(Transition.fx, {
     fadeOut: {
         opacity: 0,
         duration: 0.5,
@@ -573,6 +633,11 @@ Transition.add({
             }
         } 
     }
+});
+
+Y.mix(Transition.toggles, {
+    size: ['sizeIn', 'sizeOut'],
+    fade: ['fadeOut', 'fadeIn']
 });
 
 

@@ -17,14 +17,7 @@
 
     <script type="text/javascript">
 
-        YUI({
-
-            base: "../../../build/",
-            timeout: 10000,
-            filter: "raw"
-
-         }).use("widget", "widget-parent", "widget-child", "test", "console", function (Y) {
-
+        YUI({filter: "raw"}).use("widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 
             var RootWidget = function () {
                 RootWidget.superclass.constructor.apply(this, arguments);
@@ -128,29 +121,23 @@
                      Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
                      Y.assert((root.size() == 1), "The root Widget should have one child");
 
-
-                     child = root.add({ type: ChildWidget, label: "Child Two" });
+                     child = root.add({ childType: ChildWidget, label: "Child Two" });
 
                      Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
                      Y.assert((root.size() == 2), "The root Widget should have two children");
 
-
                      try {
-
                          child = root.add({ label: "Invalid Child" });
 
                          Y.Assert.isUndefined(child, "Add should return undefined since the type of the child is undefined.");
                          Y.assert((root.size() == 2), "The root Widget should have two children");
-
                      }
                      catch (e) {
                          Y.Assert.isNotUndefined(e, "The \"add\" method should throw an error since the type of the child was not specified and the defaultChildType attribute is not defined.");
                      }
 
-
                      try {
-
-                         child = root.add({ type: "MyChild", label: "Invalid Child" });
+                         child = root.add({ childType: "MyChild", label: "Invalid Child" });
 
                          Y.Assert.isUndefined(child, "The \"add\" method should return undefined since the type of the child is invalid.");
                          Y.assert((root.size() == 2), "The root Widget should have two children");
@@ -253,23 +240,27 @@
                              { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
                          ]
 
-                     });
-
-
+                    });
                     widget.render();
 
+                    var childSelector = "." + widget.item(0).getClassName(),
+                        parentBB = widget.get("boundingBox");
+
                     Y.Assert.areEqual(widget.remove(1).get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
                     Y.Assert.areEqual(widget.size(), 3, "The widget should now have three children.");
 
-
                     Y.Assert.areEqual(widget.item(0).remove().get("id"), "child-1", "If a child calls the \"remove\" method on itself, the \"remove\" method should return a reference to the child.");
+                    Y.Assert.areEqual(parentBB.one("#child-1"), null, "child-1's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 2, "The widget should now have two children bounding boxes.");
                     Y.Assert.areEqual(widget.size(), 2, "The widget should now have two children.");
-
 
                     var removed = widget.removeAll();
 
                     Y.Assert.areEqual(removed.size(), 2, "The \"removeAll\" method should return a Y.ArrayList instance with a size of 2.");
                     Y.Assert.areEqual(widget.size(), 0, "The widget should now have no children.");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 0, "The widget should now have no children bounding boxes.");
 
                     widget.destroy();
 

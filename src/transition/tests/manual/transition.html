@@ -2,59 +2,31 @@
 <html>
 <head> 
 <style> 
-.demo {
+li {
     background:#ccc;
-    width:200px;
-    height:200px;
-    Xpadding-bottom: 100px;
-    overflow: hidden;
-    position:relative;
-    XX-webkit-transition: width .0001s ease-out;
 }
 </style> 
 <script src="../../../../build/yui/yui.js"></script> 
+</head>
+<body> 
+<p> this is some text above the li</p>
+<ul>
+    <li>this is a</li>
+    <li>this is b</li>
+    <li>this is c</li>
+</ul>
+<p>this is some text below the li</p>
 
-</head><body> 
-<div class="demo">this is a demo</div> 
-<div class="demo">this is a demo</div> 
-
-<script type="text/javascript"> 
+<script type="text/javascript">
  
 YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native', 'node-style', function(Y) {
-    var nodes = Y.all('.demo'),
+    var nodes = Y.all('ul li'),
         node = nodes.item(0),
         running = false;
 
-    node.on('transition:start', function(e) {
-        console.log(e.type);
-    });
-    node.on('transition:propertyEnd', function(e) {
-        console.log(e.type + ': ' + e.propertyName);
-        console.log(e.elapsedTime);
-    });
-
-    node.on('transition:end', function(e) {
-        console.log(e.type);
-        console.log(e.elapsedTime);
-
-    });
-
     document.onclick = function() {
-        node.setStyles({
-            height: 0,
-            width: 0
-        });
-        node.show('sizeIn', {
-            height: '200px',
-            onend: function(e) {
-                Y.log(e);
-                Y.log('callback 1');
-                node.hide(true);
-            }
-        });
+        nodes.toggleView('fade');
     };
-
-    nodes.setStyle('border', '5px solid green');
 });
  
 </script> 

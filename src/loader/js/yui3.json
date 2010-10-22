@@ -1061,6 +1061,19 @@
         ], 
         "skinnable": true
     }, 
+    "node-tokeninput": {
+        "requires": [
+            "array-extras", 
+            "classnamemanager", 
+            "event-focus", 
+            "event-valuechange", 
+            "node-event-delegate", 
+            "node-pluginhost", 
+            "node-style", 
+            "plugin"
+        ], 
+        "skinnable": true
+    }, 
     "oop": {
         "requires": [
             "yui-base"

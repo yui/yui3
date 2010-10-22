@@ -469,12 +469,18 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
-        var cur = Y.all('br.yui-cursor');
+        var cur, sel = 'br.yui-cursor';
+        cur = Y.all(sel);
         if (cur.size()) {
             cur.each(function(b) {
-                var c = b.get('parentNode.parentNode.childNodes');
+                var c = b.get('parentNode.parentNode.childNodes'), html;
                 if (c.size() > 1) {
                     b.remove();
+                } else {
+                    html = Y.Selection.getText(c.item(0));
+                    if (html !== '') {
+                        b.remove();
+                    }
                 }
             });
         }
@@ -889,4 +895,4 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});

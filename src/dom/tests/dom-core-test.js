@@ -1468,6 +1468,80 @@ YUI.add('dom-core-test', function(Y) {
 
             Y.DOM.addHTML(node.childNodes[1], '<span>new content</span>', 'after');
             Assert.areEqual('SPAN', node.childNodes[2].nodeName);
+        },
+
+        'should replace the existing content (empty string)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, '', 'replace');
+            Assert.areEqual(0, node.childNodes.length);
+        },
+
+        'should replace the existing content (null)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, null, 'replace');
+            Assert.areEqual(0, node.childNodes.length);
+        },
+
+        'should replace the existing content (undefined)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, undefined, 'replace');
+            Assert.areEqual(0, node.childNodes.length);
+        },
+
+        'should replace the existing content (0)': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+
+            Y.DOM.addHTML(node, 0, 'replace');
+            Assert.areEqual(1, node.childNodes.length);
+            Assert.areEqual(3, node.firstChild.nodeType);
+        },
+
+
+        'should append the given nodelist': function() {
+            var node = document.createElement('div'),
+                node2 = document.createElement('div'),
+                nodelist;
+
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+            nodelist = node.getElementsByTagName('*');
+            Y.DOM.addHTML(node2, nodelist);
+
+            Assert.areEqual('EM', node2.childNodes[0].nodeName);
+        },
+
+        'should insert the given nodelist before the given node': function() {
+            var node = document.createElement('div'),
+                node2 = document.createElement('div'),
+                nodelist;
+
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+            node2.innerHTML = '<span>baz</span><b>foobar</b>';
+
+            nodelist = node.getElementsByTagName('*');
+            Y.DOM.addHTML(node2, nodelist, node2.firstChild.nextSibling);
+
+            Assert.areEqual('EM', node2.childNodes[1].nodeName);
+        },
+
+        'should prepend the given nodelist': function() {
+            var node = document.createElement('div'),
+                node2 = document.createElement('div'),
+                nodelist;
+
+            node.innerHTML = '<em>foo</em><strong>bar</strong>';
+            node2.innerHTML = '<span>baz</span><b>foobar</b>';
+
+            nodelist = node.getElementsByTagName('*');
+            Y.DOM.addHTML(node2, nodelist, node2.firstChild);
+
+            Assert.areEqual('EM', node2.childNodes[0].nodeName);
         }
     }));
 

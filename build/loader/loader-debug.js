@@ -1177,19 +1177,6 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
 
-        // Create skin modules
-        if (mod.skinnable) {
-            skindef = this.skin.overrides;
-            if (skindef && skindef[name]) {
-                for (i = 0; i < skindef[name].length; i++) {
-                    skinmod = this._addSkin(skindef[name][i], name);
-                    d.push(skinmod);
-                }
-            } else {
-                skinmod = this._addSkin(this.skin.defaultSkin, name);
-                d.push(skinmod);
-            }
-        }
 
         for (i = 0; i < r.length; i++) {
             // Y.log(name + ' requiring ' + r[i]);
@@ -1277,6 +1264,20 @@ Y.Loader.prototype = {
                     }
                 }
             }, this);
+        }
+
+        // Create skin modules
+        if (mod.skinnable) {
+            skindef = this.skin.overrides;
+            if (skindef && skindef[name]) {
+                for (i = 0; i < skindef[name].length; i++) {
+                    skinmod = this._addSkin(skindef[name][i], name);
+                    d.push(skinmod);
+                }
+            } else {
+                skinmod = this._addSkin(this.skin.defaultSkin, name);
+                d.push(skinmod);
+            }
         }
 
         mod._parsed = false;
@@ -3426,6 +3427,19 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "node-tokeninput": {
+        "requires": [
+            "array-extras", 
+            "classnamemanager", 
+            "event-focus", 
+            "event-valuechange", 
+            "node-event-delegate", 
+            "node-pluginhost", 
+            "node-style", 
+            "plugin"
+        ], 
+        "skinnable": true
+    }, 
     "oop": {
         "requires": [
             "yui-base"
@@ -3842,7 +3856,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '125d186662061c5fadd39f49d1a983a8';
+YUI.Env[Y.version].md5 = 'd2432980710953cda5e4c3e666c2e966';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

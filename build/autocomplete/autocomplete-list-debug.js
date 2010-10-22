@@ -60,6 +60,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (!inputNode) {
             Y.error('No inputNode specified.');
+            return;
         }
 
         this._inputNode  = inputNode;
@@ -74,14 +75,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this[_CLASS_ITEM_ACTIVE] = this.getClassName(ITEM, 'active');
         this[_CLASS_ITEM_HOVER]  = this.getClassName(ITEM, 'hover');
         this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
-
-        if (!this.get('align.node')) {
-            this.set('align.node', inputNode);
-        }
-
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, inputNode.get('offsetWidth'));
-        }
 
         /**
          * Fires when an autocomplete suggestion is selected from the list by
@@ -135,21 +128,20 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         inputNode.addClass(this.getClassName('input')).setAttrs({
             'aria-autocomplete': LIST,
-            role: 'textbox'
+            'aria-expanded'    : false,
+            'aria-owns'        : listNode.get('id'),
+            role               : 'combobox'
         });
 
         // ARIA node must be outside the widget or announcements won't be made
         // when the widget is hidden.
-        parentNode.setAttrs({
-            'aria-expanded': false,
-            'aria-owns'    : listNode.get('id'),
-            role           : 'combobox'
-        }).append(ariaNode);
+        parentNode.append(ariaNode);
 
-        this._ariaNode   = ariaNode;
-        this._contentBox = contentBox;
-        this._listNode   = listNode;
-        this._parentNode = parentNode;
+        this._ariaNode    = ariaNode;
+        this._boundingBox = this.get('boundingBox');
+        this._contentBox  = contentBox;
+        this._listNode    = listNode;
+        this._parentNode  = parentNode;
     },
 
     syncUI: function () {
@@ -285,13 +277,29 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Binds <code>inputNode</code> events.
+     * Binds <code>inputNode</code> events and behavior.
      *
      * @method _bindInput
      * @protected
      */
     _bindInput: function () {
-        this._listEvents.push(this._inputNode.on('blur', this._onInputBlur, this));
+        var inputNode  = this._inputNode,
+            tokenInput = this.get('tokenInput'),
+            alignNode  = (tokenInput && tokenInput.get('boundingBox')) ||
+                            inputNode;
+
+        // If this is a tokenInput, align with its bounding box. Otherwise,
+        // align with the inputNode.
+        if (!this.get('align.node')) {
+            this.set('align.node', alignNode);
+        }
+
+        if (!this.get(WIDTH)) {
+            this.set(WIDTH, alignNode.get('offsetWidth'));
+        }
+
+        // Attach inputNode events.
+        this._listEvents.push(inputNode.on('blur', this._onInputBlur, this));
     },
 
     /**
@@ -378,18 +386,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Gets the last item node in the list, or <code>null</code> if the list is
-     * empty.
-     *
-     * @method _getLastItemNode
-     * @return {Node|null}
-     * @protected
-     */
-    _getLastItemNode: function () {
-        return this._listNode.one(this[_SELECTOR_ITEM] + ':last-child');
-    },
-
-    /**
      * Gets the first item node in the list, or <code>null</code> if the list is
      * empty.
      *
@@ -399,6 +395,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _getFirstItemNode: function () {
         return this._listNode.one(this[_SELECTOR_ITEM]);
+    },
+
+    /**
+     * Gets the last item node in the list, or <code>null</code> if the list is
+     * empty.
+     *
+     * @method _getLastItemNode
+     * @return {Node|null}
+     * @protected
+     */
+    _getLastItemNode: function () {
+        return this._listNode.one(this[_SELECTOR_ITEM] + ':last-child');
     },
 
     /**
@@ -448,10 +456,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             visible = this.get(VISIBLE);
         }
 
-        this._parentNode.set('aria-expanded', visible);
-        this._contentBox.set('aria-hidden', !visible);
+        this._inputNode.set('aria-expanded', visible);
+        this._boundingBox.set('aria-hidden', !visible);
 
-        if (!visible) {
+        if (visible) {
+            // Force WidgetPositionAlign to refresh its alignment.
+            this._syncUIPosAlign();
+        } else {
             this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
         }
@@ -744,4 +755,4 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
