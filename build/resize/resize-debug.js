@@ -95,22 +95,7 @@ var Lang = Y.Lang,
 	CSS_RESIZE_HANDLE_PLACEHOLDER = getCN(RESIZE, HANDLE, '{handle}'),
 	CSS_RESIZE_HIDDEN_HANDLES = getCN(RESIZE, HIDDEN, HANDLES),
 	CSS_RESIZE_PROXY = getCN(RESIZE, PROXY),
-	CSS_RESIZE_WRAPPER = getCN(RESIZE, WRAPPER),
-
-	REGEX_CHANGE_HEIGHT = /^(t|tr|b|bl|br|tl)$/i,
-	REGEX_CHANGE_LEFT = /^(tl|l|bl)$/i,
-	REGEX_CHANGE_TOP = /^(tl|t|tr)$/i,
-	REGEX_CHANGE_WIDTH = /^(bl|br|l|r|tl|tr)$/i,
-
-	TPL_HANDLE = '<div class="'+concat(CSS_RESIZE_HANDLE, CSS_RESIZE_HANDLE_PLACEHOLDER)+'">' +
-					'<div class="'+concat(CSS_RESIZE_HANDLE_INNER, CSS_RESIZE_HANDLE_INNER_PLACEHOLDER)+'">&nbsp;</div>' +
-				 '</div>',
-
-	TPL_PROXY_NODE = '<div class="' + CSS_RESIZE_PROXY + '"></div>',
-
-	TPL_WRAP_NODE = '<div class="' + CSS_RESIZE_WRAPPER + '"></div>',
-
-	ALL_HANDLES = [ T, TR, R, BR, B, BL, L, TL ];
+	CSS_RESIZE_WRAPPER = getCN(RESIZE, WRAPPER);
 
 /**
  * A base class for Resize, providing:
@@ -255,7 +240,7 @@ Y.mix(Resize, {
 		proxyNode: {
 			setter: Y.one,
 			valueFn: function() {
-				return Y.Node.create(TPL_PROXY_NODE);
+				return Y.Node.create(this.PROXY_TEMPLATE);
 			}
 		},
 
@@ -322,6 +307,76 @@ Y.Resize = Y.extend(
 	Resize,
 	Y.Base,
 	{
+		/**
+	     * Array containing all possible resizable handles.
+	     *
+	     * @property ALL_HANDLES
+	     * @type {String}
+	     */
+		ALL_HANDLES: [ T, TR, R, BR, B, BL, L, TL ],
+
+		/**
+	     * Regex which matches with the handles that could change the height of
+		 * the resizable element.
+	     *
+	     * @property REGEX_CHANGE_HEIGHT
+	     * @type {String}
+	     */
+		REGEX_CHANGE_HEIGHT: /^(t|tr|b|bl|br|tl)$/i,
+
+		/**
+	     * Regex which matches with the handles that could change the left of
+		 * the resizable element.
+	     *
+	     * @property REGEX_CHANGE_LEFT
+	     * @type {String}
+	     */
+		REGEX_CHANGE_LEFT: /^(tl|l|bl)$/i,
+
+		/**
+	     * Regex which matches with the handles that could change the top of
+		 * the resizable element.
+	     *
+	     * @property REGEX_CHANGE_TOP
+	     * @type {String}
+	     */
+		REGEX_CHANGE_TOP: /^(tl|t|tr)$/i,
+
+		/**
+	     * Regex which matches with the handles that could change the width of
+		 * the resizable element.
+	     *
+	     * @property REGEX_CHANGE_WIDTH
+	     * @type {String}
+	     */
+		REGEX_CHANGE_WIDTH: /^(bl|br|l|r|tl|tr)$/i,
+
+		/**
+	     * Template used to create the resize wrapper node when needed.
+	     *
+	     * @property WRAP_TEMPLATE
+	     * @type {String}
+	     */
+		WRAP_TEMPLATE: '<div class="'+CSS_RESIZE_WRAPPER+'"></div>',
+
+		/**
+	     * Template used to create the resize proxy.
+	     *
+	     * @property PROXY_TEMPLATE
+	     * @type {String}
+	     */
+		PROXY_TEMPLATE: '<div class="'+CSS_RESIZE_PROXY+'"></div>',
+
+		/**
+	     * Template used to create each resize handle.
+	     *
+	     * @property HANDLE_TEMPLATE
+	     * @type {String}
+	     */
+		HANDLE_TEMPLATE: '<div class="'+concat(CSS_RESIZE_HANDLE, CSS_RESIZE_HANDLE_PLACEHOLDER)+'">' +
+							'<div class="'+concat(CSS_RESIZE_HANDLE_INNER, CSS_RESIZE_HANDLE_INNER_PLACEHOLDER)+'">&nbsp;</div>' +
+						'</div>',
+
 		/**
 		 * Whether the handle being dragged can change the height.
 		 *
@@ -701,8 +756,10 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_buildHandle: function(handle) {
+			var instance = this;
+
 			return Y.Node.create(
-				Y.substitute(TPL_HANDLE, {
+				Y.substitute(instance.HANDLE_TEMPLATE, {
 					handle: handle
 				})
 			);
@@ -973,10 +1030,10 @@ Y.Resize = Y.extend(
 		_updateChangeHandleInfo: function(handle) {
 			var instance = this;
 
-			instance.changeHeightHandles = REGEX_CHANGE_HEIGHT.test(handle);
-			instance.changeLeftHandles = REGEX_CHANGE_LEFT.test(handle);
-			instance.changeTopHandles = REGEX_CHANGE_TOP.test(handle);
-			instance.changeWidthHandles = REGEX_CHANGE_WIDTH.test(handle);
+			instance.changeHeightHandles = instance.REGEX_CHANGE_HEIGHT.test(handle);
+			instance.changeLeftHandles = instance.REGEX_CHANGE_LEFT.test(handle);
+			instance.changeTopHandles = instance.REGEX_CHANGE_TOP.test(handle);
+			instance.changeWidthHandles = instance.REGEX_CHANGE_WIDTH.test(handle);
 		},
 
 		/**
@@ -1027,7 +1084,8 @@ Y.Resize = Y.extend(
 	     * @param {String} val
 	     */
 		_setHandles: function(val) {
-			var handles = [];
+			var instance = this,
+				handles = [];
 
 			// handles attr accepts both array or string
 			if (isArray(val)) {
@@ -1036,7 +1094,7 @@ Y.Resize = Y.extend(
 			else if (isString(val)) {
 				// if the handles attr passed in is an ALL string...
 				if (val.toLowerCase() == ALL) {
-					handles = ALL_HANDLES;
+					handles = instance.ALL_HANDLES;
 				}
 				// otherwise, split the string to extract the handles
 				else {
@@ -1046,7 +1104,7 @@ Y.Resize = Y.extend(
 							var handle = trim(node);
 
 							// if its a valid handle, add it to the handles output
-							if (indexOf(ALL_HANDLES, handle) > -1) {
+							if (indexOf(instance.ALL_HANDLES, handle) > -1) {
 								handles.push(handle);
 							}
 						}
@@ -1115,7 +1173,7 @@ Y.Resize = Y.extend(
 
 			// if the node is listed on the wrapTypes or wrap is set to true, create another wrapper
 			if (instance.get(WRAP)) {
-				wrapper = Y.Node.create(TPL_WRAP_NODE);
+				wrapper = Y.Node.create(instance.WRAP_TEMPLATE);
 
 				if (pNode) {
 					pNode.insertBefore(wrapper, node);
@@ -1378,9 +1436,7 @@ Y.Resize = Y.extend(
 	}
 );
 
-
-
-Y.each(ALL_HANDLES, function(handle, i) {
+Y.each(Y.Resize.prototype.ALL_HANDLES, function(handle, i) {
 	// creating ATTRS with the handles elements
 	Y.Resize.ATTRS[handleAttrName(handle)] = {
 		setter: function() {
