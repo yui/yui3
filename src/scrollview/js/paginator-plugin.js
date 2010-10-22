@@ -3,9 +3,13 @@
  *
  * @module scrollview-paginator
  */
- 
-var BOUNCE_DECELERATION_CONST = 0.5,
-    UI = Y.ScrollView.UI_SRC;
+
+var UI = Y.ScrollView.UI_SRC,
+    INDEX = "index",
+    SCROLL_X = "scrollX",
+    TOTAL = "total",
+    BOUNDING_BOX = "boundingBox",
+    CONTENT_BOX = "contentBox";
 
 /**
  * Scrollview plugin that adds support for paging
@@ -90,60 +94,40 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method initializer
      */
     initializer: function() {
-        var host;
+        var host,
+            paginator = this; // kweight
 
-        host = this._host = this.get('host');
+        host = paginator._host = paginator.get('host');
 
-        this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
-        this.beforeHostMethod('_flickFrame', this._flickFrame);
-        this.afterHostEvent('scrollEnd', this._scrollEnded);
-        this.afterHostEvent('render', this._afterRender);
-        this.after('indexChange', this._afterIndexChange);
+        paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
+        paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
+        paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
+        paginator.afterHostEvent('render', paginator._afterRender);
 
-        if(host.get('bounce') !== 0) {
-            // Change bounce constant to increase friction
-            this._originalHostBounce = host.get('bounce'); 
-            host.set('bounce', BOUNCE_DECELERATION_CONST);
-        }
+        paginator.after('indexChange', paginator._afterIndexChange);
     },
 
     /**
-     * Destructor removes anything added by the plugin
-     *
-     * @method destructor
-     */
-    destructor: function() {
-        var host = this._host;
-
-        if(host.get('bounce') !== 0) {
-            host.set('bounce', this._originalHostBounce);
-        }
-    },
-
-    /**
-     * Pre-calculate the min/max boundary points when the contentBox changes
+     * Calculate the page boundary offsets
      * 
-     * @method _calculatePageOffsets
+     * @method _calcOffsets
      * @protected
-     */    
-    _calculatePageOffsets: function() {
+     */
+    _calcOffsets : function() {
         var host = this._host,
-            cb = host.get('contentBox'),
-            pageSelector = this.get('selector'),
+            cb = host.get(CONTENT_BOX),
+            bb = host.get(BOUNDING_BOX),
+            pageSelector = this.get("selector"),
             pages,
-            points = [];
+            offsets;
 
         // Pre-calculate min/max values for each page
-        pages = pageSelector ? cb.all(pageSelector) : cb.get('children');
-        pages.each(function(node, i) {
-            points.push(node.get('offsetLeft'));
-        }, this);
+        pages = pageSelector ? cb.all(pageSelector) : cb.get("children");
 
-        points.push(host._scrollWidth - host.get('width'));
-        
-        this._minPoints = points;
+        this.set(TOTAL, pages.size());
 
-        this.set('total', pages.size());
+        this._pgOff = offsets = pages.get("offsetLeft");
+        offsets.push(host._scrollWidth - bb.get("offsetWidth"));
     },
 
     /**
@@ -159,16 +143,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
             inc = velocity < 0,
 
-            pageIndex = this.get('index'),
-            pageCount = this.get('total');
+            pageIndex = this.get(INDEX),
+            pageCount = this.get(TOTAL);
 
         if (velocity) {
             Y.log("Handling flick - increment: " + inc + ", pageIndex: " + pageIndex, "scrollview-paginator");
 
             if (inc && pageIndex < pageCount-1) {
-                this.set('index', pageIndex+1);
+                this.set(INDEX, pageIndex+1);
             } else if (!inc && pageIndex > 0) {
-                this.set('index', pageIndex-1);
+                this.set(INDEX, pageIndex-1);
             }
         }
 
@@ -195,17 +179,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
      _scrollEnded: function(e) {
          var host = this._host,
-             pageIndex = this.get('index'),
-             pageCount = this.get('total');
+             pageIndex = this.get(INDEX),
+             pageCount = this.get(TOTAL);
 
          Y.log("_scrollEnded - onGME: " + e.onGestureMoveEnd + ", flicking: " + host._flicking + ", halfway: " + host._scrolledHalfway + ", forward: " + host._scrolledForward, "scrollview-paginator");
 
          if(e.onGestureMoveEnd && !host._flicking) {
              if(host._scrolledHalfway) {
                  if(host._scrolledForward && pageIndex < pageCount-1) {
-                     this.set('index', pageIndex+1);
-                 } else if(pageIndex > 0) {
-                     this.set('index', pageIndex-1);
+                     this.set(INDEX, pageIndex+1);
+                 } else if (pageIndex > 0) {
+                     this.set(INDEX, pageIndex-1);
                  } else {
                      this.snapToCurrent();
                  }
@@ -238,17 +222,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _uiIndex: function(index) {
         this.scrollTo(index, 350, 'ease-out');
     },
-    
+
     /**
      * Scroll to the next page in the scrollview, with animation
      *
      * @method next
-     * @param disableAnim {Boolean} If true, no animation is used
      */
-    next: function(disableAnim) {
-        var index = this.get('index');  
-        if(index < this.get('total')-1) {
-            this.set('index', index+1);
+    next: function() {
+        var index = this.get(INDEX);  
+        if(index < this.get(TOTAL)-1) {
+            this.set(INDEX, index+1);
         }
     },
     
@@ -256,12 +239,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Scroll to the previous page in the scrollview, with animation
      *
      * @method prev
-     * @param disableAnim {Boolean} If true, no animation is used
      */
-    prev: function(disableAnim) {
-        var index = this.get('index');
+    prev: function() {
+        var index = this.get(INDEX);
         if(index > 0) {
-            this.set('index', index-1);
+            this.set(INDEX, index-1);
         }
     },
     
@@ -275,12 +257,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     scrollTo: function(index, duration, easing) {
         var host = this._host,
-            x = host.get('scrollX');
+            x = host.get(SCROLL_X);
 
         if(host._scrollsHorizontal) {
-            x = this._minPoints[index];
+            x = this._pgOff[index];
 
-            host.set('scrollX', x, {
+            host.set(SCROLL_X, x, {
                 duration: duration,
                 easing: easing
             });
@@ -293,12 +275,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method snapToCurrent
      */
     snapToCurrent: function() {
+        var host = this._host;
 
-        this._host._killTimer();
+        host._killTimer();
 
-        Y.log("snapToCurrent:" + this.get("index"), "scrollview-paginator");
+        Y.log("snapToCurrent:" + this.get(INDEX), "scrollview-paginator");
 
-        this._host.set('scrollX', this._minPoints[this.get('index')], {
+        host.set(SCROLL_X, this._pgOff[this.get(INDEX)], {
             duration: 300,
             easing: 'ease-out'
         });
