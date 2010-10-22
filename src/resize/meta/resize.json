@@ -20,6 +20,13 @@
 	                "plugin",
 	                "resize-base"
 				]
+            },
+
+            "resize-proxy": {
+                "requires": [
+	                "plugin",
+	                "resize-base"
+				]
             }
         }
     }
