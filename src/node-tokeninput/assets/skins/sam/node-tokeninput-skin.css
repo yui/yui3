@@ -51,5 +51,6 @@
     text-decoration: none;
 }
 
+.yui3-tokeninput-windows .yui3-tokeninput-remove { margin-top: 2px; }
 .yui3-tokeninput-remove:hover { color: #333; }
 .yui3-tokeninput-focus .yui3-tokeninput-remove { color: #fff; }

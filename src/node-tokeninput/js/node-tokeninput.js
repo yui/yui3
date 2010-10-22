@@ -192,6 +192,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         this._events.concat([
             this._boundingBox.after({
                 blur : this._afterBlur,
+                click: this._afterFocus, // for FF4, which is buggy
                 focus: this._afterFocus
             }, null, this),
 
@@ -548,8 +549,8 @@ Y.extend(TokenInput, Y.Plugin.Base, {
 
         contentBox.addClass(classNames.content);
 
-        boundingBox.addClass(classNames.box).set('tabIndex', -1)
-                .append(contentBox);
+        boundingBox.addClass(classNames.box).addClass(classNames.os)
+                .set('tabIndex', -1).append(contentBox);
 
         this._set('boundingBox', boundingBox);
         this._set('contentBox', contentBox);
@@ -1017,14 +1018,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         content  : getClassName('content'),
         editable : getClassName('editable'),
         fauxinput: getClassName('fauxinput'),
+        focus    : getClassName('focus'),
         hasremove: getClassName('hasremove'),
         hidden   : getClassName('hidden'),
         host     : getClassName('host'),
         hover    : getClassName('hover'),
-        focus    : getClassName('focus'),
         input    : getClassName('input'),
         item     : getClassName('item'),
         list     : getClassName('list'),
+        os       : getClassName(Y.UA.os),
         remove   : getClassName('remove'),
         token    : getClassName('token')
     }
