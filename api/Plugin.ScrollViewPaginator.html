@@ -250,22 +250,22 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__calculatePageOffsets">
+                                    <div class="protected" rel="yui:method" resource="#method__calcOffsets">
                                     <h4>
-                                        <a name="method__calculatePageOffsets">_calculatePageOffsets</a></h4>
+                                        <a name="method__calcOffsets">_calcOffsets</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_calculatePageOffsets</strong>
+                                            <strong property="yui:name">_calcOffsets</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Pre-calculate the min/max boundary points when the contentBox changes
+                                            Calculate the page boundary offsets
                                         </div>
 
                                         <div class="description">
@@ -371,36 +371,6 @@ This is needed to determine if the next or prev page should be activated.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_destructor">
-                                    <h4>
-                                        <a name="method_destructor">destructor</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">destructor</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Destructor removes anything added by the plugin
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_initializer">
                                     <h4>
                                         <a name="method_initializer">initializer</a></h4>
@@ -442,11 +412,6 @@ This is needed to determine if the next or prev page should be activated.
                                         void
                                             <strong property="yui:name">next</strong>
                                            (
-                                                
-                                                        
-                                                         disableAnim
-                                                    
-                                                
                                             )
                                         </code>
                                         
@@ -456,15 +421,6 @@ This is needed to determine if the next or prev page should be activated.
 
                                         <div class="description">
 
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">disableAnim</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  If true, no animation is used</span>
-                                                        </dd>
-                                                </dl>
 
 
 
@@ -486,11 +442,6 @@ This is needed to determine if the next or prev page should be activated.
                                         void
                                             <strong property="yui:name">prev</strong>
                                            (
-                                                
-                                                        
-                                                         disableAnim
-                                                    
-                                                
                                             )
                                         </code>
                                         
@@ -500,15 +451,6 @@ This is needed to determine if the next or prev page should be activated.
 
                                         <div class="description">
 
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">disableAnim</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  If true, no animation is used</span>
-                                                        </dd>
-                                                </dl>
 
 
 
@@ -1231,6 +1173,7 @@ will snap to the closest page.
                         <ul class="content">        
                                 <li class=""><a href="paginator-plugin.js.html" title="paginator-plugin.js">paginator-plugin.js</a></li>
                                 <li class=""><a href="scrollbars-plugin.js.html" title="scrollbars-plugin.js">scrollbars-plugin.js</a></li>
+                                <li class=""><a href="ScrollViewBaseIE.js.html" title="ScrollViewBaseIE.js">ScrollViewBaseIE.js</a></li>
                         </ul>
                     </div>
 
@@ -1248,11 +1191,10 @@ will snap to the closest page.
                         <ul class="content">        
                                 <li class="protected"><a href="#method__afterIndexChange" title="_afterIndexChange">_afterIndexChange</a></li>
                                 <li class="protected"><a href="#method__afterRender" title="_afterRender">_afterRender</a></li>
-                                <li class="protected"><a href="#method__calculatePageOffsets" title="_calculatePageOffsets">_calculatePageOffsets</a></li>
+                                <li class="protected"><a href="#method__calcOffsets" title="_calcOffsets">_calcOffsets</a></li>
                                 <li class="protected"><a href="#method__flickFrame" title="_flickFrame">_flickFrame</a></li>
                                 <li class="protected"><a href="#method__scrollEnded" title="_scrollEnded">_scrollEnded</a></li>
                                 <li class="protected"><a href="#method__uiIndex" title="_uiIndex">_uiIndex</a></li>
-                                <li class=""><a href="#method_destructor" title="destructor">destructor</a></li>
                                 <li class=""><a href="#method_initializer" title="initializer">initializer</a></li>
                                 <li class=""><a href="#method_next" title="next">next</a></li>
                                 <li class=""><a href="#method_prev" title="prev">prev</a></li>
@@ -1289,7 +1231,7 @@ will snap to the closest page.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginator.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterRender", "url": "Plugin.ScrollViewPaginator.html#method__afterRender", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginator.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "destructor", "url": "Plugin.ScrollViewPaginator.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginator.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "index", "url": "Plugin.ScrollViewPaginator.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "indexChange", "url": "Plugin.ScrollViewPaginator.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "initializer", "url": "Plugin.ScrollViewPaginator.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "next", "url": "Plugin.ScrollViewPaginator.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "prev", "url": "Plugin.ScrollViewPaginator.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginator.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "scrollTo", "url": "Plugin.ScrollViewPaginator.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selector", "url": "Plugin.ScrollViewPaginator.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selectorChange", "url": "Plugin.ScrollViewPaginator.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginator.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "total", "url": "Plugin.ScrollViewPaginator.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "totalChange", "url": "Plugin.ScrollViewPaginator.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginator.html#method__uiIndex", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginator.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterRender", "url": "Plugin.ScrollViewPaginator.html#method__afterRender", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_calcOffsets", "url": "Plugin.ScrollViewPaginator.html#method__calcOffsets", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginator.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "index", "url": "Plugin.ScrollViewPaginator.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "indexChange", "url": "Plugin.ScrollViewPaginator.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "initializer", "url": "Plugin.ScrollViewPaginator.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "next", "url": "Plugin.ScrollViewPaginator.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "prev", "url": "Plugin.ScrollViewPaginator.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginator.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "scrollTo", "url": "Plugin.ScrollViewPaginator.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selector", "url": "Plugin.ScrollViewPaginator.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selectorChange", "url": "Plugin.ScrollViewPaginator.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginator.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "total", "url": "Plugin.ScrollViewPaginator.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "totalChange", "url": "Plugin.ScrollViewPaginator.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginator.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

@@ -589,7 +589,11 @@ to optimize _update implementation
                                            (
                                                 
                                                         
-                                                         currentPos
+                                                         x
+                                                    
+                                                
+                                                        , 
+                                                         y
                                                     
                                                 
                                                         , 
@@ -612,10 +616,16 @@ to optimize _update implementation
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">currentPos</span>
+                                                        <code><span property="yui:name">x</span>
                                                         &lt;<span property="yui:type">Number</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The current scrollX or scrollY value (not used here, but passed by default from _uiScrollX/_uiScrollY)</span>
+                                                        <span property="yui:description">  The current scrollX value (not used here, but passed by default from _uiScrollTo)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">y</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The current scrollY value (not used here, but passed by default from _uiScrollTo)</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">duration</span>

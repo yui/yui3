@@ -84,12 +84,13 @@
     <span class="nx">EMPTY</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">ZERO</span> <span class="o">=</span> <span class="s2">&quot;0s&quot;</span><span class="p">,</span>
     
-    <span class="nx">OWNER_DOC</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="p">,</span>
-    <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="s2">&quot;mouseup&quot;</span><span class="p">,</span>
-
     <span class="nx">IE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">,</span>
 
-    <span class="nx">NATIVE_TRANSITIONS</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">;</span>
+    <span class="nx">NATIVE_TRANSITIONS</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">,</span>
+    
+    <span class="nx">_constrain</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">min</span><span class="p">,</span> <span class="nx">max</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">min</span><span class="p">),</span> <span class="nx">max</span><span class="p">);</span>
+    <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">.</span><span class="nx">DOMSubtreeModified</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
@@ -129,10 +130,11 @@
 <span class="cm">         * @event flick</span>
 <span class="cm">         * @param e {EventFacade} The default event facade.</span>
 <span class="cm">         */</span>
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         
         <span class="c1">// Cache - they&#39;re write once, and not going to change</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_cb</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_bb</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/** </span>
@@ -147,11 +149,11 @@
     <span class="cm">/**</span>
 <span class="cm">     * Content box transition callback</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _transitionEnded</span>
+<span class="cm">     * @method _onTransEnd</span>
 <span class="cm">     * @param {Event.Facade} e The event facade</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
-    <span class="nx">_transitionEnded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_onTransEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
     <span class="p">},</span>
 
@@ -163,41 +165,37 @@
 <span class="cm">     */</span>
     <span class="nx">bindUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
-            <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
-            <span class="nx">flick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FLICK</span><span class="p">);</span> 
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="c1">// kweight</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
+            <span class="nx">scrollChangeHandler</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_afterScrollChange</span><span class="p">,</span>
+            <span class="nx">dimChangeHandler</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_afterDimChange</span><span class="p">,</span> 
+            <span class="nx">flick</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FLICK</span><span class="p">);</span> 
 
-        <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMoveStart</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+        <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemovestart&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_onGestureMoveStart</span><span class="p">,</span> <span class="nx">sv</span><span class="p">));</span>
 
         <span class="c1">// IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">IE</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="p">)));</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_cbDoc</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OWNER_DOC</span><span class="p">);</span>
-
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;mousedown&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_selectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_iePreventSelect</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_cbDoc</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="nx">MOUSE_UP</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_ieRestoreSelect</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_fixIESelect</span><span class="p">(</span><span class="nx">bb</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="c1">// TODO: Fires way to often when using non-native transitions, due to property change</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;DOMSubtreeModified&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_uiDimensionsChange</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;DOMSubtreeModified&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_uiDimensionsChange</span><span class="p">,</span> <span class="nx">sv</span><span class="p">));</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">flick</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;flick&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_flick</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">flick</span><span class="p">);</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;flick&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_flick</span><span class="p">,</span> <span class="nx">sv</span><span class="p">),</span> <span class="nx">flick</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">({</span>
-            <span class="s1">&#39;scrollYChange&#39;</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterScrollYChange</span><span class="p">,</span>
-            <span class="s1">&#39;scrollXChange&#39;</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterScrollXChange</span><span class="p">,</span>
-            <span class="s1">&#39;heightChange&#39;</span>  <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterHeightChange</span><span class="p">,</span>
-            <span class="s1">&#39;widthChange&#39;</span>   <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterWidthChange</span> 
+            <span class="s1">&#39;scrollYChange&#39;</span> <span class="o">:</span> <span class="nx">scrollChangeHandler</span><span class="p">,</span>
+            <span class="s1">&#39;scrollXChange&#39;</span> <span class="o">:</span> <span class="nx">scrollChangeHandler</span><span class="p">,</span>
+            <span class="s1">&#39;heightChange&#39;</span>  <span class="o">:</span> <span class="nx">dimChangeHandler</span><span class="p">,</span>
+            <span class="s1">&#39;widthChange&#39;</span>   <span class="o">:</span> <span class="nx">dimChangeHandler</span>
         <span class="p">});</span>
     <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * syncUI implementation</span>
 <span class="cm">     *</span>
@@ -219,14 +217,14 @@
 <span class="cm">     * @param easing {String} An easing equation if duration is set</span>
 <span class="cm">     */</span>
     <span class="nx">scrollTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
-
         <span class="kd">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_cb</span><span class="p">,</span>
             <span class="nx">xSet</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">),</span>
             <span class="nx">ySet</span> <span class="o">=</span> <span class="p">(</span><span class="nx">y</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">),</span>
             <span class="nx">xMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">xSet</span><span class="p">)</span> <span class="o">?</span> <span class="nx">x</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">yMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ySet</span><span class="p">)</span> <span class="o">?</span> <span class="nx">y</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">transition</span><span class="p">,</span>
-            <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span><span class="p">;</span>
+            <span class="nx">TRANS</span> <span class="o">=</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">_TRANSITION</span><span class="p">,</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCB</span><span class="p">;</span>
 
         <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
         <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">EASING</span><span class="p">;</span>
@@ -241,11 +239,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">NATIVE_TRANSITIONS</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">_TRANSITION_DURATION</span><span class="p">,</span> <span class="nx">ZERO</span><span class="p">);</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">_TRANSITION_PROPERTY</span><span class="p">,</span> <span class="nx">EMPTY</span><span class="p">);</span>
-
-            <span class="c1">// Causes bounce back from 0,0 instead of current translation for bottom/right edge animation</span>
-            <span class="c1">// cb.setStyle(&quot;WebkitTransform&quot;, cb.getComputedStyle(&quot;WebkitTransform&quot;));</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANS</span><span class="p">.</span><span class="nx">DURATION</span><span class="p">,</span> <span class="nx">ZERO</span><span class="p">).</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANS</span><span class="p">.</span><span class="nx">PROPERTY</span><span class="p">,</span> <span class="nx">EMPTY</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">duration</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
@@ -265,7 +259,7 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transition: duration, easing:&quot;</span> <span class="o">+</span> <span class="p">[</span><span class="nx">transition</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">transition</span><span class="p">.</span><span class="nx">easing</span><span class="p">],</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCallback</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_transitionEnded</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+                <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_transEndCB</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onTransEnd</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="nx">cb</span><span class="p">.</span><span class="nx">transition</span><span class="p">(</span><span class="nx">transition</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
@@ -280,31 +274,11 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Native onselectstart handle to prevent selection in IE</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _iePreventSelect</span>
-<span class="cm">     * @private</span>
-<span class="cm">     */</span>
-    <span class="nx">_iePreventSelect</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="nx">_prevent</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="nx">start</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">move</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nx">end</span> <span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Restores native onselectstart handle, backed up to prevent selection in IE</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _ieRestoreSelect</span>
-<span class="cm">     * @private</span>
-<span class="cm">     */</span>
-    <span class="nx">_ieRestoreSelect</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_nativeBody</span><span class="p">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_selectstart</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="nx">_preventStart</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-
-    <span class="nx">_preventMove</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    
-    <span class="nx">_preventEnd</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * gesturemovestart event handler</span>
@@ -315,23 +289,22 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMoveStart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_bb</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventStart</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_prevent</span><span class="p">.</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveEvt</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemove&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMove</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndEvt</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemoveend&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onGestureMoveEnd</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_hm</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemove&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_onGestureMove</span><span class="p">,</span> <span class="nx">sv</span><span class="p">));</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_hme</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;gesturemoveend&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_onGestureMoveEnd</span><span class="p">,</span> <span class="nx">sv</span><span class="p">));</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartTime</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_startY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">+</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">);</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_startX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">+</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">);</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_startClientY</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_endClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_startClientX</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_endClientX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, defines whether or not the scrollview is currently being dragged</span>
@@ -340,7 +313,7 @@
 <span class="cm">         * @type boolean</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, defines whether or not the scrollview is currently animating a flick</span>
@@ -349,7 +322,7 @@
 <span class="cm">         * @type boolean</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, defines whether or not the scrollview needs to snap to a boundary edge</span>
@@ -358,7 +331,7 @@
 <span class="cm">         * @type boolean</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">},</span>    
     
     <span class="cm">/**</span>
@@ -370,21 +343,22 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventMove</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_prevent</span><span class="p">.</span><span class="nx">move</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_lastMoved</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">();</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_endClientY</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_endClientX</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartY</span><span class="p">));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">-</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_startY</span><span class="p">));</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartX</span><span class="p">));</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">-</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_startX</span><span class="p">));</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -397,21 +371,27 @@
 <span class="cm">     */</span>
     <span class="nx">_onGestureMoveEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_preventEnd</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_prevent</span><span class="p">.</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">minY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">,</span>
-            <span class="nx">maxY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">,</span>
-            <span class="nx">minX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollX</span><span class="p">,</span>
-            <span class="nx">maxX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollX</span><span class="p">,</span>
-            <span class="nx">startPoint</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientY</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveStartClientX</span><span class="p">,</span>
-            <span class="nx">endPoint</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientY</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndClientX</span><span class="p">,</span>
-            <span class="nx">distance</span> <span class="o">=</span> <span class="nx">startPoint</span> <span class="o">-</span> <span class="nx">endPoint</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="c1">// kweight</span>
+            <span class="nx">minY</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">,</span>
+            <span class="nx">maxY</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">,</span>
+            <span class="nx">minX</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_minScrollX</span><span class="p">,</span>
+            <span class="nx">maxX</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_maxScrollX</span><span class="p">,</span>
+            <span class="nx">vert</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">,</span>
+            <span class="nx">horiz</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">,</span>
+            <span class="nx">startPoint</span> <span class="o">=</span>  <span class="nx">vert</span> <span class="o">?</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_startClientY</span> <span class="o">:</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_startClientX</span><span class="p">,</span>
+            <span class="nx">endPoint</span> <span class="o">=</span> <span class="nx">vert</span> <span class="o">?</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_endClientY</span> <span class="o">:</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_endClientX</span><span class="p">,</span>
+            <span class="nx">distance</span> <span class="o">=</span> <span class="nx">startPoint</span> <span class="o">-</span> <span class="nx">endPoint</span><span class="p">,</span>
+            <span class="nx">absDistance</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">),</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
+            <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">xOrig</span><span class="p">,</span> <span class="nx">yOrig</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveEvt</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_moveEndEvt</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
-        
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_hm</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_hme</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, defines whether or not the scrollview has been scrolled half it&#39;s width/height</span>
 <span class="cm">         * </span>
@@ -419,9 +399,7 @@
 <span class="cm">         * @type boolean</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_isDragging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Contains the distance (postive or negative) in pixels by which the scrollview was last scrolled. This is useful when</span>
@@ -435,11 +413,12 @@
 <span class="cm">         * @type Number</span>
 <span class="cm">         * @public</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">lastScrolledAmt</span> <span class="o">=</span> <span class="nx">distance</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">lastScrolledAmt</span> <span class="o">=</span> <span class="nx">distance</span><span class="p">;</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            
+        <span class="c1">// Check for halfway</span>
+        <span class="k">if</span><span class="p">((</span><span class="nx">horiz</span> <span class="o">&amp;&amp;</span> <span class="nx">absDistance</span> <span class="o">&gt;</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">vert</span> <span class="o">&amp;&amp;</span> <span class="nx">absDistance</span> <span class="o">&gt;</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
             <span class="cm">/**</span>
 <span class="cm">             * Internal state, defines whether or not the scrollview has been scrolled in the forward (distance &gt; 0), or backward (distance &lt; 0) direction</span>
 <span class="cm">             * </span>
@@ -447,45 +426,37 @@
 <span class="cm">             * @type boolean</span>
 <span class="cm">             * @protected</span>
 <span class="cm">             */</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledForward</span> <span class="o">=</span> <span class="nx">distance</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrolledForward</span> <span class="o">=</span> <span class="nx">distance</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledForward</span> <span class="o">=</span> <span class="nx">distance</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="c1">// Check for min/max</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">vert</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">yOrig</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">);</span>
+            <span class="nx">y</span> <span class="o">=</span> <span class="nx">_constrain</span><span class="p">(</span><span class="nx">yOrig</span><span class="p">,</span> <span class="nx">minY</span><span class="p">,</span> <span class="nx">maxY</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="c1">// Check for minY</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nx">minY</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">minY</span><span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="c1">// Check for minX</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nx">minX</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">minX</span><span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="c1">// Check for maxY</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">maxY</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">maxY</span><span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="c1">// Check for maxX</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">maxX</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">maxX</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">horiz</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">xOrig</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">);</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="nx">_constrain</span><span class="p">(</span><span class="nx">xOrig</span><span class="p">,</span> <span class="nx">minX</span><span class="p">,</span> <span class="nx">maxX</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;half:&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">+</span> <span class="s2">&quot;, fwd:&quot;</span>  <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrolledForward</span><span class="p">,</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">!==</span> <span class="nx">xOrig</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">!==</span> <span class="nx">yOrig</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">vert</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">horiz</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;half:&quot;</span> <span class="o">+</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">+</span> <span class="s2">&quot;, fwd:&quot;</span>  <span class="o">+</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrolledForward</span><span class="p">,</span> <span class="s2">&quot;scrollview&quot;</span><span class="p">);</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_snapToEdge</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">onGestureMoveEnd</span><span class="o">:</span> <span class="kc">true</span>
         <span class="p">});</span>
 
@@ -493,82 +464,52 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * After listener for changes to the scrollY attribute</span>
+<span class="cm">     * After listener for changes to the scrollX or scrollY attribute</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _afterScrollYChange</span>
+<span class="cm">     * @method _afterScrollChange</span>
 <span class="cm">     * @param e {Event.Facade} The event facade</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_afterScrollYChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_afterScrollChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">duration</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span>
+            <span class="nx">easing</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">;</span>
+            
+        <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="mi">400</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+
         <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiScrollY</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">easing</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span> <span class="o">==</span> <span class="nx">SCROLL_X</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiScrollTo</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiScrollTo</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Update the UI when the scrollY attribute changes</span>
+<span class="cm">     * Used to move the ScrollView content</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _uiScrollY</span>
-<span class="cm">     * @param val {Number} The scrollY value</span>
-<span class="cm">     * @param duration {Number} The length (in ms) of the scroll animation</span>
-<span class="cm">     * @param easing {String} An easing equation, if duration is defined</span>
+<span class="cm">     * @method _uiScrollTo</span>
+<span class="cm">     * @param x {Number}</span>
+<span class="cm">     * @param y {Number}</span>
+<span class="cm">     * @param duration {Number}</span>
+<span class="cm">     * @param easing {String}</span>
 <span class="cm">     * @protected</span>
+<span class="cm">     * </span>
 <span class="cm">     */</span>
-    <span class="nx">_uiScrollY</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="mi">400</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">);</span>
+    <span class="nx">_uiScrollTo</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * After listener for changes to the scrollX attribute</span>
+<span class="cm">     * After listener for the height or width attribute</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _afterScrollXChange</span>
+<span class="cm">     * @method _afterDimChange</span>
 <span class="cm">     * @param e {Event.Facade} The event facade</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_afterScrollXChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiScrollX</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">easing</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Update the UI when the scrollX attribute changes</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _uiScrollX</span>
-<span class="cm">     * @param val {Number} The scrollX value</span>
-<span class="cm">     * @param duration {Number} The length (in ms) of the scroll animation</span>
-<span class="cm">     * @param easing {String} An easing equation, if duration is defined</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_uiScrollX</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="mi">400</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">);</span>
-    <span class="p">},</span>
-    
-    <span class="cm">/**</span>
-<span class="cm">     * After listener for the height attribute</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _afterHeightChange</span>
-<span class="cm">     * @param e {Event.Facade} The event facade</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_afterHeightChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiDimensionsChange</span><span class="p">();</span>
-    <span class="p">},</span>
-    
-    <span class="cm">/**</span>
-<span class="cm">     * After listener for the width attribute</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _afterWidthChange</span>
-<span class="cm">     * @param e {Event.Facade} The event facade</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_afterWidthChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">_afterDimChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_uiDimensionsChange</span><span class="p">();</span>
     <span class="p">},</span>
     
@@ -580,32 +521,36 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_uiDimensionsChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
 
-            <span class="nx">height</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">),</span>
-            <span class="nx">width</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">),</span>
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_bb</span><span class="p">,</span>
+
+            <span class="nx">CLASS_NAMES</span> <span class="o">=</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">CLASS_NAMES</span><span class="p">,</span>
+
+            <span class="nx">height</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">),</span>
+            <span class="nx">width</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">),</span>
 
             <span class="c1">// Use bb instead of cb. cb doesn&#39;t gives us the right results</span>
             <span class="c1">// in FF (due to overflow:hidden)</span>
             <span class="nx">scrollHeight</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollHeight&#39;</span><span class="p">),</span>
             <span class="nx">scrollWidth</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollWidth&#39;</span><span class="p">);</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">height</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollHeight</span> <span class="o">&gt;</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>            
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span> <span class="o">=</span> <span class="nx">scrollHeight</span> <span class="o">-</span> <span class="nx">height</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrollHeight</span> <span class="o">=</span> <span class="nx">scrollHeight</span><span class="p">;</span>
-            <span class="nx">bb</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">CLASS_NAMES</span><span class="p">.</span><span class="nx">vertical</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">height</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollHeight</span> <span class="o">&gt;</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>          
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsVertical</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_maxScrollY</span> <span class="o">=</span> <span class="nx">scrollHeight</span> <span class="o">-</span> <span class="nx">height</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_minScrollY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollHeight</span> <span class="o">=</span> <span class="nx">scrollHeight</span><span class="p">;</span>
+            <span class="nx">bb</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">CLASS_NAMES</span><span class="p">.</span><span class="nx">vertical</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">width</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollWidth</span> <span class="o">&gt;</span> <span class="nx">width</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollX</span> <span class="o">=</span> <span class="nx">scrollWidth</span> <span class="o">-</span> <span class="nx">width</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">=</span> <span class="nx">scrollWidth</span><span class="p">;</span>
-            <span class="nx">bb</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">CLASS_NAMES</span><span class="p">.</span><span class="nx">horizontal</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">width</span> <span class="o">&amp;&amp;</span> <span class="nx">scrollWidth</span> <span class="o">&gt;</span> <span class="nx">width</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_maxScrollX</span> <span class="o">=</span> <span class="nx">scrollWidth</span> <span class="o">-</span> <span class="nx">width</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_minScrollX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">=</span> <span class="nx">scrollWidth</span><span class="p">;</span>
+            <span class="nx">bb</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">CLASS_NAMES</span><span class="p">.</span><span class="nx">horizontal</span><span class="p">);</span>
         <span class="p">}</span>
-        
+
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, defines whether or not the scrollview can scroll vertically </span>
 <span class="cm">         * </span>
@@ -680,7 +625,8 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_flick</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">flick</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">flick</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">flick</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">flick</span><span class="p">,</span>
+            <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Internal state, currently calculated velocity from the flick </span>
@@ -689,18 +635,18 @@
 <span class="cm">         * @type number</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="nx">flick</span><span class="p">.</span><span class="nx">velocity</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="nx">flick</span><span class="p">.</span><span class="nx">velocity</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_decelCached</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;deceleration&#39;</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_bounceCached</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bounce&#39;</span><span class="p">);</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_cDecel</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;deceleration&#39;</span><span class="p">);</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_cBounce</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bounce&#39;</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_pastYEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_pastXEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_pastYEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_pastXEdge</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_flickFrame</span><span class="p">();</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">_flickFrame</span><span class="p">();</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_FLICK</span><span class="p">);</span>
+        <span class="nx">sv</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_FLICK</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -710,53 +656,55 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_flickFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">newY</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">newY</span><span class="p">,</span>
             <span class="nx">maxY</span><span class="p">,</span>
             <span class="nx">minY</span><span class="p">,</span>
             <span class="nx">newX</span><span class="p">,</span>
             <span class="nx">maxX</span><span class="p">,</span>
             <span class="nx">minX</span><span class="p">,</span>
-            <span class="nx">scrollsVertical</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">,</span>
-            <span class="nx">scrollsHorizontal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">,</span>
-            <span class="nx">deceleration</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_decelCached</span><span class="p">,</span>
-            <span class="nx">bounce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bounceCached</span><span class="p">,</span>
+            <span class="nx">scrollsVertical</span>  <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsVertical</span><span class="p">,</span>
+            <span class="nx">scrollsHorizontal</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">,</span>
+            <span class="nx">deceleration</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_cDecel</span><span class="p">,</span>
+            <span class="nx">bounce</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_cBounce</span><span class="p">,</span>
+            <span class="nx">vel</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_currentVelocity</span><span class="p">,</span>
             <span class="nx">step</span> <span class="o">=</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">FRAME_STEP</span><span class="p">;</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">maxY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">;</span>
-            <span class="nx">minY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">;</span>
-            <span class="nx">newY</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*</span> <span class="nx">step</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">maxY</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_maxScrollY</span><span class="p">;</span>
+            <span class="nx">minY</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_minScrollY</span><span class="p">;</span>
+            <span class="nx">newY</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="nx">vel</span> <span class="o">*</span> <span class="nx">step</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">maxX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_maxScrollX</span><span class="p">;</span>
-            <span class="nx">minX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minScrollX</span><span class="p">;</span>
-            <span class="nx">newX</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*</span> <span class="nx">step</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">maxX</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_maxScrollX</span><span class="p">;</span>
+            <span class="nx">minX</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_minScrollX</span><span class="p">;</span>
+            <span class="nx">newX</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="nx">vel</span> <span class="o">*</span> <span class="nx">step</span><span class="p">);</span>
         <span class="p">}</span>
         
-        <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*</span> <span class="nx">deceleration</span><span class="p">);</span>
+        <span class="nx">vel</span> <span class="o">=</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">=</span> <span class="p">(</span><span class="nx">vel</span> <span class="o">*</span> <span class="nx">deceleration</span><span class="p">);</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.015</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pastYEdge</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_pastXEdge</span><span class="p">));</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">vel</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.015</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_pastYEdge</span> <span class="o">||</span> <span class="nx">sv</span><span class="p">.</span><span class="nx">_pastXEdge</span><span class="p">));</span>
 
             <span class="k">if</span><span class="p">(</span><span class="nx">scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span><span class="p">(</span><span class="nx">newY</span> <span class="o">&lt;</span> <span class="nx">minY</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">minY</span><span class="p">);</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">minY</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">newY</span> <span class="o">&gt;</span> <span class="nx">maxY</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">maxY</span><span class="p">);</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">maxY</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-            
+
             <span class="k">if</span><span class="p">(</span><span class="nx">scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span><span class="p">(</span><span class="nx">newX</span> <span class="o">&lt;</span> <span class="nx">minX</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">minX</span><span class="p">);</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">minX</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">newX</span> <span class="o">&gt;</span> <span class="nx">maxX</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">maxX</span><span class="p">);</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">maxX</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
@@ -765,24 +713,24 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">scrollsVertical</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">newY</span> <span class="o">&lt;</span> <span class="nx">minY</span> <span class="o">||</span> <span class="nx">newY</span> <span class="o">&gt;</span> <span class="nx">maxY</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_pastYEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="nx">bounce</span><span class="p">;</span>
+                <span class="nx">sv</span><span class="p">.</span><span class="nx">_pastYEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">sv</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="nx">bounce</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">newY</span><span class="p">);</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_Y</span><span class="p">,</span> <span class="nx">newY</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">newX</span> <span class="o">&lt;</span> <span class="nx">minX</span> <span class="o">||</span> <span class="nx">newX</span> <span class="o">&gt;</span> <span class="nx">maxX</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_pastXEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="nx">bounce</span><span class="p">;</span>
+                <span class="nx">sv</span><span class="p">.</span><span class="nx">_pastXEdge</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">sv</span><span class="p">.</span><span class="nx">_currentVelocity</span> <span class="o">*=</span> <span class="nx">bounce</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">newX</span><span class="p">);</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">newX</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;_flickFrame&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">sv</span><span class="p">,</span> <span class="s1">&#39;_flickFrame&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -794,13 +742,14 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_killTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fireEvent</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">sv</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">sv</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_flickTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">_flickTimer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span><span class="p">(</span><span class="nx">fireEvent</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
+            <span class="nx">sv</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_SCROLL_END</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -1008,20 +957,15 @@
     <span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="s1">&#39;ease-out&#39;</span><span class="p">,</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Style property name to use to set transition duration. Currently Webkit specific (WebkitTransitionDuration)</span>
-<span class="cm">     * </span>
-<span class="cm">     * @property ScrollView._TRANSITION_DURATION</span>
-<span class="cm">     * @private</span>
-<span class="cm">     */</span>
-    <span class="nx">_TRANSITION_DURATION</span> <span class="o">:</span> <span class="s2">&quot;WebkitTransitionDuration&quot;</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
 <span class="cm">     * Style property name to use to set transition property. Currently, Webkit specific (WebkitTransitionProperty)</span>
 <span class="cm">     *</span>
-<span class="cm">     * @property ScrollView._TRANSITION_PROPERTY</span>
+<span class="cm">     * @property ScrollView._TRANSITION.PROPERTY</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
-    <span class="nx">_TRANSITION_PROPERTY</span> <span class="o">:</span> <span class="s2">&quot;WebkitTransitionProperty&quot;</span>
+    <span class="nx">_TRANSITION</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="nx">DURATION</span> <span class="o">:</span> <span class="s2">&quot;WebkitTransitionDuration&quot;</span><span class="p">,</span>
+        <span class="nx">PROPERTY</span> <span class="o">:</span> <span class="s2">&quot;WebkitTransitionProperty&quot;</span>
+    <span class="p">}</span>
 <span class="p">});</span>
 </pre></div>
 
