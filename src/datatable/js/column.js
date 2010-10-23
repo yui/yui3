@@ -1,119 +1,185 @@
-var COLUMN = "column";
-
+/**
+ * The Column class defines and manages attributes of Columns for DataTable.
+ *
+ * @class Column
+ * @extends Widget
+ * @constructor
+ */
 function Column(config) {
     Column.superclass.constructor.apply(this, arguments);
 }
 
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "column"
- */
-Column.NAME = "column";
+/////////////////////////////////////////////////////////////////////////////
+//
+// STATIC PROPERTIES
+//
+/////////////////////////////////////////////////////////////////////////////
+Y.mix(Column, {
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "column"
+     */
+    NAME: "column",
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Column Attributes
+// ATTRIBUTES
 //
 /////////////////////////////////////////////////////////////////////////////
-Column.ATTRS = {
-    id: {
-        valueFn: "_defaultId",
-        writeOnce: true
-    },
-    key: {
-        valueFn: "_defaultKey"
-    },
-    field: {
-        valueFn: "_defaultField"
-    },
-    label: {
-        valueFn: "_defaultLabel"
-    },
-    keyIndex: {
-        readOnly: true
-    },
-    parent: {
-        readOnly: true
-    },
-    children: {
-    },
-    colspan: {
-        readOnly: true
-    },
-    rowspan: {
-        readOnly: true
-    },
-    thNode: {
-        readOnly: true
-    },
-    thLinerNode: {
-        readOnly: true
-    },
-    thLabelNode: {
-        readOnly: true
-    },
-    abbr: {
-        value: null
-    },
-    headers: {}, // set by Columnset code
-    classnames: {
-        readOnly: true,
-        getter: "_getClassnames"
-    },
-    editor: {},
-    formatter: {},
-    
-    // requires datatable-colresize
-    resizeable: {},
+    ATTRS: {
+        id: {
+            valueFn: "_defaultId",
+            writeOnce: true
+        },
+        key: {
+            valueFn: "_defaultKey"
+        },
+        field: {
+            valueFn: "_defaultField"
+        },
+        label: {
+            valueFn: "_defaultLabel"
+        },
+        keyIndex: {
+            readOnly: true
+        },
+        parent: {
+            readOnly: true
+        },
+        children: {
+        },
+        colSpan: {
+            readOnly: true
+        },
+        rowSpan: {
+            readOnly: true
+        },
+        thNode: {
+            readOnly: true
+        },
+        thLinerNode: {
+            readOnly: true
+        },
+        thLabelNode: {
+            readOnly: true
+        },
+        abbr: {
+            value: null
+        },
+        headers: {}, // set by Columnset code
+        classnames: {
+            readOnly: true,
+            getter: "_getClassnames"
+        },
+        editor: {},
+        formatter: {},
 
-    //requires datatable-sort
-    sortable: {},
-    hidden: {},
-    width: {},
-    minWidth: {},
-    maxAutoWidth: {}
-};
+        // requires datatable-colresize
+        resizeable: {},
 
-/* Column extends Widget */
+        //requires datatable-sort
+        sortable: {},
+        hidden: {},
+        width: {},
+        minWidth: {},
+        maxAutoWidth: {}
+    }
+});
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PROTOTYPE
+//
+/////////////////////////////////////////////////////////////////////////////
 Y.extend(Column, Y.Widget, {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTE HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * @method _defaultId
+    * @description Return ID for instance.
+    * @returns String
+    * @private
+    */
     _defaultId: function() {
         return Y.guid();
     },
 
+    /**
+    * @method _defaultKey
+    * @description Return key for instance. Defaults to ID if one was not
+    * provided.
+    * @returns String
+    * @private
+    */
     _defaultKey: function(key) {
         return key || Y.guid();
     },
 
+    /**
+    * @method _defaultField
+    * @description Return field for instance. Defaults to key if one was not
+    * provided.
+    * @returns String
+    * @private
+    */
     _defaultField: function(field) {
         return field || this.get("key");
     },
 
+    /**
+    * @method _defaultLabel
+    * @description Return label for instance. Defaults to key if one was not
+    * provided.
+    * @returns String
+    * @private
+    */
     _defaultLabel: function(label) {
         return label || this.get("key");
     },
 
-    initializer: function() {
-    },
-
-    destructor: function() {
-    },
-
-    syncUI: function() {
-        this._uiSetAbbr(this.get("abbr"));
-    },
-
+    /**
+     * Updates the UI if changes are made to abbr.
+     *
+     * @method _afterAbbrChange
+     * @param e {Event} Custom event for the attribute change.
+     * @private
+     */
     _afterAbbrChange: function (e) {
         this._uiSetAbbr(e.newVal);
     },
-    
-    _uiSetAbbr: function(val) {
-        this._thNode.set("abbr", val);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // METHODS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Initializer.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
+    initializer: function(config) {
     },
+
+    /**
+    * Destructor.
+    *
+    * @method destructor
+    * @private
+    */
+    destructor: function() {
+    },
+
     /**
      * Returns classnames for Column.
      *
@@ -176,6 +242,32 @@ Y.extend(Column, Y.Widget, {
         }
 
         return allClasses.join(' ');*/
+    },
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // SYNC
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+    * Syncs UI to intial state.
+    *
+    * @method syncUI
+    * @private
+    */
+    syncUI: function() {
+        this._uiSetAbbr(this.get("abbr"));
+    },
+
+    /**
+     * Updates abbr.
+     *
+     * @method _uiSetAbbr
+     * @param val {String} New abbr.
+     * @protected
+     */
+    _uiSetAbbr: function(val) {
+        this._thNode.set("abbr", val);
     }
 });
 

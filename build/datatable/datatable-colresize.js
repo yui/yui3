@@ -54,4 +54,5 @@ Y.extend(DataTableColResize, Y.Plugin.Base, {
 Y.namespace('Plugin').DataTableColResize = DataTableColResize;
 
 
+
 }, '@VERSION@' ,{requires:['plugin','dd','datatable-base']});

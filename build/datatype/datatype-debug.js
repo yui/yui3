@@ -35,7 +35,9 @@ Y.mix(Y.namespace("DataType.Number"), {
 Y.namespace("Parsers").number = Y.DataType.Number.parse;
 
 
+
 }, '@VERSION@' );
+
 YUI.add('datatype-number-format', function(Y) {
 
 /**
@@ -140,10 +142,13 @@ Y.mix(Y.namespace("DataType.Number"), {
 });
 
 
+
 }, '@VERSION@' );
 
 
+
 YUI.add('datatype-number', function(Y){}, '@VERSION@' ,{use:['datatype-number-parse', 'datatype-number-format']});
+
 
 YUI.add('datatype-date-parse', function(Y) {
 
@@ -190,7 +195,9 @@ Y.mix(Y.namespace("DataType.Date"), {
 Y.namespace("Parsers").date = Y.DataType.Date.parse;
 
 
+
 }, '@VERSION@' );
+
 YUI.add('datatype-date-format', function(Y) {
 
 /**
@@ -523,6 +530,7 @@ var Dt = {
 };
 
 Y.mix(Y.namespace("DataType.Date"), Dt);
+
 /**
  * @module datatype
 */
@@ -624,10 +632,13 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 
+
 }, '@VERSION@' ,{lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW']});
 
 
+
 YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{use:['datatype-date-parse', 'datatype-date-format']});
+
 
 YUI.add('datatype-xml-parse', function(Y) {
 
@@ -653,21 +664,21 @@ Y.mix(Y.namespace("DataType.XML"), {
         var xmlDoc = null;
         if(LANG.isString(data)) {
             try {
-                if(!LANG.isUndefined(DOMParser)) {
-                    xmlDoc = new DOMParser().parseFromString(data, "text/xml");
+                if(!LANG.isUndefined(ActiveXObject)) {
+                        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                        xmlDoc.async = false;
+                        xmlDoc.loadXML(data);
                 }
             }
-            catch(e) {
+            catch(ee) {
                 try {
-                    if(!LANG.isUndefined(ActiveXObject)) {
-                            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-                            xmlDoc.async = false;
-                            xmlDoc.loadXML(data);
+                    if(!LANG.isUndefined(DOMParser)) {
+                        xmlDoc = new DOMParser().parseFromString(data, "text/xml");
                     }
                 }
-                catch(ee) {
-                    Y.log(ee.message + " (Could not parse data " + Y.dump(data) + " to type XML Document)", "warn", "datatype-xml");
+                catch(e) {
                 }
+                    Y.log(ee.message + " (Could not parse data " + Y.dump(data) + " to type XML Document)", "warn", "datatype-xml");
             }
         }
         
@@ -684,7 +695,9 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
+
 }, '@VERSION@' );
+
 YUI.add('datatype-xml-format', function(Y) {
 
 /**
@@ -737,10 +750,13 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 
 
+
 }, '@VERSION@' );
 
 
+
 YUI.add('datatype-xml', function(Y){}, '@VERSION@' ,{use:['datatype-xml-parse', 'datatype-xml-format']});
+
 
 
 
