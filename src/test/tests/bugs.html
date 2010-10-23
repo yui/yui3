@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<title>YUI Test Bugs</title>
+<link type="text/css" rel="stylesheet" href="../../../build/logreader/assets/skins/sam/logreader.css" />
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+</head>
+<body class="yui3-skin-sam">
+    <h1>YUI Test Bugs</h1>
+    <div id="c"></div>
+<script type="text/javascript">
+
+YUI({
+    filter: "debug",
+    logInclude: { TestRunner: true }
+}).use('test', 'console', function (Y) {
+window.YTest = Y.Test;
+    Y.namespace("Tests");
+
+    var suite = (function(){
+
+        var suite = new Y.Test.Suite("YUI Test Bugs");
+
+        suite.add(new Y.Test.Case({
+
+            name : "TestReporter",
+
+            "creating an iframe should allow its name to be retrieved in the DOM": function () {
+                var fixture = "yuiTestTest";
+                // var form = document.createElement("<iframe name=\"yuiTestTest\">");
+                /* buggy version:
+                var form = document.createElement("iframe");
+                form.name = fixture;
+                document.body.appendChild(form);
+                // Y.Assert.areNotEqual(document.getElementById("fixture2").outerHTML, "<iframe></iframe>");
+                // Y.Assert.areNotEqual(form.outerHTML.toLowerCase(), "<iframe></iframe>");
+                */
+                // working version
+                var div = document.createElement("div");
+                div.id = "temp1";
+                div.innerHTML = "<iframe id='fixture2' name='yuiTestTest'></iframe>";
+                document.body.appendChild(div.firstChild);
+                Y.Assert.isNull(document.getElementById(div.id));
+                Y.Assert.areEqual(document.getElementById("fixture2").getAttribute("name"), fixture);
+            }
+
+        }));
+
+        return suite;
+
+    })();
+
+    var r = new Y.Console({
+        verbose : true,
+        newestOnTop : false
+    });
+
+    r.render('#c');
+
+    Y.Test.Runner.add(suite);
+    Y.Test.Runner.run();
+
+});
+
+
+</script>
+</body>
+</html>
