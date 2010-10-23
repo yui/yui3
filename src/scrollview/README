@@ -13,6 +13,7 @@ for the preview release.
 * Fixed shared scrollbar node across multiple instances.
 * Changed async call to _uiDimensionsChange after render to a sync call.
 * Corrected skin prefix to be yui3-skin-sam instead yui-skin-sam.
+* Refactored for kweight, and broke out scrollview-base-ie conditional module.
 
 3.2.0
 

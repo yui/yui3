@@ -43,6 +43,15 @@
                     "base-build",
                     "widget"
                 ]
+            },
+            "widget-base-ie": {
+                "requires": [
+                    "widget-base"
+                ],
+                "condition": {
+                   "trigger": "widget-base",
+                   "ua": "ie"
+                }
             }
         },
 
@@ -60,26 +69,17 @@
                     "classnamemanager"
                 ]
             },
-
             "widget-htmlparser": {
                 "requires": [
                     "widget-base"
                 ]
             },
-
-            "widget-base-ie": {
-                "requires": [
-                    "widget-base"
-                ]
-            },
-
             "widget-uievents": {
                 "requires": [
                     "widget-base",
                     "node-event-delegate"
                 ]
             },
-
             "widget-skin": {
                 "requires": [
                     "widget-base"
