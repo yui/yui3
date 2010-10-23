@@ -1192,6 +1192,15 @@
                 ], 
                 "skinnable": true
             }, 
+            "scrollview-base-ie": {
+                "condition": {
+                    "trigger": "scrollview-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "scrollview-base"
+                ]
+            }, 
             "scrollview-paginator": {
                 "path": "scrollview/scrollview-paginator-min.js", 
                 "requires": [

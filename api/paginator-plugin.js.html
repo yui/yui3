@@ -52,9 +52,13 @@
 <span class="cm"> *</span>
 <span class="cm"> * @module scrollview-paginator</span>
 <span class="cm"> */</span>
- 
-<span class="kd">var</span> <span class="nx">BOUNCE_DECELERATION_CONST</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="nx">UI</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">UI</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ScrollView</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">,</span>
+    <span class="nx">INDEX</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="nx">SCROLL_X</span> <span class="o">=</span> <span class="s2">&quot;scrollX&quot;</span><span class="p">,</span>
+    <span class="nx">TOTAL</span> <span class="o">=</span> <span class="s2">&quot;total&quot;</span><span class="p">,</span>
+    <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
+    <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Scrollview plugin that adds support for paging</span>
@@ -139,60 +143,40 @@
 <span class="cm">     * @method initializer</span>
 <span class="cm">     */</span>
     <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">host</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">host</span><span class="p">,</span>
+            <span class="nx">paginator</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span> <span class="c1">// kweight</span>
 
-        <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">);</span>
+        <span class="nx">host</span> <span class="o">=</span> <span class="nx">paginator</span><span class="p">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="nx">paginator</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_calculatePageOffsets</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">beforeHostMethod</span><span class="p">(</span><span class="s1">&#39;_flickFrame&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_flickFrame</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_scrollEnded</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;render&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterRender</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;indexChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterIndexChange</span><span class="p">);</span>
+        <span class="nx">paginator</span><span class="p">.</span><span class="nx">beforeHostMethod</span><span class="p">(</span><span class="s1">&#39;_flickFrame&#39;</span><span class="p">,</span> <span class="nx">paginator</span><span class="p">.</span><span class="nx">_flickFrame</span><span class="p">);</span>
+        <span class="nx">paginator</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_uiDimensionsChange&#39;</span><span class="p">,</span> <span class="nx">paginator</span><span class="p">.</span><span class="nx">_calcOffsets</span><span class="p">);</span>
+        <span class="nx">paginator</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;scrollEnd&#39;</span><span class="p">,</span> <span class="nx">paginator</span><span class="p">.</span><span class="nx">_scrollEnded</span><span class="p">);</span>
+        <span class="nx">paginator</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;render&#39;</span><span class="p">,</span> <span class="nx">paginator</span><span class="p">.</span><span class="nx">_afterRender</span><span class="p">);</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bounce&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// Change bounce constant to increase friction</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_originalHostBounce</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bounce&#39;</span><span class="p">);</span> 
-            <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;bounce&#39;</span><span class="p">,</span> <span class="nx">BOUNCE_DECELERATION_CONST</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="nx">paginator</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;indexChange&#39;</span><span class="p">,</span> <span class="nx">paginator</span><span class="p">.</span><span class="nx">_afterIndexChange</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Destructor removes anything added by the plugin</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method destructor</span>
-<span class="cm">     */</span>
-    <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
-
-        <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bounce&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;bounce&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_originalHostBounce</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Pre-calculate the min/max boundary points when the contentBox changes</span>
+<span class="cm">     * Calculate the page boundary offsets</span>
 <span class="cm">     * </span>
-<span class="cm">     * @method _calculatePageOffsets</span>
+<span class="cm">     * @method _calcOffsets</span>
 <span class="cm">     * @protected</span>
-<span class="cm">     */</span>    
-    <span class="nx">_calculatePageOffsets</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="cm">     */</span>
+    <span class="nx">_calcOffsets</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
-            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
-            <span class="nx">pageSelector</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selector&#39;</span><span class="p">),</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">),</span>
+            <span class="nx">bb</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">),</span>
+            <span class="nx">pageSelector</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;selector&quot;</span><span class="p">),</span>
             <span class="nx">pages</span><span class="p">,</span>
-            <span class="nx">points</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="nx">offsets</span><span class="p">;</span>
 
         <span class="c1">// Pre-calculate min/max values for each page</span>
-        <span class="nx">pages</span> <span class="o">=</span> <span class="nx">pageSelector</span> <span class="o">?</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">pageSelector</span><span class="p">)</span> <span class="o">:</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">);</span>
-        <span class="nx">pages</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">points</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetLeft&#39;</span><span class="p">));</span>
-        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+        <span class="nx">pages</span> <span class="o">=</span> <span class="nx">pageSelector</span> <span class="o">?</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">pageSelector</span><span class="p">)</span> <span class="o">:</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">);</span>
 
-        <span class="nx">points</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">-</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">));</span>
-        
-        <span class="k">this</span><span class="p">.</span><span class="nx">_minPoints</span> <span class="o">=</span> <span class="nx">points</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">TOTAL</span><span class="p">,</span> <span class="nx">pages</span><span class="p">.</span><span class="nx">size</span><span class="p">());</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="nx">pages</span><span class="p">.</span><span class="nx">size</span><span class="p">());</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_pgOff</span> <span class="o">=</span> <span class="nx">offsets</span> <span class="o">=</span> <span class="nx">pages</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;offsetLeft&quot;</span><span class="p">);</span>
+        <span class="nx">offsets</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollWidth</span> <span class="o">-</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;offsetWidth&quot;</span><span class="p">));</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -208,16 +192,16 @@
 
             <span class="nx">inc</span> <span class="o">=</span> <span class="nx">velocity</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span>
 
-            <span class="nx">pageIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">),</span>
-            <span class="nx">pageCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">);</span>
+            <span class="nx">pageIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">),</span>
+            <span class="nx">pageCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">TOTAL</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">velocity</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Handling flick - increment: &quot;</span> <span class="o">+</span> <span class="nx">inc</span> <span class="o">+</span> <span class="s2">&quot;, pageIndex: &quot;</span> <span class="o">+</span> <span class="nx">pageIndex</span><span class="p">,</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -244,17 +228,17 @@
 <span class="cm">     */</span>
      <span class="nx">_scrollEnded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
          <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
-             <span class="nx">pageIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">),</span>
-             <span class="nx">pageCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">);</span>
+             <span class="nx">pageIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">),</span>
+             <span class="nx">pageCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">TOTAL</span><span class="p">);</span>
 
          <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;_scrollEnded - onGME: &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">onGestureMoveEnd</span> <span class="o">+</span> <span class="s2">&quot;, flicking: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_flicking</span> <span class="o">+</span> <span class="s2">&quot;, halfway: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledHalfway</span> <span class="o">+</span> <span class="s2">&quot;, forward: &quot;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledForward</span><span class="p">,</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
 
          <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">onGestureMoveEnd</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">host</span><span class="p">.</span><span class="nx">_flicking</span><span class="p">)</span> <span class="p">{</span>
              <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledHalfway</span><span class="p">)</span> <span class="p">{</span>
                  <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrolledForward</span> <span class="o">&amp;&amp;</span> <span class="nx">pageIndex</span> <span class="o">&lt;</span> <span class="nx">pageCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                     <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                     <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+                     <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">pageIndex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                     <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">,</span> <span class="nx">pageIndex</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
                  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                      <span class="k">this</span><span class="p">.</span><span class="nx">snapToCurrent</span><span class="p">();</span>
                  <span class="p">}</span>
@@ -287,17 +271,16 @@
     <span class="nx">_uiIndex</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="s1">&#39;ease-out&#39;</span><span class="p">);</span>
     <span class="p">},</span>
-    
+
     <span class="cm">/**</span>
 <span class="cm">     * Scroll to the next page in the scrollview, with animation</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method next</span>
-<span class="cm">     * @param disableAnim {Boolean} If true, no animation is used</span>
 <span class="cm">     */</span>
-    <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">disableAnim</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">);</span>  
-        <span class="k">if</span><span class="p">(</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">);</span>  
+        <span class="k">if</span><span class="p">(</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">TOTAL</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">,</span> <span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
     
@@ -305,12 +288,11 @@
 <span class="cm">     * Scroll to the previous page in the scrollview, with animation</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method prev</span>
-<span class="cm">     * @param disableAnim {Boolean} If true, no animation is used</span>
 <span class="cm">     */</span>
-    <span class="nx">prev</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">disableAnim</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">);</span>
+    <span class="nx">prev</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">);</span>
         <span class="k">if</span><span class="p">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">,</span> <span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
     
@@ -324,12 +306,12 @@
 <span class="cm">     */</span>
     <span class="nx">scrollTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">,</span>
-            <span class="nx">x</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollX&#39;</span><span class="p">);</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">);</span>
 
         <span class="k">if</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">_scrollsHorizontal</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minPoints</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_pgOff</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
 
-            <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;scrollX&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">duration</span><span class="o">:</span> <span class="nx">duration</span><span class="p">,</span>
                 <span class="nx">easing</span><span class="o">:</span> <span class="nx">easing</span>
             <span class="p">});</span>
@@ -342,12 +324,13 @@
 <span class="cm">     * @method snapToCurrent</span>
 <span class="cm">     */</span>
     <span class="nx">snapToCurrent</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
+        <span class="nx">host</span><span class="p">.</span><span class="nx">_killTimer</span><span class="p">();</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;snapToCurrent:&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">),</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;snapToCurrent:&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">),</span> <span class="s2">&quot;scrollview-paginator&quot;</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;scrollX&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_minPoints</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)],</span> <span class="p">{</span>
+        <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">SCROLL_X</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_pgOff</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INDEX</span><span class="p">)],</span> <span class="p">{</span>
             <span class="nx">duration</span><span class="o">:</span> <span class="mi">300</span><span class="p">,</span>
             <span class="nx">easing</span><span class="o">:</span> <span class="s1">&#39;ease-out&#39;</span>
         <span class="p">});</span>
@@ -460,6 +443,7 @@
                         <ul class="content">        
                                 <li class="selected"><a href="paginator-plugin.js.html" title="paginator-plugin.js">paginator-plugin.js</a></li>
                                 <li class=""><a href="scrollbars-plugin.js.html" title="scrollbars-plugin.js">scrollbars-plugin.js</a></li>
+                                <li class=""><a href="ScrollViewBaseIE.js.html" title="ScrollViewBaseIE.js">ScrollViewBaseIE.js</a></li>
                         </ul>
                     </div>
 
@@ -477,7 +461,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginator.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterRender", "url": "Plugin.ScrollViewPaginator.html#method__afterRender", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_calculatePageOffsets", "url": "Plugin.ScrollViewPaginator.html#method__calculatePageOffsets", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "destructor", "url": "Plugin.ScrollViewPaginator.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginator.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "index", "url": "Plugin.ScrollViewPaginator.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "indexChange", "url": "Plugin.ScrollViewPaginator.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "initializer", "url": "Plugin.ScrollViewPaginator.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "next", "url": "Plugin.ScrollViewPaginator.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "prev", "url": "Plugin.ScrollViewPaginator.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginator.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "scrollTo", "url": "Plugin.ScrollViewPaginator.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selector", "url": "Plugin.ScrollViewPaginator.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selectorChange", "url": "Plugin.ScrollViewPaginator.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginator.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "total", "url": "Plugin.ScrollViewPaginator.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "totalChange", "url": "Plugin.ScrollViewPaginator.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginator.html#method__uiIndex", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterIndexChange", "url": "Plugin.ScrollViewPaginator.html#method__afterIndexChange", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_afterRender", "url": "Plugin.ScrollViewPaginator.html#method__afterRender", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_calcOffsets", "url": "Plugin.ScrollViewPaginator.html#method__calcOffsets", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_flickFrame", "url": "Plugin.ScrollViewPaginator.html#method__flickFrame", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "index", "url": "Plugin.ScrollViewPaginator.html#config_index", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "indexChange", "url": "Plugin.ScrollViewPaginator.html#event_indexChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "initializer", "url": "Plugin.ScrollViewPaginator.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "next", "url": "Plugin.ScrollViewPaginator.html#method_next", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "prev", "url": "Plugin.ScrollViewPaginator.html#method_prev", "type": "method"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_scrollEnded", "url": "Plugin.ScrollViewPaginator.html#method__scrollEnded", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "scrollTo", "url": "Plugin.ScrollViewPaginator.html#method_scrollTo", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.ATTRS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NAME", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NAME", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "ScrollViewPaginator.NS", "url": "Plugin.ScrollViewPaginator.html#property_ScrollViewPaginator.NS", "type": "property"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selector", "url": "Plugin.ScrollViewPaginator.html#config_selector", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "selectorChange", "url": "Plugin.ScrollViewPaginator.html#event_selectorChange", "type": "event"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "snapToCurrent", "url": "Plugin.ScrollViewPaginator.html#method_snapToCurrent", "type": "method"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "total", "url": "Plugin.ScrollViewPaginator.html#config_total", "type": "config"}, {"access": "", "host": "Plugin.ScrollViewPaginator", "name": "totalChange", "url": "Plugin.ScrollViewPaginator.html#event_totalChange", "type": "event"}, {"access": "protected", "host": "Plugin.ScrollViewPaginator", "name": "_uiIndex", "url": "Plugin.ScrollViewPaginator.html#method__uiIndex", "type": "method"}];
 </script>
 </body>
 </html>

@@ -1221,6 +1221,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ], 
                 "skinnable": true
             }, 
+            "scrollview-base-ie": {
+                "condition": {
+                    "trigger": "scrollview-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "scrollview-base"
+                ]
+            }, 
             "scrollview-paginator": {
                 "path": "scrollview/scrollview-paginator-min.js", 
                 "requires": [
@@ -1520,7 +1529,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'c737351f2d066395161bd763cce52c75';
+YUI.Env[Y.version].md5 = '545deafe1901cee17ad221d38e3c65d8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -162,7 +162,7 @@
                             <span class="nx">subloc</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">));</span>
                             <span class="c1">//XPath is 1-based while DOM is 0-based</span>
                             <span class="nx">subloc</span><span class="o">--</span><span class="p">;</span>
-                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">subloc</span><span class="p">];</span>
+                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nx">subloc</span><span class="p">];</span>
                             <span class="nx">isNth</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                         <span class="p">}</span>
                         <span class="c1">// grab attribute value @</span>
@@ -287,7 +287,7 @@
 <span class="cm">         *</span>
 <span class="cm">         * @method _parseResults</span>
 <span class="cm">         * @param schema {Object} Schema to parse against.</span>
-<span class="cm">         * @param context {Object} XML node document parse.</span>
+<span class="cm">         * @param context {Object} XML node or document to parse.</span>
 <span class="cm">         * @param data_out {Object} In-progress schema-parsed data to update.</span>
 <span class="cm">         * @return {Object} Schema-parsed data.</span>
 <span class="cm">         * @static</span>

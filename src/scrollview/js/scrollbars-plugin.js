@@ -120,7 +120,7 @@ ScrollbarsPlugin.ATTRS = {
      * @type Y.Node
      */
     verticalNode: {
-		setter: '_setNode',
+        setter: '_setNode',
         valueFn: '_defaultNode'
     },
 
@@ -131,7 +131,7 @@ ScrollbarsPlugin.ATTRS = {
      * @type Y.Node
      */
     horizontalNode: {
-		setter: '_setNode',
+        setter: '_setNode',
         valueFn: '_defaultNode'
     }
 };
@@ -146,10 +146,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     initializer: function() {
         this._host = this.get("host");
 
-        this.afterHostMethod('_uiScrollY', this._update);
-        this.afterHostMethod('_uiScrollX', this._update);
-        this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
         this.afterHostEvent('scrollEnd', this._hostScrollEnd);
+        this.afterHostMethod('_uiScrollTo', this._update);
+        this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
     },
 
     /**
@@ -409,13 +408,14 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * Position and resize the scroll bars according to the content size
      *
      * @method _update
-     * @param currentPos {Number} The current scrollX or scrollY value (not used here, but passed by default from _uiScrollX/_uiScrollY)
+     * @param x {Number} The current scrollX value (not used here, but passed by default from _uiScrollTo)
+     * @param y {Number} The current scrollY value (not used here, but passed by default from _uiScrollTo)
      * @param duration {Number} Number of ms of animation (optional) - used when snapping to bounds
      * @param easing {String} Optional easing equation to use during the animation, if duration is set
      * @protected
      */
-    _update: function(currentPos, duration, easing) {
-        
+    _update: function(x, y, duration, easing) {
+
         var vNode = this.get(VERTICAL_NODE),
             hNode = this.get(HORIZONTAL_NODE),
             host = this._host;
@@ -427,11 +427,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         }
 
         if (host._scrollsVertical && vNode) {
-            this._updateBar(vNode, currentPos, duration, false);
+            this._updateBar(vNode, y, duration, false);
         }
 
         if (host._scrollsHorizontal && hNode) {
-            this._updateBar(hNode, currentPos, duration, true);
+            this._updateBar(hNode, x, duration, true);
         }
     },
 
