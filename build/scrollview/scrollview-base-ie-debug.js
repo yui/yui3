@@ -1,5 +1,15 @@
+YUI.add('scrollview-base-ie', function(Y) {
+
 Y.mix(Y.ScrollView.prototype, {
 
+    /**
+     * Internal method to fix text selection in IE
+     * 
+     * @method _fixIESelect
+     * @private
+     * @param {Node} bb The bounding box
+     * @param {Node} cb The content box
+     */
     _fixIESelect : function(bb, cb) {
         this._cbDoc = cb.get("ownerDocument");
         this._nativeBody = Y.Node.getDOMNode(Y.one("body", this._cbDoc));
@@ -10,7 +20,7 @@ Y.mix(Y.ScrollView.prototype, {
             this._cbDoc.once("mouseup", this._ieRestoreSelect, this);
         }, this);
     },
-    
+
     /**
      * Native onselectstart handle to prevent selection in IE
      *
@@ -31,3 +41,6 @@ Y.mix(Y.ScrollView.prototype, {
         this._nativeBody.onselectstart = this._selectstart;
     }
 }, true);
+
+
+}, '@VERSION@' ,{requires:['scrollview-base']});

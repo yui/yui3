@@ -1219,6 +1219,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ], 
                 "skinnable": true
             }, 
+            "scrollview-base-ie": {
+                "condition": {
+                    "trigger": "scrollview-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "scrollview-base"
+                ]
+            }, 
             "scrollview-paginator": {
                 "path": "scrollview/scrollview-paginator-min.js", 
                 "requires": [
@@ -1518,4 +1527,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'f7c1df7b7a36d4ea8a236b07efdf6e8f';
+YUI.Env[Y.version].md5 = 'f94fc69609548011ad8f2d95f345d634';
