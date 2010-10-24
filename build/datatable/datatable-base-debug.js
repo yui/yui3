@@ -1249,9 +1249,13 @@ Y.extend(DTBase, Y.Widget, {
         var tree = cs.get("tree"),
             thead = this._theadNode,
             i = 0,
-            len = tree.length;
+            len = tree.length,
+            parent = thead.get("parentNode"),
+            nextSibling = thead.next();
             
-        //TODO: move thead off dom
+        // Move THEAD off DOM
+        thead.remove();
+        
         thead.get("children").remove(true);
 
         // Iterate tree of columns to add THEAD rows
@@ -1263,7 +1267,8 @@ Y.extend(DTBase, Y.Widget, {
         //this._createColumnHelpers();
 
         
-        //TODO: move thead on dom
+        // Re-attach THEAD to DOM
+        parent.insert(thead, nextSibling);
 
      },
      
@@ -1396,14 +1401,23 @@ Y.extend(DTBase, Y.Widget, {
     _uiSetRecordset: function(rs) {
         var i = 0,//TODOthis.get("state.offsetIndex")
             len = rs.getLength(), //TODOthis.get("state.pageLength")
-            o = {tbody:this._tbodyNode}; //TODO: not sure best time to do this -- depends on sdt
+            tbody = this._tbodyNode,
+            parent = tbody.get("parentNode"),
+            nextSibling = tbody.next(),
+            o = {tbody:tbody}; //TODO: not sure best time to do this -- depends on sdt
 
-        // Iterate recordset to use existing or add new tr
+        // Move TBODY off DOM
+        tbody.remove();
+
+        // Iterate Recordset to use existing TR when possible or add new TR
         for(; i<len; ++i) {
             o.record = rs.getRecord(i);
             o.rowindex = i;
             this._addTbodyTrNode(o); //TODO: sometimes rowindex != recordindex
         }
+        
+        // Re-attach TBODY to DOM
+        parent.insert(tbody, nextSibling);
     },
 
     /**
