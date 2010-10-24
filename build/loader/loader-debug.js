@@ -2453,6 +2453,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "autocomplete-list": {
+                "lang": [
+                    "en"
+                ], 
                 "plugins": {
                     "autocomplete-list-keys": {
                         "condition": {
@@ -3870,7 +3873,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'a93e2af087e9d9a9125c77a427709ee6';
+YUI.Env[Y.version].md5 = 'dbcf5649df0786e7cb172c5e112cdfe8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

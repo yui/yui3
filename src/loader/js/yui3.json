@@ -107,6 +107,9 @@
                 ]
             }, 
             "autocomplete-list": {
+                "lang": [
+                    "en"
+                ], 
                 "plugins": {
                     "autocomplete-list-keys": {
                         "condition": {
