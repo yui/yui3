@@ -141,6 +141,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                             "autocomplete-list", 
                             "base-build"
                         ]
+                    }, 
+                    "autocomplete-plugin": {
+                        "path": "autocomplete/autocomplete-plugin-min.js", 
+                        "requires": [
+                            "autocomplete-list", 
+                            "node-pluginhost"
+                        ]
                     }
                 }, 
                 "requires": [
@@ -1534,4 +1541,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'dbcf5649df0786e7cb172c5e112cdfe8';
+YUI.Env[Y.version].md5 = '58319d38e0e859c81ee8d070ad10161a';
