@@ -2298,7 +2298,38 @@ Y.AutoComplete = List;
 
 
 }, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], lang:['en']});
+YUI.add('autocomplete-plugin', function(Y) {
+
+/**
+ * Binds an AutoCompleteList instance to a Node instance.
+ *
+ * @module autocomplete
+ * @submodule autocomplete-list-plugin
+ * @class Plugin.AutoComplete
+ * @extends AutoCompleteList
+ */
+
+var Plugin = Y.Plugin;
+
+function ACListPlugin(config) {
+    config = Y.mix({}, config, true); // fast shallow clone
+    config.inputNode = config.host;
+
+    ACListPlugin.superclass.constructor.apply(this, arguments);
+}
+
+Y.extend(ACListPlugin, Y.AutoCompleteList, {}, {
+    NAME      : 'autocompleteListPlugin',
+    NS        : 'ac',
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
+});
+
+Plugin.AutoComplete     = ACListPlugin;
+Plugin.AutoCompleteList = ACListPlugin;
 
 
-YUI.add('autocomplete', function(Y){}, '@VERSION@' ,{use:['autocomplete-base', 'autocomplete-list']});
+}, '@VERSION@' ,{requires:['autocomplete-list', 'node-pluginhost']});
+
+
+YUI.add('autocomplete', function(Y){}, '@VERSION@' ,{use:['autocomplete-base', 'autocomplete-list', 'autocomplete-plugin']});
 
