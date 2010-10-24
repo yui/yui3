@@ -70,6 +70,15 @@
                             "autocomplete-list",
                             "base-build"
                         ]
+                    },
+
+                    "autocomplete-plugin": {
+                        "path": "autocomplete/autocomplete-plugin-min.js",
+
+                        "requires": [
+                            "autocomplete-list",
+                            "node-pluginhost"
+                        ]
                     }
                 },
 
