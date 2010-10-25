@@ -613,6 +613,11 @@
     }, 
     "dom": {
         "plugins": {
+            "dom-deprecated": {
+                "requires": [
+                    "dom-base"
+                ]
+            }, 
             "dom-style-ie": {
                 "condition": {
                     "trigger": "dom-style", 
@@ -981,6 +986,11 @@
                 "requires": [
                     "node-screen", 
                     "node-pluginhost"
+                ]
+            }, 
+            "node-deprecated": {
+                "requires": [
+                    "node-base"
                 ]
             }, 
             "node-event-simulate": {

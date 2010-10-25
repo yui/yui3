@@ -45,28 +45,6 @@ Y_DOM = {
         return Y_DOM.allById(id, doc)[0] || null;
     },
 
-    // @deprecated
-    children: function(node, tag) {
-        var ret = [];
-        if (node) {
-            tag = tag || '*';
-            ret = Y.Selector.query('> ' + tag, node); 
-        }
-        return ret;
-    },
-
-    // @deprecated
-    firstByTag: function(tag, root) {
-        var ret;
-        root = root || Y.config.doc;
-
-        if (tag && root.getElementsByTagName) {
-            ret = root.getElementsByTagName(tag)[0];
-        }
-
-        return ret || null;
-    },
-
     /**
      * Returns the text content of the HTMLElement. 
      * @method getText         
@@ -107,36 +85,6 @@ Y_DOM = {
             }
 
         },
-
-    /*
-     * Finds the previous sibling of the element.
-     * @method previous
-     * @deprecated Use elementByAxis
-     * @param {HTMLElement} element The html element.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current DOM node being tested as its only argument.
-     * If no function is given, the first sibling is returned.
-     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
-     * @return {HTMLElement | null} The matching DOM node or null if none found. 
-     */
-    previous: function(element, fn, all) {
-        return Y_DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
-    },
-
-    /*
-     * Finds the next sibling of the element.
-     * @method next
-     * @deprecated Use elementByAxis
-     * @param {HTMLElement} element The html element.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current DOM node being tested as its only argument.
-     * If no function is given, the first sibling is returned.
-     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
-     * @return {HTMLElement | null} The matching DOM node or null if none found. 
-     */
-    next: function(element, fn, all) {
-        return Y_DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
-    },
 
     /*
      * Finds the ancestor of the element.

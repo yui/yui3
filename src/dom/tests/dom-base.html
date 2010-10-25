@@ -12,7 +12,7 @@ YUI({
     filter: 'raw',
     combine: false,
     useConsole: true
-}).use('console', 'test', 'dom-core-test', function (Y) {
+}).use('dom-deprecated', 'console', 'test', 'dom-core-test', function (Y) {
     //create the logger
 
     var logger = new Y.Console({

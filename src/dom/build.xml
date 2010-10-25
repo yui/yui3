@@ -5,8 +5,9 @@
     <macrodef name="build-dom">
         <attribute name="target"/>
         <sequential>
-            <ant antfile="build.dom.xml" target="@{target}"/>
-            <ant antfile="build.selector-css3.xml" target="@{target}"/>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
         </sequential>
     </macrodef>
 

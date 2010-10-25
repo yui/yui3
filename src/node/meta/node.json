@@ -36,6 +36,12 @@
                     "node-base",
                     "io-base"
                 ]
+            },
+
+            "node-deprecated": {
+                "requires": [
+                    "node-base"
+                ]
             }
         },
         "submodules": {
