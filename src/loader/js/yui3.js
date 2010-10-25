@@ -633,6 +633,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "dial": {
+        "requires": [
+            "widget", 
+            "dd-drag", 
+            "substitute", 
+            "event-mouseenter", 
+            "transition"
+        ], 
+        "skinnable": true
+    }, 
     "dom": {
         "plugins": {
             "dom-deprecated": {
@@ -1582,4 +1592,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'af1573f6ac04ae5ef7081158a7a6a310';
+YUI.Env[Y.version].md5 = '5a4ef365836f14a64d3f193d674a7c51';

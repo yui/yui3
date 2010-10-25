@@ -611,6 +611,16 @@
             }
         }
     }, 
+    "dial": {
+        "requires": [
+            "widget", 
+            "dd-drag", 
+            "substitute", 
+            "event-mouseenter", 
+            "transition"
+        ], 
+        "skinnable": true
+    }, 
     "dom": {
         "plugins": {
             "dom-deprecated": {
