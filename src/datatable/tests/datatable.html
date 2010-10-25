@@ -2,6 +2,8 @@
 <html>
 <head>
 <title>Datatable Tests</title>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssbase/base-min.css">
 <script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 
 <style>
@@ -35,9 +37,37 @@
 
 <body class="yui3-skin-sam">
 <h1>Datatable Tests</h1>
-<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 
-<div id="results"></div>
+<p>To test the performance of various datatables, look at the following sections in the code:
+	
+	<pre>
+//large or small dataset.
+data: large,
+
+//---------------------------------------------
+// Special instructions
+//---------------------------------------------
+
+_should: {
+	ignore: {
+	//ignore following tests (good to do if you are doing a large dataset)
+		testBaseDatatable: true,
+		testXYDatatable: true,
+		testXDatatable: true,
+		testYDatatable_FixedCol: true,
+		testYDatatable_AutoCol: true,
+		testXYDatatable_BigHeaders: false
+	}
+}
+	</pre>
+	
+	Toggle <code>data</code> from <code>large</code> to <code>small</code> to get a different sized dataset. The <code>ignore</code> object determines which table to load. If testing performance, it is recommended that you only enable 1 table at a time.</p>
+	<hr>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+	<hr>
+<div id="results">
+	<h3>Test Results</h3>
+</div>
 
 <h3>Base Datatable</h3>
 <div id="base"></div>
@@ -79,15 +109,22 @@
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
-            BTNRUN = Y.get("#btnRun");
+            BTNRUN = Y.one("#btnRun"),
+			TestRunner = Y.Test.Runner;
         BTNRUN.set("disabled", false);
+		TestRunner.subscribe(TestRunner.TEST_CASE_COMPLETE_EVENT, testCompleted);
         Y.on("click", function(e){
-            Y.Test.Runner.run();
+			TestRunner.run();
+	        BTNRUN.set("value", 'Running...');
+	        BTNRUN.set("disabled", true);
+
         }, BTNRUN);
+		
+		function testCompleted() {
+			BTNRUN.set("value", 'Test Completed');
+			Y.log('Test Completed');
+		}
         var myConsole = new Y.Console().render();
-
-
-
 
 
 
@@ -124,13 +161,24 @@
 				cols3: [{key:"a", field:"a", label:"Lorem Ipsum Dolor SIt Amet", sortable:true, className: ["oneClass", "anotherClass"], width:'5px'},{key:"b", abbr:"Lorem Ipsum Dolor SIt Amet", className:"myClass", width:'75px'},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"}],
 				
 				
-				
-				
 				//large or small dataset.
 				data: small,
+				
+				//---------------------------------------------
+			    // Special instructions
+			    //---------------------------------------------
 
-
-
+			    _should: {
+			        ignore: {
+						//ignore following tests (good to do if you are doing a large dataset)
+			            testBaseDatatable: 				true,
+			 			testXYDatatable: 				true,
+						testXDatatable: 				true,
+						testYDatatable_FixedCol: 		true,
+						testYDatatable_AutoCol: 		true,
+						testXYDatatable_BigHeaders: 	false
+			        }
+			    },
 
 		    //---------------------------------------------
 		    // Setup and tear down
@@ -150,21 +198,7 @@
 				delete this.dt;
 		    },
 		
-		    //---------------------------------------------
-		    // Special instructions
-		    //---------------------------------------------
 
-		    _should: {
-		        ignore: {
-					//ignore following tests (good to do if you are doing a large dataset)
-		            testBaseDatatable: 				true,
-		 			testXYDatatable: 				true,
-					testXDatatable: 				false,
-					testYDatatable_FixedCol: 		true,
-					testYDatatable_AutoCol: 		true,
-					testXYDatatable_BigHeaders: 	true
-		        }
-		    },
 		
 			/////////////////////////////////////////////////////////////////////////////
 			//
@@ -174,7 +208,9 @@
 		
 			displayReport: function(data) {
 				
-				var dl = Y.Node.create('<dl></dl>');
+				var dl = Y.Node.create('<dl></dl>'),
+					results = Y.one('#results');
+				
 				Y.each(data, function(v,k,o) {
 					var dt = Y.Node.create('<dt>'+k+'</dt>');
 					var dd = Y.Node.create('<dd>' + v.calls + ' call(s) at ' + v.avg + ' ms/call = <span>' + Math.round(v.avg*v.calls) + '</span> ms total</dd>');
@@ -182,8 +218,7 @@
 					dt.appendChild(dd);
 					dl.appendChild(dt);
 				});
-				//console.log(data);
-				Y.one('#results').appendChild(dl);
+				results.appendChild(dl);
 			},
 		
 			reportParser: function(report) {
@@ -322,7 +357,7 @@
 
         Y.Test.Runner.setName("Datatable Test Runner");
         Y.Test.Runner.add(suite);
-        Y.Test.Runner.run();
+        //Y.Test.Runner.run();
     });
 })();
 </script>

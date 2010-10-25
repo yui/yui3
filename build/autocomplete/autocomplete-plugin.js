@@ -5,25 +5,27 @@ YUI.add('autocomplete-plugin', function(Y) {
  *
  * @module autocomplete
  * @submodule autocomplete-list-plugin
- * @class Plugin.AutoCompleteList
+ * @class Plugin.AutoComplete
  * @extends AutoCompleteList
  */
 
-var Plugin = Y.namespace('Plugin');
+var Plugin = Y.Plugin;
 
 function ACListPlugin(config) {
     config = Y.mix({}, config, true); // fast shallow clone
     config.inputNode = config.host;
-    AutoCompletePlugin.superclass.constructor.apply(this, arguments);
+
+    ACListPlugin.superclass.constructor.apply(this, arguments);
 }
 
 Y.extend(ACListPlugin, Y.AutoCompleteList, {}, {
-    NAME: 'autocompleteListPlugin',
-    NS  : 'aclist'
+    NAME      : 'autocompleteListPlugin',
+    NS        : 'ac',
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
 });
 
 Plugin.AutoComplete     = ACListPlugin;
 Plugin.AutoCompleteList = ACListPlugin;
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'node-pluginhost']});
+}, '@VERSION@' ,{requires:['autocomplete-list', 'node-pluginhost']});
