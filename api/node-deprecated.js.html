@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: align-plugin   node-event-delegate.js  (YUI Library)</title>
+	<title>API: align-plugin   node-deprecated.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_align-plugin.html" title="align-plugin">align-plugin</a>
                 
-                 &gt; node-event-delegate.js (source view) 
+                 &gt; node-deprecated.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,55 +47,105 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Functionality to make the node a delegated event container</span>
-<span class="cm"> * @module node</span>
-<span class="cm"> * @submodule node-event-delegate</span>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Y_Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">;</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Flat data store for off-DOM usage </span>
+<span class="cm"> * @config data</span>
+<span class="cm"> * @type any</span>
+<span class="cm"> * @deprecated Use getData/setData</span>
 <span class="cm"> */</span>
+<span class="nx">Y_Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> 
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dataVal</span><span class="p">;</span> 
+    <span class="p">},</span>
+    <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">_dataVal</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+<span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * &lt;p&gt;Sets up a delegation listener for an event occurring inside the Node.</span>
-<span class="cm"> * The delegated event will be verified against a supplied selector or</span>
-<span class="cm"> * filtering function to test if the event references at least one node that</span>
-<span class="cm"> * should trigger the subscription callback.&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;Selector string filters will trigger the callback if the event originated</span>
-<span class="cm"> * from a node that matches it or is contained in a node that matches it.</span>
-<span class="cm"> * Function filters are called for each Node up the parent axis to the</span>
-<span class="cm"> * subscribing container node, and receive at each level the Node and the event</span>
-<span class="cm"> * object.  The function should return true (or a truthy value) if that Node</span>
-<span class="cm"> * should trigger the subscription callback.  Note, it is possible for filters</span>
-<span class="cm"> * to match multiple Nodes for a single event.  In this case, the delegate</span>
-<span class="cm"> * callback will be executed for each matching Node.&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;For each matching Node, the callback will be executed with its &#39;this&#39;</span>
-<span class="cm"> * object set to the Node matched by the filter (unless a specific context was</span>
-<span class="cm"> * provided during subscription), and the provided event&#39;s</span>
-<span class="cm"> * &lt;code&gt;currentTarget&lt;/code&gt; will also be set to the matching Node.  The</span>
-<span class="cm"> * containing Node from which the subscription was originally made can be</span>
-<span class="cm"> * referenced as &lt;code&gt;e.container&lt;/code&gt;.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @method delegate</span>
-<span class="cm"> * @param type {String} the event type to delegate</span>
-<span class="cm"> * @param fn {Function} the callback function to execute.  This function</span>
-<span class="cm"> *              will be provided the event object for the delegated event.</span>
-<span class="cm"> * @param spec {String|Function} a selector that must match the target of the</span>
-<span class="cm"> *              event or a function to test target and its parents for a match</span>
-<span class="cm"> * @param context {Object} optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* {any} 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> *              These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for Node</span>
+<span class="cm"> * Returns a single Node instance bound to the node or the</span>
+<span class="cm"> * first element matching the given selector.</span>
+<span class="cm"> * @method Y.get</span>
+<span class="cm"> * @deprecated Use Y.one</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param {String | HTMLElement} node a node or Selector </span>
+<span class="cm"> * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. </span>
 <span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
-        <span class="nx">index</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">2</span><span class="p">;</span>
-
-    <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">);</span>
-
-    <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Y.get is deprecated, use Y.one&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">one</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y_Node</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
+
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y_Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Retrieves a Node instance of nodes based on the given CSS selector. </span>
+<span class="cm">     * @method query</span>
+<span class="cm">     * @deprecated Use one()</span>
+<span class="cm">     * @param {string} selector The CSS selector to test against.</span>
+<span class="cm">     * @return {Node} A Node instance for the matching HTMLElement.</span>
+<span class="cm">     */</span>
+    <span class="nx">query</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">selector</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;query() is deprecated, use one()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">selector</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Retrieves a nodeList based on the given CSS selector. </span>
+<span class="cm">     * @method queryAll</span>
+<span class="cm">     * @deprecated Use all()</span>
+<span class="cm">     * @param {string} selector The CSS selector to test against.</span>
+<span class="cm">     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.</span>
+<span class="cm">     */</span>
+    <span class="nx">queryAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">selector</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;queryAll() is deprecated, use all()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">selector</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Applies the given function to each Node in the NodeList.</span>
+<span class="cm">     * @method each</span>
+<span class="cm">     * @deprecated Use NodeList</span>
+<span class="cm">     * @param {Function} fn The function to apply </span>
+<span class="cm">     * @param {Object} context optional An optional context to apply the function with</span>
+<span class="cm">     * Default context is the NodeList instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">each</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;each is deprecated on Node&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Retrieves the Node instance at the given index. </span>
+<span class="cm">     * @method item</span>
+<span class="cm">     * @deprecated Use NodeList</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {Number} index The index of the target Node.</span>
+<span class="cm">     * @return {Node} The Node instance at the given index.</span>
+<span class="cm">     */</span>
+    <span class="nx">item</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;item is deprecated on Node&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the current number of items in the Node.</span>
+<span class="cm">     * @method size</span>
+<span class="cm">     * @deprecated Use NodeList</span>
+<span class="cm">     * @return {Int} The number of items in the Node. </span>
+<span class="cm">     */</span>
+    <span class="nx">size</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;size is deprecated on Node&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">});</span>
 </pre></div>
 
                     </div>
@@ -199,8 +249,8 @@
                         <ul class="content">        
                                 <li class=""><a href="align-plugin.js.html" title="align-plugin.js">align-plugin.js</a></li>
                                 <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
-                                <li class=""><a href="node-deprecated.js.html" title="node-deprecated.js">node-deprecated.js</a></li>
-                                <li class="selected"><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
+                                <li class="selected"><a href="node-deprecated.js.html" title="node-deprecated.js">node-deprecated.js</a></li>
+                                <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
                         </ul>
                     </div>
 

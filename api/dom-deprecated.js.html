@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dom  Selector   (YUI Library)</title>
+	<title>API: dom   dom-deprecated.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,8 +19,8 @@
         <h3>dom&nbsp; <span class="subtitle">3.3.0int1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dom.html" title="dom">dom</a>
-                 &gt; Selector 
                 
+                 &gt; dom-deprecated.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,272 +43,67 @@
                 </fieldset>
             </form>
 
-                    <h2>
-                        
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="p">{</span>
+    <span class="c1">// @deprecated</span>
+    <span class="nx">children</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;*&#39;</span><span class="p">;</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;&gt; &#39;</span> <span class="o">+</span> <span class="nx">tag</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span> 
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
 
-                        <code>static</code>
-                        
-                            Class <b property="yui:name">Selector</b>
-                        <span class="extends">
-                        </span>
+    <span class="c1">// @deprecated</span>
+    <span class="nx">firstByTag</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span><span class="p">;</span>
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
 
-                    </h2>
-                    <!-- class tree goes here -->
-                    
-                
-  
+        <span class="k">if</span> <span class="p">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">tag</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="p">}</span>
 
-                    <div class="summary description" property="yui:description">
-                        Provides support for using CSS selectors to query the DOM
-                    </div>
+        <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
 
-                    
-                    <div rel="yui:properties" resource="#properties">
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="" rel="yui:property" resource="#property_operators">
-                                    <h4><a name="property_operators" property="yui:name">operators</a>
-                                        - <code><span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            List of operators and corresponding boolean functions. 
-These functions are passed the attribute and the current node's value of the attribute.
-                                        </div>
-                                    </div>
-     
-                                        
+    <span class="cm">/*</span>
+<span class="cm">     * Finds the previous sibling of the element.</span>
+<span class="cm">     * @method previous</span>
+<span class="cm">     * @deprecated Use elementByAxis</span>
+<span class="cm">     * @param {HTMLElement} element The html element.</span>
+<span class="cm">     * @param {Function} fn optional An optional boolean test to apply.</span>
+<span class="cm">     * The optional function is passed the current DOM node being tested as its only argument.</span>
+<span class="cm">     * If no function is given, the first sibling is returned.</span>
+<span class="cm">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
+<span class="cm">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
+<span class="cm">     */</span>
+    <span class="nx">previous</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="s1">&#39;previousSibling&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
+    <span class="p">},</span>
 
+    <span class="cm">/*</span>
+<span class="cm">     * Finds the next sibling of the element.</span>
+<span class="cm">     * @method next</span>
+<span class="cm">     * @deprecated Use elementByAxis</span>
+<span class="cm">     * @param {HTMLElement} element The html element.</span>
+<span class="cm">     * @param {Function} fn optional An optional boolean test to apply.</span>
+<span class="cm">     * The optional function is passed the current DOM node being tested as its only argument.</span>
+<span class="cm">     * If no function is given, the first sibling is returned.</span>
+<span class="cm">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
+<span class="cm">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
+<span class="cm">     */</span>
+    <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="s1">&#39;nextSibling&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
+    <span class="p">}</span>
 
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_PARENT_NODE">
-                                    <h4><a name="property_PARENT_NODE" property="yui:name">PARENT_NODE</a>
-                                        - <code><span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Provides helper methods for collecting and filtering DOM elements.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_shorthand">
-                                    <h4><a name="property_shorthand" property="yui:name">shorthand</a>
-                                        - <code><span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Mapping of shorthand tokens to corresponding attribute selector
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
+<span class="p">});</span>
+</pre></div>
 
                     </div>
-
-                    <div rel="yui:methods" resource="#methods">
-                        <div class="section method details">
-                            <h3 id="methods">Methods</h3>
-                            <div class="content">
-                                    <div class="" rel="yui:method" resource="#method__tokenize">
-                                    <h4>
-                                        <a name="method__tokenize">_tokenize</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_tokenize</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Break selector into token units per simple selector.
-Combinator is attached to the previous token.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_ancestor">
-                                    <h4>
-                                        <a name="method_ancestor">ancestor</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        HTMLElement
-                                            <strong property="yui:name">ancestor</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         selector
-                                                    
-                                                
-                                                        , 
-                                                         testSelf
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            A convenience function to emulate Y.Node's aNode.ancestor(selector).
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An HTMLElement to start the query from.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">selector</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The CSS selector to test the node against.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">testSelf</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional Whether or not to include the element in the scan</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            HTMLElement
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The ancestor node matching the selector, or null.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_query">
-                                    <h4>
-                                        <a name="method_query">query</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        Array
-                                            <strong property="yui:name">query</strong>
-                                           (
-                                                
-                                                        
-                                                         selector
-                                                    
-                                                
-                                                        , 
-                                                         root
-                                                    
-                                                
-                                                        , 
-                                                         firstOnly
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Retrieves a set of nodes based on a given CSS selector.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">selector</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The CSS Selector to test the node against.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">root</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An HTMLElement to start the query from. Defaults to Y.config.doc</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">firstOnly</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional Whether or not to return only the first match.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Array
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">An array of nodes that match the given selector.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div rel="yui:events" resource="#events">
-
-
-                    </div>
-
-                    <div rel="yui:attributes" resource="#configattributes">
-
-                    </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -401,7 +196,7 @@ Combinator is attached to the previous token.
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="DOM.html" title="DOM">DOM</a></li>
-                                <li class="selected"><a href="Selector.html" title="Selector">Selector</a></li>
+                                <li class=""><a href="Selector.html" title="Selector">Selector</a></li>
                         </ul>
                     </div>
 
@@ -410,7 +205,7 @@ Combinator is attached to the previous token.
                         <ul class="content">        
                                 <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
                                 <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
-                                <li class=""><a href="dom-deprecated.js.html" title="dom-deprecated.js">dom-deprecated.js</a></li>
+                                <li class="selected"><a href="dom-deprecated.js.html" title="dom-deprecated.js">dom-deprecated.js</a></li>
                                 <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
                                 <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
                                 <li class=""><a href="dom-size.js.html" title="dom-size.js">dom-size.js</a></li>
@@ -423,23 +218,7 @@ Combinator is attached to the previous token.
                         </ul>
                     </div>
 
-                    <div id="propertyList" class="module">
-                        <h4>Properties</h4>
-                        <ul class="content">        
-                                <li class=""><a href="#property_operators" title="operators">operators</a></li>
-                                <li class=""><a href="#property_PARENT_NODE" title="PARENT_NODE">PARENT_NODE</a></li>
-                                <li class=""><a href="#property_shorthand" title="shorthand">shorthand</a></li>
-                        </ul>
-                    </div>
 
-                    <div id="methodsList" class="module">
-                        <h4>Methods</h4>
-                        <ul class="content">        
-                                <li class=""><a href="#method__tokenize" title="_tokenize">_tokenize</a></li>
-                                <li class=""><a href="#method_ancestor" title="ancestor">ancestor</a></li>
-                                <li class=""><a href="#method_query" title="query">query</a></li>
-                        </ul>
-                    </div>
 
 
 
