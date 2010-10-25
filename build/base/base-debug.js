@@ -922,5 +922,5 @@ YUI.add('base-build', function(Y) {
 }, '@VERSION@' ,{requires:['base-base']});
 
 
-YUI.add('base', function(Y){}, '@VERSION@' ,{use:['base-base', 'base-pluginhost', 'base-build']});
+YUI.add('base', function(Y){}, '@VERSION@' ,{after:['attribute-complex'], use:['base-base', 'base-pluginhost', 'base-build']});
 
