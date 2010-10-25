@@ -14,7 +14,13 @@
                    "trigger": "dom-style",
                    "ua": "ie"
                 }
-            } 
+            },
+
+            "dom-deprecated": {
+                "requires": [
+                    "dom-base"
+                ]
+            }
         }, 
         "requires": [
             "oop"
