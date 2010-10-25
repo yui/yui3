@@ -144,6 +144,9 @@
     "base": {
         "submodules": {
             "base-base": {
+                "after": [
+                    "attribute-complex"
+                ], 
                 "requires": [
                     "attribute-base"
                 ]
