@@ -1,0 +1,234 @@
+Unable to locate tools.jar. Expected to find it in C:\Program Files\Java\jre6\lib\tools.jar
+Buildfile: c:\dev\gitroot\yui3\src\dial\build.xml
+     [echo] Starting Build For dial
+     [echo] Ant Properties
+     [echo]     Home : c:/dev/tools/apache-ant-1.8.1
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : c:\dev\gitroot\yui3\src\dial\build.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : c:\dev\gitroot\yui3
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : dial
+     [echo]     component.basefilename : dial
+     [echo]     component.basedir : c:\dev\gitroot\yui3\src\dial
+     [echo]     component.builddir : c:\dev\gitroot\yui3\src\dial/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : c:\dev\gitroot\yui3\build
+     [echo]     global.build.component : c:\dev\gitroot\yui3\build\dial
+     [echo]     global.build.component.assets : c:\dev\gitroot\yui3\build\dial\assets
+
+clean:
+   [delete] Deleting directory c:\dev\gitroot\yui3\src\dial\build_tmp
+
+init:
+    [mkdir] Created dir: c:\dev\gitroot\yui3\src\dial\build_tmp
+     [echo] Starting Build For dial
+     [echo] Ant Properties
+     [echo]     Home : c:/dev/tools/apache-ant-1.8.1
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : c:\dev\gitroot\yui3\src\dial\build.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : c:\dev\gitroot\yui3
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : dial
+     [echo]     component.basefilename : dial
+     [echo]     component.basedir : c:\dev\gitroot\yui3\src\dial
+     [echo]     component.builddir : c:\dev\gitroot\yui3\src\dial/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : c:\dev\gitroot\yui3\build
+     [echo]     global.build.component : c:\dev\gitroot\yui3\build\dial
+     [echo]     global.build.component.assets : c:\dev\gitroot\yui3\build\dial\assets
+
+-yuicompressor:
+     [echo] Attempting to start YUI Compressor server.
+     [echo] Starting Build For dial
+     [echo] Ant Properties
+     [echo]     Home : c:/dev/tools/apache-ant-1.8.1
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : c:\dev\gitroot\yui3\src\dial\build.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : c:\dev\gitroot\yui3
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : dial
+     [echo]     component.basefilename : dial
+     [echo]     component.basedir : c:\dev\gitroot\yui3\src\dial
+     [echo]     component.builddir : c:\dev\gitroot\yui3\src\dial/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : c:\dev\gitroot\yui3\build
+     [echo]     global.build.component : c:\dev\gitroot\yui3\build\dial
+     [echo]     global.build.component.assets : c:\dev\gitroot\yui3\build\dial\assets
+
+-lint-server:
+     [echo] Starting Build For dial
+     [echo] Ant Properties
+     [echo]     Home : c:/dev/tools/apache-ant-1.8.1
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : c:\dev\gitroot\yui3\src\dial\build.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : c:\dev\gitroot\yui3
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : dial
+     [echo]     component.basefilename : dial
+     [echo]     component.basedir : c:\dev\gitroot\yui3\src\dial
+     [echo]     component.builddir : c:\dev\gitroot\yui3\src\dial/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : c:\dev\gitroot\yui3\build
+     [echo]     global.build.component : c:\dev\gitroot\yui3\build\dial
+     [echo]     global.build.component.assets : c:\dev\gitroot\yui3\build\dial\assets
+
+-node:
+     [echo] For faster builds, install Node.js.
+
+-concatdebug:
+     [echo] Concatenating
+     [echo]     Source Files : Dial.js
+     [echo]     In Source Dir : c:\dev\gitroot\yui3\src\dial\js
+     [echo]     To : c:\dev\gitroot\yui3\src\dial/build_tmp/dial-debug.js
+     [copy] Copying 1 file to c:\dev\gitroot\yui3\src\dial\build_tmp\ant
+   [delete] Deleting directory c:\dev\gitroot\yui3\src\dial\build_tmp\ant
+
+-registerdebug:
+     [echo] Wrapping c:\dev\gitroot\yui3\src\dial/build_tmp/dial-debug.js in YUI.add module
+     [copy] Copying 1 file to c:\dev\gitroot\yui3\src\dial\build_tmp
+
+-prependdebug:
+
+-appenddebug:
+
+builddebug:
+
+-createcore:
+     [copy] Copying 1 file to c:\dev\gitroot\yui3\src\dial\build_tmp
+
+-loggerregex:
+     [echo] Replacing Logger Statements in c:\dev\gitroot\yui3\src\dial/build_tmp/dial.js
+
+buildcore:
+
+-rollupjs:
+
+-concatskins:
+     [echo] Concatenating
+     [echo]     Source Files : dial-core.css, skins/sam/dial-skin.css
+     [echo]     In Source Dir : c:\dev\gitroot\yui3\src\dial\assets
+     [echo]     To : c:\dev\gitroot\yui3\src\dial/build_tmp/assets/skins/sam/dial.css
+     [copy] Copying 2 files to c:\dev\gitroot\yui3\src\dial\build_tmp\ant
+   [delete] Deleting directory c:\dev\gitroot\yui3\src\dial\build_tmp\ant
+     [echo] If this web request fails, try building again with -Dyuicompressor.online=false or install the cURL executable into your PATH.
+
+-buildskins:
+
+-rollupcss:
+
+buildskins:
+
+-buildlangs:
+
+-rolluplangs:
+
+buildlangs:
+
+build:
+
+minify:
+     [echo] If this web request fails, try building again with -Dyuicompressor.online=false or install the cURL executable into your PATH.
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] strokeColor){supportsVML=true;}} ---> var  <--- Lang=Y.Lang,Widget=Y.
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] .HANDLE_USER_CLASS=makeClassName("handle-user")}; ---> var  <--- strs=Dial.ATTRS.strings.value;
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] =Dial.ATTRS.strings.value; ---> var  <--- labelId=Dial.CSS_CLASSES.label+Y.
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] boundingBox=this.get("boundingBox"); ---> var  <--- keyEventSpec=(!Y.UA.opera)
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] ,this),this._centerButtonNode); ---> var  <--- dd1=new Y.DD.Drag({
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] =(Math.PI/180); ---> var  <--- newY=Math.round(Math.sin(
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] *rad)*this._handleDist); ---> var  <--- newX=Math.round(Math.cos(
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] this._resetString.setContent(""); ---> var  <--- offset=this._ringNode.get("region")
+     [echo] 
+     [echo] [WARNING] Try to use a single 'var' statement per scope.
+     [echo] newVal%this.get("stepsPerRev"); ---> var  <--- angleFromValue=nonWrapedPartOfValue/this.get("stepsPerRev")
+     [echo] 
+     [echo] [WARNING] The symbol dd1 is declared but is apparently never used.
+     [echo] This code can probably be written in a more compact way.
+     [echo] this),this._centerButtonNode);var  ---> dd1 <--- =new Y.DD.Drag({node
+     [echo] 
+     [echo] [WARNING] The symbol dialCenterOver is declared but is apparently never used.
+     [echo] This code can probably be written in a more compact way.
+     [echo] }});},_dialCenterOver:function ---> dialCenterOver <--- (e){this._resetString.setContent(
+     [echo] 
+     [echo] [WARNING] The symbol dialCenterOut is declared but is apparently never used.
+     [echo] This code can probably be written in a more compact way.
+     [echo] value));},_dialCenterOut:function ---> dialCenterOut <--- (e){this._resetString.setContent(
+     [echo] 
+     [echo] [WARNING] The symbol resetDial is declared but is apparently never used.
+     [echo] This code can probably be written in a more compact way.
+     [echo] ("");},_resetDial:function ---> resetDial <--- (){this.set("value",0
+
+lint:
+     [echo] Using Rhino. Install nodejs to improve jslint speed, or skip with -Dlint.skip=true
+     [java] Running JSLint on : c:\dev\gitroot\yui3\src\dial\build_tmp\dial-debug.js
+     [java] js: "c:\dev\gitroot\builder\componentbuild\lib\jslint\jslint-console.js", line 46: exception from uncaught JavaScript throw: [object Error]
+     [java]  
+     [java] 
+     [java] 	131, 23: Mixed spaces and tabs.
+     [java] 	Dial.RING_TEMPLATE = 	'<div class="' + Dial.CSS_CLASSES.ring + '">'+
+     [java] 
+     [java] 	172, 23: Missing radix parameter.
+     [java] 	var val = parseInt(srcNode.get("value"));
+     [java] 
+     [java] 	209, 74: Missing semicolon.
+     [java] 	this._centerYOnPage = (this._ringNode.getY() + this._centerY),
+     [java] 
+     [java] 	209, 74: Expected an identifier and instead saw ','.
+     [java] 	this._centerYOnPage = (this._ringNode.getY() + this._centerY),
+     [java] 
+     [java] 	209, 74: Stopping, unable to continue. (35% scanned).
+     [java] 	
+     [java] 
+     [java]  
+     [java] 
+
+local:
+
+deploybuild:
+     [copy] Copying 3 files to c:\dev\gitroot\yui3\build\dial
+     [copy] Copying c:\dev\gitroot\yui3\src\dial\build_tmp\dial-debug.js to c:\dev\gitroot\yui3\build\dial\dial-debug.js
+     [copy] Copying c:\dev\gitroot\yui3\src\dial\build_tmp\dial-min.js to c:\dev\gitroot\yui3\build\dial\dial-min.js
+     [copy] Copying c:\dev\gitroot\yui3\src\dial\build_tmp\dial.js to c:\dev\gitroot\yui3\build\dial\dial.js
+
+deployassets:
+     [copy] Copying 1 file to c:\dev\gitroot\yui3\build\dial\assets
+     [copy] Copying c:\dev\gitroot\yui3\src\dial\assets\dial-core.css to c:\dev\gitroot\yui3\build\dial\assets\dial-core.css
+
+deployskins:
+     [copy] Copying 1 file to c:\dev\gitroot\yui3\build\dial\assets\skins\sam
+     [copy] Copying c:\dev\gitroot\yui3\src\dial\build_tmp\assets\skins\sam\dial.css to c:\dev\gitroot\yui3\build\dial\assets\skins\sam\dial.css
+     [copy] Copying 1 file to c:\dev\gitroot\yui3\build\dial\assets\skins\sam
+     [copy] Copying c:\dev\gitroot\yui3\src\dial\assets\skins\sam\dial-skin.css to c:\dev\gitroot\yui3\build\dial\assets\skins\sam\dial-skin.css
+
+deploylang:
+
+deploydocs:
+
+deploy:
+
+all:
+
+BUILD SUCCESSFUL
+Total time: 8 seconds

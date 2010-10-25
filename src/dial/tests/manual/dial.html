@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Dial Widget</title>
+
+<!-- Source File and Seed for YUI3-->
+<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
+<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css" />
+
+<!--link type="text/css" rel="stylesheet" href="/yui3/build/dial/assets/skins/sam/dial.css" -->
+
+<script src="../../../../build/yui/yui.js"></script>
+<script src="../../../../build/dial/dial.js"></script>
+
+<script>
+
+	YUI({filter:"raw"}).use("widget", "node-deprecated", "dd-drag", "substitute", "event-mouseenter", "transition", "dial", function(Y) {
+	
+		var dial = new Y.Dial({
+			srcNode: ".dial_container",
+			min:-400,
+			max:400,
+			stepsPerRev:365,
+			value: 80,
+			diameter: 100
+		});
+		dial.render();
+		dial.focus();
+	}); 
+</script>
+<style>
+.intro-sentence{
+	margin:3em;
+}
+body{
+	margin-top:30px;
+}
+</style>
+</head>
+<body class="yui3-skin-sam"> 
+	<span class="intro-sentence">This is a Dial Widget. It supports keyboard input and screen readers.</span>
+	<div class="dial_container"></div>
+</body>
+</html>
