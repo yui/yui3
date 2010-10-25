@@ -481,7 +481,7 @@ proto = {
      * @method _attach
      * @private
      */
-    _attach: function(r, fromLoader, optional) {
+    _attach: function(r, fromLoader) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
             Y = this, j,
@@ -497,7 +497,8 @@ proto = {
                     loader = Y.Env._loader;
 
 
-                    if (!optional && !loader || !loader.moduleInfo[name]) {
+                    if (!loader || !loader.moduleInfo[name]) {
+                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
                     done[name] = true;
@@ -520,7 +521,19 @@ proto = {
                     if (after) {
                         for (j = 0; j < after.length; j++) {
                             if (!done[after[j]]) {
-                                if (!Y._attach(after, null, true)) {
+                                if (!Y._attach(after)) {
+                                    return false;
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+
+                    if (use) {
+                        for (j = 0; j < use.length; j++) {
+                            if (!done[use[j]]) {
+                                if (!Y._attach(use)) {
                                     return false;
                                 }
                                 break;
@@ -536,6 +549,7 @@ proto = {
                             return false;
                         }
                     }
+
                 }
             }
         }
