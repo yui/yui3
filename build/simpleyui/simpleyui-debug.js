@@ -483,7 +483,7 @@ proto = {
      * @private
      */
     _attach: function(r, fromLoader, optional) {
-        var i, name, mod, details, req, use,
+        var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
             Y = this, j,
             done = Y.Env._attached,
@@ -501,13 +501,14 @@ proto = {
                     // Y.log('no js def for: ' + name, 'info', 'yui');
 
                     if (!optional && !loader || !loader.moduleInfo[name]) {
-                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        Y.log('possibly not loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
                     done[name] = true;
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
+                    after = details.after;
 
                     if (req) {
                         for (j = 0; j < req.length; j++) {
