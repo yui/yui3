@@ -1,3 +1,15 @@
+/**
+ * Node plugin that turns a text input field into a tokenized input field
+ * similar to Cocoa's NSTokenField control.
+ *
+ * @module node-tokeninput
+ * @since 3.3.0
+ * @namespace Plugin
+ * @class TokenInput
+ * @constructor
+ * @param {Object} config Configuration object.
+ */
+
 var doc = Y.config.doc,
 
     Lang   = Y.Lang,
@@ -15,7 +27,12 @@ var doc = Y.config.doc,
     KEY_RIGHT     = 39,
     KEY_UP        = 38,
 
-    EMPTY_OBJECT = {};
+    EMPTY_OBJECT = {},
+
+    // String shorthand.
+    DELIMITER = 'delimiter',
+    TOKENS    = 'tokens',
+    VALUE     = 'value';
 
 function TokenInput() {
     TokenInput.superclass.constructor.apply(this, arguments);
@@ -28,6 +45,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
     INPUT_TEMPLATE  : '<input type="text" autocomplete="off">',
     ITEM_TEMPLATE   : '<li/>',
     LIST_TEMPLATE   : '<ul/>',
+    REMOVE_TEMPLATE : '<a href="#" title="Remove"><span role="img">\u00D7</span></a>',
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
@@ -57,7 +75,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         });
 
         if (initialTokens) {
-            this.set('tokens', this.get('tokens').concat(initialTokens));
+            this.set(TOKENS, this.get(TOKENS).concat(initialTokens));
         }
 
         this._render();
@@ -81,16 +99,16 @@ Y.extend(TokenInput, Y.Plugin.Base, {
      *
      * @method add
      * @param {Array|String} newTokens Token string or array of token strings.
-     * @param {Number} index (optional) Index at which to add the token.
+     * @param {Number} index (optional) 0-based index at which to add the token.
      * @chainable
      */
     add: function (newTokens, index) {
         var addTokens = [],
             items     = [],
-            tokens    = this.get('tokens');
+            tokens    = this.get(TOKENS);
 
         newTokens = Lang.isArray(newTokens) ? newTokens :
-                newTokens.split(this.get('delimiter'));
+                newTokens.split(this.get(DELIMITER));
 
         YArray.each(newTokens, function (token, i) {
             token = Lang.trim(token);
@@ -118,7 +136,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
             }
 
             this._tokenNodes.refresh();
-            this.set('tokens', tokens, {atomic: true});
+            this.set(TOKENS, tokens, {atomic: true});
         }
 
         return this;
@@ -134,7 +152,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         this._tokenNodes.remove(true);
         this._tokenNodes.refresh();
 
-        return this.set('tokens', [], {atomic: true});
+        return this.set(TOKENS, [], {atomic: true});
     },
 
     /**
@@ -145,14 +163,14 @@ Y.extend(TokenInput, Y.Plugin.Base, {
      * @chainable
      */
     remove: function (index) {
-        var tokens = this.get('tokens');
+        var tokens = this.get(TOKENS);
 
         tokens.splice(index, 1);
 
         this._tokenNodes.item(index).remove(true);
         this._tokenNodes.refresh();
 
-        return this.set('tokens', tokens, {atomic: true});
+        return this.set(TOKENS, tokens, {atomic: true});
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -172,21 +190,38 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         }
 
         this._events.concat([
-            this._boundingBox.after('blur', this._afterBlur, this),
-            this._boundingBox.after('focus', this._afterFocus, this),
+            this._boundingBox.after({
+                blur : this._afterBlur,
+                click: this._afterFocus, // for FF4, which is buggy
+                focus: this._afterFocus
+            }, null, this),
 
-            list.delegate('blur', this._onTokenBlur, selectors.token, this),
-            list.delegate('focus', this._onTokenFocus, selectors.token, this),
-            list.delegate('mouseover', this._onTokenMouseOver, selectors.token, this),
-            list.delegate('mouseout', this._onTokenMouseOut, selectors.token, this),
+            list.delegate({
+                blur     : this._onTokenBlur,
+                focus    : this._onTokenFocus,
+                mouseover: this._onTokenMouseOver,
+                mouseout : this._onTokenMouseOut
+            }, selectors.token, this),
 
             list.delegate(Y.UA.gecko ? 'keypress' : 'keydown', this._onKey,
                     selectors.input + ',' + selectors.token, this),
 
-            this.after('tokensChange', this._afterTokensChange)
+            list.delegate('click', this._onRemoveClick, selectors.remove, this),
+
+            this.after({
+                fauxInputChange   : this._afterFauxInputChange,
+                removeButtonChange: this._afterRemoveButtonChange,
+                tokensChange      : this._afterTokensChange
+            })
         ]);
     },
 
+    /**
+     * Removes and purges all items from the list, including the input field.
+     *
+     * @method _clearItems
+     * @protected
+     */
     _clearItems: function () {
         this._list.all(this._selectors.item).remove(true);
     },
@@ -219,20 +254,39 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         if (options.editable) {
             input = Node.create(this.INPUT_TEMPLATE).addClass(classNames.input);
 
-            // Event will be purged when item is removed.
+            // Event will be purged when the item is removed.
             input.on('valueChange', this._afterInputValueChange, this);
 
             item.append(input);
         }
 
         if (options.token) {
-            item.set('tabIndex', -1);
-            item.set('text', options.text || '');
+            item.setAttrs({
+                tabIndex: 0,
+                text    : options.text || ''
+            });
+
+            if (this.get('removeButton')) {
+                item.addClass(classNames.hasremove).append(
+                    Node.create(this.REMOVE_TEMPLATE).addClass(
+                        classNames.remove).set('role', 'button')
+                );
+            }
         }
 
         return item;
     },
 
+    /**
+     * Focuses the token after the specified item node, or the input node if
+     * there is no next token.
+     *
+     * @method _focusNext
+     * @param {Node} node
+     * @return {Boolean} <code>true</code> if focus was set, <code>false</code>
+     *   otherwise.
+     * @protected
+     */
     _focusNext: function (node) {
         var selectors = this._selectors,
             nextToken;
@@ -249,6 +303,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         return true;
     },
 
+    /**
+     * Focuses the token before the specified item node, if any.
+     *
+     * @method _focusPrev
+     * @param {Node} node
+     * @return {Boolean} <code>true</code> if focus was set, <code>false</code>
+     *   otherwise.
+     * @protected
+     */
     _focusPrev: function (node) {
         var selectors = this._selectors,
             prevToken;
@@ -265,6 +328,16 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         return true;
     },
 
+    /**
+     * Returns an object containing the start and end indexes of selected text
+     * within the specified node.
+     *
+     * @method _getSelection
+     * @param {Node} node
+     * @return {Object} Object with <code>start</code> and <code>end</code>
+     *   properties.
+     * @protected
+     */
     _getSelection: function (node) {
         // TODO: this should probably be a Node extension named node-selection
         // or something.
@@ -293,6 +366,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         return selection;
     },
 
+    /**
+     * Handler for the backspace key.
+     *
+     * @method _keyBackspace
+     * @param {EventFacade} e
+     * @return {Boolean} <code>false</code> if the event should not be
+     *   prevented.
+     * @protected
+     */
     _keyBackspace: function (e) {
         var node = e.currentTarget,
             index, selection;
@@ -324,6 +406,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         return true;
     },
 
+    /**
+     * Handler for the delete key.
+     *
+     * @method _keyDelete
+     * @param {EventFacade} e
+     * @return {Boolean} <code>false</code> if the event should not be
+     *   prevented.
+     * @protected
+     */
     _keyDelete: function (e) {
         var node = e.currentTarget,
             index;
@@ -346,12 +437,30 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         return true;
     },
 
+    /**
+     * Handler for the down arrow key.
+     *
+     * @method _keyDown
+     * @param {EventFacade} e
+     * @return {Boolean} <code>false</code> if the event should not be
+     *   prevented.
+     * @protected
+     */
     _keyDown: function (e) {
         return this._keyRight(e);
     },
 
+    /**
+     * Handler for the enter key.
+     *
+     * @method _keyEnter
+     * @param {EventFacade} e
+     * @return {Boolean} <code>false</code> if the event should not be
+     *   prevented.
+     * @protected
+     */
     _keyEnter: function (e) {
-        var value = Lang.trim(this._inputNode.get('value'));
+        var value = Lang.trim(this._inputNode.get(VALUE));
 
         if (!this.get('tokenizeOnEnter') || !value) {
             return false;
@@ -360,6 +469,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         this._tokenizeValue(null, null, {all: true});
     },
 
+    /**
+     * Handler for the left arrow key.
+     *
+     * @method _keyLeft
+     * @param {EventFacade} e
+     * @return {Boolean} <code>false</code> if the event should not be
+     *   prevented.
+     * @protected
+     */
     _keyLeft: function (e) {
         var node = e.currentTarget;
 
@@ -371,6 +489,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         return this._focusPrev(node);
     },
 
+    /**
+     * Handler for the right arrow key.
+     *
+     * @method _keyRight
+     * @param {EventFacade} e
+     * @return {Boolean} <code>false</code> if the event should not be
+     *   prevented.
+     * @protected
+     */
     _keyRight: function (e) {
         var node = e.currentTarget;
 
@@ -381,10 +508,26 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         return this._focusNext(node);
     },
 
+    /**
+     * Handler for the up arrow key.
+     *
+     * @method _keyUp
+     * @param {EventFacade} e
+     * @return {Boolean} <code>false</code> if the event should not be
+     *   prevented.
+     * @protected
+     */
     _keyUp: function (e) {
         return this._keyLeft(e);
     },
 
+    /**
+     * Refreshes the <code>_tokenNodes</code> NodeList, which is used internally
+     * to track token item nodes.
+     *
+     * @method _refresh
+     * @protected
+     */
     _refresh: function () {
         if (this._tokenNodes) {
             this._tokenNodes.refresh();
@@ -406,8 +549,8 @@ Y.extend(TokenInput, Y.Plugin.Base, {
 
         contentBox.addClass(classNames.content);
 
-        boundingBox.addClass(classNames.box).set('tabIndex', -1)
-                .append(contentBox);
+        boundingBox.addClass(classNames.box).addClass(classNames.os)
+                .set('tabIndex', -1).append(contentBox);
 
         this._set('boundingBox', boundingBox);
         this._set('contentBox', contentBox);
@@ -437,6 +580,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         this._contentBox.append(list);
     },
 
+    /**
+     * Setter for the <code>tokens</code> attribute.
+     *
+     * @method _setTokens
+     * @param {Array} tokens Array of token strings.
+     * @return {Array} Array of trimmed token strings, with any empty strings
+     *   removed.
+     * @protected
+     */
     _setTokens: function (tokens) {
         // Filter out empty tokens.
         return YArray.filter(tokens, function (token) {
@@ -444,9 +596,15 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         });
     },
 
+    /**
+     * Synchronizes the tokenInput's UI state with the internal state.
+     *
+     * @method _sync
+     * @protected
+     */
     _sync: function () {
         var items  = [],
-            tokens = this.get('tokens');
+            tokens = this.get(TOKENS);
 
         this._contentBox[this.get('fauxInput') ? 'addClass' : 'removeClass'](
                 TokenInput.CLASS_NAMES.fauxinput);
@@ -472,10 +630,52 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         this._syncHost();
     },
 
+    /**
+     * Synchronizes the value of the host input field with the current set of
+     * tokens in the tokenInput, joined with the configured
+     * <code>delimiter</code>.
+     *
+     * @method _syncHost
+     * @protected
+     */
     _syncHost: function () {
-        this._host.set('value', this.get('tokens').join(this.get('delimiter')));
+        this._host.set(VALUE, this.get(TOKENS).join(this.get(DELIMITER)));
     },
 
+    /**
+     * Tokenizes the value of the specified node (or the passed value if one is
+     * provided) and returns an array of tokens. Optionally also adds the tokens
+     * to the tokenInput's UI.
+     *
+     * @method _tokenizeValue
+     * @param {Node} node (optional) Node whose value should be tokenized. If
+     *   not provided, the token input node will be used.
+     * @param {String} value (optional) Value to be tokenized. If not specified,
+     *   the value of the <i>node</i> will be used.
+     * @param {Object} options (optional) Options object with zero or more of
+     *   the following properties:
+     *
+     * <dl>
+     *   <dt>all (Boolean)</dt>
+     *   <dd>
+     *      If <code>true</code>, the entire value will be split on the
+     *      delimiter string and tokenized. If <code>false</code> (the default),
+     *      all but the last token will be tokenized, and the last one will be
+     *      left in the value.
+     *   </dd>
+     *
+     *   <dt>updateUI (Boolean)</dt>
+     *   <dd>
+     *     If <code>true</code> (the default), tokens parsed out of the value
+     *     will be added to the tokenInput UI. If <code>false</code>, parsed
+     *     tokens will be returned, but the UI and the <code>tokens</code>
+     *     attribute will not be updated.
+     *   </dd>
+     * </dl>
+     *
+     * @return {Array} Array of parsed tokens.
+     * @protected
+     */
     _tokenizeValue: function (node, value, options) {
         var tokens;
 
@@ -488,10 +688,10 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         }
 
         if (!value && value !== '') {
-            value = node.get('value');
+            value = node.get(VALUE);
         }
 
-        tokens = value.split(this.get('delimiter'));
+        tokens = value.split(this.get(DELIMITER));
 
         if (options.all || tokens.length > 1) {
             if (options.all) {
@@ -502,7 +702,7 @@ Y.extend(TokenInput, Y.Plugin.Base, {
             }
 
             if (options.updateUI) {
-                node.set('value', value);
+                node.set(VALUE, value);
 
                 if (tokens.length) {
                     // All other items are added as tokens.
@@ -521,12 +721,38 @@ Y.extend(TokenInput, Y.Plugin.Base, {
     },
 
     // -- Protected Event Handlers ---------------------------------------------
+
+    /**
+     * Handles blur events on the bounding box.
+     *
+     * @method _afterBlur
+     * @param {EventFacade} e
+     * @protected
+     */
     _afterBlur: function (e) {
         if (this.get('tokenizeOnBlur')) {
             this._tokenizeValue(null, null, {all: true});
         }
     },
 
+    /**
+     * Handles changes to the <code>fauxInput</code> attribute.
+     *
+     * @method _afterFauxInputChange
+     * @param {EventFacade} e
+     * @protected
+     */
+    _afterFauxInputChange: function (e) {
+        this._sync();
+    },
+
+    /**
+     * Handles focus events on the bounding box.
+     *
+     * @method _afterFocus
+     * @param {EventFacade} e
+     * @protected
+     */
     _afterFocus: function (e) {
         var that = this;
 
@@ -538,10 +764,35 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         }
     },
 
+    /**
+     * Handles <code>valueChange</code> events on the token input node.
+     *
+     * @method _afterInputValueChange
+     * @param {EventFacade} e
+     * @protected
+     */
     _afterInputValueChange: function (e) {
         this._tokenizeValue(e.currentTarget, e.newVal);
     },
 
+    /**
+     * Handles changes to the <code>removeButton</code> attribute.
+     *
+     * @method _afterRemoveButtonChange
+     * @param {EventFacade} e
+     * @protected
+     */
+    _afterRemoveButtonChange: function (e) {
+        this._sync();
+    },
+
+    /**
+     * Handles changes to the <code>tokens</code> attribute.
+     *
+     * @method _afterTokensChange
+     * @param {EventFacade} e
+     * @protected
+     */
     _afterTokensChange: function (e) {
         // Only do a full sync for non-atomic changes (i.e., changes that are
         // made via some means other than the add()/remove() methods).
@@ -552,22 +803,13 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         }
     },
 
-    _onTokenBlur: function (e) {
-        e.currentTarget.removeClass(TokenInput.CLASS_NAMES.focus);
-    },
-
-    _onTokenFocus: function (e) {
-        e.currentTarget.addClass(TokenInput.CLASS_NAMES.focus);
-    },
-
-    _onTokenMouseOut: function (e) {
-        e.currentTarget.removeClass(TokenInput.CLASS_NAMES.hover);
-    },
-
-    _onTokenMouseOver: function (e) {
-        e.currentTarget.addClass(TokenInput.CLASS_NAMES.hover);
-    },
-
+    /**
+     * Handles keydown or keypress events on tokens and the token input field.
+     *
+     * @method _onKey
+     * @param {EventFacade} e
+     * @protected
+     */
     _onKey: function (e) {
         var handler = this._keys[e.keyCode];
 
@@ -578,44 +820,193 @@ Y.extend(TokenInput, Y.Plugin.Base, {
                 e.preventDefault();
             }
         }
+    },
+
+    /**
+     * Handles click events on token remove buttons.
+     *
+     * @method _onRemoveClick
+     * @param {EventFacade} e
+     * @protected
+     */
+    _onRemoveClick: function (e) {
+        var item = e.currentTarget.ancestor(this._selectors.item);
+        e.preventDefault();
+        this.remove(this._tokenNodes.indexOf(item));
+    },
+
+    /**
+     * Handles blur events on tokens.
+     *
+     * @method _onTokenBlur
+     * @param {EventFacade} e
+     * @protected
+     */
+    _onTokenBlur: function (e) {
+        e.currentTarget.removeClass(TokenInput.CLASS_NAMES.focus);
+    },
+
+    /**
+     * Handles focus events on tokens.
+     *
+     * @method _onTokenFocus
+     * @param {EventFacade} e
+     * @protected
+     */
+    _onTokenFocus: function (e) {
+        e.currentTarget.addClass(TokenInput.CLASS_NAMES.focus);
+    },
+
+    /**
+     * Handles mouseout events on tokens.
+     *
+     * @method _onTokenMouseOut
+     * @param {EventFacade} e
+     * @protected
+     */
+    _onTokenMouseOut: function (e) {
+        e.currentTarget.removeClass(TokenInput.CLASS_NAMES.hover);
+    },
+
+    /**
+     * Handles mouseover events on tokens.
+     *
+     * @method _onTokenMouseOver
+     * @param {EventFacade} e
+     * @protected
+     */
+    _onTokenMouseOver: function (e) {
+        e.currentTarget.addClass(TokenInput.CLASS_NAMES.hover);
     }
 }, {
     NAME: 'pluginTokenInput',
     NS  : 'tokenInput',
 
     ATTRS: {
+        /**
+         * Reference to the bounding box node.
+         *
+         * @attribute boundingBox
+         * @type Node
+         * @readonly
+         */
         boundingBox: {
             readOnly: true
         },
 
+        /**
+         * Reference to the content box node.
+         *
+         * @attribute contentBox
+         * @type Node
+         * @readonly
+         */
         contentBox: {
             readOnly: true
         },
 
+        /**
+         * Token delimiter string. May be a single character or multiple
+         * characters. User input will be split on this string as the user
+         * types, and the delimited values will be turned into tokens.
+         *
+         * @attribute delimiter
+         * @type String
+         * @default ','
+         */
         delimiter: {
             value: ','
         },
 
+        /**
+         * <p>
+         * If <code>true</code>, the CSS class name
+         * <code>yui3-tokeninput-fauxinput</code> will be applied to the
+         * bounding box. When using the Sam skin, this will cause the
+         * TokenInput's styling to mimic a real input field.
+         * </p>
+         *
+         * <p>
+         * Note that this styling may not look entirely faithful to native
+         * control styling on all browsers and platforms.
+         * </p>
+         *
+         * @attribute fauxInput
+         * @type Boolean
+         * @default true
+         */
         fauxInput: {
             value: true
         },
 
+        /**
+         * Reference to the token input node. This is the visible input node
+         * the user can type in to add tokens.
+         *
+         * @attribute inputNode
+         * @type Node
+         * @readonly
+         */
         inputNode: {
             readOnly: true
         },
 
+        /**
+         * Reference to the token list node.
+         *
+         * @attribute listNode
+         * @type Node
+         * @readonly
+         */
         listNode: {
             readOnly: true
         },
 
+        /**
+         * If <code>true</code>, each token will have a remove button (in the
+         * form of a small "x") which, when clicked, will remove the token.
+         *
+         * @attribute removeButton
+         * @type Boolean
+         * @default <code>true</code> for mobile devices, <code>false</code>
+         *   elsewhere.
+         */
+        removeButton: {
+            value: !!Y.UA.mobile
+        },
+
+        /**
+         * If <code>true</code>, any text the user has entered in the token
+         * input field will be tokenized when the input field loses focus.
+         *
+         * @attribute tokenizeOnBlur
+         * @type Boolean
+         * @default true
+         */
         tokenizeOnBlur: {
             value: true
         },
 
+        /**
+         * If <code>true</code>, any text the user has entered in the token
+         * input field will be tokenized when the user presses the enter key
+         * while the input field has focus.
+         *
+         * @attribute tokenizeOnEnter
+         * @type Boolean
+         * @default true
+         */
         tokenizeOnEnter: {
             value: true
         },
 
+        /**
+         * Current tokens.
+         *
+         * @attribute tokens
+         * @type Array
+         * @default []
+         */
         tokens: {
             setter: '_setTokens',
             value : []
@@ -627,13 +1018,16 @@ Y.extend(TokenInput, Y.Plugin.Base, {
         content  : getClassName('content'),
         editable : getClassName('editable'),
         fauxinput: getClassName('fauxinput'),
+        focus    : getClassName('focus'),
+        hasremove: getClassName('hasremove'),
         hidden   : getClassName('hidden'),
         host     : getClassName('host'),
         hover    : getClassName('hover'),
-        focus    : getClassName('focus'),
         input    : getClassName('input'),
         item     : getClassName('item'),
         list     : getClassName('list'),
+        os       : getClassName(Y.UA.os),
+        remove   : getClassName('remove'),
         token    : getClassName('token')
     }
 });

@@ -39,6 +39,8 @@
 .yui3-skin-sam .yui3-datatable-liner {
     margin:0;padding:0;
     padding:4px 10px 4px 10px; /* cell padding */
+	overflow:visible; /*to make ths where the title is really long work*/
+	border:0px solid black;
 }
 .yui3-skin-sam .yui3-datatable-coltarget {
     width: 5px;

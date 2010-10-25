@@ -107,6 +107,9 @@
                 ]
             }, 
             "autocomplete-list": {
+                "lang": [
+                    "en"
+                ], 
                 "plugins": {
                     "autocomplete-list-keys": {
                         "condition": {
@@ -117,6 +120,13 @@
                         "requires": [
                             "autocomplete-list", 
                             "base-build"
+                        ]
+                    }, 
+                    "autocomplete-plugin": {
+                        "path": "autocomplete/autocomplete-plugin-min.js", 
+                        "requires": [
+                            "autocomplete-list", 
+                            "node-pluginhost"
                         ]
                     }
                 }, 
@@ -389,7 +399,7 @@
         "submodules": {
             "datatable-base": {
                 "requires": [
-                    "recordset", 
+                    "recordset-base", 
                     "widget"
                 ], 
                 "skinnable": true
@@ -397,7 +407,8 @@
             "datatable-scroll": {
                 "requires": [
                     "datatable-base", 
-                    "plugin"
+                    "plugin", 
+                    "stylesheet"
                 ]
             }, 
             "datatable-sort": {
@@ -1180,6 +1191,34 @@
             }
         }
     }, 
+    "resize": {
+        "submodules": {
+            "resize-base": {
+                "requires": [
+                    "widget", 
+                    "substitute", 
+                    "event", 
+                    "oop", 
+                    "dd-drag", 
+                    "dd-delegate", 
+                    "dd-drop"
+                ], 
+                "skinnable": true
+            }, 
+            "resize-constrain": {
+                "requires": [
+                    "plugin", 
+                    "resize-base"
+                ]
+            }, 
+            "resize-proxy": {
+                "requires": [
+                    "plugin", 
+                    "resize-base"
+                ]
+            }
+        }
+    }, 
     "scrollview": {
         "plugins": {
             "scrollview-base": {
@@ -1190,6 +1229,15 @@
                     "transition"
                 ], 
                 "skinnable": true
+            }, 
+            "scrollview-base-ie": {
+                "condition": {
+                    "trigger": "scrollview-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "scrollview-base"
+                ]
             }, 
             "scrollview-paginator": {
                 "path": "scrollview/scrollview-paginator-min.js", 
@@ -1349,6 +1397,15 @@
     }, 
     "widget": {
         "plugins": {
+            "widget-base-ie": {
+                "condition": {
+                    "trigger": "widget-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "widget-base"
+                ]
+            }, 
             "widget-child": {
                 "requires": [
                     "base-build", 
@@ -1404,11 +1461,6 @@
                     "node-base", 
                     "node-style", 
                     "classnamemanager"
-                ]
-            }, 
-            "widget-base-ie": {
-                "requires": [
-                    "widget-base"
                 ]
             }, 
             "widget-htmlparser": {

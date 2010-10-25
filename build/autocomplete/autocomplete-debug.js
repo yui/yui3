@@ -1968,7 +1968,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (results.length) {
             items = this._add(results);
-            this._ariaSay('ITEMS_AVAILABLE');
+            this._ariaSay('items_available');
         }
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
@@ -2167,7 +2167,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // TODO: support typeahead completion, etc.
         this._inputNode.focus();
         this._updateValue(text);
-        this._ariaSay('ITEM_SELECTED', {item: text});
+        this._ariaSay('item_selected', {item: text});
         this.hide();
     }
 }, {
@@ -2239,12 +2239,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             value: null
         },
 
-        // The "strings" attribute is documented in Widget.
+        /**
+         * Translatable strings used by the AutoCompleteList widget.
+         *
+         * @attribute strings
+         * @type Object
+         */
         strings: {
-            value: {
-                // These strings are used in ARIA live region announcements.
-                ITEM_SELECTED: '{item} selected.',
-                ITEMS_AVAILABLE: 'Suggestions are available. Use the up and down arrow keys to select suggestions.'
+            valueFn: function () {
+                return Y.Intl.get('autocomplete-list');
             }
         },
 
@@ -2294,8 +2297,39 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
+}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], lang:['en']});
+YUI.add('autocomplete-plugin', function(Y) {
+
+/**
+ * Binds an AutoCompleteList instance to a Node instance.
+ *
+ * @module autocomplete
+ * @submodule autocomplete-list-plugin
+ * @class Plugin.AutoComplete
+ * @extends AutoCompleteList
+ */
+
+var Plugin = Y.Plugin;
+
+function ACListPlugin(config) {
+    config = Y.mix({}, config, true); // fast shallow clone
+    config.inputNode = config.host;
+
+    ACListPlugin.superclass.constructor.apply(this, arguments);
+}
+
+Y.extend(ACListPlugin, Y.AutoCompleteList, {}, {
+    NAME      : 'autocompleteListPlugin',
+    NS        : 'ac',
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
+});
+
+Plugin.AutoComplete     = ACListPlugin;
+Plugin.AutoCompleteList = ACListPlugin;
 
 
-YUI.add('autocomplete', function(Y){}, '@VERSION@' ,{use:['autocomplete-base', 'autocomplete-list']});
+}, '@VERSION@' ,{requires:['autocomplete-list', 'node-pluginhost']});
+
+
+YUI.add('autocomplete', function(Y){}, '@VERSION@' ,{use:['autocomplete-base', 'autocomplete-list', 'autocomplete-plugin']});
 

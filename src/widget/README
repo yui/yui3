@@ -18,7 +18,9 @@ It provides the following pieces of core functionality:
 
 * UI_EVENTS support and skin util methods (only getSkinName currently) 
   broken out of widget-base into separate submodules, widget-uievents and 
-  widget-skin
+  widget-skin. 
+  
+* widget-base-ie broken out as conditional module.
 
 * Fixed widget-locale support. Needed lazyAdd:false, for strings attribute
 

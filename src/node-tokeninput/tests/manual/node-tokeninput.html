@@ -10,11 +10,9 @@
     }
 
     body { margin: 2em; }
-
-    
     </style>
-    <!-- <link rel="stylesheet" href="../../assets/node-tokeninput-core.css">
-    <link rel="stylesheet" href="../../assets/skins/sam/node-tokeninput-skin.css"> -->
+    <link rel="stylesheet" href="../../assets/node-tokeninput-core.css">
+    <link rel="stylesheet" href="../../assets/skins/sam/node-tokeninput-skin.css">
 </head>
 <body class="yui3-skin-sam">
 
@@ -22,47 +20,45 @@
 
 <form>
     <p>
-    <label>
-        Native text field<br>
-        <input type="text">
-    </label>
+    Native text field<br>
+    <input type="text">
     </p>
 
     <p>
-    <label>
-        Empty tokenInput<br>
-        <input type="text" id="input">
-    </label>
+    Empty tokenInput<br>
+    <input type="text" id="input">
     </p>
 
     <p>
-    <label>
-        Pre-populated tokenInput, fauxInput: false<br>
-        <input type="text" id="input2">
-    </label>
+    Pre-populated from script, fauxInput: false<br>
+    <input type="text" id="input2">
+    </p>
+
+    <p>
+    Pre-populated from markup, removeButton: true<br>
+    <input type="text" id="input3" value="foo,bar,baz">
     </p>
 </form>
 
 <form action="http://search.yahoo.com/search" method="get">
     <p>
-    <label>
-        tokenInput with AutoComplete (submits to Y! Search)<br>
-        <input type="text" id="input3" name="p">
-        <input type="submit" value="Search">
-    </label>
+    tokenInput with AutoComplete (submits to Y! Search)<br>
+    <input type="text" id="input4" name="p">
+    <input type="submit" value="Search">
     </p>
 </form>
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
-    filter: 'raw'
-    // fetchCSS: false
+    filter: 'raw',
+    fetchCSS: false
 }).use('autocomplete', 'autocomplete-highlighters', 'node-tokeninput', function (Y) {
 
 var input  = Y.one('#input'),
     input2 = Y.one('#input2'),
-    input3 = Y.one('#input3');
+    input3 = Y.one('#input3'),
+    input4 = Y.one('#input4');
 
 input.plug(Y.Plugin.TokenInput);
 
@@ -71,15 +67,20 @@ input2.plug(Y.Plugin.TokenInput, {
     tokens: ['New Hampshire', 'Rhode Island', 'Texas', 'New York', 'Delaware']
 });
 
-input3.plug(Y.Plugin.TokenInput);
+input3.plug(Y.Plugin.TokenInput, {
+    removeButton: true
+});
+
+input4.plug(Y.Plugin.TokenInput);
 
 // For console debugging.
 window.input  = input;
 window.input2 = input2;
 window.input3 = input3;
+window.input4 = input4;
 
 window.ac = new Y.AutoComplete({
-    inputNode        : input3,
+    inputNode        : input4,
     render           : true,
     resultHighlighter: 'phraseMatch',
     source           : 'select * from search.suggest where query="{query}"'

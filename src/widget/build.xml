@@ -7,6 +7,7 @@
         <sequential>
             <ant antfile="build.widget.xml" target="@{target}"/>
             <ant antfile="build-locale.xml" target="@{target}"/>
+            <ant antfile="build-base-ie.xml" target="@{target}"/>
         </sequential>
     </macrodef>
 

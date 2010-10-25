@@ -163,6 +163,9 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;autocomplete-list&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;lang&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;en&quot;</span>
+                <span class="p">],</span> 
                 <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
                     <span class="s2">&quot;autocomplete-list-keys&quot;</span><span class="o">:</span> <span class="p">{</span>
                         <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -186,6 +189,13 @@
                         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                             <span class="s2">&quot;autocomplete-list&quot;</span><span class="p">,</span> 
                             <span class="s2">&quot;base-build&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span> 
+                    <span class="s2">&quot;autocomplete-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-plugin-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;autocomplete-list&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;node-pluginhost&quot;</span>
                         <span class="p">]</span>
                     <span class="p">}</span>
                 <span class="p">},</span> 
@@ -458,7 +468,7 @@
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;datatable-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;recordset&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;recordset-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;widget&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
@@ -466,7 +476,8 @@
             <span class="s2">&quot;datatable-scroll&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;datatable-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;plugin&quot;</span>
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;stylesheet&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;datatable-sort&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1256,6 +1267,34 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;resize&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;resize-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;oop&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-drag&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-delegate&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-drop&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;resize-constrain&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;resize-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;resize-proxy&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;resize-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;scrollview&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;scrollview-base&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1266,6 +1305,15 @@
                     <span class="s2">&quot;transition&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;scrollview-base-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;scrollview-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;scrollview-base&quot;</span>
+                <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;scrollview-paginator&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;scrollview/scrollview-paginator-min.js&quot;</span><span class="p">,</span> 
@@ -1425,6 +1473,15 @@
     <span class="p">},</span> 
     <span class="s2">&quot;widget&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;widget-base-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;widget-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;widget-child&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
@@ -1480,11 +1537,6 @@
                     <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;classnamemanager&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;widget-base-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;widget-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;widget-htmlparser&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1566,7 +1618,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;d2432980710953cda5e4c3e666c2e966&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;640a24c4f3f8ede7ccffb5f888664d4f&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -1582,6 +1634,7 @@
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
@@ -1596,12 +1649,14 @@
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -1614,6 +1669,7 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -1622,6 +1678,7 @@
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
@@ -1636,6 +1693,7 @@
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

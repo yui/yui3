@@ -1,121 +1,225 @@
 YUI.add('datatable-base', function(Y) {
 
-var COLUMN = "column";
+var YLang = Y.Lang,
+    Ysubstitute = Y.Lang.substitute,
+    YNode = Y.Node,
+    Ycreate = YNode.create,
+    YgetClassName = Y.ClassNameManager.getClassName,
 
+    DATATABLE = "datatable",
+    COLUMN = "column",
+    
+    FOCUS = "focus",
+    KEYDOWN = "keydown",
+    MOUSEOVER = "mouseover",
+    MOUSEOUT = "mouseout",
+    MOUSEUP = "mouseup",
+    MOUSEDOWN = "mousedown",
+    CLICK = "click",
+    DOUBLECLICK = "doubleclick",
+
+    CLASS_COLUMNS = YgetClassName(DATATABLE, "columns"),
+    CLASS_DATA = YgetClassName(DATATABLE, "data"),
+    CLASS_MSG = YgetClassName(DATATABLE, "msg"),
+    CLASS_LINER = YgetClassName(DATATABLE, "liner"),
+    CLASS_FIRST = YgetClassName(DATATABLE, "first"),
+    CLASS_LAST = YgetClassName(DATATABLE, "last"),
+
+    TEMPLATE_TABLE = '<table></table>',
+    TEMPLATE_COL = '<col></col>',
+    TEMPLATE_THEAD = '<thead class="'+CLASS_COLUMNS+'"></thead>',
+    TEMPLATE_TBODY = '<tbody class="'+CLASS_DATA+'"></tbody>',
+    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></th>',
+    TEMPLATE_TR = '<tr id="{id}"></tr>',
+    TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></td>',
+    TEMPLATE_VALUE = '{value}',
+    TEMPLATE_MSG = '<tbody class="'+CLASS_MSG+'"></tbody>';
+    
+
+
+
+/**
+ * The Column class defines and manages attributes of Columns for DataTable.
+ *
+ * @class Column
+ * @extends Widget
+ * @constructor
+ */
 function Column(config) {
     Column.superclass.constructor.apply(this, arguments);
 }
 
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "column"
- */
-Column.NAME = "column";
+/////////////////////////////////////////////////////////////////////////////
+//
+// STATIC PROPERTIES
+//
+/////////////////////////////////////////////////////////////////////////////
+Y.mix(Column, {
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "column"
+     */
+    NAME: "column",
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Column Attributes
+// ATTRIBUTES
 //
 /////////////////////////////////////////////////////////////////////////////
-Column.ATTRS = {
-    id: {
-        valueFn: "_defaultId",
-        writeOnce: true
-    },
-    key: {
-        valueFn: "_defaultKey"
-    },
-    field: {
-        valueFn: "_defaultField"
-    },
-    label: {
-        valueFn: "_defaultLabel"
-    },
-    keyIndex: {
-        readOnly: true
-    },
-    parent: {
-        readOnly: true
-    },
-    children: {
-    },
-    colspan: {
-        readOnly: true
-    },
-    rowspan: {
-        readOnly: true
-    },
-    thNode: {
-        readOnly: true
-    },
-    thLinerNode: {
-        readOnly: true
-    },
-    thLabelNode: {
-        readOnly: true
-    },
-    abbr: {
-        value: null
-    },
-    headers: {}, // set by Columnset code
-    classnames: {
-        readOnly: true,
-        getter: "_getClassnames"
-    },
-    editor: {},
-    formatter: {},
-    
-    // requires datatable-colresize
-    resizeable: {},
+    ATTRS: {
+        id: {
+            valueFn: "_defaultId",
+            writeOnce: true
+        },
+        key: {
+            valueFn: "_defaultKey"
+        },
+        field: {
+            valueFn: "_defaultField"
+        },
+        label: {
+            valueFn: "_defaultLabel"
+        },
+        keyIndex: {
+            readOnly: true
+        },
+        parent: {
+            readOnly: true
+        },
+        children: {
+        },
+        colSpan: {
+            readOnly: true
+        },
+        rowSpan: {
+            readOnly: true
+        },
+        thNode: {
+            readOnly: true
+        },
+        thLinerNode: {
+            readOnly: true
+        },
+        thLabelNode: {
+            readOnly: true
+        },
+        abbr: {
+            value: null
+        },
+        headers: {}, // set by Columnset code
+        classnames: {
+            readOnly: true,
+            getter: "_getClassnames"
+        },
+        editor: {},
+        formatter: {},
 
-    //requires datatable-sort
-    sortable: {},
-    hidden: {},
-    width: {},
-    minWidth: {},
-    maxAutoWidth: {}
-};
+        // requires datatable-colresize
+        resizeable: {},
 
-/* Column extends Widget */
+        //requires datatable-sort
+        sortable: {},
+        hidden: {},
+        width: {},
+        minWidth: {},
+        maxAutoWidth: {}
+    }
+});
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PROTOTYPE
+//
+/////////////////////////////////////////////////////////////////////////////
 Y.extend(Column, Y.Widget, {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTE HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * @method _defaultId
+    * @description Return ID for instance.
+    * @returns String
+    * @private
+    */
     _defaultId: function() {
         return Y.guid();
     },
 
+    /**
+    * @method _defaultKey
+    * @description Return key for instance. Defaults to ID if one was not
+    * provided.
+    * @returns String
+    * @private
+    */
     _defaultKey: function(key) {
         return key || Y.guid();
     },
 
+    /**
+    * @method _defaultField
+    * @description Return field for instance. Defaults to key if one was not
+    * provided.
+    * @returns String
+    * @private
+    */
     _defaultField: function(field) {
         return field || this.get("key");
     },
 
+    /**
+    * @method _defaultLabel
+    * @description Return label for instance. Defaults to key if one was not
+    * provided.
+    * @returns String
+    * @private
+    */
     _defaultLabel: function(label) {
         return label || this.get("key");
     },
 
-    initializer: function() {
-    },
-
-    destructor: function() {
-    },
-
-    syncUI: function() {
-        this._uiSetAbbr(this.get("abbr"));
-    },
-
+    /**
+     * Updates the UI if changes are made to abbr.
+     *
+     * @method _afterAbbrChange
+     * @param e {Event} Custom event for the attribute change.
+     * @private
+     */
     _afterAbbrChange: function (e) {
         this._uiSetAbbr(e.newVal);
     },
-    
-    _uiSetAbbr: function(val) {
-        this._thNode.set("abbr", val);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // METHODS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Initializer.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
+    initializer: function(config) {
     },
+
+    /**
+    * Destructor.
+    *
+    * @method destructor
+    * @private
+    */
+    destructor: function() {
+    },
+
     /**
      * Returns classnames for Column.
      *
@@ -178,90 +282,157 @@ Y.extend(Column, Y.Widget, {
         }
 
         return allClasses.join(' ');*/
+    },
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // SYNC
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+    * Syncs UI to intial state.
+    *
+    * @method syncUI
+    * @private
+    */
+    syncUI: function() {
+        this._uiSetAbbr(this.get("abbr"));
+    },
+
+    /**
+     * Updates abbr.
+     *
+     * @method _uiSetAbbr
+     * @param val {String} New abbr.
+     * @protected
+     */
+    _uiSetAbbr: function(val) {
+        this._thNode.set("abbr", val);
     }
 });
 
 Y.Column = Column;
 
-var Lang = Y.Lang;
-
+/**
+ * The Columnset class defines and manages a collection of Columns.
+ *
+ * @class Columnset
+ * @extends Base
+ * @constructor
+ */
 function Columnset(config) {
     Columnset.superclass.constructor.apply(this, arguments);
 }
 
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "columnset"
- */
-Columnset.NAME = "columnset";
-
 /////////////////////////////////////////////////////////////////////////////
 //
-// Columnset Attributes
+// STATIC PROPERTIES
 //
 /////////////////////////////////////////////////////////////////////////////
-Columnset.ATTRS = {
-    columns: {
-        setter: "_setColumns"
-    },
+Y.mix(Columnset, {
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "columnset"
+     */
+    NAME: "columnset",
 
-    // DOM tree representation of all Columns
-    tree: {
-        readOnly: true,
-        value: []
-    },
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTES
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    ATTRS: {
+        definitions: {
+            setter: "_setDefinitions"
+        },
 
-    //TODO: is this necessary?
-    // Flat representation of all Columns
-    flat: {
-        readOnly: true,
-        value: []
-    },
+        // DOM tree representation of all Columns
+        tree: {
+            readOnly: true,
+            value: []
+        },
 
-    // Hash of all Columns by ID
-    hash: {
-        readOnly: true,
-        value: {}
-    },
+        //TODO: is this necessary?
+        // Flat representation of all Columns
+        flat: {
+            readOnly: true,
+            value: []
+        },
 
-    // Flat representation of only Columns that are meant to display data
-    keys: {
-        readOnly: true,
-        value: []
+        // Hash of all Columns by ID
+        hash: {
+            readOnly: true,
+            value: {}
+        },
+
+        // Flat representation of only Columns that are meant to display data
+        keys: {
+            readOnly: true,
+            value: []
+        }
     }
-};
+});
 
-/* Columnset extends Base */
+/////////////////////////////////////////////////////////////////////////////
+//
+// PROTOTYPE
+//
+/////////////////////////////////////////////////////////////////////////////
 Y.extend(Columnset, Y.Base, {
-    _setColumns: function(columns) {
-            return Y.clone(columns);
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTE HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * @method _setDefinitions
+    * @description Clones definitions before setting.
+    * @param definitions {Array} Array of column definitions.
+    * @returns Array
+    * @private
+    */
+    _setDefinitions: function(definitions) {
+            return Y.clone(definitions);
     },
 
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // METHODS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Initializer. Generates all internal representations of the collection of
+    * Columns.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
     initializer: function() {
 
-            // DOM tree representation of all Columns
-            var tree = [],
-            // Flat representation of all Columns
-            flat = [],
-            // Hash of all Columns by ID
-            hash = {},
-            // Flat representation of only Columns that are meant to display data
-            keys = [],
-            // Original definitions
-            columns = this.get("columns"),
+        // DOM tree representation of all Columns
+        var tree = [],
+        // Flat representation of all Columns
+        flat = [],
+        // Hash of all Columns by ID
+        hash = {},
+        // Flat representation of only Columns that are meant to display data
+        keys = [],
+        // Original definitions
+        definitions = this.get("definitions"),
 
-            self = this;
+        self = this;
 
         // Internal recursive function to define Column instances
-        function parseColumns(depth, nodeList, parent) {
+        function parseColumns(depth, currentDefinitions, parent) {
             var i=0,
-                len = nodeList.length,
-                currentNode,
+                len = currentDefinitions.length,
+                currentDefinition,
                 column,
                 currentChildren;
 
@@ -275,15 +446,15 @@ Y.extend(Columnset, Y.Base, {
 
             // Parse each node at this depth for attributes and any children
             for(; i<len; ++i) {
-                currentNode = nodeList[i];
+                currentDefinition = currentDefinitions[i];
 
-                currentNode = Lang.isString(currentNode) ? {key:currentNode} : currentNode;
+                currentDefinition = YLang.isString(currentDefinition) ? {key:currentDefinition} : currentDefinition;
 
                 // Instantiate a new Column for each node
-                column = new Y.Column(currentNode);
+                column = new Y.Column(currentDefinition);
 
                 // Cross-reference Column ID back to the original object literal definition
-                currentNode.yuiColumnId = column.get("id");
+                currentDefinition.yuiColumnId = column.get("id");
 
                 // Add the new Column to the flat list
                 flat.push(column);
@@ -297,11 +468,11 @@ Y.extend(Columnset, Y.Base, {
                 }
 
                 // The Column has descendants
-                if(Lang.isArray(currentNode.children)) {
-                    currentChildren = currentNode.children;
+                if(YLang.isArray(currentDefinition.children)) {
+                    currentChildren = currentDefinition.children;
                     column._set("children", currentChildren);
 
-                    self._setColSpans(column, currentNode);
+                    self._setColSpans(column, currentDefinition);
 
                     self._cascadePropertiesToChildren(column, currentChildren);
 
@@ -314,7 +485,7 @@ Y.extend(Columnset, Y.Base, {
                 // This Column does not have any children
                 else {
                     column._set("keyIndex", keys.length);
-                    column._set("colspan", 1);
+                    column._set("colSpan", 1);
                     keys.push(column);
                 }
 
@@ -325,7 +496,7 @@ Y.extend(Columnset, Y.Base, {
         }
 
         // Parse out Column instances from the array of object literals
-        parseColumns(-1, columns);
+        parseColumns(-1, definitions);
 
 
         // Save to the Columnset instance
@@ -338,10 +509,28 @@ Y.extend(Columnset, Y.Base, {
         this._setHeaders();
     },
 
+    /**
+    * Destructor.
+    *
+    * @method destructor
+    * @private
+    */
     destructor: function() {
     },
 
-    _cascadePropertiesToChildren: function(oColumn, currentChildren) {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // COLUMN HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Cascade certain properties to children if not defined on their own.
+    *
+    * @method _cascadePropertiesToChildren
+    * @private
+    */
+    _cascadePropertiesToChildren: function(column, currentChildren) {
+        //TODO: this is all a giant todo
         var i = 0,
             len = currentChildren.length,
             child;
@@ -349,37 +538,44 @@ Y.extend(Columnset, Y.Base, {
         // Cascade certain properties to children if not defined on their own
         for(; i<len; ++i) {
             child = currentChildren[i];
-            if(oColumn.get("className") && (child.className === undefined)) {
-                child.className = oColumn.get("className");
+            if(column.get("className") && (child.className === undefined)) {
+                child.className = column.get("className");
             }
-            if(oColumn.get("editor") && (child.editor === undefined)) {
-                child.editor = oColumn.get("editor");
+            if(column.get("editor") && (child.editor === undefined)) {
+                child.editor = column.get("editor");
             }
-            if(oColumn.get("formatter") && (child.formatter === undefined)) {
-                child.formatter = oColumn.get("formatter");
+            if(column.get("formatter") && (child.formatter === undefined)) {
+                child.formatter = column.get("formatter");
             }
-            if(oColumn.get("resizeable") && (child.resizeable === undefined)) {
-                child.resizeable = oColumn.get("resizeable");
+            if(column.get("resizeable") && (child.resizeable === undefined)) {
+                child.resizeable = column.get("resizeable");
             }
-            if(oColumn.get("sortable") && (child.sortable === undefined)) {
-                child.sortable = oColumn.get("sortable");
+            if(column.get("sortable") && (child.sortable === undefined)) {
+                child.sortable = column.get("sortable");
             }
-            if(oColumn.get("hidden")) {
+            if(column.get("hidden")) {
                 child.hidden = true;
             }
-            if(oColumn.get("width") && (child.width === undefined)) {
-                child.width = oColumn.get("width");
+            if(column.get("width") && (child.width === undefined)) {
+                child.width = column.get("width");
             }
-            if(oColumn.get("minWidth") && (child.minWidth === undefined)) {
-                child.minWidth = oColumn.get("minWidth");
+            if(column.get("minWidth") && (child.minWidth === undefined)) {
+                child.minWidth = column.get("minWidth");
             }
-            if(oColumn.get("maxAutoWidth") && (child.maxAutoWidth === undefined)) {
-                child.maxAutoWidth = oColumn.get("maxAutoWidth");
+            if(column.get("maxAutoWidth") && (child.maxAutoWidth === undefined)) {
+                child.maxAutoWidth = column.get("maxAutoWidth");
             }
         }
     },
 
-    _setColSpans: function(oColumn, currentNode) {
+    /**
+    * @method _setColSpans
+    * @description Calculates and sets colSpan attribute on given Column.
+    * @param column {Array} Column instance.
+    * @param definition {Object} Column definition.
+    * @private
+    */
+    _setColSpans: function(column, definition) {
         // Determine COLSPAN value for this Column
         var terminalChildNodes = 0;
 
@@ -391,7 +587,7 @@ Y.extend(Columnset, Y.Base, {
             // Drill down each branch and count terminal nodes
             for(; i<len; ++i) {
                 // Keep drilling down
-                if(Lang.isArray(descendants[i].children)) {
+                if(YLang.isArray(descendants[i].children)) {
                     countTerminalChildNodes(descendants[i]);
                 }
                 // Reached branch terminus
@@ -400,13 +596,18 @@ Y.extend(Columnset, Y.Base, {
                 }
             }
         }
-        countTerminalChildNodes(currentNode);
-        oColumn._set("colspan", terminalChildNodes);
+        countTerminalChildNodes(definition);
+        column._set("colSpan", terminalChildNodes);
     },
 
+    /**
+    * @method _setRowSpans
+    * @description Calculates and sets rowSpan attribute on all Columns.
+    * @private
+    */
     _setRowSpans: function() {
-        // Determine ROWSPAN value for each Column in the dom tree
-        function parseDomTreeForRowspan(tree) {
+        // Determine ROWSPAN value for each Column in the DOM tree
+        function parseDomTreeForRowSpan(tree) {
             var maxRowDepth = 1,
                 currentRow,
                 currentColumn,
@@ -423,13 +624,13 @@ Y.extend(Columnset, Y.Base, {
                 for(; i<len; ++i) {
                     col = row[i];
                     // Column has children, so keep counting
-                    if(Lang.isArray(col.children)) {
+                    if(YLang.isArray(col.children)) {
                         tmpRowDepth++;
                         countMaxRowDepth(col.children, tmpRowDepth);
                         tmpRowDepth--;
                     }
                     // Column has children, so keep counting
-                    else if(col.get && Lang.isArray(col.get("children"))) {
+                    else if(col.get && YLang.isArray(col.get("children"))) {
                         tmpRowDepth++;
                         countMaxRowDepth(col.get("children"), tmpRowDepth);
                         tmpRowDepth--;
@@ -451,11 +652,11 @@ Y.extend(Columnset, Y.Base, {
                 // Assign the right ROWSPAN values to each Column in the row
                 for(p=0; p<currentRow.length; p++) {
                     currentColumn = currentRow[p];
-                    if(!Lang.isArray(currentColumn.get("children"))) {
-                        currentColumn._set("rowspan", maxRowDepth);
+                    if(!YLang.isArray(currentColumn.get("children"))) {
+                        currentColumn._set("rowSpan", maxRowDepth);
                     }
                     else {
-                        currentColumn._set("rowspan", 1);
+                        currentColumn._set("rowSpan", 1);
                     }
                 }
 
@@ -463,19 +664,24 @@ Y.extend(Columnset, Y.Base, {
                 maxRowDepth = 1;
             }
         }
-        parseDomTreeForRowspan(this.get("tree"));
+        parseDomTreeForRowSpan(this.get("tree"));
     },
 
+    /**
+    * @method _setHeaders
+    * @description Calculates and sets headers attribute on all Columns.
+    * @private
+    */
     _setHeaders: function() {
         var headers, column,
             allKeys = this.get("keys"),
             i=0, len = allKeys.length;
 
-        function recurseAncestorsForHeaders(headers, oColumn) {
-            headers.push(oColumn.get("key"));
-            //headers[i].push(oColumn.getSanitizedKey());
-            if(oColumn.get("parent")) {
-                recurseAncestorsForHeaders(headers, oColumn.get("parent"));
+        function recurseAncestorsForHeaders(headers, column) {
+            headers.push(column.get("key"));
+            //headers[i].push(column.getSanitizedKey());
+            if(column.get("parent")) {
+                recurseAncestorsForHeaders(headers, column.get("parent"));
             }
         }
         for(; i<len; ++i) {
@@ -513,42 +719,6 @@ Y.Columnset = Columnset;
  * @extends Widget
  * @constructor
  */
-var YLang = Y.Lang,
-    Ysubstitute = Y.Lang.substitute,
-    YNode = Y.Node,
-    Ycreate = YNode.create,
-    YgetClassName = Y.ClassNameManager.getClassName,
-    Ybind = Y.bind,
-
-    DATATABLE = "datatable",
-    
-    FOCUS = "focus",
-    KEYDOWN = "keydown",
-    MOUSEOVER = "mouseover",
-    MOUSEOUT = "mouseout",
-    MOUSEUP = "mouseup",
-    MOUSEDOWN = "mousedown",
-    CLICK = "click",
-    DOUBLECLICK = "doubleclick",
-
-    CLASS_COLUMNS = YgetClassName(DATATABLE, "columns"),
-    CLASS_DATA = YgetClassName(DATATABLE, "data"),
-    CLASS_MSG = YgetClassName(DATATABLE, "msg"),
-    CLASS_LINER = YgetClassName(DATATABLE, "liner"),
-    CLASS_FIRST = YgetClassName(DATATABLE, "first"),
-    CLASS_LAST = YgetClassName(DATATABLE, "last"),
-
-    TEMPLATE_TABLE = '<table></table>',
-    TEMPLATE_COL = '<col></col>',
-    TEMPLATE_THEAD = '<thead class="'+CLASS_COLUMNS+'"></thead>',
-    TEMPLATE_TBODY = '<tbody class="'+CLASS_DATA+'"></tbody>',
-    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></th>',
-    TEMPLATE_TR = '<tr id="{id}"></tr>',
-    TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></td>',
-    TEMPLATE_VALUE = '{value}',
-    TEMPLATE_MSG = '<tbody class="'+CLASS_MSG+'"></tbody>';
-
-
 function DTBase(config) {
     DTBase.superclass.constructor.apply(this, arguments);
 }
@@ -567,7 +737,7 @@ Y.mix(DTBase, {
      * @type String
      * @static
      * @final
-     * @value "dataSourceLocal"
+     * @value "dataTable"
      */
     NAME:  "dataTable",
 
@@ -714,14 +884,26 @@ Y.extend(DTBase, Y.Widget, {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-    * @property _setColumnset
+     * Updates the UI if changes are made to any of the strings in the strings
+     * attribute.
+     *
+     * @method _afterStringsChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterStringsChange: function (e) {
+        this._uiSetStrings(e.newVal);
+    },
+
+    /**
+    * @method _setColumnset
     * @description Converts Array to Y.Columnset.
     * @param columns {Array | Y.Columnset}
     * @returns Y.Columnset
     * @private
     */
     _setColumnset: function(columns) {
-        return YLang.isArray(columns) ? new Y.Columnset({columns:columns}) : columns;
+        return YLang.isArray(columns) ? new Y.Columnset({definitions:columns}) : columns;
     },
 
     /**
@@ -736,7 +918,7 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
-    * @property _setRecordset
+    * @method _setRecordset
     * @description Converts Array to Y.Recordset.
     * @param records {Array | Y.Recordset}
     * @returns Y.Recordset
@@ -752,7 +934,7 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
-    * @property _afterRecordsetChange
+    * @method _afterRecordsetChange
     * @description Adds bubble target.
     * @param records {Array | Y.Recordset}
     * @returns Y.Recordset
@@ -761,7 +943,6 @@ Y.extend(DTBase, Y.Widget, {
     _afterRecordsetChange: function (e) {
         this._uiSetRecordset(e.newVal);
     },
-
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -801,19 +982,18 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     renderUI: function() {
-        var ok =
-            // TABLE
-            this._addTableNode(this.get("contentBox")) &&
-            // COLGROUP
-            this._addColgroupNode(this._tableNode) &&
-            // THEAD
-            this._addTheadNode(this._tableNode) &&
-            // Primary TBODY
-            this._addTbodyNode(this._tableNode) &&
-            // Message TBODY
-            this._addMessageNode(this._tableNode) &&
-            // CAPTION
-            this._addCaptionNode(this._tableNode);
+        // TABLE
+        return (this._addTableNode(this.get("contentBox")) &&
+        // COLGROUP
+        this._addColgroupNode(this._tableNode) &&
+        // THEAD
+        this._addTheadNode(this._tableNode) &&
+        // Primary TBODY
+        this._addTbodyNode(this._tableNode) &&
+        // Message TBODY
+        this._addMessageNode(this._tableNode) &&
+        // CAPTION
+        this._addCaptionNode(this._tableNode));
    },
 
     /**
@@ -951,15 +1131,15 @@ Y.extend(DTBase, Y.Widget, {
         contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "theadCellDoubleclick");
 
         // Bind to TBODY DOM events
-        tableNode.delegate(FOCUS, this._onDomEvent, theadFilter, this, "tbodyCellFocus");
-        tableNode.delegate(KEYDOWN, this._onDomEvent, theadFilter, this, "tbodyCellKeydown");
-        tableNode.delegate(MOUSEOVER, this._onDomEvent, theadFilter, this, "tbodyCellMouseover");
-        tableNode.delegate(MOUSEOUT, this._onDomEvent, theadFilter, this, "tbodyCellMouseout");
-        tableNode.delegate(MOUSEUP, this._onDomEvent, theadFilter, this, "tbodyCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "tbodyCellMousedown");
-        tableNode.delegate(CLICK, this._onDomEvent, theadFilter, this, "tbodyCellClick");
+        tableNode.delegate(FOCUS, this._onDomEvent, tbodyFilter, this, "tbodyCellFocus");
+        tableNode.delegate(KEYDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellKeydown");
+        tableNode.delegate(MOUSEOVER, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseover");
+        tableNode.delegate(MOUSEOUT, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseout");
+        tableNode.delegate(MOUSEUP, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseup");
+        tableNode.delegate(MOUSEDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellMousedown");
+        tableNode.delegate(CLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "tbodyCellDoubleclick");
+        contentBox.delegate(DOUBLECLICK, this._onEvent, tbodyFilter, this, "tbodyCellDoubleclick");
 
         // Bind to message TBODY DOM events
         tableNode.delegate(FOCUS, this._onDomEvent, msgFilter, this, "msgCellFocus");
@@ -1019,18 +1199,6 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
-     * Updates the UI if changes are made to any of the strings in the strings
-     * attribute.
-     *
-     * @method _afterStringsChange
-     * @param e {Event} Custom event for the attribute change.
-     * @protected
-     */
-    _afterStringsChange: function (e) {
-        this._uiSetStrings(e.newVal);
-    },
-
-    /**
      * Updates all strings.
      *
      * @method _uiSetStrings
@@ -1070,7 +1238,7 @@ Y.extend(DTBase, Y.Widget, {
     // THEAD/COLUMNSET FUNCTIONALITY
     //
     ////////////////////////////////////////////////////////////////////////////
-        /**
+    /**
      * Updates THEAD.
      *
      * @method _uiSetColumnset
@@ -1081,9 +1249,13 @@ Y.extend(DTBase, Y.Widget, {
         var tree = cs.get("tree"),
             thead = this._theadNode,
             i = 0,
-            len = tree.length;
+            len = tree.length,
+            parent = thead.get("parentNode"),
+            nextSibling = thead.next();
             
-        //TODO: move thead off dom
+        // Move THEAD off DOM
+        thead.remove();
+        
         thead.get("children").remove(true);
 
         // Iterate tree of columns to add THEAD rows
@@ -1095,7 +1267,8 @@ Y.extend(DTBase, Y.Widget, {
         //this._createColumnHelpers();
 
         
-        //TODO: move thead on dom
+        // Re-attach THEAD to DOM
+        parent.insert(thead, nextSibling);
 
      },
      
@@ -1184,8 +1357,8 @@ Y.extend(DTBase, Y.Widget, {
         
         // Populate template object
         o.id = column.get("id");//TODO: validate 1 column ID per document
-        o.colspan = column.get("colspan");
-        o.rowspan = column.get("rowspan");
+        o.colspan = column.get("colSpan");
+        o.rowspan = column.get("rowSpan");
         //TODO o.abbr = column.get("abbr");
         o.classnames = column.get("classnames");
         o.value = Ysubstitute(this.get("thValueTemplate"), o);
@@ -1218,19 +1391,42 @@ Y.extend(DTBase, Y.Widget, {
     // TBODY/RECORDSET FUNCTIONALITY
     //
     ////////////////////////////////////////////////////////////////////////////
+    /**
+     * Updates TBODY.
+     *
+     * @method _uiSetRecordset
+     * @param rs {Y.Recordset} New Recordset.
+     * @protected
+     */
     _uiSetRecordset: function(rs) {
         var i = 0,//TODOthis.get("state.offsetIndex")
             len = rs.getLength(), //TODOthis.get("state.pageLength")
-            o = {tbody:this._tbodyNode}; //TODO: not sure best time to do this -- depends on sdt
+            tbody = this._tbodyNode,
+            parent = tbody.get("parentNode"),
+            nextSibling = tbody.next(),
+            o = {tbody:tbody}; //TODO: not sure best time to do this -- depends on sdt
 
-        // Iterate recordset to use existing or add new tr
+        // Move TBODY off DOM
+        tbody.remove();
+
+        // Iterate Recordset to use existing TR when possible or add new TR
         for(; i<len; ++i) {
             o.record = rs.getRecord(i);
             o.rowindex = i;
             this._addTbodyTrNode(o); //TODO: sometimes rowindex != recordindex
         }
+        
+        // Re-attach TBODY to DOM
+        parent.insert(tbody, nextSibling);
     },
 
+    /**
+    * Creates and attaches data row element.
+    *
+    * @method _addTbodyTrNode
+    * @param o {Object} {tbody, record}
+    * @protected
+    */
     _addTbodyTrNode: function(o) {
         var tbody = o.tbody,
             record = o.record;
@@ -1238,12 +1434,19 @@ Y.extend(DTBase, Y.Widget, {
         this._attachTbodyTrNode(o);
     },
 
+    /**
+    * Creates data row element.
+    *
+    * @method _createTbodyTrNode
+    * @param o {Object} {tbody, record}
+    * @protected
+    * @returns Y.Node
+    */
     _createTbodyTrNode: function(o) {
         var tr = Ycreate(Ysubstitute(this.get("trTemplate"), {id:o.record.get("id")})),
             i = 0,
             allKeys = this.get("columnset").get("keys"),
-            len = allKeys.length,
-            column;
+            len = allKeys.length;
 
         o.tr = tr;
         
@@ -1255,21 +1458,42 @@ Y.extend(DTBase, Y.Widget, {
         return tr;
     },
 
+    /**
+    * Attaches data row element.
+    *
+    * @method _attachTbodyTrNode
+    * @param o {Object} {tbody, record, tr}.
+    * @protected
+    */
     _attachTbodyTrNode: function(o) {
         var tbody = o.tbody,
             tr = o.tr,
-            record = o.record,
             index = o.rowindex,
             nextSibling = tbody.get("children").item(index) || null;
 
         tbody.insertBefore(tr, nextSibling);
     },
 
+    /**
+    * Creates and attaches data cell element.
+    *
+    * @method _addTbodyTdNode
+    * @param o {Object} {record, column, tr}.
+    * @protected
+    */
     _addTbodyTdNode: function(o) {
         o.td = this._createTbodyTdNode(o);
         this._attachTbodyTdNode(o);
     },
     
+    /**
+    * Creates data cell element.
+    *
+    * @method _createTbodyTdNode
+    * @param o {Object} {record, column, tr}.
+    * @protected
+    * @returns Y.Node
+    */
     _createTbodyTdNode: function(o) {
         var column = o.column;
         //TODO: attributes? or methods?
@@ -1279,10 +1503,23 @@ Y.extend(DTBase, Y.Widget, {
         return Ycreate(Ysubstitute(this.tdTemplate, o));
     },
     
+    /**
+    * Attaches data cell element.
+    *
+    * @method _attachTbodyTdNode
+    * @param o {Object} {record, column, tr, headers, classnames, value}.
+    * @protected
+    */
     _attachTbodyTdNode: function(o) {
         o.tr.appendChild(o.td);
     },
 
+    /**
+     * Returns markup to insert into data cell element.
+     *
+     * @method formatDataCell
+     * @param @param o {Object} {record, column, tr, headers, classnames}.
+     */
     formatDataCell: function(o) {
         var record = o.record;
         o.data = record.get("data");
@@ -1295,20 +1532,31 @@ Y.namespace("DataTable").Base = DTBase;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset']});
+}, '@VERSION@' ,{requires:['intl','substitute','widget','recordset-base'], lang:['en']});
 
 YUI.add('datatable-sort', function(Y) {
 
-//TODO: break out into own component
-var //getClassName = Y.ClassNameManager.getClassName,
-    COMPARE = Y.ArraySort.compare,
+/**
+ * Plugs DataTable with sorting functionality.
+ *
+ * @module datatable
+ * @submodule datatable-sort
+ */
 
-    //DATATABLE = "datatable",
+/**
+ * Adds column sorting to DataTable.
+ * @class DataTableSort
+ * @extends Plugin.Base
+ */
+var YgetClassName = Y.ClassNameManager.getClassName,
+
+    DATATABLE = "datatable",
     ASC = "asc",
     DESC = "desc",
-    //CLASS_ASC = getClassName(DATATABLE, "asc"),
-    //CLASS_DESC = getClassName(DATATABLE, "desc"),
-    CLASS_SORTABLE = Y.ClassNameManager.getClassName("datatable", "sortable"),
+    
+    CLASS_ASC = YgetClassName(DATATABLE, "asc"),
+    CLASS_DESC = YgetClassName(DATATABLE, "desc"),
+    CLASS_SORTABLE = YgetClassName("datatable", "sortable"),
 
     //TODO: Don't use hrefs - use tab/arrow/enter
     TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
@@ -1318,26 +1566,91 @@ function DataTableSort() {
     DataTableSort.superclass.constructor.apply(this, arguments);
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// STATIC PROPERTIES
+//
+/////////////////////////////////////////////////////////////////////////////
 Y.mix(DataTableSort, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "sort"
+     */
     NS: "sort",
 
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "dataTableSort"
+     */
     NAME: "dataTableSort",
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// ATTRIBUTES
+//
+/////////////////////////////////////////////////////////////////////////////
     ATTRS: {
+        /**
+        * @attribute trigger
+        * @description Name of DataTable custom event that should trigger a
+        * column to sort.
+        * @type String
+        * @default "theadCellClick"
+        * @initOnly
+        */
         trigger: {
             value: "theadCellClick",
             writeOnce: "initOnly"
         },
         
+        /**
+        * @attribute sortedBy
+        * @description Sort state: {field,dir}
+        * @type Object
+        */
         sortedBy: {
             value: null
         }
     }
 });
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// PROTOTYPE
+//
+/////////////////////////////////////////////////////////////////////////////
 Y.extend(DataTableSort, Y.Plugin.Base, {
+    /**
+    * @property thLinkTemplate
+    * @description Tokenized markup template for TH click-to-sort link creation.
+    * @type String
+    * @default '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>'
+    */
     thLinkTemplate: TEMPLATE_TH_LINK,
 
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // METHODS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Initializer.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
     initializer: function(config) {
         var dt = this.get("host");
         dt.get("recordset").plug(Y.Plugin.RecordsetSort, {dt: dt});
@@ -1359,7 +1672,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
             dt._uiSetRecordset(dt.get("recordset"));
         });
         dt.after("sortedByChangeEvent", function() {
-            alert('ok');
+            //alert('ok');
         });
 
         //TODO
@@ -1374,6 +1687,13 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         }
     },
 
+    /**
+    * Before header cell element is created, inserts link markup around {value}.
+    *
+    * @method _beforeCreateTheadThNode
+    * @param o {Object} {value, column, tr}.
+    * @protected
+    */
     _beforeCreateTheadThNode: function(o) {
         if(o.column.get("sortable")) {
             o.value = Y.substitute(this.thLinkTemplate, {
@@ -1385,6 +1705,14 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         }
     },
 
+    /**
+    * In response to the "trigger" event, sorts the underlying Recordset and
+    * updates the sortedBy attribute.
+    *
+    * @method _beforeCreateTheadThNode
+    * @param o {Object} {value, column, tr}.
+    * @protected
+    */
     _onEventSortColumn: function(e) {
         e.halt();
         //TODO: normalize e.currentTarget to TH
@@ -1409,7 +1737,7 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
+}, '@VERSION@' ,{lang:['en'], requires:['plugin','datatable-base','recordset-sort']});
 
 YUI.add('datatable-colresize', function(Y) {
 
@@ -1472,33 +1800,680 @@ Y.namespace('Plugin').DataTableColResize = DataTableColResize;
 
 YUI.add('datatable-scroll', function(Y) {
 
-function DatatableScroll() {
-    DatatableScroll.superclass.constructor.apply(this, arguments);
+/**
+ * Extends DataTable base to enable x,y, and xy scrolling.
+ * @module datatable
+ * @submodule datatable-scroll
+ */
+
+
+var YDo = Y.Do,
+	YNode = Y.Node,
+	YLang = Y.Lang,
+	YUA = Y.UA,
+	YStyleSheet = Y.StyleSheet,
+	YgetClassName = Y.ClassNameManager.getClassName,
+	DATATABLE = "datatable",
+	CLASS_HEADER = YgetClassName(DATATABLE, "hd"),
+	CLASS_BODY = YgetClassName(DATATABLE, "bd"),
+	CLASS_LINER = YgetClassName(DATATABLE, "liner"),
+	CLASS_SCROLLABLE = YgetClassName(DATATABLE, "scrollable"),
+	CONTAINER_HEADER = '<div class="'+CLASS_HEADER+'"></div>',
+	CONTAINER_BODY = '<div class="'+CLASS_BODY+'"></div>',
+	TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'" style="width:100px">{value}</div></th>',
+	TEMPLATE_TD = '<td headers="{headers}"><div class="'+CLASS_LINER+'" style="width:100px">{value}</div></td>',
+	TEMPLATE_TABLE = '<table></table>';
+	
+
+function DataTableScroll() {
+    DataTableScroll.superclass.constructor.apply(this, arguments);
 }
 
-Y.mix(DatatableScroll, {
-
+Y.mix(DataTableScroll, {
     NS: "scroll",
 
     NAME: "dataTableScroll",
 
     ATTRS: {
-
+	
+		/**
+	    * @description The width for the table. Set to a string (ex: "200px", "20em")
+	    *
+	    * @attribute width
+	    * @public
+	    * @static
+	    * @type string
+	    */
+        width: {
+			value: undefined
+		},
+		
+		/**
+	    * @description The height for the table. Set to a string (ex: "200px", "20em")
+	    *
+	    * @attribute height
+	    * @public
+	    * @static
+	    * @type string
+	    */
+		height: {
+			value: undefined
+		},
+		
+		
+		/**
+	    * @description The scrolling direction for the table. Can be set to 'x', 'y', or 'xy'
+	    *
+	    * @attribute scroll
+	    * @public
+	    * @static
+	    * @type string
+	    */
+		scroll: {
+			value: 'y'
+		},
+		
+		
+		/**
+	    * @description The hexadecimal colour value to set on the top-right of the table if a scrollbar exists. 
+	    *
+	    * @attribute COLOR_COLUMNFILLER
+	    * @public
+	    * @static
+	    * @type string
+	    */
+		COLOR_COLUMNFILLER: {
+			value: '#f2f2f2',
+			validator: YLang.isString,
+			setter: function(param) {
+				if (this._headerContainerNode) {
+					this._headerContainerNode.setStyle('backgroundColor', param);
+				}
+			}
+		}
     }
 });
 
-Y.extend(DatatableScroll, Y.Plugin.Base, {
+Y.extend(DataTableScroll, Y.Plugin.Base, {
+	
+	/**
+    * @description The base template for a td DOM element.
+    *
+    * @property tdTemplate
+    * @type string
+    */
+	tdTemplate: TEMPLATE_TD,
+	
+	
+	/**
+    * @description The base template for a th DOM element.
+    *
+    * @property thTemplate
+    * @type string
+    */
+	thTemplate: TEMPLATE_TH,
+	
+	
+	/**
+    * @description The table node created in datatable-base
+    *
+    * @property _parentTableNode
+	* @private
+    * @type Y.Node
+    */
+	_parentTableNode: null,
+	
+	
+	/**
+    * @description The THEAD node which resides within the table node created in datatable-base
+    *
+    * @property _parentTheadNode
+	* @private
+    * @type Y.Node
+    */
+	_parentTheadNode: null,
+	
+	
+	/**
+    * @description The TBODY node which resides within the table node created in datatable-base
+    *
+    * @property _parentTbodyNode
+	* @private
+    * @type Y.Node
+    */
+	_parentTbodyNode: null,
+	
+	
+	/**
+    * @description The TBODY Message node which resides within the table node created in datatable-base
+    *
+    * @property _parentMsgNode
+	* @private
+    * @type Y.Node
+    */
+	_parentMsgNode: null,
+	
+	
+	/**
+    * @description The contentBox specified for the datatable in datatable-base
+    *
+    * @property _parentContainer
+	* @private
+    * @type Y.Node
+    */
+	_parentContainer: null,
+	
+	
+	/**
+    * @description The DIV node that contains all the scrollable elements (a table with a tbody on it)
+    *
+    * @property _bodyContainerNode
+	* @private
+    * @type Y.Node
+    */
+	_bodyContainerNode: null,
+	
+	
+	/**
+    * @description The DIV node that contains a table with a THEAD in it (which syncs its horizontal scroll with the _bodyContainerNode above)
+    *
+    * @property _headerContainerNode
+	* @private
+    * @type Y.Node
+    */
+	_headerContainerNode: null,
+	
+	
+	//--------------------------------------
+    //  Methods
+    //--------------------------------------
 
-    initializer: function(config) {
-        
-    }
+
+	
+	initializer: function(config) {
+        var dt = this.get("host");
+		this._parentContainer = dt.get('contentBox');
+		this._parentContainer.addClass(CLASS_SCROLLABLE);
+		this._setUpNodes();
+	},
+	
+	/////////////////////////////////////////////////////////////////////////////
+	//
+	// Set up Table Nodes
+	//
+	/////////////////////////////////////////////////////////////////////////////
+	
+	/**
+    * @description Set up methods to fire after host methods execute
+    *
+    * @method _setUpNodes
+    * @private
+    */			
+	_setUpNodes: function() {
+		var dt = this.get('host');
+		
+		this.afterHostMethod("_addTableNode", this._setUpParentTableNode);
+		this.afterHostMethod("_addTheadNode", this._setUpParentTheadNode); 
+		this.afterHostMethod("_addTbodyNode", this._setUpParentTbodyNode);
+		this.afterHostMethod("_addMessageNode", this._setUpParentMessageNode);
+       	
+		this.afterHostMethod("renderUI", this.renderUI);
+		this.afterHostMethod("syncUI", this.syncUI);
+		
+		if (this.get('scroll') === 'y') {
+			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
+			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
+		}
+	},
+		
+	/**
+    * @description Stores the main <table> node provided by the host as a private property
+    *
+    * @method _setUpParentTableNode
+    * @private
+    */
+	_setUpParentTableNode: function() {
+		this._parentTableNode = this.get('host')._tableNode;
+	},
+	
+	
+	/**
+    * @description Stores the main <thead> node provided by the host as a private property
+    *
+    * @method _setUpParentTheadNode
+    * @private
+    */
+	_setUpParentTheadNode: function() {
+		this._parentTheadNode = this.get('host')._theadNode;
+	},
+	
+	/**
+    * @description Stores the main <tbody> node provided by the host as a private property
+    *
+    * @method _setUpParentTbodyNode
+    * @private
+    */
+	_setUpParentTbodyNode: function() {
+		this._parentTbodyNode = this.get('host')._tbodyNode;
+	},
+	
+	
+	/**
+    * @description Stores the main <tbody> message node provided by the host as a private property
+    *
+    * @method _setUpParentMessageNode
+    * @private
+    */
+	_setUpParentMessageNode: function() {
+		this._parentMsgNode = this.get('host')._msgNode;
+	},
+	
+	/////////////////////////////////////////////////////////////////////////////
+	//
+	// Renderer
+	//
+	/////////////////////////////////////////////////////////////////////////////
+	
+	/**
+    * @description Primary rendering method that takes the datatable rendered in
+    * the host, and splits it up into two separate <divs> each containing two 
+	* separate tables (one containing the head and one containing the body). 
+	* This method fires after renderUI is called on datatable-base.
+	* 
+    * @method renderUI
+    * @public
+    */
+	renderUI: function() {
+		//Y.Profiler.start('render');
+		this._createBodyContainer();
+		this._createHeaderContainer();
+		this._setContentBoxDimensions();
+		//Y.Profiler.stop('render');
+		//console.log(Y.Profiler.getReport("render"));
+	},
+	
+	
+	/**
+    * @description Post rendering method that is responsible for creating a column
+	* filler, and performing width and scroll synchronization between the <th> 
+	* elements and the <td> elements.
+	* This method fires after syncUI is called on datatable-base
+	* 
+    * @method syncUI
+    * @public
+    */
+	syncUI: function() {
+		//Y.Profiler.start('sync');
+		this._syncWidths();
+		this._syncScroll();
+		//Y.Profiler.stop('sync');
+		//console.log(Y.Profiler.getReport("sync"));
+		
+	},
+	
+	
+	/**
+    * @description Adjusts the width of the TH and the TDs to make sure that the two are in sync
+	* 
+	* Implementation Details: 
+	* 	Compares the width of the TH liner div to the the width of the TD node. The TD liner width
+	*	is not actually used because the TD often stretches past the liner if the parent DIV is very
+	*	large. Measuring the TD width is more accurate.
+	*	
+	*	Instead of measuring via .get('width'), 'clientWidth' is used, as it returns a number, whereas
+	*	'width' returns a string, In IE6, 'clientWidth' is not supported, so 'offsetWidth' is used.
+	*	'offsetWidth' is not as accurate on Chrome,FF as 'clientWidth' - thus the need for the fork.
+	* 
+    * @method _syncWidths
+    * @public
+    */
+	_syncWidths: function() {
+		var th = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-hd table thead th'), //nodelist of all THs
+			td = YNode.one('#'+this._parentContainer.get('id')+' .yui3-datatable-bd table .yui3-datatable-data').get('firstChild').get('children'), //nodelist of all TDs in 1st row
+			i,
+			len,
+			thWidth, tdWidth, thLiner, tdLiner,
+			ie = YUA.ie;
+			//stylesheet = new YStyleSheet('columnsSheet'),
+			//className;
+			
+			/*
+			This for loop goes through the first row of TDs in the table.
+			In a table, the width of the row is equal to the width of the longest cell in that column.
+			Therefore, we can observe the widths of the cells in the first row only, as they will be the same in all the cells below (in each respective column)
+			*/
+			for (i=0, len = th.size(); i<len; i++) { 
+				
+				//className = '.'+td.item(i).get('classList')._nodes[0];
+				//If a width has not been already set on the TD:
+				//if (td.item(i).get('firstChild').getStyle('width') === "auto") {
+					
+					//Get the liners for the TH and the TD cell in question
+					thLiner = th.item(i).get('firstChild'); //TODO: use liner API - how? this is a node.
+					tdLiner = td.item(i).get('firstChild');
+					
+					/*
+					If browser is not IE - get the clientWidth of the Liner div and the TD.
+					Note: 	We are not getting the width of the TDLiner, we are getting the width of the actual cell.
+							Why? Because when the table is set to auto width, the cell will grow to try to fit the table in its container.
+							The liner could potentially be much smaller than the cell width.
+							
+							TODO: Explore if there is a better way using only LINERS widths
+					*/
+					if (!ie) {
+						thWidth = thLiner.get('clientWidth'); //TODO: this should actually be done with getComputedStyle('width') but this messes up columns. Explore this option.
+						tdWidth = td.item(i).get('clientWidth');
+					}
+					
+					//IE wasn't recognizing clientWidths, so we are using offsetWidths.
+					//TODO: should use getComputedStyle('width') because offsetWidth will screw up when padding is changed.
+					else {
+						thWidth = thLiner.get('offsetWidth');
+						tdWidth = td.item(i).get('offsetWidth');
+						//thWidth = parseFloat(thLiner.getComputedStyle('width').split('px')[0]);
+						//tdWidth = parseFloat(td.item(i).getComputedStyle('width').split('px')[0]); /* TODO: for some reason, using tdLiner.get('clientWidth') doesn't work - why not? */
+					}
+										
+					//if TH is bigger than TD, enlarge TD Liner
+					if (thWidth > tdWidth) {
+						tdLiner.setStyle('width', (thWidth - 20 + 'px'));
+						//stylesheet.set(className,{'width': (thWidth - 20 + 'px')});
+					}
+					
+					//if TD is bigger than TH, enlarge TH Liner
+					else if (tdWidth > thWidth) {
+						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
+						//stylesheet.set(className,{'width': (tdWidth - 20 + 'px')});
+					}
+					
+				//}
+
+			}
+			
+			//stylesheet.enable();
+			
+			//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
+			//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
+			
+			//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
+			if (ie && this.get('scroll') === 'y') {
+				this._headerContainerNode.setStyle('width', this._parentContainer.get('offsetWidth')+ 15 +'px');
+			}		
+	},
+	
+	/**
+    * @description Adds the approriate width to the liner divs of the TH nodes before they are appended to DOM
+	*
+    * @method _attachTheadThNode
+    * @public
+    */
+	_attachTheadThNode: function(o) {
+		var w = o.column.get('width') || 'auto';
+		
+		if (w !== 'auto') {
+			o.th.get('firstChild').setStyles({'width': w, 'overflow':'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
+		}
+		return o;
+	},
+	
+	/**
+    * @description Adds the appropriate width to the liner divs of the TD nodes before they are appended to DOM
+	*
+    * @method _attachTbodyTdNode
+    * @public
+    */
+	_attachTbodyTdNode: function(o) {
+		var w = o.column.get('width') || 'auto';
+		
+		if (w !== 'auto') {
+			o.td.get('firstChild').setStyles({'width': w, 'overflow': 'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
+			//o.td.setStyles({'width': width, 'overflow': 'hidden'});
+		}
+		return o;
+	},
+	
+	/**
+    * @description Creates the body DIV that contains all the data. 
+	*
+    * @method _createBodyContainer
+    * @private
+    */
+	_createBodyContainer: function() {
+		var	bd = YNode.create(CONTAINER_BODY),
+			onScrollFn = Y.bind("_onScroll", this);
+			
+		this._bodyContainerNode = bd;		
+		this._setStylesForTbody();
+		
+		bd.appendChild(this._parentTableNode);
+		this._parentContainer.appendChild(bd);
+		bd.on('scroll', onScrollFn);
+	},
+	
+	/**
+    * @description Creates the DIV that contains a <table> with all the headers. 
+	*
+    * @method _createHeaderContainer
+    * @private
+    */
+	_createHeaderContainer: function() {
+		var hd = YNode.create(CONTAINER_HEADER),
+			tbl = YNode.create(TEMPLATE_TABLE);
+			
+		this._headerContainerNode = hd;
+		
+		//hd.setStyle('backgroundColor',this.get("COLOR_COLUMNFILLER"));
+		this._setStylesForThead();
+		tbl.appendChild(this._parentTheadNode);
+		hd.appendChild(tbl);
+		this._parentContainer.prepend(hd);
+		
+	},
+	
+	/**
+    * @description Creates styles for the TBODY based on what type of table it is.
+	*
+    * @method _setStylesForTbody
+    * @private
+    */
+	_setStylesForTbody: function() {
+		var dir = this.get('scroll'),
+			w = this.get('width') || "",
+			h = this.get('height') || "",
+			el = this._bodyContainerNode,
+			styles = {'width':"", 'height':h};
+				
+		if (dir === 'x') {
+			//X-Scrolling tables should not have a Y-Scrollbar so overflow-y is hidden. THe width on x-scrolling tables must be set by user.
+			styles['overflowY'] = 'hidden';
+			styles['width'] = w;
+		}
+		else if (dir === 'y') {
+			//Y-Scrolling tables should not have a X-Scrollbar so overflow-x is hidden. The width isn't neccessary because it can be auto.
+			styles['overflowX'] = 'hidden';
+		}
+		
+		else {
+			//assume xy - the width must be set on xy.
+			styles['width'] = w;
+		}
+		
+		el.setStyles(styles);
+		return el;
+	},
+	
+	
+	/**
+    * @description Creates styles for the THEAD based on what type of datatable it is.
+	*
+    * @method _setStylesForThead
+    * @private
+    */
+	_setStylesForThead: function() {
+		var dir = this.get('scroll'),
+			w = this.get('width') || "",
+			el = this._headerContainerNode;
+		
+		if (dir !== 'y') {
+			el.setStyles({'width': w, 'overflow': 'hidden'});
+		}
+	},
+	
+	/**
+    * @description Sets an auto width on the content box if it doesn't exist or if its a y-datatable.
+	*
+    * @method _setContentBoxDimensions
+    * @private
+    */
+	_setContentBoxDimensions: function() {
+		
+		if (this.get('scroll') === 'y' || (!this.get('width'))) {
+			this._parentContainer.setStyle('width', 'auto');
+		}
+		
+	},
+	
+	/////////////////////////////////////////////////////////////////////////////
+	//
+	// Scroll Syncing
+	//
+	/////////////////////////////////////////////////////////////////////////////
+	
+	/**
+    * @description Ensures that scrolling is synced across the two tables
+	*
+    * @method _onScroll
+    * @private
+    */
+	_onScroll: function() {
+		this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+	},
+	
+	/**
+	 * @description Syncs padding around scrollable tables, including Column header right-padding
+	 * and container width and height.
+	 *
+	 * @method _syncScroll
+	 * @private 
+	 */
+	_syncScroll : function() {
+		this._syncScrollX();
+		this._syncScrollY();
+		this._syncScrollOverhang();
+		if(YUA.opera) {
+			// Bug 1925874
+			this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+			
+			if(!this.get("width")) {
+		 		// Bug 1926125
+		 		document.body.style += '';
+		 	}
+		}
+	},
+	
+	/**
+	* @description Snaps container width for y-scrolling tables.
+	*
+	* @method _syncScrollY
+	* @private
+	*/
+	_syncScrollY : function() {
+		var tBody = this._parentTbodyNode,
+		    tBodyContainer = this._bodyContainerNode,
+			w;
+		    // X-scrolling not enabled
+			if(!this.get("width")) {
+		        // Snap outer container width to content
+		        w = (tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) ?
+		    	// but account for y-scrollbar since it is visible
+					(tBody.get('parentNode').get('clientWidth') + 19) + "px" :
+		     		// no y-scrollbar, just borders
+            		(tBody.get('parentNode').get('clientWidth') + 2) + "px";
+				this._parentContainer.setStyle('width', w);
+		}
+	},
+		
+	/**
+	 * @description Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
+	 * Taken from YUI2 ScrollingDataTable.js
+	 *
+	 * @method _syncScrollX
+	 * @private
+	 */
+	_syncScrollX: function() {
+		var tBody = this._parentTbodyNode,
+			tBodyContainer = this._bodyContainerNode,
+			w;
+			this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
+			
+			if(!this.get('height') && (YUA.ie)) {
+						w = (tBodyContainer.get('scrollWidth') > tBodyContainer.get('offsetWidth')) ?
+			            (tBody.get('parentNode').get('offsetHeight') + 18) + "px" : 
+			            tBody.get('parentNode').get('offsetHeight') + "px";
+						
+						tBodyContainer.setStyle('height', w);
+					}
+			
+		if (tBody.get('rows').length === 0) {
+			this._parentMsgNode.get('parentNode').setStyle('width', this._parentTheadNode.get('parentNode').get('offsetWidth')+'px');
+		}
+		else {
+			this._parentMsgNode.get('parentNode').setStyle('width', "");
+		}
+			
+	},
+	
+	/**
+	 * @description Adds/removes Column header overhang as necesary.
+	 * Taken from YUI2 ScrollingDataTable.js
+	 *
+	 * @method _syncScrollOverhang
+	 * @private
+	 */
+	_syncScrollOverhang: function() {
+		var tBodyContainer = this._bodyContainerNode,
+			padding = 1;
+		
+		//when its both x and y scrolling
+		if ((tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) || (tBodyContainer.get('scrollWidth') > tBodyContainer.get('clientWidth'))) {
+			padding = 18;
+		}
+		
+		this._setOverhangValue(padding);
+		
+
+	},
+	
+	
+	/**
+	 * @description Sets Column header overhang to given width.
+	 * Taken from YUI2 ScrollingDataTable.js with minor modifications
+	 *
+	 * @method _setOverhangValue
+	 * @param nBorderWidth {Number} Value of new border for overhang. 
+	 * @private
+	 */ 
+	_setOverhangValue: function(borderWidth) {
+		var host = this.get('host'),
+			cols = host.get('columnset').get('columns'),
+		 	//lastHeaders = cols[cols.length-1] || [],
+	        len = cols.length,
+	        value = borderWidth + "px solid " + this.get("COLOR_COLUMNFILLER"),
+			children = YNode.all('#'+this._parentContainer.get('id')+ ' .' + CLASS_HEADER + ' table thead th');
+
+		children.item(len-1).setStyle('borderRight', value);
+	}
+	
 });
 
-Y.namespace('Plugin').DatatableScroll = DatatableScroll;
+Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
-}, '@VERSION@' ,{requires:['plugin','datatable-base']});
+
+
+
+}, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
 
 
 

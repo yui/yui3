@@ -55,6 +55,8 @@
             },
 
             "autocomplete-list": {
+                "lang": ["en"],
+
                 "plugins": {
                     "autocomplete-list-keys": {
                         "path": "autocomplete/autocomplete-list-keys-min.js",
@@ -67,6 +69,15 @@
                         "requires": [
                             "autocomplete-list",
                             "base-build"
+                        ]
+                    },
+
+                    "autocomplete-plugin": {
+                        "path": "autocomplete/autocomplete-plugin-min.js",
+
+                        "requires": [
+                            "autocomplete-list",
+                            "node-pluginhost"
                         ]
                     }
                 },

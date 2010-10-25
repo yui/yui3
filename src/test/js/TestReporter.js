@@ -111,13 +111,10 @@
                 this._form.style.top = 0;
                 document.body.appendChild(this._form);
             
-                //IE won't let you assign a name using the DOM, must do it the hacky way
-                if (Y.UA.ie){
-                    this._iframe = document.createElement("<iframe name=\"yuiTestTarget\" />");
-                } else {
-                    this._iframe = document.createElement("iframe");
-                    this._iframe.name = "yuiTestTarget";
-                }
+                // IE won't let you assign a name using the DOM, must do it the hacky way
+                var iframeContainer = document.createElement("div");
+                iframeContainer.innerHTML = "<iframe name=\"yuiTestTarget\"></iframe>";
+                this._iframe = iframeContainer.firstChild;
     
                 this._iframe.src = "javascript:false";
                 this._iframe.style.visibility = "hidden";

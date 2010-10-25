@@ -11,6 +11,15 @@
                 "skinnable" : true,
                 "path": "scrollview/scrollview-base-min.js"
             },
+            "scrollview-base-ie": {
+                "requires": [
+                    "scrollview-base"
+                ],
+                "condition": {
+                   "trigger": "scrollview-base",
+                   "ua": "ie"
+                }
+            },
             "scrollview-scrollbars" : {
                 "requires" : [
                     "plugin"

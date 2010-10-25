@@ -2,7 +2,7 @@
 var add = Y.Features.add;
 // 0
 add('load', '0', {
-    "trigger": "node-base", 
+    "trigger": "widget-base", 
     "ua": "ie"
 });
 // autocomplete-list-keys-sniff.js
