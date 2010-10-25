@@ -1,6 +1,7 @@
 Y.Array.each([
     /**
      * Passes through to DOM method.
+     * @for Node
      * @method removeChild
      * @param {HTMLElement | Node} node Node to be removed 
      * @return {Node} The removed node 
@@ -97,7 +98,7 @@ Y.Array.each([
      * @method createCaption
      * @chainable
      */
-    'createCaption',
+    'createCaption'
 
 ], function(method) {
     Y.Node.prototype[method] = function(arg1, arg2, arg3) {
@@ -137,22 +138,23 @@ Y.Node.importMethod(Y.DOM, [
      */
     'getAttribute',
 
+    /**
+     * Wraps the given HTML around the node.
+     * @method wrap
+     * @param {String} html The markup to wrap around the node. 
+     * @chainable
+     */
     'wrap',
 
+    /**
+     * Removes the node's parent node. 
+     * @method unwrap
+     * @chainable
+     */
     'unwrap'
 ]);
 
-/**
- * Allows setting attributes on DOM nodes, normalizing in some cases.
- * This passes through to the DOM node, allowing for custom attributes.
- * @method setAttribute
- * @see Node
- * @for NodeList
- * @chainable
- * @param {string} name The attribute name 
- * @param {string} value The value to set
- */
-
+Y.NodeList.importMethod(Y.Node.prototype, [
 /**
  * Allows getting attributes on DOM nodes, normalizing in some cases.
  * This passes through to the DOM node, allowing for custom attributes.
@@ -163,6 +165,19 @@ Y.Node.importMethod(Y.DOM, [
  * @return {string} The attribute value 
  */
 
+    'getAttribute',
+/**
+ * Allows setting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method setAttribute
+ * @see Node
+ * @for NodeList
+ * @chainable
+ * @param {string} name The attribute name 
+ * @param {string} value The value to set
+ */
+    'setAttribute',
+ 
 /**
  * Allows for removing attributes on DOM nodes.
  * This passes through to the DOM node, allowing for custom attributes.
@@ -171,4 +186,18 @@ Y.Node.importMethod(Y.DOM, [
  * @for NodeList
  * @param {string} name The attribute to remove 
  */
-Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
+    'removeAttribute',
+/**
+ * Removes the parent node from node in the list. 
+ * @method unwrap
+ * @chainable
+ */
+    'unwrap',
+/**
+ * Wraps the given HTML around each node.
+ * @method wrap
+ * @param {String} html The markup to wrap around the node. 
+ * @chainable
+ */
+    'wrap'
+]);

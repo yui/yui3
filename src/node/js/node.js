@@ -1162,20 +1162,54 @@ Y.mix(Y_Node.prototype, {
     SHOW_TRANSITION: null,
     HIDE_TRANSITION: null,
 
+    /**
+     * Makes the node visible.
+     * If the "transition" module is loaded, show optionally
+     * animates the showing of the node using either the default
+     * transition effect ('fadeIn'), or the given named effect.
+     * @method show
+     * @param {String} name A named Transition effect to use as the show effect. 
+     * @param {Object} config Options to use with the transition. 
+     * @param {Function} callback An optional function to run after the transition completes. 
+     * @chainable
+     */
     show: function(name, config, callback) {
         this._show();
         return this;
     },
 
+    /**
+     * The implementation for showing nodes.
+     * Default is to toggle the style.display property.
+     * @protected
+     * @chainable
+     */
     _show: function() {
         this.setStyle('display', '');
     },
 
+    /**
+     * Hides the node.
+     * If the "transition" module is loaded, hide optionally
+     * animates the hiding of the node using either the default
+     * transition effect ('fadeOut'), or the given named effect.
+     * @method hide
+     * @param {String} name A named Transition effect to use as the show effect. 
+     * @param {Object} config Options to use with the transition. 
+     * @param {Function} callback An optional function to run after the transition completes. 
+     * @chainable
+     */
     hide: function(name, config, callback) {
         this._hide();
         return this;
     },
 
+    /**
+     * The implementation for hiding nodes.
+     * Default is to toggle the style.display property.
+     * @protected
+     * @chainable
+     */
     _hide: function() {
         this.setStyle('display', 'none');
     },
@@ -1184,8 +1218,14 @@ Y.mix(Y_Node.prototype, {
         return (this.get('nodeType') === 11);
     },
 
+    /**
+     * Removes all of the child nodes from the node.
+     * @param {Boolean} destroy Whether the nodes should also be destroyed. 
+     * @chainable
+     */
     empty: function(destroy) {
         this.get('childNodes').remove(destroy);
+        return this;
     }
 
 }, true);
