@@ -985,6 +985,11 @@
                     "node-pluginhost"
                 ]
             }, 
+            "node-deprecated": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "node-event-simulate": {
                 "requires": [
                     "node-base", 

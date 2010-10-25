@@ -1012,6 +1012,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node-pluginhost"
                 ]
             }, 
+            "node-deprecated": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "node-event-simulate": {
                 "requires": [
                     "node-base", 
@@ -1574,4 +1579,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3fa977f47e47b1c400fd88a6c3f4e593';
+YUI.Env[Y.version].md5 = '4c31fb1d891daad889313195d59bc3f5';
