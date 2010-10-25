@@ -37,7 +37,6 @@ var YLang = Y.Lang,
     
 
 
-
 /**
  * The Column class defines and manages attributes of Columns for DataTable.
  *
@@ -312,7 +311,6 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
-
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -697,7 +695,6 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
-
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -1531,9 +1528,7 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-
-}, '@VERSION@' ,{requires:['intl','substitute','widget','recordset-base'], lang:['en']});
-
+}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset-base']});
 YUI.add('datatable-sort', function(Y) {
 
 /**
@@ -1736,9 +1731,7 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-
-}, '@VERSION@' ,{lang:['en'], requires:['plugin','datatable-base','recordset-sort']});
-
+}, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
 YUI.add('datatable-colresize', function(Y) {
 
 var GETCLASSNAME = Y.ClassNameManager.getClassName,
@@ -1795,9 +1788,7 @@ Y.extend(DataTableColResize, Y.Plugin.Base, {
 Y.namespace('Plugin').DataTableColResize = DataTableColResize;
 
 
-
 }, '@VERSION@' ,{requires:['plugin','dd','datatable-base']});
-
 YUI.add('datatable-scroll', function(Y) {
 
 /**
@@ -2455,7 +2446,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	 */ 
 	_setOverhangValue: function(borderWidth) {
 		var host = this.get('host'),
-			cols = host.get('columnset').get('columns'),
+			cols = host.get('columnset').get('definitions'),
 		 	//lastHeaders = cols[cols.length-1] || [],
 	        len = cols.length,
 	        value = borderWidth + "px solid " + this.get("COLOR_COLUMNFILLER"),
@@ -2472,9 +2463,7 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
-
 }, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
-
 
 
 YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize','datatable-scroll']});

@@ -655,7 +655,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	 */ 
 	_setOverhangValue: function(borderWidth) {
 		var host = this.get('host'),
-			cols = host.get('columnset').get('columns'),
+			cols = host.get('columnset').get('definitions'),
 		 	//lastHeaders = cols[cols.length-1] || [],
 	        len = cols.length,
 	        value = borderWidth + "px solid " + this.get("COLOR_COLUMNFILLER"),
@@ -667,7 +667,6 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 });
 
 Y.namespace("Plugin").DataTableScroll = DataTableScroll;
-
 
 
 
