@@ -84,7 +84,7 @@
                         obj = {
                             a: 1
                         },
-                        node = Y.get('#clickcontainer');
+                        node = Y.one('#clickcontainer');
 
                     Y.on('click', function(e, extra1, extra2) {
                         clicked = true;
@@ -110,7 +110,7 @@
                         obj = {
                             a: 1
                         },
-                        node = Y.get('#clickcontainer');
+                        node = Y.one('#clickcontainer');
 
                     node.on('click', function(e, extra1, extra2) {
                         clicked = true;
@@ -130,7 +130,7 @@
                 test_node_detachall: function() {
 
                     var clicked = false, overed = false,
-                        node = Y.get('#clickcontainer');
+                        node = Y.one('#clickcontainer');
 
                     node.on('click', function(e, extra1, extra2) {
                         clicked = true;
