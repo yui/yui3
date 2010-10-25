@@ -1,10 +1,9 @@
-.yui3-resize, .yui3-resize-wrapper {
+.yui3-resize,.yui3-resize-wrapper {
 	z-index: 0;
 	zoom: 1;
 }
 
 .yui3-resize-handle {
-/*	background: #eee;*/
 	position: absolute;
 	display: block;
 	z-index: 100;
@@ -14,23 +13,24 @@
 .yui3-resize-proxy {
 	position: absolute;
 	border: 1px dashed #000;
-    position: absolute;
-    z-index: 10000;
+	position: absolute;
+	z-index: 10000;
 }
 
 .yui3-resize-hidden-handles .yui3-resize-handle {
 	opacity: 0;
-
-    filter: alpha(opacity=0);
+	filter: alpha(opacity=0);
 }
 
-.yui3-resize-handle-t, .yui3-resize-handle-b {
+.yui3-resize-handle-t,
+.yui3-resize-handle-b {
 	width: 100%;
 	left: 0;
 	height: 6px;
 }
 
-.yui3-resize-handle-l, .yui3-resize-handle-r {
+.yui3-resize-handle-l,
+.yui3-resize-handle-r {
 	height: 100%;
 	top: 0;
 	width: 6px;
@@ -61,18 +61,20 @@
 	zoom: 1;
 }
 
-.yui3-resize-handle-inner-t, .yui3-resize-handle-inner-b {
+.yui3-resize-handle-inner-t,
+.yui3-resize-handle-inner-b {
 	margin-left: -8px;
 	left: 50%;
 }
 
-.yui3-resize-handle-inner-l, .yui3-resize-handle-inner-r {
+.yui3-resize-handle-inner-l,
+.yui3-resize-handle-inner-r {
 	margin-top: -8px;
 	top: 50%;
 }
 
 .yui3-resize-handle-inner-t {
-	top: -5px;
+	top: -4px;
 }
 
 .yui3-resize-handle-inner-b {
@@ -84,13 +86,15 @@
 }
 
 .yui3-resize-handle-inner-r {
-	right: -5px;
+	right: -4px;
 }
 
-
-.yui3-resize-handle-tr, .yui3-resize-handle-br, .yui3-resize-handle-tl, .yui3-resize-handle-bl {
-	height: 16px;
-	width: 16px;
+.yui3-resize-handle-tr,
+.yui3-resize-handle-br,
+.yui3-resize-handle-tl,
+.yui3-resize-handle-bl {
+	height: 15px;
+	width: 15px;
 	z-index: 200;
 }
 

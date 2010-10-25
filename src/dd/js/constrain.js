@@ -189,6 +189,7 @@
 	    initializer: function() {
 			this._createEvents();
 
+	        this.get(HOST).on('drag:end', Y.bind(this._handleEnd, this));
 	        this.get(HOST).on('drag:start', Y.bind(this._handleStart, this));
 	        this.get(HOST).after('drag:align', Y.bind(this.align, this));
 	        this.get(HOST).after('drag:drag', Y.bind(this.drag, this));
@@ -216,6 +217,15 @@
 	            });
 	        }, this);
 		},
+		/**
+	    * @private
+	    * @method _handleEnd
+	    * @description Fires on drag:end
+	    */
+	    _handleEnd: function() {
+			this._lastTickYFired = null;
+			this._lastTickXFired = null;
+	    },
 	    /**
 	    * @private
 	    * @method _handleStart

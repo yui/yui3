@@ -56,6 +56,12 @@ Y.extend(ResizeProxy, Y.Plugin.Base, {
 		instance.afterHostMethod('_resizeEnd', instance._afterHostResizeEnd);
 	},
 
+	destructor: function() {
+		var instance = this;
+
+		instance.get(PROXY_NODE).remove(true);
+	},
+
 	_afterHostResizeEnd: function(event) {
 		var instance = this,
 			drag = event.dragEvent.target;
