@@ -18,8 +18,6 @@ var YDo = Y.Do,
 	CLASS_SCROLLABLE = YgetClassName(DATATABLE, "scrollable"),
 	CONTAINER_HEADER = '<div class="'+CLASS_HEADER+'"></div>',
 	CONTAINER_BODY = '<div class="'+CLASS_BODY+'"></div>',
-	TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'" style="width:100px">{value}</div></th>',
-	TEMPLATE_TD = '<td headers="{headers}"><div class="'+CLASS_LINER+'" style="width:100px">{value}</div></td>',
 	TEMPLATE_TABLE = '<table></table>';
 	
 
@@ -93,24 +91,6 @@ Y.mix(DataTableScroll, {
 });
 
 Y.extend(DataTableScroll, Y.Plugin.Base, {
-	
-	/**
-    * @description The base template for a td DOM element.
-    *
-    * @property tdTemplate
-    * @type string
-    */
-	tdTemplate: TEMPLATE_TD,
-	
-	
-	/**
-    * @description The base template for a th DOM element.
-    *
-    * @property thTemplate
-    * @type string
-    */
-	thTemplate: TEMPLATE_TH,
-	
 	
 	/**
     * @description The table node created in datatable-base
@@ -218,7 +198,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("renderUI", this.renderUI);
 		this.afterHostMethod("syncUI", this.syncUI);
 		
-		if (this.get('scroll') === 'y') {
+		if (this.get('scroll') !== 'x') {
 			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
 			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
 		}
@@ -375,12 +355,14 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 					//if TH is bigger than TD, enlarge TD Liner
 					if (thWidth > tdWidth) {
 						tdLiner.setStyle('width', (thWidth - 20 + 'px'));
+						//thLiner.setStyle('width', (tdWidth - 20 + 'px'));
 						//stylesheet.set(className,{'width': (thWidth - 20 + 'px')});
 					}
 					
 					//if TD is bigger than TH, enlarge TH Liner
 					else if (tdWidth > thWidth) {
 						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
+						//tdLiner.setStyle('width', (tdWidth - 20 + 'px'));
 						//stylesheet.set(className,{'width': (tdWidth - 20 + 'px')});
 					}
 					
@@ -394,7 +376,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
 			
 			//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
-			if (ie && this.get('scroll') === 'y') {
+			if (ie && this.get('scroll') !== 'x' && this._bodyContainerNode.get('scrollHeight') > this._bodyContainerNode.get('offsetHeight')) {
 				this._headerContainerNode.setStyle('width', this._parentContainer.get('offsetWidth')+ 15 +'px');
 			}		
 	},
@@ -425,7 +407,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 		if (w !== 'auto') {
 			o.td.get('firstChild').setStyles({'width': w, 'overflow': 'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
-			//o.td.setStyles({'width': width, 'overflow': 'hidden'});
+			//o.td.setStyles({'width': w, 'overflow': 'hidden'});
 		}
 		return o;
 	},
@@ -512,9 +494,9 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			w = this.get('width') || "",
 			el = this._headerContainerNode;
 		
-		if (dir !== 'y') {
+		//if (dir !== 'y') {
 			el.setStyles({'width': w, 'overflow': 'hidden'});
-		}
+		// }
 	},
 	
 	/**
