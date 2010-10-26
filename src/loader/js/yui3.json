@@ -403,7 +403,9 @@
             "datatable-base": {
                 "requires": [
                     "recordset-base", 
-                    "widget"
+                    "widget", 
+                    "intl", 
+                    "substitute"
                 ], 
                 "skinnable": true
             }, 
