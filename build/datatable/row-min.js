@@ -1,1 +1,0 @@
-YUI.add("row",function(B){function A(C){A.superclass.constructor.apply(this,arguments);}A.NAME="row";A.ATTRS={id:{valueFn:"_setId",writeOnce:true},data:{}};B.extend(A,B.Base,{_setId:function(){return B.guid();},initializer:function(){},destructor:function(){},getValue:function(C){return this.get("data")[C];}});B.Row=A;},"@VERSION@",{requires:["base"]});
