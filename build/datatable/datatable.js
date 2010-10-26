@@ -24,6 +24,8 @@ var YLang = Y.Lang,
     CLASS_LINER = YgetClassName(DATATABLE, "liner"),
     CLASS_FIRST = YgetClassName(DATATABLE, "first"),
     CLASS_LAST = YgetClassName(DATATABLE, "last"),
+    CLASS_EVEN = YgetClassName(DATATABLE, "even"),
+    CLASS_ODD = YgetClassName(DATATABLE, "odd"),
 
     TEMPLATE_TABLE = '<table></table>',
     TEMPLATE_COL = '<col></col>',
@@ -35,6 +37,7 @@ var YLang = Y.Lang,
     TEMPLATE_VALUE = '{value}',
     TEMPLATE_MSG = '<tbody class="'+CLASS_MSG+'"></tbody>';
     
+
 
 
 /**
@@ -311,6 +314,7 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
+
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -695,6 +699,7 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
+
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -1466,8 +1471,16 @@ Y.extend(DTBase, Y.Widget, {
         var tbody = o.tbody,
             tr = o.tr,
             index = o.rowindex,
-            nextSibling = tbody.get("children").item(index) || null;
-
+            nextSibling = tbody.get("children").item(index) || null,
+            isEven = (index%2===0);
+            
+        if(isEven) {
+            tr.replaceClass(CLASS_ODD, CLASS_EVEN);
+        }
+        else {
+            tr.replaceClass(CLASS_EVEN, CLASS_ODD);
+        }
+        
         tbody.insertBefore(tr, nextSibling);
     },
 
@@ -1528,7 +1541,9 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
+
 }, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset-base']});
+
 YUI.add('datatable-sort', function(Y) {
 
 /**
@@ -1731,7 +1746,9 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
+
 YUI.add('datatable-colresize', function(Y) {
 
 var GETCLASSNAME = Y.ClassNameManager.getClassName,
@@ -1788,7 +1805,9 @@ Y.extend(DataTableColResize, Y.Plugin.Base, {
 Y.namespace('Plugin').DataTableColResize = DataTableColResize;
 
 
+
 }, '@VERSION@' ,{requires:['plugin','dd','datatable-base']});
+
 YUI.add('datatable-scroll', function(Y) {
 
 /**
@@ -2463,7 +2482,9 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
+
 
 
 YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-colresize','datatable-scroll']});

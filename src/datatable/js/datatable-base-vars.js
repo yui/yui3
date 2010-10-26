@@ -22,6 +22,8 @@ var YLang = Y.Lang,
     CLASS_LINER = YgetClassName(DATATABLE, "liner"),
     CLASS_FIRST = YgetClassName(DATATABLE, "first"),
     CLASS_LAST = YgetClassName(DATATABLE, "last"),
+    CLASS_EVEN = YgetClassName(DATATABLE, "even"),
+    CLASS_ODD = YgetClassName(DATATABLE, "odd"),
 
     TEMPLATE_TABLE = '<table></table>',
     TEMPLATE_COL = '<col></col>',

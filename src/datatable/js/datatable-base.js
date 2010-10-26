@@ -769,8 +769,16 @@ Y.extend(DTBase, Y.Widget, {
         var tbody = o.tbody,
             tr = o.tr,
             index = o.rowindex,
-            nextSibling = tbody.get("children").item(index) || null;
-
+            nextSibling = tbody.get("children").item(index) || null,
+            isEven = (index%2===0);
+            
+        if(isEven) {
+            tr.replaceClass(CLASS_ODD, CLASS_EVEN);
+        }
+        else {
+            tr.replaceClass(CLASS_EVEN, CLASS_ODD);
+        }
+        
         tbody.insertBefore(tr, nextSibling);
     },
 
