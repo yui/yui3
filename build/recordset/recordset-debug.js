@@ -153,7 +153,9 @@ var ArrayList = Y.ArrayList,
 		//deletes the object key that held on to an overwritten record and
 		//creates an object key to hold on to the updated record
 		for (; i < e.updated.length; i++) {
-			delete obj[e.overwritten[i].get(key)];
+			if (e.overwritten[i]) {
+				delete obj[e.overwritten[i].getValue(key)];
+			}
 			obj[e.updated[i].getValue(key)] = e.updated[i]; 
 		}
 		this.set('table', obj);
@@ -693,7 +695,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 		//Go through every hashtable that is stored.
 		//in each hashtable, look to see if the key is represented in the object being added.
 		Y.each(tbl, function(v,key) {
-			Y.each(e.added, function(o) {
+			Y.each(e.added || e.updated, function(o) {
 				//if the object being added has a key which is being stored by hashtable v, add it into the table.
 				if (o.getValue(key)) {
 					v[o.getValue(key)] = o;
@@ -709,53 +711,52 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 		//Go through every hashtable that is stored.
 		//in each hashtable, look to see if the key is represented in the object being deleted.
 		Y.each(tbl, function(v,key){
-			Y.each(e.removed, function(o) {
+			Y.each(e.removed || e.overwritten, function(o) {
 				reckey = o.getValue(key);
-				
+
 				//if the hashtable has a key storing a record, and the key and the record both match the record being deleted, delete that row from the hashtable
-				if (v[reckey] == o) {
+				if (reckey && v[reckey] === o) {
 					delete v[reckey];
 				}
 			});
 		}); 
-	}
+	},
 	
-	// _defUpdateHash: function(e) {
-	// 	var tbl = this.get('hashTables'), reckey, updated;
-	// 	
-	// 	Y.each(tbl, function(v, key) {
-	// 		Y.each(e.updated, function(o, i) {
-	// 			
-	// 			//delete record from hashtable if it has been overwritten
-	// 			reckey = o.getValue(key);
-	// 			
-	// 			if (e.overwritten[i]) {
-	// 				overwritten = e.overwritten[i];
-	// 			}
-	// 			
-	// 			if (reckey) {
-	// 				v[reckey] = o;
-	// 			}
-	// 			
-	// 			//the undefined case is if more records are updated than currently exist in the recordset. 
-	// 			if ((Y.Lang.isValue(overwritten)) && (v[overwritten.getValue(key)] == overwritten)) {
-	// 				delete v[overwritten.getValue(key)];
-	// 			}
-	// 			
-	// 							// 
-	// 							// 
-	// 							// if (v[reckey] == o) {
-	// 							// 	delete v[reckey];
-	// 							// }
-	// 							// 
-	// 							// //add the new updated record if it has a key that corresponds to a hash table
-	// 							// if (updated.getValue(key)) {
-	// 							// 	v[updated.getValue(key)] = updated;
-	// 							// }
-	// 							// 
-	// 		});
-	// 	});
-	// }
+	_defUpdateHash: function(e) {
+			e.added = e.updated;
+			e.removed = e.overwritten;
+			this._defAddHash(e);
+			this._defRemoveHash(e);		// 
+	// 				// 
+	// 				// var tbl = this.get('hashTables'), reckey;
+	// 				// 
+	// 				// Y.each(tbl, function(v, key) {
+	// 				// 	Y.each(e.updated, function(o, i) {
+	// 				// 		
+	// 				// 		//delete record from hashtable if it has been overwritten
+	// 				// 		reckey = o.getValue(key);
+	// 				// 		
+	// 				// 		if (reckey) {
+	// 				// 			v[reckey] = o;
+	// 				// 		}
+	// 				// 		
+	// 				// 		//the undefined case is if more records are updated than currently exist in the recordset. 
+	// 				// 		if (e.overwritten[i] && (v[e.overwritten[i].getValue(key)] === e.overwritten[i])) {
+	// 				// 			delete v[e.overwritten[i].getValue(key)];
+	// 				// 		}
+	// 				// 		
+	// 				// 		// if (v[reckey] === o) {
+	// 				// 		// 	delete v[reckey];
+	// 				// 		// }
+	// 				// 		// 				
+	// 				// 		// //add the new updated record if it has a key that corresponds to a hash table
+	// 				// 		// if (o.getValue(key)) {
+	// 				// 		// 	v[o.getValue(key)] = o;
+	// 				// 		// }
+	// 				// 										
+	// 				// 	});
+	// 				// });
+	}
 	
 
 	// _setHashKey: function(k) {
@@ -800,7 +801,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 	// 		obj[e.updated[i].getValue(key)] = e.updated[i]; 
 	// 	}
 	// 	this.set('table', obj);
-	// }
+	//}
 	
 	
 });

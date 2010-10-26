@@ -150,7 +150,9 @@ var ArrayList = Y.ArrayList,
 		//deletes the object key that held on to an overwritten record and
 		//creates an object key to hold on to the updated record
 		for (; i < e.updated.length; i++) {
-			delete obj[e.overwritten[i].get(key)];
+			if (e.overwritten[i]) {
+				delete obj[e.overwritten[i].getValue(key)];
+			}
 			obj[e.updated[i].getValue(key)] = e.updated[i]; 
 		}
 		this.set('table', obj);
