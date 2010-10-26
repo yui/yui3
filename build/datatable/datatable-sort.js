@@ -23,7 +23,7 @@ var YgetClassName = Y.ClassNameManager.getClassName,
     CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
 
     //TODO: Don't use hrefs - use tab/arrow/enter
-    TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
+    TEMPLATE = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
 
 
 function DataTableSort() {
@@ -85,6 +85,16 @@ Y.mix(DataTableSort, {
         */
         sortedBy: {
             value: null
+        },
+        
+        /**
+        * @attribute template
+        * @description Tokenized markup template for TH sort element.
+        * @type String
+        * @default '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>'
+        */
+        template: {
+            value: TEMPLATE
         }
     }
 });
@@ -95,13 +105,6 @@ Y.mix(DataTableSort, {
 //
 /////////////////////////////////////////////////////////////////////////////
 Y.extend(DataTableSort, Y.Plugin.Base, {
-    /**
-    * @property thLinkTemplate
-    * @description Tokenized markup template for TH click-to-sort link creation.
-    * @type String
-    * @default '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>'
-    */
-    thLinkTemplate: TEMPLATE_TH_LINK,
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -162,7 +165,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     */
     _beforeCreateTheadThNode: function(o) {
         if(o.column.get("sortable")) {
-            o.value = Y.substitute(this.thLinkTemplate, {
+            o.value = Y.substitute(this.get("template"), {
                 link_class: "foo",
                 link_title: "bar",
                 link_href: "bat",
