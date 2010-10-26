@@ -2769,7 +2769,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "recordset-base", 
                     "widget", 
                     "intl", 
-                    "substitute"
+                    "substitute", 
+                    "event-mouseenter"
                 ], 
                 "skinnable": true
             }, 
@@ -3938,7 +3939,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'f313423661482062b80c3dc842b9c8b1';
+YUI.Env[Y.version].md5 = '987a1c6c1d18f2a6e22ac810354b8ec9';
 
 
 

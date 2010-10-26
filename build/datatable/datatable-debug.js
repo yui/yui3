@@ -11,8 +11,8 @@ var YLang = Y.Lang,
     
     FOCUS = "focus",
     KEYDOWN = "keydown",
-    MOUSEOVER = "mouseover",
-    MOUSEOUT = "mouseout",
+    MOUSEENTER = "mouseenter",
+    MOUSELEAVE = "mouseleave",
     MOUSEUP = "mouseup",
     MOUSEDOWN = "mousedown",
     CLICK = "click",
@@ -1117,15 +1117,66 @@ Y.extend(DTBase, Y.Widget, {
         // event facades.
         //TODO: do we need queuable=true?
         //TODO: All the other events.
+        /**
+         * Fired when a TH element has a click.
+         *
+         * @event theadCellClick
+         */
         this.publish("theadCellClick", {defaultFn: this._defTheadCellClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a click.
+         *
+         * @event theadRowClick
+         */
         this.publish("theadRowClick", {defaultFn: this._defTheadRowClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a click.
+         *
+         * @event theadClick
+         */
         this.publish("theadClick", {defaultFn: this._defTheadClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TH element has a mouseenter.
+         *
+         * @event theadCellMouseenter
+         */
+        this.publish("theadCellMouseenter", {defaultFn: this._defTheadCellMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a mouseenter.
+         *
+         * @event theadRowMouseenter
+         */
+        this.publish("theadRowMouseenter", {defaultFn: this._defTheadRowMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a mouseenter.
+         *
+         * @event theadMouseenter
+         */
+        this.publish("theadMouseenter", {defaultFn: this._defTheadMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TD element has a click.
+         *
+         * @event tbodyCellClick
+         */
+        this.publish("tbodyCellClick", {defaultFn: this._defTbodyCellClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY>TR element has a click.
+         *
+         * @event tbodyRowClick
+         */
+        this.publish("tbodyRowClick", {defaultFn: this._defTbodyRowClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY element has a click.
+         *
+         * @event tbodyClick
+         */
+        this.publish("tbodyClick", {defaultFn: this._defTbodyClickFn, emitFacade:false, queuable:true});
 
         // Bind to THEAD DOM events
         tableNode.delegate(FOCUS, this._onDomEvent, theadFilter, this, "theadCellFocus");
         tableNode.delegate(KEYDOWN, this._onDomEvent, theadFilter, this, "theadCellKeydown");
-        tableNode.delegate(MOUSEOVER, this._onDomEvent, theadFilter, this, "theadCellMousedown");
-        tableNode.delegate(MOUSEOUT, this._onDomEvent, theadFilter, this, "theadCellMouseout");
+        tableNode.delegate(MOUSEENTER, this._onDomEvent, theadFilter, this, "theadCellMouseenter");
+        tableNode.delegate(MOUSELEAVE, this._onDomEvent, theadFilter, this, "theadCellMouseleave");
         tableNode.delegate(MOUSEUP, this._onDomEvent, theadFilter, this, "theadCellMouseup");
         tableNode.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "theadCellMousedown");
         tableNode.delegate(CLICK, this._onDomEvent, theadFilter, this, "theadCellClick");
@@ -1135,8 +1186,8 @@ Y.extend(DTBase, Y.Widget, {
         // Bind to TBODY DOM events
         tableNode.delegate(FOCUS, this._onDomEvent, tbodyFilter, this, "tbodyCellFocus");
         tableNode.delegate(KEYDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellKeydown");
-        tableNode.delegate(MOUSEOVER, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseover");
-        tableNode.delegate(MOUSEOUT, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseout");
+        tableNode.delegate(MOUSEENTER, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseenter");
+        tableNode.delegate(MOUSELEAVE, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseleave");
         tableNode.delegate(MOUSEUP, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseup");
         tableNode.delegate(MOUSEDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellMousedown");
         tableNode.delegate(CLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellClick");
@@ -1146,8 +1197,8 @@ Y.extend(DTBase, Y.Widget, {
         // Bind to message TBODY DOM events
         tableNode.delegate(FOCUS, this._onDomEvent, msgFilter, this, "msgCellFocus");
         tableNode.delegate(KEYDOWN, this._onDomEvent, msgFilter, this, "msgCellKeydown");
-        tableNode.delegate(MOUSEOVER, this._onDomEvent, msgFilter, this, "msgCellMouseover");
-        tableNode.delegate(MOUSEOUT, this._onDomEvent, msgFilter, this, "msgCellMouseout");
+        tableNode.delegate(MOUSEENTER, this._onDomEvent, msgFilter, this, "msgCellMouseenter");
+        tableNode.delegate(MOUSELEAVE, this._onDomEvent, msgFilter, this, "msgCellMouseleave");
         tableNode.delegate(MOUSEUP, this._onDomEvent, msgFilter, this, "msgCellMouseup");
         tableNode.delegate(MOUSEDOWN, this._onDomEvent, msgFilter, this, "msgCellMousedown");
         tableNode.delegate(CLICK, this._onDomEvent, msgFilter, this, "msgCellClick");
@@ -1566,7 +1617,7 @@ var YgetClassName = Y.ClassNameManager.getClassName,
     
     CLASS_ASC = YgetClassName(DATATABLE, "asc"),
     CLASS_DESC = YgetClassName(DATATABLE, "desc"),
-    CLASS_SORTABLE = YgetClassName("datatable", "sortable"),
+    CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
 
     //TODO: Don't use hrefs - use tab/arrow/enter
     TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
@@ -1671,10 +1722,12 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         
         // Add class
         this.doBefore("_attachTheadThNode", function(o) {
-           o.th.addClass(CLASS_SORTABLE);
+            if(o.column.get("sortable")) {
+                o.th.addClass(CLASS_SORTABLE);
+            }
         });
 
-        // Attach click handlers
+        // Attach trigger handlers
         dt.on(this.get("trigger"), this._onEventSortColumn);
 
         // Attach UI hooks

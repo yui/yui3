@@ -405,7 +405,8 @@
                     "recordset-base", 
                     "widget", 
                     "intl", 
-                    "substitute"
+                    "substitute", 
+                    "event-mouseenter"
                 ], 
                 "skinnable": true
             }, 

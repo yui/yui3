@@ -20,7 +20,7 @@ var YgetClassName = Y.ClassNameManager.getClassName,
     
     CLASS_ASC = YgetClassName(DATATABLE, "asc"),
     CLASS_DESC = YgetClassName(DATATABLE, "desc"),
-    CLASS_SORTABLE = YgetClassName("datatable", "sortable"),
+    CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
 
     //TODO: Don't use hrefs - use tab/arrow/enter
     TEMPLATE_TH_LINK = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
@@ -125,10 +125,12 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         
         // Add class
         this.doBefore("_attachTheadThNode", function(o) {
-           o.th.addClass(CLASS_SORTABLE);
+            if(o.column.get("sortable")) {
+                o.th.addClass(CLASS_SORTABLE);
+            }
         });
 
-        // Attach click handlers
+        // Attach trigger handlers
         dt.on(this.get("trigger"), this._onEventSortColumn);
 
         // Attach UI hooks
