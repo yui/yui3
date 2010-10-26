@@ -1,3 +1,19 @@
+*** 3.3.0 PR1 ***
+
+* Fixed ticket 2528898.  When using io-xdr to load io.swf, a date-time stamp
+will appended, as a querystring, to the transport source for IE.
+
+* Implemented enhancement 2529324.  Default HTTP headers can be suppressed
+in the transaction's configuration object by setting the header with a value
+of "disable."  For example:
+
+var config = { headers: { "X-Requested-With": "disable" } };
+
+* Implemented enhancement 2528710.  Use Y.io without listening for the
+"io:xdrReady" event.
+
+* Fixed ticket 2529290.
+
 *** 3.2.0 ***
 
 * Fixed ticket 2528646 : Fixed malformed HTML entities in JSON response, when
@@ -142,3 +158,4 @@ and io-upload-iframe.js.
 *** 3.0.0 PR1 ***
 
 * Initial Release
+
