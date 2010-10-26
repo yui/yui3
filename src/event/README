@@ -1,6 +1,15 @@
 YUI Event Utility
     DOM event utilities
 
+3.3.0
+    - Added support for delegate({ click: fn, keyup: fn2 }, ...)
+        and delegate(['click', 'keyup'], fn, ...)
+    - Delegation containers are now potential matches for the filter
+    - Nested delegate matches will now have callback executed for all matching
+        targets in bubbling order
+    - e.stopPropagation() in nested delegate matches now works as expected
+    - The raw DOM event is no longer double wrapped (was e._event._event)
+
 3.2.0
     - Added event and facade support for touch
     - Synthetic event infrastructure rebuilt.  Changes include
