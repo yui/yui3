@@ -16,7 +16,7 @@
 	-moz-border-radius:100%;
 	-webkit-border-radius:100px;
 	-moz-box-shadow:1px 1px 1px rgba(0, 0, 0, 0.9) inset;
-	-webkit-box-shadow:1px 1px 1px rgba(0, 0, 0, 0.9) inset;
+	/*-webkit-box-shadow:1px 1px 1px rgba(0, 0, 0, 0.9) inset; Chrome issue*/
 	cursor:pointer;
 	font-size:1px;
 	*background:none;
@@ -28,14 +28,14 @@
 	background: -moz-linear-gradient(100% 100% 135deg, #7B7A6D, #FFFFFF);
 	background: -webkit-gradient(linear, left top, right bottom, from(#FFFFFF), to(#7B7A6D));
 	box-shadow: 		1px 1px 5px rgba(0, 0, 0, 0.4) inset;
-	-webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4) inset;
+	/*-webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4) inset; Chrome issue*/
 	-moz-box-shadow:    1px 1px 5px rgba(0, 0, 0, 0.4) inset;
 	*background:none;
 }
 .yui3-skin-sam .yui3-dial-center-button{
 	box-shadow: 	-1px -1px 2px rgba(0, 0, 0, 0.3) inset, 1px 1px 2px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow:-1px -1px 2px rgba(0, 0, 0, 0.3) inset, 1px 1px 2px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.3) inset, 1px 1px 2px rgba(0, 0, 0, 0.5);
+	/*-webkit-box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.3) inset, 1px 1px 2px rgba(0, 0, 0, 0.5); Chrome issue*/
 	-moz-border-radius:100%;
 	-webkit-border-radius:1000px;
 	background:-moz-radial-gradient(30% 30% 0deg, circle farthest-side, #FBFBF9 24%, #F2F0EA 41%, #D3D0C3 83%) repeat scroll 0 0 transparent;
