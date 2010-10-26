@@ -10,10 +10,8 @@
 <script src="../../../../build/yui/yui.js"></script>
 
 <script>
+    YUI({filter:"raw"}).use("dial", function(Y) {
 
-    // Need node-deprecated until dd-drag is fixed
-    YUI({filter:"raw"}).use("node-deprecated", "dial", function(Y) {
-    
         var dial = new Y.Dial({
             srcNode: ".dial_container",
             min:-400,
