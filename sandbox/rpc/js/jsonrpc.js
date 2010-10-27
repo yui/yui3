@@ -67,12 +67,12 @@ var isFunction = Y.Lang.isFunction,
                     }
                     catch (e) {
                         if (failure) {
-                            failure.call(config.context, response,
+                            failure.call(ioConfig.context, response,
                                 "Invalid JSON response");
                         }
                     }
 
-                    success.call(config.context, data);
+                    success.call(ioConfig.context, data);
                 };
             }
         }
