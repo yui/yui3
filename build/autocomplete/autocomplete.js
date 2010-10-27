@@ -2301,6 +2301,25 @@ YUI.add('autocomplete-plugin', function(Y) {
  *
  * @module autocomplete
  * @submodule autocomplete-list-plugin
+ */
+
+/**
+ * <p>
+ * Binds an AutoCompleteList instance to a Node instance.
+ * </p>
+ *
+ * <p>
+ * Example:
+ * </p>
+ *
+ * <pre>
+ * Y.one('#my-input').plug(Y.Plugin.AutoComplete, {
+ * &nbsp;&nbsp;source: 'select * from search.suggest where query="{query}"'
+ * });
+ * &nbsp;
+ * // You can now access the AutoCompleteList instance at Y.one('#my-input').ac
+ * </pre>
+ *
  * @class Plugin.AutoComplete
  * @extends AutoCompleteList
  */
