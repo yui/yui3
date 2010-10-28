@@ -17,8 +17,8 @@ YUI.add('editor-para', function(Y) {
 
     var EditorPara = function() {
         EditorPara.superclass.constructor.apply(this, arguments);
-    }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange',
-    FIRST_P = BODY + ' > p', P = 'p';
+    }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange', PARENT_NODE = 'parentNode',
+    FIRST_P = BODY + ' > p', P = 'p', BR = '<br>', FC = 'firstChild', LI = 'li';
 
 
     Y.extend(EditorPara, Y.Base, {
@@ -39,7 +39,10 @@ YUI.add('editor-para', function(Y) {
         * @method _onNodeChange
         */
         _onNodeChange: function(e) {
-            var host = this.get(HOST), inst = host.getInstance();
+            var host = this.get(HOST), inst = host.getInstance(),
+                html, txt, par , d, sel, btag = inst.Selection.DEFAULT_BLOCK_TAG,
+                inHTML, txt2, childs, aNode, index, node2, top, n, sib,
+                ps, br, item, p, imgs, t;
 
             switch (e.changedType) {
                 case 'enter':
@@ -50,22 +53,78 @@ YUI.add('editor-para', function(Y) {
                             e.changedEvent.preventDefault();
                         }
                     }
+                    //TODO Move this to a GECKO MODULE - Can't for the moment, requires no change to metadata (YMAIL)
                     if (Y.UA.gecko && host.get('defaultblock') !== 'p') {
-                        var par = e.changedNode, d, sel, btag = inst.Selection.DEFAULT_BLOCK_TAG;
-                        if (!par.test(btag)) {
-                            par = par.ancestor(btag);
+                        par = e.changedNode;
+
+                        if (!par.test(LI) && !par.ancestor(LI)) {
+                            if (!par.test(btag)) {
+                                par = par.ancestor(btag);
+                            }
+                            d = inst.Node.create('<' + btag + '></' + btag + '>');
+                            par.insert(d, 'after');
+                            sel = new inst.Selection();
+                            if (sel.anchorOffset) {
+                                inHTML = sel.anchorNode.get('textContent');
+
+                                txt = inst.one(inst.config.doc.createTextNode(inHTML.substr(0, sel.anchorOffset)));
+                                txt2 = inst.one(inst.config.doc.createTextNode(inHTML.substr(sel.anchorOffset)));
+
+                                aNode = sel.anchorNode;
+                                aNode.setContent(''); //I
+                                node2 = aNode.cloneNode(); //I
+                                node2.append(txt2); //text
+                                top = false;
+                                sib = aNode; //I
+                                while (!top) {
+                                    sib = sib.get(PARENT_NODE); //B
+                                    if (sib && !sib.test(btag)) {
+                                        n = sib.cloneNode();
+                                        n.set('innerHTML', '');
+                                        n.append(node2);
+                                        
+                                        //Get children..
+                                        childs = sib.get('childNodes');
+                                        var start = false;
+                                        childs.each(function(c) {
+                                            if (start) {
+                                                n.append(c);
+                                            }
+                                            if (c === aNode) {
+                                                start = true;
+                                            }
+                                        });
+
+                                        aNode = sib; //Top sibling
+                                        node2 = n;
+                                    } else {
+                                        top = true;
+                                    }
+                                }
+                                txt2 = node2;
+                                sel.anchorNode.append(txt);
+
+                                if (txt2) {
+                                    d.append(txt2);
+                                }
+                            }
+                            if (d.get(FC)) {
+                                d = d.get(FC);
+                            }
+                            d.prepend(inst.Selection.CURSOR);
+                            sel.focusCursor(true, true);
+                            html = inst.Selection.getText(d);
+                            if (html !== '') {
+                                inst.Selection.cleanCursor();
+                            }
+                            e.changedEvent.preventDefault();
                         }
-                        d = inst.Node.create('<' + btag + '>' + inst.Selection.CURSOR + '</' + btag + '>');
-                        sel = new inst.Selection();
-                        par.insert(d, 'after');
-                        sel.focusCursor(true, false);
-                        e.changedEvent.preventDefault();
                     }
                     break;
                 case 'keydown':
                     if (inst.config.doc.childNodes.length < 2) {
                         var cont = inst.config.doc.body.innerHTML;
-                        if (cont && cont.length < 5 && cont.toLowerCase() == '<br>') {
+                        if (cont && cont.length < 5 && cont.toLowerCase() == BR) {
                             this._fixFirstPara();
                         }
                     }
@@ -74,7 +133,7 @@ YUI.add('editor-para', function(Y) {
                 case 'backspace-down':
                 case 'delete-up':
                     if (!Y.UA.ie) {
-                        var ps = inst.all(FIRST_P), br, item, html, txt, p, imgs;
+                        ps = inst.all(FIRST_P);
                         item = inst.one(BODY);
                         if (ps.item(0)) {
                             item = ps.item(0);
@@ -105,7 +164,7 @@ YUI.add('editor-para', function(Y) {
                                 p = p.ancestor(P);
                             }
                             if (p) {
-                                if (!p.previous() && p.get('parentNode') && p.get('parentNode').test(BODY)) {
+                                if (!p.previous() && p.get(PARENT_NODE) && p.get(PARENT_NODE).test(BODY)) {
                                     e.changedEvent.frameEvent.halt();
                                 }
                             }
@@ -114,10 +173,10 @@ YUI.add('editor-para', function(Y) {
                             if (e.changedNode) {
                                 item = e.changedNode;
                                 if (item.test('li') && (!item.previous() && !item.next())) {
-                                    html = item.get('innerHTML').replace('<br>', '');
+                                    html = item.get('innerHTML').replace(BR, '');
                                     if (html === '') {
-                                        if (item.get('parentNode')) {
-                                            item.get('parentNode').replace(inst.Node.create('<br>'));
+                                        if (item.get(PARENT_NODE)) {
+                                            item.get(PARENT_NODE).replace(inst.Node.create(BR));
                                             e.changedEvent.frameEvent.halt();
                                             e.preventDefault();
                                             inst.Selection.filterBlocks();
@@ -134,8 +193,8 @@ YUI.add('editor-para', function(Y) {
                         * Dropping in the empty textnode and then removing it causes FF to redraw and
                         * remove the "ghost cursors"
                         */
-                        var d = e.changedNode,
-                            t = inst.config.doc.createTextNode(' ');
+                        d = e.changedNode;
+                        t = inst.config.doc.createTextNode(' ');
                         d.appendChild(t);
                         d.removeChild(t);
                     }
@@ -218,4 +277,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base', 'selection'], skinnable:false});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
