@@ -92,7 +92,7 @@
 				Y.ObjectAssert.areEqual(newRecord[1].getValue(), this.initialData[2]);
 				
 				//By ID
-				id = this.rs.getRecordByIndex(0).getValue('id');
+				id = this.rs.getRecordByIndex(0).get('id');
 				newRecord = this.rs.getRecord(id);
 				Y.ObjectAssert.areEqual(newRecord, this.rs.getRecordByIndex(0));
 								
