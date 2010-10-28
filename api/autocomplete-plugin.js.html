@@ -78,8 +78,12 @@
 <span class="kd">var</span> <span class="nx">Plugin</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">ACListPlugin</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({},</span> <span class="nx">config</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> <span class="c1">// fast shallow clone</span>
     <span class="nx">config</span><span class="p">.</span><span class="nx">inputNode</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
+
+    <span class="c1">// Render by default.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">render</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">render</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">config</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
 
     <span class="nx">ACListPlugin</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">}</span>
