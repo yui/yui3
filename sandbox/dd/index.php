@@ -479,7 +479,7 @@ YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-d
     });
     */
     
-    Y.Node.get('document').on('keypress', function(e) {
+    Y.one('document').on('keypress', function(e) {
         if ((e.keyCode === 27) || (e.charCode === 27)) {
             if (Y.DD.DDM.activeDrag) {
                 //console.info('DD is dragging, stop it..');
@@ -544,7 +544,7 @@ YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-d
 
 
     
-    dd3 = Y.Node.get('#drag3');
+    dd3 = Y.one('#drag3');
     dd3.plug(Y.Plugin.Drag, {
         groups: ['one', 'three'],
         dragMode: 'intersect',
@@ -598,7 +598,7 @@ YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-d
     });
     */
     
-    Y.Node.get('#test').on('click', function() {
+    Y.one('#test').on('click', function() {
         Y.DD.DDM._noShim = true;
         Y.log('_setStartPosition:', 'info', 'Dav Test');
         dd.set('activeHandle', dd.get('node'));
