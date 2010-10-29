@@ -226,10 +226,33 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
     },
 
+    /**
+     * <p>Used to control whether or not ScrollView's internal
+     * gesturemovestart, gesturemove and gesturemoveend
+     * event listeners should preventDefault. The value is an
+     * object, with "start", "move" and "end" properties used to 
+     * specify which events should preventDefault and which shouldn't:</p>
+     *
+     * <pre>
+     * {
+     *    start : false,
+     *    move : true,
+     *    end : false
+     * }
+     * </pre>
+     *
+     * <p>The default values are set up in order to prevent panning,
+     * on touch devices, while allowing click listeners on elements inside 
+     * the ScrollView to be notified as expected.</p> 
+     *
+     * @property _prevent
+     * @type Object
+     * @protected
+     */
     _prevent : {
         start : false,
         move : true,
-        end : true
+        end : false
     },
 
     /**
