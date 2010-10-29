@@ -74,6 +74,9 @@ YUI.add('base-base', function(Y) {
     function Base() {
         Y.log('constructor called', 'life', 'base');
 
+        // So the object can be used as a hash key (as DD does)
+        Y.stamp(this);
+
         Attribute.call(this);
 
         // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
