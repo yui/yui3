@@ -59,7 +59,7 @@
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
-            btnRun = Y.get("#btnRun"),
+            btnRun = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
             
         btnRun.set("disabled", false);
@@ -397,7 +397,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                             {key:"amount-due", locator:"td[4]"}
                         ]
                     },
-                    data_in = Y.Node.getDOMNode(Y.get("#singletbody tbody")),
+                    data_in = Y.Node.getDOMNode(Y.one("#singletbody tbody")),
                     data_out = Y.DataSchema.XML.apply(schema, data_in);
 
                 ASSERT.isArray(data_out.results, "Expected results property.");
