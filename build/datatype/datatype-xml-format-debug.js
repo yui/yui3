@@ -50,5 +50,4 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 
 
-
 }, '@VERSION@' );
