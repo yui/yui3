@@ -14,6 +14,9 @@ for the preview release.
 * Changed async call to _uiDimensionsChange after render to a sync call.
 * Corrected skin prefix to be yui3-skin-sam instead yui-skin-sam.
 * Refactored for kweight, and broke out scrollview-base-ie conditional module.
+* Don't prevent default on gesturemoveend, so that click listeners on elements
+  inside the scrollview respond reliably. Panning is still prevented by
+  preventing gesturemousemove.
 
 3.2.0
 
