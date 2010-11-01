@@ -1,7 +1,31 @@
+/**
+ * The Recordset utility provides a standard way for dealing with
+ * a collection of similar objects.
+ *
+ * Extends Y.Base, and augments methods in the collection utility.
+ *
+ * @module recordset
+ */
+
+/**
+ * Provides the base Recordset implementation, which can be extended to add
+ * additional functionality, such as custom indexing. sorting, and filtering.
+ *
+ * @module recordset
+ * @submodule recordset-base
+ */
+
+
 var ArrayList = Y.ArrayList,
 	Bind = Y.bind,
 	Recordset = Y.Base.create('recordset', Y.Base, [], {
-
+		
+	
+	/**
+     * Publish default functions for events. Create the initial hash table.
+     *
+     * @method initializer
+     */
     initializer: function() {
 	
 		//set up event listener to fire events when recordset is modified in anyway
@@ -10,8 +34,8 @@ var ArrayList = Y.ArrayList,
 		this.publish('empty', {defaultFn: this._defEmptyFn});
 		this.publish('update', {defaultFn: this._defUpdateFn});
 		
-		this._recordsetChanged();
-		this._syncHashTable();
+		this._recordsetChanged(); //Fires recordset changed event when any updates are made to the recordset
+		this._syncHashTable(); //Fires appropriate hashTable methods on "add", "remove", "update" and "empty" events
     },
     
     destructor: function() {
@@ -21,8 +45,6 @@ var ArrayList = Y.ArrayList,
      * Helper method called upon by add() - it is used to create a new record(s) in the recordset
      *
      * @method _defAddFn
-     * @param aRecord {Y.Record} A Y.Record instance
-     * @param index {Number} (optional) Index at which to add the record(s)
      * @return {Y.Record} A Record instance.
      * @private
      */
@@ -48,31 +70,43 @@ var ArrayList = Y.ArrayList,
 		
 	},
 	
+	/**
+     * Helper method called upon by remove() - it is used to remove record(s) from the recordset
+     *
+     * @method _defRemoveFn
+     * @private
+     */
 	_defRemoveFn: function(e) {
 		if (e.index === 0) {
 			this._items.pop();
 		}
 		else {
 			this._items.splice(e.index,e.range);
-		}
-		
-		//this._defRemoveHash(e);
-		Y.log('remove fired');
-		
+		}		
 	},
 	
+	/**
+     * Helper method called upon by empty() - it is used to empty the recordset
+     *
+     * @method _defEmptyFn
+     * @private
+     */
 	_defEmptyFn: function(e) {
 		this._items = [];
-		//this._defEmptyHash();
 		Y.log('empty fired');
 	},
 	
+	/**
+     * Helper method called upon by update() - it is used to update the recordset
+     *
+     * @method _defUpdateFn
+     * @private
+     */
 	_defUpdateFn: function(e) {
 		
 		for (var i=0; i<e.updated.length; i++) {
 			this._items[e.index + i] = this._changeToRecord(e.updated[i]);
 		}
-		//this._defUpdateHash(e);
 	},
 	
 	
@@ -81,43 +115,75 @@ var ArrayList = Y.ArrayList,
     //---------------------------------------------
 	
 	
-	
+	/**
+     * Method called whenever "recordset:add" event is fired. It adds the new record(s) to the hashtable.
+     *
+     * @method _defAddHash
+     * @private
+     */
 	_defAddHash: function(e) {
 		var obj = this.get('table'), key = this.get('key'), i=0;
 		for (; i<e.added.length; i++) {
-			obj[e.added[i].getValue(key)] = e.added[i];			
+			obj[e.added[i].get(key)] = e.added[i];			
 		}
 		this.set('table', obj);
 	},
 	
+	/**
+     * Method called whenever "recordset:remove" event is fired. It removes the record(s) from the recordset.
+     *
+     * @method _defRemoveHash
+     * @private
+     */
 	_defRemoveHash: function(e) {
 		var obj = this.get('table'), key = this.get('key'), i=0;
 		for (; i<e.removed.length; i++) {
-			delete obj[e.removed[i].getValue(key)];
+			delete obj[e.removed[i].get(key)];
 		}
 		this.set('table', obj);
 	},
 	
+	
+	/**
+     * Method called whenever "recordset:update" event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.
+     *
+     * @method _defUpdateHash
+     * @private
+     */
 	_defUpdateHash: function(e) {
 		var obj = this.get('table'), key = this.get('key'), i=0;
 		
 		//deletes the object key that held on to an overwritten record and
 		//creates an object key to hold on to the updated record
 		for (; i < e.updated.length; i++) {
-			delete obj[e.overwritten[i].get(key)];
-			obj[e.updated[i].getValue(key)] = e.updated[i]; 
+			if (e.overwritten[i]) {
+				delete obj[e.overwritten[i].get(key)];
+			}
+			obj[e.updated[i].get(key)] = e.updated[i]; 
 		}
 		this.set('table', obj);
 	},
 	
+	/**
+     * Method called whenever "recordset:empty" event is fired. It empties the hash table.
+     *
+     * @method _defEmptyHash
+     * @private
+     */
 	_defEmptyHash: function() {
 		this.set('table', {});
 	},
 	
+	/**
+     * Sets up the hashtable with all the records currently in the recordset
+     *
+     * @method _setHashTable
+     * @private
+     */
 	_setHashTable: function() {
 		var obj = {}, key=this.get('key'), i=0, len = this._items.length;
 		for (; i<len; i++) {
-			obj[this._items[i].getValue(key)] = this._items[i];
+			obj[this._items[i].get(key)] = this._items[i];
 		}
 		return obj;
 	},
@@ -162,6 +228,13 @@ var ArrayList = Y.ArrayList,
 		});
 	},
 
+	
+	/**
+     * Syncs up the private hash methods with their appropriate triggering events.
+     *
+     * @method _syncHashTable
+     * @private
+     */
 	_syncHashTable: function() {
 		
 		this.after('add', function(e) {
@@ -184,10 +257,10 @@ var ArrayList = Y.ArrayList,
     //---------------------------------------------
 	
 	/**
-     * Returns the record with particular ID
+     * Returns the record with particular ID or index
      *
      * @method getRecord
-     * @param i {id} The ID of the record
+     * @param i {String, Number} The ID of the record if a string, or the index if a number.
      * @return {Y.Record} An Y.Record instance
      * @public
      */
@@ -235,6 +308,13 @@ var ArrayList = Y.ArrayList,
 		return returnedRecords;
 	},
 	
+	/**
+     * Returns the length of the recordset
+     *
+     * @method getLength
+     * @return {Number} Number of records in the recordset
+     * @public
+     */
 	getLength: function() {
 		return this.size();
 	},
@@ -242,7 +322,7 @@ var ArrayList = Y.ArrayList,
 	/**
      * Returns an array of values for a specified key in the recordset
      *
-     * @method getRecord
+     * @method getValuesByKey
      * @param index {Number} (optional) Index at which the required record resides
      * @return {Array} An array of values for the given key
      * @public
@@ -263,7 +343,7 @@ var ArrayList = Y.ArrayList,
      * @method add
      * @param oData {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
      * @param index {Number} (optional) Index at which to add the record(s)
-     * @return {object} An object literal with two properties: "data" which contains array of Y.Record(s) and "index" which contains the index where the Y.Record(s) were added
+     * @return {Y.Recordset} The updated recordset instance
      * @public
      */
 	add: function(oData, index) {
@@ -295,7 +375,7 @@ var ArrayList = Y.ArrayList,
      * @method remove
      * @param index {Number} (optional) Index at which to remove the record(s) from
      * @param range {Number} (optional) Number of records to remove (including the one at the index)
-     * @return {object} An object literal with two properties: "data" which contains the removed set {Y.Record or Y.Recordset} and "index" which contains the index where the Y.Record(s) were removed from
+     * @return {Y.Recordset} The updated recordset instance
      * @public
      */
 	remove: function(index, range) {
@@ -317,6 +397,7 @@ var ArrayList = Y.ArrayList,
 	/**
      * Empties the recordset
      *
+	 * @return {Y.Recordset} The updated recordset instance
      * @method empty
      * @public
      */
@@ -325,7 +406,15 @@ var ArrayList = Y.ArrayList,
 		return this;
 	},
 	
-	
+	/**
+     * Updates the recordset with the new records passed in. Overwrites existing records when updating the index with the new records.
+     *
+     * @method update
+     * @param data {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
+     * @param index {Number} (optional) The index to start updating from. 
+     * @return {Y.Recordset} The updated recordset instance
+     * @public
+     */
 	update: function(data, index) {
 		var rec, arr, i=0;
 		
@@ -346,6 +435,15 @@ var ArrayList = Y.ArrayList,
 },
 {
     ATTRS: {
+	
+		/**
+	    * @description An array of records that the recordset is storing
+	    *
+	    * @attribute records
+	    * @public
+	    * @static
+	    * @type array
+	    */
         records: {
             validator: Y.Lang.isArray,
             getter: function () {
@@ -353,6 +451,9 @@ var ArrayList = Y.ArrayList,
                 return Y.Array(this._items);
             },
             setter: function (allData) {
+				//For allData passed in here, see if each instance is a Record.
+				//If its not, change it to a record.
+				//Then push it into the array.
 				var records = [];
 				function initRecord(oneData) {
 					var o;
@@ -373,12 +474,31 @@ var ArrayList = Y.ArrayList,
 			lazyAdd: false
         },
 	
+	/**
+    * @description A hash table where the ID of the record is the key, and the record instance is the value.
+    *
+    * @attribute table
+    * @public
+    * @static
+    * @type object
+	*/	
 	table: {
+		//Initially, create the hash table with all records currently in the recordset
 		valueFn: '_setHashTable'
 		},
-		
+	
+	/**
+    * @description The ID to use as the key in the hash table.
+    *
+    * @attribute key
+    * @public
+    * @static
+    * @type string
+	*/	
 	key: {
-		value:'id'
+		value:'id',
+		//set to readonly true. If you want custom hash tables, you should use the recordset-indexer plugin.
+		readOnly:true
 	}
 		
     }

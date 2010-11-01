@@ -29,8 +29,12 @@
 var Plugin = Y.Plugin;
 
 function ACListPlugin(config) {
-    config = Y.mix({}, config, true); // fast shallow clone
     config.inputNode = config.host;
+
+    // Render by default.
+    if (!config.render && config.render !== false) {
+      config.render = true;
+    }
 
     ACListPlugin.superclass.constructor.apply(this, arguments);
 }

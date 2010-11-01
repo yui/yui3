@@ -1,6 +1,6 @@
 <?php
 
-header('content-type', 'application/json');
+header('content-type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
     echo json_encode(array(
@@ -17,11 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         default     : $payload = "Something went wrong";
     }
 
-    $response = array("response" => $payload);
+    $response = array("result" => $payload);
     if ($req->id) {
+         
         $response["id"] = $req->id;
+        echo json_encode($response);
+    } else {
+        header('HTTP/1.0 204 No Content');
     }
-    echo json_encode($response);
 }
 
 ?>

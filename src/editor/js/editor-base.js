@@ -96,7 +96,7 @@
         */
         _resolveChangedNode: function(n) {
             var inst = this.getInstance(), lc, lc2, found;
-            if (inst && n.test('html')) {
+            if (inst && n && n.test('html')) {
                 lc = inst.one(BODY).one(LAST_CHILD);
                 while (!found) {
                     if (lc) {
@@ -219,6 +219,17 @@
                         }
                     }
                     break;
+            }
+            if (Y.UA.webkit && (e.commands.indent || e.commands.outdent)) {
+                /**
+                * When executing execCommand 'indent or 'outdent' Webkit applies
+                * a class to the BLOCKQUOTE that adds left/right margin to it
+                * This strips that style so it is just a normal BLOCKQUOTE
+                */
+                var bq = inst.all('.webkit-indent-blockquote');
+                if (bq.size()) {
+                    bq.setStyle('margin', '');
+                }
             }
             if (Y.UA.gecko) {
                 if (e.changedNode && !e.changedNode.test(btag)) {
