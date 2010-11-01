@@ -1,5 +1,7 @@
-Dial Widget
+*** 3.3.0 PR1 ***
 
-3.3.0
+* Known defect: Setting min = 0 causes widget to lock up. Negative values > min are OK.
+
+* Known defect: Setting attributes value = min or max causes widget to lock up.
 
 * New Beta Component
