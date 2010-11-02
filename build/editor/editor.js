@@ -1887,7 +1887,7 @@ YUI.add('exec-command', function(Y) {
                     cur = sel.getCursor();
                     cur.insert('<br>', 'before');
                     sel.focusCursor(true, false);
-                    return cur.previous();
+                    return ((cur && cur.previous) ? cur.previous() : null);
                 },
                 /**
                 * Inserts an image at the cursor position
@@ -2261,7 +2261,7 @@ YUI.add('editor-base', function(Y) {
                 defaultFn: this._defNodeChangeFn
             });
             
-            this.plug(Y.Plugin.EditorPara);
+            //this.plug(Y.Plugin.EditorPara);
         },
         destructor: function() {
             this.frame.destroy();
@@ -2390,50 +2390,8 @@ YUI.add('editor-base', function(Y) {
                         }
                     }
                     break;
-                case 'enter-up':
-                    var para = ((this._lastPara) ? this._lastPara : e.changedNode),
-                        b = para.one('br.yui-cursor');
-
-                    if (this._lastPara) {
-                        delete this._lastPara;
-                    }
-
-                    if (b) {
-                        if (b.previous() || b.next()) {
-                            b.remove();
-                        }
-                    }
-                    if (!para.test(btag)) {
-                        var para2 = para.ancestor(btag);
-                        if (para2) {
-                            para = para2;
-                            para2 = null;
-                        }
-                    }
-                    if (para.test(btag)) {
-                        var prev = para.previous(), lc, lc2, found = false;
-                        if (prev) {
-                            lc = prev.one(LAST_CHILD);
-                            while (!found) {
-                                if (lc) {
-                                    lc2 = lc.one(LAST_CHILD);
-                                    if (lc2) {
-                                        lc = lc2;
-                                    } else {
-                                        found = true;
-                                    }
-                                } else {
-                                    found = true;
-                                }
-                            }
-                            if (lc) {
-                                this.copyStyles(lc, para);
-                            }
-                        }
-                    }
-                    break;
             }
-            if (Y.UA.webkit && (e.commands.indent || e.commands.outdent)) {
+            if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
                 /**
                 * When executing execCommand 'indent or 'outdent' Webkit applies
                 * a class to the BLOCKQUOTE that adds left/right margin to it
@@ -2442,14 +2400,6 @@ YUI.add('editor-base', function(Y) {
                 var bq = inst.all('.webkit-indent-blockquote');
                 if (bq.size()) {
                     bq.setStyle('margin', '');
-                }
-            }
-            if (Y.UA.gecko) {
-                if (e.changedNode && !e.changedNode.test(btag)) {
-                    var p = e.changedNode.ancestor(btag);
-                    if (p) {
-                        this._lastPara = p;
-                    }
                 }
             }
 
@@ -3577,9 +3527,51 @@ YUI.add('editor-para', function(Y) {
             var host = this.get(HOST), inst = host.getInstance(),
                 html, txt, par , d, sel, btag = inst.Selection.DEFAULT_BLOCK_TAG,
                 inHTML, txt2, childs, aNode, index, node2, top, n, sib,
-                ps, br, item, p, imgs, t;
+                ps, br, item, p, imgs, t, LAST_CHILD = ':last-child';
 
             switch (e.changedType) {
+                case 'enter-up':
+                    var para = ((this._lastPara) ? this._lastPara : e.changedNode),
+                        b = para.one('br.yui-cursor');
+
+                    if (this._lastPara) {
+                        delete this._lastPara;
+                    }
+
+                    if (b) {
+                        if (b.previous() || b.next()) {
+                            b.remove();
+                        }
+                    }
+                    if (!para.test(btag)) {
+                        var para2 = para.ancestor(btag);
+                        if (para2) {
+                            para = para2;
+                            para2 = null;
+                        }
+                    }
+                    if (para.test(btag)) {
+                        var prev = para.previous(), lc, lc2, found = false;
+                        if (prev) {
+                            lc = prev.one(LAST_CHILD);
+                            while (!found) {
+                                if (lc) {
+                                    lc2 = lc.one(LAST_CHILD);
+                                    if (lc2) {
+                                        lc = lc2;
+                                    } else {
+                                        found = true;
+                                    }
+                                } else {
+                                    found = true;
+                                }
+                            }
+                            if (lc) {
+                                host.copyStyles(lc, para);
+                            }
+                        }
+                    }
+                    break;
                 case 'enter':
                     if (Y.UA.webkit) {
                         //Webkit doesn't support shift+enter as a BR, this fixes that.
@@ -3735,6 +3727,14 @@ YUI.add('editor-para', function(Y) {
                     }
                     break;
             }
+            if (Y.UA.gecko) {
+                if (e.changedNode && !e.changedNode.test(btag)) {
+                    var p = e.changedNode.ancestor(btag);
+                    if (p) {
+                        this._lastPara = p;
+                    }
+                }
+            }
             
         },
         /**
@@ -3778,6 +3778,10 @@ YUI.add('editor-para', function(Y) {
         },
         initializer: function() {
             var host = this.get(HOST);
+            if (host.editorBR) {
+                Y.error('Can not plug EditorPara and EditorBR at the same time.');
+                return;
+            }
 
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));
@@ -3813,7 +3817,108 @@ YUI.add('editor-para', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['node'], skinnable:false});
+YUI.add('editor-br', function(Y) {
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para']});
+
+    /**
+     * Plugin for Editor to normalize BR's.
+     * @module editor
+     * @submodule editor-br
+     */     
+    /**
+     * Plugin for Editor to normalize BR's.
+     * @class Plugin.EditorBR
+     * @extends Base
+     * @constructor
+     */
+
+
+    var EditorBR = function() {
+        EditorBR.superclass.constructor.apply(this, arguments);
+    }, HOST = 'host', LI = 'li';
+
+
+    Y.extend(EditorBR, Y.Base, {
+        /**
+        * Frame keyDown handler that normalizes BR's when pressing ENTER.
+        * @private
+        * @method _onKeyDown
+        */
+        _onKeyDown: function(e) {
+            if (e.keyCode == 13) {
+                var host = this.get(HOST), inst = host.getInstance(),
+                    sel = new inst.Selection();
+
+                if (sel) {
+                    if (Y.UA.ie) {
+                        if (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI)) {
+                            sel._selection.pasteHTML('<br>');
+                            sel._selection.collapse(false);
+                            sel._selection.select();
+                            e.halt();
+                        }
+                    }
+                    if (Y.UA.webkit) {
+                        if (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI)) {
+                            host.frame._execCommand('insertlinebreak', null);
+                            e.halt();
+                        }
+                    }
+                }
+            }
+        },
+        /**
+        * Adds listeners for keydown in IE and Webkit. Also fires insertbeonreturn for supporting browsers.
+        * @private
+        * @method _afterEditorReady
+        */
+        _afterEditorReady: function() {
+            var inst = this.get(HOST).getInstance();
+            try {
+                inst.config.doc.execCommand('insertbronreturn', null, true);
+            } catch (bre) {};
+
+            if (Y.UA.ie || Y.UA.webkit) {
+                inst.on('keydown', Y.bind(this._onKeyDown, this), inst.config.doc);
+            }
+        },
+        initializer: function() {
+            var host = this.get(HOST);
+            if (host.editorPara) {
+                Y.error('Can not plug EditorBR and EditorPara at the same time.');
+                return;
+            }
+            host.after('ready', Y.bind(this._afterEditorReady, this));
+        }
+    }, {
+        /**
+        * editorBR
+        * @static
+        * @property NAME
+        */
+        NAME: 'editorBR',
+        /**
+        * editorBR
+        * @static
+        * @property NS
+        */
+        NS: 'editorBR',
+        ATTRS: {
+            host: {
+                value: false
+            }
+        }
+    });
+    
+    Y.namespace('Plugin');
+    
+    Y.Plugin.EditorBR = EditorBR;
+
+
+
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
+
+
+YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br']});
 

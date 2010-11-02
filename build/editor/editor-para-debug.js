@@ -42,9 +42,51 @@ YUI.add('editor-para', function(Y) {
             var host = this.get(HOST), inst = host.getInstance(),
                 html, txt, par , d, sel, btag = inst.Selection.DEFAULT_BLOCK_TAG,
                 inHTML, txt2, childs, aNode, index, node2, top, n, sib,
-                ps, br, item, p, imgs, t;
+                ps, br, item, p, imgs, t, LAST_CHILD = ':last-child';
 
             switch (e.changedType) {
+                case 'enter-up':
+                    var para = ((this._lastPara) ? this._lastPara : e.changedNode),
+                        b = para.one('br.yui-cursor');
+
+                    if (this._lastPara) {
+                        delete this._lastPara;
+                    }
+
+                    if (b) {
+                        if (b.previous() || b.next()) {
+                            b.remove();
+                        }
+                    }
+                    if (!para.test(btag)) {
+                        var para2 = para.ancestor(btag);
+                        if (para2) {
+                            para = para2;
+                            para2 = null;
+                        }
+                    }
+                    if (para.test(btag)) {
+                        var prev = para.previous(), lc, lc2, found = false;
+                        if (prev) {
+                            lc = prev.one(LAST_CHILD);
+                            while (!found) {
+                                if (lc) {
+                                    lc2 = lc.one(LAST_CHILD);
+                                    if (lc2) {
+                                        lc = lc2;
+                                    } else {
+                                        found = true;
+                                    }
+                                } else {
+                                    found = true;
+                                }
+                            }
+                            if (lc) {
+                                host.copyStyles(lc, para);
+                            }
+                        }
+                    }
+                    break;
                 case 'enter':
                     if (Y.UA.webkit) {
                         //Webkit doesn't support shift+enter as a BR, this fixes that.
@@ -201,6 +243,14 @@ YUI.add('editor-para', function(Y) {
                     }
                     break;
             }
+            if (Y.UA.gecko) {
+                if (e.changedNode && !e.changedNode.test(btag)) {
+                    var p = e.changedNode.ancestor(btag);
+                    if (p) {
+                        this._lastPara = p;
+                    }
+                }
+            }
             
         },
         /**
@@ -244,6 +294,10 @@ YUI.add('editor-para', function(Y) {
         },
         initializer: function() {
             var host = this.get(HOST);
+            if (host.editorBR) {
+                Y.error('Can not plug EditorPara and EditorBR at the same time.');
+                return;
+            }
 
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
             host.after('ready', Y.bind(this._afterEditorReady, this));

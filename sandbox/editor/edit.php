@@ -195,6 +195,7 @@ This is some <strong>other</strong> loose test.
 <script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/editor-para.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/editor-br.js?bust=<?php echo(time()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -217,7 +218,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'editor-br', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
 
     var bCount = 0,
@@ -384,6 +385,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         */
         extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; }'
     });
+    editor.plug(Y.Plugin.EditorBR);
+    //editor.plug(Y.Plugin.EditorPara);
 
     /*
     setTimeout(function() {

@@ -725,13 +725,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection", 
-                    "editor-para"
+                    "selection"
                 ]
             }, 
             "editor-bidi": {
                 "requires": [
                     "editor-base"
+                ]
+            }, 
+            "editor-br": {
+                "requires": [
+                    "node"
                 ]
             }, 
             "editor-lists": {
@@ -1597,8 +1601,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '987a1c6c1d18f2a6e22ac810354b8ec9';
-
+YUI.Env[Y.version].md5 = '2f531a82a518eb3682f9a04bf1eaa329';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
