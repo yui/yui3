@@ -448,8 +448,14 @@
 <span class="cm">    * @return {Node} The Resolved node</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">resolve</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+            <span class="c1">//Adding a try/catch here because in rare occasions IE will</span>
+            <span class="c1">//Throw a error accessing the parentNode of a stranded text node.</span>
+            <span class="c1">//In the case of Ctrl+Z (Undo)</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">re</span><span class="p">)</span> <span class="p">{}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
     <span class="p">};</span>
