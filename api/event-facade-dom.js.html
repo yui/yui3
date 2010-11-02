@@ -157,7 +157,8 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">charCode</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">which</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">which</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">charCode</span> <span class="o">||</span> <span class="nx">c</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">button</span><span class="p">;</span>
+        <span class="c1">// this.button = e.button;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">button</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">which</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">currentTarget</span><span class="p">);</span>
