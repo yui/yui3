@@ -274,10 +274,33 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Used to control whether or not ScrollView&#39;s internal</span>
+<span class="cm">     * gesturemovestart, gesturemove and gesturemoveend</span>
+<span class="cm">     * event listeners should preventDefault. The value is an</span>
+<span class="cm">     * object, with &quot;start&quot;, &quot;move&quot; and &quot;end&quot; properties used to </span>
+<span class="cm">     * specify which events should preventDefault and which shouldn&#39;t:&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;pre&gt;</span>
+<span class="cm">     * {</span>
+<span class="cm">     *    start : false,</span>
+<span class="cm">     *    move : true,</span>
+<span class="cm">     *    end : false</span>
+<span class="cm">     * }</span>
+<span class="cm">     * &lt;/pre&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;The default values are set up in order to prevent panning,</span>
+<span class="cm">     * on touch devices, while allowing click listeners on elements inside </span>
+<span class="cm">     * the ScrollView to be notified as expected.&lt;/p&gt; </span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _prevent</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
     <span class="nx">_prevent</span> <span class="o">:</span> <span class="p">{</span>
         <span class="nx">start</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
         <span class="nx">move</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">end</span> <span class="o">:</span> <span class="kc">true</span>
+        <span class="nx">end</span> <span class="o">:</span> <span class="kc">false</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
