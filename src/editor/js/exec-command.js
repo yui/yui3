@@ -178,7 +178,7 @@
                     cur = sel.getCursor();
                     cur.insert('<br>', 'before');
                     sel.focusCursor(true, false);
-                    return cur.previous();
+                    return ((cur && cur.previous) ? cur.previous() : null);
                 },
                 /**
                 * Inserts an image at the cursor position
