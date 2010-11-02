@@ -1278,7 +1278,7 @@ Y.Loader.prototype = {
                         hash[condmod] = true;
                         d.push(condmod);
                         m = this.getModule(condmod);
-                        Y.log('conditional', m);
+                        // Y.log('conditional', m);
                         if (m) {
                             add = this.getRequires(m);
                             for (j = 0; j < add.length; j++) {
