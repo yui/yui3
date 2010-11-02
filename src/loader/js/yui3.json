@@ -701,17 +701,13 @@
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection"
+                    "selection", 
+                    "editor-para"
                 ]
             }, 
             "editor-bidi": {
                 "requires": [
                     "editor-base"
-                ]
-            }, 
-            "editor-br": {
-                "requires": [
-                    "node"
                 ]
             }, 
             "editor-lists": {
