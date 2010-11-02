@@ -47,7 +47,7 @@ YUI.add('editor-base', function(Y) {
                 defaultFn: this._defNodeChangeFn
             });
             
-            this.plug(Y.Plugin.EditorPara);
+            //this.plug(Y.Plugin.EditorPara);
         },
         destructor: function() {
             this.frame.destroy();
