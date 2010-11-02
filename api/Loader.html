@@ -1226,10 +1226,14 @@ module has localized resource bundles,
 e.g., ["en-GB","zh-Hans-CN"]</dd>
 <dt>condition:</dt>
 <dd>Specifies that the module should be loaded automatically if
-a condition is met.  This is an object with two fields:
+a condition is met.  This is an object with up to three fields:
 [trigger] - the name of a module that can trigger the auto-load
 [test] - a function that returns true when the module is to be
 loaded.
+[when] - specifies the load order of the conditional module
+with regard to the position of the trigger module.
+This should be one of three values: 'before', 'after', or
+'instead'.  The default is 'after'.
 </dd>
 </dl>
                                         </div>
