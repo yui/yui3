@@ -161,7 +161,8 @@ Y.extend(DOMEventFacade, Object, {
         this.keyCode = c;
         this.charCode = c;
         this.which = e.which || e.charCode || c;
-        this.button = e.button;
+        // this.button = e.button;
+        this.button = this.which;
 
         this.target = resolve(e.target);
         this.currentTarget = resolve(currentTarget);
@@ -1952,7 +1953,7 @@ Y.mix(SyntheticEvent, {
                 return handle;
             }
 
-            Y.each(nodes, function (node) {
+            Y.Array.each(nodes, function (node) {
                 var subArgs = args.slice(),
                     extra, filter;
 

@@ -16,7 +16,7 @@ if (!YUI.Env[Y.version]) {
             GALLERY_VERSION = 'gallery-2010.10.20-19-33',
             TNT = '2in3',
             TNT_VERSION = '4',
-            YUI2_VERSION = '2.8.1',
+            YUI2_VERSION = '2.8.2',
             COMBO_BASE = CDN_BASE + 'combo?',
             META = { version: VERSION,
                               root: ROOT,
@@ -55,7 +55,7 @@ if (!YUI.Env[Y.version]) {
             comboBase: COMBO_BASE,
             update: galleryUpdate,
             patterns: { 'gallery-': { },
-                         'gallerycss-': { type: 'css' } }
+                        'gallerycss-': { type: 'css' } }
         };
 
         groups.yui2 = {

@@ -371,7 +371,7 @@ Y.mix(SyntheticEvent, {
                 return handle;
             }
 
-            Y.each(nodes, function (node) {
+            Y.Array.each(nodes, function (node) {
                 var subArgs = args.slice(),
                     extra, filter;
 
