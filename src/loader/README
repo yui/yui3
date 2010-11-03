@@ -1,6 +1,9 @@
 YUI Loader
     Processes dependencies and dynamically loads script and css for YUI and external modules.
 
+3.3.0
+  * 'when' config for conditional modules (before, after, or instead).
+
 3.2.0
   * Conditional module support based on user agent detection or test function.
   * Added gallery css support
@@ -8,8 +11,8 @@ YUI Loader
 
 3.1.1
   * Fixed ticket #2528771 : Loader has incorrect default for "base" - uses Y.Env, instead of Y.Env.base
-  * Fixed ticket #2528784 : Regression requesting language packs using Y.use("lang/datatype-date_xx", fn) in build yui3-2029  
-  
+  * Fixed ticket #2528784 : Regression requesting language packs using Y.use("lang/datatype-date_xx", fn) in build yui3-2029
+
 3.1.0
   * Added a 'patterns' property.  Modules that are not predefined will be created with the
     default values if it matches one of the patterns defined for the instance.
