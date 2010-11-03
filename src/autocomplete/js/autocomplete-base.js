@@ -919,9 +919,6 @@ AutoCompleteBase.prototype = {
             var _sendRequest = function (request) {
                 var query = request.request;
 
-                if (!that.get(REQUEST_TEMPLATE)) {
-                    query = encodeURIComponent(query);
-                }
 
                 if (cache[query]) {
                     that[_SOURCE_SUCCESS](cache[query], request);
