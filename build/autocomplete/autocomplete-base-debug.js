@@ -639,6 +639,17 @@ AutoCompleteBase.ATTRS = {
         // completion when the user changes the value, but not when we change
         // the value.
         value: ''
+    },
+
+    /**
+     * URL protocol to use when the <code>source</code> is set to a YQL query.
+     *
+     * @attribute yqlProtocol
+     * @type String
+     * @default 'http'
+     */
+    yqlProtocol: {
+        value: 'http'
     }
 };
 
@@ -918,20 +929,35 @@ AutoCompleteBase.prototype = {
         }
 
         yqlSource.sendRequest = function (request) {
-            var _sendRequest = function (request) {
-                var query = request.request;
+            var yqlRequest,
 
-                if (!that.get(REQUEST_TEMPLATE)) {
-                    query = encodeURIComponent(query);
-                }
+            _sendRequest = function (request) {
+                var query = request.request,
+                    callback, opts, yqlQuery;
 
                 if (cache[query]) {
                     that[_SOURCE_SUCCESS](cache[query], request);
                 } else {
-                    Y.YQL(Lang.sub(source, {query: query}), function (data) {
+                    callback = function (data) {
                         cache[query] = data;
                         that[_SOURCE_SUCCESS](data, request);
-                    });
+                    };
+
+                    opts     = {proto: that.get('yqlProtocol')};
+                    yqlQuery = Lang.sub(source, {query: query});
+
+                    // Only create a new YQLRequest instance if this is the
+                    // first request. For subsequent requests, we'll reuse the
+                    // original instance.
+                    if (yqlRequest) {
+                        yqlRequest._callback = callback;
+                        yqlRequest._opts     = opts;
+                        yqlRequest._params.q = yqlQuery;
+                    } else {
+                        yqlRequest = new Y.YQLRequest(yqlQuery, callback, null, opts);
+                    }
+
+                    yqlRequest.send();
                 }
             };
 
@@ -975,6 +1001,10 @@ AutoCompleteBase.prototype = {
             // likely the results we want.
             values  = YObject.values(results) || [];
             results = values.length === 1 ? values[0] : values;
+
+            if (!isArray(results)) {
+                results = [results];
+            }
         } else {
             results = [];
         }
@@ -1110,7 +1140,7 @@ AutoCompleteBase.prototype = {
 
             // Run the raw results through all configured result filters.
             for (i = 0, len = filters.length; i < len; ++i) {
-                raw = filters[i](query, raw);
+                raw = filters[i](query, raw.concat());
 
                 if (!raw || !raw.length) {
                     break;
@@ -1127,18 +1157,19 @@ AutoCompleteBase.prototype = {
                     raw.push(textLocatorMap[unformatted[i]]);
                 }
             } else {
-                unformatted = [].concat(raw);
+                unformatted = raw.concat();
             }
 
             // Run the unformatted results through the configured highlighter
             // (if any) to produce the first stage of formatted results.
             formatted = highlighter ? highlighter(query, unformatted) :
-                    [].concat(unformatted);
+                    unformatted.concat();
 
             // Run the highlighted results through the configured formatter (if
             // any) to produce the final formatted results.
             if (formatter) {
-                formatted = formatter(query, raw, formatted, unformatted);
+                formatted = formatter(query, raw.concat(), formatted.concat(),
+                        unformatted.concat());
             }
 
             // Finally, unroll all the result arrays into a single array of
