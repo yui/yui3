@@ -310,8 +310,8 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         touchFacade.screenY = touch.screenY;
         touchFacade.clientX = touch.clientX;
         touchFacade.clientY = touch.clientY;
-        touchFacade[TARGET] = touch[TARGET] || touchFacade[TARGET];
-        touchFacade[CURRENT_TARGET] = touch[CURRENT_TARGET] || touchFacade[CURRENT_TARGET];
+        touchFacade[TARGET] = touchFacade[TARGET] || touch[TARGET];
+        touchFacade[CURRENT_TARGET] = touchFacade[CURRENT_TARGET] || touch[CURRENT_TARGET];
 
         touchFacade[BUTTON] = (params && params[BUTTON]) || 1; // default to left (left as per vendors, not W3C which is 0)
     },

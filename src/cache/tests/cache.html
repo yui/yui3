@@ -22,7 +22,7 @@
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
-            BTNRUN = Y.get("#btnRun");
+            BTNRUN = Y.one("#btnRun");
         BTNRUN.set("disabled", false);
         Y.on("click", function(e){
             Y.Test.Runner.run();
@@ -188,66 +188,83 @@
             name: "Event Tests",
 
             testAdd: function() {
+                var mock = new Y.Mock();
+                Y.Mock.expect(mock, {
+                    method: "handleAdd",
+                    args: [Y.Mock.Value.Object]
+                });
+
                 var cache = new Y.Cache({max:2});
-                cache.on("add", function(e) {
-                    this.resume(function() {
-                        ASSERT.areSame(1, e.entry.request);
-                        ASSERT.areSame("a", e.entry.response);
-                    });
-                }, this, true);
+                cache.on("add", mock.handleAdd);
                 cache.add(1, "a");
-                this.wait();
+
+                Y.Mock.verify(mock);
             },
         
             testFlush: function() {
+                var mock = new Y.Mock();
+                Y.Mock.expect(mock, {
+                    method: "handleFlush",
+                    args: [Y.Mock.Value.Object]
+                });
+
                 var cache = new Y.Cache({max:2});
-                cache.on("flush", function(e) {
-                    this.resume(function() {
-                        // This function intentionally left blank
-                    });
-                }, this, true);
+                cache.on("flush", mock.handleFlush);
                 cache.add(1, "a");
-                cache.flush()
-                this.wait();
+                cache.flush();
+
+                Y.Mock.verify(mock);
             },
 
             testRequest: function() {
+                var mock = new Y.Mock();
+                Y.Mock.expect(mock, {
+                    method: "handleRequest",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.areSame(2, e.request, "Expected request.");
+                    })]
+                });
+
                 var cache = new Y.Cache({max:2});
-                cache.on("request", function(e) {
-                    this.resume(function() {
-                        ASSERT.areSame(2, e.request);
-                    });
-                }, this, true);
+                cache.on("request", mock.handleRequest);
                 cache.add(1, "a");
-                cache.retrieve(2)
-                this.wait();
+                cache.retrieve(2);
+
+                Y.Mock.verify(mock);
             },
 
             testRetrieveSuccess: function() {
-                var cache = new Y.Cache({max:2});
-                cache.on("retrieve", function(e) {
-                    this.resume(function() {
+                var mock = new Y.Mock();
+                Y.Mock.expect(mock, {
+                    method: "handleRetrieve",
+                    args: [Y.Mock.Value(function(e){
                         ASSERT.areSame(1, e.entry.request);
                         ASSERT.areSame("a", e.entry.response);
-                    });
-                }, this, true);
+                    })]
+                });
+
+                var cache = new Y.Cache({max:2});
+                cache.on("retrieve", mock.handleRetrieve);
                 cache.add(1, "a");
-                cache.retrieve(1)
-                this.wait();
+                cache.retrieve(1);
+
+                Y.Mock.verify(mock);
             },
 
             testRetrieveFailure: function() {
+                var mock = new Y.Mock();
+                Y.Mock.expect(mock, {
+                    method: "handleRetrieve",
+                    args: [Y.Mock.Value.Any],
+                    callCount: 0
+                });
+
                 var cache = new Y.Cache({max:2});
-                cache.on("retrieve", function(e) {
-                    this.resume(function() {
-                        ASSERT.fail();
-                    });
-                }, this, true);
+                cache.on("retrieve", mock.handleRetrieve);
                 cache.add(1, "a");
-                cache.retrieve(2)
-                this.wait(function() {
-                    // This function intentionally left blank
-                }, 0); 
+                cache.retrieve(2);
+
+                Y.Mock.verify(mock);
             },
 
             testCancelAdd: function() {

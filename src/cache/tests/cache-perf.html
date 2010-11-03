@@ -19,7 +19,7 @@
     }).use("console", "profiler", "dump", "cache", function(Y) {
         
         // Set up the page
-        var BTNRUN = Y.get("#btnRun"),
+        var BTNRUN = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
             
 
@@ -29,7 +29,7 @@
         }, BTNRUN);
         
         Y.namespace("example").Perf = function() {
-            var selectNode = Y.get("#testSelector"),
+            var selectNode = Y.one("#testSelector"),
                 allTests = [];
                 
             return {
