@@ -1138,7 +1138,7 @@ AutoCompleteBase.prototype = {
 
             // Run the raw results through all configured result filters.
             for (i = 0, len = filters.length; i < len; ++i) {
-                raw = filters[i](query, raw);
+                raw = filters[i](query, raw.concat());
 
                 if (!raw || !raw.length) {
                     break;
@@ -1155,18 +1155,19 @@ AutoCompleteBase.prototype = {
                     raw.push(textLocatorMap[unformatted[i]]);
                 }
             } else {
-                unformatted = [].concat(raw);
+                unformatted = raw.concat();
             }
 
             // Run the unformatted results through the configured highlighter
             // (if any) to produce the first stage of formatted results.
             formatted = highlighter ? highlighter(query, unformatted) :
-                    [].concat(unformatted);
+                    unformatted.concat();
 
             // Run the highlighted results through the configured formatter (if
             // any) to produce the final formatted results.
             if (formatter) {
-                formatted = formatter(query, raw, formatted, unformatted);
+                formatted = formatter(query, raw.concat(), formatted.concat(),
+                        unformatted.concat());
             }
 
             // Finally, unroll all the result arrays into a single array of
