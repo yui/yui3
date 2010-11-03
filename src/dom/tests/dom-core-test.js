@@ -1014,7 +1014,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should return a fragment containing table bodies': function() {
-            var html = '<tbody>foo</tbody><tbody id="tmp-bar">bar</tbody><tbody>baz</tbody>',
+            var html = '<tbody><tr><td>foo</td></tr></tbody><tbody id="tmp-bar"><tr><td>bar</td></tr></tbody><tbody><tr><td>bar</td></tr></tbody>',
                 el = Y.DOM.create(html);
 
             Assert.areEqual(11, el.nodeType);

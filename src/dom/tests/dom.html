@@ -6,7 +6,7 @@
 <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 
 <script type="text/javascript">
-    YUI({ base: '../../../build/', filter: 'raw'}).use('console', 'test', function(Y) {
+    YUI({ base: '../../../build/', filter: 'raw'}).use('dom-deprecated', 'console', 'test', function(Y) {
         var Assert = Y.Assert,
             ArrayAssert = Y.ArrayAssert,
             suite = new Y.Test.Suite("yuisuite");
@@ -221,7 +221,7 @@
                 el = Y.DOM.create(html);
                 Assert.areEqual(1, el.childNodes.length, html);
 
-                html = '<tr>fresh</tr>';
+                html = '<tr></tr>';
                 el = Y.DOM.create(html);
                 Assert.areEqual('TR', el.tagName, html);
 
@@ -382,7 +382,7 @@
                 Assert.areEqual(3, el.childNodes.length, html);
                 Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
 
-                html = '<tbody>foo</tbody><tbody id="tmp-bar">bar</tbody><tbody>baz</tbody>';
+                html = '<tbody></tbody><tbody id="tmp-bar"></tbody><tbody></tbody>';
                 el = Y.DOM.create(html);
                 Assert.areEqual(3, el.childNodes.length, html);
                 Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
