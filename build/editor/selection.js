@@ -388,7 +388,6 @@ YUI.add('selection', function(Y) {
     * @return {Node} The Resolved node
     */
     Y.Selection.resolve = function(n) {
-        console.log(n);
         if (n && n.nodeType === 3) {
             //Adding a try/catch here because in rare occasions IE will
             //Throw a error accessing the parentNode of a stranded text node.
