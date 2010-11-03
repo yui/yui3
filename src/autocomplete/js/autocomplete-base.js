@@ -999,6 +999,10 @@ AutoCompleteBase.prototype = {
             // likely the results we want.
             values  = YObject.values(results) || [];
             results = values.length === 1 ? values[0] : values;
+
+            if (!isArray(results)) {
+                results = [results];
+            }
         } else {
             results = [];
         }
