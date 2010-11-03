@@ -637,6 +637,17 @@ AutoCompleteBase.ATTRS = {
         // completion when the user changes the value, but not when we change
         // the value.
         value: ''
+    },
+
+    /**
+     * URL protocol to use when the <code>source</code> is set to a YQL query.
+     *
+     * @attribute yqlProtocol
+     * @type String
+     * @default 'http'
+     */
+    yqlProtocol: {
+        value: 'http'
     }
 };
 
@@ -916,17 +927,35 @@ AutoCompleteBase.prototype = {
         }
 
         yqlSource.sendRequest = function (request) {
-            var _sendRequest = function (request) {
-                var query = request.request;
+            var yqlRequest,
 
+            _sendRequest = function (request) {
+                var query = request.request,
+                    callback, opts, yqlQuery;
 
                 if (cache[query]) {
                     that[_SOURCE_SUCCESS](cache[query], request);
                 } else {
-                    Y.YQL(Lang.sub(source, {query: query}), function (data) {
+                    callback = function (data) {
                         cache[query] = data;
                         that[_SOURCE_SUCCESS](data, request);
-                    });
+                    };
+
+                    opts     = {proto: that.get('yqlProtocol')};
+                    yqlQuery = Lang.sub(source, {query: query});
+
+                    // Only create a new YQLRequest instance if this is the
+                    // first request. For subsequent requests, we'll reuse the
+                    // original instance.
+                    if (yqlRequest) {
+                        yqlRequest._callback = callback;
+                        yqlRequest._opts     = opts;
+                        yqlRequest._params.q = yqlQuery;
+                    } else {
+                        yqlRequest = new Y.YQLRequest(yqlQuery, callback, null, opts);
+                    }
+
+                    yqlRequest.send();
                 }
             };
 
