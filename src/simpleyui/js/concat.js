@@ -2545,7 +2545,6 @@ O.isEmpty = function(o) {
     }
     return true;
 };
-
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -2567,8 +2566,15 @@ O.isEmpty = function(o) {
  * @class UA
  * @static
  */
-Y.UA = YUI.Env.UA || function() {
-
+/**
+* Static method for parsing the UA string. Defaults to assigning it's value to Y.UA
+* @static
+* @method Env.parseUA
+* @param {String} subUA Parse this UA string instead of navigator.userAgent
+* @returns {Object} The Y.UA object
+*/
+YUI.Env.parseUA = function(subUA) {
+    
     var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
@@ -2704,6 +2710,13 @@ Y.UA = YUI.Env.UA || function() {
          * @static
          */
         android: 0,
+        /**
+         * Detects Palms WebOS version
+         * @property webos
+         * @type float
+         * @static
+         */
+        webos: 0,
 
         /**
          * Google Caja version number or 0.
@@ -2730,7 +2743,7 @@ Y.UA = YUI.Env.UA || function() {
 
     },
 
-    ua = nav && nav.userAgent,
+    ua = subUA || nav && nav.userAgent,
 
     loc = win && win.location,
 
@@ -2767,15 +2780,25 @@ Y.UA = YUI.Env.UA || function() {
                 if (m && m[1]) {
                     m = numberify(m[1].replace('_', '.'));
                 }
-                o.ipad = (navigator.platform == 'iPad') ? m : 0;
-                o.ipod = (navigator.platform == 'iPod') ? m : 0;
-                o.iphone = (navigator.platform == 'iPhone') ? m : 0;
-                o.ios = o.ipad || o.iphone || o.ipod;
+                o.ios = m;
+                o.ipad = o.ipod = o.iphone = 0;
+
+                m = ua.match(/iPad|iPod|iPhone/);
+                if (m && m[0]) {
+                    o[m[0].toLowerCase()] = o.ios;
+                }
             } else {
                 m = ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
                     // Nokia N-series, Android, webOS, ex: NokiaN95
                     o.mobile = m[0];
+                }
+                if (/webOS/.test(ua)) {
+                    o.mobile = 'WebOS';
+                    m = ua.match(/webOS\/([^\s]*);/);
+                    if (m && m[1]) {
+                        o.webos = numberify(m[1]);
+                    }
                 }
                 if (/ Android/.test(ua)) {
                     o.mobile = 'Android';
@@ -2828,7 +2851,10 @@ Y.UA = YUI.Env.UA || function() {
     YUI.Env.UA = o;
 
     return o;
-}();
+};
+
+
+Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 
 
 }, '@VERSION@' );
@@ -9141,7 +9167,8 @@ Y.extend(DOMEventFacade, Object, {
         this.keyCode = c;
         this.charCode = c;
         this.which = e.which || e.charCode || c;
-        this.button = e.button;
+        // this.button = e.button;
+        this.button = this.which;
 
         this.target = resolve(e.target);
         this.currentTarget = resolve(currentTarget);
