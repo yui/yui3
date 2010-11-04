@@ -1220,7 +1220,8 @@ YUI.add('selection', function(Y) {
         }
         
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
-
+        
+        /*
         nodes.each(function(n) {
             n.addClass(n._yuid);
             n.setStyle(FONT_FAMILY, '');
@@ -1228,6 +1229,7 @@ YUI.add('selection', function(Y) {
                 n.removeAttribute('style');
             }
         });
+        */
         
         return html;
     };
@@ -3005,14 +3007,14 @@ YUI.add('editor-base', function(Y) {
             * @attribute content
             */
             content: {
-                value: '<br>',
+                value: '<br class="yui-cursor">',
                 setter: function(str) {
                     if (str.substr(0, 1) === "\n") {
                         Y.log('Stripping first carriage return from content before injecting', 'warn', 'editor');
                         str = str.substr(1);
                     }
                     if (str === '') {
-                        str = '<br>';
+                        str = '<br class="yui-cursor">';
                     }
                     return this.frame.set('content', str);
                 },

@@ -736,14 +736,14 @@
             * @attribute content
             */
             content: {
-                value: '<br>',
+                value: '<br class="yui-cursor">',
                 setter: function(str) {
                     if (str.substr(0, 1) === "\n") {
                         Y.log('Stripping first carriage return from content before injecting', 'warn', 'editor');
                         str = str.substr(1);
                     }
                     if (str === '') {
-                        str = '<br>';
+                        str = '<br class="yui-cursor">';
                     }
                     return this.frame.set('content', str);
                 },

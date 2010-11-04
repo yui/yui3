@@ -380,7 +380,8 @@
         }
         
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
-
+        
+        /*
         nodes.each(function(n) {
             n.addClass(n._yuid);
             n.setStyle(FONT_FAMILY, '');
@@ -388,6 +389,7 @@
                 n.removeAttribute('style');
             }
         });
+        */
         
         return html;
     };
