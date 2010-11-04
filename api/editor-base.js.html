@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>editor&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>editor&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_editor.html" title="editor">editor</a>
                 
@@ -408,7 +408,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keydown&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyDown</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:activate&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameActivate</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+                <span class="c1">//this.frame.on(&#39;dom:activate&#39;, Y.bind(this._onFrameActivate, this));</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keyup&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyUp</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="mi">800</span><span class="p">));</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keypress&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyPress</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="mi">800</span><span class="p">));</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -431,7 +431,7 @@
                     <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
                         <span class="nx">sel</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">selection</span><span class="p">.</span><span class="nx">createRange</span><span class="p">(),</span>
                         <span class="nx">bk</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">moveToBookmark</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_lastBookmark</span><span class="p">);</span>
-
+                    
                     <span class="nx">sel</span><span class="p">.</span><span class="nx">select</span><span class="p">();</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_lastBookmark</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
