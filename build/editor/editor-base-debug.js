@@ -362,7 +362,7 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
             if (Y.UA.ie) {
-                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                //this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
                 this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
                 this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
             } else {
@@ -385,7 +385,7 @@ YUI.add('editor-base', function(Y) {
                     var inst = this.getInstance(),
                         sel = inst.config.doc.selection.createRange(),
                         bk = sel.moveToBookmark(this._lastBookmark);
-
+                    
                     sel.select();
                     this._lastBookmark = null;
                 } catch (e) {
