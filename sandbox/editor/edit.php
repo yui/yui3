@@ -109,6 +109,7 @@
     <div id="smilies"></div>
 </div>
 
+<input type="text">
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
