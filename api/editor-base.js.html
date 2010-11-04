@@ -784,14 +784,14 @@
 <span class="cm">            * @attribute content</span>
 <span class="cm">            */</span>
             <span class="nx">content</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">,</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;&lt;br class=&quot;yui-cursor&quot;&gt;&#39;</span><span class="p">,</span>
                 <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;\n&quot;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Stripping first carriage return from content before injecting&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
                         <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">str</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">;</span>
+                        <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&lt;br class=&quot;yui-cursor&quot;&gt;&#39;</span><span class="p">;</span>
                     <span class="p">}</span>
                     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
                 <span class="p">},</span>

@@ -429,14 +429,16 @@
         <span class="p">}</span>
         
         <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;.hr&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-skip&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-non&#39;</span><span class="p">);</span>
-
-        <span class="nx">nodes</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">n</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">);</span>
-            <span class="nx">n</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">FONT_FAMILY</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">n</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">});</span>
+        
+        <span class="cm">/*</span>
+<span class="cm">        nodes.each(function(n) {</span>
+<span class="cm">            n.addClass(n._yuid);</span>
+<span class="cm">            n.setStyle(FONT_FAMILY, &#39;&#39;);</span>
+<span class="cm">            if (n.getAttribute(&#39;style&#39;) === &#39;&#39;) {</span>
+<span class="cm">                n.removeAttribute(&#39;style&#39;);</span>
+<span class="cm">            }</span>
+<span class="cm">        });</span>
+<span class="cm">        */</span>
         
         <span class="k">return</span> <span class="nx">html</span><span class="p">;</span>
     <span class="p">};</span>
