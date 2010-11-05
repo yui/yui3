@@ -1023,6 +1023,24 @@
 
 <span class="c1">// Y.log(&#39;pack &#39; + packName + &#39; should supersede &#39; + supName);</span>
 <span class="c1">// Add rollup file, need to add to supersedes list too</span>
+
+                            <span class="c1">// default packages</span>
+                            <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                            <span class="nx">supName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+
+                            <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">packName</span><span class="p">];</span>
+
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">smod</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
+                            <span class="p">}</span>
+
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">supName</span> <span class="k">in</span> <span class="nx">flatSup</span><span class="p">))</span> <span class="p">{</span>
+                                <span class="nx">smod</span><span class="p">.</span><span class="nx">supersedes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">supName</span><span class="p">);</span>
+                            <span class="p">}</span>
+
+<span class="c1">// Y.log(&#39;pack &#39; + packName + &#39; should supersede &#39; + supName);</span>
+<span class="c1">// Add rollup file, need to add to supersedes list too</span>
+
                         <span class="p">}</span>
                     <span class="p">}</span>
 
@@ -1145,7 +1163,8 @@
             <span class="k">delete</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// if (mod.expanded &amp;&amp; (!mod.langCache || mod.langCache == this.lang)) {</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">langCache</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;already expanded &#39; + name + &#39;, &#39; + mod.expanded);</span>
             <span class="k">return</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
         <span class="p">}</span>
