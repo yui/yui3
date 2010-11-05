@@ -1180,7 +1180,8 @@ Y.Loader.prototype = {
             delete mod.expanded;
         }
 
-        if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
             return mod.expanded;
         }
 
