@@ -159,8 +159,8 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    //inst.later(100, inst, inst.Selection.cleanCursor);
-                    inst.Selection.cleanCursor();
+                    inst.later(100, inst, inst.Selection.cleanCursor);
+                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
