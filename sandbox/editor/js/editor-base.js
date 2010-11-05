@@ -168,6 +168,8 @@ YUI.add('editor-base', function(Y) {
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
                         if (Y.UA.webkit) {
                             this.execCommand('inserttext', '\t');
+                        } else if (Y.UA.gecko) {
+                            this.frame.exec._command('inserthtml', '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
                         } else {
                             sel = new inst.Selection();
                             sel.setCursor();
