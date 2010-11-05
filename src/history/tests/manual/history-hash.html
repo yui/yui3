@@ -47,7 +47,9 @@
 var Y = YUI({
     filter: 'raw',
     filters: {
-        history: 'debug'
+        history: 'debug',
+        'history-hash': 'debug',
+        'history-hash-ie': 'debug'
     },
     useBrowserConsole: false
 }).use('console', 'event-delegate', 'history-hash', 'json-stringify', function (Y) {
