@@ -278,6 +278,24 @@
             }
         });
 
+        var testFormatAvailable = new Y.Test.Case({
+            name: "Date Format Available Format Tests",
+
+            testAvailable: function() {
+                
+                var available = Y.Intl.getAvailableLangs("datatype-date");
+                
+                ASSERT.isArray(available, "Expected getAvailableLangs to return array.");
+                Y.assert(available.length > 30, "Expected at least 30 available languages.");
+                Y.assert(Y.Array.indexOf(available, "ar-JO") >= 0, "Expected ar-JO to be available.");
+                Y.assert(Y.Array.indexOf(available, "de-DE") >= 0, "Expected de-DE to be available.");
+                Y.assert(Y.Array.indexOf(available, "en-US") >= 0, "Expected en-US to be available.");
+                Y.assert(Y.Array.indexOf(available, "th-TH") >= 0, "Expected th-TH to be available.");
+                Y.assert(Y.Array.indexOf(available, "zh-Hant-TW") >= 0, "Expected zh-Hant-TW to be available.");
+
+            }
+        });
+
         var suite = new Y.Test.Suite({name:"DataType.Date Test Suite"});
         suite.add(testParse);
         suite.add(testFormat);
@@ -286,6 +304,7 @@
         suite.add(testFormatFR);
         suite.add(testFormatKR);
         suite.add(testFormatIN);
+        suite.add(testFormatAvailable);
 
         Y.Test.Runner.setName("DataType.Date Test Runner");
         Y.Test.Runner.add(suite);
