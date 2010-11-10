@@ -328,6 +328,7 @@ function useLocal() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
+        maxResults       : 0,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
@@ -341,6 +342,7 @@ function useNone() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
+        maxResults       : 0,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
@@ -354,6 +356,7 @@ function useFlickr() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
+        maxResults       : 0,
         resultFormatter  : flickrFormatter,
         resultListLocator: null,
         resultTextLocator: 'title',
@@ -367,6 +370,7 @@ function useSearch() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
+        maxResults       : 0,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
@@ -380,10 +384,11 @@ function useTwitter() {
     autoComplete.detachAll('test|*');
 
     autoComplete.setAttrs({
+        maxResults       : 5,
         resultFormatter  : twitterFormatter,
         resultListLocator: 'results',
         resultTextLocator: 'text',
-        source           : 'http://search.twitter.com/search.json?q={query}&callback={callback}&result_type=recent'
+        source           : 'http://search.twitter.com/search.json?q={query}&callback={callback}&rpp={maxResults}&result_type=recent'
     });
 }
 

@@ -561,7 +561,10 @@ AutoCompleteBase.ATTRS = {
      *     <code>{query}</code> placeholder will be replaced with the current
      *     query, and the <code>{callback}</code> placeholder will be replaced with
      *     an internally-generated JSONP callback name. Both placeholders must
-     *     appear in the URL, or the request will fail.
+     *     appear in the URL, or the request will fail. An optional
+     *     <code>{maxResults}</code> placeholder may also be provided, and will
+     *     be replaced with the value of the maxResults attribute (or 1000 if
+     *     the maxResults attribute is 0 or less).
      *     </p>
      *
      *     <p>
@@ -587,7 +590,10 @@ AutoCompleteBase.ATTRS = {
      *     If a YQL query is provided, it will be used to make a YQL request.
      *     The <code>{query}</code> placeholder will be replaced with the
      *     current autocomplete query. This placeholder must appear in the YQL
-     *     query, or the request will fail.
+     *     query, or the request will fail. An optional
+     *     <code>{maxResults}</code> placeholder may also be provided, and will
+     *     be replaced with the value of the maxResults attribute (or 1000 if
+     *     the maxResults attribute is 0 or less).
      *     </p>
      *
      *     <p>
@@ -931,7 +937,7 @@ AutoCompleteBase.prototype = {
 
             _sendRequest = function (request) {
                 var query = request.request,
-                    callback, opts, yqlQuery;
+                    callback, maxResults, opts, yqlQuery;
 
                 if (cache[query]) {
                     that[_SOURCE_SUCCESS](cache[query], request);
@@ -941,8 +947,13 @@ AutoCompleteBase.prototype = {
                         that[_SOURCE_SUCCESS](data, request);
                     };
 
-                    opts     = {proto: that.get('yqlProtocol')};
-                    yqlQuery = Lang.sub(source, {query: query});
+                    maxResults = that.get('maxResults');
+                    opts       = {proto: that.get('yqlProtocol')};
+
+                    yqlQuery = Lang.sub(source, {
+                        maxResults: maxResults > 0 ? maxResults : 1000,
+                        query     : query
+                    });
 
                     // Only create a new YQLRequest instance if this is the
                     // first request. For subsequent requests, we'll reuse the
@@ -1058,14 +1069,16 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _jsonpFormatter: function (url, proxy, query) {
-        var requestTemplate = this.get(REQUEST_TEMPLATE);
+        var maxResults      = this.get('maxResults'),
+            requestTemplate = this.get(REQUEST_TEMPLATE);
 
         if (requestTemplate) {
             url = url + requestTemplate(query);
         }
 
         return Lang.sub(url, {
-            callback: proxy,
+            callback  : proxy,
+            maxResults: maxResults > 0 ? maxResults : 1000,
 
             // If a requestTemplate is set, assume that it will
             // handle URI encoding if necessary. Otherwise,
