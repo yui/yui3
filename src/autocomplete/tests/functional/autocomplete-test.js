@@ -83,6 +83,27 @@ baseSuite.add(new Y.Test.Case({
         delete this.inputNode;
     },
 
+    '_parseResponse should preserve duplicates in text when using resultTextLocator': function() {
+
+        var qry = '90631',
+            response = { results: [
+              {"City":"La Habra","State":"CA","County":"Orange","Zip":"90631"},
+              {"City":"La Habra Heights","State":"CA","County":"Orange","Zip":"90631"},
+              {"City":"La Habra Hgts","State":"CA","County":"Orange","Zip":"90631"}
+            ]};
+        this.ac.set('resultTextLocator', 'Zip');
+
+        this.ac.on('results', Y.bind(function(ev) {
+            Assert.areNotEqual(ev.results[0].raw.City, ev.results[1].raw.City, 
+              "The raw result values should be different!");
+            Assert.areNotEqual(ev.results[1].raw.City, ev.results[2].raw.City,
+              "The raw result values should be different!");
+        }), this);
+
+        this.ac._parseResponse(qry, response, null);
+
+    },
+
     'Browser autocomplete should be off by default': function () {
         Assert.isFalse(this.ac.get('allowBrowserAutocomplete'));
         Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
