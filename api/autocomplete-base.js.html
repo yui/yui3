@@ -123,7 +123,8 @@
 <span class="cm"> * @class AutoCompleteBase</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">Escape</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Escape</span><span class="p">,</span>
+    <span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
     <span class="nx">YArray</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
     <span class="nx">YObject</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
 
@@ -239,7 +240,15 @@
 <span class="cm">     *     &lt;dl&gt;</span>
 <span class="cm">     *       &lt;dt&gt;display (Node|HTMLElement|String)&lt;/dt&gt;</span>
 <span class="cm">     *       &lt;dd&gt;</span>
-<span class="cm">     *         Formatted result HTML suitable for display to the user.</span>
+<span class="cm">     *         Formatted result HTML suitable for display to the user. If no</span>
+<span class="cm">     *         custom formatter is set, this will be an HTML-escaped version of</span>
+<span class="cm">     *         the string in the &lt;code&gt;text&lt;/code&gt; property.</span>
+<span class="cm">     *       &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *       &lt;dt&gt;highlighted (String)&lt;/dt&gt;</span>
+<span class="cm">     *       &lt;dd&gt;</span>
+<span class="cm">     *         Highlighted (but not formatted) result text. This property will</span>
+<span class="cm">     *         only be set if a highlighter is in use.</span>
 <span class="cm">     *       &lt;/dd&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     *       &lt;dt&gt;raw (mixed)&lt;/dt&gt;</span>
@@ -252,7 +261,8 @@
 <span class="cm">     *       &lt;dd&gt;</span>
 <span class="cm">     *         Plain text version of the result, suitable for being inserted</span>
 <span class="cm">     *         into the value of a text input field or textarea when the result</span>
-<span class="cm">     *         is selected by a user.</span>
+<span class="cm">     *         is selected by a user. This value is not HTML-escaped and should</span>
+<span class="cm">     *         not be inserted into the page using innerHTML.</span>
 <span class="cm">     *       &lt;/dd&gt;</span>
 <span class="cm">     *     &lt;/dl&gt;</span>
 <span class="cm">     *   &lt;/dd&gt;</span>
@@ -405,20 +415,28 @@
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * Array of local result filter functions. If provided, each filter</span>
 <span class="cm">     * will be called with two arguments when results are received: the query</span>
-<span class="cm">     * and an array of results (as returned by the &lt;code&gt;resultLocator&lt;/code&gt;,</span>
-<span class="cm">     * if one is set).</span>
+<span class="cm">     * and an array of result objects. See the documentation for the</span>
+<span class="cm">     * &lt;code&gt;results&lt;/code&gt; event for a list of the properties available on each</span>
+<span class="cm">     * result object.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * Each filter is expected to return a filtered or modified version of the</span>
-<span class="cm">     * results, which will then be passed on to subsequent filters, then the</span>
-<span class="cm">     * &lt;code&gt;resultHighlighter&lt;/code&gt; function (if set), then the</span>
+<span class="cm">     * results array, which will then be passed on to subsequent filters, then</span>
+<span class="cm">     * the &lt;code&gt;resultHighlighter&lt;/code&gt; function (if set), then the</span>
 <span class="cm">     * &lt;code&gt;resultFormatter&lt;/code&gt; function (if set), and finally to</span>
 <span class="cm">     * subscribers to the &lt;code&gt;results&lt;/code&gt; event.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * If no &lt;code&gt;source&lt;/code&gt; is set, result filters will not be called.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Prepackaged result filters provided by the autocomplete-filters and</span>
+<span class="cm">     * autocomplete-filters-accentfold modules can be used by specifying the</span>
+<span class="cm">     * filter name as a string, such as &lt;code&gt;&#39;phraseMatch&#39;&lt;/code&gt; (assuming</span>
+<span class="cm">     * the necessary filters module is loaded).</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * @attribute resultFilters</span>
@@ -433,11 +451,15 @@
     <span class="cm">/**</span>
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * Function which will be used to format results. If provided, this function</span>
-<span class="cm">     * will be called with four arguments after results have been received and</span>
-<span class="cm">     * filtered: the query, an array of raw results, an array of highlighted</span>
-<span class="cm">     * results, and an array of plain text results. The formatter is expected to</span>
-<span class="cm">     * return a modified copy of the results array with any desired custom</span>
-<span class="cm">     * formatting applied.</span>
+<span class="cm">     * will be called with two arguments after results have been received and</span>
+<span class="cm">     * filtered: the query and an array of result objects. The formatter is</span>
+<span class="cm">     * expected to return an array of HTML strings or Node instances containing</span>
+<span class="cm">     * the desired HTML for each result.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * See the documentation for the &lt;code&gt;results&lt;/code&gt; event for a list of</span>
+<span class="cm">     * the properties available on each result object.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;</span>
@@ -455,9 +477,14 @@
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * Function which will be used to highlight results. If provided, this</span>
 <span class="cm">     * function will be called with two arguments after results have been</span>
-<span class="cm">     * received and filtered: the query and an array of filtered results. The</span>
-<span class="cm">     * highlighter is expected to return a modified version of the results</span>
-<span class="cm">     * array with the query highlighted in some form.</span>
+<span class="cm">     * received and filtered: the query and an array of filtered result objects.</span>
+<span class="cm">     * The highlighter is expected to return an array of highlighted result</span>
+<span class="cm">     * text in the form of HTML strings.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * See the documentation for the &lt;code&gt;results&lt;/code&gt; event for a list of</span>
+<span class="cm">     * the properties available on each result object.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;</span>
@@ -519,10 +546,9 @@
     <span class="cm">/**</span>
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * Locator that should be used to extract a plain text string from a</span>
-<span class="cm">     * non-string result item. The resulting text value will be fed to any</span>
-<span class="cm">     * defined filters, and will typically also be the value that ends up being</span>
-<span class="cm">     * inserted into an input field or textarea when the user of an autocomplete</span>
-<span class="cm">     * implementation selects a result.</span>
+<span class="cm">     * non-string result item. The resulting text value will typically be the</span>
+<span class="cm">     * value that ends up being inserted into an input field or textarea when</span>
+<span class="cm">     * the user of an autocomplete implementation selects a result.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;</span>
@@ -610,7 +636,10 @@
 <span class="cm">     *     &lt;code&gt;{query}&lt;/code&gt; placeholder will be replaced with the current</span>
 <span class="cm">     *     query, and the &lt;code&gt;{callback}&lt;/code&gt; placeholder will be replaced with</span>
 <span class="cm">     *     an internally-generated JSONP callback name. Both placeholders must</span>
-<span class="cm">     *     appear in the URL, or the request will fail.</span>
+<span class="cm">     *     appear in the URL, or the request will fail. An optional</span>
+<span class="cm">     *     &lt;code&gt;{maxResults}&lt;/code&gt; placeholder may also be provided, and will</span>
+<span class="cm">     *     be replaced with the value of the maxResults attribute (or 1000 if</span>
+<span class="cm">     *     the maxResults attribute is 0 or less).</span>
 <span class="cm">     *     &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     *     &lt;p&gt;</span>
@@ -636,7 +665,10 @@
 <span class="cm">     *     If a YQL query is provided, it will be used to make a YQL request.</span>
 <span class="cm">     *     The &lt;code&gt;{query}&lt;/code&gt; placeholder will be replaced with the</span>
 <span class="cm">     *     current autocomplete query. This placeholder must appear in the YQL</span>
-<span class="cm">     *     query, or the request will fail.</span>
+<span class="cm">     *     query, or the request will fail. An optional</span>
+<span class="cm">     *     &lt;code&gt;{maxResults}&lt;/code&gt; placeholder may also be provided, and will</span>
+<span class="cm">     *     be replaced with the value of the maxResults attribute (or 1000 if</span>
+<span class="cm">     *     the maxResults attribute is 0 or less).</span>
 <span class="cm">     *     &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     *     &lt;p&gt;</span>
@@ -980,7 +1012,7 @@
 
             <span class="nx">_sendRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span>
-                    <span class="nx">callback</span><span class="p">,</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">yqlQuery</span><span class="p">;</span>
+                    <span class="nx">callback</span><span class="p">,</span> <span class="nx">maxResults</span><span class="p">,</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">yqlQuery</span><span class="p">;</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">])</span> <span class="p">{</span>
                     <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="nx">request</span><span class="p">);</span>
@@ -990,8 +1022,13 @@
                         <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">data</span><span class="p">,</span> <span class="nx">request</span><span class="p">);</span>
                     <span class="p">};</span>
 
-                    <span class="nx">opts</span>     <span class="o">=</span> <span class="p">{</span><span class="nx">proto</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;yqlProtocol&#39;</span><span class="p">)};</span>
-                    <span class="nx">yqlQuery</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="p">{</span><span class="nx">query</span><span class="o">:</span> <span class="nx">query</span><span class="p">});</span>
+                    <span class="nx">maxResults</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;maxResults&#39;</span><span class="p">);</span>
+                    <span class="nx">opts</span>       <span class="o">=</span> <span class="p">{</span><span class="nx">proto</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;yqlProtocol&#39;</span><span class="p">)};</span>
+
+                    <span class="nx">yqlQuery</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">maxResults</span><span class="o">:</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">maxResults</span> <span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="nx">query</span>     <span class="o">:</span> <span class="nx">query</span>
+                    <span class="p">});</span>
 
                     <span class="c1">// Only create a new YQLRequest instance if this is the</span>
                     <span class="c1">// first request. For subsequent requests, we&#39;ll reuse the</span>
@@ -1107,14 +1144,16 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_jsonpFormatter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">proxy</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">requestTemplate</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REQUEST_TEMPLATE</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">maxResults</span>      <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;maxResults&#39;</span><span class="p">),</span>
+            <span class="nx">requestTemplate</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REQUEST_TEMPLATE</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">requestTemplate</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span> <span class="o">+</span> <span class="nx">requestTemplate</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">callback</span><span class="o">:</span> <span class="nx">proxy</span><span class="p">,</span>
+            <span class="nx">callback</span>  <span class="o">:</span> <span class="nx">proxy</span><span class="p">,</span>
+            <span class="nx">maxResults</span><span class="o">:</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">maxResults</span> <span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
 
             <span class="c1">// If a requestTemplate is set, assume that it will</span>
             <span class="c1">// handle URI encoding if necessary. Otherwise,</span>
@@ -1140,101 +1179,98 @@
                 <span class="nx">results</span><span class="o">:</span> <span class="p">[]</span>
             <span class="p">},</span>
 
-            <span class="c1">// Filtered result arrays representing different formats. These will</span>
-            <span class="c1">// be unrolled into the final array of result objects as properties.</span>
-            <span class="nx">formatted</span><span class="p">,</span>   <span class="c1">// HTML, Nodes, whatever</span>
-            <span class="nx">raw</span><span class="p">,</span>         <span class="c1">// whatever format came back in the response</span>
-            <span class="nx">unformatted</span><span class="p">,</span> <span class="c1">// plain text (ideally)</span>
+            <span class="nx">listLocator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RESULT_LIST_LOCATOR</span><span class="p">),</span>
+            <span class="nx">results</span>     <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">unfiltered</span>  <span class="o">=</span> <span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">results</span><span class="p">,</span>
 
-            <span class="c1">// Unfiltered raw results, fresh from the response.</span>
-            <span class="nx">unfiltered</span> <span class="o">=</span> <span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">results</span><span class="p">,</span>
-
-            <span class="c1">// Final array of result objects.</span>
-            <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
-
-            <span class="c1">// Other stuff.</span>
             <span class="nx">filters</span><span class="p">,</span>
+            <span class="nx">formatted</span><span class="p">,</span>
             <span class="nx">formatter</span><span class="p">,</span>
+            <span class="nx">highlighted</span><span class="p">,</span>
             <span class="nx">highlighter</span><span class="p">,</span>
             <span class="nx">i</span><span class="p">,</span>
             <span class="nx">len</span><span class="p">,</span>
-            <span class="nx">listLocator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RESULT_LIST_LOCATOR</span><span class="p">),</span>
             <span class="nx">maxResults</span><span class="p">,</span>
-            <span class="nx">textLocator</span><span class="p">,</span>
-            <span class="nx">textLocatorMap</span><span class="p">;</span>
+            <span class="nx">result</span><span class="p">,</span>
+            <span class="nx">text</span><span class="p">,</span>
+            <span class="nx">textLocator</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">unfiltered</span> <span class="o">&amp;&amp;</span> <span class="nx">listLocator</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">unfiltered</span> <span class="o">=</span> <span class="nx">listLocator</span><span class="p">(</span><span class="nx">unfiltered</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">unfiltered</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">unfiltered</span> <span class="o">&amp;&amp;</span> <span class="nx">unfiltered</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">filters</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultFilters&#39;</span><span class="p">);</span>
-            <span class="nx">formatter</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultFormatter&#39;</span><span class="p">);</span>
-            <span class="nx">highlighter</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultHighlighter&#39;</span><span class="p">);</span>
-            <span class="nx">maxResults</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;maxResults&#39;</span><span class="p">);</span>
             <span class="nx">textLocator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultTextLocator&#39;</span><span class="p">);</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">textLocator</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">// In order to allow filtering based on locator queries, we have</span>
-                <span class="c1">// to create a mapping of &quot;located&quot; results to original results</span>
-                <span class="c1">// so we can sync up the original results later without</span>
-                <span class="c1">// requiring the filters to do extra work.</span>
-                <span class="nx">raw</span>            <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">unfiltered</span><span class="p">,</span> <span class="nx">textLocator</span><span class="p">);</span>
-                <span class="nx">textLocatorMap</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">raw</span><span class="p">,</span> <span class="nx">unfiltered</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">raw</span> <span class="o">=</span> <span class="nx">unfiltered</span><span class="p">;</span>
+            <span class="c1">// Create a lightweight result object for each result to make them</span>
+            <span class="c1">// easier to work with. The various properties on the object</span>
+            <span class="c1">// represent different formats of the result, and will be populated</span>
+            <span class="c1">// as we go.</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">unfiltered</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">unfiltered</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="nx">text</span>   <span class="o">=</span> <span class="nx">textLocator</span> <span class="o">?</span> <span class="nx">textLocator</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+
+                <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">display</span><span class="o">:</span> <span class="nx">Escape</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">text</span><span class="p">),</span>
+                    <span class="nx">raw</span>    <span class="o">:</span> <span class="nx">result</span><span class="p">,</span>
+                    <span class="nx">text</span>   <span class="o">:</span> <span class="nx">text</span>
+                <span class="p">});</span>
             <span class="p">}</span>
 
-            <span class="c1">// Run the raw results through all configured result filters.</span>
+            <span class="c1">// Run the results through all configured result filters. Each</span>
+            <span class="c1">// filter returns an array of (potentially fewer) result objects,</span>
+            <span class="c1">// which is then passed to the next filter, and so on.</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">filters</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">raw</span> <span class="o">=</span> <span class="nx">filters</span><span class="p">[</span><span class="nx">i</span><span class="p">](</span><span class="nx">query</span><span class="p">,</span> <span class="nx">raw</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
+                <span class="nx">results</span> <span class="o">=</span> <span class="nx">filters</span><span class="p">[</span><span class="nx">i</span><span class="p">](</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">raw</span> <span class="o">||</span> <span class="o">!</span><span class="nx">raw</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">results</span> <span class="o">||</span> <span class="o">!</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">textLocator</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">// Sync up the original results with the filtered, &quot;located&quot;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">formatter</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultFormatter&#39;</span><span class="p">);</span>
+                <span class="nx">highlighter</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultHighlighter&#39;</span><span class="p">);</span>
+                <span class="nx">maxResults</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;maxResults&#39;</span><span class="p">);</span>
+
+                <span class="c1">// If maxResults is set and greater than 0, limit the number of</span>
                 <span class="c1">// results.</span>
-                <span class="nx">unformatted</span> <span class="o">=</span> <span class="nx">raw</span><span class="p">;</span>
-                <span class="nx">raw</span> <span class="o">=</span> <span class="p">[];</span>
-
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">unformatted</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">raw</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">textLocatorMap</span><span class="p">[</span><span class="nx">unformatted</span><span class="p">[</span><span class="nx">i</span><span class="p">]]);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">maxResults</span> <span class="o">&amp;&amp;</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
+                        <span class="nx">results</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">maxResults</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">results</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">maxResults</span><span class="p">;</span>
                 <span class="p">}</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">unformatted</span> <span class="o">=</span> <span class="nx">raw</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+
+                <span class="c1">// Run the results through the configured highlighter (if any).</span>
+                <span class="c1">// The highlighter returns an array of highlighted strings (not</span>
+                <span class="c1">// an array of result objects), and these strings are then added</span>
+                <span class="c1">// to each result object.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">highlighter</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">highlighted</span> <span class="o">=</span> <span class="nx">highlighter</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
+
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">highlighted</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">result</span> <span class="o">=</span> <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">highlighted</span> <span class="o">=</span> <span class="nx">highlighted</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">display</span>     <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">highlighted</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="c1">// Run the results through the configured formatter (if any) to</span>
+                <span class="c1">// produce the final formatted results. The formatter returns an</span>
+                <span class="c1">// array of strings or Node instances (not an array of result</span>
+                <span class="c1">// objects), and these strings/Nodes are then added to each</span>
+                <span class="c1">// result object.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">formatter</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">formatted</span> <span class="o">=</span> <span class="nx">formatter</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
+
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">formatted</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">display</span> <span class="o">=</span> <span class="nx">formatted</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
             <span class="p">}</span>
-
-            <span class="c1">// Run the unformatted results through the configured highlighter</span>
-            <span class="c1">// (if any) to produce the first stage of formatted results.</span>
-            <span class="nx">formatted</span> <span class="o">=</span> <span class="nx">highlighter</span> <span class="o">?</span> <span class="nx">highlighter</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">unformatted</span><span class="p">)</span> <span class="o">:</span>
-                    <span class="nx">unformatted</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
-
-            <span class="c1">// Run the highlighted results through the configured formatter (if</span>
-            <span class="c1">// any) to produce the final formatted results.</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">formatter</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">formatted</span> <span class="o">=</span> <span class="nx">formatter</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">raw</span><span class="p">.</span><span class="nx">concat</span><span class="p">(),</span> <span class="nx">formatted</span><span class="p">.</span><span class="nx">concat</span><span class="p">(),</span>
-                        <span class="nx">unformatted</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
-            <span class="p">}</span>
-
-            <span class="c1">// Finally, unroll all the result arrays into a single array of</span>
-            <span class="c1">// result objects.</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">maxResults</span><span class="p">,</span> <span class="nx">formatted</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">:</span>
-                    <span class="nx">formatted</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">display</span><span class="o">:</span> <span class="nx">formatted</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span>
-                    <span class="nx">raw</span>    <span class="o">:</span> <span class="nx">raw</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span>
-                    <span class="nx">text</span>   <span class="o">:</span> <span class="nx">unformatted</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
-                <span class="p">};</span>
-            <span class="p">}</span>
-
-            <span class="nx">facade</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="p">;</span>
         <span class="p">}</span>
 
+        <span class="nx">facade</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVT_RESULTS</span><span class="p">,</span> <span class="nx">facade</span><span class="p">);</span>
     <span class="p">},</span>
 

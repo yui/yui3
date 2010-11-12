@@ -81,6 +81,8 @@
                 <span class="nx">query</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">));</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">caseSensitive</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
             <span class="p">}</span>
@@ -123,7 +125,7 @@
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">(</span><span class="nx">caseSensitive</span> <span class="o">?</span> <span class="nx">result</span> <span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">caseSensitive</span> <span class="o">?</span> <span class="nx">result</span><span class="p">.</span><span class="nx">text</span> <span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="p">},</span>
 
@@ -159,7 +161,7 @@
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">(</span><span class="nx">caseSensitive</span> <span class="o">?</span> <span class="nx">result</span> <span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">caseSensitive</span> <span class="o">?</span> <span class="nx">result</span><span class="p">.</span><span class="nx">text</span> <span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="p">},</span>
 
@@ -196,7 +198,8 @@
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Convert resultWords array to a hash for fast lookup.</span>
-            <span class="kd">var</span> <span class="nx">resultWords</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">WordBreak</span><span class="p">.</span><span class="nx">getUniqueWords</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">options</span><span class="p">));</span>
+            <span class="kd">var</span> <span class="nx">resultWords</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">WordBreak</span><span class="p">.</span><span class="nx">getUniqueWords</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span>
+                                <span class="nx">options</span><span class="p">));</span>
 
             <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">queryWords</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">word</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">YObject</span><span class="p">.</span><span class="nx">owns</span><span class="p">(</span><span class="nx">resultWords</span><span class="p">,</span> <span class="nx">word</span><span class="p">);</span>

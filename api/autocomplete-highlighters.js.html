@@ -80,7 +80,7 @@
                 <span class="nx">query</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">));</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">queryChars</span><span class="p">,</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">queryChars</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">caseSensitive</span><span class="o">:</span> <span class="nx">caseSensitive</span>
             <span class="p">});</span>
         <span class="p">});</span>
@@ -114,7 +114,7 @@
         <span class="c1">// phraseMatchCase(). It&#39;s intentionally undocumented.</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="p">{</span>
                 <span class="nx">caseSensitive</span><span class="o">:</span> <span class="nx">caseSensitive</span>
             <span class="p">});</span>
         <span class="p">});</span>
@@ -148,7 +148,7 @@
         <span class="c1">// startsWithCase(). It&#39;s intentionally undocumented.</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="p">{</span>
                 <span class="nx">caseSensitive</span><span class="o">:</span> <span class="nx">caseSensitive</span><span class="p">,</span>
                 <span class="nx">startsWith</span>   <span class="o">:</span> <span class="kc">true</span>
             <span class="p">});</span>
@@ -183,7 +183,7 @@
         <span class="c1">// wordMatchCase(). It&#39;s intentionally undocumented.</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">words</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">words</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">caseSensitive</span><span class="o">:</span> <span class="nx">caseSensitive</span>
             <span class="p">});</span>
         <span class="p">});</span>

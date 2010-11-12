@@ -62,7 +62,8 @@
         <span class="s1">&#39;&gt;&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;gt;&#39;</span><span class="p">,</span>
         <span class="s1">&#39;&quot;&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;quot;&#39;</span><span class="p">,</span>
         <span class="s2">&quot;&#39;&quot;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x27;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;/&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x2F;&#39;</span>
+        <span class="s1">&#39;/&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x2F;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;`&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x60;&#39;</span>
     <span class="p">},</span>
 
 <span class="nx">Escape</span> <span class="o">=</span> <span class="p">{</span>
@@ -73,13 +74,16 @@
 <span class="cm">     * Returns a copy of the specified string with special HTML characters</span>
 <span class="cm">     * escaped. The following characters will be converted to their</span>
 <span class="cm">     * corresponding character entities:</span>
-<span class="cm">     * &lt;code&gt;&amp;amp; &amp;lt; &amp;gt; &amp;quot; &amp;#x27; &amp;#x2F;&lt;/code&gt;</span>
+<span class="cm">     * &lt;code&gt;&amp;amp; &amp;lt; &amp;gt; &amp;quot; &amp;#x27; &amp;#x2F; &amp;#x60;&lt;/code&gt;</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * This implementation is based on the</span>
 <span class="cm">     * &lt;a href=&quot;http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet&quot;&gt;OWASP</span>
-<span class="cm">     * HTML escaping recommendations&lt;/a&gt;.</span>
+<span class="cm">     * HTML escaping recommendations&lt;/a&gt;. In addition to the characters</span>
+<span class="cm">     * in the OWASP recommendation, we also escape the &lt;code&gt;&amp;#x60;&lt;/code&gt;</span>
+<span class="cm">     * character, since IE interprets it as an attribute delimiter when used in</span>
+<span class="cm">     * innerHTML.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method html</span>
@@ -88,7 +92,7 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">html</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">string</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[&amp;&lt;&gt;&quot;&#39;\/]/g</span><span class="p">,</span> <span class="nx">Escape</span><span class="p">.</span><span class="nx">_htmlReplacer</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">string</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[&amp;&lt;&gt;&quot;&#39;\/`]/g</span><span class="p">,</span> <span class="nx">Escape</span><span class="p">.</span><span class="nx">_htmlReplacer</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
