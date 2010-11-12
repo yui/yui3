@@ -19,8 +19,8 @@
  * @static
  */
 
-var AccentFold = Y.Unicode.AccentFold,
-    WordBreak  = Y.Unicode.WordBreak,
+var AccentFold = Y.Text.AccentFold,
+    WordBreak  = Y.Text.WordBreak,
     YArray     = Y.Array,
     YObject    = Y.Object;
 

@@ -9,7 +9,7 @@
 
 var YArray     = Y.Array,
     YObject    = Y.Object,
-    WordBreak  = Y.Unicode.WordBreak,
+    WordBreak  = Y.Text.WordBreak,
 
 Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     // -- Public Methods -------------------------------------------------------

@@ -10,7 +10,7 @@
  * @static
  */
 
-var AccentFold = Y.Unicode.AccentFold,
+var AccentFold = Y.Text.AccentFold,
     Escape     = Y.Escape,
 
     EMPTY_OBJECT = {},

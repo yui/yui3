@@ -132,6 +132,14 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame(this.inputNode, this.ac.get('inputNode'));
     },
 
+    // 'maxResults should enforce a maximum number of results': function () {
+    //     
+    // },
+    // 
+    // 'maxResults should do nothing if <= 0': function () {
+    //     
+    // },
+
     'requestTemplate should accept a custom template function': function () {
         var fn = function (query) {
             return 'query: ' + query;
