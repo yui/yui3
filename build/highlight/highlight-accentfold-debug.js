@@ -12,7 +12,7 @@ YUI.add('highlight-accentfold', function(Y) {
  * @static
  */
 
-var AccentFold = Y.Unicode.AccentFold,
+var AccentFold = Y.Text.AccentFold,
     Escape     = Y.Escape,
 
     EMPTY_OBJECT = {},
@@ -132,4 +132,4 @@ Highlight = Y.mix(Y.Highlight, {
 });
 
 
-}, '@VERSION@' ,{requires:['highlight-base', 'unicode-accentfold']});
+}, '@VERSION@' ,{requires:['highlight-base', 'text-accentfold']});

@@ -11,7 +11,7 @@ YUI.add('autocomplete-filters', function(Y) {
 
 var YArray     = Y.Array,
     YObject    = Y.Object,
-    WordBreak  = Y.Unicode.WordBreak,
+    WordBreak  = Y.Text.WordBreak,
 
 Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     // -- Public Methods -------------------------------------------------------
@@ -175,4 +175,4 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'text-wordbreak']});

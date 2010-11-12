@@ -21,8 +21,8 @@ YUI.add('autocomplete-filters-accentfold', function(Y) {
  * @static
  */
 
-var AccentFold = Y.Unicode.AccentFold,
-    WordBreak  = Y.Unicode.WordBreak,
+var AccentFold = Y.Text.AccentFold,
+    WordBreak  = Y.Text.WordBreak,
     YArray     = Y.Array,
     YObject    = Y.Object;
 
@@ -107,4 +107,4 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'unicode-accentfold', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'text-accentfold', 'text-wordbreak']});
