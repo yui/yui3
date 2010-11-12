@@ -109,6 +109,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "array-extras", 
                     "base-build", 
+                    "escape", 
                     "event-valuechange", 
                     "node-base"
                 ]
@@ -1129,19 +1130,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
-    "node-tokeninput": {
-        "requires": [
-            "array-extras", 
-            "classnamemanager", 
-            "event-focus", 
-            "event-valuechange", 
-            "node-event-delegate", 
-            "node-pluginhost", 
-            "node-style", 
-            "plugin"
-        ], 
-        "skinnable": true
-    }, 
     "oop": {
         "requires": [
             "yui-base"
@@ -1599,4 +1587,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '2f531a82a518eb3682f9a04bf1eaa329';
+YUI.Env[Y.version].md5 = 'd18c38b2f2d0eedc937fc89f97af8c11';

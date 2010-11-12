@@ -102,6 +102,7 @@
                 "requires": [
                     "array-extras", 
                     "base-build", 
+                    "escape", 
                     "event-valuechange", 
                     "node-base"
                 ]
@@ -1099,19 +1100,6 @@
             "classnamemanager", 
             "plugin", 
             "node-focusmanager"
-        ], 
-        "skinnable": true
-    }, 
-    "node-tokeninput": {
-        "requires": [
-            "array-extras", 
-            "classnamemanager", 
-            "event-focus", 
-            "event-valuechange", 
-            "node-event-delegate", 
-            "node-pluginhost", 
-            "node-style", 
-            "plugin"
         ], 
         "skinnable": true
     }, 
