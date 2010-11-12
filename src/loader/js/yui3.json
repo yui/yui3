@@ -73,15 +73,15 @@
                         "path": "autocomplete/autocomplete-filters-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-wordbreak"
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-filters-accentfold": {
                         "path": "autocomplete/autocomplete-filters-accentfold-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-accentfold", 
-                            "unicode-wordbreak"
+                            "text-accentfold", 
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-highlighters": {
@@ -860,14 +860,14 @@
             "highlight-accentfold": {
                 "requires": [
                     "highlight-base", 
-                    "unicode-accentfold"
+                    "text-accentfold"
                 ]
             }, 
             "highlight-base": {
                 "requires": [
                     "array-extras", 
                     "escape", 
-                    "unicode-wordbreak"
+                    "text-wordbreak"
                 ]
             }
         }
@@ -1372,6 +1372,24 @@
         ], 
         "skinnable": true
     }, 
+    "text": {
+        "submodules": {
+            "text-accentfold": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-accentfold"
+                ]
+            }, 
+            "text-data-accentfold": {}, 
+            "text-data-wordbreak": {}, 
+            "text-wordbreak": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-wordbreak"
+                ]
+            }
+        }
+    }, 
     "transition": {
         "submodules": {
             "transition-native": {
@@ -1383,24 +1401,6 @@
                 "requires": [
                     "transition-native", 
                     "node-style"
-                ]
-            }
-        }
-    }, 
-    "unicode": {
-        "submodules": {
-            "unicode-accentfold": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-accentfold"
-                ]
-            }, 
-            "unicode-data-accentfold": {}, 
-            "unicode-data-wordbreak": {}, 
-            "unicode-wordbreak": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-wordbreak"
                 ]
             }
         }
