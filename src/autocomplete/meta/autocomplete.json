@@ -49,6 +49,7 @@
                 "requires": [
                     "array-extras",
                     "base-build",
+                    "escape",
                     "event-valuechange",
                     "node-base"
                 ]

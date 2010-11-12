@@ -250,21 +250,19 @@ autoComplete.render();
 autoComplete.get('inputNode').focus();
 
 // -- UI functions -------------------------------------------------------------
-function flickrFormatter(query, raw, highlighted) {
-    return Y.Array.map(raw, function (result, i) {
-        var imgUrl = Y.Lang.sub('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result);
-
-        result.linkUrl = Y.Lang.sub('http://www.flickr.com/photos/{owner}/{id}', result);
+function flickrFormatter(query, results) {
+    return Y.Array.map(results, function (result) {
+        var imgUrl = Y.Lang.sub('http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_s.jpg', result.raw);
 
         return '<div class="flickr">' +
                  '<img src="' + imgUrl + '" alt="thumbnail">' +
-                 '<span class="title">' + highlighted[i] + '</span>' +
+                 '<span class="title">' + result.highlighted + '</span>' +
                '</div>';
     });
 }
 
-function twitterFormatter(query, raw, highlighted) {
-    return Y.Array.map(raw, function (result, i) {
+function twitterFormatter(query, results) {
+    return Y.Array.map(results, function (result) {
         return Y.Lang.sub(
             '<div class="twitter" data-tweet-id="{id}">' +
               '<div class="hd">' +
@@ -279,11 +277,11 @@ function twitterFormatter(query, raw, highlighted) {
               '</div>' +
             '</div>'
         , {
-            id    : result.id,
-            imgurl: result.profile_image_url,
-            text  : highlighted[i],
-            time  : result.created_at,
-            user  : result.from_user
+            id    : result.raw.id,
+            imgurl: result.raw.profile_image_url,
+            text  : result.highlighted,
+            time  : result.raw.created_at,
+            user  : result.raw.from_user
         });
     });
 }
