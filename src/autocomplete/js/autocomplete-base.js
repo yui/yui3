@@ -1483,6 +1483,7 @@ AutoCompleteBase.prototype = {
     _afterValueChange: function (e) {
         var delay,
             fire,
+            minQueryLength,
             newVal = e.newVal,
             query,
             that;
@@ -1495,9 +1496,10 @@ AutoCompleteBase.prototype = {
 
         Y.log('valueChange: new: "' + newVal + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
 
-        query = this._parseValue(newVal) || '';
+        minQueryLength = this.get('minQueryLength');
+        query          = this._parseValue(newVal) || '';
 
-        if (query.length >= this.get('minQueryLength')) {
+        if (minQueryLength >= 0 && query.length >= minQueryLength) {
             delay = this.get('queryDelay');
             that  = this;
 
