@@ -1,8 +1,9 @@
 YUI.add('autocomplete-test', function (Y) {
 
-var ArrayAssert = Y.ArrayAssert,
-    Assert      = Y.Assert,
-    YArray      = Y.Array,
+var ArrayAssert  = Y.ArrayAssert,
+    Assert       = Y.Assert,
+    ObjectAssert = Y.ObjectAssert,
+    YArray       = Y.Array,
 
     ACBase,
     Filters      = Y.AutoCompleteFilters,
@@ -24,6 +25,27 @@ ACBase = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
         this._destructorACBase();
     }
 });
+
+// Helper functions.
+function arrayToResults(array) {
+    return YArray.map(array, function (item) {
+        return {
+            display: item,
+            raw    : item,
+            text   : item
+        };
+    });
+}
+
+function resultsToArray(results, key) {
+    if (!key) {
+        key = 'text';
+    }
+
+    return YArray.map(results, function (item) {
+        return item[key];
+    });
+}
 
 // -- Global Suite -------------------------------------------------------------
 suite = new Y.Test.Suite('Y.AutoComplete');
@@ -74,6 +96,13 @@ baseSuite.add(new Y.Test.Case({
         Y.one(Y.config.doc.body).append(this.inputNode);
 
         this.ac = new ACBase({inputNode: this.inputNode});
+
+        // Helper method that synchronously simulates a valueChange event on the
+        // inputNode.
+        this.simulateInput = function (value) {
+            this.inputNode.set('value', value);
+            Y.ValueChange._poll(this.inputNode, Y.stamp(this.inputNode));
+        };
     },
 
     tearDown: function () {
@@ -82,27 +111,6 @@ baseSuite.add(new Y.Test.Case({
 
         delete this.ac;
         delete this.inputNode;
-    },
-
-    '_parseResponse should preserve duplicates in text when using resultTextLocator': function () {
-        var response = {
-                results: [
-                    {"City":"La Habra","State":"CA","County":"Orange","Zip":"90631"},
-                    {"City":"La Habra Heights","State":"CA","County":"Orange","Zip":"90631"},
-                    {"City":"La Habra Hgts","State":"CA","County":"Orange","Zip":"90631"}
-                ]
-            };
-
-        this.ac.set('resultTextLocator', 'Zip');
-
-        this.ac.on('results', function (e) {
-            Assert.areNotEqual(e.results[0].raw.City, e.results[1].raw.City, 
-              "The raw result values should be different.");
-            Assert.areNotEqual(e.results[1].raw.City, e.results[2].raw.City,
-              "The raw result values should be different.");
-        });
-
-        this.ac._parseResponse('90631', response);
     },
 
     'Browser autocomplete should be off by default': function () {
@@ -132,13 +140,91 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame(this.inputNode, this.ac.get('inputNode'));
     },
 
-    // 'maxResults should enforce a maximum number of results': function () {
-    //     
-    // },
-    // 
-    // 'maxResults should do nothing if <= 0': function () {
-    //     
-    // },
+    'maxResults should enforce a maximum number of results': function () {
+        this.ac.once('results', function (e) {
+            Assert.areSame(3, e.results.length);
+        });
+
+        this.ac.set('maxResults', 3);
+        this.ac._parseResponse('foo', {results: ['one', 'two', 'three', 'four']});
+    },
+    
+    'maxResults should do nothing if <= 0': function () {
+        this.ac.on('results', function (e) {
+            Assert.areSame(4, e.results.length);
+        });
+
+        this.ac.set('maxResults', 0);
+        this.ac._parseResponse('foo', {results: ['one', 'two', 'three', 'four']});
+        this.ac.set('maxResults', -5);
+        this.ac._parseResponse('foo', {results: ['one', 'two', 'three', 'four']});
+    },
+
+    'minQueryLength should enforce a minimum query length': function () {
+        var fired = 0;
+
+        this.ac.on('query', function (e) { fired += 1; });
+        this.ac.set('minQueryLength', 3).set('queryDelay', 0);
+
+        this.simulateInput('foo');
+        Assert.areSame(1, fired);
+
+        this.ac.set('minQueryLength', 4);
+        this.simulateInput('bar');
+        Assert.areSame(1, fired);
+    },
+
+    'minQueryLength should allow empty queries if set to 0': function () {
+        var fired = 0;
+
+        this.ac.on('query', function (e) { fired += 1; });
+        this.ac.set('minQueryLength', 0).set('queryDelay', 0);
+
+        this.simulateInput('foo');
+        this.simulateInput('');
+
+        Assert.areSame(2, fired);
+    },
+
+    'minQueryLength should prevent queries if negative': function () {
+        var fired = 0;
+
+        this.ac.on('query', function (e) { fired += 1; });
+        this.ac.set('minQueryLength', -1).set('queryDelay', 0);
+
+        this.simulateInput('foo');
+        this.simulateInput('bar');
+
+        Assert.areSame(0, fired);
+    },
+
+    'queryDelay should delay query events': function () {
+        var fired = 0;
+
+        this.ac.on('query', function (e) {
+            fired += 1;
+            Assert.areSame('bar', e.query);
+        });
+
+        this.ac.set('queryDelay', 30);
+
+        this.simulateInput('foo');
+        this.simulateInput('bar');
+
+        Assert.areSame(0, fired);
+
+        this.wait(function () {
+            Assert.areSame(1, fired);
+        }, 35);
+    },
+
+    '_parseValue should return the rightmost token when using a queryDelimiter': function () {
+        this.ac.set('queryDelimiter', ',');
+        Assert.areSame('bar', this.ac._parseValue('foo, bar'));
+
+        this.ac.set('queryDelimiter', '@@@');
+        Assert.areSame('bar', this.ac._parseValue('foo@@@bar'));
+    },
 
     'requestTemplate should accept a custom template function': function () {
         var fn = function (query) {
@@ -166,7 +252,7 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
-    'resultFilters should accept a filter, array of filters, string, array of strings, or null': function () {
+    'resultFilters should accept a function, array of functions, string, array of strings, or null': function () {
         var filter = function () {};
 
         this.ac.set('resultFilters', filter);
@@ -187,6 +273,164 @@ baseSuite.add(new Y.Test.Case({
         this.ac.set('resultFilters', null);
         this.ac.set('resultFilters', ['foo', 'bar']);
         ArrayAssert.isEmpty(this.ac.get('resultFilters'));
+    },
+
+    'result filters should receive the query and an array of result objects as parameters': function () {
+        var called = 0,
+            filter = function (query, results) {
+                called += 1;
+
+                Assert.areSame('foo', query);
+                Assert.isArray(results);
+
+                ObjectAssert.areEqual({
+                    display: 'foo&amp;bar',
+                    raw    : 'foo&bar',
+                    text   : 'foo&bar'
+                }, results[0]);
+
+                return results;
+            };
+
+        this.ac.set('resultFilters', filter);
+        this.ac._parseResponse('foo', {results: ['foo&bar']});
+
+        Assert.areSame(1, called, 'filter was never called');
+    },
+
+    'resultFormatter should accept a function or null': function () {
+        var formatter = function () {};
+
+        this.ac.set('resultFormatter', formatter);
+        Assert.areSame(formatter, this.ac.get('resultFormatter'));
+
+        this.ac.set('resultFormatter', null);
+        Assert.isNull(this.ac.get('resultFormatter'));
+    },
+
+    'result formatters should receive the query and an array of result objects as parameters': function () {
+        var called = 0,
+            formatter = function (query, results) {
+                called += 1;
+
+                Assert.areSame('foo', query);
+                Assert.isArray(results);
+
+                ObjectAssert.areEqual({
+                    display: 'foo&amp;bar',
+                    raw    : 'foo&bar',
+                    text   : 'foo&bar'
+                }, results[0]);
+
+                return ['|foo|'];
+            };
+
+        this.ac.set('resultFormatter', formatter);
+        this.ac._parseResponse('foo', {results: ['foo&bar']});
+
+        Assert.areSame(1, called, 'formatter was never called');
+        Assert.areSame('|foo|', this.ac.get('results')[0].display);
+    },
+
+    'resultHighlighter should accept a function, string, or null': function () {
+        var highlighter = function () {};
+
+        this.ac.set('resultHighlighter', highlighter);
+        Assert.areSame(highlighter, this.ac.get('resultHighlighter'));
+
+        this.ac.set('resultHighlighter', null);
+        Assert.isNull(this.ac.get('resultHighlighter'));
+
+        this.ac.set('resultHighlighter', 'phraseMatch');
+        Assert.areSame(Y.AutoCompleteHighlighters.phraseMatch, this.ac.get('resultHighlighter'));
+    },
+
+    'result highlighters should receive the query and an array of result objects as parameters': function () {
+        var called = 0,
+            highlighter = function (query, results) {
+                called += 1;
+
+                Assert.areSame('foo', query);
+                Assert.isArray(results);
+
+                ObjectAssert.areEqual({
+                    display: 'foo&amp;bar',
+                    raw    : 'foo&bar',
+                    text   : 'foo&bar'
+                }, results[0]);
+
+                return ['|foo|'];
+            };
+
+        this.ac.set('resultHighlighter', highlighter);
+        this.ac._parseResponse('foo', {results: ['foo&bar']});
+
+        Assert.areSame(1, called, 'highlighter was never called');
+        Assert.areSame('|foo|', this.ac.get('results')[0].highlighted);
+    },
+
+    'resultListLocator should accept a function, string, or null': function () {
+        var locator = function () {};
+
+        this.ac.set('resultListLocator', locator);
+        Assert.areSame(locator, this.ac.get('resultListLocator'));
+
+        this.ac.set('resultListLocator', null);
+        Assert.isNull(this.ac.get('resultListLocator'));
+
+        this.ac.set('resultListLocator', 'foo.bar');
+        Assert.isFunction(this.ac.get('resultListLocator'));
+    },
+
+    'resultListLocator should locate results': function () {
+        this.ac.set('resultListLocator', 'foo.bar');
+        this.ac._parseResponse('foo', {results: {foo: {bar: ['foo']}}});
+
+        Assert.areSame(1, this.ac.get('results').length, 'results array is empty');
+        Assert.areSame('foo', this.ac.get('results')[0].text);
+    },
+
+    'resultTextLocator should locate result text': function () {
+        this.ac.set('resultTextLocator', 'foo.bar');
+        this.ac._parseResponse('foo', {results: [{foo: {bar: 'foo'}}]});
+
+        Assert.areSame(1, this.ac.get('results').length, 'results array is empty');
+        Assert.areSame('foo', this.ac.get('results')[0].text);
+    },
+
+    '_parseResponse should preserve duplicates in text when using resultTextLocator': function () {
+        var response = {
+                results: [
+                    {"City":"La Habra","State":"CA","County":"Orange","Zip":"90631"},
+                    {"City":"La Habra Heights","State":"CA","County":"Orange","Zip":"90631"},
+                    {"City":"La Habra Hgts","State":"CA","County":"Orange","Zip":"90631"}
+                ]
+            };
+
+        this.ac.set('resultTextLocator', 'Zip');
+
+        this.ac.on('results', function (e) {
+            Assert.areNotEqual(e.results[0].raw.City, e.results[1].raw.City, 
+              "The raw result values should be different.");
+            Assert.areNotEqual(e.results[1].raw.City, e.results[2].raw.City,
+              "The raw result values should be different.");
+        });
+
+        this.ac._parseResponse('90631', response);
+    },
+
+    'value attribute should update the inputNode value when set via the API, and should not trigger a query': function () {
+        this.ac.set('queryDelay', 0);
+
+        this.ac.on('query', function () {
+            Assert.fail('query was triggered');
+        });
+
+        this.ac.set('value', 'foo');
+        Assert.areSame('foo', this.inputNode.get('value'));
+
+        this.ac.set('value', 'bar');
+        Assert.areSame('bar', this.inputNode.get('value'));
     },
 
     // -- Generic setters and validators ---------------------------------------
@@ -231,26 +475,6 @@ baseSuite.add(new Y.Test.Case({
 
 // -- Filters Suite ------------------------------------------------------------
 filtersSuite = new Y.Test.Suite('Filters');
-
-function arrayToResults(array) {
-    return YArray.map(array, function (item) {
-        return {
-            display: item,
-            raw    : item,
-            text   : item
-        };
-    });
-}
-
-function resultsToArray(results, key) {
-    if (!key) {
-        key = 'text';
-    }
-
-    return YArray.map(results, function (item) {
-        return item[key];
-    });
-}
 
 // -- Filters: API -------------------------------------------------------------
 filtersSuite.add(new Y.Test.Case({
