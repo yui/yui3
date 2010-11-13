@@ -71,6 +71,15 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.isTrue(WB.isWordBoundary('foo/bar', 2));
     },
 
+    'isWordBoundary() should return false when given an out-of-bounds index': function () {
+        Assert.isFalse(WB.isWordBoundary('', 5));
+        Assert.isFalse(WB.isWordBoundary('', -1));
+    },
+
+    'isWordBoundary() should return true for index 0 of an empty string': function () {
+        Assert.isTrue(WB.isWordBoundary('', 0));
+    },
+
     // -- getWords() -----------------------------------------------------------
     'getWords() should split a string into words': function () {
         // Also tests default exclusion of whitespace.
