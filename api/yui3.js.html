@@ -129,15 +129,15 @@
                         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-min.js&quot;</span><span class="p">,</span> 
                         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                             <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                            <span class="s2">&quot;text-wordbreak&quot;</span>
                         <span class="p">]</span>
                     <span class="p">},</span> 
                     <span class="s2">&quot;autocomplete-filters-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
                         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-accentfold-min.js&quot;</span><span class="p">,</span> 
                         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                             <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-accentfold&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                            <span class="s2">&quot;text-accentfold&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;text-wordbreak&quot;</span>
                         <span class="p">]</span>
                     <span class="p">},</span> 
                     <span class="s2">&quot;autocomplete-highlighters&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -931,14 +931,14 @@
             <span class="s2">&quot;highlight-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;highlight-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-accentfold&quot;</span>
+                    <span class="s2">&quot;text-accentfold&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;highlight-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;escape&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                    <span class="s2">&quot;text-wordbreak&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1448,6 +1448,24 @@
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;text-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;text-data-accentfold&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;text-data-accentfold&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;text-data-wordbreak&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;text-wordbreak&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;text-data-wordbreak&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;transition&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;transition-native&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1459,24 +1477,6 @@
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;transition-native&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-style&quot;</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">},</span> 
-    <span class="s2">&quot;unicode&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;unicode-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-data-accentfold&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;unicode-data-accentfold&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;unicode-data-wordbreak&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;unicode-wordbreak&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-data-wordbreak&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1636,7 +1636,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;d18c38b2f2d0eedc937fc89f97af8c11&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;49afa7ee5f5e4485e24b810d0f378d41&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -1709,8 +1709,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

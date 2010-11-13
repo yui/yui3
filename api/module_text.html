@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: unicode  Unicode.Data.AccentFold   (YUI Library)</title>
+	<title>API: text   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>unicode&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <h3>text&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_unicode.html" title="unicode">unicode</a>
-                 &gt; Unicode.Data.AccentFold 
+            &gt; <a href="./module_text.html" title="text">text</a>
+                
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -43,23 +43,59 @@
                 </fieldset>
             </form>
 
-                    <h2>
-                        
-
-                        <code>static</code>
-                        
-                            Class <b property="yui:name">Unicode.Data.AccentFold</b>
-                        <span class="extends">
-                        </span>
-
-                    </h2>
-                    <!-- class tree goes here -->
+                   
+                    <h3>Module: text
                     
-                
-  
 
-                    <div class="summary description" property="yui:description">
-                        <p>
+
+                    </h3>
+                    <div class="description summary">
+                        Text utilities.
+                    </div>
+
+
+
+                <div class="yui-gc">
+                    <div class="yui-u first">
+
+                            <p>This module contains the following classes:</p>
+                            <script>
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nProvides a basic Unicode accent folding implementation that converts common\naccented letters (like \"á\") to their non-accented forms (like \"a\").\n</p>\n<p>\nThis implementation is not comprehensive, and should only be used as a last\nresort when accent folding can't be done on the server. A comprehensive\naccent folding implementation would require much more character data to be\nsent to the browser, resulting in a significant performance penalty. This\nimplementation strives for a compromise between usefulness and performance.\n</p>\n<p>\nAccent folding is a destructive operation that can't be reversed, and may\nchange or destroy the actual meaning of the text depending on the language.\nIt should not be used on strings that will later be displayed to a user,\nunless this is done with the understanding that linguistic meaning may be\nlost and that you may in fact confuse or insult the user by doing so.\n</p>", "guessedname": "Text.AccentFold", "name": "Text.AccentFold"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nAn imperfect, incomplete reverse mapping of ASCII characters to\ncase-insensitive regexes that match their most common accented forms.\n</p>\n<p>\nThe goal of this module is to provide a pragmatic and generally useful set of\naccent folding data, since serving and performing lookups on a complete\ndataset would be impractical in client-side JavaScript.\n</p>\n<p>\nWhenever possible, accent folding should be done on the server, where it's\npossible to use tools that are both more complete and more performant. It\nshould only be done on the client as an absolute last resort.\n</p>", "guessedname": "Text.Data.AccentFold", "name": "Text.Data.AccentFold"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nUnicode character data used by the word breaking algorithm.\n</p>\n<p>\nWhenever possible, word breaking should be done on the server, where it's\npossible to use tools that are both more complete and more performant. It\nshould only be done on the client as an absolute last resort.\n</p>", "guessedname": "Text.Data.WordBreak", "name": "Text.Data.WordBreak"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Provides utility methods for splitting strings on word breaks and determining\nwhether a character index represents a word boundary, using the generic word\nbreaking algorithm defined in the Unicode Text Segmentation guidelines\n(<a href=\"http://unicode.org/reports/tr29/#Word_Boundaries\">Unicode Standard\nAnnex #29</a>).", "guessedname": "Text.WordBreak", "name": "Text.WordBreak"}];
+                            </script>
+                            <div id="splash_classList">
+                                <ul>
+                                    <li><a href="Text.AccentFold.html" title="Text.AccentFold" id="class_0">Text.AccentFold</a></li>
+                                    <li><a href="Text.Data.AccentFold.html" title="Text.Data.AccentFold" id="class_1">Text.Data.AccentFold</a></li>
+                                    <li><a href="Text.Data.WordBreak.html" title="Text.Data.WordBreak" id="class_2">Text.Data.WordBreak</a></li>
+                                    <li><a href="Text.WordBreak.html" title="Text.WordBreak" id="class_3">Text.WordBreak</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="yui-u">
+                                    <div class="submodules">
+                                        <h4>Submodules:</h4> 
+                                        <dl>
+                                            <dt><code>text-accentfold</code></dt>
+                                            <dd><p>
+Provides a basic Unicode accent folding implementation that converts common
+accented letters (like "á") to their non-accented forms (like "a").
+</p>
+<p>
+This implementation is not comprehensive, and should only be used as a last
+resort when accent folding can't be done on the server. A comprehensive
+accent folding implementation would require much more character data to be
+sent to the browser, resulting in a significant performance penalty. This
+implementation strives for a compromise between usefulness and performance.
+</p>
+<p>
+Accent folding is a destructive operation that can't be reversed, and may
+change or destroy the actual meaning of the text depending on the language.
+It should not be used on strings that will later be displayed to a user,
+unless this is done with the understanding that linguistic meaning may be
+lost and that you may in fact confuse or insult the user by doing so.
+</p></dd>
+                                            <dt><code>text-data-accentfold</code></dt>
+                                            <dd><p>
 An imperfect, incomplete reverse mapping of ASCII characters to
 case-insensitive regexes that match their most common accented forms.
 </p>
@@ -72,26 +108,27 @@ dataset would be impractical in client-side JavaScript.
 Whenever possible, accent folding should be done on the server, where it's
 possible to use tools that are both more complete and more performant. It
 should only be done on the client as an absolute last resort.
+</p></dd>
+                                            <dt><code>text-data-wordbreak</code></dt>
+                                            <dd><p>
+Unicode character data used by the word breaking algorithm.
 </p>
-                    </div>
+<p>
+Whenever possible, word breaking should be done on the server, where it's
+possible to use tools that are both more complete and more performant. It
+should only be done on the client as an absolute last resort.
+</p></dd>
+                                            <dt><code>text-wordbreak</code></dt>
+                                            <dd>Provides utility methods for splitting strings on word breaks and determining
+whether a character index represents a word boundary, using the generic word
+breaking algorithm defined in the Unicode Text Segmentation guidelines
+(<a href="http://unicode.org/reports/tr29/#Word_Boundaries">Unicode Standard
+Annex #29</a>).</dd>
+                                        </dl>
+                                    </div>
 
-                    
-                    <div rel="yui:properties" resource="#properties">
-
-                    </div>
-
-                    <div rel="yui:methods" resource="#methods">
-
-                    </div>
-
-                    <div rel="yui:events" resource="#events">
-
-
-                    </div>
-
-                    <div rel="yui:attributes" resource="#configattributes">
-
-                    </div>
+                        </div>
+                </div>
 
 			</div>
 		</div>
@@ -162,8 +199,8 @@ should only be done on the client as an absolute last resort.
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class="selected"><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class="selected"><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
@@ -183,20 +220,20 @@ should only be done on the client as an absolute last resort.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Unicode.AccentFold.html" title="Unicode.AccentFold">Unicode.AccentFold</a></li>
-                                <li class="selected"><a href="Unicode.Data.AccentFold.html" title="Unicode.Data.AccentFold">Unicode.Data.AccentFold</a></li>
-                                <li class=""><a href="Unicode.Data.WordBreak.html" title="Unicode.Data.WordBreak">Unicode.Data.WordBreak</a></li>
-                                <li class=""><a href="Unicode.WordBreak.html" title="Unicode.WordBreak">Unicode.WordBreak</a></li>
+                                <li class=""><a href="Text.AccentFold.html" title="Text.AccentFold">Text.AccentFold</a></li>
+                                <li class=""><a href="Text.Data.AccentFold.html" title="Text.Data.AccentFold">Text.Data.AccentFold</a></li>
+                                <li class=""><a href="Text.Data.WordBreak.html" title="Text.Data.WordBreak">Text.Data.WordBreak</a></li>
+                                <li class=""><a href="Text.WordBreak.html" title="Text.WordBreak">Text.WordBreak</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="unicode-accentfold.js.html" title="unicode-accentfold.js">unicode-accentfold.js</a></li>
-                                <li class=""><a href="unicode-data-accentfold.js.html" title="unicode-data-accentfold.js">unicode-data-accentfold.js</a></li>
-                                <li class=""><a href="unicode-data-wordbreak.js.html" title="unicode-data-wordbreak.js">unicode-data-wordbreak.js</a></li>
-                                <li class=""><a href="unicode-wordbreak.js.html" title="unicode-wordbreak.js">unicode-wordbreak.js</a></li>
+                                <li class=""><a href="text-accentfold.js.html" title="text-accentfold.js">text-accentfold.js</a></li>
+                                <li class=""><a href="text-data-accentfold.js.html" title="text-data-accentfold.js">text-data-accentfold.js</a></li>
+                                <li class=""><a href="text-data-wordbreak.js.html" title="text-data-wordbreak.js">text-data-wordbreak.js</a></li>
+                                <li class=""><a href="text-wordbreak.js.html" title="text-wordbreak.js">text-wordbreak.js</a></li>
                         </ul>
                     </div>
 
@@ -214,7 +251,7 @@ should only be done on the client as an absolute last resort.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Unicode.AccentFold", "name": "canFold", "url": "Unicode.AccentFold.html#method_canFold", "type": "method"}, {"access": "", "host": "Unicode.AccentFold", "name": "compare", "url": "Unicode.AccentFold.html#method_compare", "type": "method"}, {"access": "", "host": "Unicode.AccentFold", "name": "filter", "url": "Unicode.AccentFold.html#method_filter", "type": "method"}, {"access": "", "host": "Unicode.AccentFold", "name": "fold", "url": "Unicode.AccentFold.html#method_fold", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Text.AccentFold", "name": "canFold", "url": "Text.AccentFold.html#method_canFold", "type": "method"}, {"access": "protected", "host": "Text.WordBreak", "name": "_classify", "url": "Text.WordBreak.html#method__classify", "type": "method"}, {"access": "", "host": "Text.AccentFold", "name": "compare", "url": "Text.AccentFold.html#method_compare", "type": "method"}, {"access": "", "host": "Text.AccentFold", "name": "filter", "url": "Text.AccentFold.html#method_filter", "type": "method"}, {"access": "", "host": "Text.AccentFold", "name": "fold", "url": "Text.AccentFold.html#method_fold", "type": "method"}, {"access": "", "host": "Text.WordBreak", "name": "getUniqueWords", "url": "Text.WordBreak.html#method_getUniqueWords", "type": "method"}, {"access": "", "host": "Text.WordBreak", "name": "getWords", "url": "Text.WordBreak.html#method_getWords", "type": "method"}, {"access": "protected", "host": "Text.WordBreak", "name": "_isWordBoundary", "url": "Text.WordBreak.html#method__isWordBoundary", "type": "method"}, {"access": "", "host": "Text.WordBreak", "name": "isWordBoundary", "url": "Text.WordBreak.html#method_isWordBoundary", "type": "method"}];
 </script>
 </body>
 </html>
