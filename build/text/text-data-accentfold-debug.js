@@ -1,6 +1,14 @@
 YUI.add('text-data-accentfold', function(Y) {
 
 /**
+ * An imperfect, incomplete reverse mapping of ASCII characters to
+ * case-insensitive regexes that match their most common accented forms.
+ *
+ * @module text
+ * @submodule text-data-accentfold
+ */
+
+/**
  * <p>
  * An imperfect, incomplete reverse mapping of ASCII characters to
  * case-insensitive regexes that match their most common accented forms.
@@ -18,8 +26,6 @@ YUI.add('text-data-accentfold', function(Y) {
  * should only be done on the client as an absolute last resort.
  * </p>
  *
- * @module text
- * @submodule text-data-accentfold
  * @class Text.Data.AccentFold
  * @static
  */
