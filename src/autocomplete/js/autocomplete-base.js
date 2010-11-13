@@ -1175,7 +1175,12 @@ AutoCompleteBase.prototype = {
             for (i = 0, len = filters.length; i < len; ++i) {
                 results = filters[i](query, results.concat());
 
-                if (!results || !results.length) {
+                if (!results) {
+                    Y.log("Filter didn't return anything.", 'warn', 'autocomplete-base');
+                    return;
+                }
+
+                if (!results.length) {
                     break;
                 }
             }
@@ -1199,6 +1204,11 @@ AutoCompleteBase.prototype = {
                 if (highlighter) {
                     highlighted = highlighter(query, results.concat());
 
+                    if (!highlighted) {
+                        Y.log("Highlighter didn't return anything.", 'warn', 'autocomplete-base');
+                        return;
+                    }
+
                     for (i = 0, len = highlighted.length; i < len; ++i) {
                         result = results[i];
                         result.highlighted = highlighted[i];
@@ -1213,6 +1223,11 @@ AutoCompleteBase.prototype = {
                 // result object.
                 if (formatter) {
                     formatted = formatter(query, results.concat());
+
+                    if (!formatted) {
+                        Y.log("Formatter didn't return anything.", 'warn', 'autocomplete-base');
+                        return;
+                    }
 
                     for (i = 0, len = formatted.length; i < len; ++i) {
                         results[i].display = formatted[i];
