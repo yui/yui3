@@ -1,12 +1,29 @@
 /**
  * Provides utility methods for splitting strings on word breaks and determining
+ * whether a character index represents a word boundary.
+ *
+ * @module text
+ * @submodule text-wordbreak
+ */
+
+/**
+ * <p>
+ * Provides utility methods for splitting strings on word breaks and determining
  * whether a character index represents a word boundary, using the generic word
  * breaking algorithm defined in the Unicode Text Segmentation guidelines
  * (<a href="http://unicode.org/reports/tr29/#Word_Boundaries">Unicode Standard
  * Annex #29</a>).
+ * </p>
  *
- * @module text
- * @submodule text-wordbreak
+ * <p>
+ * This algorithm provides a reasonable default for many languages. However, it
+ * does not cover language or context specific requirements, and it does not
+ * provide meaningful results at all for languages that don't use spaces between
+ * words, such as Chinese, Japanese, Thai, Lao, Khmer, and others. Server-based
+ * word breaking services usually provide significantly better results with
+ * better performance.
+ * </p>
+ *
  * @class Text.WordBreak
  * @static
  */

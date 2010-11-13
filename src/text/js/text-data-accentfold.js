@@ -1,4 +1,12 @@
 /**
+ * An imperfect, incomplete reverse mapping of ASCII characters to
+ * case-insensitive regexes that match their most common accented forms.
+ *
+ * @module text
+ * @submodule text-data-accentfold
+ */
+
+/**
  * <p>
  * An imperfect, incomplete reverse mapping of ASCII characters to
  * case-insensitive regexes that match their most common accented forms.
@@ -16,8 +24,6 @@
  * should only be done on the client as an absolute last resort.
  * </p>
  *
- * @module text
- * @submodule text-data-accentfold
  * @class Text.Data.AccentFold
  * @static
  */

@@ -6,6 +6,14 @@
  */
 
 /**
+ * Provides a basic Unicode accent folding implementation that converts common
+ * accented letters (like "á") to their non-accented forms (like "a").
+ *
+ * @module text
+ * @submodule text-accentfold
+ */
+
+/**
  * <p>
  * Provides a basic Unicode accent folding implementation that converts common
  * accented letters (like "á") to their non-accented forms (like "a").
@@ -27,8 +35,6 @@
  * lost and that you may in fact confuse or insult the user by doing so.
  * </p>
  *
- * @module text
- * @submodule text-accentfold
  * @class Text.AccentFold
  * @static
  */

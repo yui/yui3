@@ -1,4 +1,11 @@
 /**
+ * Unicode character data used by the word breaking algorithm.
+ *
+ * @module text
+ * @submodule text-data-wordbreak
+ */
+
+/**
  * <p>
  * Unicode character data used by the word breaking algorithm.
  * </p>
@@ -9,8 +16,6 @@
  * should only be done on the client as an absolute last resort.
  * </p>
  *
- * @module text
- * @submodule text-data-wordbreak
  * @class Text.Data.WordBreak
  * @static
  */
