@@ -1,82 +1,123 @@
-var Lang = Y.Lang;
-
+/**
+ * The Columnset class defines and manages a collection of Columns.
+ *
+ * @class Columnset
+ * @extends Base
+ * @constructor
+ */
 function Columnset(config) {
     Columnset.superclass.constructor.apply(this, arguments);
 }
 
-/**
- * Class name.
- *
- * @property NAME
- * @type String
- * @static
- * @final
- * @value "columnset"
- */
-Columnset.NAME = "columnset";
-
 /////////////////////////////////////////////////////////////////////////////
 //
-// Columnset Attributes
+// STATIC PROPERTIES
 //
 /////////////////////////////////////////////////////////////////////////////
-Columnset.ATTRS = {
-    columns: {
-        setter: "_setColumns"
-    },
+Y.mix(Columnset, {
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "columnset"
+     */
+    NAME: "columnset",
 
-    // DOM tree representation of all Columns
-    tree: {
-        readOnly: true,
-        value: []
-    },
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTES
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    ATTRS: {
+        definitions: {
+            setter: "_setDefinitions"
+        },
 
-    //TODO: is this necessary?
-    // Flat representation of all Columns
-    flat: {
-        readOnly: true,
-        value: []
-    },
+        // DOM tree representation of all Columns
+        tree: {
+            readOnly: true,
+            value: []
+        },
 
-    // Hash of all Columns by ID
-    hash: {
-        readOnly: true,
-        value: {}
-    },
+        //TODO: is this necessary?
+        // Flat representation of all Columns
+        flat: {
+            readOnly: true,
+            value: []
+        },
 
-    // Flat representation of only Columns that are meant to display data
-    keys: {
-        readOnly: true,
-        value: []
+        // Hash of all Columns by ID
+        hash: {
+            readOnly: true,
+            value: {}
+        },
+
+        // Flat representation of only Columns that are meant to display data
+        keys: {
+            readOnly: true,
+            value: []
+        }
     }
-};
+});
 
-/* Columnset extends Base */
+/////////////////////////////////////////////////////////////////////////////
+//
+// PROTOTYPE
+//
+/////////////////////////////////////////////////////////////////////////////
 Y.extend(Columnset, Y.Base, {
-    _setColumns: function(columns) {
-            return Y.clone(columns);
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTE HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * @method _setDefinitions
+    * @description Clones definitions before setting.
+    * @param definitions {Array} Array of column definitions.
+    * @returns Array
+    * @private
+    */
+    _setDefinitions: function(definitions) {
+            return Y.clone(definitions);
     },
 
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // METHODS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Initializer. Generates all internal representations of the collection of
+    * Columns.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
     initializer: function() {
 
-            // DOM tree representation of all Columns
-            var tree = [],
-            // Flat representation of all Columns
-            flat = [],
-            // Hash of all Columns by ID
-            hash = {},
-            // Flat representation of only Columns that are meant to display data
-            keys = [],
-            // Original definitions
-            columns = this.get("columns"),
+        // DOM tree representation of all Columns
+        var tree = [],
+        // Flat representation of all Columns
+        flat = [],
+        // Hash of all Columns by ID
+        hash = {},
+        // Flat representation of only Columns that are meant to display data
+        keys = [],
+        // Original definitions
+        definitions = this.get("definitions"),
 
-            self = this;
+        self = this;
 
         // Internal recursive function to define Column instances
-        function parseColumns(depth, nodeList, parent) {
+        function parseColumns(depth, currentDefinitions, parent) {
             var i=0,
-                len = nodeList.length,
-                currentNode,
+                len = currentDefinitions.length,
+                currentDefinition,
                 column,
                 currentChildren;
 
@@ -90,15 +131,15 @@ Y.extend(Columnset, Y.Base, {
 
             // Parse each node at this depth for attributes and any children
             for(; i<len; ++i) {
-                currentNode = nodeList[i];
+                currentDefinition = currentDefinitions[i];
 
-                currentNode = Lang.isString(currentNode) ? {key:currentNode} : currentNode;
+                currentDefinition = YLang.isString(currentDefinition) ? {key:currentDefinition} : currentDefinition;
 
                 // Instantiate a new Column for each node
-                column = new Y.Column(currentNode);
+                column = new Y.Column(currentDefinition);
 
                 // Cross-reference Column ID back to the original object literal definition
-                currentNode.yuiColumnId = column.get("id");
+                currentDefinition.yuiColumnId = column.get("id");
 
                 // Add the new Column to the flat list
                 flat.push(column);
@@ -112,11 +153,11 @@ Y.extend(Columnset, Y.Base, {
                 }
 
                 // The Column has descendants
-                if(Lang.isArray(currentNode.children)) {
-                    currentChildren = currentNode.children;
+                if(YLang.isArray(currentDefinition.children)) {
+                    currentChildren = currentDefinition.children;
                     column._set("children", currentChildren);
 
-                    self._setColSpans(column, currentNode);
+                    self._setColSpans(column, currentDefinition);
 
                     self._cascadePropertiesToChildren(column, currentChildren);
 
@@ -129,7 +170,7 @@ Y.extend(Columnset, Y.Base, {
                 // This Column does not have any children
                 else {
                     column._set("keyIndex", keys.length);
-                    column._set("colspan", 1);
+                    column._set("colSpan", 1);
                     keys.push(column);
                 }
 
@@ -140,7 +181,7 @@ Y.extend(Columnset, Y.Base, {
         }
 
         // Parse out Column instances from the array of object literals
-        parseColumns(-1, columns);
+        parseColumns(-1, definitions);
 
 
         // Save to the Columnset instance
@@ -153,10 +194,28 @@ Y.extend(Columnset, Y.Base, {
         this._setHeaders();
     },
 
+    /**
+    * Destructor.
+    *
+    * @method destructor
+    * @private
+    */
     destructor: function() {
     },
 
-    _cascadePropertiesToChildren: function(oColumn, currentChildren) {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // COLUMN HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Cascade certain properties to children if not defined on their own.
+    *
+    * @method _cascadePropertiesToChildren
+    * @private
+    */
+    _cascadePropertiesToChildren: function(column, currentChildren) {
+        //TODO: this is all a giant todo
         var i = 0,
             len = currentChildren.length,
             child;
@@ -164,37 +223,44 @@ Y.extend(Columnset, Y.Base, {
         // Cascade certain properties to children if not defined on their own
         for(; i<len; ++i) {
             child = currentChildren[i];
-            if(oColumn.get("className") && (child.className === undefined)) {
-                child.className = oColumn.get("className");
+            if(column.get("className") && (child.className === undefined)) {
+                child.className = column.get("className");
             }
-            if(oColumn.get("editor") && (child.editor === undefined)) {
-                child.editor = oColumn.get("editor");
+            if(column.get("editor") && (child.editor === undefined)) {
+                child.editor = column.get("editor");
             }
-            if(oColumn.get("formatter") && (child.formatter === undefined)) {
-                child.formatter = oColumn.get("formatter");
+            if(column.get("formatter") && (child.formatter === undefined)) {
+                child.formatter = column.get("formatter");
             }
-            if(oColumn.get("resizeable") && (child.resizeable === undefined)) {
-                child.resizeable = oColumn.get("resizeable");
+            if(column.get("resizeable") && (child.resizeable === undefined)) {
+                child.resizeable = column.get("resizeable");
             }
-            if(oColumn.get("sortable") && (child.sortable === undefined)) {
-                child.sortable = oColumn.get("sortable");
+            if(column.get("sortable") && (child.sortable === undefined)) {
+                child.sortable = column.get("sortable");
             }
-            if(oColumn.get("hidden")) {
+            if(column.get("hidden")) {
                 child.hidden = true;
             }
-            if(oColumn.get("width") && (child.width === undefined)) {
-                child.width = oColumn.get("width");
+            if(column.get("width") && (child.width === undefined)) {
+                child.width = column.get("width");
             }
-            if(oColumn.get("minWidth") && (child.minWidth === undefined)) {
-                child.minWidth = oColumn.get("minWidth");
+            if(column.get("minWidth") && (child.minWidth === undefined)) {
+                child.minWidth = column.get("minWidth");
             }
-            if(oColumn.get("maxAutoWidth") && (child.maxAutoWidth === undefined)) {
-                child.maxAutoWidth = oColumn.get("maxAutoWidth");
+            if(column.get("maxAutoWidth") && (child.maxAutoWidth === undefined)) {
+                child.maxAutoWidth = column.get("maxAutoWidth");
             }
         }
     },
 
-    _setColSpans: function(oColumn, currentNode) {
+    /**
+    * @method _setColSpans
+    * @description Calculates and sets colSpan attribute on given Column.
+    * @param column {Array} Column instance.
+    * @param definition {Object} Column definition.
+    * @private
+    */
+    _setColSpans: function(column, definition) {
         // Determine COLSPAN value for this Column
         var terminalChildNodes = 0;
 
@@ -206,7 +272,7 @@ Y.extend(Columnset, Y.Base, {
             // Drill down each branch and count terminal nodes
             for(; i<len; ++i) {
                 // Keep drilling down
-                if(Lang.isArray(descendants[i].children)) {
+                if(YLang.isArray(descendants[i].children)) {
                     countTerminalChildNodes(descendants[i]);
                 }
                 // Reached branch terminus
@@ -215,13 +281,18 @@ Y.extend(Columnset, Y.Base, {
                 }
             }
         }
-        countTerminalChildNodes(currentNode);
-        oColumn._set("colspan", terminalChildNodes);
+        countTerminalChildNodes(definition);
+        column._set("colSpan", terminalChildNodes);
     },
 
+    /**
+    * @method _setRowSpans
+    * @description Calculates and sets rowSpan attribute on all Columns.
+    * @private
+    */
     _setRowSpans: function() {
-        // Determine ROWSPAN value for each Column in the dom tree
-        function parseDomTreeForRowspan(tree) {
+        // Determine ROWSPAN value for each Column in the DOM tree
+        function parseDomTreeForRowSpan(tree) {
             var maxRowDepth = 1,
                 currentRow,
                 currentColumn,
@@ -238,13 +309,13 @@ Y.extend(Columnset, Y.Base, {
                 for(; i<len; ++i) {
                     col = row[i];
                     // Column has children, so keep counting
-                    if(Lang.isArray(col.children)) {
+                    if(YLang.isArray(col.children)) {
                         tmpRowDepth++;
                         countMaxRowDepth(col.children, tmpRowDepth);
                         tmpRowDepth--;
                     }
                     // Column has children, so keep counting
-                    else if(col.get && Lang.isArray(col.get("children"))) {
+                    else if(col.get && YLang.isArray(col.get("children"))) {
                         tmpRowDepth++;
                         countMaxRowDepth(col.get("children"), tmpRowDepth);
                         tmpRowDepth--;
@@ -266,11 +337,11 @@ Y.extend(Columnset, Y.Base, {
                 // Assign the right ROWSPAN values to each Column in the row
                 for(p=0; p<currentRow.length; p++) {
                     currentColumn = currentRow[p];
-                    if(!Lang.isArray(currentColumn.get("children"))) {
-                        currentColumn._set("rowspan", maxRowDepth);
+                    if(!YLang.isArray(currentColumn.get("children"))) {
+                        currentColumn._set("rowSpan", maxRowDepth);
                     }
                     else {
-                        currentColumn._set("rowspan", 1);
+                        currentColumn._set("rowSpan", 1);
                     }
                 }
 
@@ -278,19 +349,24 @@ Y.extend(Columnset, Y.Base, {
                 maxRowDepth = 1;
             }
         }
-        parseDomTreeForRowspan(this.get("tree"));
+        parseDomTreeForRowSpan(this.get("tree"));
     },
 
+    /**
+    * @method _setHeaders
+    * @description Calculates and sets headers attribute on all Columns.
+    * @private
+    */
     _setHeaders: function() {
         var headers, column,
             allKeys = this.get("keys"),
             i=0, len = allKeys.length;
 
-        function recurseAncestorsForHeaders(headers, oColumn) {
-            headers.push(oColumn.get("key"));
-            //headers[i].push(oColumn.getSanitizedKey());
-            if(oColumn.get("parent")) {
-                recurseAncestorsForHeaders(headers, oColumn.get("parent"));
+        function recurseAncestorsForHeaders(headers, column) {
+            headers.push(column.get("key"));
+            //headers[i].push(column.getSanitizedKey());
+            if(column.get("parent")) {
+                recurseAncestorsForHeaders(headers, column.get("parent"));
             }
         }
         for(; i<len; ++i) {

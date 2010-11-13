@@ -9,7 +9,7 @@ var stateChangeListener,
     EVENT_NAME   = 'onreadystatechange',
     pollInterval = config.pollInterval || 40;
 
-if (!GLOBAL_ENV._ieready) {
+if (docElement.doScroll && !GLOBAL_ENV._ieready) {
     GLOBAL_ENV._ieready = function() {
         GLOBAL_ENV._ready();
     };
@@ -21,11 +21,11 @@ if (!GLOBAL_ENV._ieready) {
     if (self !== self.top) {
         stateChangeListener = function() {
             if (doc.readyState == 'complete') {
-                GLOBAL_ENV.Env.remove(doc, EVENT_NAME, stateChangeListener);
+                GLOBAL_ENV.remove(doc, EVENT_NAME, stateChangeListener);
                 GLOBAL_ENV.ieready();
             }
         };
-        GLOBAL_ENV.Env.add(doc, EVENT_NAME, stateChangeListener);
+        GLOBAL_ENV.add(doc, EVENT_NAME, stateChangeListener);
     } else {
         GLOBAL_ENV._dri = setInterval(function() {
             try {

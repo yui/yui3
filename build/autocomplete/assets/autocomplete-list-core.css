@@ -8,6 +8,7 @@
 }
 
 .yui3-aclist-list {
+    list-style: none;
     margin: 0;
     overflow: hidden;
     padding: 0;

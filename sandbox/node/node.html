@@ -21,17 +21,10 @@
 
 
 YUI({filter:'raw'}).use('node', function(Y) {
-    var node = Y.Node.create('<div></div>'),
-        node2 = Y.Node.create('<input></input>'),
-        node2parent;
+    var node = Y.Node.create('<div><p>foo<span><strong><em>bar</em></strong></span></p></div>'),
+        nodes = node.all('*');
 
-    node2parent = node2.get('parentNode');
-        
-
-    //alert(null instanceof Y.Node);
-    //alert(node2parent === null);
-
-    //alert(node.compareTo(node2parent));
+    Y.log(nodes.item(nodes.size() - 1));
 });
 
 
@@ -39,4 +32,3 @@ YUI({filter:'raw'}).use('node', function(Y) {
 </script>
 </body>
 </html>
-

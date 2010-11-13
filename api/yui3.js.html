@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -129,15 +129,15 @@
                         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-min.js&quot;</span><span class="p">,</span> 
                         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                             <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                            <span class="s2">&quot;text-wordbreak&quot;</span>
                         <span class="p">]</span>
                     <span class="p">},</span> 
                     <span class="s2">&quot;autocomplete-filters-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
                         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-accentfold-min.js&quot;</span><span class="p">,</span> 
                         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                             <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-accentfold&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                            <span class="s2">&quot;text-accentfold&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;text-wordbreak&quot;</span>
                         <span class="p">]</span>
                     <span class="p">},</span> 
                     <span class="s2">&quot;autocomplete-highlighters&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -158,11 +158,48 @@
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;escape&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;event-valuechange&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;autocomplete-list&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;lang&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;en&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;autocomplete-list-keys&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Only add keyboard support to autocomplete-list if this doesn&#39;t appear to</span>
+    <span class="c1">// be an iOS or Android-based mobile device.</span>
+    <span class="c1">//</span>
+    <span class="c1">// There&#39;s currently no feasible way to actually detect whether a device has</span>
+    <span class="c1">// a hardware keyboard, so this sniff will have to do. It can easily be</span>
+    <span class="c1">// overridden by manually loading the autocomplete-list-keys module.</span>
+    <span class="c1">//</span>
+    <span class="c1">// Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari</span>
+    <span class="c1">// doesn&#39;t fire the keyboard events used by AutoCompleteList, so there&#39;s</span>
+    <span class="c1">// no point loading the -keys module even when a bluetooth keyboard may be</span>
+    <span class="c1">// available.</span>
+    <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ios</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">android</span><span class="p">);</span>
+<span class="p">},</span> 
+                            <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete-list&quot;</span>
+                        <span class="p">},</span> 
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-list-keys-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;autocomplete-list&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;base-build&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span> 
+                    <span class="s2">&quot;autocomplete-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-plugin-min.js&quot;</span><span class="p">,</span> 
+                        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;autocomplete-list&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;node-pluginhost&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;autocomplete-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
@@ -177,6 +214,9 @@
     <span class="s2">&quot;base&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;base-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;attribute-complex&quot;</span>
+                <span class="p">],</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;attribute-base&quot;</span>
                 <span class="p">]</span>
@@ -432,16 +472,26 @@
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;datatable-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;recordset&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;widget&quot;</span>
+                    <span class="s2">&quot;recordset-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;intl&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-mouseenter&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">},</span> 
+            <span class="s2">&quot;datatable-scroll&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datatable-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;stylesheet&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;datatable-sort&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;arraysort&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;datatable-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;plugin&quot;</span>
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;recordset-sort&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -636,8 +686,23 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;dial&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;dd-drag&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-mouseenter&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;transition&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;dom&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;dom-deprecated&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;dom-style-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
                     <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;dom-style&quot;</span><span class="p">,</span> 
@@ -708,13 +773,17 @@
                     <span class="s2">&quot;frame&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;exec-command&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;selection&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;editor-para&quot;</span>
+                    <span class="s2">&quot;selection&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;editor-bidi&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;editor-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;editor-br&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;editor-lists&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -724,7 +793,7 @@
             <span class="p">},</span> 
             <span class="s2">&quot;editor-para&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;editor-base&quot;</span>
+                    <span class="s2">&quot;node&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;exec-command&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -862,14 +931,14 @@
             <span class="s2">&quot;highlight-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;highlight-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-accentfold&quot;</span>
+                    <span class="s2">&quot;text-accentfold&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;highlight-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;escape&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                    <span class="s2">&quot;text-wordbreak&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1013,10 +1082,21 @@
                     <span class="s2">&quot;node-pluginhost&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
+            <span class="s2">&quot;node-deprecated&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;node-event-simulate&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;event-simulate&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;node-load&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;io-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;shim-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1121,9 +1201,18 @@
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;pluginhost&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;yui-base&quot;</span>
-        <span class="p">]</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;pluginhost-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;pluginhost-config&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;pluginhost-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;profiler&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -1196,6 +1285,34 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;resize&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;resize-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;oop&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-drag&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-delegate&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-drop&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;resize-constrain&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;resize-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;resize-proxy&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;resize-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;scrollview&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;scrollview-base&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1206,6 +1323,15 @@
                     <span class="s2">&quot;transition&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;scrollview-base-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;scrollview-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;scrollview-base&quot;</span>
+                <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;scrollview-paginator&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;scrollview/scrollview-paginator-min.js&quot;</span><span class="p">,</span> 
@@ -1322,6 +1448,24 @@
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;text-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;text-data-accentfold&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;text-data-accentfold&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;text-data-wordbreak&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;text-wordbreak&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;text-data-wordbreak&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;transition&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;transition-native&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1337,24 +1481,6 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
-    <span class="s2">&quot;unicode&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;unicode-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-data-accentfold&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;unicode-data-accentfold&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;unicode-data-wordbreak&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;unicode-wordbreak&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-data-wordbreak&quot;</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">},</span> 
     <span class="s2">&quot;uploader&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;event-custom&quot;</span><span class="p">,</span> 
@@ -1365,6 +1491,15 @@
     <span class="p">},</span> 
     <span class="s2">&quot;widget&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;widget-base-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;widget-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
             <span class="s2">&quot;widget-child&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
@@ -1419,13 +1554,23 @@
                     <span class="s2">&quot;base-pluginhost&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;classnamemanager&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;widget-htmlparser&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;widget-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-skin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-uievents&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-event-delegate&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1491,7 +1636,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;3f7a3b8632850fc4ebd6150bbec3ed3b&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;49afa7ee5f5e4485e24b810d0f378d41&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -1507,6 +1652,7 @@
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
@@ -1521,12 +1667,14 @@
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -1543,9 +1691,11 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
@@ -1559,6 +1709,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>

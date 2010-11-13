@@ -41,7 +41,7 @@
             <div id="div-1-2" class="div-x">
                 <em>Item Two</em>
                 <div id="div-1-2-1" class="div-b">
-                    <em>Item Two - One</em>
+                    <em id="em-1-2-1-1">Item Two - One</em>
                     <div id="div-1-2-1-1" class="div-c"><em>Item Two - Two</em></div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
         <div id="a">
             <p>Div A</p>
             <div id="b" class="remove">
-                <p>Div B</p>
+                <p>Div B <em id="b2" class="remove">I'm a span!</em></p>
                 <div id="c" class="remove">
                     <p>Div C</p>
                 </div>
@@ -391,10 +391,11 @@
 
 					Y.Event.simulate(Y.one('#div-1-2-1-1 em')._node, 'click');
 
-                    Y.Assert.areSame(3, ids.length, "Delegate handler should have fired three times, once for each div in #div-1");
-                    Y.Assert.areSame('div-1-2', ids[0], "First delegate callback should be from the highest div in the subtree");
+                    Y.Assert.areSame(4, ids.length, "Delegate handler should have fired three times, once for each div in #div-1");
+                    Y.Assert.areSame('div-1-2-1-1', ids[0], "First delegate callback should be from the deepest div in the subtree");
                     Y.Assert.areSame('div-1-2-1', ids[1]);
-                    Y.Assert.areSame('div-1-2-1-1', ids[2]);
+                    Y.Assert.areSame('div-1-2', ids[2]);
+                    Y.Assert.areSame('div-1', ids[3]);
                 },
 
                 test_removing_parent_in_subscriber: function () {
@@ -405,7 +406,7 @@
                         count++;
                     }, '.remove');
 
-                    click('c');
+                    click('b2');
 
                     Y.Assert.areSame(2, count);
                 },
@@ -534,7 +535,93 @@
 					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
 					Y.Assert.isTrue(bHandler2Called, "The second delegated listener should be called.");
 					
-				}
+				},
+
+                testPassingObjectForMultipleSubscriptions: function () {
+                    var clickOk = false,
+                        mousedownOk = false;
+
+                    function clicked() {
+                        clickOk = true;
+                    }
+                    function mousedowned() {
+                        mousedownOk = true;
+                    }
+
+                    Y.one('#div-1').delegate({
+                        click: clicked,
+                        mousedown: mousedowned
+                    }, 'em');
+
+                    Y.Event.simulate(document.getElementById('em-1-2-1-1'), 'mousedown');
+                    click('em-1-2-1-1');
+
+                    Y.Assert.isTrue(clickOk);
+                    Y.Assert.isTrue(mousedownOk);
+                },
+
+                testThisObjOverrideWithObjectSubscription: function () {
+                    var thisObj;
+
+                    Y.one('#div-1').delegate({
+                        click: function () {
+                            thisObj = this;
+                        }
+                    }, 'em', { foo: true });
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.isObject(thisObj);
+                    Y.Assert.isTrue(thisObj.foo);
+                },
+
+                testPassingExtraArgsWithObjectSubscription: function () {
+                    var arg;
+
+                    Y.one('#div-1').delegate({
+                        click: function (e, extraArg) {
+                            arg = extraArg;
+                        }
+                    }, 'em', null, "extra arg");
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame("extra arg", arg);
+                },
+
+                testDetachingObjectSubscriptionViaHandle: function () {
+                    var count = 0,
+                        handle;
+
+                    handle = Y.one('#div-1').delegate({
+                        click: function (e, extraArg) {
+                            count++;
+                        }
+                    }, 'em');
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    handle.detach();
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame(1, count);
+                },
+
+                testPassingArrayForMultipleSubscriptions: function () {
+                    var count = 0;
+
+                    Y.one('#div-1').delegate(['click', 'mousedown'], function () {
+                        count++;
+                    }, 'em');
+
+                    Y.Event.simulate(document.getElementById('em-1-2-1-1'), 'mousedown');
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame(2, count);
+                }
 				
 				
 				/* 

@@ -169,7 +169,7 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', 'node-event-simulate', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-deprecated', 'anim', 'console', 'test', 'node-event-simulate', 'node-load', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
@@ -1256,6 +1256,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             inner.ancestor('td');
         },
 
+        test_ancestors: function() {
+            var node = document.createElement('node'),
+                nodelist;
+
+            node.className = 'foo';
+            document.body.appendChild(node);
+            nodelist = Y.one(node).ancestors();
+            ArrayAssert.itemsAreEqual([document.documentElement, document.body], nodelist._nodes);
+
+            nodelist = Y.one(node).ancestors('.foo', true);
+            ArrayAssert.itemsAreEqual([node], nodelist._nodes);
+
+            nodelist = Y.one(node).ancestors('body', true);
+            ArrayAssert.itemsAreEqual([document.body], nodelist._nodes);
+
+            document.body.removeChild(node);
+        },
+
         test_nodelistEvent: function() {
             var nodelist = Y.all('div'),
                 item = nodelist.item(0),
@@ -1388,8 +1406,291 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             // This will throw in IE, but the focus() wrapper should catch the
             // exception.
             Y.one(button).focus();
-        }
+        },
 
+        'should hide the node': function() {
+            var node = Y.one('body');
+            node.hide();
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node': function() {
+            var node = Y.one('body');
+            node.setStyle('display', 'none');
+            node.show(1);
+            Assert.areEqual('block', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should set text for textNode': function() {
+            var node = Y.one(document.createElement('text'));
+            node.set('text', 'foo');
+            Assert.areEqual('foo', node.get('text'));
+        },
+
+        'should append to the given node': function() {
+            var node = Y.Node.create('<div/>');
+            node.appendTo(Y.one('body'));
+        },
+
+        'should append to the given DOM node': function() {
+            var node = Y.Node.create('<div/>');
+            node.appendTo(document.body);
+        },
+
+        'should wrap the node with the given html': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap('<div/>');
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should remove the node from its parent': function() {
+            var node = Y.Node.create('<div/>').append('<span><em>foo</em></span>').one('em');
+            node.unwrap();
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should return true for fragment': function() {
+            var node = Y.Node.create('<span>foo</span><em>bar</em>');
+            Assert.isTrue(node.isFragment());
+        },
+
+        'should create a caption element': function() {
+            var node = Y.Node.create('<table/>');
+            node.createCaption();
+            Assert.areEqual('CAPTION', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>'));
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given dom node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>')._node);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace('<em>bar</em>');
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html and return the replaced node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node = node.replaceChild('<em>bar</em>', node.one('span'));
+            Assert.areEqual('SPAN', node.get('tagName'));
+        },
+
+        'should append the given html and return the new node': function() {
+            var node = Y.Node.create('<div></div>').appendChild('<em>foo</em>');
+            Assert.areEqual('EM', node.get('tagName'));
+        },
+
+        'should append the given nodelist': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div/>');
+
+            node.append(nodelist);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should append the given nodelist and return a NodeList instance': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div/>'),
+                nodelist2 = node.appendChild(nodelist);
+
+            Assert.areEqual('EM', nodelist.item(0).get('tagName'));
+            Assert.areEqual('STRONG', nodelist.item(nodelist.size() - 1).get('tagName'));
+        },
+
+        'should insert the given html and return the new node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>'),
+                newNode = node.insertBefore('<em>bar</em>', node.one('*'));
+
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should insert the given nodelist before the given node and return the nodelist': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                nodelist2 = node.insertBefore(nodelist, node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual(4, childNodes.size());
+            Assert.areEqual('EM', childNodes.item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('SPAN', childNodes.item(0).get('tagName'));
+        },
+
+        'should insert the node before the given node and return the new node': function() {
+            var node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                node2 = node.insertBefore(Y.Node.create('<em>foo</em>'), node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual('EM', childNodes.item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('EM', node2.get('tagName'));
+        },
+
+        'should insert the given node before the given dom node and return the new node': function() {
+            var node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                node2 = node.insertBefore(document.createElement('em'), node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual('EM', node.get('childNodes').item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('EM', node2.get('tagName'));
+        },
+
+        'should fire the handler once': function() {
+            var i = 0,
+                test = this,
+                node = Y.all('body');
+
+            node.once('click', function() {
+                i++;
+                Assert.areEqual(1, i);
+            });
+
+            node.item(0).simulate('click');
+            node.item(0).simulate('click');
+        },
+
+        'should pop the nodelist': function() {
+            var nodes = Y.all('div'),
+                node = nodes.pop();
+            
+            Assert.areEqual(Y.all('div').item(Y.all('div').size() - 1), node);
+            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
+        },
+
+        'should shift the nodelist': function() {
+            var nodes = Y.all('div'),
+                node = nodes.shift();
+            
+            Assert.areEqual(Y.one('div'), node);
+            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
+        },
+
+        'should push the node on nodelist': function() {
+            var nodes = Y.all('div'),
+                node = Y.one(document.createElement('div'));
+            
+            Assert.areEqual(nodes.size() + 1, nodes.push(node));
+            Assert.areEqual(nodes.item(nodes.size() - 1), node);
+            Assert.areEqual(node._node, nodes._nodes[nodes.size() - 1]);
+        },
+
+        'should unshift the node on nodelist': function() {
+            var nodes = Y.all('div'),
+                size = nodes.size(),
+                node = Y.one(document.createElement('div'));
+            
+            nodes.unshift(node);
+            Assert.areEqual(size + 1, nodes.size());
+            Assert.areEqual(nodes.item(0), node);
+            Assert.areEqual(node._node, nodes._nodes[0]);
+        },
+
+        'should unshift the dom node on nodelist': function() {
+            var nodes = Y.all('div'),
+                size = nodes.size(),
+                node = document.createElement('div');
+            
+            nodes.unshift(node);
+            Assert.areEqual(size + 1, nodes.size());
+            Assert.areEqual(nodes.item(0), Y.one(node));
+            Assert.areEqual(node, nodes._nodes[0]);
+        },
+
+        'should concat the nodelists': function() {
+            var nodelist1 = Y.all('div'),
+                nodelist2 = Y.all('li'),
+                nodelist3 = nodelist1.concat(nodelist2);
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(nodelist2._nodes), nodelist3._nodes);
+        },
+
+        'should concat the nodes': function() {
+            var nodelist1 = Y.all('div');
+                nodelist2 = nodelist1.concat(Y.one('ul'), Y.one('li'));
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(Y.one('ul')._node, Y.one('li')._node), nodelist2._nodes);
+        },
+
+        'should slice the nodes': function() {
+            var nodelist1 = Y.all('div');
+                nodelist2 = nodelist1.slice(1, 4);
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(1, 4), nodelist2._nodes);
+        },
+
+        'should splice the nodes': function() {
+            var nodelist1 = Y.all('div'),
+                nodes = Y.all('div')._nodes,
+                spliced1 = nodes.splice(1, 2),
+                spliced2 = nodelist1.splice(1, 2)._nodes;
+
+            ArrayAssert.itemsAreEqual(nodes, nodelist1._nodes);
+            ArrayAssert.itemsAreEqual(spliced1, spliced2);
+        },
+
+        'should empty the node': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>');
+            node.empty();
+            Assert.areEqual(0, node.get('childNodes').size());
+        },
+
+        'should empty the nodelist': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><span>strong>bar</strong></span></div>');
+            node.all('span').empty();
+            Assert.areEqual(0, node.get('childNodes').item(0).get('childNodes').size());
+            Assert.areEqual(0, node.get('childNodes').item(1).get('childNodes').size());
+        },
+
+        'should load the content from the given url into the node': function() {
+            var node = Y.Node.create('<div></div>'),
+                test = this;
+            node.set('id', 'test-loading');
+            node.appendTo('body');
+            node.load('test-frame.html', function(code, response) {
+                test.resume(function() {
+                    Assert.areEqual(1, node.all('div').size());
+                    node.remove();
+                });
+            });
+            test.wait(1000);
+        },
+
+        'should load the query result from the given url into the node': function() {
+            var node = Y.Node.create('<div></div>'),
+                test = this;
+            node.set('id', 'test-loading');
+            node.appendTo('body');
+            node.load('test-frame.html', 'ul', function(code, response) {
+                test.resume(function() {
+                    Assert.areEqual(1, node.all('ul').size());
+                    node.remove();
+                });
+            });
+            test.wait(1000);
+        },
+
+        'should call method with node context': function() {
+           Y.Node.addMethod('testThis', function() {
+                return this.get('id');
+            });
+
+            var node1 = Y.Node.create('<div id="foo"/>');
+            var node2 = Y.Node.create('<div id="bar"/>');
+            Assert.areEqual('foo', node1.testThis());
+            Assert.areEqual('bar', node2.testThis());
+        }
     })); 
 
     Y.Test.Runner.add(suite);

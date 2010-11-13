@@ -49,6 +49,7 @@ YUI.add('createlink-base', function(Y) {
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);
 
             if (url) {
+                url = escape(url);
                 Y.log('Adding link: ' + url, 'info', 'createLinkBase');
 
                 this.get('host')._execCommand(cmd, url);
@@ -59,6 +60,13 @@ YUI.add('createlink-base', function(Y) {
                     a = out.item(0).one('a');
                     if (a) {
                         out.item(0).replace(a);
+                    }
+                    if (Y.UA.gecko) {
+                        if (a.get('parentNode').test('span')) {
+                            if (a.get('parentNode').one('br.yui-cursor')) {
+                                a.get('parentNode').insert(a, 'before');
+                            }
+                        }
                     }
                 } else {
                     //No selection, insert a new node..

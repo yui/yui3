@@ -190,8 +190,10 @@ YUI.add('dd-constrain', function(Y) {
 	    initializer: function() {
 			this._createEvents();
 
+	        this.get(HOST).on('drag:end', Y.bind(this._handleEnd, this));
 	        this.get(HOST).on('drag:start', Y.bind(this._handleStart, this));
 	        this.get(HOST).after('drag:align', Y.bind(this.align, this));
+	        this.get(HOST).after('drag:drag', Y.bind(this.drag, this));
 	    },
 	    /**
 	    * @private
@@ -216,6 +218,15 @@ YUI.add('dd-constrain', function(Y) {
 	            });
 	        }, this);
 		},
+		/**
+	    * @private
+	    * @method _handleEnd
+	    * @description Fires on drag:end
+	    */
+	    _handleEnd: function() {
+			this._lastTickYFired = null;
+			this._lastTickXFired = null;
+	    },
 	    /**
 	    * @private
 	    * @method _handleStart
@@ -376,9 +387,16 @@ YUI.add('dd-constrain', function(Y) {
 	        _xy = this._checkTicks(_xy, r);
 
 	        host.actXY = _xy;
-
-			var xt = this.get('tickX'),
-				yt = this.get('tickY');
+	    },
+	    /**
+	    * @method drag
+	    * @description Fires after drag:drag. Handle the tickX and tickX align events.
+	    */
+		drag: function(event) {
+			var host = this.get(HOST),
+				xt = this.get('tickX'),
+				yt = this.get('tickY'),
+				_xy = [host.actXY[0], host.actXY[1]];
 
 			if ((Y.Lang.isNumber(xt) || this.get(TICK_X_ARRAY)) && (this._lastTickXFired !== _xy[0])) {
 				this._tickAlignX();
@@ -389,7 +407,7 @@ YUI.add('dd-constrain', function(Y) {
 				this._tickAlignY();
 				this._lastTickYFired = _xy[1];
 			}
-	    },
+		},
 	    /**
 	    * @private
 	    * @method _checkTicks
@@ -519,4 +537,4 @@ YUI.add('dd-constrain', function(Y) {
 	    }
 	});
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+});

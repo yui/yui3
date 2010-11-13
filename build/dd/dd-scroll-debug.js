@@ -395,7 +395,6 @@ YUI.add('dd-scroll', function(Y) {
                         Y.error('DDNodeScroll: Invalid Node Given: ' + node);
                     }
                 } else {
-                    n = n.item(0);
                     this.set(PARENT_SCROLL, n);
                 }
                 return n;
@@ -424,4 +423,4 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false, optional:['dd-proxy']});

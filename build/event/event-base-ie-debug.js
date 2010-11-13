@@ -9,7 +9,7 @@ var stateChangeListener,
     EVENT_NAME   = 'onreadystatechange',
     pollInterval = config.pollInterval || 40;
 
-if (!GLOBAL_ENV._ieready) {
+if (docElement.doScroll && !GLOBAL_ENV._ieready) {
     GLOBAL_ENV._ieready = function() {
         GLOBAL_ENV._ready();
     };
@@ -21,11 +21,11 @@ if (!GLOBAL_ENV._ieready) {
     if (self !== self.top) {
         stateChangeListener = function() {
             if (doc.readyState == 'complete') {
-                GLOBAL_ENV.Env.remove(doc, EVENT_NAME, stateChangeListener);
+                GLOBAL_ENV.remove(doc, EVENT_NAME, stateChangeListener);
                 GLOBAL_ENV.ieready();
             }
         };
-        GLOBAL_ENV.Env.add(doc, EVENT_NAME, stateChangeListener);
+        GLOBAL_ENV.add(doc, EVENT_NAME, stateChangeListener);
     } else {
         GLOBAL_ENV._dri = setInterval(function() {
             try {
@@ -88,6 +88,28 @@ Y.extend(IEEventFacade, Y.DOM2EventFacade, {
 
         this.relatedTarget = resolve(t);
 
+        // which should contain the unicode key code if this is a key event
+        // if (e.charCode) {
+        //     this.which = e.charCode;
+        // }
+
+        // for click events, which is normalized for which mouse button was
+        // clicked.
+        if (e.button) {
+            switch (e.button) {
+                case 2:
+                    this.which = 3;
+                    break;
+                case 4:
+                    this.which = 2;
+                    break;
+                default:
+                    this.which = e.button;
+            }
+
+            this.button = this.which;
+        }
+
     },
 
     stopPropagation: function() {
@@ -111,7 +133,9 @@ Y.extend(IEEventFacade, Y.DOM2EventFacade, {
 
 });
 
-Y.DOMEventFacade = IEEventFacade;
+if (Y.UA.ie) {
+    Y.DOMEventFacade = IEEventFacade;
+}
 
 
 }, '@VERSION@' );

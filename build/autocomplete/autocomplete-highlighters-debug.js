@@ -33,7 +33,7 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
                 query.toLowerCase()).split(''));
 
         return YArray.map(results, function (result) {
-            return Highlight.all(result, queryChars, {
+            return Highlight.all(result.text, queryChars, {
                 caseSensitive: caseSensitive
             });
         });
@@ -67,7 +67,7 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
         // phraseMatchCase(). It's intentionally undocumented.
 
         return YArray.map(results, function (result) {
-            return Highlight.all(result, [query], {
+            return Highlight.all(result.text, [query], {
                 caseSensitive: caseSensitive
             });
         });
@@ -101,7 +101,7 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
         // startsWithCase(). It's intentionally undocumented.
 
         return YArray.map(results, function (result) {
-            return Highlight.all(result, [query], {
+            return Highlight.all(result.text, [query], {
                 caseSensitive: caseSensitive,
                 startsWith   : true
             });
@@ -136,7 +136,7 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
         // wordMatchCase(). It's intentionally undocumented.
 
         return YArray.map(results, function (result) {
-            return Highlight.words(result, query, {
+            return Highlight.words(result.text, query, {
                 caseSensitive: caseSensitive
             });
         });

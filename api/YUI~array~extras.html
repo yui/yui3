@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>collection&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>collection&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_collection.html" title="collection">collection</a>
                  &gt; YUI~array~extras 
@@ -168,16 +168,15 @@ from the supplied function.</dd>
                                                     
                                                 
                                                         , 
-                                                         Optional
+                                                         o
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Executes the supplied function on each item in the array.
-Returns a new array containing the items that the supplied
-function returned true for.
+                                            Executes the supplied function on each item in the array. Returns a new array
+containing the items for which the supplied function returned a truthy value.
                                         </div>
 
                                         <div class="description">
@@ -188,19 +187,19 @@ function returned true for.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the array to iterate.</span>
+                                                        <span property="yui:description"> Array to filter.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the function to execute on each item.</span>
+                                                        <span property="yui:description"> Function to execute on each item.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">Optional</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> o context object.</span>
+                                                        <span property="yui:description"> Optional context object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -209,9 +208,8 @@ function returned true for.
                                                     <code property="yui:return">
                                                             Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The items on which the supplied function
-returned true. If no items matched an empty array is
-returned.</dd>
+                                                    <dd property="yui:returnInfo">Array of items for which the supplied function returned a
+truthy value (empty if it never returned a truthy value).</dd>
                                                 </dl>
 
 
@@ -402,7 +400,7 @@ If no items match, an empty array is returned.</dd>
                                         
                                          static 
                                         
-                                        int
+                                        Number
                                             <strong property="yui:name">Array.lastIndexOf</strong>
                                            (
                                                 
@@ -414,13 +412,16 @@ If no items match, an empty array is returned.</dd>
                                                          val
                                                     
                                                 
+                                                        , 
+                                                         fromIndex
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the index of the last item in the array
-that contains the specified value, -1 if the
-value isn't found.
+                                            Returns the index of the last item in the array that contains the specified
+value, or -1 if the value isn't found.
                                         </div>
 
                                         <div class="description">
@@ -431,22 +432,32 @@ value isn't found.
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the array to search.</span>
+                                                        <span property="yui:description"> Array to search in.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">val</span>
                                                         &lt;<span property="yui:type">any</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the value to search for.</span>
+                                                        <span property="yui:description"> Value to search for.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fromIndex</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (optional) Index at which to start searching
+backwards. Defaults to the array's length - 1. If negative, it will be
+taken as an offset from the end of the array. If the calculated index is
+less than 0, the array will not be searched and -1 will be returned.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                            int
+                                                            Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the index of hte item that contains the value or -1.</dd>
+                                                    <dd property="yui:returnInfo">Index of the item that contains the value, or -1 if not
+found.</dd>
                                                 </dl>
 
 
@@ -785,15 +796,11 @@ returned false.</dd>
                                                          a
                                                     
                                                 
-                                                        , 
-                                                         sort
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns a copy of the array with the duplicate entries removed
+                                            Returns a copy of the specified array with duplicate items removed.
                                         </div>
 
                                         <div class="description">
@@ -804,14 +811,7 @@ returned false.</dd>
                                                         <code><span property="yui:name">a</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> the array to find the subset of uniques for.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">sort</span>
-                                                        &lt;<span property="yui:type">bool</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> flag to denote if the array is sorted or not.
-Defaults to false, the more general operation.</span>
+                                                        <span property="yui:description"> Array to dedupe.</span>
                                                         </dd>
                                                 </dl>
 
@@ -820,7 +820,7 @@ Defaults to false, the more general operation.</span>
                                                     <code property="yui:return">
                                                             Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">a copy of the array with duplicate entries removed.</dd>
+                                                    <dd property="yui:returnInfo">Copy of the array with duplicate items removed.</dd>
                                                 </dl>
 
 
@@ -922,6 +922,7 @@ having the corresponding index.</dd>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
@@ -936,12 +937,14 @@ having the corresponding index.</dd>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -958,9 +961,11 @@ having the corresponding index.</dd>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
@@ -974,6 +979,7 @@ having the corresponding index.</dd>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>

@@ -2,13 +2,27 @@ Widget is the foundation class from which all YUI 3 widgets are derived.
 
 It provides the following pieces of core functionality:
 
-* The render lifecycle method, in addition to the init and destroy 
+- The render lifecycle method, in addition to the init and destroy 
   lifecycle methods provided by Base
-* Abstract rendering methods to support a consistent MVC structure across
+- Abstract rendering methods to support a consistent MVC structure across
   widgets
-* A common set of base widget attributes
-* Consistent class-name generation support
-* Plugin support
+- A common set of base widget attributes
+- Consistent class-name generation support
+- Plugin support
+
+3.3.0
+
+* HTML_PARSER now return null instead of an empty node list, if no nodes
+  are found, when using the [selector] syntax, so that the default value
+  will be applied for the attribute.
+
+* UI_EVENTS support and skin util methods (only getSkinName currently) 
+  broken out of widget-base into separate submodules, widget-uievents and 
+  widget-skin. 
+  
+* widget-base-ie broken out as conditional module.
+
+* Fixed widget-locale support. Needed lazyAdd:false, for strings attribute
 
 3.2.0
 

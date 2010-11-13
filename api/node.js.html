@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>node&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>node&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_node.html" title="node">node</a>
                 
@@ -108,13 +108,16 @@
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_initPlugins</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// when augmented with Plugin.Host</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_initPlugins</span><span class="p">();</span>
         <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">SHOW_TRANSITION</span> <span class="o">=</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">SHOW_TRANSITION</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">HIDE_TRANSITION</span> <span class="o">=</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">HIDE_TRANSITION</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="c1">// used with previous/next/ancestor tests</span>
     <span class="nx">_wrapFn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">fn</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">fn</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span>
             <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
             <span class="p">}</span> <span class="o">:</span>
@@ -138,6 +141,9 @@
 <span class="cm"> * The pattern used to identify ARIA attributes</span>
 <span class="cm"> */</span>
 <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">re_aria</span> <span class="o">=</span> <span class="sr">/^(?:role$|aria-)/</span><span class="p">;</span>
+
+<span class="nx">Y_Node</span><span class="p">.</span><span class="nx">SHOW_TRANSITION</span> <span class="o">=</span> <span class="s1">&#39;fadeIn&#39;</span><span class="p">;</span>
+<span class="nx">Y_Node</span><span class="p">.</span><span class="nx">HIDE_TRANSITION</span> <span class="o">=</span> <span class="s1">&#39;fadeOut&#39;</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * List of events that route to DOM events</span>
@@ -232,8 +238,8 @@
 <span class="cm"> * @return {Y.Node | Y.NodeList | any} Depends on what is returned from the DOM node.</span>
 <span class="cm"> */</span>
 <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">scrubVal</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only truthy values are risky</span>
-         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// safari nodeList === function</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only truthy values are risky</span>
+         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">val</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// safari nodeList === function</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">NODE_TYPE</span> <span class="k">in</span> <span class="nx">val</span> <span class="o">||</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">isWindow</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span><span class="c1">// node || window</span>
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">((</span><span class="nx">val</span><span class="p">.</span><span class="nx">item</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">val</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">)</span> <span class="o">||</span> <span class="c1">// dom collection or Node instance</span>
@@ -241,7 +247,7 @@
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span> <span class="c1">// for chaining</span>
     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span> <span class="c1">// IE: DOM null not the same as null</span>
@@ -262,10 +268,10 @@
 <span class="cm"> * @return {any} Depends on what is returned from the DOM node.</span>
 <span class="cm"> */</span>
 <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">addMethod</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="nx">fn</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">fn</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="nx">fn</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">fn</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">_slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">),</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
                 <span class="nx">ret</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">Y_Node</span><span class="p">))</span> <span class="p">{</span>
@@ -275,15 +281,15 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">Y_Node</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">_node</span><span class="p">;</span>
             <span class="p">}</span>
-            <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">);</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">);</span>
 
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// scrub truthy</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">scrubVal</span><span class="p">(</span><span class="nx">ret</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">scrubVal</span><span class="p">(</span><span class="nx">ret</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
             <span class="p">}</span>
 
-            <span class="p">(</span><span class="k">typeof</span> <span class="nx">ret</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="p">);</span>
+            <span class="p">(</span><span class="k">typeof</span> <span class="nx">ret</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="p">};</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -302,7 +308,7 @@
 <span class="cm"> * @param {Object} context An optional context to call the method with</span>
 <span class="cm"> */</span>
 <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">importMethod</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">host</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">altName</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">altName</span> <span class="o">=</span> <span class="nx">altName</span> <span class="o">||</span> <span class="nx">name</span><span class="p">;</span>
         <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">addMethod</span><span class="p">(</span><span class="nx">altName</span><span class="p">,</span> <span class="nx">host</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">host</span><span class="p">);</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -328,7 +334,7 @@
         <span class="nx">uid</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">node</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">node</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;doc&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// doc OR document</span>
                 <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// win OR window</span>
@@ -353,20 +359,6 @@
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="nx">instance</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * Returns a single Node instance bound to the node or the</span>
-<span class="cm"> * first element matching the given selector.</span>
-<span class="cm"> * @method Y.get</span>
-<span class="cm"> * @deprecated Use Y.one</span>
-<span class="cm"> * @static</span>
-<span class="cm"> * @param {String | HTMLElement} node a node or Selector</span>
-<span class="cm"> * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc.</span>
-<span class="cm"> */</span>
-<span class="nx">Y_Node</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Y.get is deprecated, use Y.one&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">one</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y_Node</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="cm">/**</span>
@@ -446,24 +438,6 @@
             <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">setValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">},</span>
-
-
-    <span class="cm">/*</span>
-<span class="cm">     * Flat data store for off-DOM usage</span>
-<span class="cm">     * @config data</span>
-<span class="cm">     * @type any</span>
-<span class="cm">     * @deprecated Use getData/setData</span>
-<span class="cm">     */</span>
-    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dataVal</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_dataVal</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
-            <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
@@ -485,7 +459,7 @@
         <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">DOT</span><span class="p">);</span>
         <span class="c1">// only allow when defined on node</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">setValue</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// pass thru DOM properties</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">node</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// pass thru DOM properties</span>
         <span class="nx">node</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -506,7 +480,7 @@
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">indexOf</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">DOT</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">name</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">DOT</span><span class="p">));</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// pass thru from DOM</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">node</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// pass thru from DOM</span>
         <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
     <span class="p">}</span>
 
@@ -724,6 +698,18 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">_wrapFn</span><span class="p">(</span><span class="nx">fn</span><span class="p">),</span> <span class="nx">testSelf</span><span class="p">));</span>
     <span class="p">},</span>
 
+   <span class="cm">/**</span>
+<span class="cm">     * Returns the ancestors that pass the test applied by supplied boolean method.</span>
+<span class="cm">     * @method ancestors</span>
+<span class="cm">     * @param {String | Function} fn A selector string or boolean method for testing elements.</span>
+<span class="cm">     * @param {Boolean} testSelf optional Whether or not to include the element in the scan</span>
+<span class="cm">     * If a function is used, it receives the current node being tested as the only argument.</span>
+<span class="cm">     * @return {NodeList} A NodeList instance containing the matching elements </span>
+<span class="cm">     */</span>
+    <span class="nx">ancestors</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">testSelf</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">ancestors</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">_wrapFn</span><span class="p">(</span><span class="nx">fn</span><span class="p">),</span> <span class="nx">testSelf</span><span class="p">));</span>
+    <span class="p">},</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Returns the previous matching sibling.</span>
 <span class="cm">     * Returns the nearest element node sibling if no method provided.</span>
@@ -772,18 +758,6 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Retrieves a Node instance of nodes based on the given CSS selector.</span>
-<span class="cm">     * @method query</span>
-<span class="cm">     * @deprecated Use one()</span>
-<span class="cm">     * @param {string} selector The CSS selector to test against.</span>
-<span class="cm">     * @return {Node} A Node instance for the matching HTMLElement.</span>
-<span class="cm">     */</span>
-    <span class="nx">query</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">selector</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;query() is deprecated, use one()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">selector</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
 <span class="cm">     * Retrieves a nodeList based on the given CSS selector.</span>
 <span class="cm">     * @method all</span>
 <span class="cm">     *</span>
@@ -795,18 +769,6 @@
         <span class="nx">nodelist</span><span class="p">.</span><span class="nx">_query</span> <span class="o">=</span> <span class="nx">selector</span><span class="p">;</span>
         <span class="nx">nodelist</span><span class="p">.</span><span class="nx">_queryRoot</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">nodelist</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Retrieves a nodeList based on the given CSS selector.</span>
-<span class="cm">     * @method queryAll</span>
-<span class="cm">     * @deprecated Use all()</span>
-<span class="cm">     * @param {string} selector The CSS selector to test against.</span>
-<span class="cm">     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.</span>
-<span class="cm">     */</span>
-    <span class="nx">queryAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">selector</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;queryAll() is deprecated, use all()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">selector</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="c1">// TODO: allow fn test</span>
@@ -854,8 +816,45 @@
 <span class="cm">     */</span>
     <span class="nx">replace</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newNode</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">newNode</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+        <span class="p">}</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">Y_Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">newNode</span><span class="p">),</span> <span class="nx">node</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @method replaceChild</span>
+<span class="cm">     * @for Node</span>
+<span class="cm">     * @param {String | HTMLElement | Node} node Node to be inserted </span>
+<span class="cm">     * @param {HTMLElement | Node} refNode Node to be replaced </span>
+<span class="cm">     * @return {Node} The replaced node</span>
+<span class="cm">     */</span>
+    <span class="nx">replaceChild</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">refNode</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">node</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">Y_Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">refNode</span><span class="p">)));</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @method appendChild</span>
+<span class="cm">     * @param {String | HTMLElement | Node} node Node to be appended </span>
+<span class="cm">     * @return {Node} The appended node </span>
+<span class="cm">     */</span>
+    <span class="nx">appendChild</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">scrubVal</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">node</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @method insertBefore</span>
+<span class="cm">     * @param {String | HTMLElement | Node} newNode Node to be appended </span>
+<span class="cm">     * @param {HTMLElement | Node} refNode Node to be inserted before </span>
+<span class="cm">     * @return {Node} The inserted node </span>
+<span class="cm">     */</span>
+    <span class="nx">insertBefore</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="nx">refNode</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">scrubVal</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="nx">refNode</span><span class="p">,</span> <span class="s1">&#39;before&#39;</span><span class="p">));</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -920,48 +919,9 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Applies the given function to each Node in the NodeList.</span>
-<span class="cm">     * @method each</span>
-<span class="cm">     * @deprecated Use NodeList</span>
-<span class="cm">     * @param {Function} fn The function to apply</span>
-<span class="cm">     * @param {Object} context optional An optional context to apply the function with</span>
-<span class="cm">     * Default context is the NodeList instance</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">each</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;each is deprecated on Node&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Retrieves the Node instance at the given index.</span>
-<span class="cm">     * @method item</span>
-<span class="cm">     * @deprecated Use NodeList</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param {Number} index The index of the target Node.</span>
-<span class="cm">     * @return {Node} The Node instance at the given index.</span>
-<span class="cm">     */</span>
-    <span class="nx">item</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;item is deprecated on Node&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Returns the current number of items in the Node.</span>
-<span class="cm">     * @method size</span>
-<span class="cm">     * @deprecated Use NodeList</span>
-<span class="cm">     * @return {Int} The number of items in the Node.</span>
-<span class="cm">     */</span>
-    <span class="nx">size</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;size is deprecated on Node&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
 <span class="cm">     * Inserts the content before the reference node.</span>
 <span class="cm">     * @method insert</span>
-<span class="cm">     * @param {String | Y.Node | HTMLElement} content The content to insert</span>
+<span class="cm">     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert</span>
 <span class="cm">     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.</span>
 <span class="cm">     * Possible &quot;where&quot; arguments</span>
 <span class="cm">     * &lt;dl&gt;</span>
@@ -983,32 +943,26 @@
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">where</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// allow index</span>
-                <span class="nx">where</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">where</span><span class="p">];</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">where</span> <span class="o">&amp;&amp;</span> <span class="nx">where</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Node</span>
-                <span class="nx">where</span> <span class="o">=</span> <span class="nx">where</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">content</span> <span class="o">!==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// allow Node or NodeList/Array instances</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Node</span>
-                    <span class="nx">content</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">content</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">content</span><span class="p">.</span><span class="nx">length</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// NodeList or Array</span>
-                    <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">addHTML</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
-                    <span class="p">});</span>
-
-                    <span class="k">return</span> <span class="k">this</span><span class="p">;</span> <span class="c1">// NOTE: early return</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">addHTML</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span>  <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;unable to insert content &#39;</span> <span class="o">+</span> <span class="nx">content</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">where</span> <span class="o">==</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// allow index</span>
+            <span class="nx">where</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">where</span><span class="p">];</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">where</span> <span class="o">&amp;&amp;</span> <span class="nx">where</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Node</span>
+            <span class="nx">where</span> <span class="o">=</span> <span class="nx">where</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">content</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">content</span> <span class="o">!=</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// allow Node or NodeList/Array instances</span>
+            <span class="nx">content</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_node</span> <span class="o">||</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span> <span class="o">||</span> <span class="nx">content</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">addHTML</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -1032,23 +986,33 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * Appends the node to the given node. </span>
+<span class="cm">     * @method appendTo</span>
+<span class="cm">     * @param {Y.Node | HTMLElement} node The node to append to</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">appendTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
 <span class="cm">     * Replaces the node&#39;s current content with the content.</span>
 <span class="cm">     * @method setContent</span>
-<span class="cm">     * @param {String | Y.Node | HTMLElement} content The content to insert</span>
+<span class="cm">     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">setContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// map to DOMNode</span>
-                <span class="nx">content</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// convert DOMNodeList to documentFragment</span>
-                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
-            <span class="p">}</span>
-
-        <span class="p">}</span>
-
-        <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">addHTML</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the node&#39;s current content (e.g. innerHTML) </span>
+<span class="cm">     * @method getContent</span>
+<span class="cm">     * @return {String} The current content</span>
+<span class="cm">     */</span>
+    <span class="nx">getContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -1144,14 +1108,83 @@
     <span class="nx">hasMethod</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
         <span class="k">return</span> <span class="o">!!</span><span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">method</span> <span class="k">in</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span>
-                <span class="k">typeof</span> <span class="nx">node</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;unknown&#39;</span> <span class="o">&amp;&amp;</span>
-            <span class="p">(</span><span class="k">typeof</span> <span class="nx">node</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">||</span>
+                <span class="k">typeof</span> <span class="nx">node</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;unknown&#39;</span> <span class="o">&amp;&amp;</span>
+            <span class="p">(</span><span class="k">typeof</span> <span class="nx">node</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span> <span class="o">||</span>
                 <span class="nb">String</span><span class="p">(</span><span class="nx">node</span><span class="p">[</span><span class="nx">method</span><span class="p">]).</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">));</span> <span class="c1">// IE reports as object, prepends space</span>
+    <span class="p">},</span>
+
+    <span class="nx">SHOW_TRANSITION</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nx">HIDE_TRANSITION</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Makes the node visible.</span>
+<span class="cm">     * If the &quot;transition&quot; module is loaded, show optionally</span>
+<span class="cm">     * animates the showing of the node using either the default</span>
+<span class="cm">     * transition effect (&#39;fadeIn&#39;), or the given named effect.</span>
+<span class="cm">     * @method show</span>
+<span class="cm">     * @param {String} name A named Transition effect to use as the show effect. </span>
+<span class="cm">     * @param {Object} config Options to use with the transition. </span>
+<span class="cm">     * @param {Function} callback An optional function to run after the transition completes. </span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_show</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The implementation for showing nodes.</span>
+<span class="cm">     * Default is to toggle the style.display property.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">_show</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Hides the node.</span>
+<span class="cm">     * If the &quot;transition&quot; module is loaded, hide optionally</span>
+<span class="cm">     * animates the hiding of the node using either the default</span>
+<span class="cm">     * transition effect (&#39;fadeOut&#39;), or the given named effect.</span>
+<span class="cm">     * @method hide</span>
+<span class="cm">     * @param {String} name A named Transition effect to use as the show effect. </span>
+<span class="cm">     * @param {Object} config Options to use with the transition. </span>
+<span class="cm">     * @param {Function} callback An optional function to run after the transition completes. </span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">hide</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_hide</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The implementation for hiding nodes.</span>
+<span class="cm">     * Default is to toggle the style.display property.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">_hide</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">isFragment</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodeType&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">11</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Removes all of the child nodes from the node.</span>
+<span class="cm">     * @param {Boolean} destroy Whether the nodes should also be destroyed. </span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">empty</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">destroy</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;childNodes&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">(</span><span class="nx">destroy</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">}</span>
+
 <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y_Node</span><span class="p">;</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">get</span><span class="p">;</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">;</span>
 </pre></div>
 
@@ -1168,6 +1201,7 @@
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
@@ -1182,12 +1216,14 @@
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -1204,9 +1240,11 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
@@ -1220,6 +1258,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
@@ -1252,12 +1291,14 @@
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
                                 <li class=""><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
                                 <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
+                                <li class=""><a href="node-load.js.html" title="node-load.js">node-load.js</a></li>
                                 <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
                                 <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
                                 <li class=""><a href="node-size.js.html" title="node-size.js">node-size.js</a></li>
                                 <li class=""><a href="node-style.js.html" title="node-style.js">node-style.js</a></li>
                                 <li class="selected"><a href="node.js.html" title="node.js">node.js</a></li>
+                                <li class=""><a href="nodelist-array.js.html" title="nodelist-array.js">nodelist-array.js</a></li>
                                 <li class=""><a href="nodelist.js.html" title="nodelist.js">nodelist.js</a></li>
                                 <li class=""><a href="shim-plugin.js.html" title="shim-plugin.js">shim-plugin.js</a></li>
                         </ul>
@@ -1277,7 +1318,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Node", "name": "addClass", "url": "Node.html#method_addClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "addClass", "url": "NodeList.html#method_addClass", "type": "method"}, {"access": "", "host": "Node", "name": "addMethod", "url": "Node.html#method_addMethod", "type": "method"}, {"access": "", "host": "NodeList", "name": "after", "url": "NodeList.html#method_after", "type": "method"}, {"access": "", "host": "Node", "name": "all", "url": "Node.html#method_all", "type": "method"}, {"access": "", "host": "Node", "name": "ancestor", "url": "Node.html#method_ancestor", "type": "method"}, {"access": "", "host": "Node", "name": "append", "url": "Node.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "Node", "name": "appendChild", "url": "Node.html#method_appendChild", "type": "method"}, {"access": "", "host": "Node", "name": "ATTRS", "url": "Node.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Node", "name": "blur", "url": "Node.html#method_blur", "type": "method"}, {"access": "", "host": "Node", "name": "children", "url": "Node.html#config_children", "type": "config"}, {"access": "", "host": "Node", "name": "clearData", "url": "Node.html#method_clearData", "type": "method"}, {"access": "", "host": "Node", "name": "cloneNode", "url": "Node.html#method_cloneNode", "type": "method"}, {"access": "", "host": "Node", "name": "compareTo", "url": "Node.html#method_compareTo", "type": "method"}, {"access": "", "host": "Node", "name": "contains", "url": "Node.html#method_contains", "type": "method"}, {"access": "", "host": "Node", "name": "create", "url": "Node.html#method_create", "type": "method"}, {"access": "", "host": "Node", "name": "DEFAULT_GETTER", "url": "Node.html#method_DEFAULT_GETTER", "type": "method"}, {"access": "", "host": "Node", "name": "DEFAULT_SETTER", "url": "Node.html#method_DEFAULT_SETTER", "type": "method"}, {"access": "", "host": "Node", "name": "delegate", "url": "Node.html#method_delegate", "type": "method"}, {"access": "", "host": "Node", "name": "destroy", "url": "Node.html#method_destroy", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detachAll", "url": "NodeList.html#method_detachAll", "type": "method"}, {"access": "", "host": "Node", "name": "docHeight", "url": "Node.html#config_docHeight", "type": "config"}, {"access": "", "host": "Node", "name": "docScrollX", "url": "Node.html#config_docScrollX", "type": "config"}, {"access": "", "host": "Node", "name": "docScrollY", "url": "Node.html#config_docScrollY", "type": "config"}, {"access": "", "host": "Node", "name": "DOM_EVENTS", "url": "Node.html#property_DOM_EVENTS", "type": "property"}, {"access": "", "host": "Node", "name": "each", "url": "Node.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "even", "url": "NodeList.html#method_even", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "Node", "name": "focus", "url": "Node.html#method_focus", "type": "method"}, {"access": "private", "host": "Node", "name": "_get", "url": "Node.html#method__get", "type": "method"}, {"access": "", "host": "Node", "name": "get", "url": "Node.html#method_get", "type": "method"}, {"access": "", "host": "NodeList", "name": "get", "url": "NodeList.html#method_get", "type": "method"}, {"access": "", "host": "Node", "name": "getAttribute", "url": "Node.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "getAttrs", "url": "Node.html#method_getAttrs", "type": "method"}, {"access": "", "host": "Node", "name": "getComputedStyle", "url": "Node.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getComputedStyle", "url": "NodeList.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getData", "url": "Node.html#method_getData", "type": "method"}, {"access": "", "host": "Node", "name": "getDOMNode", "url": "Node.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "Node", "name": "getElementsByTagName", "url": "Node.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "Node", "name": "getStyle", "url": "Node.html#method_getStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getStyle", "url": "NodeList.html#method_getStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getX", "url": "Node.html#method_getX", "type": "method"}, {"access": "", "host": "Node", "name": "getXY", "url": "Node.html#method_getXY", "type": "method"}, {"access": "", "host": "Node", "name": "getY", "url": "Node.html#method_getY", "type": "method"}, {"access": "", "host": "Node", "name": "hasAttribute", "url": "Node.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "hasChildNodes", "url": "Node.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "Node", "name": "hasClass", "url": "Node.html#method_hasClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasClass", "url": "NodeList.html#method_hasClass", "type": "method"}, {"access": "", "host": "Node", "name": "importMethod", "url": "Node.html#method_importMethod", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "Node", "name": "inDoc", "url": "Node.html#method_inDoc", "type": "method"}, {"access": "", "host": "Node", "name": "inRegion", "url": "Node.html#method_inRegion", "type": "method"}, {"access": "", "host": "Node", "name": "insert", "url": "Node.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "Node", "name": "insertBefore", "url": "Node.html#method_insertBefore", "type": "method"}, {"access": "private", "host": "Node", "name": "_instances", "url": "Node.html#property__instances", "type": "property"}, {"access": "", "host": "Node", "name": "intersect", "url": "Node.html#method_intersect", "type": "method"}, {"access": "", "host": "Node", "name": "invoke", "url": "Node.html#method_invoke", "type": "method"}, {"access": "", "host": "NodeList", "name": "isEmpty", "url": "NodeList.html#method_isEmpty", "type": "method"}, {"access": "", "host": "Node", "name": "item", "url": "Node.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "modulus", "url": "NodeList.html#method_modulus", "type": "method"}, {"access": "", "host": "Node", "name": "NAME", "url": "Node.html#property_NAME", "type": "property"}, {"access": "", "host": "Node", "name": "next", "url": "Node.html#method_next", "type": "method"}, {"access": "private", "host": "Node", "name": "_node", "url": "Node.html#property__node", "type": "property"}, {"access": "", "host": "NodeList", "name": "NodeList.getDOMNodes", "url": "NodeList.html#method_NodeList.getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "Node.plug", "url": "NodeList.html#method_Node.plug", "type": "method"}, {"access": "private", "host": "NodeList", "name": "_nodes", "url": "NodeList.html#property__nodes", "type": "property"}, {"access": "", "host": "NodeList", "name": "Node.unplug", "url": "NodeList.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "NodeList", "name": "odd", "url": "NodeList.html#method_odd", "type": "method"}, {"access": "", "host": "NodeList", "name": "on", "url": "NodeList.html#method_on", "type": "method"}, {"access": "", "host": "Node", "name": "one", "url": "Node.html#method_one", "type": "method"}, {"access": "", "host": "Node", "name": "prepend", "url": "Node.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "Node", "name": "previous", "url": "Node.html#method_previous", "type": "method"}, {"access": "", "host": "Node", "name": "purge", "url": "Node.html#method_purge", "type": "method"}, {"access": "", "host": "Node", "name": "query", "url": "Node.html#method_query", "type": "method"}, {"access": "", "host": "Node", "name": "queryAll", "url": "Node.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "refresh", "url": "NodeList.html#method_refresh", "type": "method"}, {"access": "", "host": "Node", "name": "region", "url": "Node.html#config_region", "type": "config"}, {"access": "", "host": "Node", "name": "remove", "url": "Node.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "Node", "name": "removeAttribute", "url": "Node.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "removeChild", "url": "Node.html#method_removeChild", "type": "method"}, {"access": "", "host": "Node", "name": "removeClass", "url": "Node.html#method_removeClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeClass", "url": "NodeList.html#method_removeClass", "type": "method"}, {"access": "", "host": "Node", "name": "replace", "url": "Node.html#method_replace", "type": "method"}, {"access": "", "host": "Node", "name": "replaceChild", "url": "Node.html#method_replaceChild", "type": "method"}, {"access": "", "host": "Node", "name": "replaceClass", "url": "Node.html#method_replaceClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceClass", "url": "NodeList.html#method_replaceClass", "type": "method"}, {"access": "", "host": "Node", "name": "reset", "url": "Node.html#method_reset", "type": "method"}, {"access": "", "host": "Node", "name": "scrollIntoView", "url": "Node.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "Node", "name": "scrubVal", "url": "Node.html#method_scrubVal", "type": "method"}, {"access": "", "host": "Node", "name": "select", "url": "Node.html#method_select", "type": "method"}, {"access": "", "host": "Node", "name": "set", "url": "Node.html#method_set", "type": "method"}, {"access": "", "host": "NodeList", "name": "set", "url": "NodeList.html#method_set", "type": "method"}, {"access": "", "host": "Node", "name": "setAttribute", "url": "Node.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "setAttrs", "url": "Node.html#method_setAttrs", "type": "method"}, {"access": "", "host": "Node", "name": "setContent", "url": "Node.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "Node", "name": "setData", "url": "Node.html#method_setData", "type": "method"}, {"access": "", "host": "Node", "name": "setStyle", "url": "Node.html#method_setStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyle", "url": "NodeList.html#method_setStyle", "type": "method"}, {"access": "", "host": "Node", "name": "setStyles", "url": "Node.html#method_setStyles", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyles", "url": "NodeList.html#method_setStyles", "type": "method"}, {"access": "", "host": "Node", "name": "setX", "url": "Node.html#method_setX", "type": "method"}, {"access": "", "host": "Node", "name": "setXY", "url": "Node.html#method_setXY", "type": "method"}, {"access": "", "host": "Node", "name": "setY", "url": "Node.html#method_setY", "type": "method"}, {"access": "", "host": "Node", "name": "siblings", "url": "Node.html#method_siblings", "type": "method"}, {"access": "", "host": "Node", "name": "simulate", "url": "Node.html#method_simulate", "type": "method"}, {"access": "", "host": "Node", "name": "size", "url": "Node.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "Node", "name": "submit", "url": "Node.html#method_submit", "type": "method"}, {"access": "", "host": "Node", "name": "swap", "url": "Node.html#method_swap", "type": "method"}, {"access": "", "host": "Node", "name": "swapXY", "url": "Node.html#method_swapXY", "type": "method"}, {"access": "", "host": "Node", "name": "test", "url": "Node.html#method_test", "type": "method"}, {"access": "", "host": "Node", "name": "text", "url": "Node.html#config_text", "type": "config"}, {"access": "", "host": "NodeList", "name": "toFrag", "url": "NodeList.html#method_toFrag", "type": "method"}, {"access": "", "host": "Node", "name": "toggleClass", "url": "Node.html#method_toggleClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "toggleClass", "url": "NodeList.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Node", "name": "toString", "url": "Node.html#method_toString", "type": "method"}, {"access": "", "host": "Node", "name": "transition", "url": "Node.html#method_transition", "type": "method"}, {"access": "", "host": "NodeList", "name": "transition", "url": "NodeList.html#method_transition", "type": "method"}, {"access": "", "host": "Node", "name": "viewportRegion", "url": "Node.html#config_viewportRegion", "type": "config"}, {"access": "", "host": "Node", "name": "winHeight", "url": "Node.html#config_winHeight", "type": "config"}, {"access": "", "host": "Node", "name": "winWidth", "url": "Node.html#config_winWidth", "type": "config"}, {"access": "", "host": "Node", "name": "Y.get", "url": "Node.html#method_Y.get", "type": "method"}, {"access": "", "host": "Node", "name": "Y.one", "url": "Node.html#method_Y.one", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Node", "name": "addClass", "url": "Node.html#method_addClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "addClass", "url": "NodeList.html#method_addClass", "type": "method"}, {"access": "", "host": "Node", "name": "addMethod", "url": "Node.html#method_addMethod", "type": "method"}, {"access": "", "host": "NodeList", "name": "after", "url": "NodeList.html#method_after", "type": "method"}, {"access": "", "host": "Node", "name": "all", "url": "Node.html#method_all", "type": "method"}, {"access": "", "host": "Node", "name": "ancestor", "url": "Node.html#method_ancestor", "type": "method"}, {"access": "", "host": "Node", "name": "ancestors", "url": "Node.html#method_ancestors", "type": "method"}, {"access": "", "host": "Node", "name": "append", "url": "Node.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "Node", "name": "appendChild", "url": "Node.html#method_appendChild", "type": "method"}, {"access": "", "host": "Node", "name": "appendTo", "url": "Node.html#method_appendTo", "type": "method"}, {"access": "", "host": "Node", "name": "ATTRS", "url": "Node.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Node", "name": "blur", "url": "Node.html#method_blur", "type": "method"}, {"access": "", "host": "Node", "name": "children", "url": "Node.html#config_children", "type": "config"}, {"access": "", "host": "Node", "name": "clearData", "url": "Node.html#method_clearData", "type": "method"}, {"access": "", "host": "Node", "name": "cloneNode", "url": "Node.html#method_cloneNode", "type": "method"}, {"access": "", "host": "Node", "name": "compareTo", "url": "Node.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "concat", "url": "NodeList.html#method_concat", "type": "method"}, {"access": "", "host": "Node", "name": "contains", "url": "Node.html#method_contains", "type": "method"}, {"access": "", "host": "Node", "name": "create", "url": "Node.html#method_create", "type": "method"}, {"access": "", "host": "Node", "name": "createCaption", "url": "Node.html#method_createCaption", "type": "method"}, {"access": "", "host": "Node", "name": "DEFAULT_GETTER", "url": "Node.html#method_DEFAULT_GETTER", "type": "method"}, {"access": "", "host": "Node", "name": "DEFAULT_SETTER", "url": "Node.html#method_DEFAULT_SETTER", "type": "method"}, {"access": "", "host": "Node", "name": "delegate", "url": "Node.html#method_delegate", "type": "method"}, {"access": "", "host": "Node", "name": "destroy", "url": "Node.html#method_destroy", "type": "method"}, {"access": "", "host": "NodeList", "name": "destroy", "url": "NodeList.html#method_destroy", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detachAll", "url": "NodeList.html#method_detachAll", "type": "method"}, {"access": "", "host": "Node", "name": "docHeight", "url": "Node.html#config_docHeight", "type": "config"}, {"access": "", "host": "Node", "name": "docScrollX", "url": "Node.html#config_docScrollX", "type": "config"}, {"access": "", "host": "Node", "name": "docScrollY", "url": "Node.html#config_docScrollY", "type": "config"}, {"access": "", "host": "Node", "name": "DOM_EVENTS", "url": "Node.html#property_DOM_EVENTS", "type": "property"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "Node", "name": "empty", "url": "Node.html#method_empty", "type": "method"}, {"access": "", "host": "NodeList", "name": "empty", "url": "NodeList.html#method_empty", "type": "method"}, {"access": "", "host": "NodeList", "name": "even", "url": "NodeList.html#method_even", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "Node", "name": "focus", "url": "Node.html#method_focus", "type": "method"}, {"access": "private", "host": "Node", "name": "_get", "url": "Node.html#method__get", "type": "method"}, {"access": "", "host": "Node", "name": "get", "url": "Node.html#method_get", "type": "method"}, {"access": "", "host": "NodeList", "name": "get", "url": "NodeList.html#method_get", "type": "method"}, {"access": "", "host": "Node", "name": "getAttribute", "url": "Node.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "getAttrs", "url": "Node.html#method_getAttrs", "type": "method"}, {"access": "", "host": "Node", "name": "getComputedStyle", "url": "Node.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getComputedStyle", "url": "NodeList.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getContent", "url": "Node.html#method_getContent", "type": "method"}, {"access": "", "host": "Node", "name": "getData", "url": "Node.html#method_getData", "type": "method"}, {"access": "", "host": "Node", "name": "getDOMNode", "url": "Node.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "Node", "name": "getElementsByTagName", "url": "Node.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "Node", "name": "getStyle", "url": "Node.html#method_getStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getStyle", "url": "NodeList.html#method_getStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getX", "url": "Node.html#method_getX", "type": "method"}, {"access": "", "host": "Node", "name": "getXY", "url": "Node.html#method_getXY", "type": "method"}, {"access": "", "host": "Node", "name": "getY", "url": "Node.html#method_getY", "type": "method"}, {"access": "", "host": "Node", "name": "hasAttribute", "url": "Node.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "hasChildNodes", "url": "Node.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "Node", "name": "hasClass", "url": "Node.html#method_hasClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasClass", "url": "NodeList.html#method_hasClass", "type": "method"}, {"access": "protected", "host": "Node", "name": "_hide", "url": "Node.html#method__hide", "type": "method"}, {"access": "", "host": "Node", "name": "hide", "url": "Node.html#method_hide", "type": "method"}, {"access": "", "host": "Node", "name": "importMethod", "url": "Node.html#method_importMethod", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "Node", "name": "inDoc", "url": "Node.html#method_inDoc", "type": "method"}, {"access": "", "host": "Node", "name": "inRegion", "url": "Node.html#method_inRegion", "type": "method"}, {"access": "", "host": "Node", "name": "insert", "url": "Node.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "Node", "name": "insertBefore", "url": "Node.html#method_insertBefore", "type": "method"}, {"access": "private", "host": "Node", "name": "_instances", "url": "Node.html#property__instances", "type": "property"}, {"access": "", "host": "Node", "name": "intersect", "url": "Node.html#method_intersect", "type": "method"}, {"access": "", "host": "Node", "name": "invoke", "url": "Node.html#method_invoke", "type": "method"}, {"access": "", "host": "NodeList", "name": "isEmpty", "url": "NodeList.html#method_isEmpty", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "modulus", "url": "NodeList.html#method_modulus", "type": "method"}, {"access": "", "host": "Node", "name": "NAME", "url": "Node.html#property_NAME", "type": "property"}, {"access": "", "host": "Node", "name": "next", "url": "Node.html#method_next", "type": "method"}, {"access": "private", "host": "Node", "name": "_node", "url": "Node.html#property__node", "type": "property"}, {"access": "", "host": "NodeList", "name": "NodeList.getDOMNodes", "url": "NodeList.html#method_NodeList.getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "Node.plug", "url": "NodeList.html#method_Node.plug", "type": "method"}, {"access": "private", "host": "NodeList", "name": "_nodes", "url": "NodeList.html#property__nodes", "type": "property"}, {"access": "", "host": "NodeList", "name": "Node.unplug", "url": "NodeList.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "NodeList", "name": "odd", "url": "NodeList.html#method_odd", "type": "method"}, {"access": "", "host": "NodeList", "name": "on", "url": "NodeList.html#method_on", "type": "method"}, {"access": "", "host": "NodeList", "name": "once", "url": "NodeList.html#method_once", "type": "method"}, {"access": "", "host": "Node", "name": "one", "url": "Node.html#method_one", "type": "method"}, {"access": "", "host": "NodeList", "name": "pop", "url": "NodeList.html#method_pop", "type": "method"}, {"access": "", "host": "Node", "name": "prepend", "url": "Node.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "Node", "name": "previous", "url": "Node.html#method_previous", "type": "method"}, {"access": "", "host": "Node", "name": "purge", "url": "Node.html#method_purge", "type": "method"}, {"access": "", "host": "NodeList", "name": "push", "url": "NodeList.html#method_push", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "refresh", "url": "NodeList.html#method_refresh", "type": "method"}, {"access": "", "host": "Node", "name": "region", "url": "Node.html#config_region", "type": "config"}, {"access": "", "host": "Node", "name": "remove", "url": "Node.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "Node", "name": "removeAttribute", "url": "Node.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "removeChild", "url": "Node.html#method_removeChild", "type": "method"}, {"access": "", "host": "Node", "name": "removeClass", "url": "Node.html#method_removeClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeClass", "url": "NodeList.html#method_removeClass", "type": "method"}, {"access": "", "host": "Node", "name": "replace", "url": "Node.html#method_replace", "type": "method"}, {"access": "", "host": "Node", "name": "replaceChild", "url": "Node.html#method_replaceChild", "type": "method"}, {"access": "", "host": "Node", "name": "replaceClass", "url": "Node.html#method_replaceClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceClass", "url": "NodeList.html#method_replaceClass", "type": "method"}, {"access": "", "host": "Node", "name": "reset", "url": "Node.html#method_reset", "type": "method"}, {"access": "", "host": "Node", "name": "scrollIntoView", "url": "Node.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "Node", "name": "scrubVal", "url": "Node.html#method_scrubVal", "type": "method"}, {"access": "", "host": "Node", "name": "select", "url": "Node.html#method_select", "type": "method"}, {"access": "", "host": "Node", "name": "set", "url": "Node.html#method_set", "type": "method"}, {"access": "", "host": "NodeList", "name": "set", "url": "NodeList.html#method_set", "type": "method"}, {"access": "", "host": "Node", "name": "setAttribute", "url": "Node.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "setAttrs", "url": "Node.html#method_setAttrs", "type": "method"}, {"access": "", "host": "Node", "name": "setContent", "url": "Node.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "Node", "name": "setData", "url": "Node.html#method_setData", "type": "method"}, {"access": "", "host": "Node", "name": "setStyle", "url": "Node.html#method_setStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyle", "url": "NodeList.html#method_setStyle", "type": "method"}, {"access": "", "host": "Node", "name": "setStyles", "url": "Node.html#method_setStyles", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyles", "url": "NodeList.html#method_setStyles", "type": "method"}, {"access": "", "host": "Node", "name": "setX", "url": "Node.html#method_setX", "type": "method"}, {"access": "", "host": "Node", "name": "setXY", "url": "Node.html#method_setXY", "type": "method"}, {"access": "", "host": "Node", "name": "setY", "url": "Node.html#method_setY", "type": "method"}, {"access": "", "host": "NodeList", "name": "shift", "url": "NodeList.html#method_shift", "type": "method"}, {"access": "protected", "host": "Node", "name": "_show", "url": "Node.html#method__show", "type": "method"}, {"access": "", "host": "Node", "name": "show", "url": "Node.html#method_show", "type": "method"}, {"access": "", "host": "Node", "name": "siblings", "url": "Node.html#method_siblings", "type": "method"}, {"access": "", "host": "Node", "name": "simulate", "url": "Node.html#method_simulate", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "slice", "url": "NodeList.html#method_slice", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "splice", "url": "NodeList.html#method_splice", "type": "method"}, {"access": "", "host": "Node", "name": "submit", "url": "Node.html#method_submit", "type": "method"}, {"access": "", "host": "Node", "name": "swap", "url": "Node.html#method_swap", "type": "method"}, {"access": "", "host": "Node", "name": "swapXY", "url": "Node.html#method_swapXY", "type": "method"}, {"access": "", "host": "Node", "name": "test", "url": "Node.html#method_test", "type": "method"}, {"access": "", "host": "Node", "name": "text", "url": "Node.html#config_text", "type": "config"}, {"access": "", "host": "NodeList", "name": "toFrag", "url": "NodeList.html#method_toFrag", "type": "method"}, {"access": "", "host": "Node", "name": "toggleClass", "url": "Node.html#method_toggleClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "toggleClass", "url": "NodeList.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Node", "name": "toString", "url": "Node.html#method_toString", "type": "method"}, {"access": "", "host": "Node", "name": "transition", "url": "Node.html#method_transition", "type": "method"}, {"access": "", "host": "NodeList", "name": "transition", "url": "NodeList.html#method_transition", "type": "method"}, {"access": "", "host": "Node", "name": "unwrap", "url": "Node.html#method_unwrap", "type": "method"}, {"access": "", "host": "NodeList", "name": "unwrap", "url": "NodeList.html#method_unwrap", "type": "method"}, {"access": "", "host": "Node", "name": "viewportRegion", "url": "Node.html#config_viewportRegion", "type": "config"}, {"access": "", "host": "Node", "name": "winHeight", "url": "Node.html#config_winHeight", "type": "config"}, {"access": "", "host": "Node", "name": "winWidth", "url": "Node.html#config_winWidth", "type": "config"}, {"access": "", "host": "Node", "name": "wrap", "url": "Node.html#method_wrap", "type": "method"}, {"access": "", "host": "NodeList", "name": "wrap", "url": "NodeList.html#method_wrap", "type": "method"}, {"access": "", "host": "NodeList", "name": "Y.get", "url": "NodeList.html#method_Y.get", "type": "method"}, {"access": "", "host": "Node", "name": "Y.one", "url": "Node.html#method_Y.one", "type": "method"}];
 </script>
 </body>
 </html>

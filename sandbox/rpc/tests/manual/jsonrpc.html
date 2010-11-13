@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+<p>This is currently testing the gallery module, not the sandbox module.  The gallery module is more up to date, but not structured like the sandbox code.</p>
+<div id="x"></div>
+<button id="go">call <code>other()</code></button>
+
+<!--script src="/dev/yui/yui3/build/simpleyui/simpleyui.js"></script-->
+<!--script src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
+<script src="/dev/yui/yui3/build/yui/yui.js"></script>
+<!--script src="/dev/yui/yui3/build/rpc/jsonrpc.js"></script-->
+<script>
+YUI({
+    filter: 'raw',
+    gallery: 'gallery-2010.10.27-19-38'
+}).use('node', 'gallery-jsonrpc', function (Y) {
+
+    var rpc = new Y.JSONRPC({ url: 'rpc.php' });
+
+    rpc.exec('foo', ['bar'], function (res) {
+        Y.one("#x").append("<p>" + res + "</p>");
+    });
+
+    rpc.on('apiready', function () {
+        // The outbound post data should NOT have an id
+        this.last('cow standing');
+    });
+
+    Y.one("button").on('click', function () {
+        rpc.other(function (res) {
+            Y.one("#x").append(res);
+        });
+    });
+});
+</script>
+</body>
+</html>

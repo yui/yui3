@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>history&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>history&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
                 
@@ -79,9 +79,12 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span> <span class="o">||</span> <span class="o">!</span><span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
         <span class="kd">var</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">,</span>
-            <span class="nx">hash</span>   <span class="o">=</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span>
-                        <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="nx">hash</span>   <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nx">prefix</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span>
                     <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">hash</span><span class="p">;</span>
@@ -99,8 +102,12 @@
 <span class="cm">     * @for HistoryHash</span>
 <span class="cm">     */</span>
     <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">replace</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframeDoc</span>      <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span>
-            <span class="nx">iframeLocation</span> <span class="o">=</span> <span class="nx">iframeDoc</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">iframeDoc</span>      <span class="o">=</span> <span class="nx">iframe</span> <span class="o">&amp;&amp;</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span> <span class="o">&amp;&amp;</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span>
+            <span class="nx">iframeLocation</span> <span class="o">=</span> <span class="nx">iframeDoc</span> <span class="o">&amp;&amp;</span> <span class="nx">iframeDoc</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframeDoc</span> <span class="o">||</span> <span class="o">!</span><span class="nx">iframeLocation</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating history iframe: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
 
@@ -149,30 +156,29 @@
             <span class="c1">// Update the iframe with the initial location hash, if any. This</span>
             <span class="c1">// will create an initial history entry that the user can return to</span>
             <span class="c1">// after the state has changed.</span>
-            <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span><span class="p">());</span>
+            <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span><span class="p">()</span> <span class="o">||</span> <span class="s1">&#39;#&#39;</span><span class="p">);</span>
+
+            <span class="c1">// Listen for hashchange events and keep the iframe&#39;s hash in sync</span>
+            <span class="c1">// with the parent frame&#39;s hash.</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">lastUrlHash</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newHash</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">lastUrlHash</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating iframe hash to match URL hash&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
+                    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">lastUrlHash</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="nx">win</span><span class="p">);</span>
+
+            <span class="c1">// Watch the iframe hash in order to detect back/forward navigation.</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">iframeHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span><span class="p">();</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">iframeHash</span> <span class="o">!==</span> <span class="nx">lastUrlHash</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating URL hash to match iframe hash&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
+                    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">setHash</span><span class="p">(</span><span class="nx">iframeHash</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="p">});</span>
-
-        <span class="c1">// Listen for hashchange events and keep the iframe&#39;s hash in sync with</span>
-        <span class="c1">// the parent frame&#39;s hash.</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">lastUrlHash</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newHash</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">lastUrlHash</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating iframe hash to match URL hash&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
-                <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">lastUrlHash</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span> <span class="nx">win</span><span class="p">);</span>
-
-        <span class="c1">// In a separate interval, watch the iframe hash in order to detect</span>
-        <span class="c1">// back/forward navigation.</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">iframeHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span><span class="p">();</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">iframeHash</span> <span class="o">&amp;&amp;</span> <span class="nx">lastUrlHash</span> <span class="o">&amp;&amp;</span> <span class="nx">iframeHash</span> <span class="o">!==</span> <span class="nx">lastUrlHash</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating URL hash to match iframe hash&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
-                <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">setHash</span><span class="p">(</span><span class="nx">iframeHash</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -190,6 +196,7 @@
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
@@ -204,12 +211,14 @@
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
                                 <li class="selected"><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -226,9 +235,11 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
@@ -242,6 +253,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>

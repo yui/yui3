@@ -4,7 +4,7 @@
 			"highlight-accentfold": {
 				"requires": [
 				    "highlight-base",
-				    "unicode-accentfold"
+				    "text-accentfold"
 				]
 			},
 
@@ -12,7 +12,7 @@
                 "requires": [
                     "array-extras",
                     "escape",
-                    "unicode-wordbreak"
+                    "text-wordbreak"
                 ]
             }
         }

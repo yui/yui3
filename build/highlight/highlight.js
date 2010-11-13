@@ -32,7 +32,7 @@ YUI.add('highlight-base', function(Y) {
 
 var YArray    = Y.Array,
     Escape    = Y.Escape,
-    WordBreak = Y.Unicode.WordBreak,
+    WordBreak = Y.Text.WordBreak,
 
     isArray = Y.Lang.isArray,
 
@@ -341,7 +341,7 @@ Highlight = {
 Y.Highlight = Highlight;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'escape', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'escape', 'text-wordbreak']});
 YUI.add('highlight-accentfold', function(Y) {
 
 /**
@@ -356,7 +356,7 @@ YUI.add('highlight-accentfold', function(Y) {
  * @static
  */
 
-var AccentFold = Y.Unicode.AccentFold,
+var AccentFold = Y.Text.AccentFold,
     Escape     = Y.Escape,
 
     EMPTY_OBJECT = {},
@@ -476,7 +476,7 @@ Highlight = Y.mix(Y.Highlight, {
 });
 
 
-}, '@VERSION@' ,{requires:['highlight-base', 'unicode-accentfold']});
+}, '@VERSION@' ,{requires:['highlight-base', 'text-accentfold']});
 
 
 YUI.add('highlight', function(Y){}, '@VERSION@' ,{use:['highlight-base', 'highlight-accentfold']});

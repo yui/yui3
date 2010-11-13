@@ -199,7 +199,7 @@ YUI({
         },
         test_proxy: function() {
             _resetCount();
-            Y.Node.get('#drag').setStyles({ top: '', left: '' });
+            Y.one('#drag').setStyles({ top: '', left: '' });
             proxy = new Y.DD.Drag({
                 node: '#drag'
             }).plug(Y.Plugin.DDProxy, {
@@ -244,7 +244,7 @@ YUI({
         },
         
         test_constrain_node_setup: function() {
-            Y.Node.get('#drag').setStyles({ top: '10px', left: '950px' });
+            Y.one('#drag').setStyles({ top: '10px', left: '950px' });
             dd = new Y.DD.Drag({
                 node: '#drag'
             }).plug(Y.Plugin.DDConstrained, {
@@ -266,7 +266,7 @@ YUI({
         },
         
         test_constrain_view_setup: function() {
-            Y.Node.get('#drag').setStyles({ top: '-150px', left: '200px' });
+            Y.one('#drag').setStyles({ top: '-150px', left: '200px' });
             dd = new Y.DD.Drag({
                 node: '#drag'
             }).plug(Y.Plugin.DDConstrained, {
@@ -288,7 +288,7 @@ YUI({
         },
         test_window_scroll: function() {
             Y.one('body').setStyle('height', '3000px');
-            Y.Node.get('#drag').setStyles({ top: '', left: '' });
+            Y.one('#drag').setStyles({ top: '', left: '' });
             dd = new Y.DD.Drag({
                 node: '#drag'
             }).plug(Y.Plugin.DDWinScroll);
@@ -311,7 +311,7 @@ YUI({
                         _fakeEnd(dd);
                         Y.Assert.isTrue((Y.one(window).get('scrollTop') > 0), 'window.scrollTop is not greater than 0');
                         dd.destroy();
-                        Y.Node.get('#drag').setStyles({ top: '', left: '' });
+                        Y.one('#drag').setStyles({ top: '', left: '' });
                         Y.one(window).set('scrollTop', 0);
                         Y.one(window).set('scrollLeft', 0);
                         Y.one('body').setStyle('height', '');

@@ -251,6 +251,29 @@ Y.Test.Runner.add(new Y.Test.Case({
                 Y.Assert.areSame(1, changes);
             }, 105);
         }, 51);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2529436
+    'Setting a non-string value should not result in two history entries': function () {
+        this.wait(function () {
+            var changes = 0,
+
+            event = this.history.on('change', function (e) {
+                changes += 1;
+            });
+
+            this.history.addValue('foo', '1');
+
+            this.wait(function () {
+                Y.Assert.areSame(1, changes);
+                this.history.addValue('foo', 1);
+
+                this.wait(function () {
+                    event.detach();
+                    Y.Assert.areSame(1, changes);
+                }, 105);
+            }, 105);
+        }, 51);
     }
 }));
 

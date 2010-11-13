@@ -13,10 +13,10 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.09.29-18-36',
+            GALLERY_VERSION = 'gallery-2010.11.03-19-46',
             TNT = '2in3',
             TNT_VERSION = '4',
-            YUI2_VERSION = '2.8.1',
+            YUI2_VERSION = '2.8.2',
             COMBO_BASE = CDN_BASE + 'combo?',
             META = { version: VERSION,
                               root: ROOT,
@@ -55,7 +55,7 @@ if (!YUI.Env[Y.version]) {
             comboBase: COMBO_BASE,
             update: galleryUpdate,
             patterns: { 'gallery-': { },
-                         'gallerycss-': { type: 'css' } }
+                        'gallerycss-': { type: 'css' } }
         };
 
         groups.yui2 = {
@@ -937,10 +937,14 @@ Y.Loader.prototype = {
      *           e.g., ["en-GB","zh-Hans-CN"]</dd>
      *     <dt>condition:</dt>
      *       <dd>Specifies that the module should be loaded automatically if
-     *           a condition is met.  This is an object with two fields:
+     *           a condition is met.  This is an object with up to three fields:
      *           [trigger] - the name of a module that can trigger the auto-load
      *           [test] - a function that returns true when the module is to be
      *           loaded.
+     *           [when] - specifies the load order of the conditional module
+     *           with regard to the position of the trigger module.
+     *           This should be one of three values: 'before', 'after', or
+     *           'instead'.  The default is 'after'.
      *       </dd>
      * </dl>
      * @method addModule
@@ -967,13 +971,15 @@ Y.Loader.prototype = {
             o.path = _path(name, name, o.type);
         }
 
+        o.supersedes = o.supersedes || o.use;
+
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
         o.requires = o.requires || [];
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname,
+            overrides, skinname, triggermod, when,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
 
@@ -1057,6 +1063,24 @@ Y.Loader.prototype = {
 
 // Y.log('pack ' + packName + ' should supersede ' + supName);
 // Add rollup file, need to add to supersedes list too
+
+                            // default packages
+                            packName = this.getLangPackName(ROOT_LANG, name);
+                            supName = this.getLangPackName(ROOT_LANG, i);
+
+                            smod = this.moduleInfo[packName];
+
+                            if (!smod) {
+                                smod = this._addLangPack(lang, o, packName);
+                            }
+
+                            if (!(supName in flatSup)) {
+                                smod.supersedes.push(supName);
+                            }
+
+// Y.log('pack ' + packName + ' should supersede ' + supName);
+// Add rollup file, need to add to supersedes list too
+
                         }
                     }
 
@@ -1088,10 +1112,30 @@ Y.Loader.prototype = {
 
         if (o.condition) {
             trigger = o.condition.trigger;
+            when = o.condition.when;
             conditions[trigger] = conditions[trigger] || {};
             conditions[trigger][name] = o.condition;
-            o.after = o.after || [];
-            o.after.push(trigger);
+            // the 'when' attribute can be 'before', 'after', or 'instead'
+            // the default is after.
+            if (when && when != 'after') {
+                if (when == 'instead') { // replace the trigger
+                    o.supersedes = o.supersedes || [];
+                    o.supersedes.push(trigger);
+                } else { // before the trigger
+                    // the trigger requires the conditional mod,
+                    // so it should appear before the conditional
+                    // mod if we do not intersede.
+                    //
+                    // triggermod = this.getModule(trigger);
+                    // if (triggermod) {
+                    //     triggermod.after = triggermod.after || [];
+                    //     triggermod.after.push(name);
+                    // }
+                }
+            } else { // after the trigger
+                o.after = o.after || [];
+                o.after.push(trigger);
+            }
         }
 
         if (o.after) {
@@ -1159,7 +1203,8 @@ Y.Loader.prototype = {
             delete mod.expanded;
         }
 
-        if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
             // Y.log('already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
@@ -1175,19 +1220,6 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
 
-        // Create skin modules
-        if (mod.skinnable) {
-            skindef = this.skin.overrides;
-            if (skindef && skindef[name]) {
-                for (i = 0; i < skindef[name].length; i++) {
-                    skinmod = this._addSkin(skindef[name][i], name);
-                    d.push(skinmod);
-                }
-            } else {
-                skinmod = this._addSkin(this.skin.defaultSkin, name);
-                d.push(skinmod);
-            }
-        }
 
         for (i = 0; i < r.length; i++) {
             // Y.log(name + ' requiring ' + r[i]);
@@ -1265,7 +1297,7 @@ Y.Loader.prototype = {
                         hash[condmod] = true;
                         d.push(condmod);
                         m = this.getModule(condmod);
-                        // console.log('conditional', m);
+                        // Y.log('conditional', m);
                         if (m) {
                             add = this.getRequires(m);
                             for (j = 0; j < add.length; j++) {
@@ -1275,6 +1307,20 @@ Y.Loader.prototype = {
                     }
                 }
             }, this);
+        }
+
+        // Create skin modules
+        if (mod.skinnable) {
+            skindef = this.skin.overrides;
+            if (skindef && skindef[name]) {
+                for (i = 0; i < skindef[name].length; i++) {
+                    skinmod = this._addSkin(skindef[name][i], name);
+                    d.push(skinmod);
+                }
+            } else {
+                skinmod = this._addSkin(this.skin.defaultSkin, name);
+                d.push(skinmod);
+            }
         }
 
         mod._parsed = false;
@@ -2416,15 +2462,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                         "path": "autocomplete/autocomplete-filters-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-wordbreak"
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-filters-accentfold": {
                         "path": "autocomplete/autocomplete-filters-accentfold-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-accentfold", 
-                            "unicode-wordbreak"
+                            "text-accentfold", 
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-highlighters": {
@@ -2445,11 +2491,48 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "array-extras", 
                     "base-build", 
+                    "escape", 
                     "event-valuechange", 
                     "node-base"
                 ]
             }, 
             "autocomplete-list": {
+                "lang": [
+                    "en"
+                ], 
+                "plugins": {
+                    "autocomplete-list-keys": {
+                        "condition": {
+                            "test": function (Y) {
+    // Only add keyboard support to autocomplete-list if this doesn't appear to
+    // be an iOS or Android-based mobile device.
+    //
+    // There's currently no feasible way to actually detect whether a device has
+    // a hardware keyboard, so this sniff will have to do. It can easily be
+    // overridden by manually loading the autocomplete-list-keys module.
+    //
+    // Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari
+    // doesn't fire the keyboard events used by AutoCompleteList, so there's
+    // no point loading the -keys module even when a bluetooth keyboard may be
+    // available.
+    return !(Y.UA.ios || Y.UA.android);
+}, 
+                            "trigger": "autocomplete-list"
+                        }, 
+                        "path": "autocomplete/autocomplete-list-keys-min.js", 
+                        "requires": [
+                            "autocomplete-list", 
+                            "base-build"
+                        ]
+                    }, 
+                    "autocomplete-plugin": {
+                        "path": "autocomplete/autocomplete-plugin-min.js", 
+                        "requires": [
+                            "autocomplete-list", 
+                            "node-pluginhost"
+                        ]
+                    }
+                }, 
                 "requires": [
                     "autocomplete-base", 
                     "widget", 
@@ -2464,6 +2547,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "base": {
         "submodules": {
             "base-base": {
+                "after": [
+                    "attribute-complex"
+                ], 
                 "requires": [
                     "attribute-base"
                 ]
@@ -2719,16 +2805,26 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "datatable-base": {
                 "requires": [
-                    "recordset", 
-                    "widget"
+                    "recordset-base", 
+                    "widget", 
+                    "intl", 
+                    "substitute", 
+                    "event-mouseenter"
                 ], 
                 "skinnable": true
             }, 
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base", 
+                    "plugin", 
+                    "stylesheet"
+                ]
+            }, 
             "datatable-sort": {
                 "requires": [
-                    "arraysort", 
                     "datatable-base", 
-                    "plugin"
+                    "plugin", 
+                    "recordset-sort"
                 ]
             }
         }
@@ -2923,8 +3019,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "dial": {
+        "requires": [
+            "widget", 
+            "dd-drag", 
+            "substitute", 
+            "event-mouseenter", 
+            "transition"
+        ], 
+        "skinnable": true
+    }, 
     "dom": {
         "plugins": {
+            "dom-deprecated": {
+                "requires": [
+                    "dom-base"
+                ]
+            }, 
             "dom-style-ie": {
                 "condition": {
                     "trigger": "dom-style", 
@@ -2995,13 +3106,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "frame", 
                     "node", 
                     "exec-command", 
-                    "selection", 
-                    "editor-para"
+                    "selection"
                 ]
             }, 
             "editor-bidi": {
                 "requires": [
                     "editor-base"
+                ]
+            }, 
+            "editor-br": {
+                "requires": [
+                    "node"
                 ]
             }, 
             "editor-lists": {
@@ -3011,7 +3126,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "editor-para": {
                 "requires": [
-                    "editor-base"
+                    "node"
                 ]
             }, 
             "exec-command": {
@@ -3149,14 +3264,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "highlight-accentfold": {
                 "requires": [
                     "highlight-base", 
-                    "unicode-accentfold"
+                    "text-accentfold"
                 ]
             }, 
             "highlight-base": {
                 "requires": [
                     "array-extras", 
                     "escape", 
-                    "unicode-wordbreak"
+                    "text-wordbreak"
                 ]
             }
         }
@@ -3300,10 +3415,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node-pluginhost"
                 ]
             }, 
+            "node-deprecated": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
             "node-event-simulate": {
                 "requires": [
                     "node-base", 
                     "event-simulate"
+                ]
+            }, 
+            "node-load": {
+                "requires": [
+                    "node-base", 
+                    "io-base"
                 ]
             }, 
             "shim-plugin": {
@@ -3408,9 +3534,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "pluginhost": {
-        "requires": [
-            "yui-base"
-        ]
+        "submodules": {
+            "pluginhost-base": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "pluginhost-config": {
+                "requires": [
+                    "pluginhost-base"
+                ]
+            }
+        }
     }, 
     "profiler": {
         "requires": [
@@ -3483,6 +3618,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "resize": {
+        "submodules": {
+            "resize-base": {
+                "requires": [
+                    "widget", 
+                    "substitute", 
+                    "event", 
+                    "oop", 
+                    "dd-drag", 
+                    "dd-delegate", 
+                    "dd-drop"
+                ], 
+                "skinnable": true
+            }, 
+            "resize-constrain": {
+                "requires": [
+                    "plugin", 
+                    "resize-base"
+                ]
+            }, 
+            "resize-proxy": {
+                "requires": [
+                    "plugin", 
+                    "resize-base"
+                ]
+            }
+        }
+    }, 
     "scrollview": {
         "plugins": {
             "scrollview-base": {
@@ -3493,6 +3656,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "transition"
                 ], 
                 "skinnable": true
+            }, 
+            "scrollview-base-ie": {
+                "condition": {
+                    "trigger": "scrollview-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "scrollview-base"
+                ]
             }, 
             "scrollview-paginator": {
                 "path": "scrollview/scrollview-paginator-min.js", 
@@ -3609,6 +3781,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "text": {
+        "submodules": {
+            "text-accentfold": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-accentfold"
+                ]
+            }, 
+            "text-data-accentfold": {}, 
+            "text-data-wordbreak": {}, 
+            "text-wordbreak": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-wordbreak"
+                ]
+            }
+        }
+    }, 
     "transition": {
         "submodules": {
             "transition-native": {
@@ -3624,24 +3814,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
-    "unicode": {
-        "submodules": {
-            "unicode-accentfold": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-accentfold"
-                ]
-            }, 
-            "unicode-data-accentfold": {}, 
-            "unicode-data-wordbreak": {}, 
-            "unicode-wordbreak": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-wordbreak"
-                ]
-            }
-        }
-    }, 
     "uploader": {
         "requires": [
             "event-custom", 
@@ -3652,6 +3824,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget": {
         "plugins": {
+            "widget-base-ie": {
+                "condition": {
+                    "trigger": "widget-base", 
+                    "ua": "ie"
+                }, 
+                "requires": [
+                    "widget-base"
+                ]
+            }, 
             "widget-child": {
                 "requires": [
                     "base-build", 
@@ -3706,13 +3887,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "base-pluginhost", 
                     "node-base", 
                     "node-style", 
-                    "node-event-delegate", 
                     "classnamemanager"
                 ]
             }, 
             "widget-htmlparser": {
                 "requires": [
                     "widget-base"
+                ]
+            }, 
+            "widget-skin": {
+                "requires": [
+                    "widget-base"
+                ]
+            }, 
+            "widget-uievents": {
+                "requires": [
+                    "widget-base", 
+                    "node-event-delegate"
                 ]
             }
         }
@@ -3778,7 +3969,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3f7a3b8632850fc4ebd6150bbec3ed3b';
+YUI.Env[Y.version].md5 = '49afa7ee5f5e4485e24b810d0f378d41';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

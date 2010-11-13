@@ -26,9 +26,6 @@ var Record = Y.Base.create('record', Y.Base, [], {
 		if (field === undefined) {
         	return this.get("data");
 		}
-		else if (field === 'id') {
-			return this.get('id');
-		}
 		else {
 			return this.get("data")[field];
 		}
@@ -38,8 +35,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 {
 	ATTRS: {
 	    id: {
-	        valueFn: "_setId",
-	        writeOnce: true
+	        valueFn: "_setId"
 	    },
 	    data : {
 			value: null
@@ -48,19 +44,44 @@ var Record = Y.Base.create('record', Y.Base, [], {
 });
 
 Y.Record = Record;
+/**
+ * The Recordset utility provides a standard way for dealing with
+ * a collection of similar objects.
+ *
+ * Extends Y.Base, and augments methods in the collection utility.
+ *
+ * @module recordset
+ */
+
+/**
+ * Provides the base Recordset implementation, which can be extended to add
+ * additional functionality, such as custom indexing. sorting, and filtering.
+ *
+ * @module recordset
+ * @submodule recordset-base
+ */
+
+
 var ArrayList = Y.ArrayList,
 	Bind = Y.bind,
 	Recordset = Y.Base.create('recordset', Y.Base, [], {
-
+		
+	
+	/**
+     * Publish default functions for events. Create the initial hash table.
+     *
+     * @method initializer
+     */
     initializer: function() {
 	
 		//set up event listener to fire events when recordset is modified in anyway
-		this.publish('add', {defaultFn: Bind("_defAddFn", this)});
-		this.publish('remove', {defaultFn: Bind("_defRemoveFn", this)});
-		this.publish('empty', {defaultFn: Bind("_defEmptyFn", this)});
-		this.publish('update', {defaultFn: Bind("_defUpdateFn", this)});
+		this.publish('add', {defaultFn: this._defAddFn});
+		this.publish('remove', {defaultFn: this._defRemoveFn});
+		this.publish('empty', {defaultFn: this._defEmptyFn});
+		this.publish('update', {defaultFn: this._defUpdateFn});
 		
-		this._recordsetChanged();
+		this._recordsetChanged(); //Fires recordset changed event when any updates are made to the recordset
+		this._syncHashTable(); //Fires appropriate hashTable methods on "add", "remove", "update" and "empty" events
     },
     
     destructor: function() {
@@ -70,8 +91,6 @@ var ArrayList = Y.ArrayList,
      * Helper method called upon by add() - it is used to create a new record(s) in the recordset
      *
      * @method _defAddFn
-     * @param aRecord {Y.Record} A Y.Record instance
-     * @param index {Number} (optional) Index at which to add the record(s)
      * @return {Y.Record} A Record instance.
      * @private
      */
@@ -93,33 +112,45 @@ var ArrayList = Y.ArrayList,
 			}
 		}
 		
-		this._defAddHash(e);
 		
 	},
 	
+	/**
+     * Helper method called upon by remove() - it is used to remove record(s) from the recordset
+     *
+     * @method _defRemoveFn
+     * @private
+     */
 	_defRemoveFn: function(e) {
 		if (e.index === 0) {
 			this._items.pop();
 		}
 		else {
 			this._items.splice(e.index,e.range);
-		}
-		
-		this._defRemoveHash(e);
-		
+		}		
 	},
 	
+	/**
+     * Helper method called upon by empty() - it is used to empty the recordset
+     *
+     * @method _defEmptyFn
+     * @private
+     */
 	_defEmptyFn: function(e) {
 		this._items = [];
-		this._defEmptyHash();
 	},
 	
+	/**
+     * Helper method called upon by update() - it is used to update the recordset
+     *
+     * @method _defUpdateFn
+     * @private
+     */
 	_defUpdateFn: function(e) {
 		
 		for (var i=0; i<e.updated.length; i++) {
 			this._items[e.index + i] = this._changeToRecord(e.updated[i]);
 		}
-		this._defUpdateHash(e);
 	},
 	
 	
@@ -128,43 +159,75 @@ var ArrayList = Y.ArrayList,
     //---------------------------------------------
 	
 	
-	
+	/**
+     * Method called whenever "recordset:add" event is fired. It adds the new record(s) to the hashtable.
+     *
+     * @method _defAddHash
+     * @private
+     */
 	_defAddHash: function(e) {
 		var obj = this.get('table'), key = this.get('key'), i=0;
 		for (; i<e.added.length; i++) {
-			obj[e.added[i].getValue(key)] = e.added[i];			
+			obj[e.added[i].get(key)] = e.added[i];			
 		}
 		this.set('table', obj);
 	},
 	
+	/**
+     * Method called whenever "recordset:remove" event is fired. It removes the record(s) from the recordset.
+     *
+     * @method _defRemoveHash
+     * @private
+     */
 	_defRemoveHash: function(e) {
 		var obj = this.get('table'), key = this.get('key'), i=0;
 		for (; i<e.removed.length; i++) {
-			delete obj[e.removed[i].getValue(key)];
+			delete obj[e.removed[i].get(key)];
 		}
 		this.set('table', obj);
 	},
 	
+	
+	/**
+     * Method called whenever "recordset:update" event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.
+     *
+     * @method _defUpdateHash
+     * @private
+     */
 	_defUpdateHash: function(e) {
 		var obj = this.get('table'), key = this.get('key'), i=0;
 		
 		//deletes the object key that held on to an overwritten record and
 		//creates an object key to hold on to the updated record
 		for (; i < e.updated.length; i++) {
-			delete obj[e.overwritten[i].get(key)];
-			obj[e.updated[i].getValue(key)] = e.updated[i]; 
+			if (e.overwritten[i]) {
+				delete obj[e.overwritten[i].get(key)];
+			}
+			obj[e.updated[i].get(key)] = e.updated[i]; 
 		}
 		this.set('table', obj);
 	},
 	
+	/**
+     * Method called whenever "recordset:empty" event is fired. It empties the hash table.
+     *
+     * @method _defEmptyHash
+     * @private
+     */
 	_defEmptyHash: function() {
 		this.set('table', {});
 	},
 	
+	/**
+     * Sets up the hashtable with all the records currently in the recordset
+     *
+     * @method _setHashTable
+     * @private
+     */
 	_setHashTable: function() {
 		var obj = {}, key=this.get('key'), i=0, len = this._items.length;
 		for (; i<len; i++) {
-			obj[this._items[i].getValue(key)] = this._items[i];
+			obj[this._items[i].get(key)] = this._items[i];
 		}
 		return obj;
 	},
@@ -208,22 +271,51 @@ var ArrayList = Y.ArrayList,
 		});
 	},
 
-
+	
+	/**
+     * Syncs up the private hash methods with their appropriate triggering events.
+     *
+     * @method _syncHashTable
+     * @private
+     */
+	_syncHashTable: function() {
+		
+		this.after('add', function(e) {
+			this._defAddHash(e);
+		});
+		this.after('remove', function(e) {
+			this._defRemoveHash(e);
+		});
+		this.after('update', function(e) {
+			this._defUpdateHash(e);
+		});
+		this.after('update', function(e) {
+			this._defEmptyHash();
+		});
+		
+	},
 	
 	//---------------------------------------------
     // Public Methods
     //---------------------------------------------
 	
 	/**
-     * Returns the record with particular ID
+     * Returns the record with particular ID or index
      *
      * @method getRecord
-     * @param i {id} The ID of the record
+     * @param i {String, Number} The ID of the record if a string, or the index if a number.
      * @return {Y.Record} An Y.Record instance
      * @public
      */
-	getRecord: function(id) {
-		return this.get('table')[id];
+	getRecord: function(i) {
+		
+		if (Y.Lang.isString(i)) {
+			return this.get('table')[i];
+		}
+		else if (Y.Lang.isNumber(i)) {
+			return this._items[i];
+		}
+		return null;
 	},
 	
 	
@@ -259,6 +351,13 @@ var ArrayList = Y.ArrayList,
 		return returnedRecords;
 	},
 	
+	/**
+     * Returns the length of the recordset
+     *
+     * @method getLength
+     * @return {Number} Number of records in the recordset
+     * @public
+     */
 	getLength: function() {
 		return this.size();
 	},
@@ -266,7 +365,7 @@ var ArrayList = Y.ArrayList,
 	/**
      * Returns an array of values for a specified key in the recordset
      *
-     * @method getRecord
+     * @method getValuesByKey
      * @param index {Number} (optional) Index at which the required record resides
      * @return {Array} An array of values for the given key
      * @public
@@ -287,7 +386,7 @@ var ArrayList = Y.ArrayList,
      * @method add
      * @param oData {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
      * @param index {Number} (optional) Index at which to add the record(s)
-     * @return {object} An object literal with two properties: "data" which contains array of Y.Record(s) and "index" which contains the index where the Y.Record(s) were added
+     * @return {Y.Recordset} The updated recordset instance
      * @public
      */
 	add: function(oData, index) {
@@ -319,7 +418,7 @@ var ArrayList = Y.ArrayList,
      * @method remove
      * @param index {Number} (optional) Index at which to remove the record(s) from
      * @param range {Number} (optional) Number of records to remove (including the one at the index)
-     * @return {object} An object literal with two properties: "data" which contains the removed set {Y.Record or Y.Recordset} and "index" which contains the index where the Y.Record(s) were removed from
+     * @return {Y.Recordset} The updated recordset instance
      * @public
      */
 	remove: function(index, range) {
@@ -341,6 +440,7 @@ var ArrayList = Y.ArrayList,
 	/**
      * Empties the recordset
      *
+	 * @return {Y.Recordset} The updated recordset instance
      * @method empty
      * @public
      */
@@ -349,13 +449,26 @@ var ArrayList = Y.ArrayList,
 		return this;
 	},
 	
-	
+	/**
+     * Updates the recordset with the new records passed in. Overwrites existing records when updating the index with the new records.
+     *
+     * @method update
+     * @param data {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
+     * @param index {Number} (optional) The index to start updating from. 
+     * @return {Y.Recordset} The updated recordset instance
+     * @public
+     */
 	update: function(data, index) {
-		var rec, arr;
+		var rec, arr, i=0;
 		
 		//Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method
 		arr = (!(Y.Lang.isArray(data))) ? [data] : data;
 		rec = this._items.slice(index, index+arr.length);
+		
+		for (; i<arr.length; i++) {
+			arr[i] = this._changeToRecord(arr[i]);
+		}
+		
 		this.fire('update', {updated:arr, overwritten:rec, index:index});
 		
 		return this;		
@@ -365,6 +478,15 @@ var ArrayList = Y.ArrayList,
 },
 {
     ATTRS: {
+	
+		/**
+	    * @description An array of records that the recordset is storing
+	    *
+	    * @attribute records
+	    * @public
+	    * @static
+	    * @type array
+	    */
         records: {
             validator: Y.Lang.isArray,
             getter: function () {
@@ -372,6 +494,9 @@ var ArrayList = Y.ArrayList,
                 return Y.Array(this._items);
             },
             setter: function (allData) {
+				//For allData passed in here, see if each instance is a Record.
+				//If its not, change it to a record.
+				//Then push it into the array.
 				var records = [];
 				function initRecord(oneData) {
 					var o;
@@ -392,12 +517,31 @@ var ArrayList = Y.ArrayList,
 			lazyAdd: false
         },
 	
+	/**
+    * @description A hash table where the ID of the record is the key, and the record instance is the value.
+    *
+    * @attribute table
+    * @public
+    * @static
+    * @type object
+	*/	
 	table: {
+		//Initially, create the hash table with all records currently in the recordset
 		valueFn: '_setHashTable'
 		},
-		
+	
+	/**
+    * @description The ID to use as the key in the hash table.
+    *
+    * @attribute key
+    * @public
+    * @static
+    * @type string
+	*/	
 	key: {
-		value:'id'
+		value:'id',
+		//set to readonly true. If you want custom hash tables, you should use the recordset-indexer plugin.
+		readOnly:true
 	}
 		
     }
@@ -409,6 +553,13 @@ Y.Recordset = Recordset;
 
 }, '@VERSION@' ,{requires:['base','record','arraylist']});
 YUI.add('recordset-sort', function(Y) {
+
+/**
+ * Provides default and custom sorting functionality to recordset.
+ *
+ * @module recordset
+ * @submodule recordset-sort
+ */
 
 var Compare = Y.ArraySort.compare,
 	isValue = Y.Lang.isValue;
@@ -423,6 +574,15 @@ Y.mix(RecordsetSort, {
     NAME: "recordsetSort",
 
     ATTRS: {
+	
+		/**
+	    * @description The last properties used to sort
+	    *
+	    * @attribute lastSortProperties
+	    * @public
+	    * @static
+	    * @type object
+	    */
 		lastSortProperties: {
 			value: {
 				field:undefined,
@@ -433,7 +593,17 @@ Y.mix(RecordsetSort, {
 				return (isValue(v.field) && isValue(v.desc) && isValue(v.sorter));
 			}
 		},
-
+		
+		/**
+	    * @description Default sort function to use if none is specified by the user.
+		* Takes two records, the key to sort by, and whether sorting direction is descending or not (boolean).
+		* If two records have the same value for a given key, the ID is used as the tie-breaker.
+	    *
+	    * @attribute defaultSorter
+	    * @public
+	    * @static
+	    * @type function
+	    */
         defaultSorter: {
             value: function(recA, recB, field, desc) {
                 var sorted = Compare(recA.getValue(field), recB.getValue(field), desc);
@@ -445,7 +615,15 @@ Y.mix(RecordsetSort, {
                 }
             }
         },
-
+		
+		/**
+	    * @description A boolean telling if the recordset is in a sorted state.
+	    *
+	    * @attribute defaultSorter
+	    * @public
+	    * @static
+	    * @type function
+	    */
 		isSorted: {
 			value: false,
 			valueFn: "_getState"
@@ -454,6 +632,13 @@ Y.mix(RecordsetSort, {
 });
 
 Y.extend(RecordsetSort, Y.Plugin.Base, {
+	
+	/**
+     * Sets up the default function to use when the "sort" event is fired.
+     *
+     * @method initializer
+     * @public
+     */
     initializer: function(config) {
         this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
     },
@@ -461,6 +646,12 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     destructor: function(config) {
     },
 
+	/**
+     * Sets up event listeners to listen to "add", "update" and "sort" events, and change the isSorted flag as needed.
+     *
+     * @method _getState
+     * @private
+     */
 	_getState: function() {
 		var host = this.get('host'),
 			checker = Y.bind(function() {
@@ -475,6 +666,14 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 		this.onHostEvent('update', checker, host);
 	},
 
+	/**
+     * Method that all sort calls go through. 
+	 * Sets up the lastSortProperties object with the details of the sort, and passes in parameters 
+	 * to the "defaultSorter" or a custom specified sort function.
+     *
+     * @method _defSortFn
+     * @private
+     */
     _defSortFn: function(e) {
 		this.set('lastSortProperties', e);
 		
@@ -484,20 +683,45 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 		});
     },
 
+	/**
+     * Sorts the recordset.
+	 *
+     * @param field {string} A key to sort by.
+     * @param desc {boolean} True if you want sort order to be descending, false if you want sort order to be ascending
+     * @method sort
+     * @public
+     */
     sort: function(field, desc, sorter) {
 		this.fire("sort", {field:field, desc: desc, sorter: sorter || this.get("defaultSorter")});
     },
 
+	/**
+     * Resorts the recordset based on the last-used sort parameters (stored in 'lastSortProperties' ATTR)
+	 *
+     * @method resort
+     * @public
+     */
 	resort: function() {
 		var p = this.get('lastSortProperties');
 		this.fire("sort", {field:p.field, desc: p.desc, sorter: p.sorter || this.get("defaultSorter")});
 	},
 
+	/**
+     * Reverses the recordset calling the standard array.reverse() method.
+	 *
+     * @method reverse
+     * @public
+     */
     reverse: function() {
 		this.get('host')._items.reverse();
     },
 
-	//flips the recordset based on the same sort method that user had defined
+	/**
+     * Sorts the recordset based on the last-used sort parameters, but flips the order. (ie: Descending becomes ascending, and vice versa).
+	 *
+     * @method flip
+     * @public
+     */	
 	flip: function() {
 		var p = this.get('lastSortProperties');
 		
@@ -516,6 +740,15 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
 YUI.add('recordset-filter', function(Y) {
+
+/**
+ * Provides the ability to filter through a recordset.
+ * Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset. 
+ *
+ * @module recordset
+ * @submodule recordset-filter
+ */
+
 
 var YArray = Y.Array,
 	Lang = Y.Lang;
@@ -544,7 +777,15 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
     destructor: function(config) {
     },
 
-	
+	/**
+     * Filter through the recordset with a custom filter function, or a key-value pair.
+	 *
+     * @param f {Function, String} A custom filter function or a string representing the key to filter by.
+     * @param v {any} (optional) If a string is passed into f, this represents the value that key should take in order to be accepted by the filter. Do not pass in anything if 'f' is a custom function
+	 * @return recordset {Y.Recordset} A new filtered recordset instance
+     * @method filter
+     * @public
+     */
 	filter: function(f,v) {
 		var recs = this.get('host').get('records'),
 			len = recs.length,
@@ -573,14 +814,36 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
 		//return new host.constructor({records:arr});
 	},
 	
+	/**
+	* The inverse of filter. Executes the supplied function on each item.
+	* Returns a new Recordset containing the items that the supplied
+	* function returned *false* for.
+	* @method reject
+	* @param {Function} f is the function to execute on each item.
+	* @static
+	* @return {Y.Recordset} A new Recordset instance containing the items on which the supplied function
+	* returned false.
+	*/
 	reject: function(f) {
 		return new Y.Recordset({records:YArray.reject(this.get('host').get('records'),f)});
 	},
 	
+	/**
+	* Iterates over the Recordset, returning a new Recordset of all the elements
+	* that match the supplied regular expression
+	* @method grep
+	* @param {pattern} pattern The regular expression to test against
+	* each record.
+	* @static
+	* @return {Y.Recordset} A Recordset instance containing all the items in the collection that
+	* produce a match against the supplied regular expression.
+	* If no items match, an empty Recordset instance is returned.
+	*/
 	grep: function(pattern) {
 		return new Y.Recordset({records:YArray.grep(this.get('host').get('records'),pattern)});
 	}
-
+	
+	//TODO: Add more pass-through methods to arrayextras
 });
 
 Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
@@ -590,6 +853,13 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 }, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
 YUI.add('recordset-indexer', function(Y) {
 
+/**
+ * Provides the ability to store multiple custom hash tables referencing records in the recordset.
+ * This utility does not support any collision handling. New hash table entries with a used key overwrite older ones.
+ *
+ * @module recordset
+ * @submodule recordset-indexer
+ */
 
 function RecordsetIndexer(config) {
     RecordsetIndexer.superclass.constructor.apply(this, arguments);
@@ -601,38 +871,54 @@ Y.mix(RecordsetIndexer, {
     NAME: "recordsetIndexer",
 
     ATTRS: {
+		/**
+	    * @description Collection of all the hashTables created by the plugin. 
+		* The individual tables can be accessed by the key they are hashing against. 
+	    *
+	    * @attribute hashTables
+	    * @public
+	    * @type object
+	    */
 		hashTables: {
-				value: {
+			value: {
 					
-				}
-			},
-			
-			keys: {
-				value: {
-					
-				}
 			}
+		},
+		
+
+		keys: {
+			value: {
+					
+			}
+		}
     }
 });
 
 
 Y.extend(RecordsetIndexer, Y.Plugin.Base, {
+	
     initializer: function(config) {
        var host = this.get('host');
        
        	//setup listeners on recordset events
-       	//this.onHostEvent('add', Y.bind("_defAddHash", this), host);
-       	//this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
-       	//this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);	
-       	//this.publish('hashKeyUpdate', {defaultFn:Y.bind('_defUpdateHashTable', this)});
-       		
-       	//create initial hash
-       	//this.set('key', config.key || 'id');
+       	this.onHostEvent('add', Y.bind("_defAddHash", this), host);
+       	this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
+       	this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);	
+
     },
 
     destructor: function(config) {
     },
 
+
+	/**
+     * Setup the hash table for a given key with all existing records in the recordset
+	 *
+     * @param key {string} A key to hash by.
+	 * @return obj {object} The created hash table
+     * @method _setHashTable
+     * @private
+     */
 	_setHashTable: function(key) {
 		var host = this.get('host'), obj = {}, i=0, len = host.getLength();
 		
@@ -641,7 +927,117 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 		}
 		return obj;
 	},
+	
+	//---------------------------------------------
+    // Syncing Methods
+    //---------------------------------------------
+	
+	
+	/**
+     * Updates all hash tables when a record is added to the recordset
+	 *
+     * @method _defAddHash
+     * @private
+     */
+	_defAddHash: function(e) {
+		var tbl = this.get('hashTables');
+		
+		
+		//Go through every hashtable that is stored.
+		//in each hashtable, look to see if the key is represented in the object being added.
+		Y.each(tbl, function(v,key) {
+			Y.each(e.added || e.updated, function(o) {
+				//if the object being added has a key which is being stored by hashtable v, add it into the table.
+				if (o.getValue(key)) {
+					v[o.getValue(key)] = o;
+				}
+			});
+		});
+		
+	},
+	
+	/**
+     * Updates all hash tables when a record is removed from the recordset
+	 *
+     * @method _defRemoveHash
+     * @private
+     */
+	_defRemoveHash: function(e) {
+		var tbl = this.get('hashTables'), reckey;
+		
+		//Go through every hashtable that is stored.
+		//in each hashtable, look to see if the key is represented in the object being deleted.
+		Y.each(tbl, function(v,key){
+			Y.each(e.removed || e.overwritten, function(o) {
+				reckey = o.getValue(key);
 
+				//if the hashtable has a key storing a record, and the key and the record both match the record being deleted, delete that row from the hashtable
+				if (reckey && v[reckey] === o) {
+					delete v[reckey];
+				}
+			});
+		}); 
+	},
+	
+	/**
+     * Updates all hash tables when the recordset is updated (a combination of add and remove)
+	 *
+     * @method _defUpdateHash
+     * @private
+     */
+	_defUpdateHash: function(e) {
+		
+		//TODO: It will be more performant to create a new method rather than using _defAddHash, _defRemoveHash, due to the number of loops. See commented code.
+		e.added = e.updated;
+		e.removed = e.overwritten;
+		this._defAddHash(e);
+		this._defRemoveHash(e);
+					
+			/*
+					var tbl = this.get('hashTables'), reckey;
+					
+					Y.each(tbl, function(v, key) {
+						Y.each(e.updated, function(o, i) {
+							
+							//delete record from hashtable if it has been overwritten
+							reckey = o.getValue(key);
+							
+							if (reckey) {
+								v[reckey] = o;
+							}
+							
+							//the undefined case is if more records are updated than currently exist in the recordset. 
+							if (e.overwritten[i] && (v[e.overwritten[i].getValue(key)] === e.overwritten[i])) {
+								delete v[e.overwritten[i].getValue(key)];
+							}
+							
+							// if (v[reckey] === o) {
+							// 	delete v[reckey];
+							// }
+							// 				
+							// //add the new updated record if it has a key that corresponds to a hash table
+							// if (o.getValue(key)) {
+							// 	v[o.getValue(key)] = o;
+							// }
+															
+						});
+					});
+			*/
+	},
+	
+	//---------------------------------------------
+    // Public Methods
+    //---------------------------------------------
+	
+	
+	/**
+     * Creates a new hash table.
+	 *
+     * @param key {string} A key to hash by.
+	 * @return tbls[key] {object} The created hash table
+     * @method createTable
+     * @public
+     */
 	createTable: function(key) {
 		var tbls = this.get('hashTables');
 		tbls[key] = this._setHashTable(key);
@@ -650,52 +1046,21 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 		return tbls[key];
 	},
 	
+	
+	/**
+     * Get a hash table that hashes records by a given key.
+	 *
+     * @param key {string} A key to hash by.
+	 * @return table {object} The created hash table
+     * @method getTable
+     * @public
+     */
 	getTable: function(key) {
 		return this.get('hashTables')[key];
 	}
 	
-
-	// _setHashKey: function(k) {
-	// 	this.fire('hashKeyUpdate', {key:k});
-	// 	return k;
-	// },
-	// 
-	// _defUpdateHashTable: function(e) {
-	// 	var host = this.get('host'), obj = {}, key=e.key, i=0, len=host.getLength();
-	// 	
-	// 	for (; i<len; i++) {
-	// 		obj[host._items[i].getValue(key)] = host._items[i];
-	// 	}
-	// 	this.set('table', obj);
-	// },
-	// 
-	// _defAddHash: function(e) {
-	// 	var obj = this.get('table'), key = this.get('key'), i=0;
-	// 	for (; i<e.added.length; i++) {
-	// 		obj[e.added[i].getValue(key)] = e.added[i];			
-	// 	}
-	// 	this.set('table', obj);
-	// },
-	// 
-	// _defRemoveHash: function(e) {
-	// 	var obj = this.get('table'), key = this.get('key'), i=0;
-	// 	for (; i<e.removed.length; i++) {
-	// 		delete obj[e.removed[i].getValue(key)];
-	// 	}
-	// 	this.set('table', obj);
-	// },
-	// 
-	// _defUpdateHash: function(e) {
-	// 	var obj = this.get('table'), key = this.get('key'), i=0;
-	// 	
-	// 	//deletes the object key that held on to an overwritten record and
-	// 	//creates an object key to hold on to the updated record
-	// 	for (; i < e.updated.length; i++) {
-	// 		delete obj[e.overwritten[i].get(key)];
-	// 		obj[e.updated[i].getValue(key)] = e.updated[i]; 
-	// 	}
-	// 	this.set('table', obj);
-	// }
+	
+	
 	
 	
 });

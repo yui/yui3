@@ -5,6 +5,15 @@ across the library and provides a consistent init() and destroy()
 sequence, by chaining initialization (initializer) and destruction 
 (destructor) methods for the class hierarcy.
 
+3.3.0
+
+* Fixed Base.mix when used on a class created using Base.create
+
+* toString no longer inadvertently stamps the object, however,
+  we now stamp Base objects in the constructor, to support
+  use cases where the "toString" stamping was implicitly being
+  relied upon (e.g. in DD, as hashkeys).
+
 3.2.0
 
 * Fixed Base.create to properly isolate ATTRS on extensions

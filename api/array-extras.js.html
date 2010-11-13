@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>collection&nbsp; <span class="subtitle">3.3.0pr0</span></h3>
+        <h3>collection&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_collection.html" title="collection">collection</a>
                 
@@ -63,46 +63,78 @@
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Returns the index of the last item in the array</span>
-<span class="cm"> * that contains the specified value, -1 if the</span>
-<span class="cm"> * value isn&#39;t found.</span>
+<span class="cm"> * Returns the index of the last item in the array that contains the specified</span>
+<span class="cm"> * value, or -1 if the value isn&#39;t found.</span>
 <span class="cm"> * @method Array.lastIndexOf</span>
 <span class="cm"> * @static</span>
-<span class="cm"> * @param {Array} a the array to search.</span>
-<span class="cm"> * @param {any} val the value to search for.</span>
-<span class="cm"> * @return {int} the index of hte item that contains the value or -1.</span>
+<span class="cm"> * @param {Array} a Array to search in.</span>
+<span class="cm"> * @param {any} val Value to search for.</span>
+<span class="cm"> * @param {Number} fromIndex (optional) Index at which to start searching</span>
+<span class="cm"> *   backwards. Defaults to the array&#39;s length - 1. If negative, it will be</span>
+<span class="cm"> *   taken as an offset from the end of the array. If the calculated index is</span>
+<span class="cm"> *   less than 0, the array will not be searched and -1 will be returned.</span>
+<span class="cm"> * @return {Number} Index of the item that contains the value, or -1 if not</span>
+<span class="cm"> *   found.</span>
 <span class="cm"> */</span>
-<span class="nx">A</span><span class="p">.</span><span class="nx">lastIndexOf</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">)</span> <span class="o">?</span>
-    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">lastIndexOf</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">lastIndexOf</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">fromIndex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// An undefined fromIndex is still considered a value by some (all?)</span>
+        <span class="c1">// native implementations, so we can&#39;t pass it unless it&#39;s actually</span>
+        <span class="c1">// specified.</span>
+        <span class="k">return</span> <span class="nx">fromIndex</span> <span class="o">||</span> <span class="nx">fromIndex</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">a</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">fromIndex</span><span class="p">)</span> <span class="o">:</span>
+                <span class="nx">a</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
     <span class="p">}</span> <span class="o">:</span>
-    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">break</span><span class="p">;</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">fromIndex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">i</span>   <span class="o">=</span> <span class="nx">len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">fromIndex</span> <span class="o">||</span> <span class="nx">fromIndex</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">fromIndex</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">len</span> <span class="o">+</span> <span class="nx">fromIndex</span> <span class="o">:</span> <span class="nx">fromIndex</span><span class="p">,</span> <span class="nx">len</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
     <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Returns a copy of the array with the duplicate entries removed</span>
+<span class="cm"> * Returns a copy of the specified array with duplicate items removed.</span>
 <span class="cm"> * @method Array.unique</span>
+<span class="cm"> * @param {Array} a Array to dedupe.</span>
+<span class="cm"> * @return {Array} Copy of the array with duplicate items removed.</span>
 <span class="cm"> * @static</span>
-<span class="cm"> * @param {Array} a the array to find the subset of uniques for.</span>
-<span class="cm"> * @param {bool} sort flag to denote if the array is sorted or not.</span>
-<span class="cm"> * Defaults to false, the more general operation.</span>
-<span class="cm"> * @return {Array} a copy of the array with duplicate entries removed.</span>
 <span class="cm"> */</span>
 <span class="nx">A</span><span class="p">.</span><span class="nx">unique</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">sort</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">slice</span><span class="p">(),</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">item</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="c1">// Note: the sort param is deprecated and intentionally undocumented since</span>
+    <span class="c1">// YUI 3.3.0. It never did what the API docs said it did (see the older</span>
+    <span class="c1">// comment below as well).</span>
+    <span class="kd">var</span> <span class="nx">i</span>       <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">len</span>     <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">item</span><span class="p">,</span> <span class="nx">j</span><span class="p">;</span>
 
-    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">item</span> <span class="o">=</span> <span class="nx">b</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-        <span class="k">while</span> <span class="p">((</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">A</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">item</span><span class="p">))</span> <span class="o">!==</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">b</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">item</span> <span class="o">=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+        <span class="c1">// This loop iterates over the results array in reverse order and stops</span>
+        <span class="c1">// if it finds an item that matches the current input array item (a</span>
+        <span class="c1">// dupe). If it makes it all the way through without finding a dupe, the</span>
+        <span class="c1">// current item is pushed onto the results array.</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">--</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">item</span> <span class="o">===</span> <span class="nx">results</span><span class="p">[</span><span class="nx">j</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
-        <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">j</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="c1">// Note: the sort option doesn&#39;t really belong here... I think it was added</span>
@@ -110,40 +142,44 @@
     <span class="c1">// implementation was not working, so I replaced it with the following.</span>
     <span class="c1">// Leaving it in so that the API doesn&#39;t get broken.</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">sort</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">{</span>
-            <span class="nx">b</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">A</span><span class="p">.</span><span class="nx">numericSort</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">A</span><span class="p">.</span><span class="nx">numericSort</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">b</span><span class="p">.</span><span class="nx">sort</span><span class="p">();</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">sort</span><span class="p">();</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">return</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm">* Executes the supplied function on each item in the array.</span>
-<span class="cm">* Returns a new array containing the items that the supplied</span>
-<span class="cm">* function returned true for.</span>
+<span class="cm">* Executes the supplied function on each item in the array. Returns a new array</span>
+<span class="cm">* containing the items for which the supplied function returned a truthy value.</span>
 <span class="cm">* @method Array.filter</span>
-<span class="cm">* @param {Array} a the array to iterate.</span>
-<span class="cm">* @param {Function} f the function to execute on each item.</span>
-<span class="cm">* @param {object} Optional o context object.</span>
+<span class="cm">* @param {Array} a Array to filter.</span>
+<span class="cm">* @param {Function} f Function to execute on each item.</span>
+<span class="cm">* @param {Object} o Optional context object.</span>
 <span class="cm">* @static</span>
-<span class="cm">* @return {Array} The items on which the supplied function</span>
-<span class="cm">* returned true. If no items matched an empty array is</span>
-<span class="cm">* returned.</span>
+<span class="cm">* @return {Array} Array of items for which the supplied function returned a</span>
+<span class="cm">*   truthy value (empty if it never returned a truthy value).</span>
 <span class="cm">*/</span>
-<span class="nx">A</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">filter</span><span class="p">)</span> <span class="o">?</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">filter</span> <span class="o">?</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">filter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
     <span class="p">}</span> <span class="o">:</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span>       <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">len</span>     <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">item</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">item</span> <span class="o">=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
             <span class="p">}</span>
-        <span class="p">});</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
     <span class="p">};</span>
@@ -178,12 +214,12 @@
 <span class="cm">* @return {boolean} true if every item in the array returns true</span>
 <span class="cm">* from the supplied function.</span>
 <span class="cm">*/</span>
-<span class="nx">A</span><span class="p">.</span><span class="nx">every</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">every</span><span class="p">)</span> <span class="o">?</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">every</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">every</span> <span class="o">?</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">every</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
     <span class="p">}</span> <span class="o">:</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
@@ -203,15 +239,19 @@
 <span class="cm">* of the supplied function for each item in the original</span>
 <span class="cm">* array.</span>
 <span class="cm">*/</span>
-<span class="nx">A</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">map</span><span class="p">)</span> <span class="o">?</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">map</span> <span class="o">?</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
     <span class="p">}</span> <span class="o">:</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">));</span>
-        <span class="p">});</span>
+        <span class="kd">var</span> <span class="nx">i</span>       <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">len</span>     <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">results</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
     <span class="p">};</span>
 
@@ -234,20 +274,24 @@
 <span class="cm">* @return {any} A value that results from iteratively applying the</span>
 <span class="cm">* supplied function to each element in the array.</span>
 <span class="cm">*/</span>
-<span class="nx">A</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">reduce</span><span class="p">)</span> <span class="o">?</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">?</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//Firefox&#39;s Array.reduce does not allow inclusion of a</span>
-        <span class="c1">//  thisObject, so we need to implement it manually</span>
-        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">reduce</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">init</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ES5 Array.reduce doesn&#39;t support a thisObject, so we need to</span>
+        <span class="c1">// implement it manually</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">init</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
         <span class="p">},</span> <span class="nx">init</span><span class="p">);</span>
     <span class="p">}</span> <span class="o">:</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
-        <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">r</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-        <span class="p">});</span>
-        <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span>      <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">len</span>    <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -362,6 +406,7 @@
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
@@ -376,12 +421,14 @@
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
                                 <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
@@ -398,9 +445,11 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
@@ -414,6 +463,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
@@ -467,7 +517,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.forEach", "url": "YUI~array~extras.html#method_Array.forEach", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList~filter", "name": "filter", "url": "ArrayList~filter.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}, {"access": "", "host": "ArrayList", "name": "some", "url": "ArrayList.html#method_some", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.forEach", "url": "YUI~array~extras.html#method_Array.forEach", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList~filter", "name": "filter", "url": "ArrayList~filter.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}, {"access": "", "host": "ArrayList", "name": "some", "url": "ArrayList.html#method_some", "type": "method"}, {"access": "", "host": "ArrayList", "name": "toJSON", "url": "ArrayList.html#method_toJSON", "type": "method"}];
 </script>
 </body>
 </html>

@@ -279,3 +279,13 @@ L.sub = function(s, o) {
         return (!L.isUndefined(o[key])) ? o[key] : match;
     }) : s);
 };
+
+/**
+ * Returns the current time in milliseconds.
+ * @method now
+ * @return {int} the current date
+ * @since 3.3.0
+ */
+L.now = Date.now || function () {
+  return new Date().getTime();
+};

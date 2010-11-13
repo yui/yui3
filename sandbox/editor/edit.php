@@ -109,6 +109,7 @@
     <div id="smilies"></div>
 </div>
 
+<input type="text">
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
@@ -183,10 +184,7 @@ This is some <strong>other</strong> loose test.
 </div-->
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script-->
-<!--
 <script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script>
--->
-<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(time()); ?>"></script>
@@ -198,6 +196,7 @@ This is some <strong>other</strong> loose test.
 <script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/editor-bidi.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/editor-para.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/editor-br.js?bust=<?php echo(time()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -220,8 +219,16 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 'editor-br', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-bidi', 'editor-lists', function(Y) {
     //console.log(Y, Y.id);
+
+    var bCount = 0,
+        bColors = [
+            '#33CC99',
+            'purple',
+            'orange',
+            'yellow'
+        ];
 
     Y.delegate('mousedown', function(e) {
         e.halt();
@@ -243,10 +250,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
             case 'backcolor':
-                val = '#33CC99';
-                break;
             case 'forecolor':
-                val = '#0000FF';
+                val = bColors[bCount];
+                if (bCount === (bColors.length - 1)) {
+                    bCount = 0;
+                } else {
+                    bCount++;
+                }
                 break;
         }
         editor.focus(function() {
@@ -294,7 +304,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     s_cont.delegate('click', function(e) {
         var img = e.currentTarget, inst = editor.getInstance();
         editor.focus(function() {
-            editor.execCommand('insertandfocus', '<span>:)</span>');
+            editor.execCommand('inserthtml', '<img src="' + img.get('src') + '">');
         });
         /*
         editor.focus(function() {
@@ -373,8 +383,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             'http://yui.yahooapis.com/2.8.1/build/grids/grids.css'
         ],
         */
-        extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } #yui-cursor { border: 1px solid purple; }'
+        extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; }'
     });
+    editor.plug(Y.Plugin.EditorBR);
+    //editor.plug(Y.Plugin.EditorPara);
 
     /*
     setTimeout(function() {
@@ -550,12 +562,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     Y.on('click', function(e) {
         editor.focus(true);
     }, '#focusEditor');
-
+    
+    /*
     Y.on('click', function(e) {
         Y.one('#test1').setStyle('display', 'block');
         editor.render('#test');
     }, '#showEditor');
-
+    */
 });
 
 </script>

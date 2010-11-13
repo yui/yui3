@@ -158,32 +158,8 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
     //try to create a mouse event
     var customEvent /*:MouseEvent*/ = null;
 
-    if (isObject(doc.createEventObject)){ //IE
-
-        //create an IE event object
-        customEvent = doc.createEventObject();
-
-        //assign available properties
-        customEvent.bubbles = bubbles;
-        customEvent.cancelable = cancelable;
-        customEvent.view = view;
-        customEvent.ctrlKey = ctrlKey;
-        customEvent.altKey = altKey;
-        customEvent.shiftKey = shiftKey;
-        customEvent.metaKey = metaKey;
-
-        /*
-         * IE doesn't support charCode explicitly. CharCode should
-         * take precedence over any keyCode value for accurate
-         * representation.
-         */
-        customEvent.keyCode = (charCode > 0) ? charCode : keyCode;
-
-        //fire the event
-        target.fireEvent("on" + type, customEvent);
-
     //check for DOM-compliant browsers first
-    } else if (isFunction(doc.createEvent)){
+    if (isFunction(doc.createEvent)){
 
         try {
 
@@ -243,6 +219,29 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         //fire the event
         target.dispatchEvent(customEvent);
 
+    } else if (isObject(doc.createEventObject)){ //IE
+
+        //create an IE event object
+        customEvent = doc.createEventObject();
+
+        //assign available properties
+        customEvent.bubbles = bubbles;
+        customEvent.cancelable = cancelable;
+        customEvent.view = view;
+        customEvent.ctrlKey = ctrlKey;
+        customEvent.altKey = altKey;
+        customEvent.shiftKey = shiftKey;
+        customEvent.metaKey = metaKey;
+
+        /*
+         * IE doesn't support charCode explicitly. CharCode should
+         * take precedence over any keyCode value for accurate
+         * representation.
+         */
+        customEvent.keyCode = (charCode > 0) ? charCode : keyCode;
+
+        //fire the event
+        target.fireEvent("on" + type, customEvent);
 
     } else {
         Y.error("simulateKeyEvent(): No event simulation framework present.");
@@ -368,55 +367,13 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         button = 0;
     }
 
+    relatedTarget = relatedTarget || null;
+
     //try to create a mouse event
     var customEvent /*:MouseEvent*/ = null;
 
-    if (isObject(doc.createEventObject)){ //IE
-
-        //create an IE event object
-        customEvent = doc.createEventObject();
-
-        //assign available properties
-        customEvent.bubbles = bubbles;
-        customEvent.cancelable = cancelable;
-        customEvent.view = view;
-        customEvent.detail = detail;
-        customEvent.screenX = screenX;
-        customEvent.screenY = screenY;
-        customEvent.clientX = clientX;
-        customEvent.clientY = clientY;
-        customEvent.ctrlKey = ctrlKey;
-        customEvent.altKey = altKey;
-        customEvent.metaKey = metaKey;
-        customEvent.shiftKey = shiftKey;
-
-        //fix button property for IE's wacky implementation
-        switch(button){
-            case 0:
-                customEvent.button = 1;
-                break;
-            case 1:
-                customEvent.button = 4;
-                break;
-            case 2:
-                //leave as is
-                break;
-            default:
-                customEvent.button = 0;
-        }
-
-        /*
-         * Have to use relatedTarget because IE won't allow assignment
-         * to toElement or fromElement on generic events. This keeps
-         * YAHOO.util.customEvent.getRelatedTarget() functional.
-         */
-        customEvent.relatedTarget = relatedTarget;
-
-        //fire the event
-        target.fireEvent("on" + type, customEvent);
-
     //check for DOM-compliant browsers first
-    } else if (isFunction(doc.createEvent)){
+    if (isFunction(doc.createEvent)){
 
         customEvent = doc.createEvent("MouseEvents");
 
@@ -464,6 +421,50 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
 
         //fire the event
         target.dispatchEvent(customEvent);
+
+    } else if (isObject(doc.createEventObject)){ //IE
+
+        //create an IE event object
+        customEvent = doc.createEventObject();
+
+        //assign available properties
+        customEvent.bubbles = bubbles;
+        customEvent.cancelable = cancelable;
+        customEvent.view = view;
+        customEvent.detail = detail;
+        customEvent.screenX = screenX;
+        customEvent.screenY = screenY;
+        customEvent.clientX = clientX;
+        customEvent.clientY = clientY;
+        customEvent.ctrlKey = ctrlKey;
+        customEvent.altKey = altKey;
+        customEvent.metaKey = metaKey;
+        customEvent.shiftKey = shiftKey;
+
+        //fix button property for IE's wacky implementation
+        switch(button){
+            case 0:
+                customEvent.button = 1;
+                break;
+            case 1:
+                customEvent.button = 4;
+                break;
+            case 2:
+                //leave as is
+                break;
+            default:
+                customEvent.button = 0;
+        }
+
+        /*
+         * Have to use relatedTarget because IE won't allow assignment
+         * to toElement or fromElement on generic events. This keeps
+         * YAHOO.util.customEvent.getRelatedTarget() functional.
+         */
+        customEvent.relatedTarget = relatedTarget;
+
+        //fire the event
+        target.fireEvent("on" + type, customEvent);
 
     } else {
         Y.error("simulateMouseEvent(): No event simulation framework present.");
@@ -536,8 +537,17 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
         detail = 1;  //usually not used but defaulted to this
     }
 
+    //check for DOM-compliant browsers first
+    if (isFunction(doc.createEvent)){
 
-    if (isObject(doc.createEventObject)){ //IE
+        //just a generic UI Event object is needed
+        customEvent = doc.createEvent("UIEvents");
+        customEvent.initUIEvent(type, bubbles, cancelable, view, detail);
+
+        //fire the event
+        target.dispatchEvent(customEvent);
+
+    } else if (isObject(doc.createEventObject)){ //IE
 
         //create an IE event object
         customEvent = doc.createEventObject();
@@ -550,17 +560,6 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
 
         //fire the event
         target.fireEvent("on" + type, customEvent);
-
-    //check for DOM-compliant browsers first
-    } else if (isFunction(doc.createEvent)){
-
-
-        //just a generic UI Event object is needed
-        customEvent = doc.createEvent("UIEvents");
-        customEvent.initUIEvent(type, bubbles, cancelable, view, detail);
-
-        //fire the event
-        target.dispatchEvent(customEvent);
 
     } else {
         Y.error("simulateUIEvent(): No event simulation framework present.");
@@ -602,6 +601,7 @@ Y.Event.simulate = function(target, type, options){
 
 
 })();
+
 
 
 }, '@VERSION@' ,{requires:['event-base']});

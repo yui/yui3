@@ -15,8 +15,7 @@
                     "frame",
                     "node",
                     "exec-command",
-                    "selection",
-                    "editor-para"
+                    "selection"
                 ]
             },
             "selection": {
@@ -41,7 +40,12 @@
             },
             "editor-para": {
                 "requires": [
-                    "editor-base"
+                    "node"
+                ]
+            },
+            "editor-br": {
+                "requires": [
+                    "node"
                 ]
             },
             "createlink-base": {

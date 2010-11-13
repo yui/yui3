@@ -291,7 +291,7 @@
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
             yeach(o, function(v, k) {
-                if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
+if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
                     if (k !== CLONE_MARKER) {
                         if (k == 'prototype') {
                             // skip the prototype

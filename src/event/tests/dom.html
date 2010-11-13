@@ -17,40 +17,57 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            filter: 'debug',
-            logExclude: {
-                yui:true, get: true, 'selector-native': true, loader: true, 
+            filter: 'debug'
+            , logExclude: {
+                yui:true, get: true, 'selector-native': true, loader: true,
                 Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true}
         }).use('console', 'test', 'node', 'event-simulate', function (Y) {
-            
+
             // creating the console...
             (new Y.Console()).render();
-            
+
             // starting the testing process
-            
-            // add the test cases and suites 
+
+            // add the test cases and suites
             Y.Test.Runner.add(new Y.Test.Case({
-                
+
                 name: "DOM Event Tests",
-                
+
                 test_on_with_string: function() {
-                    
-                    var clicked = false, 
+
+                    var clicked = false,
                         context,
                         ex1,
                         ex2,
                         obj = {
                             a: 1
-                        };
-                    
+                        },
+
+                        node = Y.one('#clickcontainer'),
+                        el = document.getElementById('clickcontainer');
+
+                    // el.attachEvent('click', function() {
+                    //     console.log("IE click");
+                    // });
+
+                    // el.addEventListener('click', function() {
+                    //     console.log("DOM2 click");
+                    // }, false);
+
+                    // el.onclick = function() {
+                    //     console.log('DOM0 click');
+                    // };
+
+
                     Y.on('click', function(e, extra1, extra2) {
                         clicked = true;
                         context = this;
                         ex1 = extra1;
                         ex2 = extra2;
                     }, '#clickcontainer', obj, 2, 3);
-                    
-                    Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+
+
+                    Y.Event.simulate(el, 'click');
 
                     Y.Assert.isTrue(clicked, "click handler via Y.on didn't work when passed a string.");
                     Y.Assert.areEqual(1, context.a, "context didn't work");
@@ -59,23 +76,23 @@
                 },
 
                 test_on_with_node: function() {
-                    
-                    var clicked = false, 
+
+                    var clicked = false,
                         context,
                         ex1,
                         ex2,
                         obj = {
                             a: 1
                         },
-                        node = Y.get('#clickcontainer');
-                    
+                        node = Y.one('#clickcontainer');
+
                     Y.on('click', function(e, extra1, extra2) {
                         clicked = true;
                         context = this;
                         ex1 = extra1;
                         ex2 = extra2;
                     }, node, obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
 
                     Y.Assert.isTrue(clicked, "click handler via Y.on didn't work when passed a node.");
@@ -85,23 +102,23 @@
                 },
 
                 test_node_on: function() {
-                    
-                    var clicked = false, 
+
+                    var clicked = false,
                         context,
                         ex1,
                         ex2,
                         obj = {
                             a: 1
                         },
-                        node = Y.get('#clickcontainer');
-                    
+                        node = Y.one('#clickcontainer');
+
                     node.on('click', function(e, extra1, extra2) {
                         clicked = true;
                         context = this;
                         ex1 = extra1;
                         ex2 = extra2;
                     }, obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
 
                     Y.Assert.isTrue(clicked, "click handler didn't work");
@@ -111,10 +128,10 @@
                 },
 
                 test_node_detachall: function() {
-                    
+
                     var clicked = false, overed = false,
-                        node = Y.get('#clickcontainer');
-                    
+                        node = Y.one('#clickcontainer');
+
                     node.on('click', function(e, extra1, extra2) {
                         clicked = true;
                     });
@@ -124,7 +141,7 @@
                     });
 
                     node.detachAll();
-                    
+
                     Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
 
                     Y.Assert.isFalse(clicked, "click handler was not removed");
@@ -132,8 +149,8 @@
                 },
 
                 test_nodelist_on: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -148,7 +165,7 @@
                         ex1 = extra1;
                         ex2 = extra2;
                     }, obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler didn't work");
@@ -165,8 +182,8 @@
                 },
 
                 test_y_on_with_nodelist: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -181,7 +198,7 @@
                         ex1 = extra1;
                         ex2 = extra2;
                     }, nodelist, obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler didn't work");
@@ -198,8 +215,8 @@
                 },
 
                 test_y_detach_with_nodelist: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -215,7 +232,7 @@
                         } ;
 
                     Y.on('click', fn, nodelist, obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler didn't work");
@@ -224,15 +241,15 @@
                     Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
 
                     Y.detach('click', fn, nodelist);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker2'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler wasn't removed");
                 },
 
                 test_y_detach_with_array: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -248,7 +265,7 @@
                         } ;
 
                     Y.on('click', fn, arrayofselectors, obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler didn't work");
@@ -257,7 +274,7 @@
                     Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
 
                     Y.detach('click', fn, arrayofselectors);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker2'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler wasn't removed");
@@ -265,8 +282,8 @@
 
 
                 test_y_on_with_selector_multiple_match: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -280,7 +297,7 @@
                         ex1 = extra1;
                         ex2 = extra2;
                     }, '.clickers', obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler didn't work");
@@ -297,8 +314,8 @@
                 },
 
                 test_y_on_with_htmlelementcollection: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -312,7 +329,7 @@
                         ex1 = extra1;
                         ex2 = extra2;
                     }, document.getElementsByTagName('p'), obj, 2, 3);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
                     Y.Assert.areEqual(1, clicked, "click handler didn't work");
@@ -331,17 +348,17 @@
                 test_y_on_empty_array: function() {
 
                     Y.on('click', function(e, extra1, extra2) {
-                        // 
+                        //
                     }, []);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
                 },
 
 
                 test_detach_by_sig: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -367,7 +384,7 @@
 
                     Y.on('click', fn, '#clicker1');
                     Y.detach('click', fn, '#clicker1');
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
                     Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
 
@@ -375,7 +392,7 @@
 
                     node.on('click', fn);
                     node.detach('click', fn);
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
                     Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
 
@@ -388,8 +405,8 @@
                 },
 
                 test_multi_detach: function() {
-                    
-                    var clicked = 0, 
+
+                    var clicked = 0,
                         context,
                         ex1,
                         ex2,
@@ -408,7 +425,7 @@
                     // Y.log(handle);
 
                     handle.detach();
-                    
+
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
                     Y.Event.simulate(document.getElementById('clicker2'), 'click');
 
@@ -509,7 +526,7 @@
                     list.detach('category|click');
 
 
-                    
+
                     Y.Assert.areEqual(2, count);
 
                     // Y.Event.simulate(document.getElementById('clicker1'), 'click');
@@ -517,15 +534,15 @@
 
                     Y.Assert.areEqual(2, count);
                 }
- 
-                
-            })); 
-            
-            //run all tests 
+
+
+            }));
+
+            //run all tests
             Y.Test.Runner.run();
-            
+
             /* finishing the testing process */
-            
+
         });
     </script>
 </body>

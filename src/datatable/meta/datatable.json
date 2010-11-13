@@ -3,18 +3,28 @@
         "submodules": {
             "datatable-base": {
                 "requires": [
-                    "recordset",
-                    "widget"
+                    "recordset-base",
+                    "widget",
+                    "intl",
+                    "substitute",
+                    "event-mouseenter"
                 ],
                 "skinnable": true
             },
             "datatable-sort": {
                 "requires": [
-                    "arraysort",
                     "datatable-base",
-                    "plugin"
+                    "plugin",
+                    "recordset-sort"
                 ]
-            }
+            },
+			"datatable-scroll": {
+				"requires": [
+					"datatable-base",
+					"plugin",
+					"stylesheet"
+				]
+			}
         }
     }
 }

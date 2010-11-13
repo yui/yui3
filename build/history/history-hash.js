@@ -19,6 +19,7 @@ YUI.add('history-hash', function(Y) {
 var HistoryBase = Y.HistoryBase,
     Lang        = Y.Lang,
     YArray      = Y.Array,
+    YObject     = Y.Object,
     GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
     SRC_HASH    = 'hash',
@@ -54,6 +55,18 @@ Y.extend(HistoryHash, HistoryBase, {
     },
 
     // -- Protected Methods ----------------------------------------------------
+    _change: function (src, state, options) {
+        // Stringify all values to ensure that comparisons don't fail after
+        // they're coerced to strings in the location hash.
+        YObject.each(state, function (value, key) {
+            if (Lang.isValue(value)) {
+                state[key] = value.toString();
+            }
+        });
+
+        return HistoryHash.superclass._change.call(this, src, state, options);
+    },
+
     _storeState: function (src, newState) {
         var decode  = HistoryHash.decode,
             newHash = HistoryHash.createHash(newState);
@@ -150,7 +163,7 @@ Y.extend(HistoryHash, HistoryBase, {
         var encode = HistoryHash.encode,
             hash   = [];
 
-        Y.Object.each(params, function (value, key) {
+        YObject.each(params, function (value, key) {
             if (Lang.isValue(value)) {
                 hash.push(encode(key) + '=' + encode(value));
             }

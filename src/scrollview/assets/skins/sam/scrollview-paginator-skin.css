@@ -1,9 +1,9 @@
-.yui-skin-sam .yui3-scrollview-paginator {
+.yui3-skin-sam .yui3-scrollview-paginator {
     -webkit-tap-highlight-color: rgba(0,0,0,0); 
     -moz-tap-highlight-color: rgba(0,0,0,0);
 }
 
-.yui-skin-sam .yui3-scrollview-paginator-page { 
+.yui3-skin-sam .yui3-scrollview-paginator-page { 
     background: #666; 
     margin-right: 8px;
     
@@ -11,6 +11,6 @@
     -moz-border-radius: 2px; 
 }
 
-.yui-skin-sam .yui3-scrollview-paginator-page.yui3-scrollview-active { 
+.yui3-skin-sam .yui3-scrollview-paginator-page.yui3-scrollview-active { 
     background: #fff; 
 }

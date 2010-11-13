@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>YUI Event Tests</title>
+<title>YUI AOP Tests</title>
 </head>
 
 <body class="yui3-skin-sam">
-<h1>Event Tests</h1>
+<h1>AOP Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
@@ -20,7 +20,7 @@
         logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
-        var button = Y.get('#btnRun');
+        var button = Y.one('#btnRun');
 
         // Set up the page
         button.set("disabled", false);
@@ -29,296 +29,34 @@
         }, button);
 
         var myConsole = new Y.Console().render();
- 
+
         var testEventTarget = new Y.Test.Case({
-            name: "EventTarget tests",
-        
-            testAugment: function() {
+            name: "AOP tests",
 
-                var fired = false;
+            test_alter_return: function() {
 
-                var O = function(id) {
-                    this.id = id;
-                    Y.log('O constructor executed ' + id);
-                }
+                var et = new Y.EventTarget(), count = 0;
 
-                O.prototype = {
-                    oOo: function(ok) {
-                        Y.log('oOo');
-                    }
-                }
+                et.after(function() {
+                    count++;
+                    Y.Assert.isTrue(Y.Do.originalRetVal);
+                    Y.Assert.isTrue(Y.Do.currentRetVal);
+                    return new Y.Do.AlterReturn("altered return", "altered");
+                }, et, 'fire');
 
-                // pass configuration info into EventTarget with the following
-                // construct
-                Y.augment(O, Y.EventTarget, null, null, {
-                    emitFacade: true
-                });
+                et.after(function() {
+                    count++;
+                    Y.Assert.isTrue(Y.Do.originalRetVal);
+                    Y.Assert.areEqual("altered", Y.Do.currentRetVal);
+                }, et, 'fire');
 
-                var o = new O(),
-                handle = o.on('testAugment', function(e, arg1, arg2) {
-                    Y.Assert.isTrue(this instanceof O);
-                    Y.Assert.isTrue(e instanceof Y.Event.Facade);
-                    Y.Assert.isTrue(e.foo === 'afoo');
-                    Y.Assert.isTrue(e.details[1] === 1);
-                    Y.Assert.isTrue(arg1 === 1);
-                    Y.Assert.isTrue(arg2 === 2);
-                    fired = true;
-                });
 
-                o.fire('testAugment', { foo: 'afoo' }, 1, 2);
+                et.fire('yay');
+                Y.Assert.areEqual(2, count);
 
-                Y.Assert.isTrue(fired);
-
-                handle.detach();
-
-                // if the first argument is not an object, the
-                // event facade is moved in front of the args rather
-                // than overwriting existing object.
-                o.on('testAugment', function(e, arg1, arg2) {
-                    Y.Assert.areEqual(1, arg1);
-                    Y.Assert.areEqual(2, arg2);
-                });
-
-                o.fire('testAugment', 1, 2);
-
-            },
-
-            testExtend: function() {
-
-                var fired = false;
-
-                var Base = function() {
-                    Y.log('Base constructor executed');
-                    arguments.callee.superclass.constructor.apply(this, arguments);
-                }
-
-                Y.extend(Base, Y.EventTarget, {
-                    base: function() {
-                        Y.log('all your base...');
-                    }
-                });
-
-                var b = new Base();
-                b.on('testExtend', function(arg1, arg2) {
-                    Y.Assert.isTrue(this instanceof Base);
-                    Y.Assert.isTrue(arg1 === 1);
-                    Y.Assert.isTrue(arg2 === 2);
-                    fired = true;
-                });
-
-                b.fire('testExtend', 1, 2);
-
-                Y.Assert.isTrue(fired);
-            },
-
-            testPrefix: function() {
-
-                var fired1 = false,
-                    fired2 = false;
-
-                var O = function(id) {
-                    this.id = id;
-                    Y.log('O constructor executed ' + id);
-                }
-
-                O.prototype = {
-                    oOo: function(ok) {
-                        Y.log('oOo');
-                    }
-                }
-
-                // pass configuration info into EventTarget with the following
-                // construct
-                Y.augment(O, Y.EventTarget, null, null, {
-                    emitFacade: true,
-                    prefix: 'prefix'
-                });
-
-                var o = new O();
-                o.on('testPrefix', function(e, arg1, arg2) {
-                    Y.Assert.isTrue(this instanceof O);
-                    fired1 = true;
-                });
-
-                o.on('prefix:testPrefix', function(e, arg1, arg2) {
-                    Y.Assert.isTrue(this instanceof O);
-                    fired2 = true;
-                });
-
-                o.fire('testPrefix', { foo: 'afoo' }, 1, 2);
-
-                Y.Assert.isTrue(fired1);
-                // Y.Assert.isTrue(fired2);
-
-                fired1 = false;
-                fired2 = false;
-
-                o.fire('prefix:testPrefix', { foo: 'afoo' }, 1, 2);
-                Y.Assert.isTrue(fired1);
-                Y.Assert.isTrue(fired2);
-            },
-
-            testDetachKey: function() {
-
-                var fired1 = false,
-                    fired2 = false;
-
-                Y.on('handle, test:event', function() {
-                    fired1 = true;
-                });
-
-                // one listener
-                Y.fire('test:event');
-                Y.Assert.isTrue(fired1);
-                Y.Assert.isFalse(fired2);
-
-                Y.detach('handle, test:event');
-
-                fired1 = false;
-                fired2 = false;
-
-                Y.on('handle, test:event', function() {
-                    fired2 = true;
-                });
-
-                // first lisener detached, added a new listener
-                Y.fire('test:event');
-                Y.Assert.isFalse(fired1);
-                Y.Assert.isTrue(fired2);
-
-                Y.detach('handle,test:event');
-                fired1 = false;
-                fired2 = false;
-
-                Y.after('handle, test:event', function() {
-                    Y.Assert.isTrue(fired1);
-                    fired2 = true;
-                });
-
-                // comma or pipe
-                Y.on('handle|test:event', function() {
-                    Y.Assert.isFalse(fired2);
-                    fired1 = true;
-                });
-
-                // testing on and after order
-                Y.fire('test:event');
-
-                fired1 = false;
-                fired2 = false;
-
-                // spaces after the comma or lack thereof should have
-                // no effect on the addition or removal of listeners
-                Y.detach('handle,test:event');
-
-                // added both an on listener and an after listener,
-                // then detached both
-                Y.fire('test:event');
-                Y.Assert.isFalse(fired1);
-                Y.Assert.isFalse(fired2);
-
-            },
-
-            testChain: function() {
-
-                var fired1 = false,
-                    fired2 = false,
-                    fired3 = false,
-                    fired4 = false,
-                    fired5 = false;
-
-                // should be executed once, after f2
-                var f1 = function() {
-                    Y.Assert.isTrue(fired2);
-                    fired1 = true;
-                };
-
-                // should be executed once, before f1
-                var f2 = function() {
-                    Y.Assert.isFalse(fired1);
-                    fired2 = true;
-                };
-
-                // should be executed once, different event from f1 and f2
-                var f3 = function() {
-                    fired3 = true;
-                };
-
-                // detached before fired, should not executed
-                var f4 = function() {
-                    fired4 = true;
-                };
-
-                // should fire once, preserving the custom prefix rather
-                // than using the configured event target prefix
-                var f5 = function() {
-                    fired5 = true;
-                };
-
-                // configure chaining via global default or on the event target
-                YUI({ /* chain: true */ }).use('*', function(Y2) {
-
-                    var o = new Y2.EventTarget({
-                        prefix: 'foo',
-                        chain : true
-                    });
-
-                    // without event target prefix manipulation (incomplete now)
-                    // @TODO an error here is throwing an uncaught exception rather than failing the test
-                    // Y2.after('p:e', f1).on('p:e', f2).on('p:e2', f3).on('detach, p:e', f4).detach('detach, p:e').fire('p:e').fire('p:e2');
-
-                    // with event target prefix manipulation ('e' is the same event as 'foo:e', 
-                    // but 'pre:e' is a different event only accessible by using that exact name)
-o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('detach,e').fire('foo:e').fire('e2').on('pre:e', f5).fire('pre:e');
-
-                    Y.Assert.isTrue(fired1);  // verifies chaining, on/after order, and adding the event target prefix
-                    Y.Assert.isTrue(fired2);  // verifies chaining, on/after order, and accepting the prefix in the event name
-                    Y.Assert.isTrue(fired3);  // verifies no interaction between events, and prefix manipulation
-                    Y.Assert.isFalse(fired4); // verifies detach works (regardless of spaces after comma)
-                    Y.Assert.isTrue(fired5);  // verifies custom prefix
-                    
-                });
-            },
-
-            
-            testObjType: function() {
-                var f1, f2;
-                Y.on({
-                    'y:click': function() {f1 = true},
-                    'y:clack': function() {f2 = true}
-                });
-
-                Y.fire('y:click');
-                Y.fire('y:clack');
-
-                Y.Assert.isTrue(f1);
-                Y.Assert.isTrue(f2);
-            },
-
-            testPreventFnOnce: function() {
-                var count = 0;
-                Y.publish('y:foo', {
-                    emitFacade: true,
-                    preventedFn: function() {
-                        count++
-                    }
-                });
-
-                Y.on('y:foo', function(e) {
-                    e.preventDefault();
-                });
-
-                Y.on('y:foo', function(e) {
-                    e.preventDefault();
-                });
-
-                Y.fire('y:foo');
-
-                Y.Assert.areEqual(1, count);
             }
-
         });
-        
+
 
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();

@@ -73,6 +73,9 @@ YUI.add('base-base', function(Y) {
      */
     function Base() {
 
+        // So the object can be used as a hash key (as DD does)
+        Y.stamp(this);
+
         Attribute.call(this);
 
         // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
@@ -556,13 +559,13 @@ YUI.add('base-base', function(Y) {
 
         /**
          * Default toString implementation. Provides the constructor NAME
-         * and the instance ID.
+         * and the instance guid, if set.
          *
          * @method toString
          * @return {String} String representation for this object
          */
         toString: function() {
-            return this.constructor.NAME + "[" + Y.stamp(this) + "]";
+            return this.name + "[" + Y.stamp(this, true) + "]";
         }
 
     };

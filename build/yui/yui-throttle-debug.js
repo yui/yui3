@@ -27,10 +27,10 @@ Y.throttle = function(fn, ms) {
         });
     }
 
-    var last = (new Date()).getTime();
+    var last = Y.Lang.now();
 
     return (function() {
-        var now = (new Date()).getTime();
+        var now = Y.Lang.now();
         if (now - last > ms) {
             last = now;
             fn.apply(null, arguments);

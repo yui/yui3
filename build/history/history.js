@@ -646,6 +646,7 @@ YUI.add('history-hash', function(Y) {
 var HistoryBase = Y.HistoryBase,
     Lang        = Y.Lang,
     YArray      = Y.Array,
+    YObject     = Y.Object,
     GlobalEnv   = YUI.namespace('Env.HistoryHash'),
 
     SRC_HASH    = 'hash',
@@ -681,6 +682,18 @@ Y.extend(HistoryHash, HistoryBase, {
     },
 
     // -- Protected Methods ----------------------------------------------------
+    _change: function (src, state, options) {
+        // Stringify all values to ensure that comparisons don't fail after
+        // they're coerced to strings in the location hash.
+        YObject.each(state, function (value, key) {
+            if (Lang.isValue(value)) {
+                state[key] = value.toString();
+            }
+        });
+
+        return HistoryHash.superclass._change.call(this, src, state, options);
+    },
+
     _storeState: function (src, newState) {
         var decode  = HistoryHash.decode,
             newHash = HistoryHash.createHash(newState);
@@ -777,7 +790,7 @@ Y.extend(HistoryHash, HistoryBase, {
         var encode = HistoryHash.encode,
             hash   = [];
 
-        Y.Object.each(params, function (value, key) {
+        YObject.each(params, function (value, key) {
             if (Lang.isValue(value)) {
                 hash.push(encode(key) + '=' + encode(value));
             }
@@ -1125,9 +1138,12 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
      * @static
      */
     HistoryHash.getIframeHash = function () {
+        if (!iframe || !iframe.contentWindow) {
+            return '';
+        }
+
         var prefix = HistoryHash.hashPrefix,
-            hash   = iframe ? iframe.contentWindow.location.hash.substr(1) :
-                        location.hash.substr(1);
+            hash   = iframe.contentWindow.location.hash.substr(1);
 
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
@@ -1145,8 +1161,12 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
      * @for HistoryHash
      */
     HistoryHash._updateIframe = function (hash, replace) {
-        var iframeDoc      = iframe.contentWindow.document,
-            iframeLocation = iframeDoc.location;
+        var iframeDoc      = iframe && iframe.contentWindow && iframe.contentWindow.document,
+            iframeLocation = iframeDoc && iframeDoc.location;
+
+        if (!iframeDoc || !iframeLocation) {
+            return;
+        }
 
 
         iframeDoc.open().close();
@@ -1193,28 +1213,27 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
             // Update the iframe with the initial location hash, if any. This
             // will create an initial history entry that the user can return to
             // after the state has changed.
-            HistoryHash._updateIframe(HistoryHash.getHash());
+            HistoryHash._updateIframe(HistoryHash.getHash() || '#');
+
+            // Listen for hashchange events and keep the iframe's hash in sync
+            // with the parent frame's hash.
+            Y.on('hashchange', function (e) {
+                lastUrlHash = e.newHash;
+
+                if (HistoryHash.getIframeHash() !== lastUrlHash) {
+                    HistoryHash._updateIframe(lastUrlHash);
+                }
+            }, win);
+
+            // Watch the iframe hash in order to detect back/forward navigation.
+            Y.later(50, null, function () {
+                var iframeHash = HistoryHash.getIframeHash();
+
+                if (iframeHash !== lastUrlHash) {
+                    HistoryHash.setHash(iframeHash);
+                }
+            }, null, true);
         });
-
-        // Listen for hashchange events and keep the iframe's hash in sync with
-        // the parent frame's hash.
-        Y.on('hashchange', function (e) {
-            lastUrlHash = e.newHash;
-
-            if (HistoryHash.getIframeHash() !== lastUrlHash) {
-                HistoryHash._updateIframe(lastUrlHash);
-            }
-        }, win);
-
-        // In a separate interval, watch the iframe hash in order to detect
-        // back/forward navigation.
-        Y.later(50, null, function () {
-            var iframeHash = HistoryHash.getIframeHash();
-
-            if (iframeHash && lastUrlHash && iframeHash !== lastUrlHash) {
-                HistoryHash.setHash(iframeHash);
-            }
-        }, null, true);
     }
 }
 
@@ -1469,7 +1488,7 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});
+}, '@VERSION@' ,{optional:['json'], requires:['event-base', 'history-base', 'node-base']});
 
 
 YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie', 'history-html5']});

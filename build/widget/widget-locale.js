@@ -26,6 +26,9 @@ Widget.ATTRS[LOCALE] = {
     value: "en"
 };
 
+// Since strings support with locale needs the private _strs setup
+Widget.ATTRS.strings.lazyAdd = false;
+
 Y.mix(Widget.prototype, {
 
     /**

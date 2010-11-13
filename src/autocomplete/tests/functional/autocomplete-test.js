@@ -1,7 +1,8 @@
 YUI.add('autocomplete-test', function (Y) {
 
-var Assert      = Y.Assert,
-    ArrayAssert = Y.ArrayAssert,
+var ArrayAssert = Y.ArrayAssert,
+    Assert      = Y.Assert,
+    YArray      = Y.Array,
 
     ACBase,
     Filters      = Y.AutoCompleteFilters,
@@ -83,6 +84,27 @@ baseSuite.add(new Y.Test.Case({
         delete this.inputNode;
     },
 
+    '_parseResponse should preserve duplicates in text when using resultTextLocator': function () {
+        var response = {
+                results: [
+                    {"City":"La Habra","State":"CA","County":"Orange","Zip":"90631"},
+                    {"City":"La Habra Heights","State":"CA","County":"Orange","Zip":"90631"},
+                    {"City":"La Habra Hgts","State":"CA","County":"Orange","Zip":"90631"}
+                ]
+            };
+
+        this.ac.set('resultTextLocator', 'Zip');
+
+        this.ac.on('results', function (e) {
+            Assert.areNotEqual(e.results[0].raw.City, e.results[1].raw.City, 
+              "The raw result values should be different.");
+            Assert.areNotEqual(e.results[1].raw.City, e.results[2].raw.City,
+              "The raw result values should be different.");
+        });
+
+        this.ac._parseResponse('90631', response);
+    },
+
     'Browser autocomplete should be off by default': function () {
         Assert.isFalse(this.ac.get('allowBrowserAutocomplete'));
         Assert.areSame('off', this.inputNode.getAttribute('autocomplete'));
@@ -110,6 +132,14 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame(this.inputNode, this.ac.get('inputNode'));
     },
 
+    // 'maxResults should enforce a maximum number of results': function () {
+    //     
+    // },
+    // 
+    // 'maxResults should do nothing if <= 0': function () {
+    //     
+    // },
+
     'requestTemplate should accept a custom template function': function () {
         var fn = function (query) {
             return 'query: ' + query;
@@ -136,7 +166,7 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
-    'resultFilters should accept a filter, array of filters, or null': function () {
+    'resultFilters should accept a filter, array of filters, string, array of strings, or null': function () {
         var filter = function () {};
 
         this.ac.set('resultFilters', filter);
@@ -147,6 +177,16 @@ baseSuite.add(new Y.Test.Case({
 
         this.ac.set('resultFilters', [filter]);
         ArrayAssert.itemsAreSame([filter], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', 'phraseMatch');
+        ArrayAssert.itemsAreSame([Y.AutoCompleteFilters.phraseMatch], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', ['phraseMatch', 'charMatch']);
+        ArrayAssert.itemsAreSame([Y.AutoCompleteFilters.phraseMatch, Y.AutoCompleteFilters.charMatch], this.ac.get('resultFilters'));
+
+        this.ac.set('resultFilters', null);
+        this.ac.set('resultFilters', ['foo', 'bar']);
+        ArrayAssert.isEmpty(this.ac.get('resultFilters'));
     },
 
     // -- Generic setters and validators ---------------------------------------
@@ -192,175 +232,204 @@ baseSuite.add(new Y.Test.Case({
 // -- Filters Suite ------------------------------------------------------------
 filtersSuite = new Y.Test.Suite('Filters');
 
+function arrayToResults(array) {
+    return YArray.map(array, function (item) {
+        return {
+            display: item,
+            raw    : item,
+            text   : item
+        };
+    });
+}
+
+function resultsToArray(results, key) {
+    if (!key) {
+        key = 'text';
+    }
+
+    return YArray.map(results, function (item) {
+        return item[key];
+    });
+}
+
 // -- Filters: API -------------------------------------------------------------
 filtersSuite.add(new Y.Test.Case({
     name: 'API',
 
     // -- charMatch() ----------------------------------------------------------
     'charMatch() should match all characters in the query, in any order': function () {
-        ArrayAssert.isEmpty(Filters.charMatch('abc', ['foo', 'bar', 'baz']));
+        ArrayAssert.isEmpty(
+            Filters.charMatch('abc', arrayToResults(['foo', 'bar', 'baz']))
+        );
 
-        ArrayAssert.itemsAreSame(
+        ArrayAssert.itemsAreEqual(
             ['cab', 'taxi cab'],
-            Filters.charMatch('abc', ['foo', 'cab', 'bar', 'taxi cab'])
+            resultsToArray(Filters.charMatch('abc', arrayToResults(['foo', 'cab', 'bar', 'taxi cab'])))
         );
     },
 
     'charMatch() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', 'foo'],
-            Filters.charMatch('f', ['Foo', 'foo'])
+            resultsToArray(Filters.charMatch('f', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'charMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['foo'],
-            Filters.charMatchCase('f', ['Foo', 'foo'])
+            resultsToArray(Filters.charMatchCase('f', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'charMatchFold() should match accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['fóó', 'föö', 'foo'],
-            Filters.charMatchFold('o', ['fóó', 'föö', 'foo', 'bar'])
+            resultsToArray(Filters.charMatchFold('o', arrayToResults(['fóó', 'föö', 'foo', 'bar'])))
         );
 
         // Accent-folded matches are always case-insensitive.
         ArrayAssert.itemsAreSame(
             ['FÓÓ', 'FÖÖ', 'FOO'],
-            Filters.charMatchFold('o', ['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])
+            resultsToArray(Filters.charMatchFold('o', arrayToResults(['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])))
         );
     },
 
     // -- phraseMatch() --------------------------------------------------------
     'phraseMatch() should match the complete query as a phrase': function () {
-        ArrayAssert.isEmpty(Filters.phraseMatch('foo baz', ['foo', 'bar', 'foo bar']));
+        ArrayAssert.isEmpty(
+            Filters.phraseMatch('foo baz',
+                arrayToResults(['foo', 'bar', 'foo bar']))
+        );
 
         ArrayAssert.itemsAreSame(
             ['foo bar'],
-            Filters.phraseMatch('foo bar', ['foo', 'bar', 'foo bar'])
+            resultsToArray(Filters.phraseMatch('foo bar', arrayToResults(['foo', 'bar', 'foo bar'])))
         );
 
         ArrayAssert.itemsAreSame(
             ['xxfoo barxx'],
-            Filters.phraseMatch('foo bar', ['foo', 'bar', 'xxfoo barxx'])
+            resultsToArray(Filters.phraseMatch('foo bar', arrayToResults(['foo', 'bar', 'xxfoo barxx'])))
         );
 
         ArrayAssert.itemsAreSame(
             ['foo barxx'],
-            Filters.phraseMatch('foo bar', ['foo', 'bar', 'foo barxx'])
+            resultsToArray(Filters.phraseMatch('foo bar', arrayToResults(['foo', 'bar', 'foo barxx'])))
         );
 
         ArrayAssert.itemsAreSame(
             ['xxfoo bar'],
-            Filters.phraseMatch('foo bar', ['foo', 'bar', 'xxfoo bar'])
+            resultsToArray(Filters.phraseMatch('foo bar', arrayToResults(['foo', 'bar', 'xxfoo bar'])))
         );
     },
 
     'phraseMatch() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', 'foo'],
-            Filters.phraseMatch('foo', ['Foo', 'foo'])
+            resultsToArray(Filters.phraseMatch('foo', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'phraseMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['foo'],
-            Filters.phraseMatchCase('foo', ['Foo', 'foo'])
+            resultsToArray(Filters.phraseMatchCase('foo', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'phraseMatchFold() should match accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['fóó', 'föö', 'foo'],
-            Filters.phraseMatchFold('foo', ['fóó', 'föö', 'foo', 'bar'])
+            resultsToArray(Filters.phraseMatchFold('foo', arrayToResults(['fóó', 'föö', 'foo', 'bar'])))
         );
 
         // Accent-folded matches are always case-insensitive.
         ArrayAssert.itemsAreSame(
             ['FÓÓ', 'FÖÖ', 'FOO'],
-            Filters.phraseMatchFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])
+            resultsToArray(Filters.phraseMatchFold('foo', arrayToResults(['FÓÓ', 'FÖÖ', 'FOO', 'BAR'])))
         );
     },
 
     // -- startsWith() ---------------------------------------------------------
     'startsWith() should match the complete query at the start of a result': function () {
-        ArrayAssert.isEmpty(Filters.startsWith('foo', ['xx foo', 'bar', 'xx foo bar']));
+        ArrayAssert.isEmpty(
+            Filters.startsWith('foo', arrayToResults(['xx foo', 'bar', 'xx foo bar']))
+        );
 
         ArrayAssert.itemsAreSame(
             ['foo', 'foo bar'],
-            Filters.startsWith('foo', ['foo', 'bar', 'foo bar'])
+            resultsToArray(Filters.startsWith('foo', arrayToResults(['foo', 'bar', 'foo bar'])))
         );
     },
 
     'startsWith() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', 'foo'],
-            Filters.startsWith('foo', ['Foo', 'foo'])
+            resultsToArray(Filters.startsWith('foo', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'startsWithCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['foo'],
-            Filters.startsWithCase('foo', ['Foo', 'foo'])
+            resultsToArray(Filters.startsWithCase('foo', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'startsWithFold() should match accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['fóó', 'föö', 'foo'],
-            Filters.startsWithFold('foo', ['fóó', 'föö', 'foo', 'barfoo'])
+            resultsToArray(Filters.startsWithFold('foo', arrayToResults(['fóó', 'föö', 'foo', 'barfoo'])))
         );
 
         // Accent-folded matches are always case-insensitive.
         ArrayAssert.itemsAreSame(
             ['FÓÓ', 'FÖÖ', 'FOO'],
-            Filters.startsWithFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])
+            resultsToArray(Filters.startsWithFold('foo', arrayToResults(['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])))
         );
     },
 
     // -- wordMatch() ----------------------------------------------------------
     'wordMatch() should match results that contain all words in the query in any order': function () {
-        ArrayAssert.isEmpty(Filters.wordMatch('foo bar baz', ['foo', 'bar', 'baz']));
+        ArrayAssert.isEmpty(
+            Filters.wordMatch('foo bar baz', arrayToResults(['foo', 'bar', 'baz']))
+        );
 
         ArrayAssert.itemsAreSame(
             ['foo bar baz'],
-            Filters.wordMatch('baz foo bar', ['foo', 'bar', 'foo bar baz', 'foobar baz'])
+            resultsToArray(Filters.wordMatch('baz foo bar', arrayToResults(['foo', 'bar', 'foo bar baz', 'foobar baz'])))
         );
 
         ArrayAssert.itemsAreSame(
             ['foo', 'foo bar baz'],
-            Filters.wordMatch('foo', ['foo', 'bar', 'foo bar baz', 'foobar baz'])
+            resultsToArray(Filters.wordMatch('foo', arrayToResults(['foo', 'bar', 'foo bar baz', 'foobar baz'])))
         );
     },
 
     'wordMatch() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', 'foo'],
-            Filters.wordMatch('foo', ['Foo', 'foo'])
+            resultsToArray(Filters.wordMatch('foo', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'wordMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['foo'],
-            Filters.wordMatchCase('foo', ['Foo', 'foo'])
+            resultsToArray(Filters.wordMatchCase('foo', arrayToResults(['Foo', 'foo'])))
         );
     },
 
     'wordMatchFold() should match accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['fóó', 'föö', 'foo'],
-            Filters.wordMatchFold('foo', ['fóó', 'föö', 'foo', 'barfoo'])
+            resultsToArray(Filters.wordMatchFold('foo', arrayToResults(['fóó', 'föö', 'foo', 'barfoo'])))
         );
 
         // Accent-folded matches are always case-insensitive.
         ArrayAssert.itemsAreSame(
             ['FÓÓ', 'FÖÖ', 'FOO'],
-            Filters.wordMatchFold('foo', ['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])
+            resultsToArray(Filters.wordMatchFold('foo', arrayToResults(['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])))
         );
     }
 }));
@@ -376,14 +445,14 @@ highlightSuite.add(new Y.Test.Case({
     'charMatch() should highlight all characters in the query, in any order': function () {
         ArrayAssert.itemsAreSame(
             ['foo', '<b class="yui3-highlight">b</b><b class="yui3-highlight">a</b>r', '<b class="yui3-highlight">b</b><b class="yui3-highlight">a</b>z'],
-            Hi.charMatch('abc', ['foo', 'bar', 'baz'])
+            Hi.charMatch('abc', arrayToResults(['foo', 'bar', 'baz']))
         );
     },
 
     'charMatch() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">F</b>oo', '<b class="yui3-highlight">f</b>oo'],
-            Hi.charMatch('f', ['Foo', 'foo'])
+            Hi.charMatch('f', arrayToResults(['Foo', 'foo']))
         );
     },
 
@@ -391,7 +460,7 @@ highlightSuite.add(new Y.Test.Case({
     'charMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">f</b>oo'],
-            Hi.charMatchCase('f', ['Foo', 'foo'])
+            Hi.charMatchCase('f', arrayToResults(['Foo', 'foo']))
         );
     },
 
@@ -399,12 +468,12 @@ highlightSuite.add(new Y.Test.Case({
     'charMatchFold() should highlight accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['f<b class="yui3-highlight">ó</b><b class="yui3-highlight">ó</b>', 'f<b class="yui3-highlight">o</b><b class="yui3-highlight">o</b>', 'bar'],
-            Hi.charMatchFold('o', ['fóó', 'foo', 'bar'])
+            Hi.charMatchFold('o', arrayToResults(['fóó', 'foo', 'bar']))
         );
 
         ArrayAssert.itemsAreSame(
             ['f<b class="yui3-highlight">o</b><b class="yui3-highlight">o</b>', 'f<b class="yui3-highlight">o</b><b class="yui3-highlight">o</b>', 'bar'],
-            Hi.charMatchFold('ö', ['foo', 'foo', 'bar'])
+            Hi.charMatchFold('ö', arrayToResults(['foo', 'foo', 'bar']))
         );
     },
 
@@ -412,29 +481,29 @@ highlightSuite.add(new Y.Test.Case({
     'phraseMatch() should highlight the complete query as a phrase': function () {
         ArrayAssert.itemsAreSame(
             ['foo', 'bar', 'foo bar'],
-            Hi.phraseMatch('foo baz', ['foo', 'bar', 'foo bar'])
+            Hi.phraseMatch('foo baz', arrayToResults(['foo', 'bar', 'foo bar']))
         );
 
         ArrayAssert.itemsAreSame(
             ['foo', 'bar', '<b class="yui3-highlight">foo bar</b>'],
-            Hi.phraseMatch('foo bar', ['foo', 'bar', 'foo bar'])
+            Hi.phraseMatch('foo bar', arrayToResults(['foo', 'bar', 'foo bar']))
         );
 
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">foo</b>', 'bar', '<b class="yui3-highlight">foo</b> bar'],
-            Hi.phraseMatch('foo', ['foo', 'bar', 'foo bar'])
+            Hi.phraseMatch('foo', arrayToResults(['foo', 'bar', 'foo bar']))
         );
 
         ArrayAssert.itemsAreSame(
             ['foo', 'bar', 'xx<b class="yui3-highlight">foo bar</b>'],
-            Hi.phraseMatch('foo bar', ['foo', 'bar', 'xxfoo bar'])
+            Hi.phraseMatch('foo bar', arrayToResults(['foo', 'bar', 'xxfoo bar']))
         );
     },
 
     'phraseMatch() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">Foo</b>', '<b class="yui3-highlight">foo</b>'],
-            Hi.phraseMatch('foo', ['Foo', 'foo'])
+            Hi.phraseMatch('foo', arrayToResults(['Foo', 'foo']))
         );
     },
 
@@ -442,7 +511,7 @@ highlightSuite.add(new Y.Test.Case({
     'phraseMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">foo</b>'],
-            Hi.phraseMatchCase('foo', ['Foo', 'foo'])
+            Hi.phraseMatchCase('foo', arrayToResults(['Foo', 'foo']))
         );
     },
 
@@ -450,12 +519,12 @@ highlightSuite.add(new Y.Test.Case({
     'phraseMatchFold() should match accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">fóó</b>bar', 'bar<b class="yui3-highlight">foo</b>', 'bar'],
-            Hi.phraseMatchFold('foo', ['fóóbar', 'barfoo', 'bar'])
+            Hi.phraseMatchFold('foo', arrayToResults(['fóóbar', 'barfoo', 'bar']))
         );
 
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">foo</b>bar', 'bar<b class="yui3-highlight">foo</b>', 'bar'],
-            Hi.phraseMatchFold('föö', ['foobar', 'barfoo', 'bar'])
+            Hi.phraseMatchFold('föö', arrayToResults(['foobar', 'barfoo', 'bar']))
         );
     },
 
@@ -463,19 +532,19 @@ highlightSuite.add(new Y.Test.Case({
     'startsWith() should highlight the complete query at the start of a result': function () {
         ArrayAssert.itemsAreSame(
             ['xx foo', 'bar', 'xx foo bar'],
-            Hi.startsWith('foo', ['xx foo', 'bar', 'xx foo bar'])
+            Hi.startsWith('foo', arrayToResults(['xx foo', 'bar', 'xx foo bar']))
         );
 
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">foo</b>', 'bar foo', '<b class="yui3-highlight">foo</b> bar'],
-            Hi.startsWith('foo', ['foo', 'bar foo', 'foo bar'])
+            Hi.startsWith('foo', arrayToResults(['foo', 'bar foo', 'foo bar']))
         );
     },
 
     'startsWith() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">Foo</b>', '<b class="yui3-highlight">foo</b>'],
-            Hi.startsWith('foo', ['Foo', 'foo'])
+            Hi.startsWith('foo', arrayToResults(['Foo', 'foo']))
         );
     },
 
@@ -483,7 +552,7 @@ highlightSuite.add(new Y.Test.Case({
     'startsWithCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">foo</b>'],
-            Hi.startsWithCase('foo', ['Foo', 'foo'])
+            Hi.startsWithCase('foo', arrayToResults(['Foo', 'foo']))
         );
     },
 
@@ -491,12 +560,12 @@ highlightSuite.add(new Y.Test.Case({
     'startsWithFold() should match accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">fóó</b>', 'barfoo', 'bar'],
-            Hi.startsWithFold('foo', ['fóó', 'barfoo', 'bar'])
+            Hi.startsWithFold('foo', arrayToResults(['fóó', 'barfoo', 'bar']))
         );
 
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">foo</b>', 'barfoo', 'bar'],
-            Hi.startsWithFold('föö', ['foo', 'barfoo', 'bar'])
+            Hi.startsWithFold('föö', arrayToResults(['foo', 'barfoo', 'bar']))
         );
     },
 
@@ -504,19 +573,19 @@ highlightSuite.add(new Y.Test.Case({
     'wordMatch() should highlight complete words in the query': function () {
         ArrayAssert.itemsAreSame(
             ['foobar', 'barbaz'],
-            Hi.wordMatch('foo bar baz', ['foobar', 'barbaz'])
+            Hi.wordMatch('foo bar baz', arrayToResults(['foobar', 'barbaz']))
         );
 
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">foo</b>', '<b class="yui3-highlight">bar</b>', '<b class="yui3-highlight">foo</b> <b class="yui3-highlight">bar</b> <b class="yui3-highlight">baz</b>', 'foobar <b class="yui3-highlight">baz</b>'],
-            Hi.wordMatch('baz foo bar', ['foo', 'bar', 'foo bar baz', 'foobar baz'])
+            Hi.wordMatch('baz foo bar', arrayToResults(['foo', 'bar', 'foo bar baz', 'foobar baz']))
         );
     },
 
     'wordMatch() should be case-insensitive': function () {
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">Foo</b>', '<b class="yui3-highlight">foo</b>'],
-            Hi.wordMatch('foo', ['Foo', 'foo'])
+            Hi.wordMatch('foo', arrayToResults(['Foo', 'foo']))
         );
     },
 
@@ -524,19 +593,19 @@ highlightSuite.add(new Y.Test.Case({
     'wordMatchCase() should be case-sensitive': function () {
         ArrayAssert.itemsAreSame(
             ['Foo', '<b class="yui3-highlight">foo</b>'],
-            Hi.wordMatchCase('foo', ['Foo', 'foo'])
+            Hi.wordMatchCase('foo', arrayToResults(['Foo', 'foo']))
         );
     },
 
     'wordMatchFold() should match accent-folded characters': function () {
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">fóó</b>', '<b class="yui3-highlight">foo</b>', 'barfoo'],
-            Hi.wordMatchFold('foo', ['fóó', 'foo', 'barfoo'])
+            Hi.wordMatchFold('foo', arrayToResults(['fóó', 'foo', 'barfoo']))
         );
 
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">foo</b>', '<b class="yui3-highlight">fóó</b>', 'barfoo'],
-            Hi.wordMatchFold('föö', ['foo', 'fóó', 'barfoo'])
+            Hi.wordMatchFold('föö', arrayToResults(['foo', 'fóó', 'barfoo']))
         );
     }
 }));
@@ -551,7 +620,7 @@ Y.Test.Runner.add(suite);
     requires: [
         'autocomplete-base', 'autocomplete-filters',
         'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-        'autocomplete-highlighters-accentfold', 'datasource-local', 'node',
-        'jsonp', 'test', 'yql'
+        'autocomplete-highlighters-accentfold', 'autocomplete-test-data', 
+        'datasource-local', 'node', 'jsonp', 'test', 'yql'
     ]
 });

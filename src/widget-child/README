@@ -4,6 +4,10 @@ widget classes which need to be nested inside Widget-Parent based widgets.
 For example, it could be used to create MenuItem widgets, which sit inside Menu 
 widgets, or TreeNode widgets which sit inside Tree widgets.
 
+3.3.0
+
+* Changed instanceof to Y.instanceOf, to prevent leaks in IE7
+
 3.2.0
 
 * No changes

@@ -64,9 +64,16 @@ VC = {
      * @static
      */
     _poll: function (node, stamp, e) {
-        var newVal  = node._node.value, // performance cheat; getValue() is a big hit when polling
+        var domNode = node._node, // performance cheat; getValue() is a big hit when polling
+            newVal  = domNode && domNode.value,
             prevVal = VC._history[stamp],
             facade;
+
+        if (!domNode) {
+            Y.log('_poll: node ' + stamp + ' disappeared; stopping polling.', 'warn', 'event-valuechange');
+            VC._stopPolling(node, stamp);
+            return;
+        }
 
         if (newVal !== prevVal) {
             VC._history[stamp] = newVal;

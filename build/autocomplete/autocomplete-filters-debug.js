@@ -11,7 +11,7 @@ YUI.add('autocomplete-filters', function(Y) {
 
 var YArray     = Y.Array,
     YObject    = Y.Object,
-    WordBreak  = Y.Unicode.WordBreak,
+    WordBreak  = Y.Text.WordBreak,
 
 Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     // -- Public Methods -------------------------------------------------------
@@ -34,6 +34,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
                 query.toLowerCase()).split(''));
 
         return YArray.filter(results, function (result) {
+            result = result.text;
+
             if (!caseSensitive) {
                 result = result.toLowerCase();
             }
@@ -76,7 +78,7 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         }
 
         return YArray.filter(results, function (result) {
-            return (caseSensitive ? result : result.toLowerCase()).indexOf(query) !== -1;
+            return (caseSensitive ? result.text : result.text.toLowerCase()).indexOf(query) !== -1;
         });
     },
 
@@ -112,7 +114,7 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         }
 
         return YArray.filter(results, function (result) {
-            return (caseSensitive ? result : result.toLowerCase()).indexOf(query) === 0;
+            return (caseSensitive ? result.text : result.text.toLowerCase()).indexOf(query) === 0;
         });
     },
 
@@ -149,7 +151,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
 
         return YArray.filter(results, function (result) {
             // Convert resultWords array to a hash for fast lookup.
-            var resultWords = YArray.hash(WordBreak.getUniqueWords(result, options));
+            var resultWords = YArray.hash(WordBreak.getUniqueWords(result.text,
+                                options));
 
             return YArray.every(queryWords, function (word) {
                 return YObject.owns(resultWords, word);
@@ -172,4 +175,4 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'text-wordbreak']});

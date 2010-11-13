@@ -1,6 +1,17 @@
 Provides the augmentable Plugin.Host class which adds plugin support 
 to the augmented class or object.
 
+3.3.0
+
+* Broke pluginhost into pluginhost-base, pluginhost-config
+
+  pluginhost-base provides the core plug/unplug methods.
+
+  pluginhost-config provides support for constructor configuration
+  and static configuration of plugins.
+
+* Added log statement if an invalid plugin is provided
+
 3.2.0
 
 * No changes

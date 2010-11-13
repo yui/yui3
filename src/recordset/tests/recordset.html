@@ -22,7 +22,7 @@
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
-            BTNRUN = Y.get("#btnRun");
+            BTNRUN = Y.one("#btnRun");
         BTNRUN.set("disabled", false);
         Y.on("click", function(e){
             Y.Test.Runner.run();
@@ -76,11 +76,15 @@
 		    //---------------------------------------------
 			
 			testGetRecords: function() {
-				var newRecord, id;
+				var newRecord,newRecord1, newRecord2, id;
 								
 				//Single Record
-				newRecord = this.rs.getRecordByIndex(1);
-				Y.ObjectAssert.areEqual(newRecord.getValue(), this.initialData[1]);
+				newRecord1 = this.rs.getRecordByIndex(1);
+				newRecord2 = this.rs.getRecord(1);
+				
+				Y.ObjectAssert.areEqual(newRecord1.getValue(), this.initialData[1]);
+				Y.ObjectAssert.areEqual(newRecord1, newRecord2);
+				
 				
 				//Multiple Records
 				newRecord = this.rs.getRecordsByIndex(1,2);
@@ -88,7 +92,7 @@
 				Y.ObjectAssert.areEqual(newRecord[1].getValue(), this.initialData[2]);
 				
 				//By ID
-				id = this.rs.getRecordByIndex(0).getValue('id');
+				id = this.rs.getRecordByIndex(0).get('id');
 				newRecord = this.rs.getRecord(id);
 				Y.ObjectAssert.areEqual(newRecord, this.rs.getRecordByIndex(0));
 								
@@ -464,7 +468,20 @@
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
 				Y.Assert.areEqual(1, Y.Object.size(hashTable));
 				
-				console.log(hashTable);
+				
+				//update single record
+				this.rs.update({a:'new', b:'record', c:'added'}, 0);
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				
+				Y.Assert.areEqual(2, Y.Object.size(hashTable));
+				
+				this.rs.update([{a:'new', b:'record', c:'added'},{a:'another', b:'new', c:'record'}], 1);
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).get('id')], this.rs.getRecordByIndex(2));
+				//console.log(hashTable);
+				Y.Assert.areEqual(2, Y.Object.size(hashTable));
 			},
 			
 			
@@ -587,8 +604,8 @@
 				this.rs.sort.flip();
 				
 				//1s
-				Y.ObjectAssert.areEqual(a, this.rs.getRecordByIndex(0).getValue());
-				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual(a, this.rs.getRecordByIndex(1).getValue());
 				//2s				
 				Y.ObjectAssert.areEqual(b, this.rs.getRecordByIndex(2).getValue());
 				//3s
@@ -827,62 +844,193 @@
 			
 			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
 			
-			testCustomHashTable: function() {
+			testCustomHashTableInitialization: function() {
 				this.rs.plug(Y.Plugin.RecordsetIndexer);
 				
 				var hashA = this.rs.indexer.createTable('a');
 				var hashTables = this.rs.indexer.get('hashTables');
 				
-				console.log('hashA is');
-				console.log(hashA);
+				//check hashA
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
 				
-				console.log('big hash table is');
-				console.log(hashTables);
+				//check main table (contains all the subtables)
+				Y.ObjectAssert.areEqual(hashTables.a[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashTables.a[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashTables.a[1].getValue(), {a:1, b:2, c:3});
 				
 				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+
 				
 				
 				var hashB = this.rs.indexer.createTable('b');
+				
+				Y.ObjectAssert.areEqual(hashTables.b[2].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashTables.b[8].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashB[2].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashB[8].getValue(), {a:9, b:8, c:7});
 				Y.ObjectAssert.areEqual(hashB, hashTables.b);
 				
-				// Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).getValue('a')], this.rs.getRecordByIndex(0));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).getValue('a')], this.rs.getRecordByIndex(1));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).getValue('a')], this.rs.getRecordByIndex(2));
-				// 				Y.ObjectAssert.areEqual(3, Y.Object.size(hashTable));
-				// 				
-				// 				
-				// 				//check hashtable sync when adding
-				// 				this.rs.add({a:'hello', b:'hey', c:'yo!'});
-				// 				console.log('added a record');
-				// 				console.log(this.rs.indexer.get('table'));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).getValue('a')], this.rs.getRecordByIndex(0));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).getValue('a')], this.rs.getRecordByIndex(1));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).getValue('a')], this.rs.getRecordByIndex(2));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(3).getValue('a')], this.rs.getRecordByIndex(3));
-				// 				Y.ObjectAssert.areEqual(4, Y.Object.size(hashTable));
-				// 				
-				// 				
-				// 				//reset the primary index to b
-				// 				this.rs.indexer.set('key', 'b');
-				// 				console.log('reset index to b');
-				// 				console.log(this.rs.indexer.get('table'));
-				// 				
-				// 				//check hashtable sync when removing 1 object
-				// 				this.rs.remove(1);
-				// 				console.log('removed a record');
-				// 				console.log(this.rs.indexer.get('table'));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).getValue('b')], this.rs.getRecordByIndex(0));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).getValue('b')], this.rs.getRecordByIndex(1));
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).getValue('b')], this.rs.getRecordByIndex(2));
-				// 				Y.ObjectAssert.areEqual(3, Y.Object.size(hashTable));
-				// 				
-				// 								
-				// 				//check hashtable sync when removing multiple records
-				// 				this.rs.remove(0,2);
-				// 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).getValue('b')], this.rs.getRecordByIndex(0));
-				// 				Y.ObjectAssert.areEqual(1, Y.Object.size(hashTable));
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testCustomHashTableAddingRecord: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
 				
+				var hashA = this.rs.indexer.createTable('a'),
+				 	hashC = this.rs.indexer.createTable('c'),
+				 	hashTables = this.rs.indexer.get('hashTables');
+				
+				//add to the end
+				this.rs.add({a:'adding', b:'this', c:'record'});
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});						
+				Y.Assert.areEqual(4, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'adding', b:'this', c:'record'});
+				Y.Assert.areEqual(4, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				
+				//adding record to a specific index
+				this.rs.add({a:'another', b:'new', c:'record'}, 0);
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});		
+				Y.ObjectAssert.areEqual(hashA['another'].getValue(), {a:'another', b:'new', c:'record'});						
+				Y.Assert.areEqual(5, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'another', b:'new', c:'record'});
+				Y.Assert.areEqual(4, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				//adding multiple records
+				this.rs.add([{a:'blah', b:'bloo', c:'bleh'},{a:'heres', b:'another', c:'one'}]);
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});		
+				Y.ObjectAssert.areEqual(hashA['another'].getValue(), {a:'another', b:'new', c:'record'});
+				Y.ObjectAssert.areEqual(hashA['blah'].getValue(), {a:'blah', b:'bloo', c:'bleh'});
+				Y.ObjectAssert.areEqual(hashA['heres'].getValue(), {a:'heres', b:'another', c:'one'});						
+										
+				Y.Assert.areEqual(7, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'another', b:'new', c:'record'});
+				Y.ObjectAssert.areEqual(hashC['bleh'].getValue(), {a:'blah', b:'bloo', c:'bleh'});
+				Y.ObjectAssert.areEqual(hashC['one'].getValue(), {a:'heres', b:'another', c:'one'});
+				Y.Assert.areEqual(6, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				
+			},			
+			
+			testCustomHashTableRemovingRecord: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+				
+				var hashA = this.rs.indexer.createTable('a'),
+				 	hashC = this.rs.indexer.createTable('c'),
+				 	hashTables = this.rs.indexer.get('hashTables');
+				
+				this.rs.remove(2);
+				
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});						
+				Y.Assert.areEqual(2, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.Assert.areEqual(2, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				
+				//try removing more than 1 record at a time
+				this.rs.add({a:1, b:2, c:3});
+				this.rs.remove(0,2);
+				
+				
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.Assert.areEqual(1, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.Assert.areEqual(1, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+			},
+			
+			
+						//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+						
+			testCustomHashTableUpdatingRecord: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+							
+				var hashA = this.rs.indexer.createTable('a'),
+				 	hashC = this.rs.indexer.createTable('c'),
+				 	hashTables = this.rs.indexer.get('hashTables');
+							
+				this.rs.update({a:'one', b:'record', c:'added'}, 1);
+							
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['one'].getValue(), {a:'one', b:'record', c:'added'});		
+				Y.Assert.areEqual(3, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+						
+						
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['added'].getValue(), {a:'one', b:'record', c:'added'});
+				Y.Assert.areEqual(3, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+					
+				//update multiple records
+				this.rs.update([{a:'adding', b:'this', c:'record'}, {a:'heres', b:'another', c:'one'}], 2);
+							
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});
+				Y.ObjectAssert.areEqual(hashA['heres'].getValue(), {a:'heres', b:'another', c:'one'});
+				Y.Assert.areEqual(4, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+							
+							
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'adding', b:'this', c:'record'});
+				Y.ObjectAssert.areEqual(hashC['one'].getValue(), {a:'heres', b:'another', c:'one'});
+				Y.Assert.areEqual(4, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+							
+							
 			}
+						
 			
 			
         });

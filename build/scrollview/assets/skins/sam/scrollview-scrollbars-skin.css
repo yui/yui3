@@ -1,18 +1,18 @@
-.yui-skin-sam .yui3-scrollview-scrollbar {
+.yui3-skin-sam .yui3-scrollview-scrollbar {
     -webkit-transform: translate3d(0, 0, 0);
     -moz-transform: translate3d(0, 0, 0); 
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-first,
-.yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-middle, 
-.yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-last { 
+.yui3-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-first,
+.yui3-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-middle, 
+.yui3-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-last { 
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==);
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-first,
-.yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-last { 
+.yui3-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-first,
+.yui3-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-last { 
     -webkit-border-bottom-right-radius:0; 
     -webkit-border-bottom-left-radius:0;
 
@@ -20,7 +20,7 @@
     -moz-border-radius-bottomleft:0;
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-last { 
+.yui3-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-last { 
     -webkit-border-radius:0; 
     -webkit-border-bottom-right-radius:3px; 
     -webkit-border-bottom-left-radius:3px; 
@@ -32,7 +32,7 @@
     -moz-transform: translate3d(0, 0, 0); 
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-middle { 
+.yui3-skin-sam .yui3-scrollview-scrollbar .yui3-scrollview-middle { 
     -webkit-border-radius: 0;
     -moz-border-radius: 0; 
 
@@ -42,8 +42,8 @@
     -moz-transform-origin-y: 0;
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-first,
-.yui-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-last { 
+.yui3-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-first,
+.yui3-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-last { 
     -webkit-border-top-right-radius: 0;
     -webkit-border-bottom-left-radius: 3px;
 
@@ -51,7 +51,7 @@
     -moz-border-radius-bottomleft: 3px;
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-last { 
+.yui3-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-last { 
     -webkit-border-bottom-left-radius: 0; 
     -webkit-border-top-right-radius: 3px;
 
@@ -59,7 +59,7 @@
     -moz-border-radius-topright: 3px; 
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-middle { 
+.yui3-skin-sam .yui3-scrollview-scrollbar-horiz .yui3-scrollview-middle { 
     -webkit-transform: translate3d(0,0,0) scaleX(1); 
     -webkit-transform-origin: 0 0;
 
@@ -67,8 +67,8 @@
     -moz-transform-origin: 0 0;
 }
 
-.yui-skin-sam .yui3-scrollview-scrollbar-vert-basic .yui3-scrollview-child,
-.yui-skin-sam .yui3-scrollview-scrollbar-horiz-basic .yui3-scrollview-child {
+.yui3-skin-sam .yui3-scrollview-scrollbar-vert-basic .yui3-scrollview-child,
+.yui3-skin-sam .yui3-scrollview-scrollbar-horiz-basic .yui3-scrollview-child {
     background-color: #aaa;
     background-image: none;
 }

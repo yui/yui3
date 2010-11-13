@@ -74,6 +74,9 @@ YUI.add('base-base', function(Y) {
     function Base() {
         Y.log('constructor called', 'life', 'base');
 
+        // So the object can be used as a hash key (as DD does)
+        Y.stamp(this);
+
         Attribute.call(this);
 
         // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
@@ -561,13 +564,13 @@ YUI.add('base-base', function(Y) {
 
         /**
          * Default toString implementation. Provides the constructor NAME
-         * and the instance ID.
+         * and the instance guid, if set.
          *
          * @method toString
          * @return {String} String representation for this object
          */
         toString: function() {
-            return this.constructor.NAME + "[" + Y.stamp(this) + "]";
+            return this.name + "[" + Y.stamp(this, true) + "]";
         }
 
     };
@@ -739,13 +742,16 @@ YUI.add('base-build', function(Y) {
         _ctor : function(main, cfg) {
 
            var dynamic = (cfg && false === cfg.dynamic) ? false : true,
-                builtClass = (dynamic) ? build._tmpl(main) : main;
+               builtClass = (dynamic) ? build._tmpl(main) : main,
+               buildCfg = builtClass._yuibuild;
 
-            builtClass._yuibuild = {
-                id: null,
-                exts : [],
-                dynamic: dynamic
-            };
+            if (!buildCfg) {
+                buildCfg = builtClass._yuibuild = {};
+            }
+
+            buildCfg.id = buildCfg.id || null;
+            buildCfg.exts = buildCfg.exts || [];
+            buildCfg.dynamic = dynamic;
 
             return builtClass;
         },
@@ -919,5 +925,5 @@ YUI.add('base-build', function(Y) {
 }, '@VERSION@' ,{requires:['base-base']});
 
 
-YUI.add('base', function(Y){}, '@VERSION@' ,{use:['base-base', 'base-pluginhost', 'base-build']});
+YUI.add('base', function(Y){}, '@VERSION@' ,{after:['attribute-complex'], use:['base-base', 'base-pluginhost', 'base-build']});
 

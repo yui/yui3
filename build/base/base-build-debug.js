@@ -119,13 +119,16 @@ YUI.add('base-build', function(Y) {
         _ctor : function(main, cfg) {
 
            var dynamic = (cfg && false === cfg.dynamic) ? false : true,
-                builtClass = (dynamic) ? build._tmpl(main) : main;
+               builtClass = (dynamic) ? build._tmpl(main) : main,
+               buildCfg = builtClass._yuibuild;
 
-            builtClass._yuibuild = {
-                id: null,
-                exts : [],
-                dynamic: dynamic
-            };
+            if (!buildCfg) {
+                buildCfg = builtClass._yuibuild = {};
+            }
+
+            buildCfg.id = buildCfg.id || null;
+            buildCfg.exts = buildCfg.exts || [];
+            buildCfg.dynamic = dynamic;
 
             return builtClass;
         },
