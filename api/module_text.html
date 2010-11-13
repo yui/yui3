@@ -60,7 +60,7 @@
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nProvides a basic Unicode accent folding implementation that converts common\naccented letters (like \"á\") to their non-accented forms (like \"a\").\n</p>\n<p>\nThis implementation is not comprehensive, and should only be used as a last\nresort when accent folding can't be done on the server. A comprehensive\naccent folding implementation would require much more character data to be\nsent to the browser, resulting in a significant performance penalty. This\nimplementation strives for a compromise between usefulness and performance.\n</p>\n<p>\nAccent folding is a destructive operation that can't be reversed, and may\nchange or destroy the actual meaning of the text depending on the language.\nIt should not be used on strings that will later be displayed to a user,\nunless this is done with the understanding that linguistic meaning may be\nlost and that you may in fact confuse or insult the user by doing so.\n</p>", "guessedname": "Text.AccentFold", "name": "Text.AccentFold"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nAn imperfect, incomplete reverse mapping of ASCII characters to\ncase-insensitive regexes that match their most common accented forms.\n</p>\n<p>\nThe goal of this module is to provide a pragmatic and generally useful set of\naccent folding data, since serving and performing lookups on a complete\ndataset would be impractical in client-side JavaScript.\n</p>\n<p>\nWhenever possible, accent folding should be done on the server, where it's\npossible to use tools that are both more complete and more performant. It\nshould only be done on the client as an absolute last resort.\n</p>", "guessedname": "Text.Data.AccentFold", "name": "Text.Data.AccentFold"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nUnicode character data used by the word breaking algorithm.\n</p>\n<p>\nWhenever possible, word breaking should be done on the server, where it's\npossible to use tools that are both more complete and more performant. It\nshould only be done on the client as an absolute last resort.\n</p>", "guessedname": "Text.Data.WordBreak", "name": "Text.Data.WordBreak"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Provides utility methods for splitting strings on word breaks and determining\nwhether a character index represents a word boundary, using the generic word\nbreaking algorithm defined in the Unicode Text Segmentation guidelines\n(<a href=\"http://unicode.org/reports/tr29/#Word_Boundaries\">Unicode Standard\nAnnex #29</a>).", "guessedname": "Text.WordBreak", "name": "Text.WordBreak"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nProvides a basic Unicode accent folding implementation that converts common\naccented letters (like \"á\") to their non-accented forms (like \"a\").\n</p>\n<p>\nThis implementation is not comprehensive, and should only be used as a last\nresort when accent folding can't be done on the server. A comprehensive\naccent folding implementation would require much more character data to be\nsent to the browser, resulting in a significant performance penalty. This\nimplementation strives for a compromise between usefulness and performance.\n</p>\n<p>\nAccent folding is a destructive operation that can't be reversed, and may\nchange or destroy the actual meaning of the text depending on the language.\nIt should not be used on strings that will later be displayed to a user,\nunless this is done with the understanding that linguistic meaning may be\nlost and that you may in fact confuse or insult the user by doing so.\n</p>", "guessedname": "Text.AccentFold", "name": "Text.AccentFold"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nAn imperfect, incomplete reverse mapping of ASCII characters to\ncase-insensitive regexes that match their most common accented forms.\n</p>\n<p>\nThe goal of this module is to provide a pragmatic and generally useful set of\naccent folding data, since serving and performing lookups on a complete\ndataset would be impractical in client-side JavaScript.\n</p>\n<p>\nWhenever possible, accent folding should be done on the server, where it's\npossible to use tools that are both more complete and more performant. It\nshould only be done on the client as an absolute last resort.\n</p>", "guessedname": "Text.Data.AccentFold", "name": "Text.Data.AccentFold"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nUnicode character data used by the word breaking algorithm.\n</p>\n<p>\nWhenever possible, word breaking should be done on the server, where it's\npossible to use tools that are both more complete and more performant. It\nshould only be done on the client as an absolute last resort.\n</p>", "guessedname": "Text.Data.WordBreak", "name": "Text.Data.WordBreak"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nProvides utility methods for splitting strings on word breaks and determining\nwhether a character index represents a word boundary, using the generic word\nbreaking algorithm defined in the Unicode Text Segmentation guidelines\n(<a href=\"http://unicode.org/reports/tr29/#Word_Boundaries\">Unicode Standard\nAnnex #29</a>).\n</p>\n<p>\nThis algorithm provides a reasonable default for many languages. However, it\ndoes not cover language or context specific requirements, and it does not\nprovide meaningful results at all for languages that don't use spaces between\nwords, such as Chinese, Japanese, Thai, Lao, Khmer, and others. Server-based\nword breaking services usually provide significantly better results with\nbetter performance.\n</p>", "guessedname": "Text.WordBreak", "name": "Text.WordBreak"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -76,54 +76,16 @@
                                         <h4>Submodules:</h4> 
                                         <dl>
                                             <dt><code>text-accentfold</code></dt>
-                                            <dd><p>
-Provides a basic Unicode accent folding implementation that converts common
-accented letters (like "á") to their non-accented forms (like "a").
-</p>
-<p>
-This implementation is not comprehensive, and should only be used as a last
-resort when accent folding can't be done on the server. A comprehensive
-accent folding implementation would require much more character data to be
-sent to the browser, resulting in a significant performance penalty. This
-implementation strives for a compromise between usefulness and performance.
-</p>
-<p>
-Accent folding is a destructive operation that can't be reversed, and may
-change or destroy the actual meaning of the text depending on the language.
-It should not be used on strings that will later be displayed to a user,
-unless this is done with the understanding that linguistic meaning may be
-lost and that you may in fact confuse or insult the user by doing so.
-</p></dd>
+                                            <dd>Provides a basic Unicode accent folding implementation that converts common
+accented letters (like "á") to their non-accented forms (like "a").</dd>
                                             <dt><code>text-data-accentfold</code></dt>
-                                            <dd><p>
-An imperfect, incomplete reverse mapping of ASCII characters to
-case-insensitive regexes that match their most common accented forms.
-</p>
-<p>
-The goal of this module is to provide a pragmatic and generally useful set of
-accent folding data, since serving and performing lookups on a complete
-dataset would be impractical in client-side JavaScript.
-</p>
-<p>
-Whenever possible, accent folding should be done on the server, where it's
-possible to use tools that are both more complete and more performant. It
-should only be done on the client as an absolute last resort.
-</p></dd>
+                                            <dd>An imperfect, incomplete reverse mapping of ASCII characters to
+case-insensitive regexes that match their most common accented forms.</dd>
                                             <dt><code>text-data-wordbreak</code></dt>
-                                            <dd><p>
-Unicode character data used by the word breaking algorithm.
-</p>
-<p>
-Whenever possible, word breaking should be done on the server, where it's
-possible to use tools that are both more complete and more performant. It
-should only be done on the client as an absolute last resort.
-</p></dd>
+                                            <dd>Unicode character data used by the word breaking algorithm.</dd>
                                             <dt><code>text-wordbreak</code></dt>
                                             <dd>Provides utility methods for splitting strings on word breaks and determining
-whether a character index represents a word boundary, using the generic word
-breaking algorithm defined in the Unicode Text Segmentation guidelines
-(<a href="http://unicode.org/reports/tr29/#Word_Boundaries">Unicode Standard
-Annex #29</a>).</dd>
+whether a character index represents a word boundary.</dd>
                                         </dl>
                                     </div>
 

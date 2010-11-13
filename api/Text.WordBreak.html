@@ -59,11 +59,21 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Provides utility methods for splitting strings on word breaks and determining
+                        <p>
+Provides utility methods for splitting strings on word breaks and determining
 whether a character index represents a word boundary, using the generic word
 breaking algorithm defined in the Unicode Text Segmentation guidelines
 (<a href="http://unicode.org/reports/tr29/#Word_Boundaries">Unicode Standard
 Annex #29</a>).
+</p>
+<p>
+This algorithm provides a reasonable default for many languages. However, it
+does not cover language or context specific requirements, and it does not
+provide meaningful results at all for languages that don't use spaces between
+words, such as Chinese, Japanese, Thai, Lao, Khmer, and others. Server-based
+word breaking services usually provide significantly better results with
+better performance.
+</p>
                     </div>
 
                     
@@ -150,8 +160,16 @@ Annex #29</a>).
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns <code>true</code> if there is a word boundary at or after the
-specified character index, <code>false</code> otherwise.
+                                            <p>
+Returns <code>true</code> if there is a word boundary between the
+specified character index and the next character index (or the end of the
+string).
+</p>
+<p>
+Note that there are always word breaks at the beginning and end of a
+string, so <code>_isWordBoundary('', 0)</code> and
+<code>_isWordBoundary('a', 0)</code> will both return <code>true</code>.
+</p>
                                         </div>
 
                                         <div class="description">
@@ -349,8 +367,16 @@ characters. Default is <code>false</code>.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns <code>true</code> if the specified character index is a word
-boundary.
+                                            <p>
+Returns <code>true</code> if there is a word boundary between the
+specified character index and the next character index (or the end of the
+string).
+</p>
+<p>
+Note that there are always word breaks at the beginning and end of a
+string, so <code>isWordBoundary('', 0)</code> and
+<code>isWordBoundary('a', 0)</code> will both return <code>true</code>.
+</p>
                                         </div>
 
                                         <div class="description">
