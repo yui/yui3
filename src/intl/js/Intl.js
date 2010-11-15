@@ -1,15 +1,16 @@
 var _mods = {},
 
     ROOT_LANG = "yuiRootLang",
-    ACTIVE_LANG = "yuiActiveLang";
+    ACTIVE_LANG = "yuiActiveLang",
+    NONE = [];
 
-/** 
+/**
  * Provides utilities to support the management of localized resources (strings and formatting patterns).
  *
  * @module intl
  */
 
-/** 
+/**
  * The Intl utility provides a central location for managing sets of localized resources (strings and formatting patterns).
  *
  * @class Intl
@@ -19,8 +20,8 @@ var _mods = {},
 Y.mix(Y.namespace("Intl"), {
 
     /**
-     * Private method to retrieve the language hash for a given module. 
-     *  
+     * Private method to retrieve the language hash for a given module.
+     *
      * @method _mod
      * @private
      *
@@ -43,7 +44,7 @@ Y.mix(Y.namespace("Intl"), {
      *
      * @param {String} module The module name.
      * @param {String} lang The BCP 47 language tag.
-     * @return boolean true if successful, false if not. 
+     * @return boolean true if successful, false if not.
      */
     setLang : function(module, lang) {
         var langs = this._mod(module),
@@ -67,7 +68,7 @@ Y.mix(Y.namespace("Intl"), {
      * @return {String} The BCP 47 language tag.
      */
     getLang : function(module) {
-        var lang = this._mod(module)[ACTIVE_LANG]; 
+        var lang = this._mod(module)[ACTIVE_LANG];
         return (lang === ROOT_LANG) ? "" : lang;
     },
 
@@ -89,8 +90,8 @@ Y.mix(Y.namespace("Intl"), {
     /**
      * Gets the module's localized resources for the currently active language (as provided by the <a href="#method_getLang">getLang</a> method).
      * <p>
-     * Optionally, the localized resources for alternate languages which have been added to Intl (see the <a href="#method_add">add</a> method) can 
-     * be retrieved by providing the BCP 47 language tag as the lang parameter.   
+     * Optionally, the localized resources for alternate languages which have been added to Intl (see the <a href="#method_add">add</a> method) can
+     * be retrieved by providing the BCP 47 language tag as the lang parameter.
      * </p>
      * @method get
      *
@@ -118,23 +119,11 @@ Y.mix(Y.namespace("Intl"), {
      * @return {Array} The array of languages available.
      */
     getAvailableLangs : function(module) {
-        var availLangs = [],
-            allLangs = Y.Env && Y.Env.lang,
-            lang;
+        var loader = Y.Env._loader,
+            mod = loader && loader.moduleInfo[module],
+            langs = mod && mod.lang;
+        return (langs) ? langs.concat() : NONE;
 
-        // Y.Env.lang[lang][m.name]
-
-        if(allLangs) {
-            for (lang in allLangs) {
-                if (lang && allLangs.hasOwnProperty(lang)) {
-                    if (allLangs[lang][module]) {
-                        availLangs[availLangs.length] = lang;
-                    }
-                }
-            }
-        }
-
-        return availLangs;
     }
 });
 

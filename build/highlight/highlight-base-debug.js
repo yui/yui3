@@ -32,7 +32,7 @@ YUI.add('highlight-base', function(Y) {
 
 var YArray    = Y.Array,
     Escape    = Y.Escape,
-    WordBreak = Y.Unicode.WordBreak,
+    WordBreak = Y.Text.WordBreak,
 
     isArray = Y.Lang.isArray,
 
@@ -341,4 +341,4 @@ Highlight = {
 Y.Highlight = Highlight;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'escape', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'escape', 'text-wordbreak']});

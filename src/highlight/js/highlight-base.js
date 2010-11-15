@@ -30,7 +30,7 @@
 
 var YArray    = Y.Array,
     Escape    = Y.Escape,
-    WordBreak = Y.Unicode.WordBreak,
+    WordBreak = Y.Text.WordBreak,
 
     isArray = Y.Lang.isArray,
 

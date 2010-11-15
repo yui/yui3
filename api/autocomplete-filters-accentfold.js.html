@@ -68,8 +68,8 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">AccentFold</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Unicode</span><span class="p">.</span><span class="nx">AccentFold</span><span class="p">,</span>
-    <span class="nx">WordBreak</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Unicode</span><span class="p">.</span><span class="nx">WordBreak</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">AccentFold</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">AccentFold</span><span class="p">,</span>
+    <span class="nx">WordBreak</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">WordBreak</span><span class="p">,</span>
     <span class="nx">YArray</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
     <span class="nx">YObject</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">;</span>
 
@@ -86,9 +86,11 @@
     <span class="nx">charMatchFold</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">queryChars</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">unique</span><span class="p">(</span><span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">query</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">));</span>
 
-        <span class="k">return</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+
             <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">queryChars</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">chr</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">chr</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                <span class="k">return</span> <span class="nx">text</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">chr</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
             <span class="p">});</span>
         <span class="p">});</span>
     <span class="p">},</span>
@@ -105,8 +107,8 @@
     <span class="nx">phraseMatchFold</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">query</span> <span class="o">=</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
 
-        <span class="k">return</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="p">},</span>
 
@@ -122,8 +124,8 @@
     <span class="nx">startsWithFold</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">query</span> <span class="o">=</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
 
-        <span class="k">return</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="p">},</span>
 
@@ -139,9 +141,10 @@
     <span class="nx">wordMatchFold</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">queryWords</span> <span class="o">=</span> <span class="nx">WordBreak</span><span class="p">.</span><span class="nx">getUniqueWords</span><span class="p">(</span><span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">query</span><span class="p">));</span>
 
-        <span class="k">return</span> <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Convert resultWords array to a hash for fast lookup.</span>
-            <span class="kd">var</span> <span class="nx">resultWords</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">WordBreak</span><span class="p">.</span><span class="nx">getUniqueWords</span><span class="p">(</span><span class="nx">result</span><span class="p">));</span>
+            <span class="kd">var</span> <span class="nx">resultWords</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">WordBreak</span><span class="p">.</span><span class="nx">getUniqueWords</span><span class="p">(</span>
+                    <span class="nx">AccentFold</span><span class="p">.</span><span class="nx">fold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">)));</span>
 
             <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">queryWords</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">word</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">YObject</span><span class="p">.</span><span class="nx">owns</span><span class="p">(</span><span class="nx">resultWords</span><span class="p">,</span> <span class="nx">word</span><span class="p">);</span>
@@ -199,7 +202,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -222,8 +224,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

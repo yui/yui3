@@ -76,7 +76,8 @@ YUI.add('autocomplete-base', function(Y) {
  * @class AutoCompleteBase
  */
 
-var Lang    = Y.Lang,
+var Escape  = Y.Escape,
+    Lang    = Y.Lang,
     YArray  = Y.Array,
     YObject = Y.Object,
 
@@ -192,7 +193,15 @@ function AutoCompleteBase() {
      *     <dl>
      *       <dt>display (Node|HTMLElement|String)</dt>
      *       <dd>
-     *         Formatted result HTML suitable for display to the user.
+     *         Formatted result HTML suitable for display to the user. If no
+     *         custom formatter is set, this will be an HTML-escaped version of
+     *         the string in the <code>text</code> property.
+     *       </dd>
+     *
+     *       <dt>highlighted (String)</dt>
+     *       <dd>
+     *         Highlighted (but not formatted) result text. This property will
+     *         only be set if a highlighter is in use.
      *       </dd>
      *
      *       <dt>raw (mixed)</dt>
@@ -205,7 +214,8 @@ function AutoCompleteBase() {
      *       <dd>
      *         Plain text version of the result, suitable for being inserted
      *         into the value of a text input field or textarea when the result
-     *         is selected by a user.
+     *         is selected by a user. This value is not HTML-escaped and should
+     *         not be inserted into the page using innerHTML.
      *       </dd>
      *     </dl>
      *   </dd>
@@ -358,20 +368,28 @@ AutoCompleteBase.ATTRS = {
      * <p>
      * Array of local result filter functions. If provided, each filter
      * will be called with two arguments when results are received: the query
-     * and an array of results (as returned by the <code>resultLocator</code>,
-     * if one is set).
+     * and an array of result objects. See the documentation for the
+     * <code>results</code> event for a list of the properties available on each
+     * result object.
      * </p>
      *
      * <p>
      * Each filter is expected to return a filtered or modified version of the
-     * results, which will then be passed on to subsequent filters, then the
-     * <code>resultHighlighter</code> function (if set), then the
+     * results array, which will then be passed on to subsequent filters, then
+     * the <code>resultHighlighter</code> function (if set), then the
      * <code>resultFormatter</code> function (if set), and finally to
      * subscribers to the <code>results</code> event.
      * </p>
      *
      * <p>
      * If no <code>source</code> is set, result filters will not be called.
+     * </p>
+     *
+     * <p>
+     * Prepackaged result filters provided by the autocomplete-filters and
+     * autocomplete-filters-accentfold modules can be used by specifying the
+     * filter name as a string, such as <code>'phraseMatch'</code> (assuming
+     * the necessary filters module is loaded).
      * </p>
      *
      * @attribute resultFilters
@@ -386,11 +404,15 @@ AutoCompleteBase.ATTRS = {
     /**
      * <p>
      * Function which will be used to format results. If provided, this function
-     * will be called with four arguments after results have been received and
-     * filtered: the query, an array of raw results, an array of highlighted
-     * results, and an array of plain text results. The formatter is expected to
-     * return a modified copy of the results array with any desired custom
-     * formatting applied.
+     * will be called with two arguments after results have been received and
+     * filtered: the query and an array of result objects. The formatter is
+     * expected to return an array of HTML strings or Node instances containing
+     * the desired HTML for each result.
+     * </p>
+     *
+     * <p>
+     * See the documentation for the <code>results</code> event for a list of
+     * the properties available on each result object.
      * </p>
      *
      * <p>
@@ -408,9 +430,14 @@ AutoCompleteBase.ATTRS = {
      * <p>
      * Function which will be used to highlight results. If provided, this
      * function will be called with two arguments after results have been
-     * received and filtered: the query and an array of filtered results. The
-     * highlighter is expected to return a modified version of the results
-     * array with the query highlighted in some form.
+     * received and filtered: the query and an array of filtered result objects.
+     * The highlighter is expected to return an array of highlighted result
+     * text in the form of HTML strings.
+     * </p>
+     *
+     * <p>
+     * See the documentation for the <code>results</code> event for a list of
+     * the properties available on each result object.
      * </p>
      *
      * <p>
@@ -472,10 +499,9 @@ AutoCompleteBase.ATTRS = {
     /**
      * <p>
      * Locator that should be used to extract a plain text string from a
-     * non-string result item. The resulting text value will be fed to any
-     * defined filters, and will typically also be the value that ends up being
-     * inserted into an input field or textarea when the user of an autocomplete
-     * implementation selects a result.
+     * non-string result item. The resulting text value will typically be the
+     * value that ends up being inserted into an input field or textarea when
+     * the user of an autocomplete implementation selects a result.
      * </p>
      *
      * <p>
@@ -563,7 +589,10 @@ AutoCompleteBase.ATTRS = {
      *     <code>{query}</code> placeholder will be replaced with the current
      *     query, and the <code>{callback}</code> placeholder will be replaced with
      *     an internally-generated JSONP callback name. Both placeholders must
-     *     appear in the URL, or the request will fail.
+     *     appear in the URL, or the request will fail. An optional
+     *     <code>{maxResults}</code> placeholder may also be provided, and will
+     *     be replaced with the value of the maxResults attribute (or 1000 if
+     *     the maxResults attribute is 0 or less).
      *     </p>
      *
      *     <p>
@@ -589,7 +618,10 @@ AutoCompleteBase.ATTRS = {
      *     If a YQL query is provided, it will be used to make a YQL request.
      *     The <code>{query}</code> placeholder will be replaced with the
      *     current autocomplete query. This placeholder must appear in the YQL
-     *     query, or the request will fail.
+     *     query, or the request will fail. An optional
+     *     <code>{maxResults}</code> placeholder may also be provided, and will
+     *     be replaced with the value of the maxResults attribute (or 1000 if
+     *     the maxResults attribute is 0 or less).
      *     </p>
      *
      *     <p>
@@ -932,7 +964,7 @@ AutoCompleteBase.prototype = {
 
             _sendRequest = function (request) {
                 var query = request.request,
-                    callback, opts, yqlQuery;
+                    callback, maxResults, opts, yqlQuery;
 
                 if (cache[query]) {
                     that[_SOURCE_SUCCESS](cache[query], request);
@@ -942,8 +974,13 @@ AutoCompleteBase.prototype = {
                         that[_SOURCE_SUCCESS](data, request);
                     };
 
-                    opts     = {proto: that.get('yqlProtocol')};
-                    yqlQuery = Lang.sub(source, {query: query});
+                    maxResults = that.get('maxResults');
+                    opts       = {proto: that.get('yqlProtocol')};
+
+                    yqlQuery = Lang.sub(source, {
+                        maxResults: maxResults > 0 ? maxResults : 1000,
+                        query     : query
+                    });
 
                     // Only create a new YQLRequest instance if this is the
                     // first request. For subsequent requests, we'll reuse the
@@ -1059,14 +1096,16 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _jsonpFormatter: function (url, proxy, query) {
-        var requestTemplate = this.get(REQUEST_TEMPLATE);
+        var maxResults      = this.get('maxResults'),
+            requestTemplate = this.get(REQUEST_TEMPLATE);
 
         if (requestTemplate) {
             url = url + requestTemplate(query);
         }
 
         return Lang.sub(url, {
-            callback: proxy,
+            callback  : proxy,
+            maxResults: maxResults > 0 ? maxResults : 1000,
 
             // If a requestTemplate is set, assume that it will
             // handle URI encoding if necessary. Otherwise,
@@ -1092,101 +1131,98 @@ AutoCompleteBase.prototype = {
                 results: []
             },
 
-            // Filtered result arrays representing different formats. These will
-            // be unrolled into the final array of result objects as properties.
-            formatted,   // HTML, Nodes, whatever
-            raw,         // whatever format came back in the response
-            unformatted, // plain text (ideally)
+            listLocator = this.get(RESULT_LIST_LOCATOR),
+            results     = [],
+            unfiltered  = response && response.results,
 
-            // Unfiltered raw results, fresh from the response.
-            unfiltered = response && response.results,
-
-            // Final array of result objects.
-            results = [],
-
-            // Other stuff.
             filters,
+            formatted,
             formatter,
+            highlighted,
             highlighter,
             i,
             len,
-            listLocator = this.get(RESULT_LIST_LOCATOR),
             maxResults,
-            textLocator,
-            textLocatorMap;
+            result,
+            text,
+            textLocator;
 
         if (unfiltered && listLocator) {
             unfiltered = listLocator(unfiltered);
         }
 
-        if (unfiltered) {
+        if (unfiltered && unfiltered.length) {
             filters     = this.get('resultFilters');
-            formatter   = this.get('resultFormatter');
-            highlighter = this.get('resultHighlighter');
-            maxResults  = this.get('maxResults');
             textLocator = this.get('resultTextLocator');
 
-            if (textLocator) {
-                // In order to allow filtering based on locator queries, we have
-                // to create a mapping of "located" results to original results
-                // so we can sync up the original results later without
-                // requiring the filters to do extra work.
-                raw            = YArray.map(unfiltered, textLocator);
-                textLocatorMap = YArray.hash(raw, unfiltered);
-            } else {
-                raw = unfiltered;
+            // Create a lightweight result object for each result to make them
+            // easier to work with. The various properties on the object
+            // represent different formats of the result, and will be populated
+            // as we go.
+            for (i = 0, len = unfiltered.length; i < len; ++i) {
+                result = unfiltered[i];
+                text   = textLocator ? textLocator(result) : result.toString();
+
+                results.push({
+                    display: Escape.html(text),
+                    raw    : result,
+                    text   : text
+                });
             }
 
-            // Run the raw results through all configured result filters.
+            // Run the results through all configured result filters. Each
+            // filter returns an array of (potentially fewer) result objects,
+            // which is then passed to the next filter, and so on.
             for (i = 0, len = filters.length; i < len; ++i) {
-                raw = filters[i](query, raw.concat());
+                results = filters[i](query, results.concat());
 
-                if (!raw || !raw.length) {
+                if (!results || !results.length) {
                     break;
                 }
             }
 
-            if (textLocator) {
-                // Sync up the original results with the filtered, "located"
+            if (results.length) {
+                formatter   = this.get('resultFormatter');
+                highlighter = this.get('resultHighlighter');
+                maxResults  = this.get('maxResults');
+
+                // If maxResults is set and greater than 0, limit the number of
                 // results.
-                unformatted = raw;
-                raw = [];
-
-                for (i = 0, len = unformatted.length; i < len; ++i) {
-                    raw.push(textLocatorMap[unformatted[i]]);
+                if (maxResults && maxResults > 0 &&
+                        results.length > maxResults) {
+                    results.length = maxResults;
                 }
-            } else {
-                unformatted = raw.concat();
+
+                // Run the results through the configured highlighter (if any).
+                // The highlighter returns an array of highlighted strings (not
+                // an array of result objects), and these strings are then added
+                // to each result object.
+                if (highlighter) {
+                    highlighted = highlighter(query, results.concat());
+
+                    for (i = 0, len = highlighted.length; i < len; ++i) {
+                        result = results[i];
+                        result.highlighted = highlighted[i];
+                        result.display     = result.highlighted;
+                    }
+                }
+
+                // Run the results through the configured formatter (if any) to
+                // produce the final formatted results. The formatter returns an
+                // array of strings or Node instances (not an array of result
+                // objects), and these strings/Nodes are then added to each
+                // result object.
+                if (formatter) {
+                    formatted = formatter(query, results.concat());
+
+                    for (i = 0, len = formatted.length; i < len; ++i) {
+                        results[i].display = formatted[i];
+                    }
+                }
             }
-
-            // Run the unformatted results through the configured highlighter
-            // (if any) to produce the first stage of formatted results.
-            formatted = highlighter ? highlighter(query, unformatted) :
-                    unformatted.concat();
-
-            // Run the highlighted results through the configured formatter (if
-            // any) to produce the final formatted results.
-            if (formatter) {
-                formatted = formatter(query, raw.concat(), formatted.concat(),
-                        unformatted.concat());
-            }
-
-            // Finally, unroll all the result arrays into a single array of
-            // result objects.
-            len = maxResults > 0 ? Math.min(maxResults, formatted.length) :
-                    formatted.length;
-
-            for (i = 0; i < len; ++i) {
-                results[i] = {
-                    display: formatted[i],
-                    raw    : raw[i],
-                    text   : unformatted[i]
-                };
-            }
-
-            facade.results = results;
         }
 
+        facade.results = results;
         this.fire(EVT_RESULTS, facade);
     },
 
@@ -1563,7 +1599,7 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{optional:['jsonp', 'yql'], requires:['array-extras', 'base-build', 'event-valuechange', 'node-base']});
+}, '@VERSION@' ,{optional:['jsonp', 'yql'], requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base']});
 YUI.add('autocomplete-list', function(Y) {
 
 /**
@@ -1662,7 +1698,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
          *   </dd>
          * </dl>
          *
-         * @preventable _defResultsFn
+         * @preventable _defSelectFn
          */
         this.publish(EVT_SELECT, {
             defaultFn: this._defSelectFn
