@@ -109,6 +109,7 @@
     <div id="smilies"></div>
 </div>
 
+<input type="text">
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
@@ -375,7 +376,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
-        defaultblock: 'div',
         /*
         linkedcss: [
             'http://yui.yahooapis.com/2.8.1/build/reset/reset.css',

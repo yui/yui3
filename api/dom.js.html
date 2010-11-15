@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dom&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>dom&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dom.html" title="dom">dom</a>
                 
@@ -81,6 +81,18 @@
 
     <span class="nx">re_tag</span> <span class="o">=</span> <span class="sr">/&lt;([a-z]+)/i</span><span class="p">,</span>
 
+    <span class="nx">createFromDIV</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">div</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">),</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+        <span class="nx">div</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">html</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">div</span><span class="p">.</span><span class="nx">firstChild</span> <span class="o">||</span> <span class="nx">div</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">.</span><span class="nx">tagName</span> <span class="o">!==</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
+    
 <span class="nx">Y_DOM</span> <span class="o">=</span> <span class="p">{</span>
     <span class="cm">/**</span>
 <span class="cm">     * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).</span>
@@ -755,7 +767,7 @@
         <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">col</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">link</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">style</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">.</span><span class="nx">script</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">createFromDIV</span><span class="p">(</span><span class="s1">&#39;&lt;tr/&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;TR&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">creators</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">option</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;select&gt;&lt;option class=&quot;yui3-big-dummy&quot; selected&gt;&lt;/option&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/select&gt;&#39;</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
@@ -769,9 +781,11 @@
                 <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
             <span class="p">},</span> 
 
-            <span class="nx">tbody</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="nx">TABLE_OPEN</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">TABLE_CLOSE</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="nx">col</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;colgroup&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/colgroup&gt;&#39;</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+            <span class="p">},</span> 
+
+            <span class="nx">tbody</span><span class="o">:</span> <span class="s1">&#39;table&#39;</span>
         <span class="p">});</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">creators</span><span class="p">,</span> <span class="p">{</span>
@@ -781,7 +795,6 @@
             <span class="nx">tfoot</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
             <span class="nx">caption</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
             <span class="nx">colgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
-            <span class="nx">col</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
             <span class="nx">optgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">option</span>
         <span class="p">});</span>
     <span class="p">}</span>
@@ -862,7 +875,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -885,8 +897,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

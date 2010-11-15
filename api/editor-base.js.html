@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>editor&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>editor&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_editor.html" title="editor">editor</a>
                 
@@ -206,8 +206,8 @@
             
             <span class="k">switch</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedType</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">case</span> <span class="s1">&#39;keydown&#39;</span><span class="o">:</span>
-                    <span class="c1">//inst.later(100, inst, inst.Selection.cleanCursor);</span>
-                    <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span><span class="p">();</span>
+                    <span class="nx">inst</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="nx">inst</span><span class="p">,</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span><span class="p">);</span>
+                    <span class="c1">//inst.Selection.cleanCursor();</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="k">case</span> <span class="s1">&#39;tab&#39;</span><span class="o">:</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;li, li *&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedEvent</span><span class="p">.</span><span class="nx">shiftKey</span><span class="p">)</span> <span class="p">{</span>
@@ -408,7 +408,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keydown&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyDown</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:activate&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameActivate</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+                <span class="c1">//this.frame.on(&#39;dom:activate&#39;, Y.bind(this._onFrameActivate, this));</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keyup&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyUp</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="mi">800</span><span class="p">));</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;dom:keypress&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyPress</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="mi">800</span><span class="p">));</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -431,7 +431,7 @@
                     <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
                         <span class="nx">sel</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">selection</span><span class="p">.</span><span class="nx">createRange</span><span class="p">(),</span>
                         <span class="nx">bk</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">moveToBookmark</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_lastBookmark</span><span class="p">);</span>
-
+                    
                     <span class="nx">sel</span><span class="p">.</span><span class="nx">select</span><span class="p">();</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_lastBookmark</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -784,14 +784,14 @@
 <span class="cm">            * @attribute content</span>
 <span class="cm">            */</span>
             <span class="nx">content</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">,</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;&lt;br class=&quot;yui-cursor&quot;&gt;&#39;</span><span class="p">,</span>
                 <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;\n&quot;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Stripping first carriage return from content before injecting&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
                         <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">str</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">;</span>
+                        <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&lt;br class=&quot;yui-cursor&quot;&gt;&#39;</span><span class="p">;</span>
                     <span class="p">}</span>
                     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
                 <span class="p">},</span>
@@ -923,7 +923,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -946,8 +945,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

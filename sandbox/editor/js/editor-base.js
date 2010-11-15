@@ -159,8 +159,8 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    //inst.later(100, inst, inst.Selection.cleanCursor);
-                    inst.Selection.cleanCursor();
+                    inst.later(100, inst, inst.Selection.cleanCursor);
+                    //inst.Selection.cleanCursor();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -361,7 +361,7 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
             if (Y.UA.ie) {
-                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                //this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
                 this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
                 this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
             } else {
@@ -384,7 +384,7 @@ YUI.add('editor-base', function(Y) {
                     var inst = this.getInstance(),
                         sel = inst.config.doc.selection.createRange(),
                         bk = sel.moveToBookmark(this._lastBookmark);
-
+                    
                     sel.select();
                     this._lastBookmark = null;
                 } catch (e) {
@@ -737,14 +737,14 @@ YUI.add('editor-base', function(Y) {
             * @attribute content
             */
             content: {
-                value: '<br>',
+                value: '<br class="yui-cursor">',
                 setter: function(str) {
                     if (str.substr(0, 1) === "\n") {
                         Y.log('Stripping first carriage return from content before injecting', 'warn', 'editor');
                         str = str.substr(1);
                     }
                     if (str === '') {
-                        str = '<br>';
+                        str = '<br class="yui-cursor">';
                     }
                     return this.frame.set('content', str);
                 },

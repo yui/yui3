@@ -82,15 +82,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                         "path": "autocomplete/autocomplete-filters-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-wordbreak"
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-filters-accentfold": {
                         "path": "autocomplete/autocomplete-filters-accentfold-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-accentfold", 
-                            "unicode-wordbreak"
+                            "text-accentfold", 
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-highlighters": {
@@ -111,6 +111,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "array-extras", 
                     "base-build", 
+                    "escape", 
                     "event-valuechange", 
                     "node-base"
                 ]
@@ -883,14 +884,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "highlight-accentfold": {
                 "requires": [
                     "highlight-base", 
-                    "unicode-accentfold"
+                    "text-accentfold"
                 ]
             }, 
             "highlight-base": {
                 "requires": [
                     "array-extras", 
                     "escape", 
-                    "unicode-wordbreak"
+                    "text-wordbreak"
                 ]
             }
         }
@@ -1128,19 +1129,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "classnamemanager", 
             "plugin", 
             "node-focusmanager"
-        ], 
-        "skinnable": true
-    }, 
-    "node-tokeninput": {
-        "requires": [
-            "array-extras", 
-            "classnamemanager", 
-            "event-focus", 
-            "event-valuechange", 
-            "node-event-delegate", 
-            "node-pluginhost", 
-            "node-style", 
-            "plugin"
         ], 
         "skinnable": true
     }, 
@@ -1413,6 +1401,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "text": {
+        "submodules": {
+            "text-accentfold": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-accentfold"
+                ]
+            }, 
+            "text-data-accentfold": {}, 
+            "text-data-wordbreak": {}, 
+            "text-wordbreak": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-wordbreak"
+                ]
+            }
+        }
+    }, 
     "transition": {
         "submodules": {
             "transition-native": {
@@ -1424,24 +1430,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "transition-native", 
                     "node-style"
-                ]
-            }
-        }
-    }, 
-    "unicode": {
-        "submodules": {
-            "unicode-accentfold": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-accentfold"
-                ]
-            }, 
-            "unicode-data-accentfold": {}, 
-            "unicode-data-wordbreak": {}, 
-            "unicode-wordbreak": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-wordbreak"
                 ]
             }
         }
@@ -1601,7 +1589,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '2f531a82a518eb3682f9a04bf1eaa329';
+YUI.Env[Y.version].md5 = '49afa7ee5f5e4485e24b810d0f378d41';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

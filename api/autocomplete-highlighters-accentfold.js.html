@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>autocomplete&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>autocomplete&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_autocomplete.html" title="autocomplete">autocomplete</a>
                 
@@ -85,7 +85,7 @@
         <span class="kd">var</span> <span class="nx">queryChars</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">unique</span><span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">));</span>
 
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">allFold</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">queryChars</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">allFold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">queryChars</span><span class="p">);</span>
         <span class="p">});</span>
     <span class="p">},</span>
 
@@ -100,7 +100,7 @@
 <span class="cm">     */</span>
     <span class="nx">phraseMatchFold</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">allFold</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">]);</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">allFold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">]);</span>
         <span class="p">});</span>
     <span class="p">},</span>
 
@@ -115,7 +115,7 @@
 <span class="cm">     */</span>
     <span class="nx">startsWithFold</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">allFold</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">allFold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="p">{</span>
                 <span class="nx">startsWith</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">});</span>
         <span class="p">});</span>
@@ -132,7 +132,7 @@
 <span class="cm">     */</span>
     <span class="nx">wordMatchFold</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">wordsFold</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">query</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">Highlight</span><span class="p">.</span><span class="nx">wordsFold</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">query</span><span class="p">);</span>
         <span class="p">});</span>
     <span class="p">}</span>
 <span class="p">});</span>
@@ -186,7 +186,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -209,8 +208,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

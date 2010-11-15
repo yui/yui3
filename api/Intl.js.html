@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>intl&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>intl&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_intl.html" title="intl">intl</a>
                 
@@ -50,15 +50,16 @@
                         <div class="highlight"><pre><span class="kd">var</span> <span class="nx">_mods</span> <span class="o">=</span> <span class="p">{},</span>
 
     <span class="nx">ROOT_LANG</span> <span class="o">=</span> <span class="s2">&quot;yuiRootLang&quot;</span><span class="p">,</span>
-    <span class="nx">ACTIVE_LANG</span> <span class="o">=</span> <span class="s2">&quot;yuiActiveLang&quot;</span><span class="p">;</span>
+    <span class="nx">ACTIVE_LANG</span> <span class="o">=</span> <span class="s2">&quot;yuiActiveLang&quot;</span><span class="p">,</span>
+    <span class="nx">NONE</span> <span class="o">=</span> <span class="p">[];</span>
 
-<span class="cm">/** </span>
+<span class="cm">/**</span>
 <span class="cm"> * Provides utilities to support the management of localized resources (strings and formatting patterns).</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module intl</span>
 <span class="cm"> */</span>
 
-<span class="cm">/** </span>
+<span class="cm">/**</span>
 <span class="cm"> * The Intl utility provides a central location for managing sets of localized resources (strings and formatting patterns).</span>
 <span class="cm"> *</span>
 <span class="cm"> * @class Intl</span>
@@ -68,8 +69,8 @@
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Intl&quot;</span><span class="p">),</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Private method to retrieve the language hash for a given module. </span>
-<span class="cm">     *  </span>
+<span class="cm">     * Private method to retrieve the language hash for a given module.</span>
+<span class="cm">     *</span>
 <span class="cm">     * @method _mod</span>
 <span class="cm">     * @private</span>
 <span class="cm">     *</span>
@@ -92,7 +93,7 @@
 <span class="cm">     *</span>
 <span class="cm">     * @param {String} module The module name.</span>
 <span class="cm">     * @param {String} lang The BCP 47 language tag.</span>
-<span class="cm">     * @return boolean true if successful, false if not. </span>
+<span class="cm">     * @return boolean true if successful, false if not.</span>
 <span class="cm">     */</span>
     <span class="nx">setLang</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">langs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_mod</span><span class="p">(</span><span class="nx">module</span><span class="p">),</span>
@@ -116,7 +117,7 @@
 <span class="cm">     * @return {String} The BCP 47 language tag.</span>
 <span class="cm">     */</span>
     <span class="nx">getLang</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">lang</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_mod</span><span class="p">(</span><span class="nx">module</span><span class="p">)[</span><span class="nx">ACTIVE_LANG</span><span class="p">];</span> 
+        <span class="kd">var</span> <span class="nx">lang</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_mod</span><span class="p">(</span><span class="nx">module</span><span class="p">)[</span><span class="nx">ACTIVE_LANG</span><span class="p">];</span>
         <span class="k">return</span> <span class="p">(</span><span class="nx">lang</span> <span class="o">===</span> <span class="nx">ROOT_LANG</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;&quot;</span> <span class="o">:</span> <span class="nx">lang</span><span class="p">;</span>
     <span class="p">},</span>
 
@@ -138,8 +139,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Gets the module&#39;s localized resources for the currently active language (as provided by the &lt;a href=&quot;#method_getLang&quot;&gt;getLang&lt;/a&gt; method).</span>
 <span class="cm">     * &lt;p&gt;</span>
-<span class="cm">     * Optionally, the localized resources for alternate languages which have been added to Intl (see the &lt;a href=&quot;#method_add&quot;&gt;add&lt;/a&gt; method) can </span>
-<span class="cm">     * be retrieved by providing the BCP 47 language tag as the lang parameter.   </span>
+<span class="cm">     * Optionally, the localized resources for alternate languages which have been added to Intl (see the &lt;a href=&quot;#method_add&quot;&gt;add&lt;/a&gt; method) can</span>
+<span class="cm">     * be retrieved by providing the BCP 47 language tag as the lang parameter.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     * @method get</span>
 <span class="cm">     *</span>
@@ -167,23 +168,11 @@
 <span class="cm">     * @return {Array} The array of languages available.</span>
 <span class="cm">     */</span>
     <span class="nx">getAvailableLangs</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">availLangs</span> <span class="o">=</span> <span class="p">[],</span>
-            <span class="nx">allLangs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">,</span>
-            <span class="nx">lang</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">loader</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loader</span><span class="p">,</span>
+            <span class="nx">mod</span> <span class="o">=</span> <span class="nx">loader</span> <span class="o">&amp;&amp;</span> <span class="nx">loader</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">module</span><span class="p">],</span>
+            <span class="nx">langs</span> <span class="o">=</span> <span class="nx">mod</span> <span class="o">&amp;&amp;</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">langs</span><span class="p">)</span> <span class="o">?</span> <span class="nx">langs</span><span class="p">.</span><span class="nx">concat</span><span class="p">()</span> <span class="o">:</span> <span class="nx">NONE</span><span class="p">;</span>
 
-        <span class="c1">// Y.Env.lang[lang][m.name]</span>
-
-        <span class="k">if</span><span class="p">(</span><span class="nx">allLangs</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">lang</span> <span class="k">in</span> <span class="nx">allLangs</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">lang</span> <span class="o">&amp;&amp;</span> <span class="nx">allLangs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">allLangs</span><span class="p">[</span><span class="nx">lang</span><span class="p">][</span><span class="nx">module</span><span class="p">])</span> <span class="p">{</span>
-                        <span class="nx">availLangs</span><span class="p">[</span><span class="nx">availLangs</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lang</span><span class="p">;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="nx">availLangs</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">});</span>
 
@@ -253,7 +242,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -276,8 +264,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

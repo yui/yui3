@@ -101,8 +101,8 @@ Y.Array.each([
     'createCaption'
 
 ], function(method) {
-    Y.Node.prototype[method] = function(arg1, arg2, arg3) {
     Y.log('adding: ' + method, 'info', 'node');
+    Y.Node.prototype[method] = function(arg1, arg2, arg3) {
         var ret = this.invoke(method, arg1, arg2, arg3);
         return ret;
     };

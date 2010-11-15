@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -129,15 +129,15 @@
                         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-min.js&quot;</span><span class="p">,</span> 
                         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                             <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                            <span class="s2">&quot;text-wordbreak&quot;</span>
                         <span class="p">]</span>
                     <span class="p">},</span> 
                     <span class="s2">&quot;autocomplete-filters-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
                         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete/autocomplete-filters-accentfold-min.js&quot;</span><span class="p">,</span> 
                         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                             <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-accentfold&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                            <span class="s2">&quot;text-accentfold&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;text-wordbreak&quot;</span>
                         <span class="p">]</span>
                     <span class="p">},</span> 
                     <span class="s2">&quot;autocomplete-highlighters&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -158,6 +158,7 @@
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;base-build&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;escape&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;event-valuechange&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-base&quot;</span>
                 <span class="p">]</span>
@@ -930,14 +931,14 @@
             <span class="s2">&quot;highlight-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;highlight-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-accentfold&quot;</span>
+                    <span class="s2">&quot;text-accentfold&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;highlight-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;escape&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-wordbreak&quot;</span>
+                    <span class="s2">&quot;text-wordbreak&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1175,19 +1176,6 @@
             <span class="s2">&quot;classnamemanager&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;node-focusmanager&quot;</span>
-        <span class="p">],</span> 
-        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">},</span> 
-    <span class="s2">&quot;node-tokeninput&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;classnamemanager&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;event-focus&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;event-valuechange&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;node-pluginhost&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;plugin&quot;</span>
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
@@ -1460,6 +1448,24 @@
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;text-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;text-data-accentfold&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;text-data-accentfold&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;text-data-wordbreak&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;text-wordbreak&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;text-data-wordbreak&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;transition&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;transition-native&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1471,24 +1477,6 @@
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;transition-native&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-style&quot;</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">},</span> 
-    <span class="s2">&quot;unicode&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;unicode-accentfold&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-data-accentfold&quot;</span>
-                <span class="p">]</span>
-            <span class="p">},</span> 
-            <span class="s2">&quot;unicode-data-accentfold&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;unicode-data-wordbreak&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;unicode-wordbreak&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;array-extras&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;unicode-data-wordbreak&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1648,7 +1636,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;2f531a82a518eb3682f9a04bf1eaa329&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;49afa7ee5f5e4485e24b810d0f378d41&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -1699,7 +1687,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -1722,8 +1709,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

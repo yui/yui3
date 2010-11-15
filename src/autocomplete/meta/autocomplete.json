@@ -8,7 +8,7 @@
 
                         "requires": [
                             "array-extras",
-                            "unicode-wordbreak"
+                            "text-wordbreak"
                         ]
                     },
 
@@ -17,8 +17,8 @@
 
                         "requires": [
                             "array-extras",
-                            "unicode-accentfold",
-                            "unicode-wordbreak"
+                            "text-accentfold",
+                            "text-wordbreak"
                         ]
                     },
 
@@ -49,6 +49,7 @@
                 "requires": [
                     "array-extras",
                     "base-build",
+                    "escape",
                     "event-valuechange",
                     "node-base"
                 ]

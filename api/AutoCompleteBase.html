@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>autocomplete&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>autocomplete&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_autocomplete.html" title="autocomplete">autocomplete</a>
                  &gt; AutoCompleteBase 
@@ -2227,7 +2227,14 @@ the array is an object with the following properties:
 <dl>
 <dt>display (Node|HTMLElement|String)</dt>
 <dd>
-Formatted result HTML suitable for display to the user.
+Formatted result HTML suitable for display to the user. If no
+custom formatter is set, this will be an HTML-escaped version of
+the string in the <code>text</code> property.
+</dd>
+<dt>highlighted (String)</dt>
+<dd>
+Highlighted (but not formatted) result text. This property will
+only be set if a highlighter is in use.
 </dd>
 <dt>raw (mixed)</dt>
 <dd>
@@ -2238,7 +2245,8 @@ Raw, unformatted result in whatever form it was provided by the
 <dd>
 Plain text version of the result, suitable for being inserted
 into the value of a text input field or textarea when the result
-is selected by a user.
+is selected by a user. This value is not HTML-escaped and should
+not be inserted into the page using innerHTML.
 </dd>
 </dl>
 </dd>
@@ -2710,18 +2718,25 @@ query argument and returns a string.
                                             <p>
 Array of local result filter functions. If provided, each filter
 will be called with two arguments when results are received: the query
-and an array of results (as returned by the <code>resultLocator</code>,
-if one is set).
+and an array of result objects. See the documentation for the
+<code>results</code> event for a list of the properties available on each
+result object.
 </p>
 <p>
 Each filter is expected to return a filtered or modified version of the
-results, which will then be passed on to subsequent filters, then the
-<code>resultHighlighter</code> function (if set), then the
+results array, which will then be passed on to subsequent filters, then
+the <code>resultHighlighter</code> function (if set), then the
 <code>resultFormatter</code> function (if set), and finally to
 subscribers to the <code>results</code> event.
 </p>
 <p>
 If no <code>source</code> is set, result filters will not be called.
+</p>
+<p>
+Prepackaged result filters provided by the autocomplete-filters and
+autocomplete-filters-accentfold modules can be used by specifying the
+filter name as a string, such as <code>'phraseMatch'</code> (assuming
+the necessary filters module is loaded).
 </p>
                                         </div>
                                     </div>
@@ -2741,11 +2756,14 @@ If no <code>source</code> is set, result filters will not be called.
                                         <div class="description" property="yui:description">
                                             <p>
 Function which will be used to format results. If provided, this function
-will be called with four arguments after results have been received and
-filtered: the query, an array of raw results, an array of highlighted
-results, and an array of plain text results. The formatter is expected to
-return a modified copy of the results array with any desired custom
-formatting applied.
+will be called with two arguments after results have been received and
+filtered: the query and an array of result objects. The formatter is
+expected to return an array of HTML strings or Node instances containing
+the desired HTML for each result.
+</p>
+<p>
+See the documentation for the <code>results</code> event for a list of
+the properties available on each result object.
 </p>
 <p>
 If no <code>source</code> is set, the formatter will not be called.
@@ -2766,9 +2784,13 @@ If no <code>source</code> is set, the formatter will not be called.
                                             <p>
 Function which will be used to highlight results. If provided, this
 function will be called with two arguments after results have been
-received and filtered: the query and an array of filtered results. The
-highlighter is expected to return a modified version of the results
-array with the query highlighted in some form.
+received and filtered: the query and an array of filtered result objects.
+The highlighter is expected to return an array of highlighted result
+text in the form of HTML strings.
+</p>
+<p>
+See the documentation for the <code>results</code> event for a list of
+the properties available on each result object.
 </p>
 <p>
 If no <code>source</code> is set, the highlighter will not be called.
@@ -2838,10 +2860,9 @@ argument and returns an array.
                                         <div class="description" property="yui:description">
                                             <p>
 Locator that should be used to extract a plain text string from a
-non-string result item. The resulting text value will be fed to any
-defined filters, and will typically also be the value that ends up being
-inserted into an input field or textarea when the user of an autocomplete
-implementation selects a result.
+non-string result item. The resulting text value will typically be the
+value that ends up being inserted into an input field or textarea when
+the user of an autocomplete implementation selects a result.
 </p>
 <p>
 By default, no locator is applied, and all results are assumed to be
@@ -2922,7 +2943,10 @@ If a URL is provided, it will be used to make a JSONP request. The
 <code>{query}</code> placeholder will be replaced with the current
 query, and the <code>{callback}</code> placeholder will be replaced with
 an internally-generated JSONP callback name. Both placeholders must
-appear in the URL, or the request will fail.
+appear in the URL, or the request will fail. An optional
+<code>{maxResults}</code> placeholder may also be provided, and will
+be replaced with the value of the maxResults attribute (or 1000 if
+the maxResults attribute is 0 or less).
 </p>
 <p>
 The response is assumed to be an array of results by default. If the
@@ -2944,7 +2968,10 @@ already loaded, it will be loaded on demand if possible.
 If a YQL query is provided, it will be used to make a YQL request.
 The <code>{query}</code> placeholder will be replaced with the
 current autocomplete query. This placeholder must appear in the YQL
-query, or the request will fail.
+query, or the request will fail. An optional
+<code>{maxResults}</code> placeholder may also be provided, and will
+be replaced with the value of the maxResults attribute (or 1000 if
+the maxResults attribute is 0 or less).
 </p>
 <p>
 <strong>The <code>yql</code> module must be loaded in order for YQL
@@ -3068,7 +3095,6 @@ be a reference to the <code>Y.Plugin.TokenInput</code> instance.
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -3091,8 +3117,8 @@ be a reference to the <code>Y.Plugin.TokenInput</code> instance.
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

@@ -381,7 +381,8 @@ YUI.add('selection', function(Y) {
         }
         
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
-
+        
+        /*
         nodes.each(function(n) {
             n.addClass(n._yuid);
             n.setStyle(FONT_FAMILY, '');
@@ -389,6 +390,7 @@ YUI.add('selection', function(Y) {
                 n.removeAttribute('style');
             }
         });
+        */
         
         return html;
     };
