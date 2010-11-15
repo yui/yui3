@@ -2232,11 +2232,15 @@ YUI.add('createlink-base', function(Y) {
         * @return {Node} Node instance of the item touched by this command.
         */
         createlink: function(cmd) {
-            var inst = this.get('host').getInstance(), out, a, sel,
+            var inst = this.get('host').getInstance(), out, a, sel, holder,
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);
 
             if (url) {
-                url = escape(url);
+                holder = inst.config.doc.createElement('div');
+                url = inst.config.doc.createTextNode(url);
+                holder.appendChild(url);
+                url = holder.innerHTML;
+
                 Y.log('Adding link: ' + url, 'info', 'createLinkBase');
 
                 this.get('host')._execCommand(cmd, url);
@@ -2438,6 +2442,8 @@ YUI.add('editor-base', function(Y) {
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
                         if (Y.UA.webkit) {
                             this.execCommand('inserttext', '\t');
+                        } else if (Y.UA.gecko) {
+                            this.frame.exec._command('inserthtml', '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
                         } else {
                             sel = new inst.Selection();
                             sel.setCursor();
@@ -2630,14 +2636,14 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
-            if (Y.UA.ie) {
+            //if (Y.UA.ie) {
                 //this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
-                this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
-                this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
-            } else {
+            //    this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+            //    this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
+            //} else {
                 this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
                 this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
-            }
+            //}
 
             inst.Selection.filter();
             this.fire('ready');
@@ -3543,7 +3549,7 @@ YUI.add('editor-bidi', function(Y) {
             returnValue = selectedBlocks;
         }
 
-        this.get(HOST).get(HOST).editorBidi.checkForChange();
+        this.get(HOST).get(HOST).editorBidi._checkForChange();
         return returnValue;
     };
 
