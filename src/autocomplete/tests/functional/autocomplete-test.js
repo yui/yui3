@@ -844,7 +844,8 @@ Y.Test.Runner.add(suite);
     requires: [
         'autocomplete-base', 'autocomplete-filters',
         'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-        'autocomplete-highlighters-accentfold', 'autocomplete-test-data', 
-        'datasource-local', 'node', 'jsonp', 'test', 'yql'
+        'autocomplete-highlighters-accentfold', 'autocomplete-sources',
+        'autocomplete-test-data', 'datasource-local', 'node', 'jsonp', 'test',
+        'yql'
     ]
 });

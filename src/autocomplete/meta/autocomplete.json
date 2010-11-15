@@ -42,8 +42,7 @@
                 },
 
                 "optional": [
-                    "jsonp",
-                    "yql"
+                    "autocomplete-sources"
                 ],
 
                 "requires": [
@@ -56,6 +55,8 @@
             },
 
             "autocomplete-list": {
+                "after": "autocomplete-sources",
+
                 "lang": ["en"],
 
                 "plugins": {
@@ -92,6 +93,17 @@
                 ],
 
                 "skinnable": true
+            },
+
+            "autocomplete-sources": {
+                "optional": [
+                    "jsonp",
+                    "yql"
+                ],
+
+                "requires": [
+                    "autocomplete-base"
+                ]
             }
         }
     }
