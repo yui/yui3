@@ -35,12 +35,12 @@
     Dial.ATTRS = {
         // The minimum value for the dial.
         min : {
-            value:0
+            value:-220
         },
 
         // The maximum value for the dial.
         max : {
-            value:100
+            value:220
         },
 
 		// The diameter of the dial
@@ -68,7 +68,7 @@
 
 		// The value increments in 360 degrees of rotation
 		stepsPerRev : {
-			value:365
+			value:100
 		},
 
         // The strings for the dial UI. This attribute is 
@@ -207,11 +207,12 @@
 			this._centerYOnPage = (this._ringNode.getY() + this._centerY);
 			this._centerXOnPage = (this._ringNode.getX() + this._centerX);
 			this._handleDist = this._centerX * this.get('handleDist');
+			this._originalValue = this.get('value');
 
 			// variables
 			this._timesWrapped = 0;
 			this._angle = 0;
-			//this._prevX = this._centerXOnPage;
+			this._setTimesWrapedFromValue(this.get('value'));
 			
 			// init Aria
 			this._handleUserNode.set('aria-valuemin', this.get('min'));
@@ -262,6 +263,13 @@
 				}
 			});
 		},
+		_setTimesWrapedFromValue : function(val){
+			if(val % this.get('stepsPerRev') === 0){
+				this._timesWrapped = (val / this.get('stepsPerRev')) -1;
+			}else{
+				this._timesWrapped = Math.floor(val / this.get('stepsPerRev'));
+			}
+		},
 		_dialCenterOver : function(e){
 			this._resetString.setContent(Y.substitute('{resetStr}', Dial.ATTRS.strings.value));
 		},
@@ -272,8 +280,8 @@
 		 * Reset all to zero and set dial and handle positions
 		 */
 		_resetDial : function(){
-			this.set('value', 0);
-			this._timesWrapped = -1;
+			this.set('value', this._originalValue);
+			this._setTimesWrapedFromValue(this.get('value'));
 			this._prevX = this._handleNode.getX();
 			//this._inputNode.focus();
 		},
@@ -286,13 +294,11 @@
 				ang = (ang - 90);
 			}
 			// check for need to set timesWrapped
-			if(this._markerUserNode.hasClass('marker-max-min') === false){
-				if(e.pageY < this._centerYOnPage){ //if handle is above the middle of the dial...
-					if((this._prevX <= this._centerXOnPage) && (e.pageX > this._centerXOnPage)){ // If wrapping, clockwise
-						this._timesWrapped = (this._timesWrapped + 1);
-					}else if((this._prevX > this._centerXOnPage) && (e.pageX <= this._centerXOnPage)){ // if un-wrapping, counter-clockwise
-						this._timesWrapped = (this._timesWrapped - 1);
-					}
+			if(e.pageY < this._centerYOnPage){ //if handle is above the middle of the dial...
+				if((this._prevX <= this._centerXOnPage) && (e.pageX > this._centerXOnPage)){ // If wrapping, clockwise
+					this._timesWrapped = (this._timesWrapped + 1);
+				}else if((this._prevX > this._centerXOnPage) && (e.pageX <= this._centerXOnPage)){ // if un-wrapping, counter-clockwise
+					this._timesWrapped = (this._timesWrapped - 1);
 				}
 			}
 //			Y.log('this._centerYOnPage: ' + this._centerXOnPage + '.....e.pageX: '+ e.pageX + '.......wrap: ' + this._timesWrapped + '......ang: ' + ang);
@@ -310,6 +316,9 @@
 		},
 		_handleDragStart : function(e){
 			this._markerNode.removeClass('marker-hidden');
+			if(!this._prevX){
+				this._prevX = this._handleNode.getX();
+			}
 		},
 
 		/*
@@ -326,7 +335,8 @@
 						this._markerNode.addClass('marker-hidden');
 						this._prevX = this._handleNode.getX(); //makes us ready for next drag.
 					}, this)
-				);			
+				);
+			this._setTimesWrapedFromValue(this.get('value'));
 //			this._inputNode.focus();
 //			this._inputNode.select();
 		},
@@ -472,7 +482,7 @@
                     newVal = Math.min(newVal, this.get("max"));
                     break;
                 case 36: // home
-                    newVal = 0;
+                    newVal = this._originalValue;
                     break;
                 case 35: // end
                     newVal = this.get('max');
@@ -490,12 +500,7 @@
             if (newVal !== currVal) {
 				this.set('value', newVal);
 				this._prevX = this._handleNode.getX();
-				if(newVal === 0){
-					this._timesWrapped = -1;	
-				}else{
-					this._timesWrapped = Math.floor(newVal / this.get('stepsPerRev'));
-				}
-            }
+				this._setTimesWrapedFromValue(this.get('value'));            }
 //			also IE seems to require 2 tab keystrokes to start responding to arrow keys etc. to modify value
 //			screen reader having trouble with IE6?
 //			alert("aria-valuenow: " + Y.one('.' + Dial.CSS_CLASSES.handleUser).get('aria-valuenow'));
