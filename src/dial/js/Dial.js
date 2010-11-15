@@ -1,3 +1,9 @@
+/**
+ * Create a circular dial value range input visualized as a draggable handle on a
+ * background element.
+ * 
+ * @module dial
+ */
 	var supportsVML = false;
 	if(Y.config.doc.namespaces && Y.config.doc.namespaces.add){
 		Y.config.doc.namespaces.add(
@@ -14,41 +20,87 @@
         Widget = Y.Widget,
         Node = Y.Node;
 
-    /* Dial class constructor */
+	/**
+	 * Create a dial to represent an input control capable of representing a
+	 * series of intermediate states based on the position of the Dial's handle.
+	 * These states are typically aligned to a value algorithm whereby the angle of the handle's
+	 * position corresponds to a given value.
+	 *
+	 * @class Dial
+	 * @extends Widget
+	 * @param config {Object} Configuration object
+	 * @constructor
+	 */
     function Dial(config) {
         Dial.superclass.constructor.apply(this, arguments);
     }
 
-    /* 
-     * Required NAME static field, to identify the Widget class and 
-     * used as an event prefix, to generate class names etc. (set to the 
-     * class name in camel case). 
-	 * Jeff says, "Camel doesn't seem to work for me. spinWheel didn't work."
+    // static properties
+
+    /**
+     * The identity of the widget.
+     *
+     * @property Dial.NAME
+     * @type String
+     * @default 'dial'
+     * @readOnly
+     * @protected
+     * @static
      */
     Dial.NAME = "dial";
 
-    /*
-     * The attribute configuration for the Dial widget. Attributes can be
-     * defined with default values, get/set functions and validator functions
-     * as with any other class extending Base.
+    /**
+     * Static property used to define the default attribute configuration of
+     * the Widget.
+     *
+     * @property Dial.ATTRS
+     * @type {Object}
+     * @protected
+     * @static
      */
     Dial.ATTRS = {
-        // The minimum value for the dial.
+
+		/**
+         * minimum value allowed
+         *
+         * @attribute min
+         * @type {Number}
+         * @default -220
+         */
         min : {
             value:-220
         },
 
-        // The maximum value for the dial.
+		/**
+         * maximum value allowed
+         *
+         * @attribute max
+         * @type {Number}
+         * @default 220
+         */
         max : {
             value:220
         },
 
-		// The diameter of the dial
+		/**
+         * diameter of the circular background object
+		 * other objects scale accordingly
+         *
+         * @attribute diameter
+         * @type {Number} the number of px in diameter
+         * @default 100
+         */
 		diameter : {
 			value:100
 		},
 
-        // The current value of the dial.
+		/**
+		 * initial value of the Dial
+         *
+         * @attribute value
+         * @type {Number}
+         * @default 0
+         */
         value : {
             value:0,
             validator: function(val) {
@@ -56,24 +108,51 @@
             }
         },
 		
-        // Amount to increment/decrement the dial when the buttons or arrow up/down keys are pressed.
+		/**
+		 * amount to increment/decrement the dial value
+		 * when the arrow up/down/left/right keys are pressed
+         *
+         * @attribute minorStep
+         * @type {Number}
+         * @default 1
+         */
         minorStep : {
             value:1
         },
 
-        // Amount to increment/decrement the dial when the page up/down keys are pressed.
+		/**
+		 * amount to increment/decrement the dial value
+		 * when the page up/down keys are pressed
+         *
+         * @attribute majorStep
+         * @type {Number}
+         * @default 10
+         */
         majorStep : {
             value:10
         },
 
-		// The value increments in 360 degrees of rotation
+		/**
+		 * number of value increments in one 360 degree revolution 
+		 * of the handle around the dial
+         *
+         * @attribute stepsPerRev
+         * @type {Number}
+         * @default 100
+         */
 		stepsPerRev : {
 			value:100
 		},
 
-        // The strings for the dial UI. This attribute is 
-        // defined by the base Widget class but has an empty value. The
-        // dial is simply providing a default value for the attribute.
+		/**
+		 * visible strings for the dial UI. This attribute is 
+		 * defined by the base Widget class but has an empty value. The
+		 * Dial is simply providing a default value for the attribute.
+         *
+         * @attribute strings
+         * @type {Object}
+         * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Press the ... for reset.'}
+         */
         strings: {
 			value: {label: 'My label',
 				resetStr: 'Reset',
@@ -81,20 +160,44 @@
 			}
         },
 		
-		// The distance from the center of the dial to the resting place of the center of the handle and marker.
-		// The value is a percent of the radius of the dial
+		/**
+		 * distance from the center of the dial to the 
+		 * resting place of the center of the handle and marker. 
+		 * The value is a percent of the radius of the dial.
+         *
+         * @attribute handleDist
+         * @type {number}
+         * @default 0.75
+         */
 		handleDist:{
 			value:0.75
 		}
     };
 
-    /* Static constant used to identify the classname applied to the spinwheels value field */
+	/**
+	 * returns a properly formed yui class name
+	 *
+	 * @function
+	 * @param {String} string to be appended at the end of class name
+	 * @return
+	 * @private
+	 */
 	function makeClassName(str) {
 		return Y.ClassNameManager.getClassName(Dial.NAME, str);
 	}
+	
+    /**
+	 * array of static constants used to identify the classname applied to the Dial DOM objects 
+	 *
+     * @property Dial.CSS_CLASSES
+     * @type {Array}
+	 * @private
+     * @static
+	 */
 	Dial.CSS_CLASSES = {
 		input : Dial.INPUT_CLASS = makeClassName("value"),
 		label : Dial.LABEL_CLASS = makeClassName("label"),
+		labelString : Dial.LABEL_CLASS = makeClassName("label-string"),
 		valueString : Dial.LABEL_CLASS = makeClassName("value-string"),
 		northMark : Dial.NORTH_MARK_CLASS = makeClassName("north-mark"),
 		ring : Dial.RING_CLASS = makeClassName('ring'),
@@ -114,16 +217,68 @@
 	var strs = Dial.ATTRS.strings.value, //('strings');
 	labelId = Dial.CSS_CLASSES.label + Y.guid();
 
-	Dial.LABEL_TEMPLATE = '<div id="' + labelId + '" class="' + Dial.CSS_CLASSES.label + '">' + Y.substitute('{label}', strs) + ':<span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
+    /**
+     * template that will contain the Dial's label.
+     *
+     * @property Dial.LABEL_TEMPLATE
+     * @type {String}
+     * @default &lt;div>...&lt;/div>
+	 * @private
+     */
+	Dial.LABEL_TEMPLATE = '<div id="' + labelId + '" class="' + Dial.CSS_CLASSES.label + '"><span class="' + Dial.CSS_CLASSES.labelString + '">{label}</span><span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
+
+	/**
+     * template that will contain the Dial's text input field.
+     *
+     * @property Dial.INPUT_TEMPLATE
+     * @type {String}
+     * @default &lt;input type="text" class="..."/>
+	 * @private
+     */
     Dial.INPUT_TEMPLATE = '<input type="text" class="' + Dial.CSS_CLASSES.input + '">';
 
 
 
 	if(supportsVML === false){
+		/**
+		 * template that will contain the Dial's background ring.
+		 *
+		 * @property Dial.RING_TEMPLATE
+		 * @type {String}
+		 * @default &lt;div class="[...-ring]">&lt;div class="[...-northMark]">&lt;/div>&lt;/div>
+		 * @private
+		 */
 		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring + '"><div class="' + Dial.CSS_CLASSES.northMark + '"></div></div>';
+
+		/**
+		 * template that will contain the Dial's current angle marker.
+		 *
+		 * @property Dial.MARKER_TEMPLATE
+		 * @type {String}
+		 * @default &lt;div class="[...-marker] marker-hidden">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
+		 * @private
+		 */
 		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' marker-hidden"><div class="' + Dial.CSS_CLASSES.markerUser + '"></div></div>';
-		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '"><div class="' + Dial.CSS_CLASSES.resetString + '">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '</div></div>';
-		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0"></div></div>';// title="' + Y.substitute('{tooltipHandle}', strs) + '"
+
+		/**
+		 * template that will contain the Dial's center button.
+		 *
+		 * @property Dial.CENTER_BUTTON_TEMPLATE
+		 * @type {String}
+		 * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
+		 * @private
+		 */
+		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '"><div class="' + Dial.CSS_CLASSES.resetString + '">{resetStr}</div></div>';
+
+		/**
+		 * template that will contain the Dial's handle.
+		 *
+		 * @property Dial.HANDLE_TEMPLATE
+		 * @type {String}
+		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
+		 * @private
+		 */
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}"></div></div>';// title="{tooltipHandle}"
 	
 	}else{ // VML case
 		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring + '">'+
@@ -145,12 +300,12 @@
 												'<v:shadow on="True" color="#000" opacity="10%" offset="2px, 2px"/>'+
 											'</v:oval>'+
 											'<v:oval></v:oval>'+
-											'<div class="' + Dial.CSS_CLASSES.resetString + '">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '</div>'+
+											'<div class="' + Dial.CSS_CLASSES.resetString + '">{resetStr}</div>'+
 									'</div>'+
 									'';
 		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '">'+
 									'<v:oval stroked="false" class="' + Dial.CSS_CLASSES.handleUser + '"'+
-									' aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" >'+ //title="' + Y.substitute('{tooltipHandle}', strs) + '"
+									' aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+ //title="{tooltipHandle}"
 										'<v:fill opacity="20%" color="#6C3A3A"/>'+
 									'</v:oval>'+
 									'<v:oval></v:oval>'+
@@ -158,7 +313,7 @@
 								'';
 	}
 
-    /* 
+    /**
      * The HTML_PARSER static constant is used by the Widget base class to populate 
      * the configuration for the dial instance from markup already on the page.
      *
@@ -175,20 +330,12 @@
     /* Dial extends the base Widget class */
     Y.extend(Dial, Widget, {
 
-        /*
-         * renderUI is part of the lifecycle introduced by the
-         * Widget class. Widget's renderer method invokes:
-         *
-         *     renderUI()
-         *     bindUI()
-         *     syncUI()
-         *
-         * renderUI is intended to be used by the Widget subclass
-         * to create or insert new elements into the DOM. 
-         *
-         * For dial the method adds the input (if it's not already 
-         * present in the markup), and creates the inc/dec buttons
-         */
+		/**
+		 * creates the DOM structure for the Dial.
+		 *
+		 * @method renderUI
+		 * @private
+		 */
         renderUI : function() {
 			this._renderLabel();
 			this._renderInput();
@@ -220,23 +367,13 @@
 
         },
 
-        /*
-         * bindUI is intended to be used by the Widget subclass 
-         * to bind any event listeners which will drive the Widget UI.
-         * 
-         * It will generally bind event listeners for attribute change
-         * events, to update the state of the rendered UI in response 
-         * to attribute value changes, and also attach any DOM events,
-         * to activate the UI.
-         * 
-         * For dial, the method:
-         *
-         * - Sets up the attribute change listener for the "value" attribute
-         *
-         * - Binds key listeners for the arrow/page keys
-         * - Binds mouseup/down listeners on the boundingBox, document respectively.
-         * - Binds a simple change listener on the input box.
-         */
+		/**
+		 * Creates the Y.DD.Drag instance used for the handle movement and
+		 * binds Dial interaction to the configured value model.
+		 *
+		 * @method bindUI
+		 * @private
+		 */
         bindUI : function() {
             this.after("valueChange", this._afterValueChange);
 
@@ -263,6 +400,15 @@
 				}
 			});
 		},
+
+		/**
+		 * Sets _timesWrapped based on Dial value
+		 * to net integer revolutions the user dragged the handle around the Dial
+		 *
+		 * @method _setTimesWrapedFromValue
+		 * @param val {Number} current value of the Dial
+		 * @private
+		 */
 		_setTimesWrapedFromValue : function(val){
 			if(val % this.get('stepsPerRev') === 0){
 				this._timesWrapped = (val / this.get('stepsPerRev')) -1;
@@ -270,14 +416,32 @@
 				this._timesWrapped = Math.floor(val / this.get('stepsPerRev'));
 			}
 		},
+		
+		/**
+		 * Sets the string in the object the user clicks to reset the Dial value
+		 * 
+		 * @method _dialCenterOver
+		 * @private
+		 */
 		_dialCenterOver : function(e){
-			this._resetString.setContent(Y.substitute('{resetStr}', Dial.ATTRS.strings.value));
+			this._resetString.setContent(Y.substitute('{resetStr}', this.get('strings')));
 		},
+		
+		/**
+		 * Sets the string in the object the user clicks to reset the Dial value
+		 * 
+		 * @method _dialCenterOut
+		 * @private
+		 */
 		_dialCenterOut : function(e){
 			this._resetString.setContent(''); 
 		},
-		/*
-		 * Reset all to zero and set dial and handle positions
+		
+		/**
+		 * resets Dial value to zero. Stores the handle X location required for future drag starts.
+		 *
+		 * @method _resetDial
+		 * @private
 		 */
 		_resetDial : function(){
 			this.set('value', this._originalValue);
@@ -285,6 +449,14 @@
 			this._prevX = this._handleNode.getX();
 			//this._inputNode.focus();
 		},
+		
+		/**
+		 * handles the user dragging the handle around the Dial, calculates the angle, 
+		 * checks for wrapping around top center, handles exceeding min or max values 
+		 *
+		 * @method _handleDrag
+		 * @private
+		 */
 		_handleDrag : function(e){
 			var ang = Math.atan( (this._centerYOnPage - e.pageY)  /  (this._centerXOnPage - e.pageX)  ) * (180 / Math.PI), 
 			deltaX = (this._centerXOnPage - e.pageX);
@@ -314,6 +486,13 @@
 				this.set('value', this.get('min'));
 			}
 		},
+
+		/**
+		 * handles the user starting to drag the handle around the Dial
+		 *
+		 * @method _handleDragStart
+		 * @private
+		 */
 		_handleDragStart : function(e){
 			this._markerNode.removeClass('marker-hidden');
 			if(!this._prevX){
@@ -324,6 +503,14 @@
 		/*
 		 * When handle is handleDragEnd, this animates the return to the fixed dial
 		 */		
+
+		/**
+		 * handles the end of a user dragging the handle, animates the handle returning to
+		 * resting position.
+		 *
+		 * @method _handleDragEnd
+		 * @private
+		 */
 		_handleDragEnd : function(){
 			var node = this._handleNode;			
 				node.transition({
@@ -341,11 +528,16 @@
 //			this._inputNode.select();
 		},
 
-		/*
-		 * Sets the XY of the node to the fixed dial within the control (resting position)
-		 * Sets it according to the angle related to the current value
-		 * In the case of handle drag:end, no obj is passed so
-		 * this just returns [X,Y] for style transform 
+		/**
+		 * returns the XY of the fixed position, handleDist, from the center of the Dial (resting position)
+		 * The XY also represents the angle related to the current value
+		 * If no param is passed, [X,Y] is returned.
+		 * If param is passed, the XY of the node passed is set.
+		 *
+		 * @method _setNodeToFixedRadius
+		 * @param obj {Node}
+		 * @private
+		 * @return {Array} an array of [XY] is optionally returned
 		 */
 		 _setNodeToFixedRadius : function(obj){
 			var thisAngle = (this._angle - 90),
@@ -353,28 +545,28 @@
 			var newY = Math.round(Math.sin(thisAngle * rad) * this._handleDist);
 			var newX = Math.round(Math.cos(thisAngle * rad) * this._handleDist);
 			if(obj){
-		//		obj.setXY([(this._centerXOnPage + newX), (this._centerYOnPage + newY)]);
 				obj.setXY([(this._ringNode.getX() + this._centerX + newX), (this._ringNode.getY() + this._centerY + newY)]);
 			}else{ // just need the style for css transform left and top to animate the handle drag:end
 				return [this._centerX + newX, this._centerX + newY];
 			}
 		 },
 
-        /*
-         * syncUI is intended to be used by the Widget subclass to
-         * update the UI to reflect the current state of the widget.
-         * 
-         * For dial, the method sets the value of the input field,
-         * to match the current state of the value attribute.
-         */
+		/**
+		 * Synchronizes the DOM state with the attribute settings.
+		 *
+		 * @method syncUI
+		 * @private
+		 */
         syncUI : function() {
             this._uiSetValue(this.get("value"));
         },
 
-        /*
-         * Creates the input control for the dial and adds it to
-         * the widget's content box, if not already in the markup.
-         */
+		/**
+		 * renders the DOM object for the Dial's text input
+		 *
+		 * @method _renderInput
+		 * @private
+		 */
         _renderInput : function() {
             var contentBox = this.get("contentBox"),
                 input = contentBox.one("." + Dial.CSS_CLASSES.input);
@@ -384,16 +576,30 @@
             }
             this._inputNode = input;
         },
+
+		/**
+		 * renders the DOM object for the Dial's label
+		 *
+		 * @method _renderLabel
+		 * @private
+		 */
         _renderLabel : function() {
             var contentBox = this.get("contentBox"),
                 label = contentBox.one("." + Dial.CSS_CLASSES.label);
             if (!label) {
-                label = Node.create(Dial.LABEL_TEMPLATE);
-                contentBox.append(label);
+				label = Node.create(Y.substitute(Dial.LABEL_TEMPLATE, this.get('strings')));
+				contentBox.append(label);
             }
             this._labelNode = label;
 			this._valueStringNode = this._labelNode.one("." + Dial.CSS_CLASSES.valueString);
         },
+
+		/**
+		 * renders the DOM object for the Dial's background ring
+		 *
+		 * @method _renderRing
+		 * @private
+		 */
         _renderRing : function() {
             var contentBox = this.get("contentBox"),
                 ring = contentBox.one("." + Dial.CSS_CLASSES.ring);
@@ -404,6 +610,14 @@
             }
             this._ringNode = ring;
         },
+
+		/**
+		 * renders the DOM object for the Dial's background marker which 
+		 * tracks the angle of the user dragging the handle
+		 *
+		 * @method _renderMarker
+		 * @private
+		 */
         _renderMarker : function() {
             var contentBox = this.get("contentBox"),
 			marker = contentBox.one("." + Dial.CSS_CLASSES.marker);
@@ -415,48 +629,111 @@
 			this._markerUserNode = this._markerNode.one('.' + Dial.CSS_CLASSES.markerUser);
 
         },
+		
+		/**
+		 * places the centerbutton's reset string in the center of the button
+		 * based on the size of the string object 
+		 *
+		 * @method _setXYResetString
+		 * @private
+		 */
+		_setXYResetString : function(){
+			this._resetString.setStyle('top', (this._centerButtonNode.get('region').height / 2) - (this._resetString.get('region').height / 2) + 'px');
+			this._resetString.setStyle('left', (this._centerButtonNode.get('region').width / 2) - (this._resetString.get('region').width / 2) + 'px');
+		},
+
+		/**
+		 * renders the DOM object for the Dial's center
+		 *
+		 * @method _renderCenterButton
+		 * @private
+		 */
         _renderCenterButton : function() {
             var contentBox = this.get("contentBox"),
                 centerButton = contentBox.one("." + Dial.CSS_CLASSES.centerButton);
             if (!centerButton) {
-                centerButton = Node.create(Dial.CENTER_BUTTON_TEMPLATE);
+				centerButton = Node.create(Y.substitute(Dial.CENTER_BUTTON_TEMPLATE, this.get('strings')));
                 contentBox.one('.' + Dial.CSS_CLASSES.ring).append(centerButton);
             }
             this._centerButtonNode = centerButton;
 			this._resetString = this._centerButtonNode.one('.' + Dial.CSS_CLASSES.resetString);
-			// centering the reset string in the button
-			this._resetString.setStyle('top', (this._centerButtonNode.get('region').height / 2) - (this._resetString.get('region').height / 2) + 'px');
-			this._resetString.setStyle('left', (this._centerButtonNode.get('region').width / 2) - (this._resetString.get('region').width / 2) + 'px');
+			this._setXYResetString(); // centering the reset string in the button
 			this._resetString.setContent('');
-			var offset = this._ringNode.get('region').width * 0.25;
+			var offset = (this._ringNode.get('region').width - this._centerButtonNode.get('region').width) / 2;
 			this._centerButtonNode.setXY([(this._ringNode.getX() + offset), (this._ringNode.getY() + offset)]);
-			
         },
+
+		/**
+		 * renders the DOM object for the Dial's user draggable handle
+		 *
+		 * @method _renderHandle
+		 * @private
+		 */
         _renderHandle : function() {
             var contentBox = this.get("contentBox"),
                 handle = contentBox.one("." + Dial.CSS_CLASSES.handle);
             if (!handle) {
-                handle = Node.create(Dial.HANDLE_TEMPLATE);
+                handle = Node.create(Y.substitute(Dial.HANDLE_TEMPLATE, this.get('strings')));
                 contentBox.one('.' + Dial.CSS_CLASSES.ring).append(handle);
             }
             this._handleNode = handle;
 			this._handleUserNode = this._handleNode.one('.' + Dial.CSS_CLASSES.handleUser);
         },
 
+        /**
+         * sets the visible UI label string
+		 *
+		 * @method setLabelString
+		 * @param str {String}
+		 * @private
+		 */
+        setLabelString : function(str) {
+            this.get("contentBox").one("." + Dial.CSS_CLASSES.labelString).setContent(str);
+        },
 
-        /*
+        /**
+         * sets the visible UI label string
+		 *
+		 * @method setResetString
+		 * @param str {String}
+		 * @private
+		 */
+        setResetString : function(str) {
+			this.set('strings.resetStr', str);
+            this.get("contentBox").one("." + Dial.CSS_CLASSES.resetString).setContent(str);
+			this._setXYResetString(); // recenters the string in the button
+			this._resetString.setContent('');
+        },
+
+        /**
+         * sets the tooltip string in the Dial's handle
+		 *
+		 * @method setTooltipString
+		 * @param str {String}
+		 * @private
+		 */
+        setTooltipString : function(str) {
+            this.get("contentBox").one("." + Dial.CSS_CLASSES.handleUser).set('title', str);
+        },
+
+        /**
          * Override the default content box value, since we don't want the srcNode
          * to be the content box for dial.
-         */
+		 *
+		 * @method _defaultCB
+		 * @private
+		 */
         _defaultCB : function() {
             return null;
         },
 
-        /*
-         * Bounding box Arrow up/down, Page up/down key listener.
-         *
-         * Increments/Decrement the dial value, based on the key pressed.
-         */
+		/**
+		 * sets the Dial's value in response to key events
+		 *
+		 * @method _onDirectionKey
+		 * @param e {Event}
+		 * @private
+		 */
         _onDirectionKey : function(e) {
             e.preventDefault();
             var currVal = this.get("value"),
@@ -500,18 +777,34 @@
             if (newVal !== currVal) {
 				this.set('value', newVal);
 				this._prevX = this._handleNode.getX();
-				this._setTimesWrapedFromValue(this.get('value'));            }
+				this._setTimesWrapedFromValue(this.get('value'));
+            }
 //			also IE seems to require 2 tab keystrokes to start responding to arrow keys etc. to modify value
 //			screen reader having trouble with IE6?
 //			alert("aria-valuenow: " + Y.one('.' + Dial.CSS_CLASSES.handleUser).get('aria-valuenow'));
 //			alert("aria-valuetext: " + Y.one('.' + Dial.CSS_CLASSES.handleUser).get('aria-valuetext'));
         },
+
+		/**
+		 * returns the handle angle associated with the current value of the Dial
+		 *
+		 * @method _getAngleFromValue
+		 * @param newVal {Number} the current value of the Dial
+		 * @return {Number} the angle associated with the current Dial value
+		 */
 		_getAngleFromValue : function(newVal){
 			var nonWrapedPartOfValue = newVal % this.get('stepsPerRev');
 			var angleFromValue = nonWrapedPartOfValue / this.get('stepsPerRev') * 360;
 			return angleFromValue; 
 		},
-		
+
+		/**
+		 * returns the value of the Dial calculated from the current handle angle
+		 *
+		 * @method _getValueFromAngle
+		 * @param angle {Number} the current angle of the Dial's handle
+		 * @return {Number} the current Dial value corresponding to the handle position
+		 */
 		_getValueFromAngle : function(angle){
 			if(angle < 0){
 				angle = (360 + angle);
@@ -521,6 +814,14 @@
 			var value = Math.round((angle / 360) * this.get('stepsPerRev'));
 			return (value + (this._timesWrapped * this.get('stepsPerRev'))  );
 		},
+
+		/**
+		 * sets the value of the Dial equal to the value of the text input field
+		 *
+		 * @method _numberKey
+		 * @param e {Event}
+		 * @private
+		 */
 		_numberKey : function(e){
 			var val = parseInt(e.target.get('value'),10);
 			if(this._validateValue(val)){
@@ -528,20 +829,26 @@
 			}
 		},
 
-        /*
-         * value attribute change listener. Updates the 
-         * value in the rendered input box, whenever the 
-         * attribute value changes.
-         */
+		/**
+		 * calls the method to update the UI whenever the Dial value changes
+		 *
+		 * @method _afterValueChange
+		 * @param e {Event}
+		 * @private
+		 */
         _afterValueChange : function(e) {
             this._uiSetValue(e.newVal);
         },
 
-        /*
+		/**
          * Updates the value of the input box to reflect 
          * the value passed in.
 		 * Makes all other needed UI display changes
-         */
+		 *
+		 * @method _uiSetValue
+		 * @param val {Number} value of the Dial
+		 * @protected
+		 */
         _uiSetValue : function(val) {
             this._inputNode.set("value", val);
 			this._valueStringNode.setContent(val); 
@@ -567,10 +874,14 @@
 			}
         },
 
-        /*
+		/**
          * value attribute default validator. Verifies that
          * the value being set lies between the min/max value
-         */
+		 *
+		 * @method _validateValue
+		 * @param val {Number} value of the Dial
+		 * @private
+		 */
         _validateValue: function(val) {
             var min = this.get("min"),
                 max = this.get("max");
