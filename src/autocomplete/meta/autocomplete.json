@@ -97,6 +97,8 @@
 
             "autocomplete-sources": {
                 "optional": [
+                    "io-base",
+                    "json-parse",
                     "jsonp",
                     "yql"
                 ],

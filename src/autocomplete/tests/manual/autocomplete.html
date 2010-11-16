@@ -112,6 +112,9 @@
 
             <input type="radio" id="ds-twitter" name="ds" value="twitter">
             <label for="ds-twitter">Remote (Twitter Search)</label>
+
+            <input type="radio" id="ds-xhr" name="ds" value="xhr">
+            <label for="ds-xhr">Remote (XHR)</label>
         </div>
     </fieldset>
 
@@ -229,6 +232,10 @@ Y.delegate('click', function (e) {
 
     case 'twitter':
         useTwitter();
+        break;
+
+    case 'xhr':
+        useXHR();
         break;
     }
 }, '#data-sources', 'input[type="radio"]');
@@ -387,6 +394,20 @@ function useTwitter() {
         resultListLocator: 'results',
         resultTextLocator: 'text',
         source           : 'http://search.twitter.com/search.json?q={query}&callback={callback}&rpp={maxResults}&result_type=recent'
+    });
+}
+
+function useXHR() {
+    Y.log('using XHR source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        maxResults       : 5,
+        resultFormatter  : null,
+        resultListLocator: null,
+        resultTextLocator: null,
+        source           : '../assets/xhr-data.json?query={query}'
     });
 }
 

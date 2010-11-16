@@ -7,7 +7,10 @@
 
 var Lang = Y.Lang,
 
-    _SOURCE_SUCCESS     = '_sourceSuccess',
+    _SOURCE_SUCCESS = '_sourceSuccess',
+
+    MAX_RESULTS         = 'maxResults',
+    REQUEST_TEMPLATE    = 'requestTemplate',
     RESULT_LIST_LOCATOR = 'resultListLocator';
 
 function ACSources() {}
@@ -25,12 +28,96 @@ ACSources.prototype = {
     _YQL_SOURCE_REGEX: /^(?:select|set|use)\s+/i,
 
     /**
+     * Creates a DataSource-like object that uses <code>Y.io</code> as a source.
+     * See the <code>source</code> attribute for more details.
+     *
+     * @method _createIOSource
+     * @param {String} source URL.
+     * @return {Object} DataSource-like object.
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _createIOSource: function (source) {
+        var cache    = {},
+            ioSource = {},
+            that     = this,
+            ioRequest, lastRequest, loading;
+
+        ioSource.sendRequest = function (request) {
+            var _sendRequest = function (request) {
+                var query = request.request,
+                    maxResults, requestTemplate, url;
+
+                if (cache[query]) {
+                    that[_SOURCE_SUCCESS](cache[query], request);
+                } else {
+                    maxResults      = that.get(MAX_RESULTS);
+                    requestTemplate = that.get(REQUEST_TEMPLATE);
+                    url             = source;
+
+                    if (requestTemplate) {
+                        url += requestTemplate(query);
+                    }
+
+                    url = Lang.sub(url, {
+                        maxResults: maxResults > 0 ? maxResults : 1000,
+                        query     : encodeURIComponent(query)
+                    });
+
+                    // Cancel any outstanding requests.
+                    if (ioRequest && ioRequest.isInProgress()) {
+                        ioRequest.abort();
+                    }
+
+                    ioRequest = Y.io(url, {
+                        on: {
+                            success: function (tid, response) {
+                                var data;
+
+                                try {
+                                    data = Y.JSON.parse(response.responseText);
+                                } catch (ex) {
+                                    Y.error('JSON parse error', ex);
+                                }
+
+                                if (data) {
+                                    cache[query] = data;
+                                    that[_SOURCE_SUCCESS](data, request);
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+
+            // Keep track of the most recent request in case there are multiple
+            // requests while we're waiting for the IO module to load. Only the
+            // most recent request will be sent.
+            lastRequest = request;
+
+            if (!loading) {
+                loading = true;
+
+                // Lazy-load the io and json-parse modules if necessary, then
+                // overwrite the sendRequest method to bypass this check in the
+                // future.
+                Y.use('io-base', 'json-parse', function () {
+                    ioSource.sendRequest = _sendRequest;
+                    _sendRequest(lastRequest);
+                });
+            }
+        };
+
+        return ioSource;
+    },
+
+    /**
      * Creates a DataSource-like object that uses the specified JSONPRequest
      * instance as a source. See the <code>source</code> attribute for more
      * details.
      *
      * @method _createJSONPSource
-     * @param {JSONPRequest} source
+     * @param {JSONPRequest|String} source URL string or JSONPRequest instance.
      * @return {Object} DataSource-like object.
      * @protected
      * @for AutoCompleteBase
@@ -94,14 +181,16 @@ ACSources.prototype = {
     },
 
     /**
-     * Creates a DataSource-like object that calls the specified JSONP
-     * URL or executes the specified YQL query for results. If the string starts
+     * Creates a DataSource-like object that calls the specified  URL or
+     * executes the specified YQL query for results. If the string starts
      * with "select ", "use ", or "set " (case-insensitive), it's assumed to be
      * a YQL query; otherwise, it's assumed to be a URL (which may be absolute
-     * or relative). See the <code>source</code> attribute for more details.
+     * or relative). URLs containing a "{callback}" placeholder are assumed to
+     * be JSONP URLs; all others will use XHR. See the <code>source</code>
+     * attribute for more details.
      *
      * @method _createStringSource
-     * @param {String} source JSONP URL or YQL query.
+     * @param {String} source URL or YQL query.
      * @return {Object} DataSource-like object.
      * @protected
      * @for AutoCompleteBase
@@ -110,9 +199,13 @@ ACSources.prototype = {
         if (this._YQL_SOURCE_REGEX.test(source)) {
             // Looks like a YQL query.
             return this._createYQLSource(source);
-        } else {
-            // Doesn't look like a YQL query, so assume it's a URL.
+        } else if (source.indexOf('{callback}') !== -1) {
+            // Contains a {callback} param and isn't a YQL query, so it must be
+            // JSONP.
             return this._createJSONPSource(source);
+        } else {
+            // Not a YQL query or JSONP, so we'll assume it's an XHR URL.
+            return this._createIOSource(source);
         }
     },
 
@@ -154,7 +247,7 @@ ACSources.prototype = {
                         that[_SOURCE_SUCCESS](data, request);
                     };
 
-                    maxResults = that.get('maxResults');
+                    maxResults = that.get(MAX_RESULTS);
                     opts       = {proto: that.get('yqlProtocol')};
 
                     yqlQuery = Lang.sub(source, {
@@ -241,21 +334,17 @@ ACSources.prototype = {
      * @for AutoCompleteBase
      */
     _jsonpFormatter: function (url, proxy, query) {
-        var maxResults      = this.get('maxResults'),
-            requestTemplate = this.get('requestTemplate');
+        var maxResults      = this.get(MAX_RESULTS),
+            requestTemplate = this.get(REQUEST_TEMPLATE);
 
         if (requestTemplate) {
-            url = url + requestTemplate(query);
+            url += requestTemplate(query);
         }
 
         return Lang.sub(url, {
             callback  : proxy,
             maxResults: maxResults > 0 ? maxResults : 1000,
-
-            // If a requestTemplate is set, assume that it will
-            // handle URI encoding if necessary. Otherwise,
-            // encode the query.
-            query: requestTemplate ? query : encodeURIComponent(query)
+            query     : encodeURIComponent(query)
         });
     }
 };

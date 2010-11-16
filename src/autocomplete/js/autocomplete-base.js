@@ -344,7 +344,10 @@ AutoCompleteBase.ATTRS = {
      * Source request template. This can be a function that accepts a query as a
      * parameter and returns a request string, or it can be a string containing
      * the placeholder "{query}", which will be replaced with the actual
-     * URI-encoded query.
+     * URI-encoded query. In either case, the resulting string will be appended
+     * to the request URL when the <code>source</code> attribute is set to a
+     * remote DataSource, JSONP URL, or XHR URL (it will not be appended to YQL
+     * URLs).
      * </p>
      *
      * <p>
@@ -590,11 +593,12 @@ AutoCompleteBase.ATTRS = {
      *     </p>
      *
      *     <p>
-     *     If a URL is provided, it will be used to make a JSONP request. The
-     *     <code>{query}</code> placeholder will be replaced with the current
-     *     query, and the <code>{callback}</code> placeholder will be replaced
-     *     with an internally-generated JSONP callback name. Both placeholders
-     *     must appear in the URL, or the request will fail. An optional
+     *     If a URL with a <code>{callback}</code> placeholder is provided, it
+     *     will be used to make a JSONP request. The <code>{query}</code>
+     *     placeholder will be replaced with the current query, and the
+     *     <code>{callback}</code> placeholder will be replaced with an
+     *     internally-generated JSONP callback name. Both placeholders must
+     *     appear in the URL, or the request will fail. An optional
      *     <code>{maxResults}</code> placeholder may also be provided, and will
      *     be replaced with the value of the maxResults attribute (or 1000 if
      *     the maxResults attribute is 0 or less).
@@ -607,9 +611,40 @@ AutoCompleteBase.ATTRS = {
      *     </p>
      *
      *     <p>
-     *     <strong>The <code>jsonp</code> module must be loaded in order for URL
-     *     sources to work.</strong> If the <code>jsonp</code> module is not
-     *     already loaded, it will be loaded on demand if possible.
+     *     <strong>The <code>jsonp</code> module must be loaded in order for
+     *     JSONP URL sources to work.</strong> If the <code>jsonp</code> module
+     *     is not already loaded, it will be loaded on demand if possible.
+     *     </p>
+     *   </dd>
+     *
+     *   <dt>String (XHR URL)</dt>
+     *   <dd>
+     *     <p>
+     *     <i>Example:</i> <code>'http://example.com/search?q={query}'</code>
+     *     </p>
+     *
+     *     <p>
+     *     If a URL without a <code>{callback}</code> placeholder is provided,
+     *     it will be used to make a same-origin XHR request. The
+     *     <code>{query}</code> placeholder will be replaced with the current
+     *     query. An optional <code>{maxResults}</code> placeholder may also be
+     *     provided, and will be replaced with the value of the maxResults
+     *     attribute (or 1000 if the maxResults attribute is 0 or less).
+     *     </p>
+     *
+     *     <p>
+     *     The response is assumed to be a JSON array of results by default. If
+     *     the response is a JSON object and not an array, provide a
+     *     <code>resultListLocator</code> to process the response and return an
+     *     array. If the response is in some form other than JSON, you will
+     *     need to use a custom DataSource instance as the source.
+     *     </p>
+     *
+     *     <p>
+     *     <strong>The <code>io-base</code> and <code>json-parse</code> modules
+     *     must be loaded in order for XHR URL sources to work.</strong> If
+     *     these modules are not already loaded, they will be loaded on demand
+     *     if possible.
      *     </p>
      *   </dd>
      *
