@@ -48,7 +48,9 @@ YUI.add('selection', function(Y) {
                         //This causes IE to not allow a selection on a doubleclick
                         //rng.select(nodes[i]);
                         if (rng.inRange(sel)) {
-                           ieNode = nodes[i]; 
+                            if (!ieNode) {
+                                ieNode = nodes[i];
+                            }
                         }
                     }
                 }
@@ -59,6 +61,11 @@ YUI.add('selection', function(Y) {
                     if (ieNode.nodeType !== 3) {
                         if (ieNode.firstChild) {
                             ieNode = ieNode.firstChild;
+                        }
+                        if (ieNode && ieNode.tagName && ieNode.tagName.toLowerCase() === 'body') {
+                            if (ieNode.firstChild) {
+                                ieNode = ieNode.firstChild;
+                            }
                         }
                     }
                     this.anchorNode = this.focusNode = Y.Selection.resolve(ieNode);

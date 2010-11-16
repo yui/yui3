@@ -95,4 +95,29 @@ YUI.add('editor-br', function(Y) {
     
     Y.Plugin.EditorBR = EditorBR;
 
+    if (Y.UA.ie) {
+        var handleLists = function(cmd, tag) {
+            var inst = this.getInstance(),
+                host = this.get(HOST),
+                sel = new inst.Selection();
+
+            if (sel.isCollapsed) {
+                host.exec.command('inserthtml', '<' + tag + ' id="yui-ie-list"><li></li></' + tag + '>');
+                inst.on('available', function() {
+                    this.set('id', '');
+                    this.one('li').append(this.get('nextSibling')).append(inst.Selection.CURSOR);
+                    sel.focusCursor();
+                }, '#yui-ie-list');
+            } else {
+                host.exec._command(cmd, '');
+            }
+        };
+        Y.Plugin.ExecCommand.COMMANDS.insertunorderedlist = function(cmd, val) {
+            handleLists.call(this, cmd, 'ul');
+        };
+        Y.Plugin.ExecCommand.COMMANDS.insertorderedlist = function(cmd, val) {
+            handleLists.call(this, cmd, 'ol');
+        };
+    }
+
 }, '1.0.0', {requires: ['editor-base', 'selection']});
