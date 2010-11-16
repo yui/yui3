@@ -121,8 +121,7 @@
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;autocomplete-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;jsonp&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;yql&quot;</span>
+                    <span class="s2">&quot;autocomplete-sources&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
                     <span class="s2">&quot;autocomplete-filters&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -164,6 +163,7 @@
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;autocomplete-list&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="s2">&quot;autocomplete-sources&quot;</span><span class="p">,</span> 
                 <span class="s2">&quot;lang&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;en&quot;</span>
                 <span class="p">],</span> 
@@ -208,6 +208,17 @@
                     <span class="s2">&quot;widget-stack&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;autocomplete-sources&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;io-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;json-parse&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;jsonp&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;yql&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;autocomplete-base&quot;</span>
+                <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
@@ -1636,7 +1647,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;49afa7ee5f5e4485e24b810d0f378d41&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;72328ce68e004780c3d2941f217670cf&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
