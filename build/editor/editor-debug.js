@@ -1254,7 +1254,9 @@ YUI.add('selection', function(Y) {
             //In the case of Ctrl+Z (Undo)
             try {
                 n = n.parentNode;
-            } catch (re) {}
+            } catch (re) {
+                n = 'body';
+            }
         }
         return Y.one(n);
     };
