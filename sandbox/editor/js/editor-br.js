@@ -106,6 +106,7 @@ YUI.add('editor-br', function(Y) {
                 inst.on('available', function() {
                     this.set('id', '');
                     this.one('li').append(this.get('nextSibling')).append(inst.Selection.CURSOR);
+                    host.focus(true);
                     sel.focusCursor();
                 }, '#yui-ie-list');
             } else {
@@ -118,6 +119,68 @@ YUI.add('editor-br', function(Y) {
         Y.Plugin.ExecCommand.COMMANDS.insertorderedlist = function(cmd, val) {
             handleLists.call(this, cmd, 'ol');
         };
+        Y.Plugin.ExecCommand.COMMANDS.outdent = function(cmd, val) {
+            var inst = this.getInstance(),
+                host = this.get(HOST),
+                sel = new inst.Selection();
+
+            if (sel.isCollapsed) {
+                host.exec.command('inserthtml', '<var id="yui-ie-bq"></var>');
+                inst.on('available', function() {
+                    var par = this.ancestor('blockquote'), par2, cont;
+                    this.set('id', '');
+                    this.remove();
+                    if (!par) {
+                        //No Blockquote parent, leaving now..
+                        return;
+                    }
+                    par2 = par.ancestor('blockquote');
+                    if (par2) {
+                        par2.replace(par);
+                        cont = par;
+                    } else {
+                        cont = inst.Node.create('<span></span>');
+                        cont.set('innerHTML', par.get('innerHTML'));
+                        par.replace(cont);
+                    }
+
+                    cont.append(inst.Selection.CURSOR);
+                    host.focus(true);
+                    sel.focusCursor();
+                    inst.Selection.cleanCursor();
+                }, '#yui-ie-bq');
+            } else {
+                host.exec._command(cmd, '');
+            }
+        };
+        Y.Plugin.ExecCommand.COMMANDS.indent = function(cmd, val) {
+            var inst = this.getInstance(),
+                host = this.get(HOST),
+                sel = new inst.Selection();
+
+            if (sel.isCollapsed) {
+                host.exec.command('inserthtml', '<blockquote id="yui-ie-bq"></blockquote>');
+                inst.on('available', function() {
+                    this.set('id', '');
+                    var par = this.ancestor('blockquote'), cont;
+                    if (!par) {
+                        cont = this.get('nextSibling');
+                    }
+                    if (par) {
+                        this.remove();
+                        par.set('innerHTML', '<blockquote>' + par.get('innerHTML') + inst.Selection.CURSOR + '</blockquote>');
+                    }
+                    if (cont) {
+                        this.append(cont).append(inst.Selection.CURSOR);
+                    }
+                    host.focus(true);
+                    sel.focusCursor();
+                    inst.Selection.cleanCursor();
+                }, '#yui-ie-bq');
+            } else {
+                host.exec._command(cmd, '');
+            }
+        }
     }
 
 }, '1.0.0', {requires: ['editor-base', 'selection']});
