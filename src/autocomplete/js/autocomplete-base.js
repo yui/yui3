@@ -1383,7 +1383,10 @@ AutoCompleteBase.prototype = {
             }
         } else {
             clearTimeout(this._delay);
-            this.fire(EVT_CLEAR);
+
+            this.fire(EVT_CLEAR, {
+                prevVal: e.prevVal ? this._parseValue(e.prevVal) : null
+            });
         }
     },
 
