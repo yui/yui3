@@ -96,7 +96,9 @@
                         <span class="c1">//This causes IE to not allow a selection on a doubleclick</span>
                         <span class="c1">//rng.select(nodes[i]);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">rng</span><span class="p">.</span><span class="nx">inRange</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
-                           <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span> 
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ieNode</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
@@ -107,6 +109,11 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">!==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span> <span class="o">&amp;&amp;</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">tagName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;body&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">anchorNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">focusNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">ieNode</span><span class="p">);</span>
