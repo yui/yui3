@@ -65,8 +65,7 @@
         "submodules": {
             "autocomplete-base": {
                 "optional": [
-                    "jsonp", 
-                    "yql"
+                    "autocomplete-sources"
                 ], 
                 "plugins": {
                     "autocomplete-filters": {
@@ -108,6 +107,7 @@
                 ]
             }, 
             "autocomplete-list": {
+                "after": "autocomplete-sources", 
                 "lang": [
                     "en"
                 ], 
@@ -139,6 +139,17 @@
                     "widget-stack"
                 ], 
                 "skinnable": true
+            }, 
+            "autocomplete-sources": {
+                "optional": [
+                    "io-base", 
+                    "json-parse", 
+                    "jsonp", 
+                    "yql"
+                ], 
+                "requires": [
+                    "autocomplete-base"
+                ]
             }
         }
     }, 
