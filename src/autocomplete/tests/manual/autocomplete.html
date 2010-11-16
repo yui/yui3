@@ -102,7 +102,10 @@
             <label for="ds-none">None</label>
 
             <input type="radio" id="ds-local" name="ds" value="local" checked="checked">
-            <label for="ds-local">Local</label>
+            <label for="ds-local">Local (Array)</label>
+
+            <input type="radio" id="ds-function" name="ds" value="function">
+            <label for="ds-function">Local (Function)</label>
 
             <input type="radio" id="ds-flickr" name="ds" value="flickr">
             <label for="ds-flickr">Remote (Flickr)</label>
@@ -222,6 +225,10 @@ Y.delegate('click', function (e) {
         useLocal();
         break;
 
+    case 'function':
+        useFunction();
+        break;
+
     case 'flickr':
         useFlickr();
         break;
@@ -327,6 +334,20 @@ function setHighlighter() {
 }
 
 // -- DataSource functions -----------------------------------------------------
+function useNone() {
+    Y.log('using no source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        maxResults       : 0,
+        resultFormatter  : null,
+        resultListLocator: null,
+        resultTextLocator: null,
+        source           : null
+    });
+}
+
 function useLocal() {
     Y.log('using local array source', 'info', 'autocomplete');
 
@@ -341,8 +362,8 @@ function useLocal() {
     });
 }
 
-function useNone() {
-    Y.log('using no source', 'info', 'autocomplete');
+function useFunction() {
+    Y.log('using local function source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
 
@@ -351,7 +372,7 @@ function useNone() {
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
-        source           : null
+        source           : function (query) { return ExampleData.arrayStates; }
     });
 }
 
