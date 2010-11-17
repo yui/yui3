@@ -308,14 +308,16 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._listEvents.concat([
-            this.after('mouseover', this._afterMouseOver),
-            this.after('mouseout', this._afterMouseOut),
+            this.after({
+              mouseover: this._afterMouseOver,
+              mouseout : this._afterMouseOut,
 
-            this.after('activeItemChange', this._afterActiveItemChange),
-            this.after('alwaysShowListChange', this._afterAlwaysShowListChange),
-            this.after('hoveredItemChange', this._afterHoveredItemChange),
-            this.after('resultsChange', this._afterResultsChange),
-            this.after('visibleChange', this._afterVisibleChange),
+              activeItemChange    : this._afterActiveItemChange,
+              alwaysShowListChange: this._afterAlwaysShowListChange,
+              hoveredItemChange   : this._afterHoveredItemChange,
+              resultsChange       : this._afterResultsChange,
+              visibleChange       : this._afterVisibleChange
+            }),
 
             this._listNode.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
         ]);
