@@ -838,7 +838,6 @@ Y.mix(Y_Node.prototype, {
             this.unplug();
         }
 
-        this._node._yuid = null;
         this._node = null;
         this._stateProxy = null;
         this.clearData();

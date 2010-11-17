@@ -4,6 +4,7 @@
 <style> 
 li {
     background:#ccc;
+    height: 100px;
 }
 </style> 
 <script src="../../../../build/yui/yui.js"></script> 
@@ -24,9 +25,27 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
         node = nodes.item(0),
         running = false;
 
+    Y.TRCOUNT = 0;
     document.onclick = function() {
-        nodes.toggleView('fade');
+    /*
+        if (!Y.TRCOUNT) {
+            node.transition({
+                height: 0,
+                duration: 2
+            });
+        } else {
+            node.destroy(); 
+        }
+        Y.TRCOUNT++;
+    */
     };
+
+    var node = Y.one('body');
+
+    Y.on('click', function(e) {
+        console.log('click');
+        node.destroy();
+    }, document.body);
 });
  
 </script> 
