@@ -116,13 +116,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var ariaNode   = this._createAriaNode(),
             contentBox = this.get('contentBox'),
             inputNode  = this._inputNode,
-            listNode   = this.get('listNode'),
+            listNode,
             parentNode = inputNode.get('parentNode');
 
-        if (!listNode) {
-            listNode = this._createListNode();
-            contentBox.append(listNode);
-        }
+        listNode = this._createListNode();
+        this._set('listNode', listNode);
+        contentBox.append(listNode);
 
         inputNode.addClass(this.getClassName('input')).setAttrs({
             'aria-autocomplete': LIST,
@@ -701,6 +700,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         },
 
         /**
+         * Node that will contain result items.
+         *
+         * @attribute listNode
+         * @type Node|null
+         * @readonly
+         */
+        listNode: {
+            readOnly: true,
+            value: null
+        },
+
+        /**
          * Translatable strings used by the AutoCompleteList widget.
          *
          * @attribute strings
@@ -730,20 +741,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
     },
 
-    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist'),
-
-    HTML_PARSER: {
-        /**
-         * Node that will contain result items.
-         *
-         * @attribute listNode
-         * @type Node|null
-         * @readonly
-         */
-        listNode: function () {
-            return this.getClassName(LIST);
-        }
-    }
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
 });
 
 Y.AutoCompleteList = List;
