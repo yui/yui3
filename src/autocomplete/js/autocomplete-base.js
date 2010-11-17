@@ -128,8 +128,7 @@ function AutoCompleteBase() {
      * @preventable _defClearFn
      */
     this.publish(EVT_CLEAR, {
-        defaultFn: this._defClearFn,
-        queueable: true
+        defaultFn: this._defClearFn
     });
 
     /**
@@ -158,8 +157,7 @@ function AutoCompleteBase() {
      * @preventable _defQueryFn
      */
     this.publish(EVT_QUERY, {
-        defaultFn: this._defQueryFn,
-        queueable: true
+        defaultFn: this._defQueryFn
     });
 
     /**
@@ -220,8 +218,7 @@ function AutoCompleteBase() {
      * @preventable _defResultsFn
      */
     this.publish(EVT_RESULTS, {
-        defaultFn: this._defResultsFn,
-        queueable: true
+        defaultFn: this._defResultsFn
     });
 }
 
