@@ -462,6 +462,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
+        var inst = this.getInstance();
+        this.set('content', inst.Selection.CURSOR);
 
         //This stops image resizes, but for all images!!
         //editor.execCommand('enableObjectResizing', false);
