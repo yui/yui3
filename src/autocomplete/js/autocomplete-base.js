@@ -757,13 +757,13 @@ AutoCompleteBase.prototype = {
         var request,
             source = this.get('source');
 
-        if (source) {
-            if (query || query === '') {
-                this._set(QUERY, query);
-            } else {
-                query = this.get(QUERY);
-            }
+        if (query || query === '') {
+            this._set(QUERY, query);
+        } else {
+            query = this.get(QUERY);
+        }
 
+        if (source) {
             if (!requestTemplate) {
                 requestTemplate = this.get(REQUEST_TEMPLATE);
             }
