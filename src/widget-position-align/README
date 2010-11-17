@@ -3,6 +3,10 @@ positioning support to a Widget class. It adds viewport
 or element based alignment and centering. It requires the "widget-position"
 extension, which provides basic XY support, to be added to the class first.
 
+3.3.0
+
+* No changes
+
 3.2.0
 
 * No changes

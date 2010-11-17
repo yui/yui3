@@ -3,6 +3,10 @@ XY positioning for a widget to the viewport, or to another node. Also provides
 "preventOverlap" support, to prevent the widget from overlapping the node to 
 which it is aligned (when using widget-position-align). 
 
+3.3.0
+
+* No changes
+
 3.2.0
 
 * No changes
