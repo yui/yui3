@@ -25,7 +25,8 @@ It provides the following pieces of core functionality:
 * Fixed widget-locale support. Needed lazyAdd:false, for strings attribute
 
 * Changed widget UI_EVENTS type parsing, to use EventTarget.parseType and 
-  removed after over-ride(), since everything ends up going through on(). 
+  removed after() override, since everything ends up going through on() 
+  eventually. 
 
 3.2.0
 
