@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>editor&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>editor&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_editor.html" title="editor">editor</a>
                 
@@ -140,6 +140,94 @@
     <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Plugin&#39;</span><span class="p">);</span>
     
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">EditorBR</span> <span class="o">=</span> <span class="nx">EditorBR</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">handleLists</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+                <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">host</span><span class="p">.</span><span class="nx">exec</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="nx">tag</span> <span class="o">+</span> <span class="s1">&#39; id=&quot;yui-ie-list&quot;&gt;&lt;li&gt;&lt;/li&gt;&lt;/&#39;</span> <span class="o">+</span> <span class="nx">tag</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">);</span>
+                <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nextSibling&#39;</span><span class="p">)).</span><span class="nx">append</span><span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span><span class="p">);</span>
+                    <span class="nx">host</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                    <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">();</span>
+                <span class="p">},</span> <span class="s1">&#39;#yui-ie-list&#39;</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">host</span><span class="p">.</span><span class="nx">exec</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ExecCommand</span><span class="p">.</span><span class="nx">COMMANDS</span><span class="p">.</span><span class="nx">insertunorderedlist</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">handleLists</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">cmd</span><span class="p">,</span> <span class="s1">&#39;ul&#39;</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ExecCommand</span><span class="p">.</span><span class="nx">COMMANDS</span><span class="p">.</span><span class="nx">insertorderedlist</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">handleLists</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">cmd</span><span class="p">,</span> <span class="s1">&#39;ol&#39;</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ExecCommand</span><span class="p">.</span><span class="nx">COMMANDS</span><span class="p">.</span><span class="nx">outdent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+                <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">host</span><span class="p">.</span><span class="nx">exec</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;var id=&quot;yui-ie-bq&quot;&gt;&lt;/var&gt;&#39;</span><span class="p">);</span>
+                <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">par</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;blockquote&#39;</span><span class="p">),</span> <span class="nx">par2</span><span class="p">,</span> <span class="nx">cont</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">par</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">//No Blockquote parent, leaving now..</span>
+                        <span class="k">return</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="nx">par2</span> <span class="o">=</span> <span class="nx">par</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;blockquote&#39;</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">par2</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">par2</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">par</span><span class="p">);</span>
+                        <span class="nx">cont</span> <span class="o">=</span> <span class="nx">par</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">cont</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;span&gt;&lt;/span&gt;&#39;</span><span class="p">);</span>
+                        <span class="nx">cont</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span> <span class="nx">par</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">));</span>
+                        <span class="nx">par</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">cont</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">cont</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span><span class="p">);</span>
+                    <span class="nx">host</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                    <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">();</span>
+                    <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span><span class="p">();</span>
+                <span class="p">},</span> <span class="s1">&#39;#yui-ie-bq&#39;</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">host</span><span class="p">.</span><span class="nx">exec</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ExecCommand</span><span class="p">.</span><span class="nx">COMMANDS</span><span class="p">.</span><span class="nx">indent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+                <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">isCollapsed</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">host</span><span class="p">.</span><span class="nx">exec</span><span class="p">.</span><span class="nx">command</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;blockquote id=&quot;yui-ie-bq&quot;&gt;&lt;/blockquote&gt;&#39;</span><span class="p">);</span>
+                <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                    <span class="kd">var</span> <span class="nx">par</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="s1">&#39;blockquote&#39;</span><span class="p">),</span> <span class="nx">cont</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">par</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">cont</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nextSibling&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">par</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+                        <span class="nx">par</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;blockquote&gt;&#39;</span> <span class="o">+</span> <span class="nx">par</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span> <span class="o">+</span> <span class="s1">&#39;&lt;/blockquote&gt;&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">cont</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">cont</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">CURSOR</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="nx">host</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                    <span class="nx">sel</span><span class="p">.</span><span class="nx">focusCursor</span><span class="p">();</span>
+                    <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span><span class="p">();</span>
+                <span class="p">},</span> <span class="s1">&#39;#yui-ie-bq&#39;</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">host</span><span class="p">.</span><span class="nx">exec</span><span class="p">.</span><span class="nx">_command</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 </pre></div>
 
                     </div>
@@ -190,7 +278,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -213,8 +300,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

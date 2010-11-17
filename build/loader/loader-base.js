@@ -1059,6 +1059,23 @@ Y.Loader.prototype = {
                             }
 
 // Add rollup file, need to add to supersedes list too
+
+                            // default packages
+                            packName = this.getLangPackName(ROOT_LANG, name);
+                            supName = this.getLangPackName(ROOT_LANG, i);
+
+                            smod = this.moduleInfo[packName];
+
+                            if (!smod) {
+                                smod = this._addLangPack(lang, o, packName);
+                            }
+
+                            if (!(supName in flatSup)) {
+                                smod.supersedes.push(supName);
+                            }
+
+// Add rollup file, need to add to supersedes list too
+
                         }
                     }
 
@@ -1180,7 +1197,8 @@ Y.Loader.prototype = {
             delete mod.expanded;
         }
 
-        if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
+        if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
             return mod.expanded;
         }
 

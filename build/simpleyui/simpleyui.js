@@ -4472,6 +4472,18 @@ var NODE_TYPE = 'nodeType',
 
     re_tag = /<([a-z]+)/i,
 
+    createFromDIV = function(html, tag) {
+        var div = Y.config.doc.createElement('div'),
+            ret = true;
+
+        div.innerHTML = html;
+        if (!div.firstChild || div.firstChild.tagName !== tag) {
+            ret = false;
+        }
+
+        return ret;
+    },
+    
 Y_DOM = {
     /**
      * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).
@@ -5143,7 +5155,7 @@ Y_DOM = {
         Y_DOM.creators.col = Y_DOM.creators.link = Y_DOM.creators.style = Y_DOM.creators.script;
     }
 
-    if (Y.UA.gecko || Y.UA.ie) {
+    if (!createFromDIV('<tr/>', 'TR')) {
         Y.mix(creators, {
             option: function(html, doc) {
                 return create('<select><option class="yui3-big-dummy" selected></option>' + html + '</select>', doc);
@@ -5157,9 +5169,11 @@ Y_DOM = {
                 return create('<tr>' + html + '</tr>', doc);
             }, 
 
-            tbody: function(html, doc) {
-                return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-            }
+            col: function(html, doc) {
+                return create('<colgroup>' + html + '</colgroup>', doc);
+            }, 
+
+            tbody: 'table'
         });
 
         Y.mix(creators, {
@@ -5169,7 +5183,6 @@ Y_DOM = {
             tfoot: creators.tbody,
             caption: creators.tbody,
             colgroup: creators.tbody,
-            col: creators.tbody,
             optgroup: creators.option
         });
     }

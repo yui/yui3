@@ -8,7 +8,7 @@
 
                         "requires": [
                             "array-extras",
-                            "unicode-wordbreak"
+                            "text-wordbreak"
                         ]
                     },
 
@@ -17,8 +17,8 @@
 
                         "requires": [
                             "array-extras",
-                            "unicode-accentfold",
-                            "unicode-wordbreak"
+                            "text-accentfold",
+                            "text-wordbreak"
                         ]
                     },
 
@@ -42,19 +42,21 @@
                 },
 
                 "optional": [
-                    "jsonp",
-                    "yql"
+                    "autocomplete-sources"
                 ],
 
                 "requires": [
                     "array-extras",
                     "base-build",
+                    "escape",
                     "event-valuechange",
                     "node-base"
                 ]
             },
 
             "autocomplete-list": {
+                "after": "autocomplete-sources",
+
                 "lang": ["en"],
 
                 "plugins": {
@@ -91,6 +93,19 @@
                 ],
 
                 "skinnable": true
+            },
+
+            "autocomplete-sources": {
+                "optional": [
+                    "io-base",
+                    "json-parse",
+                    "jsonp",
+                    "yql"
+                ],
+
+                "requires": [
+                    "autocomplete-base"
+                ]
             }
         }
     }

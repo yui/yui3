@@ -94,7 +94,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
          *   </dd>
          * </dl>
          *
-         * @preventable _defResultsFn
+         * @preventable _defSelectFn
          */
         this.publish(EVT_SELECT, {
             defaultFn: this._defSelectFn

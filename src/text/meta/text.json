@@ -1,0 +1,22 @@
+{
+    "text": {
+        "submodules": {
+            "text-accentfold": {
+                "requires": [
+                    "array-extras",
+                    "text-data-accentfold"
+                ]
+            },
+
+            "text-data-accentfold": {},
+            "text-data-wordbreak": {},
+
+            "text-wordbreak": {
+                "requires": [
+                    "array-extras",
+                    "text-data-wordbreak"
+                ]
+            }
+        }
+    }
+}

@@ -264,7 +264,7 @@ YUI.add('editor-bidi', function(Y) {
             returnValue = selectedBlocks;
         }
 
-        this.get(HOST).get(HOST).editorBidi.checkForChange();
+        this.get(HOST).get(HOST).editorBidi._checkForChange();
         return returnValue;
     };
 

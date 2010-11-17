@@ -109,6 +109,7 @@
     <div id="smilies"></div>
 </div>
 
+<input type="text">
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
@@ -375,7 +376,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
-        defaultblock: 'div',
         /*
         linkedcss: [
             'http://yui.yahooapis.com/2.8.1/build/reset/reset.css',
@@ -383,7 +383,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             'http://yui.yahooapis.com/2.8.1/build/grids/grids.css'
         ],
         */
-        extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; }'
+        //extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; } blockquote { border: 1px solid orange; }'
+        extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } blockquote { border: 1px solid orange; }'
     });
     editor.plug(Y.Plugin.EditorBR);
     //editor.plug(Y.Plugin.EditorPara);
@@ -462,6 +463,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
+        var inst = this.getInstance();
+        this.set('content', inst.Selection.CURSOR + '<hr><p>This is some content below the HR</p>');
 
         //This stops image resizes, but for all images!!
         //editor.execCommand('enableObjectResizing', false);

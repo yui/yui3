@@ -6,6 +6,11 @@ The overlay is built by extending Widget and adding the
 WidgetPosition, WidgetStack, WidgetPositionAlign, 
 WidgetPositionConstrain and WidgetStdMod extensions.
 
+3.3.0
+
+No changes, see Widget and extensions for changes to
+dependencies.
+
 3.2.0
 
 No changes, see Widget and extensions for changes to

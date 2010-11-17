@@ -21,8 +21,8 @@ YUI.add('autocomplete-filters-accentfold', function(Y) {
  * @static
  */
 
-var AccentFold = Y.Unicode.AccentFold,
-    WordBreak  = Y.Unicode.WordBreak,
+var AccentFold = Y.Text.AccentFold,
+    WordBreak  = Y.Text.WordBreak,
     YArray     = Y.Array,
     YObject    = Y.Object;
 
@@ -39,9 +39,11 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     charMatchFold: function (query, results) {
         var queryChars = YArray.unique(AccentFold.fold(query).split(''));
 
-        return AccentFold.filter(results, function (result) {
+        return YArray.filter(results, function (result) {
+            var text = AccentFold.fold(result.text);
+
             return YArray.every(queryChars, function (chr) {
-                return result.indexOf(chr) !== -1;
+                return text.indexOf(chr) !== -1;
             });
         });
     },
@@ -58,8 +60,8 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     phraseMatchFold: function (query, results) {
         query = AccentFold.fold(query);
 
-        return AccentFold.filter(results, function (result) {
-            return result.indexOf(query) !== -1;
+        return YArray.filter(results, function (result) {
+            return AccentFold.fold(result.text).indexOf(query) !== -1;
         });
     },
 
@@ -75,8 +77,8 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     startsWithFold: function (query, results) {
         query = AccentFold.fold(query);
 
-        return AccentFold.filter(results, function (result) {
-            return result.indexOf(query) === 0;
+        return YArray.filter(results, function (result) {
+            return AccentFold.fold(result.text).indexOf(query) === 0;
         });
     },
 
@@ -92,9 +94,10 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     wordMatchFold: function (query, results) {
         var queryWords = WordBreak.getUniqueWords(AccentFold.fold(query));
 
-        return AccentFold.filter(results, function (result) {
+        return YArray.filter(results, function (result) {
             // Convert resultWords array to a hash for fast lookup.
-            var resultWords = YArray.hash(WordBreak.getUniqueWords(result));
+            var resultWords = YArray.hash(WordBreak.getUniqueWords(
+                    AccentFold.fold(result.text)));
 
             return YArray.every(queryWords, function (word) {
                 return YObject.owns(resultWords, word);
@@ -104,4 +107,4 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'unicode-accentfold', 'unicode-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'text-accentfold', 'text-wordbreak']});

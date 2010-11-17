@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>escape&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>escape&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_escape.html" title="escape">escape</a>
                 
@@ -62,7 +62,8 @@
         <span class="s1">&#39;&gt;&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;gt;&#39;</span><span class="p">,</span>
         <span class="s1">&#39;&quot;&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;quot;&#39;</span><span class="p">,</span>
         <span class="s2">&quot;&#39;&quot;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x27;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;/&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x2F;&#39;</span>
+        <span class="s1">&#39;/&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x2F;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;`&#39;</span><span class="o">:</span> <span class="s1">&#39;&amp;#x60;&#39;</span>
     <span class="p">},</span>
 
 <span class="nx">Escape</span> <span class="o">=</span> <span class="p">{</span>
@@ -73,13 +74,16 @@
 <span class="cm">     * Returns a copy of the specified string with special HTML characters</span>
 <span class="cm">     * escaped. The following characters will be converted to their</span>
 <span class="cm">     * corresponding character entities:</span>
-<span class="cm">     * &lt;code&gt;&amp;amp; &amp;lt; &amp;gt; &amp;quot; &amp;#x27; &amp;#x2F;&lt;/code&gt;</span>
+<span class="cm">     * &lt;code&gt;&amp;amp; &amp;lt; &amp;gt; &amp;quot; &amp;#x27; &amp;#x2F; &amp;#x60;&lt;/code&gt;</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * This implementation is based on the</span>
 <span class="cm">     * &lt;a href=&quot;http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet&quot;&gt;OWASP</span>
-<span class="cm">     * HTML escaping recommendations&lt;/a&gt;.</span>
+<span class="cm">     * HTML escaping recommendations&lt;/a&gt;. In addition to the characters</span>
+<span class="cm">     * in the OWASP recommendation, we also escape the &lt;code&gt;&amp;#x60;&lt;/code&gt;</span>
+<span class="cm">     * character, since IE interprets it as an attribute delimiter when used in</span>
+<span class="cm">     * innerHTML.</span>
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method html</span>
@@ -88,7 +92,7 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">html</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">string</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[&amp;&lt;&gt;&quot;&#39;\/]/g</span><span class="p">,</span> <span class="nx">Escape</span><span class="p">.</span><span class="nx">_htmlReplacer</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">string</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[&amp;&lt;&gt;&quot;&#39;\/`]/g</span><span class="p">,</span> <span class="nx">Escape</span><span class="p">.</span><span class="nx">_htmlReplacer</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -175,7 +179,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -198,8 +201,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
