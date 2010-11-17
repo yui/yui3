@@ -15,7 +15,8 @@ var HTML_CHARS = {
         '>': '&gt;',
         '"': '&quot;',
         "'": '&#x27;',
-        '/': '&#x2F;'
+        '/': '&#x2F;',
+        '`': '&#x60;'
     },
 
 Escape = {
@@ -26,13 +27,16 @@ Escape = {
      * Returns a copy of the specified string with special HTML characters
      * escaped. The following characters will be converted to their
      * corresponding character entities:
-     * <code>&amp; &lt; &gt; &quot; &#x27; &#x2F;</code>
+     * <code>&amp; &lt; &gt; &quot; &#x27; &#x2F; &#x60;</code>
      * </p>
      *
      * <p>
      * This implementation is based on the
      * <a href="http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet">OWASP
-     * HTML escaping recommendations</a>.
+     * HTML escaping recommendations</a>. In addition to the characters
+     * in the OWASP recommendation, we also escape the <code>&#x60;</code>
+     * character, since IE interprets it as an attribute delimiter when used in
+     * innerHTML.
      * </p>
      *
      * @method html
@@ -41,7 +45,7 @@ Escape = {
      * @static
      */
     html: function (string) {
-        return string.replace(/[&<>"'\/]/g, Escape._htmlReplacer);
+        return string.replace(/[&<>"'\/`]/g, Escape._htmlReplacer);
     },
 
     /**

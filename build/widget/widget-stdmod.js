@@ -7,7 +7,6 @@ YUI.add('widget-stdmod', function(Y) {
  */
     var L = Y.Lang,
         Node = Y.Node,
-        NodeList = Y.NodeList,
         UA = Y.UA,
         Widget = Y.Widget,
 
@@ -24,7 +23,6 @@ YUI.add('widget-stdmod', function(Y) {
         NODE_SUFFIX = "Node",
         CONTENT_SUFFIX = "Content",
 
-        INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
         CHILD_NODES = "childNodes",
         OWNER_DOCUMENT = "ownerDocument",
@@ -138,10 +136,7 @@ YUI.add('widget-stdmod', function(Y) {
         
         HEADER_CONTENT = STD_HEADER + CONTENT_SUFFIX,
         FOOTER_CONTENT = STD_FOOTER + CONTENT_SUFFIX,
-        BODY_CONTENT = STD_BODY + CONTENT_SUFFIX,
-
-        AFTER = StdMod.AFTER,
-        BEFORE = StdMod.BEFORE;
+        BODY_CONTENT = STD_BODY + CONTENT_SUFFIX;
 
     /**
      * Static property used to define the default attribute 
@@ -276,11 +271,11 @@ YUI.add('widget-stdmod', function(Y) {
             if (!stdModParsed || !stdModParsed[HEADER_CONTENT]) { 
                 this._uiSetStdMod(STD_HEADER, this.get(HEADER_CONTENT)); 
             }
-            
+
             if (!stdModParsed || !stdModParsed[BODY_CONTENT]) { 
                 this._uiSetStdMod(STD_BODY, this.get(BODY_CONTENT));
             }
-            
+
             if (!stdModParsed || !stdModParsed[FOOTER_CONTENT]) {
                 this._uiSetStdMod(STD_FOOTER, this.get(FOOTER_CONTENT));
             }
@@ -454,11 +449,9 @@ YUI.add('widget-stdmod', function(Y) {
             // Using isValue, so that "" is valid content 
             if (L.isValue(content)) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
-                if (Y.instanceOf(content, Node) || Y.instanceOf(content, NodeList)) {
-                    this._addNodeRef(node, content, where);
-                } else {
-                    this._addNodeHTML(node, content, where);
-                }
+
+                this._addStdModContent(node, content, where);
+
                 this.set(section + CONTENT_SUFFIX, this._getStdModContent(section), {src:UI});
             } else {
                 this._eraseStdMod(section);
@@ -546,70 +539,33 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Helper method to add the given HTML string to the node reference provided.
-         * The HTML is added either before, after or replaces the existing node content 
+         * Helper method to add content to a StdMod section node.
+         * The content is added either before, after or replaces the existing node content 
          * based on the value of the <code>where</code> argument.
-         *
-         * @method _addNodeHTML
+         * 
+         * @method _addStdModContent
          * @private
          * 
          * @param {Node} node The section Node to be updated.
-         * @param {String} html The new content HTML string to be added to the section Node.
-         * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
-         * If not provided, the content will replace Nodes existing content.
-         */
-        _addNodeHTML : function(node, html, where) {
-            if (where == AFTER) {
-                node.append(html);
-            } else if (where == BEFORE) {
-                node.prepend(html);
-            } else {
-                node.setContent(html);
-            }
-        },
-
-        /**
-         * Helper method to add nodes, to another node.
-         * The child node(s) are added either before, after or replaces the existing node content 
-         * based on the value of the <code>where</code> argument.
-         * 
-         * @method _addNodeRef
-         * @private
-         * 
-         * @param {Node} node The section Node to be updated.
-         * @param {Node|NodeList} children The new content Node, or NodeList to be added to section Node provided.
+         * @param {Node|NodeList|String} children The new content Node, NodeList or String to be added to section Node provided.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the Node.
          */
-        _addNodeRef : function(node, children, where) {
-            var append = true, 
-                i, s;
-            
-            if (where == BEFORE) {
-                var n = node.get(FIRST_CHILD);
-                if (n) {
-                    if (Y.instanceOf(children, NodeList)) {
-                        for (i = children.size() - 1; i >=0; --i) {
-                            node.insertBefore(children.item(i), n);
-                        }
-                    } else {
-                        node.insertBefore(children, n);
-                    }
-                    append = false;
-                }
-            } else if (where != AFTER) { // replace
-                node.set(INNER_HTML, EMPTY);
+        _addStdModContent : function(node, children, where) {
+
+            // StdMod where to Node where
+            switch (where) {
+                case StdMod.BEFORE:  // 0 is before fistChild
+                    where = 0;
+                    break;
+                case StdMod.AFTER:   // undefined is appendChild
+                    where = undefined;
+                    break;
+                default:            // replace is replace, not specified is replace
+                    where = StdMod.REPLACE; 
             }
 
-            if (append) {
-                if (Y.instanceOf(children, NodeList)) {
-                    for (i = 0, s = children.size(); i < s; ++i) {
-                        node.appendChild(children.item(i));
-                    }
-                } else {
-                    node.appendChild(children);
-                }
-            }
+            node.insert(children, where);
         },
 
         /**

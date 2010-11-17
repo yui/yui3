@@ -158,8 +158,9 @@
             
             switch (e.changedType) {
                 case 'keydown':
-                    //inst.later(100, inst, inst.Selection.cleanCursor);
-                    inst.Selection.cleanCursor();
+                    if (!Y.UA.gecko) {
+                        inst.later(100, inst, inst.Selection.cleanCursor);
+                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -167,6 +168,8 @@
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
                         if (Y.UA.webkit) {
                             this.execCommand('inserttext', '\t');
+                        } else if (Y.UA.gecko) {
+                            this.frame.exec._command('inserthtml', '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
                         } else {
                             sel = new inst.Selection();
                             sel.setCursor();
@@ -359,14 +362,14 @@
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
-            if (Y.UA.ie) {
-                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
-                this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
-                this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
-            } else {
+            //if (Y.UA.ie) {
+                //this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+            //    this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
+            //    this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
+            //} else {
                 this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
                 this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
-            }
+            //}
 
             inst.Selection.filter();
             this.fire('ready');
@@ -383,7 +386,7 @@
                     var inst = this.getInstance(),
                         sel = inst.config.doc.selection.createRange(),
                         bk = sel.moveToBookmark(this._lastBookmark);
-
+                    
                     sel.select();
                     this._lastBookmark = null;
                 } catch (e) {

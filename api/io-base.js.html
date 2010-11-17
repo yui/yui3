@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>io&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>io&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_io.html" title="io">io</a>
                 
@@ -220,12 +220,15 @@
 
 
     <span class="kd">function</span> <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// IE, when using XMLHttpRequest as an ActiveX Object, will throw</span>
-        <span class="c1">// a &quot;Type Mismatch&quot; error if the event handler is set to &quot;null&quot;.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">w</span> <span class="o">&amp;&amp;</span> <span class="nx">w</span><span class="p">.</span><span class="nx">XMLHttpRequest</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">w</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">w</span><span class="p">.</span><span class="nx">XMLHttpRequest</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">===</span> <span class="mi">6</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+				<span class="c1">// IE, when using XMLHttpRequest as an ActiveX Object, will throw</span>
+				<span class="c1">// a &quot;Type Mismatch&quot; error if the event handler is set to &quot;null&quot;.</span>
+				<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+			<span class="p">}</span>
         <span class="p">}</span>
 
         <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -484,14 +487,19 @@
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">_headers</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">_headers</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">p</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="c1">// Configuration headers will supersede io preset headers,</span>
-                    <span class="c1">// if headers match.</span>
-                    <span class="k">continue</span><span class="p">;</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_headers</span><span class="p">[</span><span class="nx">p</span><span class="p">];</span>
-                <span class="p">}</span>
+				<span class="cm">/*</span>
+<span class="cm">                if (h[p]) {</span>
+<span class="cm">                    // Configuration headers will supersede preset io headers,</span>
+<span class="cm">                    // if headers match.</span>
+<span class="cm">                    continue;</span>
+<span class="cm">                }</span>
+<span class="cm">                else {</span>
+<span class="cm">                    h[p] = _headers[p];</span>
+<span class="cm">                }</span>
+<span class="cm">				*/</span>
+				<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">])</span> <span class="p">{</span>
+					<span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_headers</span><span class="p">[</span><span class="nx">p</span><span class="p">];</span>
+				<span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -900,7 +908,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -923,8 +930,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

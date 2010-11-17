@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>editor&nbsp; <span class="subtitle">3.3.0int1</span></h3>
+        <h3>editor&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_editor.html" title="editor">editor</a>
                 
@@ -96,7 +96,9 @@
                         <span class="c1">//This causes IE to not allow a selection on a doubleclick</span>
                         <span class="c1">//rng.select(nodes[i]);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">rng</span><span class="p">.</span><span class="nx">inRange</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
-                           <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span> 
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ieNode</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
@@ -107,6 +109,11 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">!==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span> <span class="o">&amp;&amp;</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">tagName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;body&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">ieNode</span> <span class="o">=</span> <span class="nx">ieNode</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">anchorNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">focusNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">ieNode</span><span class="p">);</span>
@@ -203,12 +210,22 @@
         <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hrs</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hr</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;hr yui-non yui-skip&#39;</span><span class="p">;</span>
-                <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;&#39;</span><span class="p">);</span>
+                
                 <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;contenteditable&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span> <span class="c1">//Keep it from being Edited</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">hr</span><span class="p">);</span>
                 <span class="p">}</span>
+                <span class="c1">//Had to move to inline style. writes for ie&#39;s &lt; 8. They don&#39;t render el.setAttribute(&#39;style&#39;);</span>
+                <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s1">&#39;1px solid #ccc&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">lineHeight</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">fontSize</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginTop</span> <span class="o">=</span> <span class="s1">&#39;5px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginBottom</span> <span class="o">=</span> <span class="s1">&#39;5px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginLeft</span> <span class="o">=</span> <span class="s1">&#39;15px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginRight</span> <span class="o">=</span> <span class="s1">&#39;15px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">padding</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
         <span class="p">});</span>
         
 
@@ -456,7 +473,9 @@
             <span class="c1">//In the case of Ctrl+Z (Undo)</span>
             <span class="k">try</span> <span class="p">{</span>
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">re</span><span class="p">)</span> <span class="p">{}</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">re</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="s1">&#39;body&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
     <span class="p">};</span>
@@ -1015,7 +1034,6 @@
                                 <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
-                                <li class=""><a href="module_node-tokeninput.html" title="node-tokeninput">node-tokeninput</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
@@ -1038,8 +1056,8 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
                                 <li class=""><a href="module_transition.html" title="transition">transition</a></li>
-                                <li class=""><a href="module_unicode.html" title="unicode">unicode</a></li>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

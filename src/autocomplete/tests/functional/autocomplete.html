@@ -8,7 +8,6 @@
 
 <div id="log"></div>
 
-<script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
@@ -30,9 +29,14 @@ var Y = YUI({
             requires: [
                 'autocomplete-base', 'autocomplete-filters',
                 'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-                'autocomplete-highlighters-accentfold', 'datasource-local',
-                'jsonp', 'node', 'test', 'yql'
+                'autocomplete-highlighters-accentfold', 'autocomplete-sources',
+                'autocomplete-test-data', 'datasource-local', 'jsonp', 'node',
+                'test', 'yql'
             ]
+        },
+
+        'autocomplete-test-data': {
+            fullpath: 'autocomplete-test-data.js'
         }
     },
     useBrowserConsole: false

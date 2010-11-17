@@ -21,11 +21,11 @@ if (docElement.doScroll && !GLOBAL_ENV._ieready) {
     if (self !== self.top) {
         stateChangeListener = function() {
             if (doc.readyState == 'complete') {
-                GLOBAL_ENV.Env.remove(doc, EVENT_NAME, stateChangeListener);
+                GLOBAL_ENV.remove(doc, EVENT_NAME, stateChangeListener);
                 GLOBAL_ENV.ieready();
             }
         };
-        GLOBAL_ENV.Env.add(doc, EVENT_NAME, stateChangeListener);
+        GLOBAL_ENV.add(doc, EVENT_NAME, stateChangeListener);
     } else {
         GLOBAL_ENV._dri = setInterval(function() {
             try {

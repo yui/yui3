@@ -65,23 +65,22 @@
         "submodules": {
             "autocomplete-base": {
                 "optional": [
-                    "jsonp", 
-                    "yql"
+                    "autocomplete-sources"
                 ], 
                 "plugins": {
                     "autocomplete-filters": {
                         "path": "autocomplete/autocomplete-filters-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-wordbreak"
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-filters-accentfold": {
                         "path": "autocomplete/autocomplete-filters-accentfold-min.js", 
                         "requires": [
                             "array-extras", 
-                            "unicode-accentfold", 
-                            "unicode-wordbreak"
+                            "text-accentfold", 
+                            "text-wordbreak"
                         ]
                     }, 
                     "autocomplete-highlighters": {
@@ -102,11 +101,13 @@
                 "requires": [
                     "array-extras", 
                     "base-build", 
+                    "escape", 
                     "event-valuechange", 
                     "node-base"
                 ]
             }, 
             "autocomplete-list": {
+                "after": "autocomplete-sources", 
                 "lang": [
                     "en"
                 ], 
@@ -138,6 +139,17 @@
                     "widget-stack"
                 ], 
                 "skinnable": true
+            }, 
+            "autocomplete-sources": {
+                "optional": [
+                    "io-base", 
+                    "json-parse", 
+                    "jsonp", 
+                    "yql"
+                ], 
+                "requires": [
+                    "autocomplete-base"
+                ]
             }
         }
     }, 
@@ -859,14 +871,14 @@
             "highlight-accentfold": {
                 "requires": [
                     "highlight-base", 
-                    "unicode-accentfold"
+                    "text-accentfold"
                 ]
             }, 
             "highlight-base": {
                 "requires": [
                     "array-extras", 
                     "escape", 
-                    "unicode-wordbreak"
+                    "text-wordbreak"
                 ]
             }
         }
@@ -1099,19 +1111,6 @@
             "classnamemanager", 
             "plugin", 
             "node-focusmanager"
-        ], 
-        "skinnable": true
-    }, 
-    "node-tokeninput": {
-        "requires": [
-            "array-extras", 
-            "classnamemanager", 
-            "event-focus", 
-            "event-valuechange", 
-            "node-event-delegate", 
-            "node-pluginhost", 
-            "node-style", 
-            "plugin"
         ], 
         "skinnable": true
     }, 
@@ -1384,6 +1383,24 @@
         ], 
         "skinnable": true
     }, 
+    "text": {
+        "submodules": {
+            "text-accentfold": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-accentfold"
+                ]
+            }, 
+            "text-data-accentfold": {}, 
+            "text-data-wordbreak": {}, 
+            "text-wordbreak": {
+                "requires": [
+                    "array-extras", 
+                    "text-data-wordbreak"
+                ]
+            }
+        }
+    }, 
     "transition": {
         "submodules": {
             "transition-native": {
@@ -1395,24 +1412,6 @@
                 "requires": [
                     "transition-native", 
                     "node-style"
-                ]
-            }
-        }
-    }, 
-    "unicode": {
-        "submodules": {
-            "unicode-accentfold": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-accentfold"
-                ]
-            }, 
-            "unicode-data-accentfold": {}, 
-            "unicode-data-wordbreak": {}, 
-            "unicode-wordbreak": {
-                "requires": [
-                    "array-extras", 
-                    "unicode-data-wordbreak"
                 ]
             }
         }

@@ -36,7 +36,7 @@ Y.mix(Y.namespace('AutoCompleteHighlighters'), {
         var queryChars = YArray.unique(query.split(''));
 
         return YArray.map(results, function (result) {
-            return Highlight.allFold(result, queryChars);
+            return Highlight.allFold(result.text, queryChars);
         });
     },
 
@@ -51,7 +51,7 @@ Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      */
     phraseMatchFold: function (query, results) {
         return YArray.map(results, function (result) {
-            return Highlight.allFold(result, [query]);
+            return Highlight.allFold(result.text, [query]);
         });
     },
 
@@ -66,7 +66,7 @@ Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      */
     startsWithFold: function (query, results) {
         return YArray.map(results, function (result) {
-            return Highlight.allFold(result, [query], {
+            return Highlight.allFold(result.text, [query], {
                 startsWith: true
             });
         });
@@ -83,7 +83,7 @@ Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      */
     wordMatchFold: function (query, results) {
         return YArray.map(results, function (result) {
-            return Highlight.wordsFold(result, query);
+            return Highlight.wordsFold(result.text, query);
         });
     }
 });

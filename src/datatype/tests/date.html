@@ -27,7 +27,7 @@
     }).use("datatype-date", function(Y) {
         dateFR = Y.DataType.Date;
     });
-    
+
     YUI({
         filter:"debug",
         lang: "ko-KR"
@@ -40,14 +40,14 @@
         logInclude:{"TestRunner":true},
         useConsole: true
     }).use("console", "test", "dump", "datatype-date", "node", function(Y) {
-        
+
         // Set up the page
         var LANG = Y.Lang,
             ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
             btnRun = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-            
+
         btnRun.set("disabled", false);
         Y.on("click", function(){
             Y.Test.Runner.run();
@@ -56,7 +56,7 @@
 
         var testParse = new Y.Test.Case({
             name: "Date Parse Tests",
-        
+
             testUndefined: function() {
                 var date = Y.DataType.Date.parse();
                 ASSERT.isNull(date, "Expected null.");
@@ -66,7 +66,7 @@
                 var date = Y.DataType.Date.parse(null);
                 ASSERT.isTrue(LANG.isDate(date), "Expected date.");
             },
-            
+
             testParse: function() {
                 var date = Y.DataType.Date.parse("December 17, 1995 03:24:00");
                 ASSERT.isTrue(LANG.isDate(date), "Expected date.");
@@ -81,7 +81,7 @@
                 ASSERT.isTrue(LANG.isDate(date), "Expected date.");
             }
         });
-        
+
         var testFormat = new Y.Test.Case({
             name: "Date Format Tests",
 
@@ -94,11 +94,11 @@
                 var output = Y.DataType.Date.format(null);
                 ASSERT.areSame("", output, "Expected empty string.");
             },
-            
+
             testFormats: function() {
                 var date = new Date(819199440000),
                     output;
-                
+
                 output = Y.DataType.Date.format(date);
                 ASSERT.areSame("1995-12-17", output, "Expected default format (%F)");
 
@@ -118,7 +118,7 @@
                 ASSERT.areSame("03:24", output, "Expected %R format.");
             }
         });
-            
+
         var testFormatDeprecatedLocales = new Y.Test.Case({
             name: "Date Format Locale Tests",
 
@@ -136,7 +136,7 @@
                 });
 
                 Y.DataType.Date.Locale['fr-CH'] = Y.merge(Y.DataType.Date.Locale['fr'], { x: '%d. %m. %y' }, true);
-                
+
                 var date = new Date(819199440000),
                     output;
 
@@ -253,9 +253,9 @@
                     });
                 // switch to Punjabi
                 Y.Intl.setLang("datatype-date-format", "pa-IN");
-                
+
                 var dateIN = Y.DataType.Date;
-                
+
                 ASSERT.isNotNull(dateIN, "Expected Punjabi Date to be loaded.");
 
                 var date = new Date(819199440000),
@@ -278,6 +278,24 @@
             }
         });
 
+        var testFormatAvailable = new Y.Test.Case({
+            name: "Date Format Available Format Tests",
+
+            testAvailable: function() {
+
+                var available = Y.Intl.getAvailableLangs("datatype-date");
+
+                ASSERT.isArray(available, "Expected getAvailableLangs to return array.");
+                Y.assert(available.length > 30, "Expected at least 30 available languages.");
+                Y.assert(Y.Array.indexOf(available, "ar-JO") >= 0, "Expected ar-JO to be available.");
+                Y.assert(Y.Array.indexOf(available, "de-DE") >= 0, "Expected de-DE to be available.");
+                Y.assert(Y.Array.indexOf(available, "en-US") >= 0, "Expected en-US to be available.");
+                Y.assert(Y.Array.indexOf(available, "th-TH") >= 0, "Expected th-TH to be available.");
+                Y.assert(Y.Array.indexOf(available, "zh-Hant-TW") >= 0, "Expected zh-Hant-TW to be available.");
+
+            }
+        });
+
         var suite = new Y.Test.Suite({name:"DataType.Date Test Suite"});
         suite.add(testParse);
         suite.add(testFormat);
@@ -286,6 +304,7 @@
         suite.add(testFormatFR);
         suite.add(testFormatKR);
         suite.add(testFormatIN);
+        suite.add(testFormatAvailable);
 
         Y.Test.Runner.setName("DataType.Date Test Runner");
         Y.Test.Runner.add(suite);

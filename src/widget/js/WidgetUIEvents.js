@@ -1,6 +1,4 @@
-var UI_EVENT_REGEX = /(\w+):(\w+)/,
-    UI_EVENT_REGEX_REPLACE = "$2",
-    BOUNDING_BOX = "boundingBox",
+var BOUNDING_BOX = "boundingBox",
     Widget = Y.Widget,
     RENDER = "render",
     L = Y.Lang;
@@ -105,7 +103,7 @@ Y.mix(Widget.prototype, {
      */
     _getUIEvent: function (type) {
         if (L.isString(type)) {
-            var sType = type.replace(UI_EVENT_REGEX, UI_EVENT_REGEX_REPLACE),
+            var sType = this.parseType(type)[1],
                 returnVal;
 
             if (this.UI_EVENTS[sType]) {
@@ -147,15 +145,6 @@ Y.mix(Widget.prototype, {
     on: function (type) {
         this._initUIEvent(type);
         return Widget.superclass.on.apply(this, arguments);
-    },
-
-    //  Override of "after" from Base to facilitate the firing of Widget events
-    //  based on DOM events of the same name/type (e.g. "click", "mouseover").    
-    //  Temporary solution until we have the ability to listen to when 
-    //  someone adds an event listener (bug 2528230)    
-    after: function (type) {
-        this._initUIEvent(type);
-        return Widget.superclass.after.apply(this, arguments);
     },
 
     //  Override of "publish" from Base to facilitate the firing of Widget events
