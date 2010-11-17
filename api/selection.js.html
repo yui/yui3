@@ -210,12 +210,22 @@
         <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hrs</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hr</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;hr yui-non yui-skip&#39;</span><span class="p">;</span>
-                <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;&#39;</span><span class="p">);</span>
+                
                 <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;contenteditable&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span> <span class="c1">//Keep it from being Edited</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">hr</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">hr</span><span class="p">);</span>
                 <span class="p">}</span>
+                <span class="c1">//Had to move to inline style. writes for ie&#39;s &lt; 8. They don&#39;t render el.setAttribute(&#39;style&#39;);</span>
+                <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s1">&#39;1px solid #ccc&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">lineHeight</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">fontSize</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginTop</span> <span class="o">=</span> <span class="s1">&#39;5px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginBottom</span> <span class="o">=</span> <span class="s1">&#39;5px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginLeft</span> <span class="o">=</span> <span class="s1">&#39;15px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">marginRight</span> <span class="o">=</span> <span class="s1">&#39;15px&#39;</span><span class="p">;</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">padding</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
         <span class="p">});</span>
         
 
