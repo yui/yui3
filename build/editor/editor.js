@@ -973,12 +973,22 @@ YUI.add('selection', function(Y) {
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
                 el.className = 'hr yui-non yui-skip';
-                el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
+                
                 el.setAttribute('readonly', true);
                 el.setAttribute('contenteditable', false); //Keep it from being Edited
                 if (hr.parentNode) {
                     hr.parentNode.replaceChild(el, hr);
                 }
+                //Had to move to inline style. writes for ie's < 8. They don't render el.setAttribute('style');
+                var s = el.style;
+                s.border = '1px solid #ccc';
+                s.lineHeight = '0';
+                s.fontSize = '0';
+                s.marginTop = '5px';
+                s.marginBottom = '5px';
+                s.marginLeft = '15px';
+                s.marginRight = '15px';
+                s.padding = '0';
         });
         
 
@@ -2392,8 +2402,9 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.later(100, inst, inst.Selection.cleanCursor);
-                    //inst.Selection.cleanCursor();
+                    if (!Y.UA.gecko) {
+                        inst.later(100, inst, inst.Selection.cleanCursor);
+                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
