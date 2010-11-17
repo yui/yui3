@@ -447,8 +447,8 @@
             // Using isValue, so that "" is valid content 
             if (L.isValue(content)) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
-                
-                this._addNodeRef(node, content, where);
+
+                this._addStdModContent(node, content, where);
 
                 this.set(section + CONTENT_SUFFIX, this._getStdModContent(section), {src:UI});
             } else {
@@ -537,11 +537,11 @@
         },
 
         /**
-         * Helper method to add nodes, to another node.
-         * The child node(s) are added either before, after or replaces the existing node content 
+         * Helper method to add content to a StdMod section node.
+         * The content is added either before, after or replaces the existing node content 
          * based on the value of the <code>where</code> argument.
          * 
-         * @method _addNodeRef
+         * @method _addStdModContent
          * @private
          * 
          * @param {Node} node The section Node to be updated.
@@ -549,7 +549,7 @@
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the Node.
          */
-        _addNodeRef : function(node, children, where) {
+        _addStdModContent : function(node, children, where) {
 
             // StdMod where to Node where
             switch (where) {
