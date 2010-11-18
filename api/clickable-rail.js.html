@@ -179,6 +179,10 @@
 
                 <span class="c1">// Delegate to DD&#39;s natural behavior</span>
                 <span class="nx">dd</span><span class="p">.</span><span class="nx">_handleMouseDownEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+
+                <span class="c1">// TODO: this won&#39;t trigger a slideEnd if the rail is clicked</span>
+                <span class="c1">// check if dd._move(e); dd._dragThreshMet = true; dd.start();</span>
+                <span class="c1">// will do the trick.  Is that even a good idea?</span>
             <span class="p">}</span>
         <span class="p">},</span>
 

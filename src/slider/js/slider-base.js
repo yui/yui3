@@ -420,14 +420,20 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     _initThumbUrl: function () {
-        var url     = this.get( 'thumbUrl' ),
-            skin    = this.getSkinName() || 'sam',
-            skinDir = Y.config.base + 'slider/assets/skins/' + skin;
+        if (!this.get('thumbUrl')) {
+            var skin = this.getSkinName() || 'sam',
+                base = Y.config.base;
 
-        if ( !url ) {
+            // Unfortunate hack to avoid requesting image resources from the
+            // combo service.  The combo service does not serve images.
+            if (base.indexOf('http://yui.yahooapis.com/combo') === 0) {
+                base = 'http://yui.yahooapis.com/' + Y.version + '/build/';
+            }
+
             // <img src="/path/to/build/slider/assets/skins/sam/thumb-x.png">
-            url = skinDir + '/thumb-' + this.axis + '.png';
-            this.set( 'thumbUrl', url );
+            this.set('thumbUrl', base + 'slider/assets/skins/' +
+                                 skin + '/thumb-' + this.axis + '.png');
+
         }
     },
 

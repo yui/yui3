@@ -861,7 +861,9 @@ YUI.add('selection', function(Y) {
                         //This causes IE to not allow a selection on a doubleclick
                         //rng.select(nodes[i]);
                         if (rng.inRange(sel)) {
-                           ieNode = nodes[i]; 
+                            if (!ieNode) {
+                                ieNode = nodes[i];
+                            }
                         }
                     }
                 }
@@ -872,6 +874,11 @@ YUI.add('selection', function(Y) {
                     if (ieNode.nodeType !== 3) {
                         if (ieNode.firstChild) {
                             ieNode = ieNode.firstChild;
+                        }
+                        if (ieNode && ieNode.tagName && ieNode.tagName.toLowerCase() === 'body') {
+                            if (ieNode.firstChild) {
+                                ieNode = ieNode.firstChild;
+                            }
                         }
                     }
                     this.anchorNode = this.focusNode = Y.Selection.resolve(ieNode);
@@ -966,12 +973,22 @@ YUI.add('selection', function(Y) {
         Y.each(hrs, function(hr) {
             var el = doc.createElement('div');
                 el.className = 'hr yui-non yui-skip';
-                el.setAttribute('style', 'border: 1px solid #ccc; line-height: 0; font-size: 0;margin-top: 5px; margin-bottom: 5px;');
+                
                 el.setAttribute('readonly', true);
                 el.setAttribute('contenteditable', false); //Keep it from being Edited
                 if (hr.parentNode) {
                     hr.parentNode.replaceChild(el, hr);
                 }
+                //Had to move to inline style. writes for ie's < 8. They don't render el.setAttribute('style');
+                var s = el.style;
+                s.border = '1px solid #ccc';
+                s.lineHeight = '0';
+                s.fontSize = '0';
+                s.marginTop = '5px';
+                s.marginBottom = '5px';
+                s.marginLeft = '15px';
+                s.marginRight = '15px';
+                s.padding = '0';
         });
         
 
@@ -1208,7 +1225,9 @@ YUI.add('selection', function(Y) {
             //In the case of Ctrl+Z (Undo)
             try {
                 n = n.parentNode;
-            } catch (re) {}
+            } catch (re) {
+                n = 'body';
+            }
         }
         return Y.one(n);
     };
@@ -1507,7 +1526,11 @@ YUI.add('selection', function(Y) {
                     if (html === '' || html === '<br>') {
                         node.append(newNode);
                     } else {
-                        node.insert(newNode, 'before');
+                        if (newNode.get('parentNode')) {
+                            node.insert(newNode, 'before');
+                        } else {
+                            Y.one('body').prepend(newNode);
+                        }
                     }
                     if (node.get('firstChild').test('br')) {
                         node.get('firstChild').remove();
@@ -1756,12 +1779,14 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
                 
-                Y.later(0, this, function() {
-                    var inst = this.getInstance();
-                    if (inst && inst.Selection) {
-                        inst.Selection.cleanCursor();
-                    }
-                });
+                if (action !== 'insertbr') {
+                    Y.later(0, this, function() {
+                        var inst = this.getInstance();
+                        if (inst && inst.Selection) {
+                            inst.Selection.cleanCursor();
+                        }
+                    });
+                }
 
                 if (fn) {
                     return fn.call(this, action, value);
@@ -2383,8 +2408,11 @@ YUI.add('editor-base', function(Y) {
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.later(100, inst, inst.Selection.cleanCursor);
-                    //inst.Selection.cleanCursor();
+                    if (!Y.UA.gecko) {
+                        if (!EditorBase.NC_KEYS[e.changedEvent.keyCode] && !e.changedEvent.shiftKey && !e.changedEvent.ctrlKey && (e.changedEvent.keyCode !== 13)) {
+                            inst.later(100, inst, inst.Selection.cleanCursor);
+                        }
+                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -3859,6 +3887,10 @@ YUI.add('editor-br', function(Y) {
         * @method _onKeyDown
         */
         _onKeyDown: function(e) {
+            if (e.stopped) {
+                e.halt();
+                return;
+            }
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
                     sel = new inst.Selection();
@@ -3866,9 +3898,11 @@ YUI.add('editor-br', function(Y) {
                 if (sel) {
                     if (Y.UA.ie) {
                         if (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI)) {
-                            sel._selection.pasteHTML('<br>');
-                            sel._selection.collapse(false);
-                            sel._selection.select();
+                            sel._selection.pasteHTML('<div id="yui-ie-enter"><br></div>');
+                            inst.on('available', function() {
+                                this.set('id', '');
+                                sel.selectNode(this.get('firstChild'));
+                            }, '#yui-ie-enter');
                             e.halt();
                         }
                     }

@@ -11,6 +11,12 @@
                 ],
                 "skinnable": true
             },
+            "datatable-datasource": {
+                "requires": [
+                    "datatable-base",
+                    "datasource-local"
+                ]
+            },
             "datatable-sort": {
                 "requires": [
                     "datatable-base",

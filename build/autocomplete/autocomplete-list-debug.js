@@ -118,13 +118,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var ariaNode   = this._createAriaNode(),
             contentBox = this.get('contentBox'),
             inputNode  = this._inputNode,
-            listNode   = this.get('listNode'),
+            listNode,
             parentNode = inputNode.get('parentNode');
 
-        if (!listNode) {
-            listNode = this._createListNode();
-            contentBox.append(listNode);
-        }
+        listNode = this._createListNode();
+        this._set('listNode', listNode);
+        contentBox.append(listNode);
 
         inputNode.addClass(this.getClassName('input')).setAttrs({
             'aria-autocomplete': LIST,
@@ -310,14 +309,16 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._listEvents.concat([
-            this.after('mouseover', this._afterMouseOver),
-            this.after('mouseout', this._afterMouseOut),
+            this.after({
+              mouseover: this._afterMouseOver,
+              mouseout : this._afterMouseOut,
 
-            this.after('activeItemChange', this._afterActiveItemChange),
-            this.after('alwaysShowListChange', this._afterAlwaysShowListChange),
-            this.after('hoveredItemChange', this._afterHoveredItemChange),
-            this.after('resultsChange', this._afterResultsChange),
-            this.after('visibleChange', this._afterVisibleChange),
+              activeItemChange    : this._afterActiveItemChange,
+              alwaysShowListChange: this._afterAlwaysShowListChange,
+              hoveredItemChange   : this._afterHoveredItemChange,
+              resultsChange       : this._afterResultsChange,
+              visibleChange       : this._afterVisibleChange
+            }),
 
             this._listNode.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
         ]);
@@ -491,6 +492,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             inputNode.set('aria-activedescendant', newVal.get(ID));
         } else {
             inputNode.scrollIntoView();
+            inputNode.removeAttribute('aria-activedescendant');
         }
     },
 
@@ -701,6 +703,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         },
 
         /**
+         * Node that will contain result items.
+         *
+         * @attribute listNode
+         * @type Node|null
+         * @readonly
+         */
+        listNode: {
+            readOnly: true,
+            value: null
+        },
+
+        /**
          * Translatable strings used by the AutoCompleteList widget.
          *
          * @attribute strings
@@ -730,20 +744,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
     },
 
-    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist'),
-
-    HTML_PARSER: {
-        /**
-         * Node that will contain result items.
-         *
-         * @attribute listNode
-         * @type Node|null
-         * @readonly
-         */
-        listNode: function () {
-            return this.getClassName(LIST);
-        }
-    }
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
 });
 
 Y.AutoCompleteList = List;
@@ -758,4 +759,4 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], lang:['en']});
+}, '@VERSION@' ,{after:['autocomplete-sources'], skinnable:true, lang:['en'], requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});

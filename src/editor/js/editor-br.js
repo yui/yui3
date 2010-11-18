@@ -25,6 +25,10 @@
         * @method _onKeyDown
         */
         _onKeyDown: function(e) {
+            if (e.stopped) {
+                e.halt();
+                return;
+            }
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
                     sel = new inst.Selection();
@@ -32,9 +36,11 @@
                 if (sel) {
                     if (Y.UA.ie) {
                         if (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI)) {
-                            sel._selection.pasteHTML('<br>');
-                            sel._selection.collapse(false);
-                            sel._selection.select();
+                            sel._selection.pasteHTML('<div id="yui-ie-enter"><br></div>');
+                            inst.on('available', function() {
+                                this.set('id', '');
+                                sel.selectNode(this.get('firstChild'));
+                            }, '#yui-ie-enter');
                             e.halt();
                         }
                     }

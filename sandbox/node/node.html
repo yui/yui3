@@ -4,27 +4,23 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>Node</title>
 <style>
-#foo {
-    display:none;
-    padding:20px;
-
-}
 </style>
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
 </head>
 
 <body>
 <div id="foo">
-    <div id="bar">bar</div>
+    <div id="bar"><em id="baz">baz</em></div>
 </div>
 <script type="text/javascript">
 
 
 YUI({filter:'raw'}).use('node', function(Y) {
-    var node = Y.Node.create('<div><p>foo<span><strong><em>bar</em></strong></span></p></div>'),
-        nodes = node.all('*');
+    Y.one('#foo');
+    Y.one('#bar');
 
-    Y.log(nodes.item(nodes.size() - 1));
+    Y.one('#foo').remove(true);
+    console.log(Y.Node._instances);
 });
 
 

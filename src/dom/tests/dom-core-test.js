@@ -781,6 +781,11 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual('THEAD', el.tagName);
         },
 
+        'should create a table head from uppercase': function() {
+            var el = Y.DOM.create('<THEAD></THEAD>');
+            Assert.areEqual('THEAD', el.tagName);
+        },
+
         'should create a table head with nested table': function() {
             var el = Y.DOM.create('<thead><tr><td><table><tbody><tr>' + 
                     '<td>fresh</td></tr></tbody></table></td></tr></thead>');

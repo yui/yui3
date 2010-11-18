@@ -44,6 +44,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 });
 
 Y.Record = Record;
+
 /**
  * The Recordset utility provides a standard way for dealing with
  * a collection of similar objects.
@@ -64,6 +65,7 @@ Y.Record = Record;
 
 var ArrayList = Y.ArrayList,
 	Bind = Y.bind,
+	Lang = Y.Lang,
 	Recordset = Y.Base.create('recordset', Y.Base, [], {
 		
 	
@@ -99,7 +101,7 @@ var ArrayList = Y.ArrayList,
 			recs = e.added,
 			index = e.index,
 			i=0;
-		//index = (Y.Lang.isNumber(index) && (index > -1)) ? index : len;
+		//index = (Lang.isNumber(index) && (index > -1)) ? index : len;
 		
 		for (; i < recs.length; i++) {
 			//if records are to be added one at a time, push them in one at a time
@@ -225,9 +227,16 @@ var ArrayList = Y.ArrayList,
      * @private
      */
 	_setHashTable: function() {
-		var obj = {}, key=this.get('key'), i=0, len = this._items.length;
-		for (; i<len; i++) {
-			obj[this._items[i].get(key)] = this._items[i];
+		var obj = {}, key=this.get('key'), i=0;
+		
+		//could be an empty recordset
+		//This if statement looks convoluted due to a bug on Y.Array that returns an array of length one when instantiating an empty Y.Array().
+		//TODO: Change when Ticket #2529534 has been resolved
+		if (this._items && this._items[0]) {
+			var len = this._items.length;
+			for (; i<len; i++) {
+				obj[this._items[i].get(key)] = this._items[i];
+			}	
 		}
 		return obj;
 	},
@@ -309,10 +318,10 @@ var ArrayList = Y.ArrayList,
      */
 	getRecord: function(i) {
 		
-		if (Y.Lang.isString(i)) {
+		if (Lang.isString(i)) {
 			return this.get('table')[i];
 		}
-		else if (Y.Lang.isNumber(i)) {
+		else if (Lang.isNumber(i)) {
 			return this._items[i];
 		}
 		return null;
@@ -343,7 +352,7 @@ var ArrayList = Y.ArrayList,
 	getRecordsByIndex: function(index, range) {
 		var i=0, returnedRecords = [];
 		//Range cannot take on negative values
-		range = (Y.Lang.isNumber(range) && (range > 0)) ? range : 1;
+		range = (Lang.isNumber(range) && (range > 0)) ? range : 1;
 		
 		for(; i<range; i++) {
 			returnedRecords.push(this._items[index+i]);
@@ -392,18 +401,18 @@ var ArrayList = Y.ArrayList,
 	add: function(oData, index) {
 		
 		var newRecords=[], idx, i=0;		
-		idx = (Y.Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
+		idx = (Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
 		
 
 		
 		//Passing in array of object literals for oData
-		if (Y.Lang.isArray(oData)) {
+		if (Lang.isArray(oData)) {
 			for(; i < oData.length; i++) {
 				newRecords[i] = this._changeToRecord(oData[i]);
 			}
 
 		}
-		else if (Y.Lang.isObject(oData)) {
+		else if (Lang.isObject(oData)) {
 			newRecords[0] = this._changeToRecord(oData);
 		}
 		
@@ -462,7 +471,7 @@ var ArrayList = Y.ArrayList,
 		var rec, arr, i=0;
 		
 		//Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method
-		arr = (!(Y.Lang.isArray(data))) ? [data] : data;
+		arr = (!(Lang.isArray(data))) ? [data] : data;
 		rec = this._items.slice(index, index+arr.length);
 		
 		for (; i<arr.length; i++) {
@@ -488,10 +497,10 @@ var ArrayList = Y.ArrayList,
 	    * @type array
 	    */
         records: {
-            validator: Y.Lang.isArray,
+            validator: Lang.isArray,
             getter: function () {
                 // give them a copy, not the internal object
-                return Y.Array(this._items);
+                return new Y.Array(this._items);
             },
             setter: function (allData) {
 				//For allData passed in here, see if each instance is a Record.
@@ -509,8 +518,15 @@ var ArrayList = Y.ArrayList,
 						records.push(o);
 					}
 				}
-				Y.Array.each(allData, initRecord);
-                this._items = Y.Array(records);
+				
+				//This conditional statement handles creating empty recordsets
+				if (allData) {
+					Y.Array.each(allData, initRecord);
+					this._items = new Y.Array(records);
+				}
+				else {
+					this._items = new Y.Array();
+				}
             },
 			//initialization of the attribute must be done before the first call is made.
 			//see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this
@@ -551,7 +567,9 @@ Y.Recordset = Recordset;
 
 
 
-}, '@VERSION@' ,{requires:['base','record','arraylist']});
+
+}, '@VERSION@' ,{requires:['base','arraylist']});
+
 YUI.add('recordset-sort', function(Y) {
 
 /**
@@ -738,7 +756,9 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
+
 YUI.add('recordset-filter', function(Y) {
 
 /**
@@ -850,7 +870,9 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
+
 YUI.add('recordset-indexer', function(Y) {
 
 /**
@@ -1068,7 +1090,9 @@ Y.namespace("Plugin").RecordsetIndexer = RecordsetIndexer;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','plugin']});
+
 
 
 YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter','recordset-indexer']});

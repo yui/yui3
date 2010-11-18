@@ -3,7 +3,7 @@
 <head>
 <title>Transition tests</title>
 <link type="text/css" rel="stylesheet" href="../../../build/logreader/assets/skins/sam/logreader.css">
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <style>
 .demo {
     background: #ccc;
@@ -250,7 +250,7 @@ YUI({
                     });
                 });
 
-                test.wait(1000);
+                test.wait(2000);
             },
 
             'should override effect duration': function() {
@@ -510,12 +510,6 @@ YUI({
                 node1.transition({
                     duration: 1,
                     height: 0
-                }, function(e) {
-                    test.resume(function () {
-                        Y.Assert.areEqual('0px', node1.getComputedStyle('height'), 'item 1 height');                     
-                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
-                        test.wait(4000);
-                    });
                 });
 
                 node2.transition({
@@ -523,6 +517,7 @@ YUI({
                     duration: 2
                 }, function(e) {
                     test.resume(function () {
+                        Y.Assert.areEqual('0px', node1.getComputedStyle('height'), 'item 1 height');                     
                         Y.Assert.areEqual('100px', node2.getComputedStyle('height'), 'item 2 height');                     
                         Y.Assert.areEqual(2, parseInt(e.elapsedTime));
                     });
@@ -532,14 +527,18 @@ YUI({
             },
 
             'nodelist should transition together': function() {
-                var test = this;
+                var test = this,
+                    resumed = false;
 
                 Y.all('.demo').transition({duration: 1, opacity: 0}, function(e) {
-                    test.resume(function() {
-                        var nodes = Y.all('.demo');
-                        Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
-                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
-                    });
+                    if (!resumed) {
+                        test.resume(function() {
+                            resumed = true;
+                            var nodes = Y.all('.demo');
+                            Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
+                            Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                        });
+                    }
                 });
                 test.wait(4000);
             }
@@ -695,6 +694,7 @@ YUI({
                 }, function(e) {
                     test.resume(function() { 
                         Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                        node.setStyle('height', '100px');
                         if (Y.UA.webkit) {
                             Y.Assert.areEqual('matrix(-1, 1.22465e-16, -1.22465e-16, -1, 0, 0)', node.getComputedStyle('WebkitTransform'));
                         }
@@ -710,8 +710,26 @@ YUI({
 
                 node.setStyle('height', '100px');
                 Y.Assert.areEqual('100px', node.getComputedStyle('height'));
-            }
+            },
 
+            'destroyed node should complete transition': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    easing: 'ease',
+                    duration: 1,
+                    height: 0
+                }, function(e) {
+                    test.resume(function() { 
+                        var node = Y.one('.demo');
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                    });
+                });
+                node.destroy();
+                test.wait(3000);
+            }
         }));           
 
         //return it

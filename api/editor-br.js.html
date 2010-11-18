@@ -72,6 +72,10 @@
 <span class="cm">        * @method _onKeyDown</span>
 <span class="cm">        */</span>
         <span class="nx">_onKeyDown</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">stopped</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">halt</span><span class="p">();</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span> <span class="nx">inst</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
                     <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
@@ -79,9 +83,11 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">LI</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">.</span><span class="nx">ancestor</span><span class="p">(</span><span class="nx">LI</span><span class="p">))</span> <span class="p">{</span>
-                            <span class="nx">sel</span><span class="p">.</span><span class="nx">_selection</span><span class="p">.</span><span class="nx">pasteHTML</span><span class="p">(</span><span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">);</span>
-                            <span class="nx">sel</span><span class="p">.</span><span class="nx">_selection</span><span class="p">.</span><span class="nx">collapse</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
-                            <span class="nx">sel</span><span class="p">.</span><span class="nx">_selection</span><span class="p">.</span><span class="nx">select</span><span class="p">();</span>
+                            <span class="nx">sel</span><span class="p">.</span><span class="nx">_selection</span><span class="p">.</span><span class="nx">pasteHTML</span><span class="p">(</span><span class="s1">&#39;&lt;div id=&quot;yui-ie-enter&quot;&gt;&lt;br&gt;&lt;/div&gt;&#39;</span><span class="p">);</span>
+                            <span class="nx">inst</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                                <span class="nx">sel</span><span class="p">.</span><span class="nx">selectNode</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
+                            <span class="p">},</span> <span class="s1">&#39;#yui-ie-enter&#39;</span><span class="p">);</span>
                             <span class="nx">e</span><span class="p">.</span><span class="nx">halt</span><span class="p">();</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
